@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -34,12 +35,7 @@ fun ExercisesScreen(innerPadding: PaddingValues = PaddingValues()){
         LazyColumn(
             contentPadding = innerPadding
         ) {
-            items(
-                count = exercises.size,
-                itemContent = { index ->
-                    ExerciseListItemContent(exercise = exercises[index])
-                }
-            )
+            items(exercises) { exercise -> ExerciseListItemContent(exercise = exercise) }
         }
     }
 }
