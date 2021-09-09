@@ -30,7 +30,7 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
             TrainingsScreen(innerPadding = innerPadding)
         }
         composable(BottomNavItem.Exercises.route){
-            ExercisesScreen()
+            ExercisesScreen(innerPadding = innerPadding)
         }
         composable(BottomNavItem.Calendar.route){
             CalendarScreen()
