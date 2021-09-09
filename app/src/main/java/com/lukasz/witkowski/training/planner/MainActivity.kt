@@ -58,7 +58,7 @@ fun TrainingPlannerApp() {
             TopBar(title = currentScreenTitle)
         }
     ) {
-        Navigation(navController = navController)
+        Navigation(navController = navController, it)
     }
 }
 

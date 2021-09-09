@@ -1,29 +1,82 @@
 package com.lukasz.witkowski.training.planner.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.lukasz.witkowski.shared.Training
 import com.lukasz.witkowski.shared.dummyTrainingList
 
 
 @Composable
-fun TrainingsScreen(){
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .background(Color.Black)
-            .wrapContentSize(Alignment.Center)
+fun TrainingsScreen(innerPadding: PaddingValues = PaddingValues()){
+    val trainings = remember { dummyTrainingList }
+    LazyColumn(
+        contentPadding = innerPadding
     ) {
-        Text(text = "Trainings Screen",
-            color = Color.Yellow
+        items(
+            count = trainings.size,
+            itemContent = { index ->
+                TrainingListItemContent(training = trainings[index])
+            }
         )
     }
+}
+
+//
+//@Composable
+//fun ListCardItem(
+//    modifier: Modifier = Modifier,
+//    content: @Composable (Training) -> Unit
+//) {
+//    Box(
+//        modifier = modifier
+//            .background(Color.LightGray)
+//    ){
+//        content()
+//    }
+//}
+
+@Composable
+fun TrainingListItemContent(
+    modifier: Modifier = Modifier,
+    training: Training
+) {
+    Box(
+        modifier = modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+            .background(Color.LightGray)
+            .padding(8.dp),
+    ){
+        Row {
+            Icon(imageVector = Icons.Filled.Person, contentDescription = "Placeholder")
+            Column {
+                Text(
+                    text = training.name,
+                    fontSize = 24.sp
+                )
+                Text(
+                    text = training.description,
+                    fontSize = 14.sp
+                )
+            }
+        }
+    }
+
 }
 
 

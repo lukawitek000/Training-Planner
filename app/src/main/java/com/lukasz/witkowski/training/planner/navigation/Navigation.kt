@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.navigation
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -23,10 +24,10 @@ import com.lukasz.witkowski.training.planner.ui.StatisticsScreen
 import com.lukasz.witkowski.training.planner.ui.TrainingsScreen
 
 @Composable
-fun Navigation(navController: NavHostController) {
+fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
     NavHost(navController = navController, startDestination = BottomNavItem.Trainings.route) {
         composable(BottomNavItem.Trainings.route){
-            TrainingsScreen()
+            TrainingsScreen(innerPadding = innerPadding)
         }
         composable(BottomNavItem.Exercises.route){
             ExercisesScreen()
