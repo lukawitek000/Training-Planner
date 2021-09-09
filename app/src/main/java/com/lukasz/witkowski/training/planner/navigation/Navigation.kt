@@ -20,11 +20,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.lukasz.witkowski.training.planner.ui.CalendarScreen
-import com.lukasz.witkowski.training.planner.ui.ExercisesScreen
-import com.lukasz.witkowski.training.planner.ui.StatisticsScreen
+import com.lukasz.witkowski.training.planner.ui.*
 import com.lukasz.witkowski.training.planner.ui.TrainingsList.TrainingsListViewModel
-import com.lukasz.witkowski.training.planner.ui.TrainingsScreen
 
 @Composable
 fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
@@ -34,7 +31,9 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
             TrainingsScreen(innerPadding = innerPadding, viewModel = trainingsListViewModel)
         }
         composable(BottomNavItem.Exercises.route){
-            ExercisesScreen(innerPadding = innerPadding)
+            ExercisesScreen(innerPadding = innerPadding){
+                navController.navigate(route = "create-exercise")
+            }
         }
         composable(BottomNavItem.Calendar.route){
             CalendarScreen()
@@ -42,6 +41,10 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
         composable(BottomNavItem.Statistics.route){
             StatisticsScreen()
         }
+        composable("create-exercise"){
+            CreateExerciseScreen()
+        }
+
     }
 }
 

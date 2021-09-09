@@ -1,13 +1,17 @@
 package com.lukasz.witkowski.training.planner.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -24,21 +28,26 @@ import com.lukasz.witkowski.shared.dummyExerciseList
 import com.lukasz.witkowski.shared.dummyTrainingList
 
 @Composable
-fun ExercisesScreen(innerPadding: PaddingValues = PaddingValues()){
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .wrapContentSize(Alignment.Center)
+fun ExercisesScreen(innerPadding: PaddingValues = PaddingValues(), onCreateExerciseFabClicked: () -> Unit = {}){
+    Scaffold(
+        modifier = Modifier.padding(innerPadding),
+        floatingActionButton = {
+            FloatingActionButton(onClick = { onCreateExerciseFabClicked() }) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Create Exercise")
+            }
+        }
     ) {
-        val exercises = remember { dummyExerciseList }
-        LazyColumn(
-            contentPadding = innerPadding
-        ) {
-            items(exercises) { exercise ->
-                ListCardItem() {
-                    ExerciseListItemContent(exercise = exercise)
-                }
+        ExercisesList()
+    }
+}
+
+@Composable
+private fun ExercisesList() {
+    val exercises = remember { dummyExerciseList }
+    LazyColumn() {
+        items(exercises) { exercise ->
+            ListCardItem() {
+                ExerciseListItemContent(exercise = exercise)
             }
         }
     }
