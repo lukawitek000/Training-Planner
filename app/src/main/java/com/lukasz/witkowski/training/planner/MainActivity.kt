@@ -21,6 +21,7 @@ import androidx.navigation.compose.rememberNavController
 import com.lukasz.witkowski.training.planner.navigation.BottomNavItem
 import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
 import com.lukasz.witkowski.training.planner.navigation.Navigation
+import com.lukasz.witkowski.training.planner.navigation.TopBar
 import com.lukasz.witkowski.training.planner.ui.CalendarScreen
 import com.lukasz.witkowski.training.planner.ui.ExercisesScreen
 import com.lukasz.witkowski.training.planner.ui.StatisticsScreen
@@ -41,19 +42,25 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TrainingPlannerApp() {
     val navController = rememberNavController()
+    val backStackEntry = navController.currentBackStackEntryAsState()
+    val currentScreenTitle = BottomNavItem.Items.list.find {
+        it.route == backStackEntry.value?.destination?.route
+    }?.title ?: BottomNavItem.Trainings.title
     Scaffold(
         bottomBar = {
             BottomNavigationBar(
-                navController = navController,
+                backStackEntry = backStackEntry.value,
                 onItemClick = {
                     navController.navigate(it.route)
                 })
+        },
+        topBar = {
+            TopBar(title = currentScreenTitle)
         }
     ) {
         Navigation(navController = navController)
     }
 }
-
 
 
 @Preview(showBackground = true)

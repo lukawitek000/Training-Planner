@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -43,16 +44,15 @@ fun Navigation(navController: NavHostController) {
 fun BottomNavigationBar(
     modifier: Modifier = Modifier,
     items: List<BottomNavItem> = BottomNavItem.Items.list,
-    navController: NavController,
+    backStackEntry: NavBackStackEntry?,
     onItemClick: (BottomNavItem) -> Unit
 ) {
-    val backStackEntry = navController.currentBackStackEntryAsState()
     BottomNavigation (
         modifier = modifier,
         elevation = 5.dp
     ) {
         items.forEach { item ->
-            val selected = item.route == backStackEntry.value?.destination?.route
+            val selected = item.route == backStackEntry?.destination?.route
             BottomNavigationItem(
                 selected = selected,
                 onClick = { onItemClick(item) },
