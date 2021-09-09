@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner
+package com.lukasz.witkowski.training.planner.navigation
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DateRange
