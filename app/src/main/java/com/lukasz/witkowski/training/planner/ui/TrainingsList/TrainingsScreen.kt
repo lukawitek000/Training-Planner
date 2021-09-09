@@ -36,66 +36,47 @@ fun TrainingsScreen(innerPadding: PaddingValues = PaddingValues(), viewModel: Tr
     LazyColumn(
         contentPadding = innerPadding
     ) {
-        items(trainings) { training ->  TrainingListItemContent(training = training)}
+        items(trainings) { training ->
+            ListCardItem() {
+                TrainingListItemContent(training = training)
+            }
+        }
     }
+
 }
 
-//
-//@Composable
-//fun ListCardItem(
-//    modifier: Modifier = Modifier,
-//    content: @Composable (Training) -> Unit
-//) {
-//    Box(
-//        modifier = modifier
-//            .background(Color.LightGray)
-//    ){
-//        content()
-//    }
-//}
 
 @Composable
 fun TrainingListItemContent(
     modifier: Modifier = Modifier,
     training: Training
 ) {
-
-    Card(
-        modifier = modifier
-            .padding(8.dp),
-        shape = RoundedCornerShape(16.dp),
-        backgroundColor = Color.DarkGray
-    ){
-        Row(
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(end = 8.dp)
+                .weight(1f)
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .weight(1f)
-            ) {
-                Text(
-                    text = training.name,
-                    fontSize = 24.sp
-                )
-                Text(
-                    text = training.description,
-                    fontSize = 14.sp
-                )
-            }
-            Icon(
-                modifier = Modifier.size(40.dp),
-                imageVector = Icons.Filled.PlayArrow,
-                contentDescription = "Start training",
-                tint = Color.Yellow,
+            Text(
+                text = training.name,
+                fontSize = 24.sp
+            )
+            Text(
+                text = training.description,
+                fontSize = 14.sp
             )
         }
+        Icon(
+            modifier = Modifier.size(40.dp),
+            imageVector = Icons.Filled.PlayArrow,
+            contentDescription = "Start training",
+            tint = Color.Yellow,
+        )
     }
-
 }
 
 

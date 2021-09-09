@@ -35,7 +35,11 @@ fun ExercisesScreen(innerPadding: PaddingValues = PaddingValues()){
         LazyColumn(
             contentPadding = innerPadding
         ) {
-            items(exercises) { exercise -> ExerciseListItemContent(exercise = exercise) }
+            items(exercises) { exercise ->
+                ListCardItem() {
+                    ExerciseListItemContent(exercise = exercise)
+                }
+            }
         }
     }
 }
@@ -45,39 +49,30 @@ fun ExerciseListItemContent(
     modifier: Modifier = Modifier,
     exercise: Exercise
 ) {
-    Box(
-        modifier = modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(16.dp))
-            .background(Color.LightGray)
-            .padding(8.dp),
-    ){
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(Color.DarkGray)
-                    .padding(8.dp),
-                imageVector = Icons.Filled.Person,
-                contentDescription = "${exercise.name} image"
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color.DarkGray)
+                .padding(8.dp),
+            imageVector = Icons.Filled.Person,
+            contentDescription = "${exercise.name} image"
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Column {
+            Text(
+                text = exercise.name,
+                fontSize = 24.sp
             )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column {
-                Text(
-                    text = exercise.name,
-                    fontSize = 24.sp
-                )
-                Text(
-                    text = exercise.description,
-                    fontSize = 14.sp
-                )
-            }
+            Text(
+                text = exercise.description,
+                fontSize = 14.sp
+            )
         }
     }
-
 }
 
 
