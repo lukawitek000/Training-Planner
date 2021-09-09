@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -21,13 +23,15 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.lukasz.witkowski.training.planner.ui.CalendarScreen
 import com.lukasz.witkowski.training.planner.ui.ExercisesScreen
 import com.lukasz.witkowski.training.planner.ui.StatisticsScreen
+import com.lukasz.witkowski.training.planner.ui.TrainingsList.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.TrainingsScreen
 
 @Composable
 fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
     NavHost(navController = navController, startDestination = BottomNavItem.Trainings.route) {
         composable(BottomNavItem.Trainings.route){
-            TrainingsScreen(innerPadding = innerPadding)
+            val trainingsListViewModel: TrainingsListViewModel = viewModel()
+            TrainingsScreen(innerPadding = innerPadding, viewModel = trainingsListViewModel)
         }
         composable(BottomNavItem.Exercises.route){
             ExercisesScreen(innerPadding = innerPadding)

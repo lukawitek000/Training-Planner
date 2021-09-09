@@ -24,13 +24,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.lukasz.witkowski.shared.Training
 import com.lukasz.witkowski.shared.dummyTrainingList
+import com.lukasz.witkowski.training.planner.ui.TrainingsList.TrainingsListViewModel
 
 
 @Composable
-fun TrainingsScreen(innerPadding: PaddingValues = PaddingValues()){
-    val trainings = remember { dummyTrainingList }
+fun TrainingsScreen(innerPadding: PaddingValues = PaddingValues(), viewModel: TrainingsListViewModel){
+    val trainings = remember { viewModel.getAllTrainings() }
     LazyColumn(
         contentPadding = innerPadding
     ) {
@@ -100,5 +102,5 @@ fun TrainingListItemContent(
 @Preview(showBackground = true)
 @Composable
 fun TrainingsScreenPreview() {
-    TrainingsScreen()
+    TrainingsScreen(viewModel = hiltViewModel<TrainingsListViewModel>())
 }
