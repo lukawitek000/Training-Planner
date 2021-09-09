@@ -27,7 +27,9 @@ import com.lukasz.witkowski.training.planner.ui.ExercisesScreen
 import com.lukasz.witkowski.training.planner.ui.StatisticsScreen
 import com.lukasz.witkowski.training.planner.ui.TrainingsScreen
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
