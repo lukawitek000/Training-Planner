@@ -31,9 +31,10 @@ class MainActivity : ComponentActivity() {
 fun TrainingPlannerApp() {
     val navController = rememberNavController()
     val backStackEntry = navController.currentBackStackEntryAsState()
-    val currentScreenTitle = NavItem.Items.list.find {
+    val currentScreen = NavItem.Items.list.find {
         it.route == backStackEntry.value?.destination?.route
-    }?.title ?: "Null"
+    } ?: NavItem.Trainings
+    // TODO research how to better handle top bar with navigation
     Scaffold(
         bottomBar = {
             BottomNavigationBar(
@@ -43,7 +44,9 @@ fun TrainingPlannerApp() {
                 })
         },
         topBar = {
-            TopBar(title = currentScreenTitle)
+            TopBar(title = currentScreen.title, showBackArrow = currentScreen.isBackArrow){
+                navController.navigateUp()
+            }
         }
     ) {
         Navigation(navController = navController, it)
