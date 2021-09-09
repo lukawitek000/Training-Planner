@@ -12,36 +12,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.lukasz.witkowski.training.planner.ui.*
 import com.lukasz.witkowski.training.planner.ui.TrainingsList.TrainingsListViewModel
 
 @Composable
 fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
-    NavHost(navController = navController, startDestination = BottomNavItem.Trainings.route) {
-        composable(BottomNavItem.Trainings.route){
+    NavHost(navController = navController, startDestination = NavItem.Trainings.route) {
+        composable(NavItem.Trainings.route){
             val trainingsListViewModel: TrainingsListViewModel = viewModel()
             TrainingsScreen(innerPadding = innerPadding, viewModel = trainingsListViewModel)
         }
-        composable(BottomNavItem.Exercises.route){
+        composable(NavItem.Exercises.route){
             ExercisesScreen(innerPadding = innerPadding){
-                navController.navigate(route = "create-exercise")
+                navController.navigate(route = NavItem.CreateExercise.route)
             }
         }
-        composable(BottomNavItem.Calendar.route){
+        composable(NavItem.Calendar.route){
             CalendarScreen()
         }
-        composable(BottomNavItem.Statistics.route){
+        composable(NavItem.Statistics.route){
             StatisticsScreen()
         }
-        composable("create-exercise"){
+        composable(NavItem.CreateExercise.route){
             CreateExerciseScreen()
         }
 
@@ -51,15 +48,16 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
 @Composable
 fun BottomNavigationBar(
     modifier: Modifier = Modifier,
-    items: List<BottomNavItem> = BottomNavItem.Items.list,
+    items: List<NavItem> = NavItem.BottomNavItems.list,
     backStackEntry: NavBackStackEntry?,
-    onItemClick: (BottomNavItem) -> Unit
+    onItemClick: (NavItem) -> Unit
 ) {
     BottomNavigation (
         modifier = modifier,
         elevation = 5.dp
     ) {
         items.forEach { item ->
+            if(item.icon == null) return@forEach
             val selected = item.route == backStackEntry?.destination?.route
             BottomNavigationItem(
                 selected = selected,
