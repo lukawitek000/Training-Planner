@@ -12,12 +12,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.lukasz.witkowski.training.planner.ui.*
+import com.lukasz.witkowski.training.planner.ui.CreateExercise.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.ui.TrainingsList.TrainingsListViewModel
 
 @Composable
@@ -39,7 +41,8 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
             StatisticsScreen()
         }
         composable(NavItem.CreateExercise.route){
-            CreateExerciseScreen()
+        //    val viewModel = hiltViewModel<CreateExerciseViewModel>()
+            CreateExerciseScreen(null)
         }
 
     }
