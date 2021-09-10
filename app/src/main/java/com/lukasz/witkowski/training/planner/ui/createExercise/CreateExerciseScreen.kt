@@ -1,7 +1,6 @@
-package com.lukasz.witkowski.training.planner.ui
+package com.lukasz.witkowski.training.planner.ui.createExercise
 
 import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -9,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -18,15 +18,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.lukasz.witkowski.training.planner.navigation.NavItem
-import com.lukasz.witkowski.training.planner.ui.CreateExercise.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 
 @Composable
-fun CreateExerciseScreen(viewModel: CreateExerciseViewModel? = null) {
-    val title = remember { mutableStateOf("") }
-    val description = remember { mutableStateOf("") }
+fun CreateExerciseScreen(viewModel: CreateExerciseViewModel) {
+    val title: String by viewModel.title.observeAsState("")
+    val description by viewModel.description.observeAsState(initial = "")
     val selectedCategory = remember { mutableStateOf("") }
     val suggestions = listOf(
         "ABS", "Back", "Legs", "Arms"
@@ -39,9 +36,9 @@ fun CreateExerciseScreen(viewModel: CreateExerciseViewModel? = null) {
     ) {
         UploadImageButton()
         Spacer(modifier = Modifier.height(16.dp))
-        TextField(title, "Title")
+        TextField(title, { viewModel.onExerciseNameChange(it) }, "Title")
         Spacer(modifier = Modifier.height(16.dp))
-        TextField(description, "Description")
+        TextField(description, { viewModel.onExerciseDescriptionChange(it) }, "Description")
         Spacer(modifier = Modifier.height(16.dp))
         DropDownInput(selectedText = selectedCategory, suggestions = suggestions, label = "Category")
     }
@@ -97,10 +94,10 @@ fun DropDownInput(
 }
 
 @Composable
-private fun TextField(title: MutableState<String>, label: String) {
+private fun TextField(text: String, onTextChange: (String) -> Unit,label: String) {
     OutlinedTextField(
-        value = title.value,
-        onValueChange = { title.value = it },
+        value = text,
+        onValueChange = onTextChange,
         label = {
             Text(text = label)
         },
@@ -128,6 +125,6 @@ fun UploadImageButton() {
 @Composable
 fun CreateExerciseScreenPreview() {
     TrainingPlannerTheme {
-        CreateExerciseScreen()
+      // CreateExerciseScreen()
     }
 }
