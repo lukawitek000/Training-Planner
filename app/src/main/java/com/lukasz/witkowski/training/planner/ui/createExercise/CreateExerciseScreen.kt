@@ -1,6 +1,13 @@
 package com.lukasz.witkowski.training.planner.ui.createExercise
 
+import android.net.Uri
 import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -14,13 +21,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
-import timber.log.Timber
+import com.skydoves.landscapist.glide.GlideImage
 
 @Composable
 fun CreateExerciseScreen(
@@ -138,14 +148,29 @@ private fun TextField(text: String, onTextChange: (String) -> Unit,label: String
 
 @Composable
 fun UploadImageButton() {
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+        onResult = { uri ->  imageUri = uri}
+    )
+    val placeholder = Uri.parse("android.resource://com.lukasz.witkowski.training.planner/drawable/ic_launcher_foreground")
+    GlideImage(
+        imageModel = imageUri ?: placeholder,
+        contentScale = ContentScale.Fit,
+        modifier = Modifier
+            .width(200.dp)
+            .height(200.dp)
+            .border(BorderStroke(2.dp, Color.Black))
+    )
+    Spacer(modifier = Modifier.height(16.dp))
     Button(
-        onClick = { Log.i("TAG", "UploadImageButton: TODO") },
-        modifier = Modifier.size(200.dp),
+        onClick = { launcher.launch("image/*") },
         colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow)
     ) {
         Text(text = "Upload image", color = Color.Black)
     }
 }
+
 
 @Preview
 @Composable
