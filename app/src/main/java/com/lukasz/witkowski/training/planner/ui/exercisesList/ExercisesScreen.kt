@@ -1,6 +1,5 @@
-package com.lukasz.witkowski.training.planner.ui
+package com.lukasz.witkowski.training.planner.ui.exercisesList
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,29 +24,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.Exercise
-import com.lukasz.witkowski.shared.Training
-import com.lukasz.witkowski.shared.dummyExerciseList
-import com.lukasz.witkowski.shared.dummyTrainingList
+import com.lukasz.witkowski.training.planner.ui.ListCardItem
 
 @Composable
-fun ExercisesScreen(innerPadding: PaddingValues = PaddingValues(), onCreateExerciseFabClicked: () -> Unit = {}){
+fun ExercisesScreen(modifier: Modifier = Modifier,
+                    viewModel: ExercisesListViewModel,
+                    onCreateExerciseFabClicked: () -> Unit = {}
+){
     Scaffold(
-        modifier = Modifier.padding(innerPadding),
+        modifier = modifier,
         floatingActionButton = {
             FloatingActionButton(onClick = { onCreateExerciseFabClicked() }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Create Exercise")
             }
         }
     ) {
-        ExercisesList()
+        val exercisesList by remember { mutableStateOf(viewModel.exercises) }
+        ExercisesList(exercisesList = exercisesList)
     }
 }
 
 @Composable
-private fun ExercisesList() {
-    val exercises = remember { dummyExerciseList }
+private fun ExercisesList(
+    modifier: Modifier = Modifier,
+    exercisesList: List<Exercise>) {
     LazyColumn() {
-        items(exercises) { exercise ->
+        items(exercisesList) { exercise ->
             ListCardItem() {
                 ExerciseListItemContent(exercise = exercise)
             }
@@ -88,5 +92,5 @@ fun ExerciseListItemContent(
 @Preview(showBackground = true)
 @Composable
 fun ExercisesScreenPreview() {
-    ExercisesScreen()
+    //ExercisesScreen()
 }
