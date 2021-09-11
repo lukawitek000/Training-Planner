@@ -34,7 +34,7 @@ val dummyTrainingList = listOf<Training>(
     ),
 )
 
-val dummyExerciseList = listOf<Exercise>(
+val dummyExerciseList = mutableListOf<Exercise>(
 
     Exercise(
         1, "Exercise 1", "Description of Exercise 1 what happend if a text is very long etafasfasdadsd and much longer " +

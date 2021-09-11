@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.navigation
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -45,7 +46,7 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
         composable(NavItem.CreateExercise.route){
         //    val viewModel = hiltViewModel<CreateExerciseViewModel>()
             val viewModel: CreateExerciseViewModel = hiltViewModel()
-            CreateExerciseScreen(viewModel)
+            CreateExerciseScreen(Modifier.padding(innerPadding), viewModel = viewModel, navigateBack = { navController.navigateUp() })
         }
 
     }

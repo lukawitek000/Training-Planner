@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -21,27 +22,48 @@ import androidx.compose.ui.unit.toSize
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 
 @Composable
-fun CreateExerciseScreen(viewModel: CreateExerciseViewModel) {
+fun CreateExerciseScreen(
+    modifier: Modifier = Modifier,
+    viewModel: CreateExerciseViewModel,
+    navigateBack: () -> Unit
+) {
     val title: String by viewModel.title.observeAsState("")
     val description by viewModel.description.observeAsState(initial = "")
     val selectedCategory = remember { mutableStateOf("") }
     val suggestions = listOf(
         "ABS", "Back", "Legs", "Arms"
     )
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    Scaffold(
+        modifier = modifier,
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                viewModel.createExercise()
+                navigateBack()
+            }) {
+                Icon(imageVector = Icons.Default.Create, contentDescription = "Create exercise")
+            }
+        }
     ) {
-        UploadImageButton()
-        Spacer(modifier = Modifier.height(16.dp))
-        TextField(title, { viewModel.onExerciseNameChange(it) }, "Title")
-        Spacer(modifier = Modifier.height(16.dp))
-        TextField(description, { viewModel.onExerciseDescriptionChange(it) }, "Description")
-        Spacer(modifier = Modifier.height(16.dp))
-        DropDownInput(selectedText = selectedCategory, suggestions = suggestions, label = "Category")
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            UploadImageButton()
+            Spacer(modifier = Modifier.height(16.dp))
+            TextField(title, { viewModel.onExerciseNameChange(it) }, "Title")
+            Spacer(modifier = Modifier.height(16.dp))
+            TextField(description, { viewModel.onExerciseDescriptionChange(it) }, "Description")
+            Spacer(modifier = Modifier.height(16.dp))
+            DropDownInput(
+                selectedText = selectedCategory,
+                suggestions = suggestions,
+                label = "Category"
+            )
+        }
     }
+   
 }
 
 @Composable
@@ -103,8 +125,8 @@ private fun TextField(text: String, onTextChange: (String) -> Unit,label: String
         },
         maxLines = 1,
         colors = TextFieldDefaults.textFieldColors(
-            textColor = Color.Yellow,
-            cursorColor = Color.Yellow,
+            textColor = Color.Red,
+            cursorColor = Color.Red,
 
             ),
         )

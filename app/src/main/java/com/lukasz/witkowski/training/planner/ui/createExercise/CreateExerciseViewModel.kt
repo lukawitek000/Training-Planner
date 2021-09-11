@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.lukasz.witkowski.shared.Exercise
+import com.lukasz.witkowski.shared.dummyExerciseList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -28,6 +29,14 @@ class CreateExerciseViewModel @Inject constructor(
 
     fun onExerciseDescriptionChange(newDescription: String){
         _description.value = newDescription
+    }
+
+    fun createExercise(){
+        val exercise = Exercise(
+            name = title.value ?: "",
+            description = description.value ?: ""
+        )
+        dummyExerciseList.add(exercise)
     }
 
 }
