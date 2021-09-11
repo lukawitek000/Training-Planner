@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+import timber.log.Timber
 
 @Composable
 fun CreateExerciseScreen(
@@ -29,10 +30,11 @@ fun CreateExerciseScreen(
 ) {
     val title: String by viewModel.title.observeAsState("")
     val description by viewModel.description.observeAsState(initial = "")
-    val selectedCategory = remember { mutableStateOf("") }
     val suggestions = listOf(
         "ABS", "Back", "Legs", "Arms"
     )
+    var selectedCategory by remember { mutableStateOf(suggestions[0]) }
+
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
@@ -59,7 +61,8 @@ fun CreateExerciseScreen(
             DropDownInput(
                 selectedText = selectedCategory,
                 suggestions = suggestions,
-                label = "Category"
+                label = "Category",
+                onSuggestionSelected = { selectedCategory = it }
             )
         }
     }
@@ -68,9 +71,10 @@ fun CreateExerciseScreen(
 
 @Composable
 fun DropDownInput(
-    selectedText:  MutableState<String>,
+    selectedText:  String,
     suggestions: List<String>,
-    label: String
+    label: String,
+    onSuggestionSelected: (String) -> Unit
 ) {
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
     var expanded by remember { mutableStateOf(false) }
@@ -80,8 +84,8 @@ fun DropDownInput(
         Icons.Filled.ArrowDropDown
     Column() {
         OutlinedTextField(
-            value = selectedText.value,
-            onValueChange = { selectedText.value = it },
+            value = selectedText,
+            onValueChange = { onSuggestionSelected(it) },
             modifier = Modifier
                 .fillMaxWidth()
                 .onGloballyPositioned { coordinates ->
@@ -104,7 +108,7 @@ fun DropDownInput(
         ) {
             suggestions.forEach {
                 DropdownMenuItem(onClick = {
-                    selectedText.value = it
+                    onSuggestionSelected(it)
                     expanded = !expanded
                 }) {
                     Text(text = it)
