@@ -1,16 +1,17 @@
 package com.lukasz.witkowski.training.planner.ui.createExercise
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
+import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.dummyExerciseList
+import com.lukasz.witkowski.training.planner.repository.ExerciseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateExerciseViewModel @Inject constructor(
+    private val exerciseRepository: ExerciseRepository,
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
@@ -32,11 +33,16 @@ class CreateExerciseViewModel @Inject constructor(
     }
 
     fun createExercise(){
-        val exercise = Exercise(
-            name = title.value ?: "",
-            description = description.value ?: ""
-        )
-        dummyExerciseList.add(exercise)
+        viewModelScope.launch {
+            val exercise = Exercise(
+                name = title.value ?: "",
+                description = description.value ?: "",
+                category = Category.Legs
+            )
+//            dummyExerciseList.add(exercise)
+            exerciseRepository.insertExercise(exercise)
+        }
+
     }
 
 }
