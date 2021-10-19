@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.shared
+package com.lukasz.witkowski.shared.models
 
 import android.graphics.Bitmap
 

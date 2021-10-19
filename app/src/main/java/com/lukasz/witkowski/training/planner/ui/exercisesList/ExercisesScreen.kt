@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.Exercise
+import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.training.planner.ui.ListCardItem
 
 @Composable

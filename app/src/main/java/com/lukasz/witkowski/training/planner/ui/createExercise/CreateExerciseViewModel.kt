@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.lukasz.witkowski.shared.Exercise
-import com.lukasz.witkowski.shared.dummyExerciseList
+import com.lukasz.witkowski.shared.models.Exercise
+import com.lukasz.witkowski.shared.models.dummyExerciseList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

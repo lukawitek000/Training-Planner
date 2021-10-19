@@ -1,9 +1,8 @@
 package com.lukasz.witkowski.training.planner.ui.TrainingsList
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.lukasz.witkowski.shared.Training
-import com.lukasz.witkowski.shared.dummyTrainingList
+import com.lukasz.witkowski.shared.models.Training
+import com.lukasz.witkowski.shared.models.dummyTrainingList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

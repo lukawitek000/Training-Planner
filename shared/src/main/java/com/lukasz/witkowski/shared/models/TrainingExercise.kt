@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.shared
+package com.lukasz.witkowski.shared.models
 
 data class TrainingExercise(
     val id: Long,
