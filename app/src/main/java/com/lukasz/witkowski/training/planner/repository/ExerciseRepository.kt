@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.repository
 
+import androidx.lifecycle.LiveData
 import com.lukasz.witkowski.shared.db.ExerciseDao
 import com.lukasz.witkowski.shared.models.Exercise
 import kotlinx.coroutines.Dispatchers
@@ -14,6 +15,10 @@ constructor(
         return withContext(Dispatchers.IO) {
             exerciseDao.insert(exercise = exercise)
         }
+    }
+
+    fun loadAllExercises(): LiveData<List<Exercise>> {
+        return exerciseDao.getAll()
     }
 
 

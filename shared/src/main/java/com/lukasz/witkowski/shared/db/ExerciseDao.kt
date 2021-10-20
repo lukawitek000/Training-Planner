@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.shared.db
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -10,7 +11,7 @@ import com.lukasz.witkowski.shared.models.Exercise
 interface ExerciseDao {
 
     @Query("SELECT * FROM Exercise")
-    fun getAll(): List<Exercise>
+    fun getAll(): LiveData<List<Exercise>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(exercise: Exercise): Long
