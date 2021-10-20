@@ -16,17 +16,6 @@ class ExercisesListViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
-    private val _exercises = MutableLiveData(emptyList<Exercise>())
     val exercises: LiveData<List<Exercise>> = exerciseRepository.loadAllExercises()
-
-//    init {
-//        loadAllExercises()
-//    }
-//
-//    fun loadAllExercises() {
-//        viewModelScope.launch {
-//            _exercises.value = exerciseRepository.loadAllExercises()
-//        }
-//    }
 
 }

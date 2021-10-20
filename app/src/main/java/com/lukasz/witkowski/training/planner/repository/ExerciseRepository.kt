@@ -20,6 +20,4 @@ constructor(
     fun loadAllExercises(): LiveData<List<Exercise>> {
         return exerciseDao.getAll()
     }
-
-
 }
