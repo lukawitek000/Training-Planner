@@ -28,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
+import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import com.skydoves.landscapist.glide.GlideImage
@@ -43,7 +44,7 @@ fun CreateExerciseScreen(
     val suggestions = listOf(
         "ABS", "Back", "Legs", "Arms"
     )
-    var selectedCategory by remember { mutableStateOf(suggestions[0]) }
+    val selectedCategory by viewModel.category.observeAsState(initial = Category.None)
 
     Scaffold(
         modifier = modifier,
@@ -69,10 +70,10 @@ fun CreateExerciseScreen(
             TextField(description, { viewModel.onExerciseDescriptionChange(it) }, "Description")
             Spacer(modifier = Modifier.height(16.dp))
             DropDownInput(
-                selectedText = selectedCategory,
-                suggestions = suggestions,
+                selectedText = selectedCategory.name,
+                suggestions = Category.allCategories.map { it.name },
                 label = "Category",
-                onSuggestionSelected = { selectedCategory = it }
+                onSuggestionSelected = { viewModel.onCategorySelected(it) }
             )
         }
     }
@@ -105,7 +106,7 @@ fun DropDownInput(
             trailingIcon = {
                 Icon(
                     imageVector = icon,
-                    contentDescription = "Drop down categories",
+                    contentDescription = "Drop down arrow",
                     modifier = Modifier.clickable { expanded = !expanded }
                 )
             },

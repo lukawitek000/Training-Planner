@@ -15,11 +15,11 @@ class Converters {
 
     @TypeConverter
     fun fromStringToCategory(name: String): Category {
-        val categories = Category::class.sealedSubclasses.map { it.objectInstance as Category }
+        val categories = Category.allCategories
 
         return categories.firstOrNull {
             it.name == name
-        } ?: Category.Legs
+        } ?: Category.None
     }
 
     @TypeConverter

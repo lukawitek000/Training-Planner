@@ -32,12 +32,22 @@ class CreateExerciseViewModel @Inject constructor(
         _description.value = newDescription
     }
 
+    private val _category = MutableLiveData<Category>(Category.None)
+    val category: LiveData<Category> = _category
+
+    fun onCategorySelected(newCategory: String) {
+        _category.value = Category.allCategories.firstOrNull {
+            it.name == newCategory
+        } ?: Category.None
+    }
+
+
     fun createExercise(){
         viewModelScope.launch {
             val exercise = Exercise(
                 name = title.value ?: "",
                 description = description.value ?: "",
-                category = Category.Legs
+                category = category.value ?: Category.None
             )
 //            dummyExerciseList.add(exercise)
             exerciseRepository.insertExercise(exercise)
