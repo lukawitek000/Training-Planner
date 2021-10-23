@@ -138,7 +138,7 @@ fun ExerciseListItemContent(
                 fontSize = 14.sp
             )
             val category = exercise.category
-            if(category != null && category != Category.None) {
+            if(category != Category.None) {
                 CategoryChip(
                     modifier = Modifier.padding(4.dp),
                     text = category.name
@@ -170,10 +170,10 @@ fun ExerciseInfoAlertDialog(
         text = {
             Column() {
                 Text(text = exercise.description)
-                if(exercise.category != null && exercise.category != Category.None)
+                if(exercise.category != Category.None)
                 CategoryChip(
                     modifier = Modifier.padding(top = 4.dp),
-                    text = exercise.category!!.name)
+                    text = exercise.category.name)
             }
         },
         buttons = {
