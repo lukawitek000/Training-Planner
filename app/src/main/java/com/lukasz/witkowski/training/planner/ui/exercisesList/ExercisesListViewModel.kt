@@ -17,11 +17,12 @@ class ExercisesListViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
-    val exercises: LiveData<List<Exercise>> = exerciseRepository.loadAllExercises()
-
-
     private val _selectedCategories = MutableLiveData<List<Category>>(emptyList())
     val selectedCategories: LiveData<List<Category>> = _selectedCategories
+
+    val exercises: LiveData<List<Exercise>> = Transformations.switchMap(_selectedCategories) {
+         exerciseRepository.loadExercises(it)
+    }
 
     fun selectCategory(category: Category) {
         val list = _selectedCategories.value?.toMutableList()
@@ -36,4 +37,6 @@ class ExercisesListViewModel @Inject constructor(
         }
         _selectedCategories.value = list.toList()
     }
+
+
 }
