@@ -19,24 +19,21 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun CategoryChip(
     modifier: Modifier = Modifier,
-    isSelected: Boolean,
+    isSelected: Boolean = true,
     text: String,
-    selectionChanged: (Boolean) -> Unit
+    selectionChanged: (Boolean) -> Unit = {},
+    isClickable: Boolean = false
 ) {
     val shape = RoundedCornerShape(16.dp)
     Surface(
-        modifier = modifier
-            .clip(shape = shape)
-            .clickable {
-                                      selectionChanged(!isSelected)
-        },
+        modifier = modifier.clip(shape = shape).then(if(isClickable) Modifier.clickable { selectionChanged(!isSelected) } else Modifier) ,
         elevation = 4.dp,
         color = if (isSelected) Color.Yellow else Color.DarkGray
     ) {
         Text(
             text = text,
             modifier = Modifier.padding(8.dp),
-            fontSize = 24.sp
+            fontSize = 16.sp
         )
     }
 }

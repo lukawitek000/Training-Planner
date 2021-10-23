@@ -85,7 +85,8 @@ fun CategoryFilters(
                 modifier = Modifier.padding(4.dp),
                 isSelected = selectedCategories.any { it == category },
                 text = category.name,
-                selectionChanged = { selectCategory(category) }
+                selectionChanged = { selectCategory(category) },
+                isClickable = true
             )
         }
     }
@@ -136,6 +137,14 @@ fun ExerciseListItemContent(
                 text = exercise.description,
                 fontSize = 14.sp
             )
+            val category = exercise.category
+            if(category != null && category != Category.None) {
+                CategoryChip(
+                    modifier = Modifier.padding(4.dp),
+                    text = category.name
+                )
+            }
+
         }
     }
 }
@@ -159,7 +168,13 @@ fun ExerciseInfoAlertDialog(
             )
         },
         text = {
-            Text(text = exercise.description)
+            Column() {
+                Text(text = exercise.description)
+                if(exercise.category != null && exercise.category != Category.None)
+                CategoryChip(
+                    modifier = Modifier.padding(top = 4.dp),
+                    text = exercise.category!!.name)
+            }
         },
         buttons = {
             Row(horizontalArrangement = Arrangement.Center) {
@@ -168,7 +183,7 @@ fun ExerciseInfoAlertDialog(
             Button(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(8.dp),
                 onClick = closeDialog
             ) {
                 Text(text = "Ok")
