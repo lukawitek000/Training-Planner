@@ -1,6 +1,10 @@
 package com.lukasz.witkowski.training.planner.ui.createExercise
 
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContract
@@ -28,6 +32,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -49,11 +54,10 @@ fun CreateExerciseScreen(
     viewModel: CreateExerciseViewModel,
     navigateBack: () -> Unit
 ) {
+    val image by viewModel.image.observeAsState()
     val title: String by viewModel.title.observeAsState("")
     val description by viewModel.description.observeAsState(initial = "")
     val selectedCategory by viewModel.category.observeAsState(initial = Category.None)
-
-
 
     Scaffold(
         modifier = modifier,
@@ -72,7 +76,10 @@ fun CreateExerciseScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            UploadImageButton()
+            UploadImageButton(
+                image = image,
+                onImageChange = { viewModel.onImageChange(it) }
+            )
             Spacer(modifier = Modifier.height(16.dp))
             TextField(
                 text = title,
@@ -180,15 +187,30 @@ private fun TextField(
 }
 
 @Composable
-fun UploadImageButton() {
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
+fun UploadImageButton(
+    modifier: Modifier = Modifier,
+    image: Bitmap?,
+    onImageChange: (Bitmap) -> Unit
+) {
+    val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
-        onResult = { uri ->  imageUri = uri}
+        onResult = { uri ->
+            val bitmap = if (Build.VERSION.SDK_INT < 28) {
+                MediaStore.Images
+                    .Media.getBitmap(context.contentResolver, uri)
+
+            } else {
+                val source = ImageDecoder
+                    .createSource(context.contentResolver, uri)
+                ImageDecoder.decodeBitmap(source)
+            }
+            onImageChange(bitmap)
+        }
     )
     val placeholder = Uri.parse("android.resource://com.lukasz.witkowski.training.planner/drawable/ic_launcher_foreground")
     GlideImage(
-        imageModel = imageUri ?: placeholder,
+        imageModel = image ?: placeholder,
         contentScale = ContentScale.Fit,
         modifier = Modifier
             .width(200.dp)

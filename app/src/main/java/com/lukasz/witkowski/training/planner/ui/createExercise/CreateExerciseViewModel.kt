@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.ui.createExercise
 
+import android.graphics.Bitmap
 import androidx.lifecycle.*
 import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.Exercise
@@ -37,6 +38,13 @@ class CreateExerciseViewModel @Inject constructor(
         _category.value = allCategories.firstOrNull {
             it.name == newCategory
         } ?: Category.None
+    }
+
+    private val _image = MutableLiveData<Bitmap?>(null)
+    val image: LiveData<Bitmap?> = _image
+
+    fun onImageChange(bitmap: Bitmap){
+        _image.value = bitmap
     }
 
 
