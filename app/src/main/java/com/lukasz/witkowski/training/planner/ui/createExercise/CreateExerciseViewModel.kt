@@ -16,9 +16,6 @@ class CreateExerciseViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
-
-    private var exercise: Exercise? = null
-
     private val _title = MutableLiveData("")
     val title: LiveData<String> = _title
 
@@ -50,10 +47,7 @@ class CreateExerciseViewModel @Inject constructor(
                 description = description.value ?: "",
                 category = category.value ?: Category.None
             )
-//            dummyExerciseList.add(exercise)
             exerciseRepository.insertExercise(exercise)
         }
-
     }
-
 }

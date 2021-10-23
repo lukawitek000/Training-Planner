@@ -10,6 +10,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -18,13 +20,19 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
@@ -34,6 +42,7 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import com.skydoves.landscapist.glide.GlideImage
 
+
 @Composable
 fun CreateExerciseScreen(
     modifier: Modifier = Modifier,
@@ -42,10 +51,9 @@ fun CreateExerciseScreen(
 ) {
     val title: String by viewModel.title.observeAsState("")
     val description by viewModel.description.observeAsState(initial = "")
-    val suggestions = listOf(
-        "ABS", "Back", "Legs", "Arms"
-    )
     val selectedCategory by viewModel.category.observeAsState(initial = Category.None)
+
+
 
     Scaffold(
         modifier = modifier,
@@ -66,9 +74,18 @@ fun CreateExerciseScreen(
         ) {
             UploadImageButton()
             Spacer(modifier = Modifier.height(16.dp))
-            TextField(title, { viewModel.onExerciseNameChange(it) }, "Title")
+            TextField(
+                text = title,
+                onTextChange = { viewModel.onExerciseNameChange(it) },
+                label = "Title",
+                imeAction = ImeAction.Next            )
             Spacer(modifier = Modifier.height(16.dp))
-            TextField(description, { viewModel.onExerciseDescriptionChange(it) }, "Description")
+            TextField(
+                text = description,
+                onTextChange = { viewModel.onExerciseDescriptionChange(it) },
+                label = "Description",
+                imeAction = ImeAction.Done
+            )
             Spacer(modifier = Modifier.height(16.dp))
             DropDownInput(
                 selectedText = selectedCategory.name,
@@ -132,10 +149,19 @@ fun DropDownInput(
 }
 
 @Composable
-private fun TextField(text: String, onTextChange: (String) -> Unit,label: String) {
+private fun TextField(
+    modifier: Modifier = Modifier,
+    text: String,
+    onTextChange: (String) -> Unit,
+    label: String,
+    imeAction: ImeAction = ImeAction.Default
+) {
+    val keyboardController = LocalFocusManager.current
+    val fr = FocusRequester.Default
     OutlinedTextField(
         value = text,
         onValueChange = onTextChange,
+        modifier = modifier.focusRequester(fr),
         label = {
             Text(text = label)
         },
@@ -145,6 +171,11 @@ private fun TextField(text: String, onTextChange: (String) -> Unit,label: String
             cursorColor = Color.Red,
 
             ),
+        keyboardOptions = KeyboardOptions(imeAction = imeAction),
+        keyboardActions = KeyboardActions(
+            onNext = { fr.requestFocus() },
+            onDone = { keyboardController.clearFocus() }
+        ),
         )
 }
 
