@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.lukasz.witkowski.shared.models.Category
+import com.lukasz.witkowski.shared.utils.allCategories
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import com.skydoves.landscapist.glide.GlideImage
@@ -71,7 +72,7 @@ fun CreateExerciseScreen(
             Spacer(modifier = Modifier.height(16.dp))
             DropDownInput(
                 selectedText = selectedCategory.name,
-                suggestions = Category.allCategories.map { it.name },
+                suggestions = allCategories.map { it.name },
                 label = "Category",
                 onSuggestionSelected = { viewModel.onCategorySelected(it) }
             )

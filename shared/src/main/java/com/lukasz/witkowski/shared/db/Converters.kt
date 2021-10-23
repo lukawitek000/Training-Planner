@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.room.TypeConverter
 import com.lukasz.witkowski.shared.models.Category
+import com.lukasz.witkowski.shared.utils.allCategories
 import java.io.ByteArrayOutputStream
 
 class Converters {
@@ -15,9 +16,7 @@ class Converters {
 
     @TypeConverter
     fun fromStringToCategory(name: String): Category {
-        val categories = Category.allCategories
-
-        return categories.firstOrNull {
+        return allCategories.firstOrNull {
             it.name == name
         } ?: Category.None
     }

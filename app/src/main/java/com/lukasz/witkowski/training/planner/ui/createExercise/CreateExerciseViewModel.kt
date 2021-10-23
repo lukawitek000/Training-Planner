@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.dummyExerciseList
+import com.lukasz.witkowski.shared.utils.allCategories
 import com.lukasz.witkowski.training.planner.repository.ExerciseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -36,7 +37,7 @@ class CreateExerciseViewModel @Inject constructor(
     val category: LiveData<Category> = _category
 
     fun onCategorySelected(newCategory: String) {
-        _category.value = Category.allCategories.firstOrNull {
+        _category.value = allCategories.firstOrNull {
             it.name == newCategory
         } ?: Category.None
     }
