@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.ui.exercisesList
 
 import android.graphics.drawable.shapes.Shape
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -20,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,6 +31,7 @@ import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.utils.allCategories
 import com.lukasz.witkowski.shared.utils.categoriesWithoutNone
+import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 
@@ -115,18 +119,31 @@ fun ExerciseListItemContent(
     modifier: Modifier = Modifier,
     exercise: Exercise
 ) {
+    val image = exercise.image
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            modifier = Modifier
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color.DarkGray)
-                .padding(8.dp),
-            imageVector = Icons.Filled.Person,
-            contentDescription = "${exercise.name} image"
-        )
+        if (image == null){
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.DarkGray)
+                    .padding(8.dp),
+                contentDescription = "${exercise.name} image"
+            )
+        } else {
+            Image(
+                bitmap = image.asImageBitmap(),
+                modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.DarkGray)
+                    .padding(8.dp),
+                contentDescription = "${exercise.name} image"
+            )
+        }
+        
         Spacer(modifier = Modifier.width(16.dp))
         Column {
             Text(

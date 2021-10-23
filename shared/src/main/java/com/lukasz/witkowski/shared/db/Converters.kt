@@ -6,6 +6,7 @@ import androidx.room.TypeConverter
 import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.utils.allCategories
 import java.io.ByteArrayOutputStream
+import kotlin.math.roundToInt
 
 class Converters {
 
@@ -23,12 +24,23 @@ class Converters {
 
     @TypeConverter
     fun fromBitmapToByteArray(bitmap: Bitmap?): ByteArray? {
-        if(bitmap == null) {
+        if (bitmap == null) {
             return null
         }
         val outputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-        return outputStream.toByteArray()
+        var imageByteArray = outputStream.toByteArray()
+        while(imageByteArray.size > 500000) {
+            val img = BitmapFactory.decodeByteArray(imageByteArray,0, imageByteArray.size)
+            val resized = Bitmap.createScaledBitmap(
+                img, (img.width * 0.8).roundToInt(),
+                (img.height * 0.8).roundToInt(), true
+            )
+            val stream = ByteArrayOutputStream()
+            resized.compress(Bitmap.CompressFormat.PNG, 70, stream)
+            imageByteArray = stream.toByteArray()
+        }
+        return imageByteArray
     }
 
     @TypeConverter

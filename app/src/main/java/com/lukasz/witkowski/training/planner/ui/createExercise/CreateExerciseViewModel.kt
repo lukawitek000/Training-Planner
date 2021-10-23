@@ -53,7 +53,8 @@ class CreateExerciseViewModel @Inject constructor(
             val exercise = Exercise(
                 name = title.value ?: "",
                 description = description.value ?: "",
-                category = category.value ?: Category.None
+                category = category.value ?: Category.None,
+                image = image.value
             )
             exerciseRepository.insertExercise(exercise)
         }
