@@ -2,7 +2,6 @@ package com.lukasz.witkowski.training.planner.ui.exercisesList
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,7 +28,7 @@ import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.utils.categoriesWithoutNone
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.ui.ListCardItem
+import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 
 @Composable

@@ -46,6 +46,7 @@ import com.lukasz.witkowski.shared.utils.allCategories
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import com.skydoves.landscapist.glide.GlideImage
+import com.lukasz.witkowski.training.planner.ui.components.TextField
 
 
 @Composable
@@ -155,36 +156,6 @@ fun DropDownInput(
 
 }
 
-@Composable
-private fun TextField(
-    modifier: Modifier = Modifier,
-    text: String,
-    onTextChange: (String) -> Unit,
-    label: String,
-    imeAction: ImeAction = ImeAction.Default
-) {
-    val keyboardController = LocalFocusManager.current
-    val fr = FocusRequester.Default
-    OutlinedTextField(
-        value = text,
-        onValueChange = onTextChange,
-        modifier = modifier.focusRequester(fr),
-        label = {
-            Text(text = label)
-        },
-        maxLines = 1,
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = Color.Red,
-            cursorColor = Color.Red,
-
-            ),
-        keyboardOptions = KeyboardOptions(imeAction = imeAction),
-        keyboardActions = KeyboardActions(
-            onNext = { fr.requestFocus() },
-            onDone = { keyboardController.clearFocus() }
-        ),
-        )
-}
 
 @Composable
 fun UploadImageButton(

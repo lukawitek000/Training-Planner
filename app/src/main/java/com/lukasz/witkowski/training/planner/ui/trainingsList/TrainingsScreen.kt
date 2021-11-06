@@ -20,8 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.lukasz.witkowski.shared.models.Training
-import com.lukasz.witkowski.training.planner.ui.ListCardItem
-import timber.log.Timber
+import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 
 
 @Composable
@@ -68,7 +67,7 @@ fun TrainingListItemContent(
                 .weight(1f)
         ) {
             Text(
-                text = training.name,
+                text = training.title,
                 fontSize = 24.sp
             )
             Text(

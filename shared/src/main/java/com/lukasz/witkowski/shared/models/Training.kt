@@ -1,8 +1,8 @@
 package com.lukasz.witkowski.shared.models
 
 data class Training(
-    val id: Long,
-    val name: String,
-    val description: String
-    //val image: Image
+    val id: Long = 0L,
+    val title: String,
+    val description: String = "",
+    val exercises: List<Exercise> = emptyList()
 )
