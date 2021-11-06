@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.ui
+package com.lukasz.witkowski.training.planner.ui.trainingsList
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.lukasz.witkowski.shared.models.Training
-import com.lukasz.witkowski.training.planner.ui.TrainingsList.TrainingsListViewModel
+import com.lukasz.witkowski.training.planner.ui.ListCardItem
 
 
 @Composable

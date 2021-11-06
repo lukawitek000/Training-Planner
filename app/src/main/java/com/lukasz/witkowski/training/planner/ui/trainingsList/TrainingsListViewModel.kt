@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.ui.TrainingsList
+package com.lukasz.witkowski.training.planner.ui.trainingsList
 
 import androidx.lifecycle.ViewModel
 import com.lukasz.witkowski.shared.models.Training
