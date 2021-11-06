@@ -21,37 +21,54 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.lukasz.witkowski.training.planner.ui.*
 import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseScreen
-import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsListViewModel
-import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsScreen
 import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseViewModel
+import com.lukasz.witkowski.training.planner.ui.createTraining.CreateTrainingScreen
+import com.lukasz.witkowski.training.planner.ui.createTraining.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesScreen
+import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsListViewModel
+import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsScreen
 
 @Composable
 fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
     NavHost(navController = navController, startDestination = NavItem.Trainings.route) {
-        composable(NavItem.Trainings.route){
+        composable(NavItem.Trainings.route) {
             val trainingsListViewModel: TrainingsListViewModel = viewModel()
-            TrainingsScreen(innerPadding = innerPadding, viewModel = trainingsListViewModel)
+            TrainingsScreen(innerPadding = innerPadding, viewModel = trainingsListViewModel) {
+                navController.navigate(route = NavItem.CreateTraining.route)
+            }
         }
-        composable(NavItem.Exercises.route){
+
+        composable(NavItem.Exercises.route) {
             val viewModel: ExercisesListViewModel = hiltViewModel()
-            ExercisesScreen(Modifier.padding(innerPadding), viewModel = viewModel){
+            ExercisesScreen(Modifier.padding(innerPadding), viewModel = viewModel) {
                 navController.navigate(route = NavItem.CreateExercise.route)
             }
         }
-        composable(NavItem.Calendar.route){
+
+        composable(NavItem.Calendar.route) {
             CalendarScreen()
         }
-        composable(NavItem.Statistics.route){
+
+        composable(NavItem.Statistics.route) {
             StatisticsScreen()
         }
-        composable(NavItem.CreateExercise.route){
-        //    val viewModel = hiltViewModel<CreateExerciseViewModel>()
+
+        composable(NavItem.CreateExercise.route) {
             val viewModel: CreateExerciseViewModel = hiltViewModel()
-            CreateExerciseScreen(Modifier.padding(innerPadding), viewModel = viewModel, navigateBack = { navController.navigateUp() })
+            CreateExerciseScreen(
+                Modifier.padding(innerPadding),
+                viewModel = viewModel,
+                navigateBack = { navController.navigateUp() })
         }
 
+        composable(NavItem.CreateTraining.route) {
+            val viewModel: CreateTrainingViewModel = hiltViewModel()
+            CreateTrainingScreen(
+                modifier = Modifier.padding(innerPadding),
+                viewModel = viewModel,
+                navigateBack = { navController.navigateUp() })
+        }
     }
 }
 
@@ -62,12 +79,12 @@ fun BottomNavigationBar(
     backStackEntry: NavBackStackEntry?,
     onItemClick: (NavItem) -> Unit
 ) {
-    BottomNavigation (
+    BottomNavigation(
         modifier = modifier,
         elevation = 5.dp
     ) {
         items.forEach { item ->
-            if(item.icon == null) return@forEach
+            if (item.icon == null) return@forEach
             val selected = item.route == backStackEntry?.destination?.route
             BottomNavigationItem(
                 selected = selected,
@@ -79,7 +96,7 @@ fun BottomNavigationBar(
                         Icon(imageVector = item.icon, contentDescription = item.title)
                         Text(
                             text = item.title,
-                            textAlign =  TextAlign.Center
+                            textAlign = TextAlign.Center
                         )
                     }
                 }

@@ -3,9 +3,12 @@ package com.lukasz.witkowski.training.planner.ui.trainingsList
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -18,21 +21,34 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.training.planner.ui.ListCardItem
+import timber.log.Timber
 
 
 @Composable
-fun TrainingsScreen(innerPadding: PaddingValues = PaddingValues(), viewModel: TrainingsListViewModel){
+fun TrainingsScreen(
+    innerPadding: PaddingValues = PaddingValues(),
+    viewModel: TrainingsListViewModel,
+    onCreateTrainingFabClicked: () -> Unit = {}
+){
     val trainings = remember { viewModel.getAllTrainings() }
-    LazyColumn(
-        contentPadding = innerPadding
+    Scaffold(
+        modifier = Modifier.padding(innerPadding),
+        floatingActionButton = {
+            FloatingActionButton(onClick = { onCreateTrainingFabClicked() }) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "Create Training")
+            }
+        }
     ) {
-        items(trainings) { training ->
-            ListCardItem() {
-                TrainingListItemContent(training = training)
+        LazyColumn(
+            contentPadding = innerPadding
+        ) {
+            items(trainings) { training ->
+                ListCardItem() {
+                    TrainingListItemContent(training = training)
+                }
             }
         }
     }
-
 }
 
 
