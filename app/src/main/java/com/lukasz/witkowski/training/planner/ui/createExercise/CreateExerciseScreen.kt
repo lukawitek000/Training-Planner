@@ -167,6 +167,9 @@ fun UploadImageButton(
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
+            if(uri == null) {
+                return@rememberLauncherForActivityResult
+            }
             val bitmap = if (Build.VERSION.SDK_INT < 28) {
                 MediaStore.Images
                     .Media.getBitmap(context.contentResolver, uri)

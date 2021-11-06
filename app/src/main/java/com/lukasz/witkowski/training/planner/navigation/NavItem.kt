@@ -20,13 +20,17 @@ sealed class NavItem(val route: String, val icon: ImageVector?, val title: Strin
     }
 
     object CreateExercise : NavItem("create-exercise", null, "Create Exercise", true)
+
+    object CreateTrainingGraph : NavItem("create-training-graph", null, "Create Training Graph", true)
+
     object CreateTraining : NavItem("create-training", null, "Create Training", true)
 
     object PickExercise : NavItem("pick-exercise", null, "Pick Exercise", true)
 
     object Items {
         val list = listOf<NavItem>(
-            Trainings, Exercises, Calendar, Statistics, CreateExercise, CreateTraining, PickExercise
+            Trainings, Exercises, Calendar, Statistics, CreateExercise, CreateTraining, PickExercise,
+            CreateTrainingGraph
         )
     }
 }

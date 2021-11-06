@@ -18,6 +18,10 @@ class CreateTrainingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
+    init {
+        Timber.d("Iniitttt")
+    }
+
     private val _title = MutableStateFlow("")
     val title: StateFlow<String>
         get() = _title
@@ -34,18 +38,34 @@ class CreateTrainingViewModel @Inject constructor(
         _description.value = newDescription
     }
 
+    private val _exercises = MutableStateFlow<List<Exercise>>(emptyList())
+    val exercises: StateFlow<List<Exercise>>
+        get() = _exercises
+
+    fun addPickedExercises(pickedExercises: List<Exercise>) {
+        Timber.d("Added picked exercises $pickedExercises")
+        val mutableExercises = exercises.value.toMutableList()
+        mutableExercises.addAll(pickedExercises)
+        _exercises.value = mutableExercises.toList()
+        Timber.d("Training exercises ${exercises.value}")
+    }
+
     fun createTraining() {
         // create training in database
         val training = Training(
             title = title.value,
-            description = description.value
+            description = description.value,
+            exercises = exercises.value
         )
         Timber.d("Create training $training")
+       // cleanData()
     }
 
-    fun addPickedExercises(pickedExercises: List<Exercise>) {
-        Timber.d("Added picked exercises $pickedExercises")
+    private fun cleanData() {
+        _title.value = ""
+        _description.value = ""
+        _exercises.value = emptyList()
+        // TODO Find better way than holding instance of this viewmodel in Navigation.kt, it will be kept for app live
     }
-
 
 }

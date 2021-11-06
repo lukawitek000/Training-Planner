@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.navigation
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -16,9 +17,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navigation
 import com.lukasz.witkowski.training.planner.ui.*
 import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseViewModel
@@ -32,7 +35,11 @@ import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsScreen
 
 @Composable
 fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
+
+    //val createTrainingViewModel: CreateTrainingViewModel = hiltViewModel()
+
     NavHost(navController = navController, startDestination = NavItem.Trainings.route) {
+
         composable(NavItem.Trainings.route) {
             val trainingsListViewModel: TrainingsListViewModel = viewModel()
             TrainingsScreen(innerPadding = innerPadding, viewModel = trainingsListViewModel) {
@@ -62,20 +69,37 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
                 viewModel = viewModel,
                 navigateBack = { navController.navigateUp() })
         }
+        createTrainingNavGraph(innerPadding, navController)
 
+
+
+    }
+}
+
+@SuppressLint("UnrememberedGetBackStackEntry")
+private fun NavGraphBuilder.createTrainingNavGraph(
+    innerPadding: PaddingValues,
+    navController: NavHostController
+) {
+    navigation(
+        startDestination = NavItem.CreateTraining.route,
+        route = NavItem.CreateTrainingGraph.route
+    ) {
         composable(NavItem.CreateTraining.route) {
-            val viewModel: CreateTrainingViewModel = hiltViewModel()
+            val createTrainingViewModel: CreateTrainingViewModel =
+                hiltViewModel(navController.getBackStackEntry(NavItem.Trainings.route))
             CreateTrainingScreen(
                 modifier = Modifier.padding(innerPadding),
-                viewModel = viewModel,
+                viewModel = createTrainingViewModel,
                 navigateBack = { navController.navigateUp() },
-                onAddExerciseClicked = {  navController.navigate(route = NavItem.PickExercise.route) }
-                )
-        }
+                onAddExerciseClicked = { navController.navigate(route = NavItem.PickExercise.route) }
+            )
 
+        }
         composable(NavItem.PickExercise.route) {
             val viewModel: ExercisesListViewModel = hiltViewModel()
-            val createTrainingViewModel: CreateTrainingViewModel = hiltViewModel()
+            val createTrainingViewModel: CreateTrainingViewModel =
+                hiltViewModel(navController.getBackStackEntry(NavItem.Trainings.route))
             PickExerciseScreen(
                 modifier = Modifier.padding(innerPadding),
                 viewModel = viewModel,
