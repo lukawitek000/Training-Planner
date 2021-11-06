@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.ui.createTraining
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.training.planner.repository.ExerciseRepository
 import com.lukasz.witkowski.training.planner.repository.TrainingRepository
@@ -40,6 +41,10 @@ class CreateTrainingViewModel @Inject constructor(
             description = description.value
         )
         Timber.d("Create training $training")
+    }
+
+    fun addPickedExercises(pickedExercises: List<Exercise>) {
+        Timber.d("Added picked exercises $pickedExercises")
     }
 
 

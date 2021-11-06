@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.ui.exercisesList
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -44,28 +45,47 @@ fun ExercisesScreen(modifier: Modifier = Modifier,
             }
         }
     ) {
-        val exercisesList by viewModel.exercises.observeAsState(initial = emptyList())
-        val selectedCategoriesList by viewModel.selectedCategories.observeAsState(initial = emptyList())
 
-        var isExerciseDialogOpen by remember { mutableStateOf(false) }
-        var exercise by remember {
-            mutableStateOf(exercisesList.firstOrNull())
-        }
-        if(isExerciseDialogOpen && exercise != null){
-            ExerciseInfoAlertDialog(exercise = exercise!!, closeDialog = { isExerciseDialogOpen = false })
-        }
-        Column() {
-            CategoryFilters(
-                categories = categoriesWithoutNone,
-                selectedCategories = selectedCategoriesList,
-                selectCategory = { viewModel.selectCategory(it) }
-            )
-            ExercisesList(exercisesList = exercisesList, openDialog = {
+        ExercisesScreenContent(viewModel)
+
+    }
+}
+
+@Composable
+fun ExercisesScreenContent(
+    viewModel: ExercisesListViewModel,
+    pickingExerciseMode: Boolean = false
+) {
+    val exercisesList by viewModel.exercises.observeAsState(initial = emptyList())
+    val selectedCategoriesList by viewModel.selectedCategories.observeAsState(initial = emptyList())
+
+    val pickedExercises by viewModel.pickedExercises.collectAsState()
+
+    var isExerciseDialogOpen by remember { mutableStateOf(false) }
+    var exercise by remember {
+        mutableStateOf(exercisesList.firstOrNull())
+    }
+    if (isExerciseDialogOpen && exercise != null) {
+        ExerciseInfoAlertDialog(
+            exercise = exercise!!,
+            closeDialog = { isExerciseDialogOpen = false })
+    }
+    Column() {
+        CategoryFilters(
+            categories = categoriesWithoutNone,
+            selectedCategories = selectedCategoriesList,
+            selectCategory = { viewModel.selectCategory(it) }
+        )
+        ExercisesList(
+            exercisesList = exercisesList,
+            openDialog = {
                 isExerciseDialogOpen = true
                 exercise = it
-            })
-        }
-
+            },
+            pickingExerciseMode = pickingExerciseMode,
+            pickExercise = { viewModel.pickExercise(it) },
+            pickedExercises = pickedExercises
+        )
     }
 }
 
@@ -96,15 +116,25 @@ fun CategoryFilters(
 private fun ExercisesList(
     modifier: Modifier = Modifier,
     exercisesList: List<Exercise>,
-    openDialog: (Exercise) -> Unit
+    openDialog: (Exercise) -> Unit,
+    pickingExerciseMode: Boolean = false,
+    pickExercise: (Exercise) -> Unit = {},
+    pickedExercises: List<Exercise> = emptyList()
 ) {
     LazyColumn() {
         items(exercisesList) { exercise ->
             ListCardItem(modifier = Modifier.clickable {
-                openDialog(exercise)
+                if(pickingExerciseMode){
+                    pickExercise(exercise)
+                }else {
+                    openDialog(exercise)
+                }
             }
             ) {
-                ExerciseListItemContent(exercise = exercise)
+                ExerciseListItemContent(
+                    exercise = exercise,
+                    isHighlighted = pickedExercises.contains(exercise)
+                )
             }
         }
     }
@@ -113,13 +143,14 @@ private fun ExercisesList(
 @Composable
 fun ExerciseListItemContent(
     modifier: Modifier = Modifier,
-    exercise: Exercise
+    exercise: Exercise,
+    isHighlighted: Boolean = false
 ) {
     val image = exercise.image
-
     val imageDescription = "${exercise.name} image"
+
     Row(
-        modifier = modifier,
+        modifier = if(isHighlighted) modifier.background(Color.Red) else modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         ImageWithDefaultPlaceholder(imageDescription = imageDescription, image = image)

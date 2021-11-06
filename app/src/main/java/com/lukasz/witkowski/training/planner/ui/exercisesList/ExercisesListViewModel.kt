@@ -8,6 +8,8 @@ import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.dummyExerciseList
 import com.lukasz.witkowski.training.planner.repository.ExerciseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,6 +38,20 @@ class ExercisesListViewModel @Inject constructor(
             list.add(category)
         }
         _selectedCategories.value = list.toList()
+    }
+
+    private val _pickedExercises = MutableStateFlow<List<Exercise>>(emptyList())
+    val pickedExercises: StateFlow<List<Exercise>>
+        get() = _pickedExercises
+
+    fun pickExercise(exercise: Exercise) {
+        val exercises = pickedExercises.value.toMutableList()
+        if(exercises.contains(exercise)){
+            exercises.remove(exercise)
+        } else {
+            exercises.add(exercise)
+        }
+        _pickedExercises.value = exercises.toList()
     }
 
 

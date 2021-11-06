@@ -24,6 +24,7 @@ import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseScr
 import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.ui.createTraining.CreateTrainingScreen
 import com.lukasz.witkowski.training.planner.ui.createTraining.CreateTrainingViewModel
+import com.lukasz.witkowski.training.planner.ui.createTraining.PickExerciseScreen
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsListViewModel
@@ -67,7 +68,20 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
             CreateTrainingScreen(
                 modifier = Modifier.padding(innerPadding),
                 viewModel = viewModel,
-                navigateBack = { navController.navigateUp() })
+                navigateBack = { navController.navigateUp() },
+                onAddExerciseClicked = {  navController.navigate(route = NavItem.PickExercise.route) }
+                )
+        }
+
+        composable(NavItem.PickExercise.route) {
+            val viewModel: ExercisesListViewModel = hiltViewModel()
+            val createTrainingViewModel: CreateTrainingViewModel = hiltViewModel()
+            PickExerciseScreen(
+                modifier = Modifier.padding(innerPadding),
+                viewModel = viewModel,
+                createTrainingViewModel = createTrainingViewModel,
+                navigateBack = { navController.navigateUp() }
+            )
         }
     }
 }

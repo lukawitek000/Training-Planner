@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.Composable
@@ -23,7 +25,8 @@ import com.lukasz.witkowski.training.planner.ui.components.TextField
 fun CreateTrainingScreen(
     modifier: Modifier = Modifier,
     viewModel: CreateTrainingViewModel,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
+    onAddExerciseClicked: () -> Unit
 ) {
     val title by viewModel.title.collectAsState()
     val description by viewModel.description.collectAsState()
@@ -60,6 +63,9 @@ fun CreateTrainingScreen(
                 imeAction = ImeAction.Next
             )
             Spacer(modifier = Modifier.height(16.dp))
+            Button(onClick = { onAddExerciseClicked() }) {
+                Text(text = "Add Exercises")
+            }
         }
     }
 }
