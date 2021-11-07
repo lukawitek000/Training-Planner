@@ -2,9 +2,11 @@ package com.lukasz.witkowski.training.planner.ui.createTraining
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
+import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.TimeFormatter.MILLIS_IN_SECONDS
 import com.lukasz.witkowski.shared.utils.TimeFormatter.SECONDS_IN_MINUTE
 import com.lukasz.witkowski.training.planner.repository.ExerciseRepository
@@ -12,6 +14,7 @@ import com.lukasz.witkowski.training.planner.repository.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -51,14 +54,19 @@ class CreateTrainingViewModel @Inject constructor(
 //    }
 
     fun createTraining() {
-        // create training in database
-        val training = Training(
-            title = title.value,
-            description = description.value,
-            exercises = trainingExercises.value
-        )
-        Timber.d("Create training $training")
-       // cleanData()
+
+        viewModelScope.launch {
+            val training = Training(
+                title = title.value,
+                description = description.value
+            )
+            val trainingWithExercises = TrainingWithExercises(
+                training = training,
+                exercises = trainingExercises.value
+            )
+            trainingRepository.insertTrainingWithExercises(trainingWithExercises)
+            Timber.d("Create training $trainingWithExercises")
+        }
     }
 
     private val _trainingExercises = MutableStateFlow<List<TrainingExercise>>(emptyList())

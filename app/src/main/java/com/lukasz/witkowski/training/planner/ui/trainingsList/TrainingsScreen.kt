@@ -11,6 +11,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +31,7 @@ fun TrainingsScreen(
     viewModel: TrainingsListViewModel,
     onCreateTrainingFabClicked: () -> Unit = {}
 ){
-    val trainings = remember { viewModel.getAllTrainings() }
+    val trainings by viewModel.allTrainings.collectAsState()
     Scaffold(
         modifier = Modifier.padding(innerPadding),
         floatingActionButton = {

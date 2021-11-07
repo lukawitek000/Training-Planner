@@ -41,7 +41,7 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
     NavHost(navController = navController, startDestination = NavItem.Trainings.route) {
 
         composable(NavItem.Trainings.route) {
-            val trainingsListViewModel: TrainingsListViewModel = viewModel()
+            val trainingsListViewModel: TrainingsListViewModel = hiltViewModel()
             TrainingsScreen(innerPadding = innerPadding, viewModel = trainingsListViewModel) {
                 navController.navigate(route = NavItem.CreateTraining.route)
             }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.lukasz.witkowski.shared.db.AppDatabase
 import com.lukasz.witkowski.shared.db.ExerciseDao
+import com.lukasz.witkowski.shared.db.TrainingDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,4 +31,8 @@ object DatabaseModule {
         return appDatabase.exerciseDao()
     }
 
+    @Provides
+    fun provideTrainingDao(appDatabase: AppDatabase): TrainingDao {
+        return appDatabase.trainingDao()
+    }
 }
