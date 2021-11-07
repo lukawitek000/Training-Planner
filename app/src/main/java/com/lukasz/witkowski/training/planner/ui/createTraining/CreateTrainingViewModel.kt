@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
+import com.lukasz.witkowski.shared.utils.TimeFormatter.MILLIS_IN_SECONDS
+import com.lukasz.witkowski.shared.utils.TimeFormatter.SECONDS_IN_MINUTE
 import com.lukasz.witkowski.training.planner.repository.ExerciseRepository
 import com.lukasz.witkowski.training.planner.repository.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,10 +21,6 @@ class CreateTrainingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
-    companion object {
-        private const val SECONDS_IN_MINUTE = 60
-        private const val MILLIS_IN_SECONDS = 1000
-    }
 
     private val _title = MutableStateFlow("")
     val title: StateFlow<String>
@@ -84,6 +82,12 @@ class CreateTrainingViewModel @Inject constructor(
             time = timeInMillis.toLong()
         )
         addTrainingExercise(trainingExercise)
+    }
+
+    fun removeTrainingExercise(trainingExercise: TrainingExercise) {
+        val mutableExercises = trainingExercises.value.toMutableList()
+        mutableExercises.remove(trainingExercise)
+        _trainingExercises.value = mutableExercises
     }
 
 }

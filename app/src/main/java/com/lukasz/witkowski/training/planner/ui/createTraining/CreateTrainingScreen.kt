@@ -1,18 +1,29 @@
 package com.lukasz.witkowski.training.planner.ui.createTraining
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Button
+import androidx.compose.material.Card
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
@@ -21,8 +32,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.models.Exercise
+import com.lukasz.witkowski.shared.models.TrainingExercise
+import com.lukasz.witkowski.shared.utils.TimeFormatter
+import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExerciseListItemContent
 
@@ -73,7 +89,9 @@ fun CreateTrainingScreen(
                 Text(text = "Add Exercises")
             }
             Spacer(modifier = Modifier.height(16.dp))
-            TrainingExercisesList(exercises = exercises.map { it.exercise }) // TODO list for training exercises
+            TrainingExercisesList(
+                exercises = exercises,
+                removeTrainingExercise = { viewModel.removeTrainingExercise(it) })
         }
     }
 }
@@ -81,11 +99,85 @@ fun CreateTrainingScreen(
 @Composable
 fun TrainingExercisesList(
     modifier: Modifier = Modifier,
-    exercises: List<Exercise>
+    exercises: List<TrainingExercise>,
+    removeTrainingExercise: (TrainingExercise) -> Unit
 ) {
     LazyColumn() {
-        items(exercises) { exercise ->
-            ExerciseListItemContent(exercise = exercise)
+        itemsIndexed(exercises) { index, exercise ->
+            TrainingExerciseListItem(
+                trainingExercise = exercise,
+                index = index,
+                removeTrainingExercise = removeTrainingExercise)
         }
     }
+}
+
+@Composable
+fun TrainingExerciseListItem(
+    modifier: Modifier = Modifier,
+    trainingExercise: TrainingExercise,
+    index: Int = 0,
+    removeTrainingExercise: (TrainingExercise) -> Unit
+) {
+
+    ListCardItem() {
+        Row(
+            modifier = modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = "${index + 1}.", fontSize = 32.sp)
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+            ) {
+                Text(text = trainingExercise.exercise.name, fontSize = 24.sp)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Reps: ${trainingExercise.repetitions}",
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        text = "Sets: ${trainingExercise.sets}",
+                        modifier = Modifier.weight(1f)
+                    )
+                    if (trainingExercise.time > 0L) {
+                        Text(text = "Time: ${TimeFormatter.millisToMinutesSeconds(trainingExercise.time)}")
+                    } else {
+                        Spacer(modifier = Modifier.weight(1f))        
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Icon(
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable {
+                        removeTrainingExercise(trainingExercise)
+                    },
+                imageVector = Icons.Default.Close,
+                contentDescription = "Remove training exercise"
+            )
+        }
+        
+    }
+}
+
+@Preview
+@Composable
+fun TrainingExerciseListItemPreview() {
+    TrainingExerciseListItem(
+        trainingExercise = TrainingExercise(
+            exercise = Exercise(name = "New exercise"),
+            repetitions = 10,
+            sets = 5,
+            time = 1000
+        ),
+        removeTrainingExercise = {}
+    )
 }
