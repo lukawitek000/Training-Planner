@@ -46,8 +46,6 @@ class CreateExerciseViewModel @Inject constructor(
     fun onImageChange(bitmap: Bitmap){
         _image.value = bitmap
     }
-
-
     fun createExercise(){
         viewModelScope.launch {
             val exercise = Exercise(
@@ -56,7 +54,7 @@ class CreateExerciseViewModel @Inject constructor(
                 category = category.value ?: Category.None,
                 image = image.value
             )
-            exerciseRepository.insertExercise(exercise)
+            exerciseRepository.insertExercise(exercise) // TODO loading indicator, because of the image it is saving very long
         }
     }
 }

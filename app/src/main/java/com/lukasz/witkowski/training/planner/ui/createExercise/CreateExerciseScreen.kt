@@ -5,17 +5,12 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -24,29 +19,22 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.utils.allCategories
-import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import com.skydoves.landscapist.glide.GlideImage
-import com.lukasz.witkowski.training.planner.ui.components.TextField
 
 
 @Composable
@@ -86,7 +74,8 @@ fun CreateExerciseScreen(
                 text = title,
                 onTextChange = { viewModel.onExerciseNameChange(it) },
                 label = "Title",
-                imeAction = ImeAction.Next            )
+                imeAction = ImeAction.Next
+            )
             Spacer(modifier = Modifier.height(16.dp))
             TextField(
                 text = description,
@@ -103,12 +92,12 @@ fun CreateExerciseScreen(
             )
         }
     }
-   
+
 }
 
 @Composable
 fun DropDownInput(
-    selectedText:  String,
+    selectedText: String,
     suggestions: List<String>,
     label: String,
     onSuggestionSelected: (String) -> Unit
@@ -141,7 +130,7 @@ fun DropDownInput(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.width(with(LocalDensity.current) { textFieldSize.width.toDp() } )
+            modifier = Modifier.width(with(LocalDensity.current) { textFieldSize.width.toDp() })
         ) {
             suggestions.forEach {
                 DropdownMenuItem(onClick = {
@@ -167,7 +156,7 @@ fun UploadImageButton(
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
-            if(uri == null) {
+            if (uri == null) {
                 return@rememberLauncherForActivityResult
             }
             val bitmap = if (Build.VERSION.SDK_INT < 28) {
@@ -182,7 +171,8 @@ fun UploadImageButton(
             onImageChange(bitmap)
         }
     )
-    val placeholder = Uri.parse("android.resource://com.lukasz.witkowski.training.planner/drawable/ic_launcher_foreground")
+    val placeholder =
+        Uri.parse("android.resource://com.lukasz.witkowski.training.planner/drawable/ic_launcher_foreground")
     GlideImage(
         imageModel = image ?: placeholder,
         contentScale = ContentScale.Fit,
@@ -205,6 +195,6 @@ fun UploadImageButton(
 @Composable
 fun CreateExerciseScreenPreview() {
     TrainingPlannerTheme {
-      // CreateExerciseScreen()
+        // CreateExerciseScreen()
     }
 }

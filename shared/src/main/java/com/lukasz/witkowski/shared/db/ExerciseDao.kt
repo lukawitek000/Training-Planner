@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.shared.db
 
-import androidx.core.widget.ListViewAutoScrollHelper
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
@@ -20,7 +19,4 @@ interface ExerciseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(exercise: Exercise): Long
-
-
-
 }

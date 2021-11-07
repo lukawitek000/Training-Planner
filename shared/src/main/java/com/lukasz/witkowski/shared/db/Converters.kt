@@ -30,8 +30,8 @@ class Converters {
         val outputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
         var imageByteArray = outputStream.toByteArray()
-        while(imageByteArray.size > 500000) {
-            val img = BitmapFactory.decodeByteArray(imageByteArray,0, imageByteArray.size)
+        while (imageByteArray.size > 500000) {
+            val img = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.size)
             val resized = Bitmap.createScaledBitmap(
                 img, (img.width * 0.8).roundToInt(),
                 (img.height * 0.8).roundToInt(), true
@@ -45,12 +45,9 @@ class Converters {
 
     @TypeConverter
     fun fromByteArrayToBitmap(byteArray: ByteArray?): Bitmap? {
-        if(byteArray == null) {
+        if (byteArray == null) {
             return null
         }
         return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
     }
-
-
-
 }

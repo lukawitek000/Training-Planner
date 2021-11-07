@@ -35,8 +35,8 @@ fun ListCardItem(
             .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         backgroundColor = Color.DarkGray
-    ){
-        Box(modifier = Modifier.padding(8.dp)){
+    ) {
+        Box(modifier = Modifier.padding(8.dp)) {
             content()
         }
     }

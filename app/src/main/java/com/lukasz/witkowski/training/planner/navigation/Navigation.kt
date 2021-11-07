@@ -15,7 +15,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -35,9 +34,6 @@ import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsScreen
 
 @Composable
 fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
-
-    //val createTrainingViewModel: CreateTrainingViewModel = hiltViewModel()
-
     NavHost(navController = navController, startDestination = NavItem.Trainings.route) {
 
         composable(NavItem.Trainings.route) {
@@ -70,7 +66,6 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
                 navigateBack = { navController.navigateUp() })
         }
         createTrainingNavGraph(innerPadding, navController)
-
 
 
     }

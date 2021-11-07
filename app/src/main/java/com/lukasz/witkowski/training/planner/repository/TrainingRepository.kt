@@ -12,7 +12,7 @@ class TrainingRepository constructor(
     fun getAllTrainings() = trainingDao.getAllTrainings()
 
     suspend fun insertTrainingWithExercises(trainingWithExercises: TrainingWithExercises) {
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             trainingDao.insertTrainingWithTrainingExercises(trainingWithExercises = trainingWithExercises)
         }
     }

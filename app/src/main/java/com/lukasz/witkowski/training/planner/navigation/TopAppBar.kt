@@ -16,10 +16,11 @@ fun TopBar(
     modifier: Modifier = Modifier,
     title: String,
     showBackArrow: Boolean,
-    navigateBack: () -> Unit) {
+    navigateBack: () -> Unit
+) {
     TopAppBar(modifier = modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            if(showBackArrow) {
+            if (showBackArrow) {
                 IconButton(onClick = { navigateBack() }) {
                     Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Go back")
                 }

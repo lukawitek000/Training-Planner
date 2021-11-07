@@ -3,13 +3,13 @@ package com.lukasz.witkowski.training.planner
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material.*
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.lukasz.witkowski.training.planner.navigation.NavItem
 import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
+import com.lukasz.witkowski.training.planner.navigation.NavItem
 import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TrainingPlannerTheme {
-               TrainingPlannerApp()
+                TrainingPlannerApp()
             }
         }
     }
@@ -44,7 +44,7 @@ fun TrainingPlannerApp() {
                 })
         },
         topBar = {
-            TopBar(title = currentScreen.title, showBackArrow = currentScreen.isBackArrow){
+            TopBar(title = currentScreen.title, showBackArrow = currentScreen.isBackArrow) {
                 navController.navigateUp()
             }
         }

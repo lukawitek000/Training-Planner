@@ -1,7 +1,5 @@
 package com.lukasz.witkowski.training.planner.ui.createTraining
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,17 +12,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Button
-import androidx.compose.material.Card
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,7 +35,6 @@ import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.TextField
-import com.lukasz.witkowski.training.planner.ui.exercisesList.ExerciseListItemContent
 
 @Composable
 fun CreateTrainingScreen(
@@ -107,7 +101,8 @@ fun TrainingExercisesList(
             TrainingExerciseListItem(
                 trainingExercise = exercise,
                 index = index,
-                removeTrainingExercise = removeTrainingExercise)
+                removeTrainingExercise = removeTrainingExercise
+            )
         }
     }
 }
@@ -149,7 +144,7 @@ fun TrainingExerciseListItem(
                     if (trainingExercise.time > 0L) {
                         Text(text = "Time: ${TimeFormatter.millisToMinutesSeconds(trainingExercise.time)}")
                     } else {
-                        Spacer(modifier = Modifier.weight(1f))        
+                        Spacer(modifier = Modifier.weight(1f))
                     }
                 }
             }
@@ -164,7 +159,7 @@ fun TrainingExerciseListItem(
                 contentDescription = "Remove training exercise"
             )
         }
-        
+
     }
 }
 
