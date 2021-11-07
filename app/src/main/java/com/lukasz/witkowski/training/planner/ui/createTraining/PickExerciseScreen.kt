@@ -1,52 +1,35 @@
 package com.lukasz.witkowski.training.planner.ui.createTraining
 
-import android.widget.NumberPicker
-import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.AlertDialog
 import androidx.compose.material.Checkbox
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
-import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
@@ -61,16 +44,17 @@ fun PickExerciseScreen(
     createTrainingViewModel: CreateTrainingViewModel,
     navigateBack: () -> Unit
 ) {
-    val pickedExercises by viewModel.pickedExercises.collectAsState()
+    //val pickedExercises by viewModel.pickedExercises.collectAsState()
+    val pickedTrainingExercises by createTrainingViewModel.trainingExercises.collectAsState()
     var openDialog by remember { mutableStateOf(false) }
     val trainingTitle by createTrainingViewModel.title.collectAsState()
+
     var exercise = Exercise()
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                Timber.d("Picked Exercises $pickedExercises")
-                createTrainingViewModel.addPickedExercises(pickedExercises)
+                //createTrainingViewModel.addPickedTrainingExercises()
                 navigateBack()
             }) {
                 Icon(imageVector = Icons.Default.Done, contentDescription = "Pick Exercises")
@@ -83,13 +67,23 @@ fun PickExerciseScreen(
             pickExercise = {
                 exercise = it
                 openDialog = true
-            }
+            },
+            pickedExercises = pickedTrainingExercises.map { it.exercise }
         )
-        if(openDialog){
+        if (openDialog) {
             SetTrainingExercisePropertiesDialog(
                 exercise = exercise,
                 trainingTitle = trainingTitle,
-                closeDialog = { openDialog = false }
+                closeDialog = { openDialog = false },
+                saveTrainingExercise = { reps, sets, minutes, seconds ->
+                    createTrainingViewModel.createTrainingExercise(
+                        exercise,
+                        reps,
+                        sets,
+                        minutes,
+                        seconds
+                    )
+                }
             )
         }
     }
@@ -102,7 +96,8 @@ fun SetTrainingExercisePropertiesDialog(
     modifier: Modifier = Modifier,
     exercise: Exercise,
     trainingTitle: String,
-    closeDialog: () -> Unit
+    closeDialog: () -> Unit,
+    saveTrainingExercise: (reps: String, sets: String, minutes: Int, seconds: Int) -> Unit
 ) {
 
     var reps by remember { mutableStateOf("") }
@@ -127,7 +122,10 @@ fun SetTrainingExercisePropertiesDialog(
                 .height(600.dp)
                 .clip(MaterialTheme.shapes.medium),
             floatingActionButton = {
-                FloatingActionButton(onClick = { closeDialog() }) {
+                FloatingActionButton(onClick = {
+                    saveTrainingExercise(reps, sets, minutes, seconds)
+                    closeDialog()
+                }) {
                     Icon(
                         imageVector = Icons.Default.Done,
                         contentDescription = "Done exercise configuration"
@@ -147,11 +145,13 @@ fun SetTrainingExercisePropertiesDialog(
                     modifier = Modifier.padding(16.dp)
                 )
 
-                TextField(text = reps,
+                TextField(
+                    text = reps,
                     onTextChange = { reps = it },
                     label = "Reps",
                     imeAction = ImeAction.Next,
-                    keyboardType = KeyboardType.Number)
+                    keyboardType = KeyboardType.Number
+                )
                 Spacer(modifier = Modifier.height(16.dp))
                 TextField(
                     text = sets,
@@ -161,14 +161,14 @@ fun SetTrainingExercisePropertiesDialog(
                     keyboardType = KeyboardType.Number
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                if(isTimerSetEnable) {
+                if (isTimerSetEnable) {
                     TimerTimePicker(
                         minutes = minutes,
                         seconds = seconds,
                         onMinutesChange = {
                             Timber.d("New value minutes $it")
                             minutes = it
-                                          },
+                        },
                         onSecondsChange = {
                             Timber.d("New value seconds $it")
                             seconds = it
@@ -194,8 +194,7 @@ fun SetTrainingExercisePropertiesDialog(
                         .clickable {
                             isTimerSetEnable = !isTimerSetEnable
                         }
-                        .padding(16.dp)
-                    ,
+                        .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Checkbox(
@@ -210,17 +209,4 @@ fun SetTrainingExercisePropertiesDialog(
             }
         }
     }
-}
-
-
-
-
-@Preview
-@Composable
-fun SetTrainingExercisePropertiesDialogPreview() {
-    SetTrainingExercisePropertiesDialog(
-        exercise = Exercise(name = "Exercise-name"),
-        trainingTitle = "Training-super",
-        closeDialog = {}
-    )
 }

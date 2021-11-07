@@ -35,7 +35,7 @@ fun CreateTrainingScreen(
 ) {
     val title by viewModel.title.collectAsState()
     val description by viewModel.description.collectAsState()
-    val exercises by viewModel.exercises.collectAsState()
+    val exercises by viewModel.trainingExercises.collectAsState()
 
     Scaffold(
         modifier = modifier,
@@ -73,7 +73,7 @@ fun CreateTrainingScreen(
                 Text(text = "Add Exercises")
             }
             Spacer(modifier = Modifier.height(16.dp))
-            TrainingExercisesList(exercises = exercises)
+            TrainingExercisesList(exercises = exercises.map { it.exercise }) // TODO list for training exercises
         }
     }
 }

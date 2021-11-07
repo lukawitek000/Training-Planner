@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.Training
+import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.repository.ExerciseRepository
 import com.lukasz.witkowski.training.planner.repository.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,8 +19,9 @@ class CreateTrainingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
-    init {
-        Timber.d("Iniitttt")
+    companion object {
+        private const val SECONDS_IN_MINUTE = 60
+        private const val MILLIS_IN_SECONDS = 1000
     }
 
     private val _title = MutableStateFlow("")
@@ -38,34 +40,50 @@ class CreateTrainingViewModel @Inject constructor(
         _description.value = newDescription
     }
 
-    private val _exercises = MutableStateFlow<List<Exercise>>(emptyList())
-    val exercises: StateFlow<List<Exercise>>
-        get() = _exercises
-
-    fun addPickedExercises(pickedExercises: List<Exercise>) {
-        Timber.d("Added picked exercises $pickedExercises")
-        val mutableExercises = exercises.value.toMutableList()
-        mutableExercises.addAll(pickedExercises)
-        _exercises.value = mutableExercises.toList()
-        Timber.d("Training exercises ${exercises.value}")
-    }
+//    private val _exercises = MutableStateFlow<List<Exercise>>(emptyList())
+//    val exercises: StateFlow<List<Exercise>>
+//        get() = _exercises
+//
+//    fun addPickedExercises(pickedExercises: List<Exercise>) {
+//        Timber.d("Added picked exercises $pickedExercises")
+//        val mutableExercises = exercises.value.toMutableList()
+//        mutableExercises.addAll(pickedExercises)
+//        _exercises.value = mutableExercises.toList()
+//        Timber.d("Training exercises ${exercises.value}")
+//    }
 
     fun createTraining() {
         // create training in database
         val training = Training(
             title = title.value,
             description = description.value,
-            exercises = exercises.value
+            exercises = trainingExercises.value
         )
         Timber.d("Create training $training")
        // cleanData()
     }
 
-    private fun cleanData() {
-        _title.value = ""
-        _description.value = ""
-        _exercises.value = emptyList()
-        // TODO Find better way than holding instance of this viewmodel in Navigation.kt, it will be kept for app live
+    private val _trainingExercises = MutableStateFlow<List<TrainingExercise>>(emptyList())
+    val trainingExercises: StateFlow<List<TrainingExercise>>
+        get() = _trainingExercises
+
+    private fun addTrainingExercise(trainingExercise: TrainingExercise){
+        val mutableExercises = _trainingExercises.value.toMutableList()
+        mutableExercises.add(trainingExercise)
+        _trainingExercises.value = mutableExercises.toList()
+    }
+
+    fun createTrainingExercise(exercise: Exercise, reps: String, sets: String, minutes: Int, seconds: Int) {
+        val timeInMillis = (minutes * SECONDS_IN_MINUTE + seconds) * MILLIS_IN_SECONDS
+        val repetitions = reps.toIntOrNull() ?: 1
+        val sets = sets.toIntOrNull() ?: 1
+        val trainingExercise = TrainingExercise(
+            exercise = exercise,
+            repetitions = repetitions,
+            sets = sets,
+            time = timeInMillis.toLong()
+        )
+        addTrainingExercise(trainingExercise)
     }
 
 }

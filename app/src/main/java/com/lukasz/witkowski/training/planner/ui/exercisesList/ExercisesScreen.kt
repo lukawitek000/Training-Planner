@@ -55,12 +55,11 @@ fun ExercisesScreen(modifier: Modifier = Modifier,
 fun ExercisesScreenContent(
     viewModel: ExercisesListViewModel,
     pickingExerciseMode: Boolean = false,
-    pickExercise: (Exercise) -> Unit = {}
+    pickExercise: (Exercise) -> Unit = {},
+    pickedExercises: List<Exercise> = emptyList()
 ) {
     val exercisesList by viewModel.exercises.observeAsState(initial = emptyList())
     val selectedCategoriesList by viewModel.selectedCategories.observeAsState(initial = emptyList())
-
-    val pickedExercises by viewModel.pickedExercises.collectAsState()
 
     var isExerciseDialogOpen by remember { mutableStateOf(false) }
     var exercise by remember {

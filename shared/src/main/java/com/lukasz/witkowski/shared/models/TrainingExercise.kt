@@ -1,10 +1,10 @@
 package com.lukasz.witkowski.shared.models
 
 data class TrainingExercise(
-    val id: Long,
+    val id: Long = 0L,
     val exercise: Exercise,
-    val repetitions: Int,
-    val sets: Int,
-    val time: Long,
-    val restTime: Long // Rest time after exercise
+    val repetitions: Int = 1,
+    val sets: Int = 1,
+    val time: Long = 0L,
+    val restTime: Long = 0L // Rest time after exercise
 )

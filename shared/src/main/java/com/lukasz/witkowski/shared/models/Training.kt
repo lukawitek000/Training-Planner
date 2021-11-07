@@ -4,5 +4,5 @@ data class Training(
     val id: Long = 0L,
     val title: String,
     val description: String = "",
-    val exercises: List<Exercise> = emptyList()
+    val exercises: List<TrainingExercise> = emptyList()
 )
