@@ -54,7 +54,8 @@ fun ExercisesScreen(modifier: Modifier = Modifier,
 @Composable
 fun ExercisesScreenContent(
     viewModel: ExercisesListViewModel,
-    pickingExerciseMode: Boolean = false
+    pickingExerciseMode: Boolean = false,
+    pickExercise: (Exercise) -> Unit = {}
 ) {
     val exercisesList by viewModel.exercises.observeAsState(initial = emptyList())
     val selectedCategoriesList by viewModel.selectedCategories.observeAsState(initial = emptyList())
@@ -83,7 +84,7 @@ fun ExercisesScreenContent(
                 exercise = it
             },
             pickingExerciseMode = pickingExerciseMode,
-            pickExercise = { viewModel.pickExercise(it) },
+            pickExercise = pickExercise,
             pickedExercises = pickedExercises
         )
     }

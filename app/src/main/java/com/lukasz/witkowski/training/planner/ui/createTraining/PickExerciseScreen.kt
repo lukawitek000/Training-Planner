@@ -1,15 +1,55 @@
 package com.lukasz.witkowski.training.planner.ui.createTraining
 
+import android.widget.NumberPicker
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Checkbox
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.LocalTextStyle
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import com.lukasz.witkowski.shared.models.Exercise
+import com.lukasz.witkowski.training.planner.ui.components.TextField
+import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesScreenContent
 import timber.log.Timber
@@ -22,6 +62,9 @@ fun PickExerciseScreen(
     navigateBack: () -> Unit
 ) {
     val pickedExercises by viewModel.pickedExercises.collectAsState()
+    var openDialog by remember { mutableStateOf(false) }
+    val trainingTitle by createTrainingViewModel.title.collectAsState()
+    var exercise = Exercise()
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
@@ -36,8 +79,148 @@ fun PickExerciseScreen(
     ) {
         ExercisesScreenContent(
             viewModel = viewModel,
-            pickingExerciseMode = true
+            pickingExerciseMode = true,
+            pickExercise = {
+                exercise = it
+                openDialog = true
+            }
         )
+        if(openDialog){
+            SetTrainingExercisePropertiesDialog(
+                exercise = exercise,
+                trainingTitle = trainingTitle,
+                closeDialog = { openDialog = false }
+            )
+        }
     }
 
+}
+
+
+@Composable
+fun SetTrainingExercisePropertiesDialog(
+    modifier: Modifier = Modifier,
+    exercise: Exercise,
+    trainingTitle: String,
+    closeDialog: () -> Unit
+) {
+
+    var reps by remember { mutableStateOf("") }
+    var sets by remember { mutableStateOf("") }
+
+    var minutes by remember {
+        mutableStateOf(0)
+    }
+    var seconds by remember {
+        mutableStateOf(0)
+    }
+
+    var isTimerSetEnable by remember { mutableStateOf(true) }
+
+
+
+    Dialog(
+        onDismissRequest = { closeDialog() })
+    {
+        Scaffold(
+            modifier = Modifier
+                .height(600.dp)
+                .clip(MaterialTheme.shapes.medium),
+            floatingActionButton = {
+                FloatingActionButton(onClick = { closeDialog() }) {
+                    Icon(
+                        imageVector = Icons.Default.Done,
+                        contentDescription = "Done exercise configuration"
+                    )
+                }
+            },
+            backgroundColor = Color.Gray
+        ) {
+            Column(
+                modifier = Modifier,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Configure the ${exercise.name} exercise for the $trainingTitle training",
+                    fontSize = 28.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(16.dp)
+                )
+
+                TextField(text = reps,
+                    onTextChange = { reps = it },
+                    label = "Reps",
+                    imeAction = ImeAction.Next,
+                    keyboardType = KeyboardType.Number)
+                Spacer(modifier = Modifier.height(16.dp))
+                TextField(
+                    text = sets,
+                    onTextChange = { sets = it },
+                    label = "Sets",
+                    imeAction = ImeAction.Done,
+                    keyboardType = KeyboardType.Number
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                if(isTimerSetEnable) {
+                    TimerTimePicker(
+                        minutes = minutes,
+                        seconds = seconds,
+                        onMinutesChange = {
+                            Timber.d("New value minutes $it")
+                            minutes = it
+                                          },
+                        onSecondsChange = {
+                            Timber.d("New value seconds $it")
+                            seconds = it
+                        },
+                        isTimePickerEnabled = isTimerSetEnable
+                    )
+                } else {
+                    TimerTimePicker(
+                        minutes = 0,
+                        seconds = 0,
+                        onMinutesChange = {},
+                        onSecondsChange = {},
+                        isTimePickerEnabled = isTimerSetEnable
+                    )
+                }
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.Start)
+                        .clip(MaterialTheme.shapes.medium)
+                        .clickable {
+                            isTimerSetEnable = !isTimerSetEnable
+                        }
+                        .padding(16.dp)
+                    ,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Checkbox(
+                        checked = !isTimerSetEnable,
+                        onCheckedChange = { isTimerSetEnable = !isTimerSetEnable }
+                    )
+                    Text(
+                        text = "Do not set timer"
+                    )
+                }
+
+            }
+        }
+    }
+}
+
+
+
+
+@Preview
+@Composable
+fun SetTrainingExercisePropertiesDialogPreview() {
+    SetTrainingExercisePropertiesDialog(
+        exercise = Exercise(name = "Exercise-name"),
+        trainingTitle = "Training-super",
+        closeDialog = {}
+    )
 }

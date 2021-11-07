@@ -8,8 +8,8 @@ import androidx.room.PrimaryKey
 data class Exercise(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
-    val name: String,
-    val description: String,
+    val name: String = "",
+    val description: String = "",
     val category: Category = Category.None,
     val image: Bitmap? = null
 )
