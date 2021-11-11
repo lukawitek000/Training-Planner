@@ -24,6 +24,10 @@ class TrainingRestTimeFragment : Fragment() {
             viewModel.navigateToTrainingExercise()
         }
 
+        binding.restTimeTv.setOnClickListener {
+            viewModel.navigateToTrainingSummary()
+        }
+
         return binding.root
     }
 

@@ -20,6 +20,10 @@ class CurrentTrainingViewModel : ViewModel() {
         _currentTrainingState.value = CurrentTrainingState.RestTimeState
     }
 
+    fun navigateToTrainingSummary() {
+        _currentTrainingState.value = CurrentTrainingState.SummaryState
+    }
+
 
 
 

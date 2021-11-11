@@ -1,11 +1,13 @@
 package com.lukasz.witkowski.training.wearable.currentTraining
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.lukasz.witkowski.training.wearable.R
+import com.lukasz.witkowski.training.wearable.TrainingSummaryActivity
 import com.lukasz.witkowski.training.wearable.databinding.ActivityCurrentTrainingBinding
 
 class CurrentTrainingActivity : FragmentActivity() {
@@ -49,9 +51,9 @@ class CurrentTrainingActivity : FragmentActivity() {
                 destination = restTimeFragment,
                 destinationTag = TRAINING_REST_TIME_TAG
             )
+            CurrentTrainingState.SummaryState -> navigateToSummary()
         }
     }
-
 
     private fun navigate(current: Fragment?, destination: Fragment?, destinationTag: String) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
@@ -81,5 +83,12 @@ class CurrentTrainingActivity : FragmentActivity() {
         } else {
             TrainingRestTimeFragment()
         }
+    }
+
+    private fun navigateToSummary() {
+        val intent = Intent(this, TrainingSummaryActivity::class.java)
+        // TODO How to pass training summary?
+        // Maybe only values displayed on the summary screen?
+        startActivity(intent)
     }
 }

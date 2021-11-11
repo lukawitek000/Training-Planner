@@ -13,12 +13,16 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
         <activity
+            android:name=".TrainingSummaryActivity"
+            android:exported="false" />
+        <activity
             android:name=".currentTraining.CurrentTrainingActivity"
+            android:noHistory="true"
             android:exported="false" />
         <activity
             android:name=".StartTrainingActivity"
-            android:noHistory="true"
-            android:exported="false" />
+            android:exported="false"
+            android:noHistory="true" />
 
         <uses-library
             android:name="com.google.android.wearable"
