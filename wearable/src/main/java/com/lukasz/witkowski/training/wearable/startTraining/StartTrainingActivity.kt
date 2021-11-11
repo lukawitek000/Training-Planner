@@ -1,12 +1,15 @@
-package com.lukasz.witkowski.training.wearable
+package com.lukasz.witkowski.training.wearable.startTraining
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
+import com.lukasz.witkowski.training.wearable.R
 import com.lukasz.witkowski.training.wearable.currentTraining.CurrentTrainingActivity
 import com.lukasz.witkowski.training.wearable.databinding.ActivityStartTrainingBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class StartTrainingActivity : ComponentActivity() {
 
     companion object {

@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.wearable
+package com.lukasz.witkowski.training.wearable.trainingsList
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

@@ -1,10 +1,11 @@
-package com.lukasz.witkowski.training.wearable
+package com.lukasz.witkowski.training.wearable.summary
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import com.lukasz.witkowski.training.wearable.databinding.ActivityTrainingSummaryBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class TrainingSummaryActivity : ComponentActivity() {
 
     private lateinit var binding: ActivityTrainingSummaryBinding

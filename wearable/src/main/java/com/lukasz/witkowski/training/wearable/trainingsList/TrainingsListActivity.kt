@@ -5,12 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.wear.widget.WearableLinearLayoutManager
-import com.lukasz.witkowski.training.wearable.StartTrainingActivity
-import com.lukasz.witkowski.training.wearable.StartTrainingActivity.Companion.TRAINING_ID_KEY
-import com.lukasz.witkowski.training.wearable.StartTrainingActivity.Companion.TRAINING_TITLE_KEY
-import com.lukasz.witkowski.training.wearable.TrainingsAdapter
+import com.lukasz.witkowski.training.wearable.startTraining.StartTrainingActivity
+import com.lukasz.witkowski.training.wearable.startTraining.StartTrainingActivity.Companion.TRAINING_ID_KEY
+import com.lukasz.witkowski.training.wearable.startTraining.StartTrainingActivity.Companion.TRAINING_TITLE_KEY
 import com.lukasz.witkowski.training.wearable.databinding.ActivityTrainingsListBinding
-import com.lukasz.witkowski.training.wearable.trainingsList
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

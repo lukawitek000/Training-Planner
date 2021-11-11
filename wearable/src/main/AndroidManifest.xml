@@ -14,14 +14,14 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
         <activity
-            android:name=".TrainingSummaryActivity"
+            android:name=".summary.TrainingSummaryActivity"
             android:exported="false" />
         <activity
             android:name=".currentTraining.CurrentTrainingActivity"
             android:noHistory="true"
             android:exported="false" />
         <activity
-            android:name=".StartTrainingActivity"
+            android:name=".startTraining.StartTrainingActivity"
             android:exported="false"
             android:noHistory="true" />
 

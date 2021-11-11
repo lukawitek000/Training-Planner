@@ -2,13 +2,17 @@ package com.lukasz.witkowski.training.wearable.currentTraining
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class CurrentTrainingViewModel : ViewModel() {
+@HiltViewModel
+class CurrentTrainingViewModel
+@Inject constructor(private val savedStateHandle: SavedStateHandle) : ViewModel() {
 
-    private val _currentTrainingState = MutableLiveData<CurrentTrainingState>(CurrentTrainingState.ExerciseState)
+    private val _currentTrainingState =
+        MutableLiveData<CurrentTrainingState>(CurrentTrainingState.ExerciseState)
     val currentTrainingState: LiveData<CurrentTrainingState>
         get() = _currentTrainingState
 
@@ -23,8 +27,6 @@ class CurrentTrainingViewModel : ViewModel() {
     fun navigateToTrainingSummary() {
         _currentTrainingState.value = CurrentTrainingState.SummaryState
     }
-
-
 
 
 }

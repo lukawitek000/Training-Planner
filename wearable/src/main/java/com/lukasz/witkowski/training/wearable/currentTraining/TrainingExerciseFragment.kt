@@ -8,8 +8,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.lukasz.witkowski.training.wearable.R
 import com.lukasz.witkowski.training.wearable.databinding.FragmentTrainingExerciseBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class TrainingExerciseFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingExerciseBinding

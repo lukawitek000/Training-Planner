@@ -7,9 +7,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.lukasz.witkowski.training.wearable.R
-import com.lukasz.witkowski.training.wearable.TrainingSummaryActivity
 import com.lukasz.witkowski.training.wearable.databinding.ActivityCurrentTrainingBinding
+import com.lukasz.witkowski.training.wearable.summary.TrainingSummaryActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CurrentTrainingActivity : FragmentActivity() {
 
     companion object {
