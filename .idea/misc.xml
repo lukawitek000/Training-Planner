@@ -12,8 +12,15 @@
         <entry key="../../../../../../layout/compose-model-1631217617633.xml" value="0.335" />
         <entry key="../../../../../../layout/compose-model-1631290044835.xml" value="0.2766047297297297" />
         <entry key="../../../../../../layout/compose-model-1636220781799.xml" value="0.4473684210526316" />
+        <entry key="../../../../../../layout/compose-model-1636298104293.xml" value="0.45555555555555555" />
+        <entry key="../../../../../../layout/compose-model-1636298917223.xml" value="0.1" />
+        <entry key="../../../../../../layout/compose-model-1636298961643.xml" value="0.27576013513513514" />
+        <entry key="../../../../../../layout/compose-model-1636298965300.xml" value="0.27576013513513514" />
+        <entry key="../../../../../../layout/compose-model-1636298968417.xml" value="0.27576013513513514" />
         <entry key="app/src/main/res/layout/timer_time_picker.xml" value="0.3145833333333333" />
         <entry key="wearable/src/main/res/layout/activity_main.xml" value="1.7607142857142857" />
+        <entry key="wearable/src/main/res/layout/category_list_item.xml" value="2.157142857142857" />
+        <entry key="wearable/src/main/res/layout/training_list_item.xml" value="0.6476683937823834" />
       </map>
     </option>
   </component>
