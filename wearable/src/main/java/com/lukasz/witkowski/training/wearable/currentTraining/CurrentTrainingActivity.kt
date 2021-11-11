@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentTransaction
 import com.lukasz.witkowski.training.wearable.R
 import com.lukasz.witkowski.training.wearable.databinding.ActivityCurrentTrainingBinding
 
@@ -54,6 +55,7 @@ class CurrentTrainingActivity : FragmentActivity() {
 
     private fun navigate(current: Fragment?, destination: Fragment?, destinationTag: String) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
+        setAnimation(fragmentTransaction)
         if (destination != null) {
             fragmentTransaction.show(destination)
         } else {
@@ -67,6 +69,10 @@ class CurrentTrainingActivity : FragmentActivity() {
             fragmentTransaction.hide(current)
         }
         fragmentTransaction.commit()
+    }
+
+    private fun setAnimation(fragmentTransaction: FragmentTransaction) {
+        fragmentTransaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left)
     }
 
     private fun getFragmentInstance(destinationTag: String): Fragment {

@@ -7,16 +7,24 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import com.lukasz.witkowski.training.wearable.R
+import com.lukasz.witkowski.training.wearable.databinding.FragmentTrainingRestTimeBinding
 
 class TrainingRestTimeFragment : Fragment() {
+
+    private lateinit var binding: FragmentTrainingRestTimeBinding
     private val viewModel: CurrentTrainingViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_training_rest_time, container, false)
+    ): View {
+        binding = FragmentTrainingRestTimeBinding.inflate(layoutInflater, container, false)
+
+        binding.skipRestTimeTv.setOnClickListener {
+            viewModel.navigateToTrainingExercise()
+        }
+
+        return binding.root
     }
 
 }
