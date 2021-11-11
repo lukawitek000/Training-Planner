@@ -3,4 +3,5 @@
     <string name="yes">YES</string>
     <string name="no">NO</string>
     <string name="start_training_question">Do you want to start %1$s training?</string>
+    <string name="next">NEXT</string>
 </resources>

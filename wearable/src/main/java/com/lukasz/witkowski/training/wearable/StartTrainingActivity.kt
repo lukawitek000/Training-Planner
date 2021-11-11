@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.wearable
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -45,7 +46,13 @@ class StartTrainingActivity : ComponentActivity() {
             finish()
         }
         binding.yesStartTrainingBtn.setOnClickListener {
-            Toast.makeText(this, "Start training", Toast.LENGTH_SHORT).show()
+            startTraining()
         }
+    }
+
+    private fun startTraining() {
+        val intent = Intent(this, TrainingExerciseActivity::class.java)
+        intent.putExtra(TRAINING_ID_KEY, viewModel.trainingId)
+        startActivity(intent)
     }
 }
