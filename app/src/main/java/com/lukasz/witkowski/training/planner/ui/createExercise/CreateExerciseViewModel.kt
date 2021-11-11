@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import androidx.lifecycle.*
 import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.Exercise
-import com.lukasz.witkowski.shared.models.dummyExerciseList
 import com.lukasz.witkowski.shared.utils.allCategories
 import com.lukasz.witkowski.training.planner.repository.ExerciseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

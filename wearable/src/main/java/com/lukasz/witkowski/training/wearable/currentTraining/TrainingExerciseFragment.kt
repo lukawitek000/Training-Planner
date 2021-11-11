@@ -73,7 +73,7 @@ class TrainingExerciseFragment : Fragment() {
     }
 
     private fun setTimerButtonIcon(isTimerRunning: Boolean = false) {
-        val icon = if(isTimerRunning) R.drawable.ic_play_arrow else R.drawable.ic_pause
+        val icon = if(isTimerRunning) R.drawable.ic_pause else R.drawable.ic_play_arrow
         binding.startPauseTimerBtn.setImageDrawable(
             ContextCompat.getDrawable(
                 requireContext(),
