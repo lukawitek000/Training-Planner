@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.wearable.repo.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -32,6 +33,11 @@ class CurrentTrainingViewModel
     val currentExercise : LiveData<TrainingExercise>
         get() = _currentExercise
     private var currentExerciseIndex = 0
+    private var exerciseTime = 0L
+    private val _currentExerciseTime = MutableLiveData<Long>(0L)
+    val currentExerciseTime : LiveData<Long>
+        get() = _currentExerciseTime
+
 
     private var restTime = 0L
     private val _currentRestTime = MutableLiveData<Long>(0L)
@@ -48,6 +54,7 @@ class CurrentTrainingViewModel
 
     fun navigateToTrainingRestTime() {
         _currentTrainingState.value = CurrentTrainingState.RestTimeState
+        cancelExerciseTimer()
         startRestTimer()
     }
 
@@ -66,6 +73,12 @@ class CurrentTrainingViewModel
     private fun setNewCurrentExercise() {
         _currentExercise.value = trainingWithExercises!!.exercises[currentExerciseIndex]
         setNewRestTime()
+        setNewExerciseTime()
+    }
+
+    private fun setNewExerciseTime() {
+        exerciseTime = _currentExercise.value!!.time
+        _currentExerciseTime.value = exerciseTime
     }
 
     private fun setNewRestTime() {
@@ -89,7 +102,7 @@ class CurrentTrainingViewModel
     private var timer : CountDownTimer? = null
 
     fun startRestTimer() {
-        timer = object : CountDownTimer(restTime, 1000) {
+        timer = object : CountDownTimer(restTime, TimeFormatter.MILLIS_IN_SECONDS) {
             override fun onTick(millisUntilFinished: Long) {
                 Timber.d("Tick $millisUntilFinished")
                 _currentRestTime.value = millisUntilFinished
@@ -112,6 +125,32 @@ class CurrentTrainingViewModel
     override fun onCleared() {
         super.onCleared()
         cancelRestTimer()
+        cancelExerciseTimer()
+    }
+
+    fun startExerciseTimer() {
+        timer = object : CountDownTimer(exerciseTime, TimeFormatter.MILLIS_IN_SECONDS) {
+            override fun onTick(millisUntilFinished: Long) {
+                _currentExerciseTime.value = millisUntilFinished
+            }
+
+            override fun onFinish() {
+                timer = null
+                navigateToTrainingRestTime()
+            }
+
+        }.start()
+        isExerciseTimerRunning = true
+    }
+
+
+    private fun cancelExerciseTimer() {
+        timer?.cancel()
+        isExerciseTimerRunning = false
+    }
+
+    fun pauseExerciseTimer() {
+        // Pause timer
     }
 
 

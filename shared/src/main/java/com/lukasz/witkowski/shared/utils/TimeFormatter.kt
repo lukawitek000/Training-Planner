@@ -2,8 +2,8 @@ package com.lukasz.witkowski.shared.utils
 
 object TimeFormatter {
 
-    const val SECONDS_IN_MINUTE = 60
-    const val MILLIS_IN_SECONDS = 1000
+    const val SECONDS_IN_MINUTE = 60L
+    const val MILLIS_IN_SECONDS = 1000L
 
     fun millisToMinutesSeconds(millis: Long): String {
         val (minutes, seconds) = calculateMinutesAndSeconds(millis)

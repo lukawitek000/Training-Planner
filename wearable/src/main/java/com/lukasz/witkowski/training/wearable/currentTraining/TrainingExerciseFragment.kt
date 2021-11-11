@@ -28,9 +28,16 @@ class TrainingExerciseFragment : Fragment() {
         observeCurrentExercise()
         setPlayButtonListener()
         setNextExerciseButtonListener()
+        observeExerciseTimer()
         Timber.d("on Create trauubg exercise")
 
         return binding.root
+    }
+
+    private fun observeExerciseTimer() {
+        viewModel.currentExerciseTime.observe(viewLifecycleOwner) {
+            binding.timerTv.text = TimeFormatter.millisToTimer(it)
+        }
     }
 
     private fun setNextExerciseButtonListener() {
@@ -44,6 +51,9 @@ class TrainingExerciseFragment : Fragment() {
             setOnClickListener {
                 viewModel.isExerciseTimerRunning = !viewModel.isExerciseTimerRunning
                 setTimerButtonIcon(viewModel.isExerciseTimerRunning)
+                if(viewModel.isExerciseTimerRunning){
+                    viewModel.startExerciseTimer()
+                }
             }
         }
     }
