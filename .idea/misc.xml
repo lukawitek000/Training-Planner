@@ -18,7 +18,9 @@
         <entry key="../../../../../../layout/compose-model-1636298965300.xml" value="0.27576013513513514" />
         <entry key="../../../../../../layout/compose-model-1636298968417.xml" value="0.27576013513513514" />
         <entry key="app/src/main/res/layout/timer_time_picker.xml" value="0.3145833333333333" />
+        <entry key="wearable/src/main/res/drawable/button_shape.xml" value="1.7571428571428571" />
         <entry key="wearable/src/main/res/layout/activity_main.xml" value="1.7607142857142857" />
+        <entry key="wearable/src/main/res/layout/activity_start_training.xml" value="0.7392739273927392" />
         <entry key="wearable/src/main/res/layout/category_list_item.xml" value="2.157142857142857" />
         <entry key="wearable/src/main/res/layout/training_list_item.xml" value="0.6476683937823834" />
       </map>

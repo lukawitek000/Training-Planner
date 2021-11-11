@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/box_inset_layout_padding"
+    android:background="@color/background_gray"
+    tools:context=".StartTrainingActivity"
+    tools:deviceIds="wear">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="@dimen/inner_layout_padding"
+            app:layout_boxedEdges="all">
+
+            <TextView
+                android:id="@+id/start_training_question_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_size"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                tools:text="Do you want to start xxxx training?" />
+
+            <Button
+                android:id="@+id/yes_start_training_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_size"
+                android:text="@string/yes"
+                android:background="@drawable/button_shape"
+                android:backgroundTint="@color/orange" />
+
+            <Button
+                android:id="@+id/no_start_training_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_size"
+                android:text="@string/no"
+                android:background="@drawable/button_shape"
+                android:backgroundTint="@color/gray" />
+        </LinearLayout>
+</androidx.wear.widget.BoxInsetLayout>

@@ -38,7 +38,7 @@ val trainingsList = listOf<TrainingWithExercises>(
         )
     ),
     TrainingWithExercises(
-        Training(1L, "Training 2", "Some description of training 2"),
+        Training(2L, "Training 2", "Some description of training 2"),
         listOf(
             TrainingExercise(
                 0L, 1L,
@@ -68,7 +68,7 @@ val trainingsList = listOf<TrainingWithExercises>(
         )
     ),
     TrainingWithExercises(
-        Training(1L, "Training 31", "Some description of training 31"),
+        Training(3L, "Training 31", "Some description of training 31"),
         listOf(
             TrainingExercise(
                 0L, 1L,
@@ -98,7 +98,7 @@ val trainingsList = listOf<TrainingWithExercises>(
         )
     ),
     TrainingWithExercises(
-        Training(1L, "Training 4", "Some description of training 4"),
+        Training(4L, "Training 4", "Some description of training 4"),
         listOf(
             TrainingExercise(
                 0L, 1L,
@@ -128,7 +128,7 @@ val trainingsList = listOf<TrainingWithExercises>(
         )
     ),
     TrainingWithExercises(
-        Training(1L, "Training 5", "Some description of training 5"),
+        Training(5L, "Training 5", "Some description of training 5"),
         listOf(
             TrainingExercise(
                 0L, 1L,

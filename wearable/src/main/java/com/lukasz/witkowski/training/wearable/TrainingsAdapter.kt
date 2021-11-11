@@ -10,7 +10,7 @@ import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.training.wearable.databinding.TrainingListItemBinding
 
-class TrainingsAdapter :
+class TrainingsAdapter(private val onTrainingClicked: (Long, String) -> Unit) :
     ListAdapter<TrainingWithExercises, TrainingsAdapter.TrainingsViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrainingsViewHolder {
@@ -30,6 +30,9 @@ class TrainingsAdapter :
             binding.trainingNameTv.text = item.training.title
             val categories = item.exercises.map { it.exercise.category }
             setUpCategoriesRecyclerView(categories)
+            binding.root.setOnClickListener {
+                onTrainingClicked(item.training.id, item.training.title)
+            }
         }
 
         private fun setUpCategoriesRecyclerView(categories: List<Category>) {
