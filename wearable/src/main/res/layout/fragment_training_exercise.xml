@@ -50,19 +50,20 @@
             android:text="Sets: 3"
             android:textColor="@color/light_orange"
             android:textSize="11sp"
+            app:layout_constraintBottom_toBottomOf="@+id/repetitions_tv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/repetitions_tv"
-            app:layout_constraintTop_toBottomOf="@+id/exercise_name_tv" />
+            app:layout_constraintTop_toTopOf="@+id/repetitions_tv" />
 
         <TextView
             android:id="@+id/timer_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="01:30"
             android:textColor="@color/white"
             android:textSize="34sp"
-            app:layout_constraintBottom_toTopOf="@+id/next_btn"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/repetitions_tv" />
 
@@ -88,7 +89,8 @@
             android:text="@string/next"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/timer_tv" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.wear.widget.BoxInsetLayout>
