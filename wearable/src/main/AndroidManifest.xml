@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.DeviceDefault">
         <activity
-            android:name=".TrainingExerciseActivity"
+            android:name=".currentTraining.CurrentTrainingActivity"
             android:exported="false" />
         <activity
             android:name=".StartTrainingActivity"

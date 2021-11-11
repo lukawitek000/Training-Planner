@@ -2,9 +2,9 @@ package com.lukasz.witkowski.training.wearable
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
+import com.lukasz.witkowski.training.wearable.currentTraining.CurrentTrainingActivity
 import com.lukasz.witkowski.training.wearable.databinding.ActivityStartTrainingBinding
 
 class StartTrainingActivity : ComponentActivity() {
@@ -51,7 +51,7 @@ class StartTrainingActivity : ComponentActivity() {
     }
 
     private fun startTraining() {
-        val intent = Intent(this, TrainingExerciseActivity::class.java)
+        val intent = Intent(this, CurrentTrainingActivity::class.java)
         intent.putExtra(TRAINING_ID_KEY, viewModel.trainingId)
         startActivity(intent)
     }
