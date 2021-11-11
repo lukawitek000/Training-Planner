@@ -103,27 +103,27 @@ val trainingsList = listOf<TrainingWithExercises>(
             TrainingExercise(
                 0L, 1L,
                 Exercise(0L, "Name exercise 41", "Exercise description4 1", Category.Biceps),
-                10, 3, 0L
+                10, 3, 0L,10000L
             ),
             TrainingExercise(
                 0L, 1L,
                 Exercise(0L, "Name exercise 42", "Exercise description4 2", Category.Abs),
-                15, 3, 600L
+                15, 3, 600L,200L
             ),
             TrainingExercise(
                 0L, 1L,
                 Exercise(0L, "Name exercise 43", "Exercise description 43", Category.Cardio),
-                10, 3, 1000L
+                10, 3, 1000L,30000L
             ),
             TrainingExercise(
                 0L, 1L,
                 Exercise(0L, "Name exercise 44", "Exercise description4 4", Category.Legs),
-                100, 1, 0L
+                100, 1, 0L,60000L
             ),
             TrainingExercise(
                 0L, 1L,
                 Exercise(0L, "Name exercise4 5", "Exercise description 45", Category.Biceps),
-                10, 3, 0L
+                10, 3, 0L,10000L
             )
         )
     ),
@@ -133,27 +133,27 @@ val trainingsList = listOf<TrainingWithExercises>(
             TrainingExercise(
                 0L, 1L,
                 Exercise(0L, "Name exercise5 1", "Exercise description 51", Category.Biceps),
-                10, 3, 0L
+                10, 3, 0L, 6000L
             ),
             TrainingExercise(
                 0L, 1L,
                 Exercise(0L, "Name exercise 52", "Exercise description 52", Category.Abs),
-                15, 3, 600L
+                15, 3, 600L, 10000L
             ),
             TrainingExercise(
                 0L, 1L,
                 Exercise(0L, "Name exercise 53", "Exercise description 53", Category.Cardio),
-                10, 3, 1000L
+                10, 3, 1000L, 60000L
             ),
             TrainingExercise(
                 0L, 1L,
                 Exercise(0L, "Name exercise 54", "Exercise description 54", Category.Legs),
-                100, 1, 0L
+                100, 1, 0L, 20000L
             ),
             TrainingExercise(
                 0L, 1L,
                 Exercise(0L, "Name exercise 55", "Exercise description 55", Category.Biceps),
-                10, 3, 0L
+                10, 3, 0L, 30000L
             )
         )
     )

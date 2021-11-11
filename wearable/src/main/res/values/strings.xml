@@ -4,6 +4,7 @@
     <string name="no">NO</string>
     <string name="start_training_question">Do you want to start %1$s training?</string>
     <string name="next">NEXT</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="reps_text">Reps: %1$d</string>
+    <string name="sets_text">Sets: %1$d</string>
+    <string name="play_or_pause_control_button">Play or pause control button</string>
 </resources>

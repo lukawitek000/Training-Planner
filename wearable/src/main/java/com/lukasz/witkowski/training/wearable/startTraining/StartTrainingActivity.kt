@@ -34,9 +34,10 @@ class StartTrainingActivity : ComponentActivity() {
         val trainingTitle = intent.extras?.getString(TRAINING_TITLE_KEY)
         if (trainingId == null || trainingTitle == null) {
             finish()
+            return
         }
-        viewModel.trainingId = trainingId!!
-        viewModel.trainingTitle = trainingTitle!!
+        viewModel.trainingId = trainingId
+        viewModel.trainingTitle = trainingTitle
     }
 
     private fun setQuestionText() {

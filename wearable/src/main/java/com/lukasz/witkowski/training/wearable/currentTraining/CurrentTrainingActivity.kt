@@ -8,8 +8,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.lukasz.witkowski.training.wearable.R
 import com.lukasz.witkowski.training.wearable.databinding.ActivityCurrentTrainingBinding
+import com.lukasz.witkowski.training.wearable.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.wearable.summary.TrainingSummaryActivity
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class CurrentTrainingActivity : FragmentActivity() {
@@ -29,6 +31,16 @@ class CurrentTrainingActivity : FragmentActivity() {
         setContentView(binding.root)
         navigateToState(CurrentTrainingState.ExerciseState)
         observeNavigation()
+        fetchTrainingInformation()
+    }
+
+    private fun fetchTrainingInformation() {
+        val trainingId = intent.extras?.getLong(StartTrainingActivity.TRAINING_ID_KEY)
+        if(trainingId == null) {
+            finish()
+            return
+        }
+        viewModel.fetchTraining(trainingId)
     }
 
     private fun observeNavigation() {
