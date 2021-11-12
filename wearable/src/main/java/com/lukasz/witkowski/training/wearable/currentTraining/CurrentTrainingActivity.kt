@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.wearable.R
 import com.lukasz.witkowski.training.wearable.databinding.ActivityCurrentTrainingBinding
 import com.lukasz.witkowski.training.wearable.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.wearable.summary.TrainingSummaryActivity
+import com.lukasz.witkowski.training.wearable.summary.TrainingSummaryActivity.Companion.TRAINING_TIME_KEY
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -102,6 +103,7 @@ class CurrentTrainingActivity : FragmentActivity() {
         val intent = Intent(this, TrainingSummaryActivity::class.java)
         // TODO How to pass training summary?
         // Maybe only values displayed on the summary screen?
+        intent.putExtra(TRAINING_TIME_KEY, viewModel.trainingTime)
         startActivity(intent)
     }
 }

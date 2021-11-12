@@ -21,7 +21,7 @@
             android:id="@+id/summary_title_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Summary"
+            android:text="@string/summary"
             android:textAlignment="center"
             android:textColor="@color/orange"
             android:textSize="24sp"

@@ -20,6 +20,10 @@ class CurrentTrainingViewModel
     private val trainingRepository: TrainingRepository
 ) : ViewModel() {
 
+    private val startTrainingTime = System.currentTimeMillis()
+    var trainingTime = 0L
+        private set
+
     private val _currentTrainingState =
         MutableLiveData<CurrentTrainingState>(CurrentTrainingState.ExerciseState)
     val currentTrainingState: LiveData<CurrentTrainingState>
@@ -56,6 +60,7 @@ class CurrentTrainingViewModel
     }
 
     fun navigateToTrainingSummary() {
+        trainingTime = System.currentTimeMillis() - startTrainingTime
         _currentTrainingState.value = CurrentTrainingState.SummaryState
     }
 
