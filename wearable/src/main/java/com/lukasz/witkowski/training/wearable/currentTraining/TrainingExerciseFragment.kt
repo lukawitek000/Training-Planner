@@ -31,7 +31,6 @@ class TrainingExerciseFragment : Fragment() {
         setPlayButtonListener()
         setNextExerciseButtonListener()
         observeExerciseTimer()
-        Timber.d("on Create TrainingExerciseFragment")
 
         return binding.root
     }
@@ -41,7 +40,7 @@ class TrainingExerciseFragment : Fragment() {
             binding.timerTv.text = TimeFormatter.millisToTimer(it)
         }
         timerViewModel.timerFinished.observe(viewLifecycleOwner) {
-            if(it) {
+            if (it) {
                 setTimerButtonIcon(isTimerRunning = false)
                 // TODO Some sound / vibration that timer has finished
             }
@@ -57,11 +56,11 @@ class TrainingExerciseFragment : Fragment() {
 
     private fun setPlayButtonListener() {
         binding.startPauseTimerBtn.setOnClickListener {
-            if(!timerViewModel.isRunning && !timerViewModel.isPaused) {
+            if (!timerViewModel.isRunning && !timerViewModel.isPaused) {
                 timerViewModel.startTimer(viewModel.exerciseTime)
             } else if (timerViewModel.isPaused) {
                 timerViewModel.resumeTimer()
-            } else if(timerViewModel.isRunning) {
+            } else if (timerViewModel.isRunning) {
                 timerViewModel.pauseTimer()
             }
             setTimerButtonIcon(timerViewModel.isRunning)

@@ -1,19 +1,16 @@
 package com.lukasz.witkowski.training.wearable.currentTraining
 
-import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.wearable.repo.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -21,7 +18,7 @@ class CurrentTrainingViewModel
 @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val trainingRepository: TrainingRepository
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val _currentTrainingState =
         MutableLiveData<CurrentTrainingState>(CurrentTrainingState.ExerciseState)
@@ -30,7 +27,7 @@ class CurrentTrainingViewModel
 
     private var trainingWithExercises: TrainingWithExercises? = null
     private val _currentExercise = MutableLiveData<TrainingExercise>()
-    val currentExercise : LiveData<TrainingExercise>
+    val currentExercise: LiveData<TrainingExercise>
         get() = _currentExercise
     private var currentExerciseIndex = 0
     var exerciseTime = 0L
@@ -43,7 +40,7 @@ class CurrentTrainingViewModel
 
     fun navigateToTrainingExercise() {
         val isNextExercise = getNextExercise()
-        if(isNextExercise) {
+        if (isNextExercise) {
             _currentTrainingState.value = CurrentTrainingState.ExerciseState
         } else {
             navigateToTrainingSummary()
@@ -51,7 +48,7 @@ class CurrentTrainingViewModel
     }
 
     fun navigateToTrainingRestTime() {
-        if(restTime >= TimeFormatter.MILLIS_IN_SECONDS) {
+        if (restTime >= TimeFormatter.MILLIS_IN_SECONDS) {
             _currentTrainingState.value = CurrentTrainingState.RestTimeState
         } else {
             navigateToTrainingExercise()
@@ -77,22 +74,25 @@ class CurrentTrainingViewModel
     }
 
     // Returns false if there isn't next exercise
-    private fun getNextExercise() : Boolean{
+    private fun getNextExercise(): Boolean {
         val nextExerciseIndex = currentExerciseIndex + 1
-        if (nextExerciseIndex >= trainingWithExercises!!.exercises.size){
+        if (nextExerciseIndex >= trainingWithExercises!!.exercises.size) {
             currentExerciseIndex = 0
             currentSet++
         } else {
             currentExerciseIndex++
         }
         val nextExercise = trainingWithExercises!!.exercises[currentExerciseIndex]
-        if(nextExercise.sets >= currentSet) {
+        if (nextExercise.sets >= currentSet) {
             setNewCurrentExercise()
-        } else if(!trainingWithExercises!!.exercises.any { it.sets >= currentSet }) {
+        } else if (!isAnyExerciseLeft()) {
             return false
         } else {
             getNextExercise()
         }
         return true
     }
+
+    private fun isAnyExerciseLeft() =
+        trainingWithExercises!!.exercises.any { it.sets >= currentSet }
 }

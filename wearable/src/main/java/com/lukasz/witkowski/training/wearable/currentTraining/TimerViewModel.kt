@@ -7,24 +7,23 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import dagger.hilt.android.lifecycle.HiltViewModel
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class TimerViewModel
 @Inject constructor(
     private val savedStateHandle: SavedStateHandle
-) : ViewModel(){
+) : ViewModel() {
 
     private var millisLeft = 0L
-    private var timer : CountDownTimer? = null
+    private var timer: CountDownTimer? = null
 
     private val _timeLeft = MutableLiveData(0L)
     val timeLeft: LiveData<Long>
         get() = _timeLeft
 
     private val _timerFinished = MutableLiveData(false)
-    val timerFinished : LiveData<Boolean>
+    val timerFinished: LiveData<Boolean>
         get() = _timerFinished
 
     var isRunning: Boolean = false
@@ -32,7 +31,6 @@ class TimerViewModel
 
     var isPaused: Boolean = false
         private set
-
 
     fun startTimer(time: Long) {
         timer = object : CountDownTimer(time, TimeFormatter.MILLIS_IN_SECONDS) {
@@ -73,11 +71,5 @@ class TimerViewModel
     override fun onCleared() {
         super.onCleared()
         cancelTimer()
-        Timber.d("On cleared timer view modedl")
     }
-
-    init {
-        Timber.d("Init timer view model")
-    }
-
 }

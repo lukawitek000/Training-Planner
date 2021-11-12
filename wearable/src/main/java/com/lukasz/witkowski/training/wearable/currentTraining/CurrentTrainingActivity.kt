@@ -11,7 +11,6 @@ import com.lukasz.witkowski.training.wearable.databinding.ActivityCurrentTrainin
 import com.lukasz.witkowski.training.wearable.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.wearable.summary.TrainingSummaryActivity
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class CurrentTrainingActivity : FragmentActivity() {
@@ -36,7 +35,7 @@ class CurrentTrainingActivity : FragmentActivity() {
 
     private fun fetchTrainingInformation() {
         val trainingId = intent.extras?.getLong(StartTrainingActivity.TRAINING_ID_KEY)
-        if(trainingId == null) {
+        if (trainingId == null) {
             finish()
             return
         }
