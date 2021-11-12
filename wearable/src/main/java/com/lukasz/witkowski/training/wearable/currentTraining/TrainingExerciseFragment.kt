@@ -1,12 +1,13 @@
 package com.lukasz.witkowski.training.wearable.currentTraining
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.wearable.R
@@ -19,6 +20,7 @@ class TrainingExerciseFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingExerciseBinding
     private val viewModel: CurrentTrainingViewModel by activityViewModels()
+    private val timerViewModel: TimerViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,32 +31,36 @@ class TrainingExerciseFragment : Fragment() {
         setPlayButtonListener()
         setNextExerciseButtonListener()
         observeExerciseTimer()
-        Timber.d("on Create trauubg exercise")
 
         return binding.root
     }
 
     private fun observeExerciseTimer() {
-        viewModel.currentExerciseTime.observe(viewLifecycleOwner) {
+        timerViewModel.timeLeft.observe(viewLifecycleOwner) {
             binding.timerTv.text = TimeFormatter.millisToTimer(it)
+            if(it <= 0L) {
+                setTimerButtonIcon(isTimerRunning = false)
+            }
         }
     }
 
     private fun setNextExerciseButtonListener() {
         binding.nextBtn.setOnClickListener {
             viewModel.navigateToTrainingRestTime()
+            timerViewModel.cancelTimer()
         }
     }
 
     private fun setPlayButtonListener() {
-        binding.startPauseTimerBtn.apply {
-            setOnClickListener {
-                viewModel.isExerciseTimerRunning = !viewModel.isExerciseTimerRunning
-                setTimerButtonIcon(viewModel.isExerciseTimerRunning)
-                if(viewModel.isExerciseTimerRunning){
-                    viewModel.startExerciseTimer()
-                }
+        binding.startPauseTimerBtn.setOnClickListener {
+            if(!timerViewModel.isRunning && !timerViewModel.isPaused) {
+                timerViewModel.startTimer(viewModel.exerciseTime)
+            } else if (timerViewModel.isPaused) {
+                timerViewModel.resumeTimer()
+            } else if(timerViewModel.isRunning) {
+                timerViewModel.pauseTimer()
             }
+            setTimerButtonIcon(timerViewModel.isRunning)
         }
     }
 
@@ -70,7 +76,7 @@ class TrainingExerciseFragment : Fragment() {
         binding.setsTv.text = getString(R.string.sets_text, trainingExercise.sets)
         val time = trainingExercise.time
         binding.apply {
-            if(time == 0L){
+            if (time == 0L) {
                 timerTv.visibility = View.GONE
                 startPauseTimerBtn.visibility = View.GONE
             } else {
@@ -83,7 +89,7 @@ class TrainingExerciseFragment : Fragment() {
     }
 
     private fun setTimerButtonIcon(isTimerRunning: Boolean = false) {
-        val icon = if(isTimerRunning) R.drawable.ic_pause else R.drawable.ic_play_arrow
+        val icon = if (isTimerRunning) R.drawable.ic_pause else R.drawable.ic_play_arrow
         binding.startPauseTimerBtn.setImageDrawable(
             ContextCompat.getDrawable(
                 requireContext(),

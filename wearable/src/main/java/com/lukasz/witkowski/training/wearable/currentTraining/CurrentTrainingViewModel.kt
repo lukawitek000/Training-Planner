@@ -33,18 +33,13 @@ class CurrentTrainingViewModel
     val currentExercise : LiveData<TrainingExercise>
         get() = _currentExercise
     private var currentExerciseIndex = 0
-    private var exerciseTime = 0L
-    private val _currentExerciseTime = MutableLiveData<Long>(0L)
-    val currentExerciseTime : LiveData<Long>
-        get() = _currentExerciseTime
-
+    var exerciseTime = 0L
+        private set
 
     private var restTime = 0L
     private val _currentRestTime = MutableLiveData<Long>(0L)
     val currentRestTime : LiveData<Long>
         get() = _currentRestTime
-
-    var isExerciseTimerRunning = false
 
     fun navigateToTrainingExercise() {
         _currentTrainingState.value = CurrentTrainingState.ExerciseState
@@ -54,7 +49,6 @@ class CurrentTrainingViewModel
 
     fun navigateToTrainingRestTime() {
         _currentTrainingState.value = CurrentTrainingState.RestTimeState
-        cancelExerciseTimer()
         startRestTimer()
     }
 
@@ -72,13 +66,8 @@ class CurrentTrainingViewModel
 
     private fun setNewCurrentExercise() {
         _currentExercise.value = trainingWithExercises!!.exercises[currentExerciseIndex]
+        exerciseTime = _currentExercise.value?.time ?: 0L
         setNewRestTime()
-        setNewExerciseTime()
-    }
-
-    private fun setNewExerciseTime() {
-        exerciseTime = _currentExercise.value!!.time
-        _currentExerciseTime.value = exerciseTime
     }
 
     private fun setNewRestTime() {
@@ -125,33 +114,5 @@ class CurrentTrainingViewModel
     override fun onCleared() {
         super.onCleared()
         cancelRestTimer()
-        cancelExerciseTimer()
     }
-
-    fun startExerciseTimer() {
-        timer = object : CountDownTimer(exerciseTime, TimeFormatter.MILLIS_IN_SECONDS) {
-            override fun onTick(millisUntilFinished: Long) {
-                _currentExerciseTime.value = millisUntilFinished
-            }
-
-            override fun onFinish() {
-                timer = null
-                navigateToTrainingRestTime()
-            }
-
-        }.start()
-        isExerciseTimerRunning = true
-    }
-
-
-    private fun cancelExerciseTimer() {
-        timer?.cancel()
-        isExerciseTimerRunning = false
-    }
-
-    fun pauseExerciseTimer() {
-        // Pause timer
-    }
-
-
 }
