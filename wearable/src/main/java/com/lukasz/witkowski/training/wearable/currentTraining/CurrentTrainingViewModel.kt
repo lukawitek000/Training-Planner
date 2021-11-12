@@ -36,20 +36,16 @@ class CurrentTrainingViewModel
     var exerciseTime = 0L
         private set
 
-    private var restTime = 0L
-    private val _currentRestTime = MutableLiveData<Long>(0L)
-    val currentRestTime : LiveData<Long>
-        get() = _currentRestTime
+    var restTime = 0L
+        private set
 
     fun navigateToTrainingExercise() {
         _currentTrainingState.value = CurrentTrainingState.ExerciseState
-        cancelRestTimer()
         getNextExercise()
     }
 
     fun navigateToTrainingRestTime() {
         _currentTrainingState.value = CurrentTrainingState.RestTimeState
-        startRestTimer()
     }
 
     fun navigateToTrainingSummary() {
@@ -67,14 +63,8 @@ class CurrentTrainingViewModel
     private fun setNewCurrentExercise() {
         _currentExercise.value = trainingWithExercises!!.exercises[currentExerciseIndex]
         exerciseTime = _currentExercise.value?.time ?: 0L
-        setNewRestTime()
+        restTime = _currentExercise.value?.restTime ?: 0L
     }
-
-    private fun setNewRestTime() {
-        restTime = _currentExercise.value!!.restTime
-        _currentRestTime.value = restTime
-    }
-
 
     private fun getNextExercise() {
         val nextExerciseIndex = currentExerciseIndex + 1
@@ -84,35 +74,5 @@ class CurrentTrainingViewModel
             currentExerciseIndex++
         }
         setNewCurrentExercise()
-    }
-
-
-
-    private var timer : CountDownTimer? = null
-
-    fun startRestTimer() {
-        timer = object : CountDownTimer(restTime, TimeFormatter.MILLIS_IN_SECONDS) {
-            override fun onTick(millisUntilFinished: Long) {
-                Timber.d("Tick $millisUntilFinished")
-                _currentRestTime.value = millisUntilFinished
-            }
-
-            override fun onFinish() {
-                Timber.d("Finished")
-                timer = null
-                navigateToTrainingExercise()
-            }
-
-        }.start()
-    }
-
-
-    private fun cancelRestTimer() {
-        timer?.cancel()
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        cancelRestTimer()
     }
 }

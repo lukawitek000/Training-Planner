@@ -31,6 +31,7 @@ class TrainingExerciseFragment : Fragment() {
         setPlayButtonListener()
         setNextExerciseButtonListener()
         observeExerciseTimer()
+        Timber.d("on Create TrainingExerciseFragment")
 
         return binding.root
     }
@@ -38,8 +39,11 @@ class TrainingExerciseFragment : Fragment() {
     private fun observeExerciseTimer() {
         timerViewModel.timeLeft.observe(viewLifecycleOwner) {
             binding.timerTv.text = TimeFormatter.millisToTimer(it)
-            if(it <= 0L) {
+        }
+        timerViewModel.timerFinished.observe(viewLifecycleOwner) {
+            if(it) {
                 setTimerButtonIcon(isTimerRunning = false)
+                // TODO Some sound / vibration that timer has finished
             }
         }
     }

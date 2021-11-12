@@ -23,6 +23,10 @@ class TimerViewModel
     val timeLeft: LiveData<Long>
         get() = _timeLeft
 
+    private val _timerFinished = MutableLiveData(false)
+    val timerFinished : LiveData<Boolean>
+        get() = _timerFinished
+
     var isRunning: Boolean = false
         private set
 
@@ -35,12 +39,14 @@ class TimerViewModel
             override fun onTick(millisUntilFinished: Long) {
                 millisLeft = millisUntilFinished
                 _timeLeft.value = millisLeft
+                _timerFinished.value = false
             }
 
             override fun onFinish() {
                 timer = null
                 isRunning = false
                 isPaused = false
+                _timerFinished.value = true
             }
         }.start()
         isRunning = true
@@ -66,6 +72,7 @@ class TimerViewModel
 
     override fun onCleared() {
         super.onCleared()
+        cancelTimer()
         Timber.d("On cleared timer view modedl")
     }
 
