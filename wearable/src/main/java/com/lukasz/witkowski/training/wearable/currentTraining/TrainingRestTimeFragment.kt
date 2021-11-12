@@ -68,8 +68,8 @@ class TrainingRestTimeFragment : Fragment() {
     }
 
     private fun exitRestTimeFragment() {
-        viewModel.navigateToTrainingExercise()
         timerViewModel.cancelTimer()
+        viewModel.navigateToTrainingExercise()
     }
 
 }

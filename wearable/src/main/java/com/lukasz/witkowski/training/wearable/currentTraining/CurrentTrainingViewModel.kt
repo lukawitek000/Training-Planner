@@ -39,13 +39,23 @@ class CurrentTrainingViewModel
     var restTime = 0L
         private set
 
+    private var currentSet = 1
+
     fun navigateToTrainingExercise() {
-        _currentTrainingState.value = CurrentTrainingState.ExerciseState
-        getNextExercise()
+        val isNextExercise = getNextExercise()
+        if(isNextExercise) {
+            _currentTrainingState.value = CurrentTrainingState.ExerciseState
+        } else {
+            navigateToTrainingSummary()
+        }
     }
 
     fun navigateToTrainingRestTime() {
-        _currentTrainingState.value = CurrentTrainingState.RestTimeState
+        if(restTime >= TimeFormatter.MILLIS_IN_SECONDS) {
+            _currentTrainingState.value = CurrentTrainingState.RestTimeState
+        } else {
+            navigateToTrainingExercise()
+        }
     }
 
     fun navigateToTrainingSummary() {
@@ -66,13 +76,23 @@ class CurrentTrainingViewModel
         restTime = _currentExercise.value?.restTime ?: 0L
     }
 
-    private fun getNextExercise() {
+    // Returns false if there isn't next exercise
+    private fun getNextExercise() : Boolean{
         val nextExerciseIndex = currentExerciseIndex + 1
         if (nextExerciseIndex >= trainingWithExercises!!.exercises.size){
             currentExerciseIndex = 0
+            currentSet++
         } else {
             currentExerciseIndex++
         }
-        setNewCurrentExercise()
+        val nextExercise = trainingWithExercises!!.exercises[currentExerciseIndex]
+        if(nextExercise.sets >= currentSet) {
+            setNewCurrentExercise()
+        } else if(!trainingWithExercises!!.exercises.any { it.sets >= currentSet }) {
+            return false
+        } else {
+            getNextExercise()
+        }
+        return true
     }
 }
