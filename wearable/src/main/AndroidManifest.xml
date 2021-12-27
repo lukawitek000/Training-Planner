@@ -6,10 +6,6 @@
 
     <uses-feature android:name="android.hardware.type.watch" />
 
-    <queries>
-        <package android:name="com.google.android.wearable.healthservices" />
-    </queries>
-
     <application
         android:name=".TrainingPlannerWearableApplication"
         android:allowBackup="true"

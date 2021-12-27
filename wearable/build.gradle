@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.lukasz.witkowski.training.wearable"
-        minSdk 30
+        minSdk 28
         targetSdk 31
         versionCode 1
         versionName "1.0"
@@ -54,9 +54,4 @@ dependencies {
 
     //Timber
     implementation 'com.jakewharton.timber:timber:5.0.1'
-
-    // Health services
-    implementation "androidx.health:health-services-client:1.0.0-alpha03"
-    // Used to bridge between Futures and coroutines
-    implementation "androidx.concurrent:concurrent-futures-ktx:1.1.0"
 }
