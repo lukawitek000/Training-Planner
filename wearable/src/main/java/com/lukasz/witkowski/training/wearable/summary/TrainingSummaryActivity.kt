@@ -1,10 +1,12 @@
 package com.lukasz.witkowski.training.wearable.summary
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.wearable.R
 import com.lukasz.witkowski.training.wearable.databinding.ActivityTrainingSummaryBinding
+import com.lukasz.witkowski.training.wearable.trainingsList.TrainingsListActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,7 +26,9 @@ class TrainingSummaryActivity : ComponentActivity() {
         val trainingTime = intent.extras?.getLong(TRAINING_TIME_KEY) ?: 0L
         binding.totalTimeTv.text = getString(R.string.total_training_time, TimeFormatter.millisToTime(trainingTime))
         binding.exitTrainingBtn.setOnClickListener {
-            finish()
+            val intent = Intent(this, TrainingsListActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+            startActivity(intent)
         }
     }
 }
