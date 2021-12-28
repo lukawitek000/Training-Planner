@@ -38,7 +38,7 @@ class TrainingRestTimeFragment : Fragment() {
 
     private fun observeState() {
         viewModel.currentTrainingState.observe(viewLifecycleOwner) {
-            if (it == CurrentTrainingState.RestTimeState) {
+            if (it is CurrentTrainingState.RestTimeState) {
                 timerViewModel.startTimer(viewModel.restTime)
             }
         }

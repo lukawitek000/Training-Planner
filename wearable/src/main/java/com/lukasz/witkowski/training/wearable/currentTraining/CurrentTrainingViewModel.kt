@@ -20,6 +20,7 @@ class CurrentTrainingViewModel
     private val trainingRepository: TrainingRepository
 ) : ViewModel() {
 
+    private var trainingId = 0L
     private val startTrainingTime = System.currentTimeMillis()
     var trainingTime = 0L
         private set
@@ -30,6 +31,11 @@ class CurrentTrainingViewModel
         get() = _currentTrainingState
 
     private var trainingWithExercises: TrainingWithExercises? = null
+        set(value) {
+            trainingId = value?.training?.id ?: 0L
+            field = value
+        }
+
     private val _currentExercise = MutableLiveData<TrainingExercise>()
     val currentExercise: LiveData<TrainingExercise>
         get() = _currentExercise

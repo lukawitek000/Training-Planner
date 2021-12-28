@@ -1,8 +1,11 @@
 package com.lukasz.witkowski.training.wearable.currentTraining
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -15,6 +18,7 @@ import com.lukasz.witkowski.training.wearable.startTraining.StartTrainingActivit
 import com.lukasz.witkowski.training.wearable.summary.TrainingSummaryActivity
 import com.lukasz.witkowski.training.wearable.summary.TrainingSummaryActivity.Companion.TRAINING_TIME_KEY
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class CurrentTrainingActivity : FragmentActivity() {
@@ -26,34 +30,57 @@ class CurrentTrainingActivity : FragmentActivity() {
 
     private var serviceConnection = TrainingServiceConnection()
 
+    private lateinit var trainingService: TrainingService
+    private var isBound = false
+    private var trainingId = 0L
+
     private lateinit var binding: ActivityCurrentTrainingBinding
 
     private val viewModel: CurrentTrainingViewModel by viewModels()
+
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            trainingService = (service as TrainingService.LocalBinder).getService()
+            trainingService.setTrainingId(trainingId)
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            isBound = false
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCurrentTrainingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val serviceIntent = Intent(this, TrainingService::class.java)
+        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
+
+        val extras = intent.extras?.getString("NotificationMessage") ?: "No message"
+        Timber.d("Extra data received $extras")
+
         navigateToState(CurrentTrainingState.ExerciseState)
         observeNavigation()
         fetchTrainingInformation()
-
-        val serviceIntent = Intent(this, TrainingService::class.java)
-        bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        unbindService(serviceConnection)
+        unbindService(connection)
     }
 
 
     private fun fetchTrainingInformation() {
         val trainingId = intent.extras?.getLong(StartTrainingActivity.TRAINING_ID_KEY)
+        Timber.d("Received training id $trainingId")
         if (trainingId == null) {
             finish()
             return
         }
+        this.trainingId = trainingId
+
         viewModel.fetchTraining(trainingId)
     }
 
