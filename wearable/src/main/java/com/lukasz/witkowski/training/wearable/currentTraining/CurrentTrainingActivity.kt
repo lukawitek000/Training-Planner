@@ -12,7 +12,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.lukasz.witkowski.training.wearable.R
 import com.lukasz.witkowski.training.wearable.currentTraining.service.TrainingService
-import com.lukasz.witkowski.training.wearable.currentTraining.service.TrainingServiceConnection
 import com.lukasz.witkowski.training.wearable.databinding.ActivityCurrentTrainingBinding
 import com.lukasz.witkowski.training.wearable.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.wearable.summary.TrainingSummaryActivity
@@ -27,8 +26,6 @@ class CurrentTrainingActivity : FragmentActivity() {
         private const val TRAINING_EXERCISE_TAG = "Training exercise"
         private const val TRAINING_REST_TIME_TAG = "Training rest time"
     }
-
-    private var serviceConnection = TrainingServiceConnection()
 
     private lateinit var trainingService: TrainingService
     private var isBound = false
