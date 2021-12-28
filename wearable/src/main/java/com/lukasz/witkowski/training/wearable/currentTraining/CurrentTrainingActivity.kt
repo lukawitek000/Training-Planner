@@ -75,8 +75,6 @@ class CurrentTrainingActivity : FragmentActivity() {
         findViewById<SwipeDismissFrameLayout>(R.id.swipe_dismiss_layout).apply {
             addCallback(object : SwipeDismissFrameLayout.Callback() {
                 override fun onDismissed(layout: SwipeDismissFrameLayout?) {
-                    super.onDismissed(layout)
-                    Timber.d("On dismissed")
                     stopCurrentTrainingService()
                     finish()
                 }
