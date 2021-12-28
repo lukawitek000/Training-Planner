@@ -6,9 +6,7 @@ import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.wearable.currentTraining.CurrentTrainingState
-import com.lukasz.witkowski.training.wearable.repo.CurrentTrainingRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import timber.log.Timber
 
 object CurrentTrainingProgressHelper {
     private lateinit var trainingWithExercises: TrainingWithExercises
@@ -17,6 +15,8 @@ object CurrentTrainingProgressHelper {
 
     private var currentExerciseIndex = 0
     private var currentSet = 1
+    private val trainingId: Long
+        get() = trainingWithExercises.training.id
 
     private val _currentTrainingState = MutableLiveData<CurrentTrainingState>()
     val currentTrainingState: LiveData<CurrentTrainingState> = _currentTrainingState
@@ -29,7 +29,22 @@ object CurrentTrainingProgressHelper {
     fun startTraining(trainingWithExercises: TrainingWithExercises) {
         this.trainingWithExercises = trainingWithExercises
         startTrainingTime = System.currentTimeMillis()
-        _currentTrainingState.value = CurrentTrainingState.ExerciseState(trainingWithExercises.exercises[currentExerciseIndex])
+        if(_currentTrainingState.value == null || _currentTrainingState.value is CurrentTrainingState.SummaryState || isDifferentTrainingRunning()) {
+            val exercise = trainingWithExercises.exercises[currentExerciseIndex]
+            _currentTrainingState.value =
+                CurrentTrainingState.ExerciseState(exercise)
+            restTime = exercise.restTime
+            exerciseTime = exercise.time
+        }
+    }
+
+    private fun isDifferentTrainingRunning(): Boolean {
+        val state = _currentTrainingState.value ?: return true
+        return when(state) {
+            is CurrentTrainingState.ExerciseState -> state.exercise.trainingId != trainingId
+            is CurrentTrainingState.RestTimeState -> state.trainingId != trainingId
+            is CurrentTrainingState.SummaryState -> true
+        }
     }
 
     fun navigateToTrainingExercise() {
@@ -45,18 +60,20 @@ object CurrentTrainingProgressHelper {
 
     fun navigateToTrainingRestTime() {
         if (restTime >= TimeFormatter.MILLIS_IN_SECONDS) {
-            _currentTrainingState.value = CurrentTrainingState.RestTimeState(restTime)
+            _currentTrainingState.value = CurrentTrainingState.RestTimeState(restTime, trainingId)
         } else {
             navigateToTrainingExercise()
         }
     }
+
+
 
     fun navigateToTrainingSummary() {
         resetData()
         _currentTrainingState.value = CurrentTrainingState.SummaryState
     }
 
-    private fun resetData() {
+    fun resetData() {
         currentExerciseIndex = 0
         currentSet = 1
     }

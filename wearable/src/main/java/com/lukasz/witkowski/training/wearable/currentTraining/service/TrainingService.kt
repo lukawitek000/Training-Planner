@@ -93,6 +93,7 @@ class TrainingService : LifecycleService() {
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("onDestroy")
+        currentTrainingProgressHelper.resetData()
     }
 
     override fun onCreate() {

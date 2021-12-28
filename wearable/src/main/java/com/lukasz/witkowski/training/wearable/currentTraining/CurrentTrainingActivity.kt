@@ -6,10 +6,15 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.View
 import androidx.activity.viewModels
+import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
+import androidx.wear.widget.SwipeDismissFrameLayout
 import com.lukasz.witkowski.training.wearable.R
 import com.lukasz.witkowski.training.wearable.currentTraining.service.TrainingService
 import com.lukasz.witkowski.training.wearable.databinding.ActivityCurrentTrainingBinding
@@ -63,6 +68,20 @@ class CurrentTrainingActivity : FragmentActivity() {
 //        navigateToState(CurrentTrainingState.ExerciseState)
 //        observeNavigation()
         fetchTrainingInformation()
+        setOnSwipeListener()
+    }
+
+    private fun setOnSwipeListener() {
+        findViewById<SwipeDismissFrameLayout>(R.id.swipe_dismiss_layout).apply {
+            addCallback(object : SwipeDismissFrameLayout.Callback() {
+                override fun onDismissed(layout: SwipeDismissFrameLayout?) {
+                    super.onDismissed(layout)
+                    Timber.d("On dismissed")
+                    stopCurrentTrainingService()
+                    finish()
+                }
+            })
+        }
     }
 
     override fun onDestroy() {
@@ -144,10 +163,15 @@ class CurrentTrainingActivity : FragmentActivity() {
     }
 
     private fun navigateToSummary() {
+        stopCurrentTrainingService()
         val intent = Intent(this, TrainingSummaryActivity::class.java)
         // TODO How to pass training summary?
         // Maybe only values displayed on the summary screen?
         intent.putExtra(TRAINING_TIME_KEY, viewModel.trainingTime)
         startActivity(intent)
+    }
+
+    private fun stopCurrentTrainingService() {
+        trainingService.stopSelf()
     }
 }
