@@ -10,7 +10,7 @@ import com.lukasz.witkowski.training.wearable.repo.CurrentTrainingRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class CurrentTrainingProgressHelper() {
+object CurrentTrainingProgressHelper {
     private lateinit var trainingWithExercises: TrainingWithExercises
 
     private var startTrainingTime = 0L
