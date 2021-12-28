@@ -88,6 +88,7 @@ class CurrentTrainingActivity : FragmentActivity() {
 //            navigateToState(it)
 //        }
         trainingService.currentTrainingProgressHelper.currentTrainingState.observe(this) {
+            Timber.d("State has changed $it")
             navigateToState(it)
         }
     }

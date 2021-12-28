@@ -57,17 +57,16 @@ object CurrentTrainingProgressHelper {
 
     private fun getNextExercise() : TrainingExercise? {
         val exercises = trainingWithExercises.exercises
-        var i = 1
-        while (currentExerciseIndex + i < exercises.size) {
-            val nextExerciseIndex = if (currentExerciseIndex + i >= exercises.size) {
+
+        while (currentExerciseIndex + 1 < exercises.size) {
+            currentExerciseIndex = if (currentExerciseIndex + 1 >= exercises.size) {
                 break
             } else {
-                currentExerciseIndex + i
+                currentExerciseIndex + 1
             }
-            if (exercises[nextExerciseIndex].sets >= currentSet) {
-                return exercises[nextExerciseIndex]
+            if (exercises[currentExerciseIndex].sets >= currentSet) {
+                return exercises[currentExerciseIndex]
             }
-            i++
         }
         return exercises.firstOrNull {
             it.sets >= currentSet + 1

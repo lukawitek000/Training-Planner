@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.wearable.currentTraining
 
 import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
@@ -53,11 +55,14 @@ class TrainingRestTimeFragment : Fragment() {
 //        observeRestTimer()
 //        observeState()
 
+        val serviceIntent = Intent(requireContext(), TrainingService::class.java)
+        requireActivity().bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
+
         // TODO remove it once everything is working
-        binding.restTimeTv.setOnClickListener {
-//            viewModel.navigateToTrainingSummary()
-            trainingService.currentTrainingProgressHelper.navigateToTrainingSummary()
-        }
+//        binding.restTimeTv.setOnClickListener {
+////            viewModel.navigateToTrainingSummary()
+//            trainingService.currentTrainingProgressHelper.navigateToTrainingSummary()
+//        }
 
         return binding.root
     }

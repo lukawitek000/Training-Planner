@@ -148,7 +148,7 @@ class TrainingExerciseFragment : Fragment() {
 //            viewModel.navigateToTrainingRestTime()
             trainingService.currentTrainingProgressHelper.navigateToTrainingRestTime()
             timerViewModel.cancelTimer()
-            exerciseClient.endExercise()
+//            exerciseClient.endExercise()
         }
     }
 
