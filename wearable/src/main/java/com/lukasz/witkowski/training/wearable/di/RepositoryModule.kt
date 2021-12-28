@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.wearable.di
 
 import com.lukasz.witkowski.shared.db.ExerciseDao
 import com.lukasz.witkowski.shared.db.TrainingDao
+import com.lukasz.witkowski.training.wearable.repo.CurrentTrainingRepository
 import com.lukasz.witkowski.training.wearable.repo.TrainingRepository
 import dagger.Module
 import dagger.Provides
@@ -17,5 +18,11 @@ object RepositoryModule {
     @Provides
     fun provideTrainingRepository(): TrainingRepository {
         return TrainingRepository()
+    }
+
+    @Singleton
+    @Provides
+    fun provideCurrentTrainingRepository(): CurrentTrainingRepository {
+        return CurrentTrainingRepository()
     }
 }

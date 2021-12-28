@@ -18,8 +18,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDeepLinkBuilder
 import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
+import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.training.wearable.R
 import com.lukasz.witkowski.training.wearable.currentTraining.CurrentTrainingActivity
+import com.lukasz.witkowski.training.wearable.repo.CurrentTrainingRepository
 import com.lukasz.witkowski.training.wearable.startTraining.StartTrainingActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -27,9 +29,15 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.Duration
 import java.time.Instant
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class TrainingService : LifecycleService() {
+
+    @Inject
+    lateinit var currentTrainingRepository: CurrentTrainingRepository
+
+    val currentTrainingProgressHelper: CurrentTrainingProgressHelper = CurrentTrainingProgressHelper()
 
     private val localBinder = LocalBinder()
 
@@ -170,9 +178,10 @@ class TrainingService : LifecycleService() {
         }
     }
 
-    fun setTrainingId(trainingId: Long) {
-        this.trainingId = trainingId
-        Timber.d("Set training Id")
+    fun startTraining(trainingWithExercises: TrainingWithExercises) {
+        this.trainingId = trainingWithExercises.training.id
+        Timber.d("Start training")
+        currentTrainingProgressHelper.startTraining(trainingWithExercises)
     }
 
     inner class LocalBinder : Binder() {

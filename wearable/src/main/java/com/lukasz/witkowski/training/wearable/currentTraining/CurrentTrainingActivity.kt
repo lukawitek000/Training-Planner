@@ -38,7 +38,9 @@ class CurrentTrainingActivity : FragmentActivity() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as TrainingService.LocalBinder).getService()
-            trainingService.setTrainingId(trainingId)
+            trainingService.startTraining(viewModel.trainingWithExercises!!)
+            navigateToState(trainingService.currentTrainingProgressHelper.currentTrainingState.value)
+            observeNavigation()
             isBound = true
         }
 
@@ -58,8 +60,8 @@ class CurrentTrainingActivity : FragmentActivity() {
         val extras = intent.extras?.getString("NotificationMessage") ?: "No message"
         Timber.d("Extra data received $extras")
 
-        navigateToState(CurrentTrainingState.ExerciseState)
-        observeNavigation()
+//        navigateToState(CurrentTrainingState.ExerciseState)
+//        observeNavigation()
         fetchTrainingInformation()
     }
 
@@ -82,7 +84,10 @@ class CurrentTrainingActivity : FragmentActivity() {
     }
 
     private fun observeNavigation() {
-        viewModel.currentTrainingState.observe(this) {
+//        viewModel.currentTrainingState.observe(this) {
+//            navigateToState(it)
+//        }
+        trainingService.currentTrainingProgressHelper.currentTrainingState.observe(this) {
             navigateToState(it)
         }
     }
@@ -93,12 +98,12 @@ class CurrentTrainingActivity : FragmentActivity() {
         val restTimeFragment = supportFragmentManager.findFragmentByTag(TRAINING_REST_TIME_TAG)
         // Navigate to the new state
         when (it) {
-            CurrentTrainingState.ExerciseState -> navigate(
+            is CurrentTrainingState.ExerciseState -> navigate(
                 current = restTimeFragment,
                 destination = trainingExerciseFragment,
                 destinationTag = TRAINING_EXERCISE_TAG
             )
-            CurrentTrainingState.RestTimeState -> navigate(
+            is CurrentTrainingState.RestTimeState -> navigate(
                 current = trainingExerciseFragment,
                 destination = restTimeFragment,
                 destinationTag = TRAINING_REST_TIME_TAG

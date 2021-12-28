@@ -11,27 +11,27 @@ val trainingsList = listOf<TrainingWithExercises>(
         Training(1L, "Training 1", "Some description of training 1"),
         listOf(
             TrainingExercise(
-                0L, 1L,
+                1L, 1L,
                 Exercise(0L, "Name exercise 1", "Exercise description 1", Category.Biceps),
                 10, 3, 0L
             ),
             TrainingExercise(
-                0L, 1L,
+                2L, 1L,
                 Exercise(0L, "Name exercise 2", "Exercise description 2", Category.Abs),
                 15, 3, 600L
             ),
             TrainingExercise(
-                0L, 1L,
+                3L, 1L,
                 Exercise(0L, "Name exercise 3", "Exercise description 3", Category.Cardio),
                 10, 3, 1000L
             ),
             TrainingExercise(
-                0L, 1L,
+                4L, 1L,
                 Exercise(0L, "Name exercise 4", "Exercise description 4", Category.Legs),
                 100, 1, 0L
             ),
             TrainingExercise(
-                0L, 1L,
+                5L, 1L,
                 Exercise(0L, "Name exercise 5", "Exercise description 5", Category.Biceps),
                 10, 3, 0L
             )

@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.TimeFormatter
+import com.lukasz.witkowski.training.wearable.repo.CurrentTrainingRepository
 import com.lukasz.witkowski.training.wearable.repo.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -25,13 +26,13 @@ class CurrentTrainingViewModel
     var trainingTime = 0L
         private set
 
-    private val _currentTrainingState =
-        MutableLiveData<CurrentTrainingState>(CurrentTrainingState.ExerciseState)
-    val currentTrainingState: LiveData<CurrentTrainingState>
-        get() = _currentTrainingState
+//    private val _currentTrainingState =
+//        MutableLiveData<CurrentTrainingState>(CurrentTrainingState.ExerciseState())
+//    val currentTrainingState: LiveData<CurrentTrainingState>
+//        get() = _currentTrainingState
 
-    private var trainingWithExercises: TrainingWithExercises? = null
-        set(value) {
+    var trainingWithExercises: TrainingWithExercises? = null
+        private set(value) {
             trainingId = value?.training?.id ?: 0L
             field = value
         }
@@ -51,7 +52,7 @@ class CurrentTrainingViewModel
     fun navigateToTrainingExercise() {
         val isNextExercise = getNextExercise()
         if (isNextExercise) {
-            _currentTrainingState.value = CurrentTrainingState.ExerciseState
+//            _currentTrainingState.value = CurrentTrainingState.ExerciseState
         } else {
             navigateToTrainingSummary()
         }
@@ -59,7 +60,7 @@ class CurrentTrainingViewModel
 
     fun navigateToTrainingRestTime() {
         if (restTime >= TimeFormatter.MILLIS_IN_SECONDS) {
-            _currentTrainingState.value = CurrentTrainingState.RestTimeState
+//            _currentTrainingState.value = CurrentTrainingState.RestTimeState
         } else {
             navigateToTrainingExercise()
         }
@@ -67,12 +68,13 @@ class CurrentTrainingViewModel
 
     fun navigateToTrainingSummary() {
         trainingTime = System.currentTimeMillis() - startTrainingTime
-        _currentTrainingState.value = CurrentTrainingState.SummaryState
+//        _currentTrainingState.value = CurrentTrainingState.SummaryState
     }
 
     fun fetchTraining(trainingId: Long) {
         viewModelScope.launch {
             trainingWithExercises = trainingRepository.fetchTrainingById(trainingId)
+//            currentTrainingRepository.trainingWithExercises = trainingWithExercises!!
             currentExerciseIndex = 0
             setNewCurrentExercise()
         }

@@ -1,6 +1,11 @@
 package com.lukasz.witkowski.training.wearable.currentTraining
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,6 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.wearable.R
+import com.lukasz.witkowski.training.wearable.currentTraining.service.TrainingService
 import com.lukasz.witkowski.training.wearable.databinding.FragmentTrainingExerciseBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -32,20 +38,45 @@ import timber.log.Timber
 class TrainingExerciseFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingExerciseBinding
-    private val viewModel: CurrentTrainingViewModel by activityViewModels()
+//    private val viewModel: CurrentTrainingViewModel by activityViewModels()
     private val timerViewModel: TimerViewModel by viewModels()
+
+    private lateinit var trainingService: TrainingService
+
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            trainingService = (service as TrainingService.LocalBinder).getService()
+            observeCurrentExercise()
+            setPlayButtonListener()
+            setNextExerciseButtonListener()
+            observeExerciseTimer()
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            Timber.d("Service disconnected")
+        }
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentTrainingExerciseBinding.inflate(inflater, container, false)
-        observeCurrentExercise()
-        setPlayButtonListener()
-        setNextExerciseButtonListener()
-        observeExerciseTimer()
+//        observeCurrentExercise()
+//        setPlayButtonListener()
+//        setNextExerciseButtonListener()
+//        observeExerciseTimer()
+
+        val serviceIntent = Intent(requireContext(), TrainingService::class.java)
+        requireActivity().bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireActivity().unbindService(connection)
     }
 
     val exerciseUpdateListener = object : ExerciseUpdateListener {
@@ -114,7 +145,8 @@ class TrainingExerciseFragment : Fragment() {
 
     private fun setNextExerciseButtonListener() {
         binding.nextBtn.setOnClickListener {
-            viewModel.navigateToTrainingRestTime()
+//            viewModel.navigateToTrainingRestTime()
+            trainingService.currentTrainingProgressHelper.navigateToTrainingRestTime()
             timerViewModel.cancelTimer()
             exerciseClient.endExercise()
         }
@@ -123,7 +155,8 @@ class TrainingExerciseFragment : Fragment() {
     private fun setPlayButtonListener() {
         binding.startPauseTimerBtn.setOnClickListener {
             if (!timerViewModel.isRunning && !timerViewModel.isPaused) {
-                timerViewModel.startTimer(viewModel.exerciseTime)
+//                timerViewModel.startTimer(viewModel.exerciseTime)
+                timerViewModel.startTimer(trainingService.currentTrainingProgressHelper.exerciseTime)
             } else if (timerViewModel.isPaused) {
                 timerViewModel.resumeTimer()
             } else if (timerViewModel.isRunning) {
@@ -134,8 +167,14 @@ class TrainingExerciseFragment : Fragment() {
     }
 
     private fun observeCurrentExercise() {
-        viewModel.currentExercise.observe(viewLifecycleOwner) {
-            setExerciseDataToUi(it)
+//        viewModel.currentExercise.observe(viewLifecycleOwner) {
+//            setExerciseDataToUi(it)
+//        }
+        trainingService.currentTrainingProgressHelper.currentTrainingState.observe(viewLifecycleOwner) {
+            Timber.d("Training state changed $it")
+            if(it is CurrentTrainingState.ExerciseState) {
+                setExerciseDataToUi(it.exercise)
+            }
         }
     }
 
