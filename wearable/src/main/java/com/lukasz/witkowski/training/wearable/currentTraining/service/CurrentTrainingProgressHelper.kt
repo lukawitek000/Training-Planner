@@ -52,24 +52,27 @@ object CurrentTrainingProgressHelper {
     }
 
     fun navigateToTrainingSummary() {
+        resetData()
         _currentTrainingState.value = CurrentTrainingState.SummaryState
+    }
+
+    private fun resetData() {
+        currentExerciseIndex = 0
+        currentSet = 1
     }
 
     private fun getNextExercise() : TrainingExercise? {
         val exercises = trainingWithExercises.exercises
-
         while (currentExerciseIndex + 1 < exercises.size) {
-            currentExerciseIndex = if (currentExerciseIndex + 1 >= exercises.size) {
-                break
-            } else {
-                currentExerciseIndex + 1
-            }
+            currentExerciseIndex++
             if (exercises[currentExerciseIndex].sets >= currentSet) {
                 return exercises[currentExerciseIndex]
             }
         }
+        currentSet++
+        currentExerciseIndex = 0
         return exercises.firstOrNull {
-            it.sets >= currentSet + 1
+            it.sets >= currentSet
         }
     }
 
