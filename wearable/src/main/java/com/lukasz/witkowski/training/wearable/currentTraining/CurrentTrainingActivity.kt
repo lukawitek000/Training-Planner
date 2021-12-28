@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.wearable.currentTraining
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -7,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import com.lukasz.witkowski.training.wearable.R
+import com.lukasz.witkowski.training.wearable.currentTraining.service.TrainingService
+import com.lukasz.witkowski.training.wearable.currentTraining.service.TrainingServiceConnection
 import com.lukasz.witkowski.training.wearable.databinding.ActivityCurrentTrainingBinding
 import com.lukasz.witkowski.training.wearable.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.wearable.summary.TrainingSummaryActivity
@@ -21,6 +24,8 @@ class CurrentTrainingActivity : FragmentActivity() {
         private const val TRAINING_REST_TIME_TAG = "Training rest time"
     }
 
+    private var serviceConnection = TrainingServiceConnection()
+
     private lateinit var binding: ActivityCurrentTrainingBinding
 
     private val viewModel: CurrentTrainingViewModel by viewModels()
@@ -32,7 +37,16 @@ class CurrentTrainingActivity : FragmentActivity() {
         navigateToState(CurrentTrainingState.ExerciseState)
         observeNavigation()
         fetchTrainingInformation()
+
+        val serviceIntent = Intent(this, TrainingService::class.java)
+        bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unbindService(serviceConnection)
+    }
+
 
     private fun fetchTrainingInformation() {
         val trainingId = intent.extras?.getLong(StartTrainingActivity.TRAINING_ID_KEY)
