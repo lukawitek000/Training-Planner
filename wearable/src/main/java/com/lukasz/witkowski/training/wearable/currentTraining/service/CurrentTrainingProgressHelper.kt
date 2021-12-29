@@ -60,9 +60,9 @@ object CurrentTrainingProgressHelper {
     fun navigateToTrainingExercise() {
         val nextExercise = getNextExercise()
         if (nextExercise != null) {
-            _currentTrainingState.value = CurrentTrainingState.ExerciseState(nextExercise)
             restTime = nextExercise.restTime
             exerciseTime = nextExercise.time
+            _currentTrainingState.value = CurrentTrainingState.ExerciseState(nextExercise)
         } else {
             navigateToTrainingSummary()
         }

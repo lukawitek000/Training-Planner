@@ -146,7 +146,7 @@ class TrainingExerciseFragment : Fragment() {
 //            }
 //        }
         timer.timeLeft.observe(viewLifecycleOwner) {
-            if(trainingService.currentTrainingProgressHelper.isExerciseState) {
+            if(trainingService.currentTrainingProgressHelper.isExerciseState && timer.isRunning) {
                 binding.timerTv.text = TimeFormatter.millisToTimer(it)
             }
         }
