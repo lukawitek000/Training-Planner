@@ -153,7 +153,7 @@ val trainingsList = listOf<TrainingWithExercises>(
             TrainingExercise(
                 0L, 1L,
                 Exercise(0L, "Name exercise 55", "Exercise description 55", Category.Biceps),
-                10, 3, 0L, 0L
+                10, 3, 5000L, 0L
             )
         )
     )

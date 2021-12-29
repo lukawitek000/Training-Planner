@@ -76,9 +76,7 @@ object CurrentTrainingProgressHelper {
         }
     }
 
-
-
-    fun navigateToTrainingSummary() {
+    private fun navigateToTrainingSummary() {
         resetData()
         _currentTrainingState.value = CurrentTrainingState.SummaryState
     }
@@ -102,5 +100,4 @@ object CurrentTrainingProgressHelper {
             it.sets >= currentSet
         }
     }
-
 }
