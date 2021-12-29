@@ -146,7 +146,9 @@ class TrainingExerciseFragment : Fragment() {
 //            }
 //        }
         timer.timeLeft.observe(viewLifecycleOwner) {
-            binding.timerTv.text = TimeFormatter.millisToTimer(it)
+            if(trainingService.currentTrainingProgressHelper.isExerciseState) {
+                binding.timerTv.text = TimeFormatter.millisToTimer(it)
+            }
         }
         timer.timerFinished.observe(viewLifecycleOwner) {
             if (it) {

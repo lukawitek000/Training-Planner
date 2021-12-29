@@ -21,6 +21,11 @@ object CurrentTrainingProgressHelper {
     private val _currentTrainingState = MutableLiveData<CurrentTrainingState>()
     val currentTrainingState: LiveData<CurrentTrainingState> = _currentTrainingState
 
+    val isExerciseState: Boolean
+        get() {
+            return currentTrainingState.value is CurrentTrainingState.ExerciseState
+        }
+
     var restTime = 0L
         private set
     var exerciseTime = 0L
