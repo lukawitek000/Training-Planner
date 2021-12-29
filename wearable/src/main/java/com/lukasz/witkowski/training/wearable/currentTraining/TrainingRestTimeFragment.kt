@@ -79,7 +79,9 @@ class TrainingRestTimeFragment : Fragment() {
         trainingService.currentTrainingProgressHelper.currentTrainingState.observe(viewLifecycleOwner) {
             if (it is CurrentTrainingState.RestTimeState) {
 //                timerViewModel.startTimer(trainingService.currentTrainingProgressHelper.restTime)
-                timer.startTimer(trainingService.currentTrainingProgressHelper.restTime)
+                if(!timer.isRunning && !timer.isPaused) {
+                    timer.startTimer(trainingService.currentTrainingProgressHelper.restTime)
+                }
             }
         }
     }
@@ -96,11 +98,11 @@ class TrainingRestTimeFragment : Fragment() {
         timer.timeLeft.observe(viewLifecycleOwner) {
             binding.restTimeTimerTv.text = TimeFormatter.millisToTimer(it)
         }
-        timer.timerFinished.observe(viewLifecycleOwner) {
-            if (it) {
-                exitRestTimeFragment()
-            }
-        }
+//        timer.timerFinished.observe(viewLifecycleOwner) {
+//            if (it) {
+//                exitRestTimeFragment()
+//            }
+//        }
     }
 
     private fun observeSkipRestTimeButton() {

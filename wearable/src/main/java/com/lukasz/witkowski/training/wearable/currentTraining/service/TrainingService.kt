@@ -5,22 +5,17 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import android.provider.VoicemailContract
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavDeepLinkBuilder
 import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
@@ -32,8 +27,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.Duration
-import java.time.Instant
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -50,7 +43,7 @@ class TrainingService : LifecycleService() {
     private var isBound = false
     private var isForeground = false
 
-    private var trainingId = 0L
+    private var trainingId = DEFAULT_TRAINING_ID
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -189,25 +182,44 @@ class TrainingService : LifecycleService() {
         this.trainingId = trainingWithExercises.training.id
         Timber.d("Start training")
         currentTrainingProgressHelper.startTraining(trainingWithExercises)
+        onTimerFinishedListener()
     }
 
-    private fun vibrateOnTimerFinished() {
+    private fun onTimerFinishedListener() {
         timerHelper.timerFinished.observe(this) {
             if (it) {
-                val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                    val vibrator = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
-                    vibrator.defaultVibrator
-                } else {
-                    getSystemService(VIBRATOR_SERVICE) as Vibrator
-                }
-                vibrator.vibrate(
-                    VibrationEffect.createOneShot(
-                        300,
-                        VibrationEffect.DEFAULT_AMPLITUDE
-                    )
-                )
+                vibrate()
+                navigateToTheNextScreen()
             }
         }
+    }
+
+    private fun navigateToTheNextScreen() {
+        if (currentTrainingProgressHelper.isExerciseState) {
+            currentTrainingProgressHelper.navigateToTrainingRestTime()
+            timerHelper.startTimer(currentTrainingProgressHelper.restTime)
+        } else if (currentTrainingProgressHelper.isRestTimeState) {
+            currentTrainingProgressHelper.navigateToTrainingExercise()
+        }
+    }
+
+    private fun vibrate() {
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibrator = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibrator.defaultVibrator
+        } else {
+            getSystemService(VIBRATOR_SERVICE) as Vibrator
+        }
+        vibrator.vibrate(
+            VibrationEffect.createOneShot(
+                300,
+                VibrationEffect.DEFAULT_AMPLITUDE
+            )
+        )
+    }
+
+    fun isTrainingStarted(): Boolean {
+        return trainingId != DEFAULT_TRAINING_ID
     }
 
     inner class LocalBinder : Binder() {
@@ -215,6 +227,8 @@ class TrainingService : LifecycleService() {
     }
 
     private companion object {
+        const val DEFAULT_TRAINING_ID = 1L
+
         const val UNBIND_DELAY_MILLIS = 1_000L
         const val NOTIFICATION_ID = 1
         const val NOTIFICATION_CHANNEL = "com.lukasz.witkowski.training.wearable.ONGOING_TRAINING"

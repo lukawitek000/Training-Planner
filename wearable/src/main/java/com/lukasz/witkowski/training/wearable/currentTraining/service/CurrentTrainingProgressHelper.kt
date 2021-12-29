@@ -26,6 +26,11 @@ object CurrentTrainingProgressHelper {
             return currentTrainingState.value is CurrentTrainingState.ExerciseState
         }
 
+    val isRestTimeState: Boolean
+        get() {
+            return currentTrainingState.value is CurrentTrainingState.RestTimeState
+        }
+
     var restTime = 0L
         private set
     var exerciseTime = 0L

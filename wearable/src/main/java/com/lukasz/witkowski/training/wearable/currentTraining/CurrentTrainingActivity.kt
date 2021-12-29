@@ -33,7 +33,6 @@ class CurrentTrainingActivity : FragmentActivity() {
     }
 
     private lateinit var trainingService: TrainingService
-    private var isBound = false
     private var trainingId = 0L
 
     private lateinit var binding: ActivityCurrentTrainingBinding
@@ -43,15 +42,14 @@ class CurrentTrainingActivity : FragmentActivity() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as TrainingService.LocalBinder).getService()
-            trainingService.startTraining(viewModel.trainingWithExercises!!)
+            if(!trainingService.isTrainingStarted()) {
+                trainingService.startTraining(viewModel.trainingWithExercises!!)
+            }
             navigateToState(trainingService.currentTrainingProgressHelper.currentTrainingState.value)
             observeNavigation()
-            isBound = true
         }
 
-        override fun onServiceDisconnected(name: ComponentName?) {
-            isBound = false
-        }
+        override fun onServiceDisconnected(name: ComponentName?) = Unit
 
     }
 
