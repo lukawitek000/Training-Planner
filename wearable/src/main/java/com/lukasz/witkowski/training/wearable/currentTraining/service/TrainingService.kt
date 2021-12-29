@@ -5,11 +5,16 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.Binder
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.os.SystemClock
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import android.provider.VoicemailContract
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -184,6 +189,25 @@ class TrainingService : LifecycleService() {
         this.trainingId = trainingWithExercises.training.id
         Timber.d("Start training")
         currentTrainingProgressHelper.startTraining(trainingWithExercises)
+    }
+
+    private fun vibrateOnTimerFinished() {
+        timerHelper.timerFinished.observe(this) {
+            if (it) {
+                val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    val vibrator = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
+                    vibrator.defaultVibrator
+                } else {
+                    getSystemService(VIBRATOR_SERVICE) as Vibrator
+                }
+                vibrator.vibrate(
+                    VibrationEffect.createOneShot(
+                        300,
+                        VibrationEffect.DEFAULT_AMPLITUDE
+                    )
+                )
+            }
+        }
     }
 
     inner class LocalBinder : Binder() {
