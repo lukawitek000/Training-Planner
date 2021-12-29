@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.lukasz.witkowski.shared.utils.TimeFormatter
+import com.lukasz.witkowski.training.wearable.currentTraining.service.TimerHelper
 import com.lukasz.witkowski.training.wearable.currentTraining.service.TrainingService
 import com.lukasz.witkowski.training.wearable.databinding.FragmentTrainingRestTimeBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,13 +24,15 @@ class TrainingRestTimeFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingRestTimeBinding
 //    private val viewModel: CurrentTrainingViewModel by activityViewModels()
-    private val timerViewModel: TimerViewModel by viewModels()
+//    private val timerViewModel: TimerViewModel by viewModels()
 
     private lateinit var trainingService: TrainingService
+    private lateinit var timer: TimerHelper
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as TrainingService.LocalBinder).getService()
+            timer = trainingService.timerHelper
             observeRestTimer()
             observeState()
         }
@@ -75,16 +78,25 @@ class TrainingRestTimeFragment : Fragment() {
 //        }
         trainingService.currentTrainingProgressHelper.currentTrainingState.observe(viewLifecycleOwner) {
             if (it is CurrentTrainingState.RestTimeState) {
-                timerViewModel.startTimer(trainingService.currentTrainingProgressHelper.restTime)
+//                timerViewModel.startTimer(trainingService.currentTrainingProgressHelper.restTime)
+                timer.startTimer(trainingService.currentTrainingProgressHelper.restTime)
             }
         }
     }
 
     private fun observeRestTimer() {
-        timerViewModel.timeLeft.observe(viewLifecycleOwner) {
+//        timerViewModel.timeLeft.observe(viewLifecycleOwner) {
+//            binding.restTimeTimerTv.text = TimeFormatter.millisToTimer(it)
+//        }
+//        timerViewModel.timerFinished.observe(viewLifecycleOwner) {
+//            if (it) {
+//                exitRestTimeFragment()
+//            }
+//        }
+        timer.timeLeft.observe(viewLifecycleOwner) {
             binding.restTimeTimerTv.text = TimeFormatter.millisToTimer(it)
         }
-        timerViewModel.timerFinished.observe(viewLifecycleOwner) {
+        timer.timerFinished.observe(viewLifecycleOwner) {
             if (it) {
                 exitRestTimeFragment()
             }
@@ -98,7 +110,8 @@ class TrainingRestTimeFragment : Fragment() {
     }
 
     private fun exitRestTimeFragment() {
-        timerViewModel.cancelTimer()
+        timer.cancelTimer()
+//        timerViewModel.cancelTimer()
 //        viewModel.navigateToTrainingExercise()
         trainingService.currentTrainingProgressHelper.navigateToTrainingExercise()
     }

@@ -28,6 +28,7 @@ import androidx.lifecycle.lifecycleScope
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.wearable.R
+import com.lukasz.witkowski.training.wearable.currentTraining.service.TimerHelper
 import com.lukasz.witkowski.training.wearable.currentTraining.service.TrainingService
 import com.lukasz.witkowski.training.wearable.databinding.FragmentTrainingExerciseBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,13 +40,16 @@ class TrainingExerciseFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingExerciseBinding
 //    private val viewModel: CurrentTrainingViewModel by activityViewModels()
-    private val timerViewModel: TimerViewModel by viewModels()
+//    private val timerViewModel: TimerViewModel by viewModels()
 
     private lateinit var trainingService: TrainingService
+
+    private lateinit var timer: TimerHelper
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as TrainingService.LocalBinder).getService()
+            timer = trainingService.timerHelper
             observeCurrentExercise()
             setPlayButtonListener()
             setNextExerciseButtonListener()
@@ -132,10 +136,19 @@ class TrainingExerciseFragment : Fragment() {
     }
 
     private fun observeExerciseTimer() {
-        timerViewModel.timeLeft.observe(viewLifecycleOwner) {
+//        timerViewModel.timeLeft.observe(viewLifecycleOwner) {
+//            binding.timerTv.text = TimeFormatter.millisToTimer(it)
+//        }
+//        timerViewModel.timerFinished.observe(viewLifecycleOwner) {
+//            if (it) {
+//                setTimerButtonIcon(isTimerRunning = false)
+//                // TODO Some sound / vibration that timer has finished
+//            }
+//        }
+        timer.timeLeft.observe(viewLifecycleOwner) {
             binding.timerTv.text = TimeFormatter.millisToTimer(it)
         }
-        timerViewModel.timerFinished.observe(viewLifecycleOwner) {
+        timer.timerFinished.observe(viewLifecycleOwner) {
             if (it) {
                 setTimerButtonIcon(isTimerRunning = false)
                 // TODO Some sound / vibration that timer has finished
@@ -147,22 +160,32 @@ class TrainingExerciseFragment : Fragment() {
         binding.nextBtn.setOnClickListener {
 //            viewModel.navigateToTrainingRestTime()
             trainingService.currentTrainingProgressHelper.navigateToTrainingRestTime()
-            timerViewModel.cancelTimer()
+//            timerViewModel.cancelTimer()
+            timer.cancelTimer()
 //            exerciseClient.endExercise()
         }
     }
 
     private fun setPlayButtonListener() {
         binding.startPauseTimerBtn.setOnClickListener {
-            if (!timerViewModel.isRunning && !timerViewModel.isPaused) {
+//            if (!timerViewModel.isRunning && !timerViewModel.isPaused) {
+////                timerViewModel.startTimer(viewModel.exerciseTime)
+//                timerViewModel.startTimer(trainingService.currentTrainingProgressHelper.exerciseTime)
+//            } else if (timerViewModel.isPaused) {
+//                timerViewModel.resumeTimer()
+//            } else if (timerViewModel.isRunning) {
+//                timerViewModel.pauseTimer()
+//            }
+//            setTimerButtonIcon(timerViewModel.isRunning)
+            if (!timer.isRunning && !timer.isPaused) {
 //                timerViewModel.startTimer(viewModel.exerciseTime)
-                timerViewModel.startTimer(trainingService.currentTrainingProgressHelper.exerciseTime)
-            } else if (timerViewModel.isPaused) {
-                timerViewModel.resumeTimer()
-            } else if (timerViewModel.isRunning) {
-                timerViewModel.pauseTimer()
+                timer.startTimer(trainingService.currentTrainingProgressHelper.exerciseTime)
+            } else if (timer.isPaused) {
+                timer.resumeTimer()
+            } else if (timer.isRunning) {
+                timer.pauseTimer()
             }
-            setTimerButtonIcon(timerViewModel.isRunning)
+            setTimerButtonIcon(timer.isRunning)
         }
     }
 

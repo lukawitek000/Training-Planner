@@ -38,6 +38,7 @@ class TrainingService : LifecycleService() {
     lateinit var currentTrainingRepository: CurrentTrainingRepository
 
     val currentTrainingProgressHelper: CurrentTrainingProgressHelper = CurrentTrainingProgressHelper
+    val timerHelper = TimerHelper
 
     private val localBinder = LocalBinder()
 
