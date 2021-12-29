@@ -159,9 +159,10 @@ class TrainingExerciseFragment : Fragment() {
     private fun setNextExerciseButtonListener() {
         binding.nextBtn.setOnClickListener {
 //            viewModel.navigateToTrainingRestTime()
+            timer.cancelTimer()
             trainingService.currentTrainingProgressHelper.navigateToTrainingRestTime()
 //            timerViewModel.cancelTimer()
-            timer.cancelTimer()
+
 //            exerciseClient.endExercise()
         }
     }
@@ -216,7 +217,7 @@ class TrainingExerciseFragment : Fragment() {
                 timerTv.text = TimeFormatter.millisToTimer(time)
             }
         }
-        setTimerButtonIcon()
+        setTimerButtonIcon(timer.isRunning)
     }
 
     private fun setTimerButtonIcon(isTimerRunning: Boolean = false) {

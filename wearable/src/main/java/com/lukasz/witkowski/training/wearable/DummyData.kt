@@ -159,8 +159,4 @@ val trainingsList = listOf<TrainingWithExercises>(
     )
 
 
-
-
-
-
 )
