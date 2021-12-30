@@ -18,12 +18,16 @@ import androidx.core.app.NotificationCompat
 import androidx.health.services.client.ExerciseClient
 import androidx.health.services.client.ExerciseUpdateListener
 import androidx.health.services.client.data.Availability
+import androidx.health.services.client.data.CumulativeDataPoint
 import androidx.health.services.client.data.DataType
 import androidx.health.services.client.data.ExerciseConfig
 import androidx.health.services.client.data.ExerciseLapSummary
+import androidx.health.services.client.data.ExerciseState
+import androidx.health.services.client.data.ExerciseTrackedStatus
 import androidx.health.services.client.data.ExerciseType
 import androidx.health.services.client.data.ExerciseTypeCapabilities
 import androidx.health.services.client.data.ExerciseUpdate
+import androidx.health.services.client.data.StatisticalDataPoint
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -170,7 +174,6 @@ class TrainingService : LifecycleService() {
                     stopCurrentService()
                 }
                 is CurrentTrainingState.ExerciseState -> {
-                    exerciseClient.endExercise()
                     monitorHealthIndicators()
                 }
                 is CurrentTrainingState.RestTimeState -> {
@@ -187,6 +190,7 @@ class TrainingService : LifecycleService() {
 
         override fun onExerciseUpdate(update: ExerciseUpdate) {
             Timber.d("On exercise update $update")
+            processExerciseUpdate(update)
         }
 
         override fun onLapSummary(lapSummary: ExerciseLapSummary) {
@@ -195,8 +199,45 @@ class TrainingService : LifecycleService() {
 
     }
 
+    private var exerciseState = ExerciseState.USER_ENDED
+    private var caloriesCumulativeData: CumulativeDataPoint? = null
+    private var heartRateStatisticalData: StatisticalDataPoint? = null
+
+    private fun processExerciseUpdate(exerciseUpdate: ExerciseUpdate) {
+        val oldState = exerciseState
+        if(!oldState.isEnded && exerciseUpdate.state.isEnded) {
+            // Exercise ended
+            Timber.d("Exercise ended statistics calories $caloriesCumulativeData")
+            Timber.d("Exercise ended statistics heart rate $heartRateStatisticalData")
+            when(exerciseUpdate.state) {
+                ExerciseState.TERMINATED -> {
+                    // Another app started tracking an exercise
+                }
+                ExerciseState.AUTO_ENDED -> {
+                    // The exercise was auto ended because there were no registered listeners
+                }
+                ExerciseState.AUTO_ENDED_PERMISSION_LOST -> {
+                    // Your exercises ended because it lost the required permissions
+                }
+                else -> {}
+            }
+        }
+        exerciseState = exerciseUpdate.state
+        val aggregatedMetrics = exerciseUpdate.latestAggregateMetrics
+        caloriesCumulativeData = (aggregatedMetrics[DataType.TOTAL_CALORIES] as? CumulativeDataPoint) ?: caloriesCumulativeData
+        heartRateStatisticalData = (aggregatedMetrics[DataType.HEART_RATE_BPM] as? StatisticalDataPoint) ?: heartRateStatisticalData
+    }
+
+    private suspend fun isExerciseInProgress(): Boolean {
+        val exerciseInfo = exerciseClient.currentExerciseInfo.await()
+        return exerciseInfo.exerciseTrackedStatus == ExerciseTrackedStatus.OWNED_EXERCISE_IN_PROGRESS
+    }
+
     private fun monitorHealthIndicators() {
         lifecycleScope.launch {
+            if(isExerciseInProgress()) {
+                exerciseClient.endExercise().await()
+            }
             if(!isExerciseConfigured) {
                 configureHealthServices()
             }
@@ -219,10 +260,6 @@ class TrainingService : LifecycleService() {
                 DataType.TOTAL_CALORIES in exerciseCapabilities.supportedDataTypes
 
             exerciseClient.setUpdateListener(exerciseUpdateListener)
-            // Types for which we want to receive metrics.
-            val dataTypes = setOf(
-                DataType.HEART_RATE_BPM
-            )
             // Types for which we want to receive aggregate metrics.
             val aggregateDataTypes = setOf(
                 // "Total" here refers not to the aggregation but to basal + activity.
@@ -231,7 +268,6 @@ class TrainingService : LifecycleService() {
             )
             exerciseConfig = ExerciseConfig.builder()
                 .setExerciseType(exerciseType)
-                .setDataTypes(dataTypes)
                 .setAggregateDataTypes(aggregateDataTypes)
                 .build()
         } else {
