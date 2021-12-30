@@ -6,12 +6,8 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.view.GestureDetector
-import android.view.MotionEvent
-import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
@@ -21,7 +17,6 @@ import com.lukasz.witkowski.training.wearable.currentTraining.service.TrainingSe
 import com.lukasz.witkowski.training.wearable.databinding.ActivityCurrentTrainingBinding
 import com.lukasz.witkowski.training.wearable.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.wearable.summary.TrainingSummaryActivity
-import com.lukasz.witkowski.training.wearable.summary.TrainingSummaryActivity.Companion.TRAINING_TIME_KEY
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -37,13 +32,12 @@ class CurrentTrainingActivity : FragmentActivity() {
     private var trainingId = 0L
 
     private lateinit var binding: ActivityCurrentTrainingBinding
-
     private val viewModel: CurrentTrainingViewModel by viewModels()
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as TrainingService.LocalBinder).getService()
-            if(!trainingService.isTrainingStarted()) {
+            if (!trainingService.isTrainingStarted()) {
                 trainingService.startTraining(viewModel.trainingWithExercises!!)
             }
             navigateToState(trainingService.currentTrainingProgressHelper.currentTrainingState.value)
@@ -53,17 +47,7 @@ class CurrentTrainingActivity : FragmentActivity() {
         }
 
         override fun onServiceDisconnected(name: ComponentName?) = Unit
-
     }
-
-    private fun observeHealthService() {
-        trainingService.exerciseUpdatesEndedMessage.observe(this) {
-            if(it.isNotEmpty()) {
-                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,12 +55,6 @@ class CurrentTrainingActivity : FragmentActivity() {
         setContentView(binding.root)
         val serviceIntent = Intent(this, TrainingService::class.java)
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
-
-        val extras = intent.extras?.getString("NotificationMessage") ?: "No message"
-        Timber.d("Extra data received $extras")
-
-//        navigateToState(CurrentTrainingState.ExerciseState)
-//        observeNavigation()
         fetchTrainingInformation()
         setOnSwipeListener()
     }
@@ -97,7 +75,6 @@ class CurrentTrainingActivity : FragmentActivity() {
         unbindService(connection)
     }
 
-
     private fun fetchTrainingInformation() {
         val trainingId = intent.extras?.getLong(StartTrainingActivity.TRAINING_ID_KEY)
         Timber.d("Received training id $trainingId")
@@ -111,9 +88,6 @@ class CurrentTrainingActivity : FragmentActivity() {
     }
 
     private fun observeNavigation() {
-//        viewModel.currentTrainingState.observe(this) {
-//            navigateToState(it)
-//        }
         trainingService.currentTrainingProgressHelper.currentTrainingState.observe(this) {
             Timber.d("State has changed $it")
             navigateToState(it)
@@ -175,7 +149,7 @@ class CurrentTrainingActivity : FragmentActivity() {
         val intent = Intent(this, TrainingSummaryActivity::class.java)
         // TODO How to pass training summary?
         // Maybe only values displayed on the summary screen?
-        intent.putExtra(TRAINING_TIME_KEY, viewModel.trainingTime)
+//        intent.putExtra(TRAINING_TIME_KEY, viewModel.trainingTime)
         startActivity(intent)
     }
 
@@ -186,20 +160,29 @@ class CurrentTrainingActivity : FragmentActivity() {
     private fun observeHealthIndicatorsSupport() {
         trainingService.isHeartRateSupported.observe(this) {
             Timber.d("Is Heart rate supported = $it")
-            if(!it) {
+            if (!it) {
                 Toast.makeText(this, "The Heart rate is not supported", Toast.LENGTH_SHORT).show()
             }
         }
         trainingService.isBurntKcalSupported.observe(this) {
             Timber.d("Is burnt calories supported = $it")
-            if(!it) {
+            if (!it) {
                 Toast.makeText(this, "The burnt Kcal is not supported", Toast.LENGTH_SHORT).show()
             }
         }
         trainingService.isWorkoutExerciseSupported.observe(this) {
             Timber.d("Is workout supported = $it")
-            if(!it) {
-                Toast.makeText(this, "The Workout exercise is not supported", Toast.LENGTH_SHORT).show()
+            if (!it) {
+                Toast.makeText(this, "The Workout exercise is not supported", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+
+    private fun observeHealthService() {
+        trainingService.exerciseUpdatesEndedMessage.observe(this) {
+            if (it.isNotEmpty()) {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
             }
         }
     }

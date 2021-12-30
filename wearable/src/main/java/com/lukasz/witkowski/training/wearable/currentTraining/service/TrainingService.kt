@@ -25,7 +25,6 @@ import androidx.health.services.client.data.ExerciseLapSummary
 import androidx.health.services.client.data.ExerciseState
 import androidx.health.services.client.data.ExerciseTrackedStatus
 import androidx.health.services.client.data.ExerciseType
-import androidx.health.services.client.data.ExerciseTypeCapabilities
 import androidx.health.services.client.data.ExerciseUpdate
 import androidx.health.services.client.data.StatisticalDataPoint
 import androidx.lifecycle.LifecycleService
@@ -37,7 +36,6 @@ import androidx.wear.ongoing.Status
 import com.lukasz.witkowski.shared.models.CaloriesStatistics
 import com.lukasz.witkowski.shared.models.ExerciseStatistics
 import com.lukasz.witkowski.shared.models.HeartRateStatistics
-import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingStatistics
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.training.wearable.R
@@ -46,9 +44,6 @@ import com.lukasz.witkowski.training.wearable.currentTraining.CurrentTrainingSta
 import com.lukasz.witkowski.training.wearable.repo.CurrentTrainingRepository
 import com.lukasz.witkowski.training.wearable.startTraining.StartTrainingActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
@@ -124,6 +119,7 @@ class TrainingService : LifecycleService() {
     }
 
     private fun buildNotification(): Notification {
+        // TODO investigate notification
         val bundle = Bundle()
         bundle.putString("NotificationMessage", "notification")
         val intent = Intent(applicationContext, CurrentTrainingActivity::class.java)
@@ -183,12 +179,9 @@ class TrainingService : LifecycleService() {
         currentTrainingProgressHelper.currentTrainingState.observe(this) {
             when (it) {
                 is CurrentTrainingState.SummaryState -> {
-                    Timber.d("Statistics Training summary $trainingStatistics")
                     stopCurrentService()
                 }
                 is CurrentTrainingState.ExerciseState -> {
-                    Timber.d("Statistics Exercise state ${it.exercise}")
-//                    currentExercise = it.exercise
                     exercisesIdAndSetQueue.offer(Pair(it.exercise.id, currentTrainingProgressHelper.currentSet))
                     monitorHealthIndicators()
                 }
@@ -219,8 +212,6 @@ class TrainingService : LifecycleService() {
         val oldState = exerciseState
         if(!oldState.isEnded && exerciseUpdate.state.isEnded) {
             // Exercise ended
-            Timber.d("Exercise ended statistics calories $caloriesCumulativeData")
-            Timber.d("Exercise ended statistics heart rate $heartRateStatisticalData")
             val exerciseTime = exerciseUpdate.activeDuration.toMillis()
             saveRecordedHealthStatistics(caloriesCumulativeData, heartRateStatisticalData, exerciseTime)
             when(exerciseUpdate.state) {
@@ -249,6 +240,7 @@ class TrainingService : LifecycleService() {
     }
 
     private fun saveRecordedHealthStatistics(calories: CumulativeDataPoint?, heartRate: StatisticalDataPoint?, exerciseTime: Long) {
+        // TODO extract to separate class
         if(trainingStatistics == null) {
             initTrainingStatistics()
         }
@@ -259,11 +251,9 @@ class TrainingService : LifecycleService() {
             min = heartRate?.min?.asDouble() ?: 0.0,
             average = heartRate?.average?.asDouble() ?: 0.0
         )
-        Timber.d("Statistics $exercisesIdAndSetQueue")
         val (currentExerciseId, currentSet) = exercisesIdAndSetQueue.poll() ?: return
         val savedSets = if (currentSet - 1 == 0 ) 1 else currentSet - 1
         val index = exercisesStatistics.indexOfFirst { it.trainingExerciseId == currentExerciseId }
-        Timber.d("Statistics $index")
         if(index != -1) {
             val exerciseStatistics = exercisesStatistics[index]
             val heartRateStatistics = HeartRateStatistics(
@@ -326,9 +316,7 @@ class TrainingService : LifecycleService() {
     private suspend fun configureHealthServices() {
         val capabilities = exerciseClient.capabilities.await()
         val exerciseType = ExerciseType.WORKOUT
-        Timber.d("Exercise type $exerciseType")
         if (exerciseType in capabilities.supportedExerciseTypes) {
-            Timber.d("Exercise type is in capabilities supported types ${capabilities.supportedExerciseTypes}")
             val exerciseCapabilities = capabilities.getExerciseTypeCapabilities(exerciseType)
             _isHeartRateSupported.value =
                 DataType.HEART_RATE_BPM in exerciseCapabilities.supportedDataTypes
@@ -400,7 +388,6 @@ class TrainingService : LifecycleService() {
 
     private companion object {
         const val DEFAULT_TRAINING_ID = -1L
-        const val DELAY = 1000L
         const val NOTIFICATION_ID = 1
         const val NOTIFICATION_CHANNEL = "com.lukasz.witkowski.training.wearable.ONGOING_TRAINING"
         const val NOTIFICATION_CHANNEL_DISPLAY = "Ongoing Training"
@@ -408,5 +395,4 @@ class TrainingService : LifecycleService() {
         const val NOTIFICATION_TEXT = "Training is active"
         const val ONGOING_STATUS_TEMPLATE = "Ongoing Exercise #duration#"
     }
-
 }

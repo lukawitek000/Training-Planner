@@ -23,8 +23,6 @@ import timber.log.Timber
 class TrainingRestTimeFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingRestTimeBinding
-//    private val viewModel: CurrentTrainingViewModel by activityViewModels()
-//    private val timerViewModel: TimerViewModel by viewModels()
 
     private lateinit var trainingService: TrainingService
     private lateinit var timer: TimerHelper
@@ -37,10 +35,7 @@ class TrainingRestTimeFragment : Fragment() {
             observeState()
         }
 
-        override fun onServiceDisconnected(name: ComponentName?) {
-            Timber.d("Service disconnected")
-        }
-
+        override fun onServiceDisconnected(name: ComponentName?) = Unit
     }
 
     override fun onDestroyView() {
@@ -53,33 +48,18 @@ class TrainingRestTimeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentTrainingRestTimeBinding.inflate(layoutInflater, container, false)
-
         observeSkipRestTimeButton()
-//        observeRestTimer()
-//        observeState()
-
         val serviceIntent = Intent(requireContext(), TrainingService::class.java)
         requireActivity().bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
-
-        // TODO remove it once everything is working
-//        binding.restTimeTv.setOnClickListener {
-////            viewModel.navigateToTrainingSummary()
-//            trainingService.currentTrainingProgressHelper.navigateToTrainingSummary()
-//        }
-
         return binding.root
     }
 
     private fun observeState() {
-//        viewModel.currentTrainingState.observe(viewLifecycleOwner) {
-//            if (it is CurrentTrainingState.RestTimeState) {
-//                timerViewModel.startTimer(viewModel.restTime)
-//            }
-//        }
-        trainingService.currentTrainingProgressHelper.currentTrainingState.observe(viewLifecycleOwner) {
+        trainingService.currentTrainingProgressHelper.currentTrainingState.observe(
+            viewLifecycleOwner
+        ) {
             if (it is CurrentTrainingState.RestTimeState) {
-//                timerViewModel.startTimer(trainingService.currentTrainingProgressHelper.restTime)
-                if(!timer.isRunning && !timer.isPaused) {
+                if (!timer.isRunning && !timer.isPaused) {
                     timer.startTimer(trainingService.currentTrainingProgressHelper.restTime)
                 }
             }
@@ -87,22 +67,9 @@ class TrainingRestTimeFragment : Fragment() {
     }
 
     private fun observeRestTimer() {
-//        timerViewModel.timeLeft.observe(viewLifecycleOwner) {
-//            binding.restTimeTimerTv.text = TimeFormatter.millisToTimer(it)
-//        }
-//        timerViewModel.timerFinished.observe(viewLifecycleOwner) {
-//            if (it) {
-//                exitRestTimeFragment()
-//            }
-//        }
         timer.timeLeft.observe(viewLifecycleOwner) {
             binding.restTimeTimerTv.text = TimeFormatter.millisToTimer(it)
         }
-//        timer.timerFinished.observe(viewLifecycleOwner) {
-//            if (it) {
-//                exitRestTimeFragment()
-//            }
-//        }
     }
 
     private fun observeSkipRestTimeButton() {
@@ -113,8 +80,6 @@ class TrainingRestTimeFragment : Fragment() {
 
     private fun exitRestTimeFragment() {
         timer.cancelTimer()
-//        timerViewModel.cancelTimer()
-//        viewModel.navigateToTrainingExercise()
         trainingService.currentTrainingProgressHelper.navigateToTrainingExercise()
     }
 }

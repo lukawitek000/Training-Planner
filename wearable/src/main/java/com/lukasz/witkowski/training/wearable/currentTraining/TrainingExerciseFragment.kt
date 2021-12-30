@@ -39,8 +39,6 @@ import timber.log.Timber
 class TrainingExerciseFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingExerciseBinding
-//    private val viewModel: CurrentTrainingViewModel by activityViewModels()
-//    private val timerViewModel: TimerViewModel by viewModels()
 
     private lateinit var trainingService: TrainingService
 
@@ -56,10 +54,7 @@ class TrainingExerciseFragment : Fragment() {
             observeExerciseTimer()
         }
 
-        override fun onServiceDisconnected(name: ComponentName?) {
-            Timber.d("Service disconnected")
-        }
-
+        override fun onServiceDisconnected(name: ComponentName?) = Unit
     }
 
     override fun onCreateView(
@@ -67,11 +62,6 @@ class TrainingExerciseFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentTrainingExerciseBinding.inflate(inflater, container, false)
-//        observeCurrentExercise()
-//        setPlayButtonListener()
-//        setNextExerciseButtonListener()
-//        observeExerciseTimer()
-
         val serviceIntent = Intent(requireContext(), TrainingService::class.java)
         requireActivity().bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
 
@@ -83,55 +73,29 @@ class TrainingExerciseFragment : Fragment() {
         requireActivity().unbindService(connection)
     }
 
-
-
     private fun observeExerciseTimer() {
-//        timerViewModel.timeLeft.observe(viewLifecycleOwner) {
-//            binding.timerTv.text = TimeFormatter.millisToTimer(it)
-//        }
-//        timerViewModel.timerFinished.observe(viewLifecycleOwner) {
-//            if (it) {
-//                setTimerButtonIcon(isTimerRunning = false)
-//                // TODO Some sound / vibration that timer has finished
-//            }
-//        }
         timer.timeLeft.observe(viewLifecycleOwner) {
-            if(trainingService.currentTrainingProgressHelper.isExerciseState && timer.isRunning) {
+            if (trainingService.currentTrainingProgressHelper.isExerciseState && timer.isRunning) {
                 binding.timerTv.text = TimeFormatter.millisToTimer(it)
             }
         }
         timer.timerFinished.observe(viewLifecycleOwner) {
             if (it) {
                 setTimerButtonIcon(isTimerRunning = false)
-                // TODO Some sound / vibration that timer has finished
             }
         }
     }
 
     private fun setNextExerciseButtonListener() {
         binding.nextBtn.setOnClickListener {
-//            viewModel.navigateToTrainingRestTime()
             timer.cancelTimer()
             trainingService.currentTrainingProgressHelper.navigateToTrainingRestTime()
-//            timerViewModel.cancelTimer()
-
-//            exerciseClient.endExercise()
         }
     }
 
     private fun setPlayButtonListener() {
         binding.startPauseTimerBtn.setOnClickListener {
-//            if (!timerViewModel.isRunning && !timerViewModel.isPaused) {
-////                timerViewModel.startTimer(viewModel.exerciseTime)
-//                timerViewModel.startTimer(trainingService.currentTrainingProgressHelper.exerciseTime)
-//            } else if (timerViewModel.isPaused) {
-//                timerViewModel.resumeTimer()
-//            } else if (timerViewModel.isRunning) {
-//                timerViewModel.pauseTimer()
-//            }
-//            setTimerButtonIcon(timerViewModel.isRunning)
             if (!timer.isRunning && !timer.isPaused) {
-//                timerViewModel.startTimer(viewModel.exerciseTime)
                 timer.startTimer(trainingService.currentTrainingProgressHelper.exerciseTime)
             } else if (timer.isPaused) {
                 timer.resumeTimer()
@@ -143,13 +107,14 @@ class TrainingExerciseFragment : Fragment() {
     }
 
     private fun observeCurrentExercise() {
-//        viewModel.currentExercise.observe(viewLifecycleOwner) {
-//            setExerciseDataToUi(it)
-//        }
-        trainingService.currentTrainingProgressHelper.currentTrainingState.observe(viewLifecycleOwner) {
-            Timber.d("Training state changed $it")
-            if(it is CurrentTrainingState.ExerciseState) {
-                setExerciseDataToUi(it.exercise, trainingService.currentTrainingProgressHelper.exerciseTime)
+        trainingService.currentTrainingProgressHelper.currentTrainingState.observe(
+            viewLifecycleOwner
+        ) {
+            if (it is CurrentTrainingState.ExerciseState) {
+                setExerciseDataToUi(
+                    it.exercise,
+                    trainingService.currentTrainingProgressHelper.exerciseTime
+                )
             }
         }
     }
