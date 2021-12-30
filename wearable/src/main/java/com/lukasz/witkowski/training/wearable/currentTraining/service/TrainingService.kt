@@ -34,6 +34,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
+import com.lukasz.witkowski.shared.models.CaloriesStatistics
+import com.lukasz.witkowski.shared.models.ExerciseStatistics
+import com.lukasz.witkowski.shared.models.HeartRateStatistics
+import com.lukasz.witkowski.shared.models.TrainingExercise
+import com.lukasz.witkowski.shared.models.TrainingStatistics
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.training.wearable.R
 import com.lukasz.witkowski.training.wearable.currentTraining.CurrentTrainingActivity
@@ -46,7 +51,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
+import kotlin.math.max
+import kotlin.math.min
 
 @AndroidEntryPoint
 class TrainingService : LifecycleService() {
@@ -79,6 +87,15 @@ class TrainingService : LifecycleService() {
     private val isExerciseConfigured: Boolean
         get() = exerciseConfig != null
 
+    private var exerciseState = ExerciseState.USER_ENDED
+    private var caloriesCumulativeData: CumulativeDataPoint? = null
+    private var heartRateStatisticalData: StatisticalDataPoint? = null
+    private val _exerciseUpdatesEndedMessage = MutableLiveData("")
+    val exerciseUpdatesEndedMessage: LiveData<String> = _exerciseUpdatesEndedMessage
+
+    private var exercisesQueue: Queue<TrainingExercise> = LinkedList()
+    private var trainingStatistics: TrainingStatistics? = null
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         Timber.d("onStartCommand")
@@ -99,17 +116,11 @@ class TrainingService : LifecycleService() {
         return localBinder
     }
 
-
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("onDestroy")
         currentTrainingProgressHelper.resetData()
         exerciseConfig = null
-    }
-
-    override fun onCreate() {
-        super.onCreate()
-        Timber.d("onCreate")
     }
 
     private fun buildNotification(): Notification {
@@ -161,6 +172,7 @@ class TrainingService : LifecycleService() {
 
     fun startTraining(trainingWithExercises: TrainingWithExercises) {
         this.trainingId = trainingWithExercises.training.id
+        initTrainingStatistics()
         Timber.d("Start training")
         currentTrainingProgressHelper.startTraining(trainingWithExercises)
         onTimerFinishedListener()
@@ -171,9 +183,13 @@ class TrainingService : LifecycleService() {
         currentTrainingProgressHelper.currentTrainingState.observe(this) {
             when (it) {
                 is CurrentTrainingState.SummaryState -> {
+                    Timber.d("Statistics Training summary $trainingStatistics")
                     stopCurrentService()
                 }
                 is CurrentTrainingState.ExerciseState -> {
+                    Timber.d("Statistics Exercise state ${it.exercise}")
+//                    currentExercise = it.exercise
+                    exercisesQueue.offer(it.exercise)
                     monitorHealthIndicators()
                 }
                 is CurrentTrainingState.RestTimeState -> {
@@ -199,18 +215,14 @@ class TrainingService : LifecycleService() {
 
     }
 
-    private var exerciseState = ExerciseState.USER_ENDED
-    private var caloriesCumulativeData: CumulativeDataPoint? = null
-    private var heartRateStatisticalData: StatisticalDataPoint? = null
-    private val _exerciseUpdatesEndedMessage = MutableLiveData("")
-    val exerciseUpdatesEndedMessage: LiveData<String> = _exerciseUpdatesEndedMessage
-
     private fun processExerciseUpdate(exerciseUpdate: ExerciseUpdate) {
         val oldState = exerciseState
         if(!oldState.isEnded && exerciseUpdate.state.isEnded) {
             // Exercise ended
             Timber.d("Exercise ended statistics calories $caloriesCumulativeData")
             Timber.d("Exercise ended statistics heart rate $heartRateStatisticalData")
+            val exerciseTime = exerciseUpdate.activeDuration.toMillis()
+            saveRecordedHealthStatistics(caloriesCumulativeData, heartRateStatisticalData, exerciseTime)
             when(exerciseUpdate.state) {
                 ExerciseState.TERMINATED -> {
                     // Another app started tracking an exercise
@@ -234,6 +246,61 @@ class TrainingService : LifecycleService() {
         val aggregatedMetrics = exerciseUpdate.latestAggregateMetrics
         caloriesCumulativeData = (aggregatedMetrics[DataType.TOTAL_CALORIES] as? CumulativeDataPoint) ?: caloriesCumulativeData
         heartRateStatisticalData = (aggregatedMetrics[DataType.HEART_RATE_BPM] as? StatisticalDataPoint) ?: heartRateStatisticalData
+    }
+
+    private fun saveRecordedHealthStatistics(calories: CumulativeDataPoint?, heartRate: StatisticalDataPoint?, exerciseTime: Long) {
+        if(trainingStatistics == null) {
+            initTrainingStatistics()
+        }
+        val exercisesStatistics = trainingStatistics!!.exercisesStatistics.toMutableList()
+        val currentCaloriesStatistics = CaloriesStatistics(calories?.total?.asDouble() ?: 0.0)
+        val currentHeartRateStatistics = HeartRateStatistics(
+            max = heartRate?.max?.asDouble() ?: 0.0,
+            min = heartRate?.min?.asDouble() ?: 0.0,
+            average = heartRate?.average?.asDouble() ?: 0.0
+        )
+        Timber.d("Statistics $exercisesQueue")
+        val currentExercise = exercisesQueue.poll() ?: return
+        val index = exercisesStatistics.indexOfFirst { it.trainingExerciseId == currentExercise.id }
+        Timber.d("Statistics $index")
+        if(index != -1) {
+            val exerciseStatistics = exercisesStatistics[index]
+            val heartRateStatistics = HeartRateStatistics(
+                max = max(currentHeartRateStatistics.max, exerciseStatistics.heartRateStatistics.max),
+                min = min(currentHeartRateStatistics.min, exerciseStatistics.heartRateStatistics.min),
+                average = (currentHeartRateStatistics.average + exerciseStatistics.heartRateStatistics.average) / 2 // TODO calculate average
+            )
+            val caloriesStatistics = CaloriesStatistics(
+                burntCalories = exerciseStatistics.burntCaloriesStatistics.burntCalories + currentCaloriesStatistics.burntCalories
+            )
+            val averageTime = (exerciseStatistics.averageTime + exerciseTime) / 2 // TODO calculate average
+            exercisesStatistics.removeAt(index)
+            exercisesStatistics.add(
+                ExerciseStatistics(
+                    id = exerciseStatistics.id,
+                    trainingExerciseId = exerciseStatistics.trainingExerciseId,
+                    heartRateStatistics = heartRateStatistics,
+                    burntCaloriesStatistics = caloriesStatistics,
+                    averageTime = averageTime
+                )
+            )
+        } else {
+            val exerciseStatistics = ExerciseStatistics(
+                trainingExerciseId = currentExercise.id,
+                heartRateStatistics = currentHeartRateStatistics,
+                burntCaloriesStatistics = currentCaloriesStatistics,
+                averageTime = exerciseTime
+            )
+            exercisesStatistics.add(exerciseStatistics)
+        }
+        trainingStatistics!!.exercisesStatistics = exercisesStatistics
+    }
+
+    private fun initTrainingStatistics() {
+        trainingStatistics = TrainingStatistics(
+            trainingId = trainingId,
+            exercisesStatistics = emptyList()
+        )
     }
 
     private suspend fun isExerciseInProgress(): Boolean {
