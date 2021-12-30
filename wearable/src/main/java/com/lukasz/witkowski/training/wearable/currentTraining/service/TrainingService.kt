@@ -202,6 +202,8 @@ class TrainingService : LifecycleService() {
     private var exerciseState = ExerciseState.USER_ENDED
     private var caloriesCumulativeData: CumulativeDataPoint? = null
     private var heartRateStatisticalData: StatisticalDataPoint? = null
+    private val _exerciseUpdatesEndedMessage = MutableLiveData("")
+    val exerciseUpdatesEndedMessage: LiveData<String> = _exerciseUpdatesEndedMessage
 
     private fun processExerciseUpdate(exerciseUpdate: ExerciseUpdate) {
         val oldState = exerciseState
@@ -212,12 +214,18 @@ class TrainingService : LifecycleService() {
             when(exerciseUpdate.state) {
                 ExerciseState.TERMINATED -> {
                     // Another app started tracking an exercise
+                    _exerciseUpdatesEndedMessage.value = "Another app terminated exercise"
                 }
                 ExerciseState.AUTO_ENDED -> {
                     // The exercise was auto ended because there were no registered listeners
+                    _exerciseUpdatesEndedMessage.value = "No registered listener"
                 }
                 ExerciseState.AUTO_ENDED_PERMISSION_LOST -> {
                     // Your exercises ended because it lost the required permissions
+                    _exerciseUpdatesEndedMessage.value = "Required permissions lost"
+                }
+                ExerciseState.USER_ENDED -> {
+                    // User ended exercise
                 }
                 else -> {}
             }

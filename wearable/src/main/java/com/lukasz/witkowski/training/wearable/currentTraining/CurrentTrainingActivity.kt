@@ -49,12 +49,20 @@ class CurrentTrainingActivity : FragmentActivity() {
             navigateToState(trainingService.currentTrainingProgressHelper.currentTrainingState.value)
             observeNavigation()
             observeHealthIndicatorsSupport()
+            observeHealthService()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) = Unit
 
     }
 
+    private fun observeHealthService() {
+        trainingService.exerciseUpdatesEndedMessage.observe(this) {
+            if(it.isNotEmpty()) {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
