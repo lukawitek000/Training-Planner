@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.GestureDetectorCompat
 import androidx.fragment.app.Fragment
@@ -47,11 +48,14 @@ class CurrentTrainingActivity : FragmentActivity() {
             }
             navigateToState(trainingService.currentTrainingProgressHelper.currentTrainingState.value)
             observeNavigation()
+            observeHealthIndicatorsSupport()
         }
 
         override fun onServiceDisconnected(name: ComponentName?) = Unit
 
     }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -169,5 +173,26 @@ class CurrentTrainingActivity : FragmentActivity() {
 
     private fun stopCurrentTrainingService() {
         trainingService.stopSelf()
+    }
+
+    private fun observeHealthIndicatorsSupport() {
+        trainingService.isHeartRateSupported.observe(this) {
+            Timber.d("Is Heart rate supported = $it")
+            if(!it) {
+                Toast.makeText(this, "The Heart rate is not supported", Toast.LENGTH_SHORT).show()
+            }
+        }
+        trainingService.isBurntKcalSupported.observe(this) {
+            Timber.d("Is burnt calories supported = $it")
+            if(!it) {
+                Toast.makeText(this, "The burnt Kcal is not supported", Toast.LENGTH_SHORT).show()
+            }
+        }
+        trainingService.isWorkoutExerciseSupported.observe(this) {
+            Timber.d("Is workout supported = $it")
+            if(!it) {
+                Toast.makeText(this, "The Workout exercise is not supported", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

@@ -83,57 +83,7 @@ class TrainingExerciseFragment : Fragment() {
         requireActivity().unbindService(connection)
     }
 
-    val exerciseUpdateListener = object : ExerciseUpdateListener {
-        override fun onAvailabilityChanged(dataType: DataType, availability: Availability) {
-            Timber.d("Availability changed $dataType $availability")
-        }
 
-        override fun onExerciseUpdate(update: ExerciseUpdate) {
-            Timber.d("On exercise update $update")
-        }
-
-        override fun onLapSummary(lapSummary: ExerciseLapSummary) {
-            Timber.d("On lap summary $lapSummary")
-        }
-
-    }
-
-    private lateinit var exerciseClient: ExerciseClient
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-//        val healthClient = HealthServices.getClient(requireContext())
-//        exerciseClient = healthClient.exerciseClient
-//        var exerciseCapabilities: ExerciseTypeCapabilities? = null
-//        lifecycleScope.launch {
-//            val capabilities = exerciseClient.capabilities.await()
-//            val exerciseType = ExerciseType.CALISTHENICS
-//            Timber.d("Exercise type $exerciseType")
-//            if(exerciseType in capabilities.supportedExerciseTypes) {
-//                Timber.d("Exercise type is in capabilities supported types ${capabilities.supportedExerciseTypes}")
-//                exerciseCapabilities = capabilities.getExerciseTypeCapabilities(exerciseType)
-//
-//                exerciseClient.setUpdateListener(exerciseUpdateListener)
-//                // Types for which we want to receive metrics.
-//                val dataTypes = setOf(
-//                    DataType.HEART_RATE_BPM
-//                )
-//                // Types for which we want to receive aggregate metrics.
-//                val aggregateDataTypes = setOf(
-//                    // "Total" here refers not to the aggregation but to basal + activity.
-//                    DataType.TOTAL_CALORIES,
-//                    DataType.HEART_RATE_BPM
-//                )
-//                val config = ExerciseConfig.builder()
-//                    .setExerciseType(exerciseType)
-//                    .setDataTypes(dataTypes)
-//                    .setAggregateDataTypes(aggregateDataTypes)
-//                    .build()
-//                exerciseClient.startExercise(config).await()
-//            }
-//        }
-
-    }
 
     private fun observeExerciseTimer() {
 //        timerViewModel.timeLeft.observe(viewLifecycleOwner) {

@@ -13,8 +13,20 @@ import android.os.IBinder
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import androidx.concurrent.futures.await
 import androidx.core.app.NotificationCompat
+import androidx.health.services.client.ExerciseClient
+import androidx.health.services.client.ExerciseUpdateListener
+import androidx.health.services.client.data.Availability
+import androidx.health.services.client.data.DataType
+import androidx.health.services.client.data.ExerciseConfig
+import androidx.health.services.client.data.ExerciseLapSummary
+import androidx.health.services.client.data.ExerciseType
+import androidx.health.services.client.data.ExerciseTypeCapabilities
+import androidx.health.services.client.data.ExerciseUpdate
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
@@ -26,6 +38,8 @@ import com.lukasz.witkowski.training.wearable.repo.CurrentTrainingRepository
 import com.lukasz.witkowski.training.wearable.startTraining.StartTrainingActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -35,6 +49,9 @@ class TrainingService : LifecycleService() {
 
     @Inject
     lateinit var currentTrainingRepository: CurrentTrainingRepository
+
+    @Inject
+    lateinit var exerciseClient: ExerciseClient
 
     val currentTrainingProgressHelper: CurrentTrainingProgressHelper = CurrentTrainingProgressHelper
     val timerHelper = TimerHelper
@@ -46,6 +63,18 @@ class TrainingService : LifecycleService() {
 
     private var trainingId = DEFAULT_TRAINING_ID
 
+    private val _isHeartRateSupported = MutableLiveData(true)
+    val isHeartRateSupported: LiveData<Boolean> = _isHeartRateSupported
+
+    private val _isBurntKcalSupported = MutableLiveData(true)
+    val isBurntKcalSupported: LiveData<Boolean> = _isBurntKcalSupported
+
+    private val _isWorkoutExerciseSupported = MutableLiveData(true)
+    val isWorkoutExerciseSupported: LiveData<Boolean> = _isWorkoutExerciseSupported
+
+    private var exerciseConfig: ExerciseConfig? = null
+    private val isExerciseConfigured: Boolean
+        get() = exerciseConfig != null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
@@ -71,6 +100,7 @@ class TrainingService : LifecycleService() {
         Timber.d("onUnbind")
         isBound = false
         lifecycleScope.launch {
+            delay(DELAY)
             if(!isBound) {
                 goForegroundOrStopSelf()
             }
@@ -93,6 +123,7 @@ class TrainingService : LifecycleService() {
         super.onDestroy()
         Timber.d("onDestroy")
         currentTrainingProgressHelper.resetData()
+        exerciseConfig = null
     }
 
     override fun onCreate() {
@@ -188,9 +219,77 @@ class TrainingService : LifecycleService() {
 
     private fun observeTrainingState() {
         currentTrainingProgressHelper.currentTrainingState.observe(this) {
-            if(it is CurrentTrainingState.SummaryState) {
-                stopSelf()
+            when (it) {
+                is CurrentTrainingState.SummaryState -> {
+                    stopSelf()
+                }
+                is CurrentTrainingState.ExerciseState -> {
+                    exerciseClient.endExercise()
+                    monitorHealthIndicators()
+                }
+                is CurrentTrainingState.RestTimeState -> {
+                    exerciseClient.endExercise()
+                }
             }
+        }
+    }
+
+    private val exerciseUpdateListener = object : ExerciseUpdateListener {
+        override fun onAvailabilityChanged(dataType: DataType, availability: Availability) {
+            Timber.d("Availability changed $dataType $availability")
+        }
+
+        override fun onExerciseUpdate(update: ExerciseUpdate) {
+            Timber.d("On exercise update $update")
+        }
+
+        override fun onLapSummary(lapSummary: ExerciseLapSummary) {
+            Timber.d("On lap summary $lapSummary")
+        }
+
+    }
+
+    private fun monitorHealthIndicators() {
+        lifecycleScope.launch {
+            if(!isExerciseConfigured) {
+                configureHealthServices()
+            }
+            exerciseConfig?.let {
+                exerciseClient.startExercise(it).await()
+            }
+        }
+    }
+
+    private suspend fun configureHealthServices() {
+        val capabilities = exerciseClient.capabilities.await()
+        val exerciseType = ExerciseType.WORKOUT
+        Timber.d("Exercise type $exerciseType")
+        if (exerciseType in capabilities.supportedExerciseTypes) {
+            Timber.d("Exercise type is in capabilities supported types ${capabilities.supportedExerciseTypes}")
+            val exerciseCapabilities = capabilities.getExerciseTypeCapabilities(exerciseType)
+            _isHeartRateSupported.value =
+                DataType.HEART_RATE_BPM in exerciseCapabilities.supportedDataTypes
+            _isBurntKcalSupported.value =
+                DataType.TOTAL_CALORIES in exerciseCapabilities.supportedDataTypes
+
+            exerciseClient.setUpdateListener(exerciseUpdateListener)
+            // Types for which we want to receive metrics.
+            val dataTypes = setOf(
+                DataType.HEART_RATE_BPM
+            )
+            // Types for which we want to receive aggregate metrics.
+            val aggregateDataTypes = setOf(
+                // "Total" here refers not to the aggregation but to basal + activity.
+                DataType.TOTAL_CALORIES,
+                DataType.HEART_RATE_BPM
+            )
+            exerciseConfig = ExerciseConfig.builder()
+                .setExerciseType(exerciseType)
+                .setDataTypes(dataTypes)
+                .setAggregateDataTypes(aggregateDataTypes)
+                .build()
+        } else {
+            _isWorkoutExerciseSupported.value = false
         }
     }
 
@@ -236,7 +335,8 @@ class TrainingService : LifecycleService() {
     }
 
     private companion object {
-        const val DEFAULT_TRAINING_ID = 1L
+        const val DEFAULT_TRAINING_ID = -1L
+        const val DELAY = 1000L
         const val NOTIFICATION_ID = 1
         const val NOTIFICATION_CHANNEL = "com.lukasz.witkowski.training.wearable.ONGOING_TRAINING"
         const val NOTIFICATION_CHANNEL_DISPLAY = "Ongoing Training"
