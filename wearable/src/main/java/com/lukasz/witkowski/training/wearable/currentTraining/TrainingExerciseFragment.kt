@@ -199,24 +199,23 @@ class TrainingExerciseFragment : Fragment() {
         trainingService.currentTrainingProgressHelper.currentTrainingState.observe(viewLifecycleOwner) {
             Timber.d("Training state changed $it")
             if(it is CurrentTrainingState.ExerciseState) {
-                setExerciseDataToUi(it.exercise)
+                setExerciseDataToUi(it.exercise, trainingService.currentTrainingProgressHelper.exerciseTime)
             }
         }
     }
 
-    private fun setExerciseDataToUi(trainingExercise: TrainingExercise) {
+    private fun setExerciseDataToUi(trainingExercise: TrainingExercise, exerciseTime: Long) {
         binding.exerciseNameTv.text = trainingExercise.exercise.name
         binding.repetitionsTv.text = getString(R.string.reps_text, trainingExercise.repetitions)
         binding.setsTv.text = getString(R.string.sets_text, trainingExercise.sets)
-        val time = trainingExercise.time
         binding.apply {
-            if (time == 0L) {
+            if (exerciseTime == 0L) {
                 timerTv.visibility = View.GONE
                 startPauseTimerBtn.visibility = View.GONE
             } else {
                 timerTv.visibility = View.VISIBLE
                 startPauseTimerBtn.visibility = View.VISIBLE
-                timerTv.text = TimeFormatter.millisToTimer(time)
+                timerTv.text = TimeFormatter.millisToTimer(exerciseTime)
             }
         }
         setTimerButtonIcon(timer.isRunning)

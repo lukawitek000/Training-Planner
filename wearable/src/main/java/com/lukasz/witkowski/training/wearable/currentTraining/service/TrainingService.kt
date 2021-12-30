@@ -21,6 +21,7 @@ import androidx.wear.ongoing.Status
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.training.wearable.R
 import com.lukasz.witkowski.training.wearable.currentTraining.CurrentTrainingActivity
+import com.lukasz.witkowski.training.wearable.currentTraining.CurrentTrainingState
 import com.lukasz.witkowski.training.wearable.repo.CurrentTrainingRepository
 import com.lukasz.witkowski.training.wearable.startTraining.StartTrainingActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -70,7 +71,6 @@ class TrainingService : LifecycleService() {
         Timber.d("onUnbind")
         isBound = false
         lifecycleScope.launch {
-            delay(UNBIND_DELAY_MILLIS)
             if(!isBound) {
                 goForegroundOrStopSelf()
             }
@@ -183,6 +183,15 @@ class TrainingService : LifecycleService() {
         Timber.d("Start training")
         currentTrainingProgressHelper.startTraining(trainingWithExercises)
         onTimerFinishedListener()
+        observeTrainingState()
+    }
+
+    private fun observeTrainingState() {
+        currentTrainingProgressHelper.currentTrainingState.observe(this) {
+            if(it is CurrentTrainingState.SummaryState) {
+                stopSelf()
+            }
+        }
     }
 
     private fun onTimerFinishedListener() {
@@ -228,8 +237,6 @@ class TrainingService : LifecycleService() {
 
     private companion object {
         const val DEFAULT_TRAINING_ID = 1L
-
-        const val UNBIND_DELAY_MILLIS = 1_000L
         const val NOTIFICATION_ID = 1
         const val NOTIFICATION_CHANNEL = "com.lukasz.witkowski.training.wearable.ONGOING_TRAINING"
         const val NOTIFICATION_CHANNEL_DISPLAY = "Ongoing Training"

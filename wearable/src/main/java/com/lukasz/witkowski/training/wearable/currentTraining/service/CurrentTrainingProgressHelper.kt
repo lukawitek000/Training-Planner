@@ -39,18 +39,21 @@ object CurrentTrainingProgressHelper {
     fun startTraining(trainingWithExercises: TrainingWithExercises) {
         this.trainingWithExercises = trainingWithExercises
         startTrainingTime = System.currentTimeMillis()
-        if(_currentTrainingState.value == null || _currentTrainingState.value is CurrentTrainingState.SummaryState || isDifferentTrainingRunning()) {
+        if (_currentTrainingState.value == null || _currentTrainingState.value is CurrentTrainingState.SummaryState || isDifferentTrainingRunning()) {
             val exercise = trainingWithExercises.exercises[currentExerciseIndex]
+            restTime = setRestTime(exercise)
+            exerciseTime = setExerciseTime(exercise)
             _currentTrainingState.value =
                 CurrentTrainingState.ExerciseState(exercise)
-            restTime = exercise.restTime
-            exerciseTime = exercise.time
         }
     }
 
+    private fun setExerciseTime(exercise: TrainingExercise) =
+        if (exercise.time < TimeFormatter.MILLIS_IN_SECONDS) 0L else exercise.time
+
     private fun isDifferentTrainingRunning(): Boolean {
         val state = _currentTrainingState.value ?: return true
-        return when(state) {
+        return when (state) {
             is CurrentTrainingState.ExerciseState -> state.exercise.trainingId != trainingId
             is CurrentTrainingState.RestTimeState -> state.trainingId != trainingId
             is CurrentTrainingState.SummaryState -> true
@@ -60,12 +63,16 @@ object CurrentTrainingProgressHelper {
     fun navigateToTrainingExercise() {
         val nextExercise = getNextExercise()
         if (nextExercise != null) {
-            restTime = nextExercise.restTime
-            exerciseTime = nextExercise.time
+            restTime = setRestTime(nextExercise)
+            exerciseTime = setExerciseTime(nextExercise)
             _currentTrainingState.value = CurrentTrainingState.ExerciseState(nextExercise)
         } else {
             navigateToTrainingSummary()
         }
+    }
+
+    private fun setRestTime(exercise: TrainingExercise): Long {
+       return if(exercise.restTime < TimeFormatter.MILLIS_IN_SECONDS) 0L else exercise.restTime
     }
 
     fun navigateToTrainingRestTime() {
