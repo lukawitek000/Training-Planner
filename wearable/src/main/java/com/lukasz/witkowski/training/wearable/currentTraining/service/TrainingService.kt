@@ -58,10 +58,9 @@ class TrainingService : LifecycleService() {
 
     private val localBinder = LocalBinder()
 
-    private var isBound = false
-    private var isForeground = false
-
     private var trainingId = DEFAULT_TRAINING_ID
+
+    private var isStarted = false
 
     private val _isHeartRateSupported = MutableLiveData(true)
     val isHeartRateSupported: LiveData<Boolean> = _isHeartRateSupported
@@ -79,45 +78,23 @@ class TrainingService : LifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         Timber.d("onStartCommand")
+        createNotificationChannel()
+        startForeground(NOTIFICATION_ID, buildNotification())
 
         return Service.START_STICKY
     }
 
+
     override fun onBind(intent: Intent): IBinder {
         super.onBind(intent)
         Timber.d("onBind")
-        handleBind()
+        if(!isStarted){
+            isStarted = true
+            startService(Intent(this, this::class.java))
+        }
         return localBinder
     }
 
-    override fun onRebind(intent: Intent?) {
-        super.onRebind(intent)
-        Timber.d("onRebind")
-        handleBind()
-    }
-
-    override fun onUnbind(intent: Intent?): Boolean {
-        Timber.d("onUnbind")
-        isBound = false
-        lifecycleScope.launch {
-            delay(DELAY)
-            if(!isBound) {
-                goForegroundOrStopSelf()
-            }
-        }
-        return true
-    }
-
-    private fun goForegroundOrStopSelf() {
-        lifecycleScope.launch {
-            if(isExerciseRunning()) {
-                showNotification()
-            } else {
-                Timber.d("Stop self")
-                stopSelf()
-            }
-        }
-    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -129,28 +106,6 @@ class TrainingService : LifecycleService() {
     override fun onCreate() {
         super.onCreate()
         Timber.d("onCreate")
-    }
-
-
-    private fun isExerciseRunning(): Boolean {
-        return true
-    }
-
-    private fun handleBind() {
-        if(!isBound) {
-            isBound = true
-            startService(Intent(this, this::class.java))
-            removeNotification()
-        }
-    }
-
-    private fun showNotification() {
-        if(!isForeground) {
-            isForeground = true
-            Timber.d("Show notification")
-            createNotificationChannel()
-            startForeground(NOTIFICATION_ID, buildNotification())
-        }
     }
 
     private fun buildNotification(): Notification {
@@ -200,15 +155,6 @@ class TrainingService : LifecycleService() {
         manager.createNotificationChannel(notificationChannel)
     }
 
-    private fun removeNotification() {
-        Timber.d("Remove notification")
-        if (isForeground) {
-            Timber.d( "Removing ongoing activity notification")
-            isForeground = false
-            stopForeground(true)
-        }
-    }
-
     fun startTraining(trainingWithExercises: TrainingWithExercises) {
         this.trainingId = trainingWithExercises.training.id
         Timber.d("Start training")
@@ -221,7 +167,7 @@ class TrainingService : LifecycleService() {
         currentTrainingProgressHelper.currentTrainingState.observe(this) {
             when (it) {
                 is CurrentTrainingState.SummaryState -> {
-                    stopSelf()
+                    stopCurrentService()
                 }
                 is CurrentTrainingState.ExerciseState -> {
                     exerciseClient.endExercise()
@@ -328,6 +274,12 @@ class TrainingService : LifecycleService() {
 
     fun isTrainingStarted(): Boolean {
         return trainingId != DEFAULT_TRAINING_ID
+    }
+
+    fun stopCurrentService() {
+        stopForeground(true)
+        stopSelf()
+        isStarted = false
     }
 
     inner class LocalBinder : Binder() {

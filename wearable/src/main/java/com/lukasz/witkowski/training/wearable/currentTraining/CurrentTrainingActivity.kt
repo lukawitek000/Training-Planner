@@ -172,7 +172,7 @@ class CurrentTrainingActivity : FragmentActivity() {
     }
 
     private fun stopCurrentTrainingService() {
-        trainingService.stopSelf()
+        trainingService.stopCurrentService()
     }
 
     private fun observeHealthIndicatorsSupport() {
