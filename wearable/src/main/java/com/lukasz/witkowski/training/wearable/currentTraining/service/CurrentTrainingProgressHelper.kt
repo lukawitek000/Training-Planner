@@ -14,7 +14,8 @@ object CurrentTrainingProgressHelper {
     private var startTrainingTime = 0L
 
     private var currentExerciseIndex = 0
-    private var currentSet = 1
+    var currentSet = 1
+    private set
     private val trainingId: Long
         get() = trainingWithExercises.training.id
 

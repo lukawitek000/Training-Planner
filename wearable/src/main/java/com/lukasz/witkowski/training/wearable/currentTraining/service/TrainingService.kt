@@ -93,7 +93,7 @@ class TrainingService : LifecycleService() {
     private val _exerciseUpdatesEndedMessage = MutableLiveData("")
     val exerciseUpdatesEndedMessage: LiveData<String> = _exerciseUpdatesEndedMessage
 
-    private var exercisesQueue: Queue<TrainingExercise> = LinkedList()
+    private var exercisesIdAndSetQueue: Queue<Pair<Long, Int>> = LinkedList()
     private var trainingStatistics: TrainingStatistics? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -189,7 +189,7 @@ class TrainingService : LifecycleService() {
                 is CurrentTrainingState.ExerciseState -> {
                     Timber.d("Statistics Exercise state ${it.exercise}")
 //                    currentExercise = it.exercise
-                    exercisesQueue.offer(it.exercise)
+                    exercisesIdAndSetQueue.offer(Pair(it.exercise.id, currentTrainingProgressHelper.currentSet))
                     monitorHealthIndicators()
                 }
                 is CurrentTrainingState.RestTimeState -> {
@@ -259,21 +259,22 @@ class TrainingService : LifecycleService() {
             min = heartRate?.min?.asDouble() ?: 0.0,
             average = heartRate?.average?.asDouble() ?: 0.0
         )
-        Timber.d("Statistics $exercisesQueue")
-        val currentExercise = exercisesQueue.poll() ?: return
-        val index = exercisesStatistics.indexOfFirst { it.trainingExerciseId == currentExercise.id }
+        Timber.d("Statistics $exercisesIdAndSetQueue")
+        val (currentExerciseId, currentSet) = exercisesIdAndSetQueue.poll() ?: return
+        val savedSets = if (currentSet - 1 == 0 ) 1 else currentSet - 1
+        val index = exercisesStatistics.indexOfFirst { it.trainingExerciseId == currentExerciseId }
         Timber.d("Statistics $index")
         if(index != -1) {
             val exerciseStatistics = exercisesStatistics[index]
             val heartRateStatistics = HeartRateStatistics(
                 max = max(currentHeartRateStatistics.max, exerciseStatistics.heartRateStatistics.max),
                 min = min(currentHeartRateStatistics.min, exerciseStatistics.heartRateStatistics.min),
-                average = (currentHeartRateStatistics.average + exerciseStatistics.heartRateStatistics.average) / 2 // TODO calculate average
+                average = (currentHeartRateStatistics.average * savedSets + exerciseStatistics.heartRateStatistics.average) / currentSet
             )
             val caloriesStatistics = CaloriesStatistics(
                 burntCalories = exerciseStatistics.burntCaloriesStatistics.burntCalories + currentCaloriesStatistics.burntCalories
             )
-            val averageTime = (exerciseStatistics.averageTime + exerciseTime) / 2 // TODO calculate average
+            val averageTime = (exerciseStatistics.averageTime * savedSets + exerciseTime) / currentSet
             exercisesStatistics.removeAt(index)
             exercisesStatistics.add(
                 ExerciseStatistics(
@@ -286,7 +287,7 @@ class TrainingService : LifecycleService() {
             )
         } else {
             val exerciseStatistics = ExerciseStatistics(
-                trainingExerciseId = currentExercise.id,
+                trainingExerciseId = currentExerciseId,
                 heartRateStatistics = currentHeartRateStatistics,
                 burntCaloriesStatistics = currentCaloriesStatistics,
                 averageTime = exerciseTime
