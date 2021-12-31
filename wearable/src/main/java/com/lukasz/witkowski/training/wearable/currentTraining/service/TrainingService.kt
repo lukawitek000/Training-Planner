@@ -179,9 +179,14 @@ class TrainingService : LifecycleService() {
         currentTrainingProgressHelper.currentTrainingState.observe(this) {
             when (it) {
                 is CurrentTrainingState.SummaryState -> {
+                    lifecycleScope.launch {
+                        endExercise()
+                    }
                     stopCurrentService()
                 }
                 is CurrentTrainingState.ExerciseState -> {
+                    Timber.d("Exercise state ${currentTrainingProgressHelper.currentSet} ${it.exercise}")
+                    // TODO it is skipping everything training 1
                     exercisesIdAndSetQueue.offer(Pair(it.exercise.id, currentTrainingProgressHelper.currentSet))
                     monitorHealthIndicators()
                 }
@@ -301,15 +306,19 @@ class TrainingService : LifecycleService() {
 
     private fun monitorHealthIndicators() {
         lifecycleScope.launch {
-            if(isExerciseInProgress()) {
-                exerciseClient.endExercise().await()
-            }
+            endExercise()
             if(!isExerciseConfigured) {
                 configureHealthServices()
             }
             exerciseConfig?.let {
                 exerciseClient.startExercise(it).await()
             }
+        }
+    }
+
+    private suspend fun endExercise() {
+        if (isExerciseInProgress()) {
+            exerciseClient.endExercise().await()
         }
     }
 
@@ -377,6 +386,7 @@ class TrainingService : LifecycleService() {
     }
 
     fun stopCurrentService() {
+        timerHelper.cancelTimer()
         stopForeground(true)
         stopSelf()
         isStarted = false
