@@ -39,6 +39,7 @@ class DataLayerListenerService : WearableListenerService() {
 //                    .dataMap
 //                    .getLong(TRAINING_KEY)
                 Timber.d("Received time")
+
                     val trainingAsset = DataMapItem.fromDataItem(dataEvent.dataItem)
                         .dataMap
                         .getAsset(TRAINING_KEY)
@@ -58,7 +59,6 @@ class DataLayerListenerService : WearableListenerService() {
     }
 
     private suspend fun getTrainingWithExercisesFromAsset(trainingAsset: Asset): TrainingWithExercises {
-        trainingAsset.zza()
         val response = dataClient.getFdForAsset(trainingAsset).await()
         val byteArray =  response.inputStream.readBytes()
         return gson.fromJson(String(byteArray), TrainingWithExercises::class.java)

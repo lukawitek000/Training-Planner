@@ -39,40 +39,42 @@ class SendingDataService : LifecycleService() {
     private fun observeNotSynchronizedData() {
         lifecycleScope.launch {
             syncDataRepository.getNotSynchronizedTrainings().collect {
-                for (training in it) {
-                    Timber.d("Send training $training")
-                    sendTraining(training)
+                if (it.isNotEmpty()) {
+                    Timber.d("Send trainings ${it.size} $it")
+                    sendTrainings(it)
                 }
             }
         }
     }
 
-    private fun sendTraining(training: TrainingWithExercises) {
+    private fun sendTrainings(trainings: List<TrainingWithExercises>) {
         lifecycleScope.launch {
-            try {
-                val data = training.toAsset()
-
-                val putDataRequest = PutDataMapRequest.create(TRAINING_PATH).apply {
-                    dataMap.putAsset(TRAINING_KEY, data)
-//                    dataMap.putLong(TRAINING_KEY, System.currentTimeMillis())
-                }
-                    .asPutDataRequest()
-                    .setUrgent()
-                val result = dataClient.putDataItem(putDataRequest)
-                result.addOnSuccessListener { Timber.d("On success sending") }    
-                result.addOnFailureListener { Timber.d("On failure sending") }    
-                result.addOnCanceledListener { Timber.d("On cancelled sending") }
-                result.addOnCompleteListener { Timber.d("On complete sending") }
-                    
-                result.await()
-                Timber.d("Result of sending $result")
-            } catch (cancellationException: CancellationException) {
-                Timber.d("Job has been cancelled")
-            } catch (e: Exception) {
-                Timber.d("Saving item failed")
+            for (training in trainings) {
+                sendSingleTraining(training)
             }
         }
+    }
 
+    private suspend fun sendSingleTraining(training: TrainingWithExercises) {
+        try {
+            val data = training.toAsset()
+            val putDataRequest = PutDataMapRequest.create(TRAINING_PATH).apply {
+                dataMap.putAsset(TRAINING_KEY, data)
+            }
+                .asPutDataRequest()
+            val result = dataClient.putDataItem(putDataRequest)
+            result.addOnSuccessListener { Timber.d("On success sending") }
+            result.addOnFailureListener { Timber.d("On failure sending") }
+            result.addOnCanceledListener { Timber.d("On cancelled sending") }
+            result.addOnCompleteListener { Timber.d("On complete sending") }
+
+            result.await()
+            Timber.d("Result of sending $result")
+        } catch (cancellationException: CancellationException) {
+            Timber.d("Job has been cancelled")
+        } catch (e: Exception) {
+            Timber.d("Saving item failed")
+        }
     }
 
     private suspend fun TrainingWithExercises.toAsset(): Asset =
