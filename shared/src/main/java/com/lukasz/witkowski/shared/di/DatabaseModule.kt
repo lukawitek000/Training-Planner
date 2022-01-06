@@ -10,11 +10,13 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
+    @Singleton
     @Provides
     fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase {
         return Room.databaseBuilder(
@@ -26,11 +28,13 @@ object DatabaseModule {
             .build()
     }
 
+    @Singleton
     @Provides
     fun provideExerciseDao(appDatabase: AppDatabase): ExerciseDao {
         return appDatabase.exerciseDao()
     }
 
+    @Singleton
     @Provides
     fun provideTrainingDao(appDatabase: AppDatabase): TrainingDao {
         return appDatabase.trainingDao()
