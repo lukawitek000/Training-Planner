@@ -57,6 +57,7 @@ class SendingDataService : LifecycleService() {
 //            for (training in trainings) {
                 sendSingleTraining(trainings.first(), outputSteam)
 //            }
+            outputSteam.close()
 //            channelClient.close(channel)
         }
     }
@@ -70,16 +71,19 @@ class SendingDataService : LifecycleService() {
 
 
     private suspend fun sendSingleTraining(training: TrainingWithExercises, outputStream: OutputStream) {
-        try {
+        withContext(Dispatchers.IO) {
+            try {
 //            val data = training.toAsset()
 //            val putDataRequest = PutDataMapRequest.create(TRAINING_PATH).apply {
 //                dataMap.putAsset(TRAINING_KEY, data)
 //            }
 //                .asPutDataRequest()
 //            val result = dataClient.putDataItem(putDataRequest)
-            Timber.d("Send data")
-//            val byteArray = gson.toJson(training).toByteArray()
-            outputStream.write(12)
+                Timber.d("Send data")
+                val byteArray = gson.toJson(training).toByteArray()
+                Timber.d("Byte array ${byteArray.contentToString()}")
+//            outputStream.write(12)
+                outputStream.write(byteArray, 0, byteArray.size)
 //            outputStream.flush()
 //            result.addOnSuccessListener { Timber.d("On success sending") }
 //            result.addOnFailureListener { Timber.d("On failure sending") }
@@ -88,10 +92,11 @@ class SendingDataService : LifecycleService() {
 //
 //            result.await()
 //            Timber.d("Result of sending $result")
-        } catch (cancellationException: CancellationException) {
-            Timber.d("Job has been cancelled")
-        } catch (e: Exception) {
-            Timber.d("Saving item failed")
+            } catch (cancellationException: CancellationException) {
+                Timber.d("Job has been cancelled")
+            } catch (e: Exception) {
+                Timber.d("Saving item failed")
+            }
         }
     }
 

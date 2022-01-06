@@ -6,12 +6,12 @@
         <type value="RUNNING_DEVICE_TARGET" />
         <deviceKey>
           <Key>
-            <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="$USER_HOME$/.android/avd/Wear_OS_Round_API_30.avd" />
+            <type value="SERIAL_NUMBER" />
+            <value value="0A061JEC205705" />
           </Key>
         </deviceKey>
       </Target>
     </runningDeviceTargetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2022-01-06T19:20:43.090035Z" />
+    <timeTargetWasSelectedWithDropDown value="2022-01-06T19:21:22.010043Z" />
   </component>
 </project>

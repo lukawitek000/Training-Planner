@@ -20,7 +20,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.InputStream
 import kotlin.concurrent.timer
 
 class DataLayerListenerService : WearableListenerService() {
@@ -40,13 +42,21 @@ class DataLayerListenerService : WearableListenerService() {
         coroutineScope.launch {
             val inputStream = channelClient.getInputStream(channel).await()
             Timber.d("Input channel")
-            val byteArray = inputStream.read()
-            Timber.d("Received $byteArray")
-//            val trainingWithExercises = gson.fromJson(String(byteArray), TrainingWithExercises::class.java)
-//            Timber.d("Training with exercises $trainingWithExercises")
+            receiveData(inputStream)
+            inputStream.close()
+
         }
         Timber.d("After coroutine")
 
+    }
+
+    private suspend fun receiveData(inputStream: InputStream) {
+        withContext(Dispatchers.IO) {
+            val byteArray = inputStream.readBytes()
+            Timber.d("Received ${byteArray.contentToString()}")
+            val trainingWithExercises = gson.fromJson(String(byteArray), TrainingWithExercises::class.java)
+            Timber.d("Training with exercises $trainingWithExercises")
+        }
     }
 
     override fun onChannelClosed(p0: ChannelClient.Channel, p1: Int, p2: Int) {
