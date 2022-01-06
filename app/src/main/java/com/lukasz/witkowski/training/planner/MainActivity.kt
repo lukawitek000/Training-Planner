@@ -1,17 +1,17 @@
 package com.lukasz.witkowski.training.planner
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
 import com.lukasz.witkowski.training.planner.navigation.NavItem
 import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
+import com.lukasz.witkowski.training.planner.service.SendingDataService
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -19,11 +19,23 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        startSendingDataService()
         setContent {
             TrainingPlannerTheme {
                 TrainingPlannerApp()
             }
         }
+    }
+
+    private fun startSendingDataService() {
+        val intent = Intent(this, SendingDataService::class.java)
+        startService(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val intent = Intent(this, SendingDataService::class.java)
+        stopService(intent)
     }
 }
 
