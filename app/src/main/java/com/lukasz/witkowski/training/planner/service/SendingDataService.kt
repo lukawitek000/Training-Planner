@@ -11,6 +11,7 @@ import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import com.google.gson.Gson
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.utils.SYNC_SUCCESSFUL
 import com.lukasz.witkowski.shared.utils.TRAINING_KEY
 import com.lukasz.witkowski.shared.utils.TRAINING_PATH
 import com.lukasz.witkowski.shared.utils.closeSuspending
@@ -55,7 +56,7 @@ class SendingDataService : LifecycleService() {
 
     private fun sendTrainings(trainings: List<TrainingWithExercises>) {
         lifecycleScope.launch {
-            val nodeId = getConnectedNodes() ?: return@launch
+            val nodeId = getConnectedNodes() ?: return@launch // TODO send to all nodes
             val channel = channelClient.openChannel(nodeId, TRAINING_PATH).await()
             val outputStream = channelClient.getOutputStream(channel).await()
             val inputStream = channelClient.getInputStream(channel).await()
@@ -64,7 +65,6 @@ class SendingDataService : LifecycleService() {
             }
             outputStream.closeSuspending()
             inputStream.closeSuspending()
-
             channelClient.close(channel)
         }
     }
@@ -79,29 +79,18 @@ class SendingDataService : LifecycleService() {
 
     private suspend fun sendSingleTraining(training: TrainingWithExercises, outputStream: OutputStream, inputStream: InputStream) {
         try {
-
-
             Timber.d("Send data")
             val byteArray = gson.toJson(training).toByteArray()
-            Timber.d("Byte array ${byteArray.contentToString()}")
-//            outputStream.write(12)
             outputStream.writeSuspending(byteArray)
+            val syncResponse = inputStream.readSuspending()
+            Timber.d("Message returned $syncResponse")
+            if(syncResponse == SYNC_SUCCESSFUL) {
+                // TODO change is synchronized to true
+            }
 
-            val message = inputStream.readSuspending()
-            Timber.d("Message returned $message")
-
-
-        } catch (cancellationException: CancellationException) {
-            Timber.d("Job has been cancelled")
         } catch (e: Exception) {
             e.printStackTrace()
             Timber.d("Saving item failed ${e.localizedMessage}")
         }
     }
-
-    private suspend fun TrainingWithExercises.toAsset(): Asset =
-        withContext(Dispatchers.Default) {
-            val byteArray = gson.toJson(this@toAsset).toByteArray()
-            Asset.createFromBytes(byteArray)
-        }
 }

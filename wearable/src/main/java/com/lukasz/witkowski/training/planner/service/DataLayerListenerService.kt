@@ -9,6 +9,8 @@ import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import com.google.android.gms.wearable.WearableListenerService
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.utils.SYNC_FAILURE
+import com.lukasz.witkowski.shared.utils.SYNC_SUCCESSFUL
 import com.lukasz.witkowski.shared.utils.TRAINING_KEY
 import com.lukasz.witkowski.shared.utils.TRAINING_PATH
 import com.lukasz.witkowski.shared.utils.closeSuspending
@@ -27,7 +29,6 @@ import java.lang.Exception
 
 class DataLayerListenerService : WearableListenerService() {
 
-    private val dataClient: DataClient by lazy { Wearable.getDataClient(this) }
     private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(this) }
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
@@ -50,64 +51,26 @@ class DataLayerListenerService : WearableListenerService() {
         val inputStream = channelClient.getInputStream(channel).await()
         val outputStream = channelClient.getOutputStream(channel).await()
         do {
-            Timber.d("Waiting for bytes")
             val byteArray = readBytesSuspending(inputStream)
-
-            Timber.d("Received ${byteArray.contentToString()}")
             try {
                 val trainingWithExercises =
                     gson.fromJson(String(byteArray), TrainingWithExercises::class.java)
                 Timber.d("Training with exercises $trainingWithExercises")
 
-                outputStream.writeIntSuspending(1)
-
-                Timber.d("Sent response")
+                outputStream.writeIntSuspending(SYNC_SUCCESSFUL)
             } catch (e: Exception) {
-                Timber.d("Deserializing failed ${byteArray.contentToString()}")
+                Timber.d("Receiving data failed")
+                outputStream.writeIntSuspending(SYNC_FAILURE)
             }
         } while (byteArray.isNotEmpty())
         outputStream.closeSuspending()
         inputStream.closeSuspending()
     }
 
-    override fun onChannelClosed(p0: ChannelClient.Channel, p1: Int, p2: Int) {
-        super.onChannelClosed(p0, p1, p2)
-        Timber.d("Channel closed $p0")
-    }
-
-    override fun onDataChanged(dataEvents: DataEventBuffer) {
-        super.onDataChanged(dataEvents)
-        Timber.d("Data changed")
-        dataEvents.forEach { dataEvent ->
-            if (dataEvent.type == DataEvent.TYPE_CHANGED && dataEvent.dataItem.uri.path == TRAINING_PATH) {
-//                val time = DataMapItem.fromDataItem(dataEvent.dataItem)
-//                    .dataMap
-//                    .getLong(TRAINING_KEY)
-                Timber.d("Received time")
-
-                val trainingAsset = DataMapItem.fromDataItem(dataEvent.dataItem)
-                    .dataMap
-                    .getAsset(TRAINING_KEY)
-                coroutineScope.launch {
-                    val trainingWithExercises =
-                        trainingAsset?.let { getTrainingWithExercisesFromAsset(it) }
-                    Timber.d("Received $trainingWithExercises")
-                }
-            }
-        }
-
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("Destroy service")
         coroutineScope.cancel()
-    }
-
-    private suspend fun getTrainingWithExercisesFromAsset(trainingAsset: Asset): TrainingWithExercises {
-        val response = dataClient.getFdForAsset(trainingAsset).await()
-        val byteArray = response.inputStream.readBytes()
-        return gson.fromJson(String(byteArray), TrainingWithExercises::class.java)
     }
 
     private suspend fun readBytesSuspending(inputStream: InputStream) =

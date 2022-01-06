@@ -14,6 +14,10 @@ val gson = GsonBuilder()
     .registerTypeAdapter(Category::class.java, CategoryAdapter())
     .create()
 
+
+const val SYNC_SUCCESSFUL = 1
+const val SYNC_FAILURE = 0
+
 suspend fun OutputStream.closeSuspending() = withContext(Dispatchers.IO) {
     close()
 }
