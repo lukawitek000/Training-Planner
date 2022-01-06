@@ -19,6 +19,8 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private var isServiceStarted = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -38,14 +40,34 @@ class MainActivity : ComponentActivity() {
         stopSendingDataService()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(!isServiceStarted) startSendingDataService()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        if(isServiceStarted) stopSendingDataService()
+    }
+
     private fun startSendingDataService() {
-        val intent = Intent(this, SendingDataService::class.java)
-        startService(intent)
+        isServiceStarted = try {
+            val intent = Intent(this, SendingDataService::class.java)
+            startService(intent)
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private fun stopSendingDataService() {
-        val intent = Intent(this, SendingDataService::class.java)
-        stopService(intent)
+        isServiceStarted = try {
+            val intent = Intent(this, SendingDataService::class.java)
+            stopService(intent)
+            false
+        } catch (e: Exception) {
+            true
+        }
     }
 }
 
