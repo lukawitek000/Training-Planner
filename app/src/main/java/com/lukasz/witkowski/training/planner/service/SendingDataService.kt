@@ -17,6 +17,7 @@ import com.lukasz.witkowski.shared.utils.TRAINING_PATH
 import com.lukasz.witkowski.shared.utils.closeSuspending
 import com.lukasz.witkowski.shared.utils.gson
 import com.lukasz.witkowski.shared.utils.readSuspending
+import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import com.lukasz.witkowski.shared.utils.writeSuspending
 import com.lukasz.witkowski.training.planner.repository.SyncDataRepository
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,6 +61,7 @@ class SendingDataService : LifecycleService() {
             val channel = channelClient.openChannel(nodeId, TRAINING_PATH).await()
             val outputStream = channelClient.getOutputStream(channel).await()
             val inputStream = channelClient.getInputStream(channel).await()
+            outputStream.writeIntSuspending(trainings.size)
             for (training in trainings) {
                 sendSingleTraining(training, outputStream, inputStream)
             }

@@ -15,6 +15,7 @@ import com.lukasz.witkowski.shared.utils.TRAINING_KEY
 import com.lukasz.witkowski.shared.utils.TRAINING_PATH
 import com.lukasz.witkowski.shared.utils.closeSuspending
 import com.lukasz.witkowski.shared.utils.gson
+import com.lukasz.witkowski.shared.utils.readSuspending
 import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +26,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.InputStream
+import java.io.OutputStream
 import java.lang.Exception
 
 class DataLayerListenerService : WearableListenerService() {
@@ -41,30 +43,37 @@ class DataLayerListenerService : WearableListenerService() {
         super.onChannelOpened(channel)
         Timber.d("Channel open $channel")
         coroutineScope.launch {
-            Timber.d("Input channel")
             receiveData(channel)
         }
-        Timber.d("After coroutine")
     }
 
     private suspend fun receiveData(channel: ChannelClient.Channel) {
         val inputStream = channelClient.getInputStream(channel).await()
         val outputStream = channelClient.getOutputStream(channel).await()
-        do {
+        val numberOfTrainings = inputStream.readSuspending()
+        Timber.d("Number of trainings $numberOfTrainings")
+        receiveTrainings(numberOfTrainings, inputStream, outputStream)
+        outputStream.closeSuspending()
+        inputStream.closeSuspending()
+    }
+
+    private suspend fun receiveTrainings(
+        numberOfTrainings: Int,
+        inputStream: InputStream,
+        outputStream: OutputStream
+    ) {
+        for (i in 1..numberOfTrainings) {
             val byteArray = readBytesSuspending(inputStream)
             try {
                 val trainingWithExercises =
                     gson.fromJson(String(byteArray), TrainingWithExercises::class.java)
                 Timber.d("Training with exercises $trainingWithExercises")
-
                 outputStream.writeIntSuspending(SYNC_SUCCESSFUL)
             } catch (e: Exception) {
                 Timber.d("Receiving data failed")
                 outputStream.writeIntSuspending(SYNC_FAILURE)
             }
-        } while (byteArray.isNotEmpty())
-        outputStream.closeSuspending()
-        inputStream.closeSuspending()
+        }
     }
 
     override fun onDestroy() {
@@ -73,6 +82,7 @@ class DataLayerListenerService : WearableListenerService() {
         coroutineScope.cancel()
     }
 
+    // Reads bytes till everything is received
     private suspend fun readBytesSuspending(inputStream: InputStream) =
         withContext(Dispatchers.IO) {
             var arraySize = 0
@@ -97,5 +107,4 @@ class DataLayerListenerService : WearableListenerService() {
             }
             byteArray
         }
-
 }
