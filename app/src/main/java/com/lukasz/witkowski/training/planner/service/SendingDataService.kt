@@ -2,7 +2,6 @@ package com.lukasz.witkowski.training.planner.service
 
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.tasks.Tasks.await
 import com.google.android.gms.wearable.Asset
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.PutDataMapRequest
@@ -15,8 +14,8 @@ import com.lukasz.witkowski.training.planner.repository.SyncDataRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
@@ -37,6 +36,7 @@ class SendingDataService : LifecycleService() {
     private fun observeNotSynchronizedData() {
         syncDataRepository.getNotSynchronizedTrainings().observe(this) {
             for(training in it) {
+                Timber.d("Send training $training")
                 sendTraining(training)
             }
         }
@@ -52,10 +52,17 @@ class SendingDataService : LifecycleService() {
                 }
                     .asPutDataRequest()
                 val result = dataClient.putDataItem(putDataRequest)
+                result.addOnSuccessListener { Timber.d("On success sending") }    
+                result.addOnFailureListener { Timber.d("On failure sending") }    
+                result.addOnCanceledListener { Timber.d("On cancelled sending") }
+                result.addOnCompleteListener { Timber.d("On complete sending") }
+                    
+                result.await()
+                Timber.d("Result of sending $result")
             } catch (cancellationException: CancellationException) {
                 Timber.d("Job has been cancelled")
             } catch (e: Exception) {
-                Timber.d("Saving item failes")
+                Timber.d("Saving item failed")
             }
         }
 
@@ -66,5 +73,4 @@ class SendingDataService : LifecycleService() {
             val byteArray = Gson().toJson(training).toByteArray()
             Asset.createFromBytes(byteArray)
         }
-
 }

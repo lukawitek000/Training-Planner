@@ -21,7 +21,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        startSendingDataService()
         setContent {
             TrainingPlannerTheme {
                 TrainingPlannerApp()
@@ -29,13 +28,22 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        startSendingDataService()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        stopSendingDataService()
+    }
+
     private fun startSendingDataService() {
         val intent = Intent(this, SendingDataService::class.java)
         startService(intent)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    private fun stopSendingDataService() {
         val intent = Intent(this, SendingDataService::class.java)
         stopService(intent)
     }
