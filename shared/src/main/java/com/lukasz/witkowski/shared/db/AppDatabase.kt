@@ -7,7 +7,7 @@ import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
 
-@Database(entities = [Exercise::class, Training::class, TrainingExercise::class], version = 3)
+@Database(entities = [Exercise::class, Training::class, TrainingExercise::class], version = 4)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
