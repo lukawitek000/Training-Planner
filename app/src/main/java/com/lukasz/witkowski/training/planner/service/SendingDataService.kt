@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.service
 
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.wearable.Asset
 import com.google.android.gms.wearable.DataClient
@@ -14,6 +16,7 @@ import com.lukasz.witkowski.training.planner.repository.SyncDataRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -34,10 +37,12 @@ class SendingDataService : LifecycleService() {
     }
 
     private fun observeNotSynchronizedData() {
-        syncDataRepository.getNotSynchronizedTrainings().observe(this) {
-            for(training in it) {
-                Timber.d("Send training $training")
-                sendTraining(training)
+        lifecycleScope.launch {
+            syncDataRepository.getNotSynchronizedTrainings().collect {
+                for (training in it) {
+                    Timber.d("Send training $training")
+                    sendTraining(training)
+                }
             }
         }
     }

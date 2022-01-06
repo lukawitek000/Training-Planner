@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.Flow
 class SyncDataRepository
 constructor( private val trainingDao: TrainingDao) {
 
-    fun getNotSynchronizedTrainings() : LiveData<List<TrainingWithExercises>> {
-        return trainingDao.getNotSynchronizedTrainingsWithExercises().asLiveData()
+    fun getNotSynchronizedTrainings() : Flow<List<TrainingWithExercises>> {
+        return trainingDao.getNotSynchronizedTrainingsWithExercises()
     }
 
 
