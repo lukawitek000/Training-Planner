@@ -11,6 +11,7 @@ import com.google.gson.Gson
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.TRAINING_KEY
 import com.lukasz.witkowski.shared.utils.TRAINING_PATH
+import com.lukasz.witkowski.shared.utils.gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -34,17 +35,17 @@ class DataLayerListenerService : WearableListenerService() {
         Timber.d("Data changed")
         dataEvents.forEach { dataEvent ->
             if(dataEvent.type == DataEvent.TYPE_CHANGED && dataEvent.dataItem.uri.path == TRAINING_PATH) {
-                val time = DataMapItem.fromDataItem(dataEvent.dataItem)
-                    .dataMap
-                    .getLong(TRAINING_KEY)
-                Timber.d("Received time $time")
-//                    val trainingAsset = DataMapItem.fromDataItem(dataEvent.dataItem)
-//                        .dataMap
-//                        .getAsset(TRAINING_KEY)
-//                coroutineScope.launch {
-//                    val trainingWithExercises = trainingAsset?.let { getTrainingWithExercisesFromAsset(it) }
-//                    Timber.d("Received $trainingWithExercises")
-//                }
+//                val time = DataMapItem.fromDataItem(dataEvent.dataItem)
+//                    .dataMap
+//                    .getLong(TRAINING_KEY)
+                Timber.d("Received time")
+                    val trainingAsset = DataMapItem.fromDataItem(dataEvent.dataItem)
+                        .dataMap
+                        .getAsset(TRAINING_KEY)
+                coroutineScope.launch {
+                    val trainingWithExercises = trainingAsset?.let { getTrainingWithExercisesFromAsset(it) }
+                    Timber.d("Received $trainingWithExercises")
+                }
             }
         }
 
@@ -57,9 +58,10 @@ class DataLayerListenerService : WearableListenerService() {
     }
 
     private suspend fun getTrainingWithExercisesFromAsset(trainingAsset: Asset): TrainingWithExercises {
+        trainingAsset.zza()
         val response = dataClient.getFdForAsset(trainingAsset).await()
         val byteArray =  response.inputStream.readBytes()
-        return Gson().fromJson(String(byteArray), TrainingWithExercises::class.java)
+        return gson.fromJson(String(byteArray), TrainingWithExercises::class.java)
     }
 
 }
