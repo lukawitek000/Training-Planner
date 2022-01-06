@@ -16,7 +16,6 @@ import com.lukasz.witkowski.training.planner.repository.SyncDataRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -53,7 +52,8 @@ class SendingDataService : LifecycleService() {
                 val data = training.toAsset()
 
                 val putDataRequest = PutDataMapRequest.create(TRAINING_PATH).apply {
-                    dataMap.putAsset(TRAINING_KEY, data)
+//                    dataMap.putAsset(TRAINING_KEY, data)
+                    dataMap.putLong(TRAINING_KEY, System.currentTimeMillis())
                 }
                     .asPutDataRequest()
                 val result = dataClient.putDataItem(putDataRequest)
