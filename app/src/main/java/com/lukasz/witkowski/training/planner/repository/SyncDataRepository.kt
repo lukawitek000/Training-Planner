@@ -1,11 +1,15 @@
 package com.lukasz.witkowski.training.planner.repository
 
 import com.lukasz.witkowski.shared.db.TrainingDao
+import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import kotlinx.coroutines.flow.Flow
 
 class SyncDataRepository
-    constructor(trainingDao: TrainingDao) {
+constructor( private val trainingDao: TrainingDao) {
 
-        fun get
+    fun getNotSynchronizedTrainings() : Flow<List<TrainingWithExercises>> {
+        return trainingDao.getNotSynchronizedTrainingsWithExercises()
+    }
 
 
 }

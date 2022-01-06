@@ -30,4 +30,7 @@ interface TrainingDao {
 
     @Insert(onConflict = REPLACE)
     fun insertTrainingExercise(trainingExercise: TrainingExercise): Long
+
+    @Query("SELECT * FROM TRAINING WHERE isSynchronized=0")
+    fun getNotSynchronizedTrainingsWithExercises(): Flow<List<TrainingWithExercises>>
 }
