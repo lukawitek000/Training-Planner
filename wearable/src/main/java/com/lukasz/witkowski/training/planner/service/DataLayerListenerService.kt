@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.service
 
 import com.google.android.gms.wearable.Asset
+import com.google.android.gms.wearable.Channel
+import com.google.android.gms.wearable.ChannelClient
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
@@ -19,16 +21,40 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
+import kotlin.concurrent.timer
 
 class DataLayerListenerService : WearableListenerService() {
 
     private val dataClient: DataClient by lazy { Wearable.getDataClient(this) }
+    private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(this) }
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     override fun onCreate() {
         super.onCreate()
         Timber.d("Create service")
     }
+
+    override fun onChannelOpened(channel: ChannelClient.Channel) {
+        super.onChannelOpened(channel)
+        Timber.d("Channel open $channel")
+        coroutineScope.launch {
+            val inputStream = channelClient.getInputStream(channel).await()
+            Timber.d("Input channel")
+            val byteArray = inputStream.read()
+            Timber.d("Received $byteArray")
+//            val trainingWithExercises = gson.fromJson(String(byteArray), TrainingWithExercises::class.java)
+//            Timber.d("Training with exercises $trainingWithExercises")
+        }
+        Timber.d("After coroutine")
+
+    }
+
+    override fun onChannelClosed(p0: ChannelClient.Channel, p1: Int, p2: Int) {
+        super.onChannelClosed(p0, p1, p2)
+        Timber.d("Channel closed $p0")
+    }
+
+
 
     override fun onDataChanged(dataEvents: DataEventBuffer) {
         super.onDataChanged(dataEvents)

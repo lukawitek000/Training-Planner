@@ -5,6 +5,7 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.wearable.Asset
+import com.google.android.gms.wearable.ChannelClient
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.OutputStream
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -29,7 +31,7 @@ class SendingDataService : LifecycleService() {
     @Inject
     lateinit var syncDataRepository: SyncDataRepository
 
-    private val dataClient: DataClient by lazy { Wearable.getDataClient(this) }
+    private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(this) }
 
     override fun onCreate() {
         super.onCreate()
@@ -49,27 +51,43 @@ class SendingDataService : LifecycleService() {
 
     private fun sendTrainings(trainings: List<TrainingWithExercises>) {
         lifecycleScope.launch {
-            for (training in trainings) {
-                sendSingleTraining(training)
-            }
+            val nodeId = getConnectedNodes() ?: return@launch
+            val channel = channelClient.openChannel(nodeId, TRAINING_PATH).await()
+            val outputSteam = channelClient.getOutputStream(channel).await()
+//            for (training in trainings) {
+                sendSingleTraining(trainings.first(), outputSteam)
+//            }
+//            channelClient.close(channel)
         }
     }
 
-    private suspend fun sendSingleTraining(training: TrainingWithExercises) {
-        try {
-            val data = training.toAsset()
-            val putDataRequest = PutDataMapRequest.create(TRAINING_PATH).apply {
-                dataMap.putAsset(TRAINING_KEY, data)
-            }
-                .asPutDataRequest()
-            val result = dataClient.putDataItem(putDataRequest)
-            result.addOnSuccessListener { Timber.d("On success sending") }
-            result.addOnFailureListener { Timber.d("On failure sending") }
-            result.addOnCanceledListener { Timber.d("On cancelled sending") }
-            result.addOnCompleteListener { Timber.d("On complete sending") }
+    private suspend fun getConnectedNodes(): String? {
+        val nodeClient = Wearable.getNodeClient(this)
+        val nodes = nodeClient.connectedNodes.await()
+        Timber.d("Available nodes $nodes")
+        return nodes.firstOrNull()?.id
+    }
 
-            result.await()
-            Timber.d("Result of sending $result")
+
+    private suspend fun sendSingleTraining(training: TrainingWithExercises, outputStream: OutputStream) {
+        try {
+//            val data = training.toAsset()
+//            val putDataRequest = PutDataMapRequest.create(TRAINING_PATH).apply {
+//                dataMap.putAsset(TRAINING_KEY, data)
+//            }
+//                .asPutDataRequest()
+//            val result = dataClient.putDataItem(putDataRequest)
+            Timber.d("Send data")
+//            val byteArray = gson.toJson(training).toByteArray()
+            outputStream.write(12)
+//            outputStream.flush()
+//            result.addOnSuccessListener { Timber.d("On success sending") }
+//            result.addOnFailureListener { Timber.d("On failure sending") }
+//            result.addOnCanceledListener { Timber.d("On cancelled sending") }
+//            result.addOnCompleteListener { Timber.d("On complete sending") }
+//
+//            result.await()
+//            Timber.d("Result of sending $result")
         } catch (cancellationException: CancellationException) {
             Timber.d("Job has been cancelled")
         } catch (e: Exception) {
