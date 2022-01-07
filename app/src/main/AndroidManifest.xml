@@ -30,11 +30,11 @@
             android:name=".service.SendingTrainingsService"
             android:exported="false" />
         <service
-            android:name=".service.DataLayerListenerService"
+            android:name=".service.StatisticsDataReceiverService"
             android:exported="true">
             <intent-filter>
                 <!-- listeners receive events that match the action and data filters -->
-                <action android:name="com.google.android.gms.wearable.DATA_CHANGED" />
+                <action android:name="com.google.android.gms.wearable.CHANNEL_EVENT" />
                 <data
                     android:host="*"
                     android:pathPrefix="/statistics"
