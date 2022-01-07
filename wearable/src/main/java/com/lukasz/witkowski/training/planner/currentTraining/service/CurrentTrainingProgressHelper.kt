@@ -17,7 +17,7 @@ object CurrentTrainingProgressHelper {
 
     private var currentExerciseIndex = 0
     var currentSet = 1
-    private set
+        private set
     private val trainingId: Long
         get() = trainingWithExercises.training.id
 
@@ -76,7 +76,7 @@ object CurrentTrainingProgressHelper {
     }
 
     private fun setRestTime(exercise: TrainingExercise): Long {
-       return if(exercise.restTime <= TimeFormatter.MILLIS_IN_SECOND) 0L else exercise.restTime
+        return if (exercise.restTime <= TimeFormatter.MILLIS_IN_SECOND) 0L else exercise.restTime
     }
 
     fun navigateToTrainingRestTime() {
@@ -97,14 +97,10 @@ object CurrentTrainingProgressHelper {
         currentSet = 1
     }
 
-    private fun getNextExercise() : TrainingExercise? {
+    private fun getNextExercise(): TrainingExercise? {
         val exercises = trainingWithExercises.exercises
-        while (currentExerciseIndex + 1 < exercises.size) {
-            currentExerciseIndex++
-            if (exercises[currentExerciseIndex].sets >= currentSet) {
-                return exercises[currentExerciseIndex]
-            }
-        }
+        currentExerciseIndex = getNextExerciseIndexFromCurrentSet(exercises)
+        if (currentExerciseIndex != -1) return exercises[currentExerciseIndex]
         currentSet++
         currentExerciseIndex = exercises.indexOfFirst { it.sets >= currentSet }
         return exercises.firstOrNull {
@@ -112,20 +108,26 @@ object CurrentTrainingProgressHelper {
         }
     }
 
+    private fun getNextExerciseIndexFromCurrentSet(exercises: List<TrainingExercise>): Int {
+        var idx = currentExerciseIndex
+        while (idx + 1 < exercises.size) {
+            idx++
+            if (exercises[idx].sets >= currentSet) {
+                return idx
+            }
+        }
+        return -1
+    }
+
     fun isRestTimeNext(): Boolean {
-        val state = currentTrainingState.value as? CurrentTrainingState.ExerciseState ?: return false
+        val state =
+            currentTrainingState.value as? CurrentTrainingState.ExerciseState ?: return false
         return state.exercise.restTime > TimeFormatter.MILLIS_IN_SECOND
     }
 
-    fun isLastExercise() : Boolean {
+    fun isLastExercise(): Boolean {
         val exercises = trainingWithExercises.exercises
-        var index = currentExerciseIndex
-        while (index + 1 < exercises.size) {
-            index++
-            if (exercises[index].sets >= currentSet) {
-                return false
-            }
-        }
+        if (getNextExerciseIndexFromCurrentSet(exercises) != -1) return false
         val nextSet = currentSet + 1
         return !exercises.any {
             it.sets >= nextSet
