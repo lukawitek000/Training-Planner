@@ -26,12 +26,6 @@ import java.io.OutputStream
 @AndroidEntryPoint
 class SendingTrainingsService : SendingDataService() {
 
-    override fun onCreate() {
-        super.onCreate()
-        Timber.d("On create Sending trainings")
-//        observeNotSynchronizedData()
-    }
-
     override fun observeNotSynchronizedData() {
         lifecycleScope.launch {
             syncDataRepository.getNotSynchronizedTrainings().collect {
