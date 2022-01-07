@@ -41,6 +41,8 @@ class DataLayerListenerService : WearableListenerService() {
     @Inject
     lateinit var repository: TrainingRepository
 
+    private var currentChannel: ChannelClient.Channel? = null
+
     override fun onCreate() {
         super.onCreate()
         Timber.d("Create service")
@@ -49,8 +51,9 @@ class DataLayerListenerService : WearableListenerService() {
     override fun onChannelOpened(channel: ChannelClient.Channel) {
         super.onChannelOpened(channel)
         Timber.d("Channel open $channel")
+        currentChannel = channel
         coroutineScope.launch {
-            receiveData(channel)
+            currentChannel?.let { receiveData(it) }
         }
     }
 
@@ -70,8 +73,10 @@ class DataLayerListenerService : WearableListenerService() {
         outputStream: OutputStream
     ) {
         for (i in 1..numberOfTrainings) {
+            Timber.d("Read bytes")
             val byteArray = readBytesSuspending(inputStream)
             try {
+                Timber.d("Convert training with exercises")
                 val trainingWithExercises =
                     gson.fromJson(String(byteArray), TrainingWithExercises::class.java)
                 Timber.d("Training with exercises $trainingWithExercises")
@@ -87,6 +92,7 @@ class DataLayerListenerService : WearableListenerService() {
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("Destroy service")
+        currentChannel?.let { channelClient.close(it) }
         coroutineScope.cancel()
     }
 
@@ -105,7 +111,7 @@ class DataLayerListenerService : WearableListenerService() {
             } while(size >= arraySize)
             val byteArray = ByteArray(totalBytes)
             var i = 0
-            Timber.d("")
+            Timber.d("Byte array size $totalBytes")
             for(array in listOfArrays){
                 for(byte in array) {
                     if(i >= totalBytes) return@withContext byteArray

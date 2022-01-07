@@ -26,7 +26,7 @@ object TimerHelper {
 
     fun startTimer(time: Long) {
         timer?.cancel()
-        timer = object : CountDownTimer(time, TimeFormatter.MILLIS_IN_SECONDS) {
+        timer = object : CountDownTimer(time, TimeFormatter.MILLIS_IN_SECOND) {
             override fun onTick(millisUntilFinished: Long) {
                 millisLeft = millisUntilFinished
                 _timeLeft.value = millisLeft

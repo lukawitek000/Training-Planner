@@ -51,7 +51,7 @@ object CurrentTrainingProgressHelper {
     }
 
     private fun setExerciseTime(exercise: TrainingExercise) =
-        if (exercise.time < TimeFormatter.MILLIS_IN_SECONDS) 0L else exercise.time
+        if (exercise.time < TimeFormatter.MILLIS_IN_SECOND) 0L else exercise.time
 
     private fun isDifferentTrainingRunning(): Boolean {
         val state = _currentTrainingState.value ?: return true
@@ -74,11 +74,11 @@ object CurrentTrainingProgressHelper {
     }
 
     private fun setRestTime(exercise: TrainingExercise): Long {
-       return if(exercise.restTime < TimeFormatter.MILLIS_IN_SECONDS) 0L else exercise.restTime
+       return if(exercise.restTime < TimeFormatter.MILLIS_IN_SECOND) 0L else exercise.restTime
     }
 
     fun navigateToTrainingRestTime() {
-        if (restTime >= TimeFormatter.MILLIS_IN_SECONDS) {
+        if (restTime >= TimeFormatter.MILLIS_IN_SECOND) {
             _currentTrainingState.value = CurrentTrainingState.RestTimeState(restTime, trainingId)
         } else {
             navigateToTrainingExercise()

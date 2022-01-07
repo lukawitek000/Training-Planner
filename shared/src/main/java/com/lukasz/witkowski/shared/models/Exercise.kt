@@ -11,5 +11,5 @@ data class Exercise(
     val name: String = "",
     val description: String = "",
     val category: Category = Category.None,
-    val image: Bitmap? = null
+    var image: Bitmap? = null
 )
