@@ -25,7 +25,8 @@ class CurrentTrainingViewModel
     fun fetchTraining(trainingId: Long) {
         viewModelScope.launch {
             _trainingWithExercises.value = ResultHandler.Loading
-            _trainingWithExercises.value = ResultHandler.Success(trainingRepository.fetchDummyTrainingById(trainingId))
+//            _trainingWithExercises.value = ResultHandler.Success(trainingRepository.fetchDummyTrainingById(trainingId))
+            _trainingWithExercises.value = ResultHandler.Success(trainingRepository.fetchTrainingById(trainingId))
         }
     }
 }
