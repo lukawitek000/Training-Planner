@@ -28,6 +28,8 @@
         <entry key="wearable/src/main/res/drawable/ic_pause.xml" value="0.9777777777777777" />
         <entry key="wearable/src/main/res/drawable/ic_play_arrow.xml" value="0.9777777777777777" />
         <entry key="wearable/src/main/res/drawable/launch_screeen.xml" value="0.9777777777777777" />
+        <entry key="wearable/src/main/res/drawable/splash_background.xml" value="0.41944444444444445" />
+        <entry key="wearable/src/main/res/drawable/splash_background_gradient.xml" value="0.41944444444444445" />
         <entry key="wearable/src/main/res/drawable/splash_screen.xml" value="1.1888888888888889" />
         <entry key="wearable/src/main/res/drawable/splash_screen_bg_gradient.xml" value="1.1888888888888889" />
         <entry key="wearable/src/main/res/layout/activity_current_training.xml" value="0.21947194719471946" />

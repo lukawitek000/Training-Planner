@@ -14,6 +14,7 @@ import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.shared.utils.startSendingDataService
 import com.lukasz.witkowski.shared.utils.stopSendingDataService
+import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_ID_KEY
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_TITLE_KEY
@@ -33,8 +34,8 @@ class TrainingsListActivity : ComponentActivity() {
     private var isServiceStarted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.TrainingPlannerTheme)
         super.onCreate(savedInstanceState)
-
         binding = ActivityTrainingsListBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUpTrainingAdapter()
