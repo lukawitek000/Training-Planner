@@ -8,7 +8,7 @@ import java.io.InputStream
 import java.io.OutputStream
 
 const val TRAINING_PATH = "/training"
-const val TRAINING_KEY = "training"
+const val STATISTICS_PATH = "/statistics"
 
 val gson = GsonBuilder()
     .registerTypeAdapter(Category::class.java, CategoryAdapter())
