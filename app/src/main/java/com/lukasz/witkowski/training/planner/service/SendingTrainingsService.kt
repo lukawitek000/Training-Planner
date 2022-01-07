@@ -11,6 +11,7 @@ import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import com.google.gson.Gson
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.services.SendingDataService
 import com.lukasz.witkowski.shared.utils.SYNC_FAILURE
 import com.lukasz.witkowski.shared.utils.SYNC_SUCCESSFUL
 import com.lukasz.witkowski.shared.utils.TRAINING_KEY
@@ -37,12 +38,12 @@ import java.io.OutputStream
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SendingDataService : LifecycleService() {
+class SendingTrainingsService : SendingDataService() {
 
     @Inject
     lateinit var syncDataRepository: SyncDataRepository
 
-    private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(this) }
+//    private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(this) }
 
     override fun onCreate() {
         super.onCreate()
@@ -76,12 +77,12 @@ class SendingDataService : LifecycleService() {
         }
     }
 
-    private suspend fun getConnectedNodes(): String? {
-        val nodeClient = Wearable.getNodeClient(this)
-        val nodes = nodeClient.connectedNodes.await()
-        Timber.d("Available nodes $nodes")
-        return nodes.firstOrNull()?.id
-    }
+//    private suspend fun getConnectedNodes(): String? {
+//        val nodeClient = Wearable.getNodeClient(this)
+//        val nodes = nodeClient.connectedNodes.await()
+//        Timber.d("Available nodes $nodes")
+//        return nodes.firstOrNull()?.id
+//    }
 
 
     private suspend fun sendSingleTraining(training: TrainingWithExercises, outputStream: OutputStream, inputStream: InputStream) = withContext(Dispatchers.IO) {
@@ -92,8 +93,8 @@ class SendingDataService : LifecycleService() {
             Timber.d("Send data $training")
 
             val job: Deferred<Int> = async {
-                val byteArray = gson.toJson(training).toByteArray()
                 try {
+                    val byteArray = gson.toJson(training).toByteArray()
                     outputStream.writeSuspending(byteArray)
                     inputStream.readSuspending()
                 } catch (e: Exception) {

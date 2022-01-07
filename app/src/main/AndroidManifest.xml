@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <service
-            android:name=".service.SendingDataService"
+            android:name=".service.SendingTrainingsService"
             android:exported="false" />
         <service
             android:name=".service.DataLayerListenerService"

@@ -13,7 +13,7 @@ import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
 import com.lukasz.witkowski.training.planner.navigation.NavItem
 import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
-import com.lukasz.witkowski.training.planner.service.SendingDataService
+import com.lukasz.witkowski.training.planner.service.SendingTrainingsService
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -52,7 +52,7 @@ class MainActivity : ComponentActivity() {
 
     private fun startSendingDataService() {
         isServiceStarted = try {
-            val intent = Intent(this, SendingDataService::class.java)
+            val intent = Intent(this, SendingTrainingsService::class.java)
             startService(intent)
             true
         } catch (e: Exception) {
@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
 
     private fun stopSendingDataService() {
         isServiceStarted = try {
-            val intent = Intent(this, SendingDataService::class.java)
+            val intent = Intent(this, SendingTrainingsService::class.java)
             stopService(intent)
             false
         } catch (e: Exception) {

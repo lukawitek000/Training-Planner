@@ -57,4 +57,19 @@ dependencies {
 
     // Gson for json serialization
     implementation 'com.google.code.gson:gson:2.8.9'
+
+    // Lifecycle
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
+    implementation "androidx.lifecycle:lifecycle-service:2.4.0"
+
+    // Wearables
+    implementation 'com.google.android.gms:play-services-wearable:17.1.0'
+
+    //Timber
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+
+    // Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.0"
 }
