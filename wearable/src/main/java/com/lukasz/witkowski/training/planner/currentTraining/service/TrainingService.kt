@@ -185,8 +185,6 @@ class TrainingService : LifecycleService() {
                     timerHelper.cancelTimer()
                 }
                 is CurrentTrainingState.ExerciseState -> {
-                    Timber.d("Exercise state ${currentTrainingProgressHelper.currentSet} ${it.exercise}")
-                    // TODO it is skipping everything training 1
                     exercisesIdAndSetQueue.offer(Pair(it.exercise.id, currentTrainingProgressHelper.currentSet))
                     monitorHealthIndicators()
                 }

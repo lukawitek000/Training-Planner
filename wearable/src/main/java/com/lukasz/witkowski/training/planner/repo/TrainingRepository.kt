@@ -20,17 +20,17 @@ class TrainingRepository(
     }
 
     fun fetchDummyTrainingById(trainingId: Long): TrainingWithExercises {
-        return trainingsList.first { it.training.id == trainingId}
+        return trainingsList.first { it.training.id == trainingId }
     }
 
     suspend fun fetchTrainingById(id: Long): TrainingWithExercises = withContext(Dispatchers.IO) {
         trainingDao.getTrainingWithExercisesById(id)
     }
 
-    fun insertTrainingCompleteStatistics(trainingCompleteStatistics: TrainingCompleteStatistics): Long {
-        // TODO insert statistics and return its id
-        return 0L
-    }
+    suspend fun insertTrainingCompleteStatistics(trainingCompleteStatistics: TrainingCompleteStatistics): Long =
+        withContext(Dispatchers.IO) {
+            trainingDao.insertTrainingCompleteStatistics(trainingCompleteStatistics)
+        }
 
     suspend fun insertTrainingWithExercises(trainingWithExercises: TrainingWithExercises) {
         withContext(Dispatchers.IO) {
@@ -41,7 +41,6 @@ class TrainingRepository(
     fun getAllTrainingsWithExercises(): Flow<List<TrainingWithExercises>> {
         return trainingDao.getAllTrainingsWithExercises()
     }
-
 
 
 }

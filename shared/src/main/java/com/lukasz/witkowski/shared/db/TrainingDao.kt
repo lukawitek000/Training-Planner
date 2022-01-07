@@ -8,6 +8,9 @@ import androidx.room.Transaction
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.models.statistics.ExerciseStatistics
+import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
+import com.lukasz.witkowski.shared.models.statistics.TrainingStatistics
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -40,6 +43,20 @@ interface TrainingDao {
     @Query("SELECT * FROM TRAINING WHERE id=:id")
     fun getTrainingWithExercisesById(id: Long): TrainingWithExercises
 
-//    @Insert(onConflict = REPLACE)
-//    fun insertTrainingStatistics(trainingStatistics: TrainingStatistics) : Long
+    @Transaction
+    fun insertTrainingCompleteStatistics(trainingCompleteStatistics: TrainingCompleteStatistics): Long {
+        val trainingStatisticsId = insertTrainingStatistics(trainingCompleteStatistics.trainingStatistics)
+        for(exerciseStatistics in trainingCompleteStatistics.exercisesStatistics) {
+            exerciseStatistics.trainingStatisticsId = trainingStatisticsId
+            insertExerciseStatistics(exerciseStatistics)
+        }
+        return trainingStatisticsId
+    }
+
+    @Insert(onConflict = REPLACE)
+    fun insertExerciseStatistics(exerciseStatistics: ExerciseStatistics)
+
+    @Insert(onConflict = REPLACE)
+    fun insertTrainingStatistics(trainingStatistics: TrainingStatistics): Long
+
 }
