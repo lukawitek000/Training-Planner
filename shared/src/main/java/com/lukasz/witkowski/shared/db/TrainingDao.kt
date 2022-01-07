@@ -7,7 +7,6 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
-import com.lukasz.witkowski.shared.models.TrainingStatistics
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import kotlinx.coroutines.flow.Flow
 

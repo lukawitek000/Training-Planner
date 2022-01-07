@@ -33,10 +33,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
-import com.lukasz.witkowski.shared.models.CaloriesStatistics
-import com.lukasz.witkowski.shared.models.ExerciseStatistics
-import com.lukasz.witkowski.shared.models.HeartRateStatistics
-import com.lukasz.witkowski.shared.models.TrainingStatistics
+import com.lukasz.witkowski.shared.models.statistics.CaloriesStatistics
+import com.lukasz.witkowski.shared.models.statistics.ExerciseStatistics
+import com.lukasz.witkowski.shared.models.statistics.HeartRateStatistics
+import com.lukasz.witkowski.shared.models.statistics.TrainingStatistics
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.currentTraining.CurrentTrainingActivity
@@ -298,6 +298,7 @@ class TrainingService : LifecycleService() {
     private fun initTrainingStatistics() {
         trainingStatistics = TrainingStatistics(
             trainingId = trainingId,
+            totalTime = 0L,
             exercisesStatistics = emptyList()
         )
     }
@@ -322,6 +323,7 @@ class TrainingService : LifecycleService() {
     private suspend fun endExercise() {
         if (isExerciseInProgress()) {
             exerciseClient.endExercise().await()
+            trainingStatistics?.totalTime = currentTrainingProgressHelper.trainingTime
         }
     }
 

@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.shared.models
+package com.lukasz.witkowski.shared.models.statistics
 
 data class HeartRateStatistics(
     val max: Double,
