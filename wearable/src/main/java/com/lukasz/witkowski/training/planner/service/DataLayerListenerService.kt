@@ -17,6 +17,8 @@ import com.lukasz.witkowski.shared.utils.closeSuspending
 import com.lukasz.witkowski.shared.utils.gson
 import com.lukasz.witkowski.shared.utils.readSuspending
 import com.lukasz.witkowski.shared.utils.writeIntSuspending
+import com.lukasz.witkowski.training.planner.repo.TrainingRepository
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -28,11 +30,16 @@ import timber.log.Timber
 import java.io.InputStream
 import java.io.OutputStream
 import java.lang.Exception
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class DataLayerListenerService : WearableListenerService() {
 
     private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(this) }
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+
+    @Inject
+    lateinit var repository: TrainingRepository
 
     override fun onCreate() {
         super.onCreate()
@@ -68,6 +75,7 @@ class DataLayerListenerService : WearableListenerService() {
                 val trainingWithExercises =
                     gson.fromJson(String(byteArray), TrainingWithExercises::class.java)
                 Timber.d("Training with exercises $trainingWithExercises")
+                repository.insertTrainingWithExercises(trainingWithExercises)
                 outputStream.writeIntSuspending(SYNC_SUCCESSFUL)
             } catch (e: Exception) {
                 Timber.d("Receiving data failed")

@@ -13,6 +13,6 @@ class TrainingsListViewModel
         private val trainingRepository: TrainingRepository
     ): ViewModel() {
 
-        val trainings = trainingRepository.getDummyTrainings()
+        val trainings = trainingRepository.getAllTrainingsWithExercises()
 
 }

@@ -17,6 +17,9 @@ interface TrainingDao {
     @Query("SELECT * FROM Training")
     fun getAllTrainings(): Flow<List<Training>>
 
+    @Query("SELECT * FROM Training")
+    fun getAllTrainingsWithExercises(): Flow<List<TrainingWithExercises>>
+
     @Transaction
     fun insertTrainingWithTrainingExercises(trainingWithExercises: TrainingWithExercises) {
         val trainingId = insertTraining(trainingWithExercises.training)

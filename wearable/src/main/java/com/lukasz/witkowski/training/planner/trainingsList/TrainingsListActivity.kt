@@ -3,15 +3,18 @@ package com.lukasz.witkowski.training.planner.trainingsList
 import android.Manifest
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.lifecycle.coroutineScope
 import androidx.wear.widget.WearableLinearLayoutManager
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_ID_KEY
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_TITLE_KEY
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingsListBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -33,7 +36,16 @@ class TrainingsListActivity : ComponentActivity() {
 
     private fun getTrainings() {
         // TODO observe trainings returned from the DB
-        adapter.submitList(viewModel.trainings)
+        lifecycle.coroutineScope.launch {
+            viewModel.trainings.collect() {
+                if(it.isEmpty()){
+                    binding.noTrainingsMessage.visibility = View.VISIBLE
+                } else {
+                    binding.noTrainingsMessage.visibility = View.GONE
+                }
+                adapter.submitList(it)
+            }
+        }
     }
 
     private fun setUpTrainingAdapter() {
