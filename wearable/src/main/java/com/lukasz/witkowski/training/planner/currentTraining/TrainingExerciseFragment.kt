@@ -1,5 +1,7 @@
 package com.lukasz.witkowski.training.planner.currentTraining
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -18,6 +20,7 @@ import com.lukasz.witkowski.training.planner.currentTraining.service.TimerHelper
 import com.lukasz.witkowski.training.planner.currentTraining.service.TrainingService
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingExerciseBinding
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class TrainingExerciseFragment : Fragment() {
@@ -73,8 +76,42 @@ class TrainingExerciseFragment : Fragment() {
     private fun setNextExerciseButtonListener() {
         binding.nextBtn.setOnClickListener {
             timer.cancelTimer()
-            trainingService.currentTrainingProgressHelper.navigateToTrainingRestTime()
+            navigateFurther()
+//            trainingService.currentTrainingProgressHelper.navigateToTrainingRestTime()
         }
+    }
+
+    private fun navigateFurther() {
+        if(trainingService.currentTrainingProgressHelper.isRestTimeNext() || trainingService.currentTrainingProgressHelper.isLastExercise()){
+            trainingService.currentTrainingProgressHelper.navigateToTrainingRestTime()
+        } else {
+            animateView()
+        }
+    }
+
+    private fun animateView() {
+        val v = binding.constraintLayout
+        v.animate().alpha(0f).setListener(
+            object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    Timber.d("Animation enddddd")
+                    trainingService.currentTrainingProgressHelper.navigateToTrainingRestTime()
+                    animateBack(v)
+                }
+            }
+        )
+    }
+
+    private fun animateBack(it: View) {
+        it.animate().alpha(1f).setListener(
+            object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    Timber.d("Animation enddddd coming back")
+                }
+            }
+        )
     }
 
     private fun setPlayButtonListener() {

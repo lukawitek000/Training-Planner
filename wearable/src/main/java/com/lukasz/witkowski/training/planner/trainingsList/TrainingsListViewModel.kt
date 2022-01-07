@@ -27,7 +27,8 @@ class TrainingsListViewModel
         viewModelScope.launch {
             _trainings.value = ResultHandler.Loading
             trainingRepository.getAllTrainingsWithExercises().collect {
-                _trainings.value = ResultHandler.Success(it)
+//                _trainings.value = ResultHandler.Success(it)
+                _trainings.value = ResultHandler.Success(trainingRepository.getDummyTrainings())
             }
         }
     }

@@ -6,6 +6,7 @@ import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.currentTraining.CurrentTrainingState
+import timber.log.Timber
 
 object CurrentTrainingProgressHelper {
     private lateinit var trainingWithExercises: TrainingWithExercises
@@ -51,7 +52,7 @@ object CurrentTrainingProgressHelper {
     }
 
     private fun setExerciseTime(exercise: TrainingExercise) =
-        if (exercise.time < TimeFormatter.MILLIS_IN_SECOND) 0L else exercise.time
+        if (exercise.time <= TimeFormatter.MILLIS_IN_SECOND) 0L else exercise.time
 
     private fun isDifferentTrainingRunning(): Boolean {
         val state = _currentTrainingState.value ?: return true
@@ -64,6 +65,7 @@ object CurrentTrainingProgressHelper {
 
     fun navigateToTrainingExercise() {
         val nextExercise = getNextExercise()
+        Timber.d("Next exercise $nextExercise")
         if (nextExercise != null) {
             restTime = setRestTime(nextExercise)
             exerciseTime = setExerciseTime(nextExercise)
@@ -74,11 +76,11 @@ object CurrentTrainingProgressHelper {
     }
 
     private fun setRestTime(exercise: TrainingExercise): Long {
-       return if(exercise.restTime < TimeFormatter.MILLIS_IN_SECOND) 0L else exercise.restTime
+       return if(exercise.restTime <= TimeFormatter.MILLIS_IN_SECOND) 0L else exercise.restTime
     }
 
     fun navigateToTrainingRestTime() {
-        if (restTime >= TimeFormatter.MILLIS_IN_SECOND) {
+        if (restTime > TimeFormatter.MILLIS_IN_SECOND) {
             _currentTrainingState.value = CurrentTrainingState.RestTimeState(restTime, trainingId)
         } else {
             navigateToTrainingExercise()
@@ -104,9 +106,29 @@ object CurrentTrainingProgressHelper {
             }
         }
         currentSet++
-        currentExerciseIndex = 0
+        currentExerciseIndex = exercises.indexOfFirst { it.sets >= currentSet }
         return exercises.firstOrNull {
             it.sets >= currentSet
+        }
+    }
+
+    fun isRestTimeNext(): Boolean {
+        val state = currentTrainingState.value as? CurrentTrainingState.ExerciseState ?: return false
+        return state.exercise.restTime > TimeFormatter.MILLIS_IN_SECOND
+    }
+
+    fun isLastExercise() : Boolean {
+        val exercises = trainingWithExercises.exercises
+        var index = currentExerciseIndex
+        while (index + 1 < exercises.size) {
+            index++
+            if (exercises[index].sets >= currentSet) {
+                return false
+            }
+        }
+        val nextSet = currentSet + 1
+        return !exercises.any {
+            it.sets >= nextSet
         }
     }
 }

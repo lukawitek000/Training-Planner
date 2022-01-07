@@ -19,6 +19,10 @@ class TrainingRepository(
         return trainingDao.getAllTrainings()
     }
 
+    fun fetchDummyTrainingById(trainingId: Long): TrainingWithExercises {
+        return trainingsList.first { it.training.id == trainingId}
+    }
+
     suspend fun fetchTrainingById(id: Long): TrainingWithExercises = withContext(Dispatchers.IO) {
         trainingDao.getTrainingWithExercisesById(id)
     }
@@ -37,5 +41,7 @@ class TrainingRepository(
     fun getAllTrainingsWithExercises(): Flow<List<TrainingWithExercises>> {
         return trainingDao.getAllTrainingsWithExercises()
     }
+
+
 
 }
