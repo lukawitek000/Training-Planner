@@ -11,6 +11,8 @@ object CurrentTrainingProgressHelper {
     private lateinit var trainingWithExercises: TrainingWithExercises
 
     private var startTrainingTime = 0L
+    val trainingTime: Long
+        get() = System.currentTimeMillis() - startTrainingTime
 
     private var currentExerciseIndex = 0
     var currentSet = 1

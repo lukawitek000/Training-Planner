@@ -147,9 +147,6 @@ class CurrentTrainingActivity : FragmentActivity() {
     private fun navigateToSummary() {
         stopCurrentTrainingService()
         val intent = Intent(this, TrainingSummaryActivity::class.java)
-        // TODO How to pass training summary?
-        // Maybe only values displayed on the summary screen?
-//        intent.putExtra(TRAINING_TIME_KEY, viewModel.trainingTime)
         startActivity(intent)
     }
 

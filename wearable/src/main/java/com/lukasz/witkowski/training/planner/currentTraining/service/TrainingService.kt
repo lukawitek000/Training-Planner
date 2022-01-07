@@ -182,7 +182,8 @@ class TrainingService : LifecycleService() {
                     lifecycleScope.launch {
                         endExercise()
                     }
-                    stopCurrentService()
+//                    stopCurrentService()
+                    timerHelper.cancelTimer()
                 }
                 is CurrentTrainingState.ExerciseState -> {
                     Timber.d("Exercise state ${currentTrainingProgressHelper.currentSet} ${it.exercise}")
