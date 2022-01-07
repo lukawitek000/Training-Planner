@@ -25,7 +25,6 @@ abstract class SendingDataService : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
-        Timber.d("On create observ")
         observeNotSynchronizedData()
     }
 

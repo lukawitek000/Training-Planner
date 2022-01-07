@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.shared.di
 
+import com.lukasz.witkowski.shared.db.StatisticsDao
 import com.lukasz.witkowski.shared.db.TrainingDao
 import com.lukasz.witkowski.shared.repository.SyncDataRepository
 import dagger.Module
@@ -14,7 +15,7 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideSyncDataRepository(trainingDao: TrainingDao): SyncDataRepository {
-        return SyncDataRepository(trainingDao = trainingDao)
+    fun provideSyncDataRepository(trainingDao: TrainingDao, statisticsDao: StatisticsDao): SyncDataRepository {
+        return SyncDataRepository(trainingDao = trainingDao, statisticsDao = statisticsDao)
     }
 }

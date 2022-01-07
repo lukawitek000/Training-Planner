@@ -11,5 +11,6 @@ data class TrainingStatistics(
     val id: Long = 0L,
     var trainingId: Long,
     var totalTime: Long = 0L,
-    val date: Long
+    val date: Long,
+    var isSynchronized: Boolean = false
 )

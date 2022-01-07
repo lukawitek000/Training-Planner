@@ -43,20 +43,6 @@ interface TrainingDao {
     @Query("SELECT * FROM TRAINING WHERE id=:id")
     fun getTrainingWithExercisesById(id: Long): TrainingWithExercises
 
-    @Transaction
-    fun insertTrainingCompleteStatistics(trainingCompleteStatistics: TrainingCompleteStatistics): Long {
-        val trainingStatisticsId = insertTrainingStatistics(trainingCompleteStatistics.trainingStatistics)
-        for(exerciseStatistics in trainingCompleteStatistics.exercisesStatistics) {
-            exerciseStatistics.trainingStatisticsId = trainingStatisticsId
-            insertExerciseStatistics(exerciseStatistics)
-        }
-        return trainingStatisticsId
-    }
 
-    @Insert(onConflict = REPLACE)
-    fun insertExerciseStatistics(exerciseStatistics: ExerciseStatistics)
-
-    @Insert(onConflict = REPLACE)
-    fun insertTrainingStatistics(trainingStatistics: TrainingStatistics): Long
 
 }

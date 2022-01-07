@@ -4,19 +4,21 @@ import androidx.lifecycle.lifecycleScope
 import com.lukasz.witkowski.shared.services.SendingDataService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class SendingStatisticsService : SendingDataService() {
 
-
-    override fun onCreate() {
-        super.onCreate()
-
-    }
-
     override fun observeNotSynchronizedData() {
-//        TODO("Not yet implemented")
+        lifecycleScope.launch {
+            syncDataRepository.getNotSynchronizedStatistics().collect {
+                if (it.isNotEmpty()) {
+                    Timber.d("Send statistics ${it.size} $it")
+//                    sendTrainings(it)
+                }
+            }
+        }
     }
 
 

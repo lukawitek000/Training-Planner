@@ -11,10 +11,11 @@ import com.lukasz.witkowski.shared.models.statistics.TrainingStatistics
 
 @Database(
     entities = [Exercise::class, Training::class, TrainingExercise::class, ExerciseStatistics::class, TrainingStatistics::class],
-    version = 5
+    version = 6
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
     abstract fun trainingDao(): TrainingDao
+    abstract fun statisticsDao(): StatisticsDao
 }
