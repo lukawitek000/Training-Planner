@@ -11,7 +11,7 @@ import com.lukasz.witkowski.shared.utils.gson
 import com.lukasz.witkowski.shared.utils.readSuspending
 import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import com.lukasz.witkowski.shared.utils.writeSuspending
-import com.lukasz.witkowski.training.planner.repository.SyncDataRepository
+import com.lukasz.witkowski.shared.repository.SyncDataRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -22,20 +22,17 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.InputStream
 import java.io.OutputStream
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SendingTrainingsService : SendingDataService() {
 
-    @Inject
-    lateinit var syncDataRepository: SyncDataRepository
-
     override fun onCreate() {
         super.onCreate()
-        observeNotSynchronizedData()
+        Timber.d("On create Sending trainings")
+//        observeNotSynchronizedData()
     }
 
-    private fun observeNotSynchronizedData() {
+    override fun observeNotSynchronizedData() {
         lifecycleScope.launch {
             syncDataRepository.getNotSynchronizedTrainings().collect {
                 if (it.isNotEmpty()) {

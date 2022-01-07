@@ -65,6 +65,10 @@
         </activity>
 
         <service
+            android:name=".service.SendingStatisticsService"
+            android:exported="false" />
+
+        <service
             android:name=".service.TrainingDataReceiverService"
             android:exported="true">
             <intent-filter>

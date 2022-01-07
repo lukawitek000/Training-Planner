@@ -3,9 +3,8 @@ package com.lukasz.witkowski.training.planner.service
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
-import com.google.android.gms.wearable.Wearable
 import com.google.android.gms.wearable.WearableListenerService
-import com.lukasz.witkowski.training.planner.repository.SyncDataRepository
+import com.lukasz.witkowski.shared.repository.SyncDataRepository
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
