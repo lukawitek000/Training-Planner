@@ -24,7 +24,7 @@ class TrainingSummaryActivity : ComponentActivity() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as TrainingService.LocalBinder).getService()
-            binding.totalTimeTv.text = TimeFormatter.millisToTime(trainingService.currentTrainingProgressHelper.trainingTime)
+            displaySummaryProperties()
             trainingService.stopCurrentService() // TODO stop training service after putting statistics to database
         }
 
@@ -47,5 +47,20 @@ class TrainingSummaryActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unbindService(connection)
+    }
+
+    private fun displaySummaryProperties() {
+        binding.totalTimeTv.text =
+            TimeFormatter.millisToTime(trainingService.currentTrainingProgressHelper.trainingTime)
+        var totalBurnedCalories = 0.0
+        trainingService.trainingStatistics?.exercisesStatistics?.forEach {
+            totalBurnedCalories += it.burntCaloriesStatistics.burntCalories
+        }
+        binding.burnedCaloriesTv.text =
+            getString(R.string.total_burned_calories, totalBurnedCalories.toString())
+        val maxHeartRate = trainingService.trainingStatistics?.exercisesStatistics?.maxByOrNull {
+            it.heartRateStatistics.max
+        }?.heartRateStatistics?.max ?: 0.0
+        binding.maxHeartRateTv.text = getString(R.string.max_heart_rate, maxHeartRate.toString())
     }
 }

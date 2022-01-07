@@ -89,7 +89,8 @@ class TrainingService : LifecycleService() {
     val exerciseUpdatesEndedMessage: LiveData<String> = _exerciseUpdatesEndedMessage
 
     private var exercisesIdAndSetQueue: Queue<Pair<Long, Int>> = LinkedList()
-    private var trainingStatistics: TrainingStatistics? = null
+    var trainingStatistics: TrainingStatistics? = null
+        private set
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
