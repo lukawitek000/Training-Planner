@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.repo.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,12 +19,13 @@ class CurrentTrainingViewModel
     private val trainingRepository: TrainingRepository
 ) : ViewModel() {
 
-    private val _trainingWithExercises = MutableLiveData<TrainingWithExercises>()
-    val trainingWithExercises: LiveData<TrainingWithExercises> = _trainingWithExercises
+    private val _trainingWithExercises = MutableLiveData<ResultHandler<TrainingWithExercises>>()
+    val trainingWithExercises: LiveData<ResultHandler<TrainingWithExercises>> = _trainingWithExercises
 
     fun fetchTraining(trainingId: Long) {
         viewModelScope.launch {
-            _trainingWithExercises.value = trainingRepository.fetchTrainingById(trainingId)
+            _trainingWithExercises.value = ResultHandler.Loading
+            _trainingWithExercises.value = ResultHandler.Success(trainingRepository.fetchTrainingById(trainingId))
         }
     }
 }

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
@@ -13,6 +14,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.wear.widget.SwipeDismissFrameLayout
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.currentTraining.service.TrainingService
 import com.lukasz.witkowski.training.planner.databinding.ActivityCurrentTrainingBinding
@@ -20,6 +22,7 @@ import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.summary.TrainingSummaryActivity
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import java.lang.Exception
 
 @AndroidEntryPoint
 class CurrentTrainingActivity : FragmentActivity() {
@@ -38,7 +41,7 @@ class CurrentTrainingActivity : FragmentActivity() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as TrainingService.LocalBinder).getService()
-            val training = viewModel.trainingWithExercises.value
+            val training = (viewModel.trainingWithExercises.value as? ResultHandler.Success)?.value
             if (!trainingService.isTrainingStarted() && training != null) {
                 trainingService.startTraining(training)
             }
@@ -57,7 +60,6 @@ class CurrentTrainingActivity : FragmentActivity() {
         setContentView(binding.root)
         fetchTrainingInformation()
         setOnSwipeListener()
-
     }
 
     private fun setOnSwipeListener() {
@@ -73,7 +75,12 @@ class CurrentTrainingActivity : FragmentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        unbindService(connection)
+        try {
+            unbindService(connection)
+        } catch (e: Exception) {
+            Timber.d("Unbinding service failed ${e.localizedMessage}")
+        }
+
     }
 
     private fun fetchTrainingInformation() {
@@ -85,9 +92,30 @@ class CurrentTrainingActivity : FragmentActivity() {
         }
         this.trainingId = trainingId
         viewModel.trainingWithExercises.observe(this) {
+            when(it){
+                is ResultHandler.Loading -> showProgressBar()
+                is ResultHandler.Success -> startTraining()
+                is ResultHandler.Error -> handleError()
+            }
             startTrainingService()
         }
         viewModel.fetchTraining(trainingId)
+    }
+
+    private fun handleError() {
+        Toast.makeText(this, "No training in database", Toast.LENGTH_SHORT).show()
+        finish()
+    }
+
+    private fun showProgressBar() {
+        binding.swipeDismissLayout.visibility = View.GONE
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    private fun startTraining() {
+        binding.swipeDismissLayout.visibility = View.VISIBLE
+        binding.progressBar.visibility = View.GONE
+        startTrainingService()
     }
 
     private fun startTrainingService() {
