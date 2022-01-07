@@ -10,7 +10,7 @@ data class ExerciseStatistics(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "ExerciseStatisticsId")
     val id: Long = 0L,
-    val trainingStatisticsId: Long,
+    val trainingStatisticsId: Long = 0L,
     val trainingExerciseId: Long,
     @Embedded
     val heartRateStatistics: HeartRateStatistics,

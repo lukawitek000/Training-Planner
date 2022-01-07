@@ -4,12 +4,12 @@ import androidx.room.Embedded
 import androidx.room.Relation
 import com.lukasz.witkowski.shared.models.Training
 
-class TrainingWithCompleteStatistics(
+class TrainingWithStatistics(
     @Embedded val training: Training,
     @Relation(
         entity = TrainingStatistics::class,
         parentColumn = "id",
         entityColumn = "trainingId"
     )
-    val statistics: List<TrainingStatisticsWithExercisesStatistics>
+    val statistics: List<TrainingCompleteStatistics>
 )

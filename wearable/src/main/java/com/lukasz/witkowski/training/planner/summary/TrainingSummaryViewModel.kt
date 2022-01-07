@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.shared.models.statistics.TrainingStatistics
+import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
 import com.lukasz.witkowski.training.planner.repo.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -23,10 +23,10 @@ class TrainingSummaryViewModel
     private val _statisticsId = MutableLiveData(0L)
     val statisticsId: LiveData<Long> = _statisticsId
 
-    fun insertTrainingStatistics(trainingStatistics: TrainingStatistics) {
+    fun insertTrainingStatistics(trainingCompleteStatistics: TrainingCompleteStatistics) {
         viewModelScope.launch {
-            trainingStatistics.trainingId = trainingId
-            _statisticsId.value = repository.insertTrainingStatistics(trainingStatistics)
+            trainingCompleteStatistics.trainingStatistics.trainingId = trainingId
+            _statisticsId.value = repository.insertTrainingCompleteStatistics(trainingCompleteStatistics)
         }
     }
 

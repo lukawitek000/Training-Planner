@@ -11,6 +11,6 @@ data class TrainingStatistics(
     @ColumnInfo(name = "TrainingIdStatistics")
     val id: Long = 0L,
     var trainingId: Long,
-    var totalTime: Long,
+    var totalTime: Long = 0L,
     val date: Long
 )

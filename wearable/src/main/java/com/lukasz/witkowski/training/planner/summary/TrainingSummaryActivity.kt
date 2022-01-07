@@ -31,7 +31,7 @@ class TrainingSummaryActivity : ComponentActivity() {
             observeInsertingStatistics()
             viewModel.trainingId = trainingService.trainingId
             displaySummaryProperties()
-            trainingService.trainingStatistics?.let { viewModel.insertTrainingStatistics(it) }
+            trainingService.trainingCompleteStatistics?.let { viewModel.insertTrainingStatistics(it) }
 
         }
 
@@ -67,12 +67,12 @@ class TrainingSummaryActivity : ComponentActivity() {
         binding.totalTimeTv.text =
             TimeFormatter.millisToTime(trainingService.currentTrainingProgressHelper.trainingTime)
         var totalBurnedCalories = 0.0
-        trainingService.trainingStatistics?.exercisesStatistics?.forEach {
+        trainingService.trainingCompleteStatistics?.exercisesStatistics?.forEach {
             totalBurnedCalories += it.burntCaloriesStatistics.burntCalories
         }
         binding.burnedCaloriesTv.text =
             getString(R.string.total_burned_calories, totalBurnedCalories)
-        val maxHeartRate = trainingService.trainingStatistics?.exercisesStatistics?.maxByOrNull {
+        val maxHeartRate = trainingService.trainingCompleteStatistics?.exercisesStatistics?.maxByOrNull {
             it.heartRateStatistics.max
         }?.heartRateStatistics?.max ?: 0.0
         binding.maxHeartRateTv.text = getString(R.string.max_heart_rate, maxHeartRate)

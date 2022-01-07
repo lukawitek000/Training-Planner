@@ -38,6 +38,7 @@ import com.lukasz.witkowski.shared.models.statistics.ExerciseStatistics
 import com.lukasz.witkowski.shared.models.statistics.HeartRateStatistics
 import com.lukasz.witkowski.shared.models.statistics.TrainingStatistics
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.currentTraining.CurrentTrainingActivity
 import com.lukasz.witkowski.training.planner.currentTraining.CurrentTrainingState
@@ -90,7 +91,7 @@ class TrainingService : LifecycleService() {
     val exerciseUpdatesEndedMessage: LiveData<String> = _exerciseUpdatesEndedMessage
 
     private var exercisesIdAndSetQueue: Queue<Pair<Long, Int>> = LinkedList()
-    var trainingStatistics: TrainingStatistics? = null
+    var trainingCompleteStatistics: TrainingCompleteStatistics? = null
         private set
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -249,10 +250,10 @@ class TrainingService : LifecycleService() {
 
     private fun saveRecordedHealthStatistics(calories: CumulativeDataPoint?, heartRate: StatisticalDataPoint?, exerciseTime: Long) {
         // TODO extract to separate class
-        if(trainingStatistics == null) {
+        if(trainingCompleteStatistics == null) {
             initTrainingStatistics()
         }
-        val exercisesStatistics = trainingStatistics!!.exercisesStatistics.toMutableList()
+        val exercisesStatistics = trainingCompleteStatistics!!.exercisesStatistics.toMutableList()
         val currentCaloriesStatistics = CaloriesStatistics(calories?.total?.asDouble() ?: 0.0)
         val currentHeartRateStatistics = HeartRateStatistics(
             max = heartRate?.max?.asDouble() ?: 0.0,
@@ -292,13 +293,15 @@ class TrainingService : LifecycleService() {
             )
             exercisesStatistics.add(exerciseStatistics)
         }
-        trainingStatistics!!.exercisesStatistics = exercisesStatistics
+        trainingCompleteStatistics!!.exercisesStatistics = exercisesStatistics
     }
 
     private fun initTrainingStatistics() {
-        trainingStatistics = TrainingStatistics(
-            trainingId = trainingId,
-            totalTime = 0L,
+        trainingCompleteStatistics = TrainingCompleteStatistics(
+            trainingStatistics = TrainingStatistics(
+                trainingId = trainingId,
+                date = System.currentTimeMillis()
+            ),
             exercisesStatistics = emptyList()
         )
     }
@@ -323,7 +326,7 @@ class TrainingService : LifecycleService() {
     private suspend fun endExercise() {
         if (isExerciseInProgress()) {
             exerciseClient.endExercise().await()
-            trainingStatistics?.totalTime = currentTrainingProgressHelper.trainingTime
+            trainingCompleteStatistics?.trainingStatistics?.totalTime = currentTrainingProgressHelper.trainingTime
         }
     }
 

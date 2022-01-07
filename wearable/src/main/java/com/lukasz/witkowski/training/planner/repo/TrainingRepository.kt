@@ -4,6 +4,7 @@ import com.lukasz.witkowski.shared.db.TrainingDao
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.statistics.TrainingStatistics
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
 import com.lukasz.witkowski.training.planner.trainingsList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -26,7 +27,7 @@ class TrainingRepository(
         trainingDao.getTrainingWithExercisesById(id)
     }
 
-    fun insertTrainingStatistics(trainingStatistics: TrainingStatistics): Long {
+    fun insertTrainingCompleteStatistics(trainingCompleteStatistics: TrainingCompleteStatistics): Long {
         // TODO insert statistics and return its id
         return 0L
     }
