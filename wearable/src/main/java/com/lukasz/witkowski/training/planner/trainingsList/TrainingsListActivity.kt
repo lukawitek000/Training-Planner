@@ -60,12 +60,12 @@ class TrainingsListActivity : ComponentActivity() {
     }
 
     private fun setLoadingState() {
-        binding.progressBar.visibility = View.VISIBLE
+        binding.loadingView.loadingLayout.visibility = View.VISIBLE
         binding.noTrainingsMessage.visibility = View.GONE
     }
 
     private fun setTrainingsListToAdapter(data: List<TrainingWithExercises>) {
-        binding.progressBar.visibility = View.GONE
+        binding.loadingView.loadingLayout.visibility = View.GONE
         if (data.isEmpty()) {
             binding.noTrainingsMessage.visibility = View.VISIBLE
         } else {

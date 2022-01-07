@@ -109,12 +109,12 @@ class CurrentTrainingActivity : FragmentActivity() {
 
     private fun showProgressBar() {
         binding.swipeDismissLayout.visibility = View.GONE
-        binding.progressBar.visibility = View.VISIBLE
+        binding.loadingView.loadingLayout.visibility = View.VISIBLE
     }
 
     private fun startTraining() {
         binding.swipeDismissLayout.visibility = View.VISIBLE
-        binding.progressBar.visibility = View.GONE
+        binding.loadingView.loadingLayout.visibility = View.GONE
         startTrainingService()
     }
 

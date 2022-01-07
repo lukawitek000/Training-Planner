@@ -12,4 +12,5 @@
     <string name="max_heart_rate">%1$.1f BPM</string>
     <string name="summary">Summary</string>
     <string name="no_trainings_message">Training list is empty.\nUse mobile application to create them.</string>
+    <string name="loading_info">Loading...</string>
 </resources>

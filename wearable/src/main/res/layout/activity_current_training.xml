@@ -12,11 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:indeterminateTint="@color/orange" />
+        <include
+            android:id="@+id/loading_view"
+            layout="@layout/loading_view"
+            />
 
         <androidx.wear.widget.SwipeDismissFrameLayout
             android:id="@+id/swipe_dismiss_layout"
