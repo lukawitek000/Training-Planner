@@ -9,9 +9,12 @@ import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import com.lukasz.witkowski.shared.utils.TimeFormatter
+import com.lukasz.witkowski.shared.utils.startSendingDataService
+import com.lukasz.witkowski.shared.utils.stopSendingDataService
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.currentTraining.service.TrainingService
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSummaryBinding
+import com.lukasz.witkowski.training.planner.service.SendingStatisticsService
 import com.lukasz.witkowski.training.planner.trainingsList.TrainingsListActivity
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -20,9 +23,8 @@ import timber.log.Timber
 class TrainingSummaryActivity : ComponentActivity() {
 
     private lateinit var binding: ActivityTrainingSummaryBinding
-
     private lateinit var trainingService: TrainingService
-
+    private var isServiceStarted = false
     private val viewModel by viewModels<TrainingSummaryViewModel>()
 
     private val connection = object : ServiceConnection {
@@ -32,7 +34,6 @@ class TrainingSummaryActivity : ComponentActivity() {
             viewModel.trainingId = trainingService.trainingId
             displaySummaryProperties()
             trainingService.trainingCompleteStatistics?.let { viewModel.insertTrainingStatistics(it) }
-
         }
 
         override fun onServiceDisconnected(name: ComponentName?) = Unit
@@ -61,6 +62,20 @@ class TrainingSummaryActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unbindService(connection)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if(!isServiceStarted) {
+            isServiceStarted = startSendingDataService(SendingStatisticsService::class.java)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if(isServiceStarted) {
+            isServiceStarted = stopSendingDataService(SendingStatisticsService::class.java)
+        }
     }
 
     private fun displaySummaryProperties() {

@@ -12,10 +12,13 @@ import androidx.lifecycle.coroutineScope
 import androidx.wear.widget.WearableLinearLayoutManager
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.ResultHandler
+import com.lukasz.witkowski.shared.utils.startSendingDataService
+import com.lukasz.witkowski.shared.utils.stopSendingDataService
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_ID_KEY
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_TITLE_KEY
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingsListBinding
+import com.lukasz.witkowski.training.planner.service.SendingStatisticsService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -26,6 +29,8 @@ class TrainingsListActivity : ComponentActivity() {
     private lateinit var binding: ActivityTrainingsListBinding
     private lateinit var adapter: TrainingsAdapter
     private val viewModel : TrainingsListViewModel by viewModels()
+
+    private var isServiceStarted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +43,6 @@ class TrainingsListActivity : ComponentActivity() {
     }
 
     private fun getTrainings() {
-        // TODO observe trainings returned from the DB
         viewModel.trainings.observe(this) {
             when(it){
                 is ResultHandler.Success -> setTrainingsListToAdapter(it.value)
@@ -46,19 +50,7 @@ class TrainingsListActivity : ComponentActivity() {
                 is ResultHandler.Error -> handleFetchingDataError(it.cause)
             }
         }
-
         viewModel.getTrainingsWithExercises()
-
-//        lifecycle.coroutineScope.launch {
-//            viewModel.trainings.collect() {
-//                if(it.isEmpty()){
-//                    binding.noTrainingsMessage.visibility = View.VISIBLE
-//                } else {
-//                    binding.noTrainingsMessage.visibility = View.GONE
-//                }
-//                adapter.submitList(it)
-//            }
-//        }
     }
 
     private fun handleFetchingDataError(cause: Exception?) {
@@ -107,6 +99,20 @@ class TrainingsListActivity : ComponentActivity() {
             Timber.d( "All required permissions granted")
         } else {
             Timber.w( "Not all required permissions granted")
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if(!isServiceStarted) {
+            isServiceStarted = startSendingDataService(SendingStatisticsService::class.java)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if(isServiceStarted) {
+            isServiceStarted = stopSendingDataService(SendingStatisticsService::class.java)
         }
     }
 

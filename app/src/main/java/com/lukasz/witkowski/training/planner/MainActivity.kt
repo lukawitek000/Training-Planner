@@ -4,11 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.lukasz.witkowski.shared.utils.startSendingDataService
+import com.lukasz.witkowski.shared.utils.stopSendingDataService
 import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
 import com.lukasz.witkowski.training.planner.navigation.NavItem
 import com.lukasz.witkowski.training.planner.navigation.Navigation
@@ -32,41 +35,33 @@ class MainActivity : ComponentActivity() {
 
     override fun onStart() {
         super.onStart()
-        startSendingDataService()
+        startSendingTrainingService()
     }
 
     override fun onStop() {
         super.onStop()
-        stopSendingDataService()
+        stopSendingTrainingService()
     }
 
     override fun onResume() {
         super.onResume()
-        if(!isServiceStarted) startSendingDataService()
+        startSendingTrainingService()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if(isServiceStarted) stopSendingDataService()
+        stopSendingTrainingService()
     }
 
-    private fun startSendingDataService() {
-        isServiceStarted = try {
-            val intent = Intent(this, SendingTrainingsService::class.java)
-            startService(intent)
-            true
-        } catch (e: Exception) {
-            false
+    private fun startSendingTrainingService() {
+        if (!isServiceStarted) {
+            isServiceStarted = startSendingDataService(SendingTrainingsService::class.java)
         }
     }
 
-    private fun stopSendingDataService() {
-        isServiceStarted = try {
-            val intent = Intent(this, SendingTrainingsService::class.java)
-            stopService(intent)
-            false
-        } catch (e: Exception) {
-            true
+    private fun stopSendingTrainingService() {
+        if (isServiceStarted) {
+            isServiceStarted = stopSendingDataService(SendingTrainingsService::class.java)
         }
     }
 }
