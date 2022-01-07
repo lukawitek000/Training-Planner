@@ -65,7 +65,7 @@
         </activity>
 
         <service
-            android:name=".service.DataLayerListenerService"
+            android:name=".service.TrainingDataReceiverService"
             android:exported="true">
             <intent-filter>
                 <!-- listeners receive events that match the action and data filters -->

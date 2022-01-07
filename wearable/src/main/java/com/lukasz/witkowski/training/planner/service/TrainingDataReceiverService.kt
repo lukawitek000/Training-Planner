@@ -9,6 +9,7 @@ import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
 import com.google.android.gms.wearable.WearableListenerService
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.services.DataLayerListenerService
 import com.lukasz.witkowski.shared.utils.SYNC_FAILURE
 import com.lukasz.witkowski.shared.utils.SYNC_SUCCESSFUL
 import com.lukasz.witkowski.shared.utils.TRAINING_KEY
@@ -33,10 +34,7 @@ import java.lang.Exception
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DataLayerListenerService : WearableListenerService() {
-
-    private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(this) }
-    private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+class TrainingDataReceiverService : DataLayerListenerService() {
 
     @Inject
     lateinit var repository: TrainingRepository
@@ -57,7 +55,7 @@ class DataLayerListenerService : WearableListenerService() {
         }
     }
 
-    private suspend fun receiveData(channel: ChannelClient.Channel) {
+    override suspend fun receiveData(channel: ChannelClient.Channel) {
         val inputStream = channelClient.getInputStream(channel).await()
         val outputStream = channelClient.getOutputStream(channel).await()
         val numberOfTrainings = inputStream.readSuspending()
@@ -95,36 +93,4 @@ class DataLayerListenerService : WearableListenerService() {
         currentChannel?.let { channelClient.close(it) }
         coroutineScope.cancel()
     }
-
-    // Reads bytes till everything is received
-    private suspend fun readBytesSuspending(inputStream: InputStream) =
-        withContext(Dispatchers.IO) {
-            var arraySize = 0
-            val listOfArrays = mutableListOf<ByteArray>()
-            var totalBytes = 0
-            do {
-                arraySize += 256
-                val temp = ByteArray(arraySize)
-                var size = 0
-                try {
-                    size = inputStream.read(temp)
-                    totalBytes += size
-                    listOfArrays.add(temp)
-                } catch (e: Exception) {
-                    Timber.e("Failed reading ${e.localizedMessage}")
-                    return@withContext byteArrayOf()
-                }
-            } while(size >= arraySize)
-            val byteArray = ByteArray(totalBytes)
-            var i = 0
-            Timber.d("Byte array size $totalBytes")
-            for(array in listOfArrays){
-                for(byte in array) {
-                    if(i >= totalBytes) return@withContext byteArray
-                    byteArray[i] = byte
-                    i++
-                }
-            }
-            byteArray
-        }
 }
