@@ -3,7 +3,6 @@ package com.lukasz.witkowski.shared.models.statistics
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.lukasz.witkowski.shared.models.statistics.ExerciseStatistics
 
 @Entity
 data class TrainingStatistics(
