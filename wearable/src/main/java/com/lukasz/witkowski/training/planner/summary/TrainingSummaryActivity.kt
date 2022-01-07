@@ -28,9 +28,11 @@ class TrainingSummaryActivity : ComponentActivity() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as TrainingService.LocalBinder).getService()
+            observeInsertingStatistics()
             viewModel.trainingId = trainingService.trainingId
             displaySummaryProperties()
             trainingService.trainingStatistics?.let { viewModel.insertTrainingStatistics(it) }
+
         }
 
         override fun onServiceDisconnected(name: ComponentName?) = Unit
@@ -47,7 +49,6 @@ class TrainingSummaryActivity : ComponentActivity() {
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
         }
-        observeInsertingStatistics()
     }
 
     private fun observeInsertingStatistics() {
