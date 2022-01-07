@@ -42,7 +42,6 @@ import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.currentTraining.CurrentTrainingActivity
 import com.lukasz.witkowski.training.planner.currentTraining.CurrentTrainingState
-import com.lukasz.witkowski.training.planner.repo.CurrentTrainingRepository
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -54,9 +53,6 @@ import kotlin.math.min
 
 @AndroidEntryPoint
 class TrainingService : LifecycleService() {
-
-    @Inject
-    lateinit var currentTrainingRepository: CurrentTrainingRepository
 
     @Inject
     lateinit var exerciseClient: ExerciseClient

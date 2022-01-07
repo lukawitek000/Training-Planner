@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.di
 
 import com.lukasz.witkowski.shared.db.TrainingDao
-import com.lukasz.witkowski.training.planner.repo.CurrentTrainingRepository
 import com.lukasz.witkowski.training.planner.repo.TrainingRepository
 import dagger.Module
 import dagger.Provides
@@ -17,11 +16,5 @@ object RepositoryModule {
     @Provides
     fun provideTrainingRepository(trainingDao: TrainingDao): TrainingRepository {
         return TrainingRepository(trainingDao)
-    }
-
-    @Singleton
-    @Provides
-    fun provideCurrentTrainingRepository(): CurrentTrainingRepository {
-        return CurrentTrainingRepository()
     }
 }
