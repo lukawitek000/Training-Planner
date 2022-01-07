@@ -34,15 +34,8 @@ class TrainingRepository(
             statisticsDao.insertTrainingCompleteStatistics(trainingCompleteStatistics)
         }
 
-    suspend fun insertTrainingWithExercises(trainingWithExercises: TrainingWithExercises) {
-        withContext(Dispatchers.IO) {
-            trainingDao.insertTrainingWithTrainingExercises(trainingWithExercises)
-        }
-    }
 
     fun getAllTrainingsWithExercises(): Flow<List<TrainingWithExercises>> {
         return trainingDao.getAllTrainingsWithExercises()
     }
-
-
 }

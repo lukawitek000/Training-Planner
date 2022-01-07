@@ -28,59 +28,17 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class StatisticsDataReceiverService: DataLayerListenerService() {
 
-    @Inject
-    lateinit var syncDataRepository: SyncDataRepository
-
-    private var currentChannel: ChannelClient.Channel? = null
-
     override fun onChannelOpened(channel: ChannelClient.Channel) {
         super.onChannelOpened(channel)
         Timber.d("Channel open $channel")
         currentChannel = channel
         coroutineScope.launch {
-            currentChannel?.let { receiveData(it) }
+            currentChannel?.let { receiveData(it, TrainingCompleteStatistics::class.java) }
         }
     }
 
-    override suspend fun receiveData(channel: ChannelClient.Channel) {
-        val inputStream = channelClient.getInputStream(channel).await()
-        val outputStream = channelClient.getOutputStream(channel).await()
-        val numberOfStatistics = inputStream.readSuspending()
-        Timber.d("Number of trainings $numberOfStatistics")
-        receiveStatistics(numberOfStatistics, inputStream, outputStream)
-        outputStream.closeSuspending()
-        inputStream.closeSuspending()
+    override suspend fun <T> handleReceivedData(data: T) {
+        val trainingCompleteStatistics = (data as? TrainingCompleteStatistics) ?: return
+        Timber.d("Received statistics $trainingCompleteStatistics")
     }
-
-    private suspend fun receiveStatistics(
-        numberOfStatistics: Int,
-        inputStream: InputStream,
-        outputStream: OutputStream
-    ) {
-        for (i in 1..numberOfStatistics) {
-            Timber.d("Read bytes")
-            try {
-                val byteArray = readBytesSuspending(inputStream)
-                Timber.d("Convert training with exercises")
-                val trainingCompleteStatistics =
-                    gson.fromJson(String(byteArray), TrainingCompleteStatistics::class.java)
-                Timber.d("Training complete statistics $trainingCompleteStatistics")
-                syncDataRepository.insertTrainingCompleteStatistics(trainingCompleteStatistics)
-                outputStream.writeIntSuspending(SYNC_SUCCESSFUL)
-            } catch (e: Exception) {
-                Timber.d("Receiving data failed")
-                outputStream.writeIntSuspending(SYNC_FAILURE)
-            }
-        }
-    }
-
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Timber.d("Destroy service")
-        currentChannel?.let { channelClient.close(it) }
-        coroutineScope.cancel()
-    }
-
 }

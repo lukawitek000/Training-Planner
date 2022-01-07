@@ -25,4 +25,10 @@ constructor(private val trainingDao: TrainingDao, private val statisticsDao: Sta
             trainingCompleteStatistics.trainingStatistics.isSynchronized = true
             statisticsDao.insertTrainingCompleteStatistics(trainingCompleteStatistics)
     }
+
+    suspend fun insertTrainingWithExercises(trainingWithExercises: TrainingWithExercises) {
+        withContext(Dispatchers.IO) {
+            trainingDao.insertTrainingWithTrainingExercises(trainingWithExercises)
+        }
+    }
 }
