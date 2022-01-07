@@ -32,45 +32,13 @@ class SendingStatisticsService : SendingDataService() {
             syncDataRepository.getNotSynchronizedStatistics().collect {
                 if (it.isNotEmpty()) {
                     Timber.d("Send statistics ${it.size} $it")
-                    sendData(it.size) { outputStream, inputStream ->
-                        for (statistic in it) {
-                            sendSingleStatistic(statistic, outputStream, inputStream)
-                        }
-                    }
+                    sendData(data = it, path = STATISTICS_PATH)
                 }
             }
         }
     }
 
-    private suspend fun sendSingleStatistic(
-        statistic: TrainingCompleteStatistics,
-        outputStream: OutputStream,
-        inputStream: InputStream
-    ) = withContext(Dispatchers.IO) {
-        try {
-            Timber.d("Send statistic $statistic")
-            val job: Deferred<Int> = async {
-                try {
-                    val byteArray = gson.toJson(statistic).toByteArray()
-                    outputStream.writeSuspending(byteArray)
-                    inputStream.readSuspending()
-                } catch (e: Exception) {
-                    Timber.d("Error during exchanging messages occurred ${e.localizedMessage}")
-                    SYNC_FAILURE
-                }
-            }
-            val syncResponse = job.await()
-
-            Timber.d("Message returned $syncResponse")
-            if (syncResponse == SYNC_SUCCESSFUL) {
-                // TODO change is synchronized to true
-            }
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Timber.d("Saving item failed ${e.localizedMessage}")
-        }
+    override suspend fun handleSyncResponse(syncResponse: Int) {
+        Timber.d("Sync response $syncResponse")
     }
-
-
 }
