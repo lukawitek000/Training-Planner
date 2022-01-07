@@ -31,25 +31,13 @@ class SendingTrainingsService : SendingDataService() {
             syncDataRepository.getNotSynchronizedTrainings().collect {
                 if (it.isNotEmpty()) {
                     Timber.d("Send trainings ${it.size} $it")
-                    sendTrainings(it)
+                    sendData(it.size) { outputStream, inputStream ->
+                        for (training in it) {
+                            sendSingleTraining(training, outputStream, inputStream)
+                        }
+                    }
                 }
             }
-        }
-    }
-
-    private fun sendTrainings(trainings: List<TrainingWithExercises>) {
-        lifecycleScope.launch {
-            val nodeId = getConnectedNodes() ?: return@launch // TODO send to all nodes
-            val channel = channelClient.openChannel(nodeId, TRAINING_PATH).await()
-            val outputStream = channelClient.getOutputStream(channel).await()
-            val inputStream = channelClient.getInputStream(channel).await()
-            outputStream.writeIntSuspending(trainings.size)
-            for (training in trainings) {
-                sendSingleTraining(training, outputStream, inputStream)
-            }
-            outputStream.closeSuspending()
-            inputStream.closeSuspending()
-            channelClient.close(channel)
         }
     }
 

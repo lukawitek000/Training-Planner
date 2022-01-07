@@ -32,25 +32,13 @@ class SendingStatisticsService : SendingDataService() {
             syncDataRepository.getNotSynchronizedStatistics().collect {
                 if (it.isNotEmpty()) {
                     Timber.d("Send statistics ${it.size} $it")
-                    sendStatistics(it)
+                    sendData(it.size) { outputStream, inputStream ->
+                        for (statistic in it) {
+                            sendSingleStatistic(statistic, outputStream, inputStream)
+                        }
+                    }
                 }
             }
-        }
-    }
-
-    private fun sendStatistics(statistics: List<TrainingCompleteStatistics>) {
-        lifecycleScope.launch {
-            val nodeId = getConnectedNodes() ?: return@launch // TODO send to all nodes
-            val channel = channelClient.openChannel(nodeId, STATISTICS_PATH).await()
-            val outputStream = channelClient.getOutputStream(channel).await()
-            val inputStream = channelClient.getInputStream(channel).await()
-            outputStream.writeIntSuspending(statistics.size)
-            for (statistic in statistics) {
-                sendSingleStatistic(statistic, outputStream, inputStream)
-            }
-            outputStream.closeSuspending()
-            inputStream.closeSuspending()
-            channelClient.close(channel)
         }
     }
 
