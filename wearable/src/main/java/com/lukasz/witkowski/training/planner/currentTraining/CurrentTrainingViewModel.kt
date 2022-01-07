@@ -1,5 +1,7 @@
 package com.lukasz.witkowski.training.planner.currentTraining
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -16,12 +18,12 @@ class CurrentTrainingViewModel
     private val trainingRepository: TrainingRepository
 ) : ViewModel() {
 
-    var trainingWithExercises: TrainingWithExercises? = null
-        private set
+    private val _trainingWithExercises = MutableLiveData<TrainingWithExercises>()
+    val trainingWithExercises: LiveData<TrainingWithExercises> = _trainingWithExercises
 
     fun fetchTraining(trainingId: Long) {
         viewModelScope.launch {
-            trainingWithExercises = trainingRepository.fetchTrainingById(trainingId)
+            _trainingWithExercises.value = trainingRepository.fetchTrainingById(trainingId)
         }
     }
 }

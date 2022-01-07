@@ -38,6 +38,9 @@ interface TrainingDao {
     @Query("SELECT * FROM TRAINING WHERE isSynchronized=0")
     fun getNotSynchronizedTrainingsWithExercises(): Flow<List<TrainingWithExercises>>
 
+    @Query("SELECT * FROM TRAINING WHERE id=:id")
+    fun getTrainingWithExercisesById(id: Long): TrainingWithExercises
+
 //    @Insert(onConflict = REPLACE)
 //    fun insertTrainingStatistics(trainingStatistics: TrainingStatistics) : Long
 }

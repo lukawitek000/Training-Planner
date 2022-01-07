@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.wear.widget.SwipeDismissFrameLayout
+import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.currentTraining.service.TrainingService
 import com.lukasz.witkowski.training.planner.databinding.ActivityCurrentTrainingBinding
@@ -37,8 +38,9 @@ class CurrentTrainingActivity : FragmentActivity() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as TrainingService.LocalBinder).getService()
-            if (!trainingService.isTrainingStarted()) {
-                trainingService.startTraining(viewModel.trainingWithExercises!!)
+            val training = viewModel.trainingWithExercises.value
+            if (!trainingService.isTrainingStarted() && training != null) {
+                trainingService.startTraining(training)
             }
             navigateToState(trainingService.currentTrainingProgressHelper.currentTrainingState.value)
             observeNavigation()
@@ -53,10 +55,9 @@ class CurrentTrainingActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCurrentTrainingBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val serviceIntent = Intent(this, TrainingService::class.java)
-        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
         fetchTrainingInformation()
         setOnSwipeListener()
+
     }
 
     private fun setOnSwipeListener() {
@@ -83,8 +84,15 @@ class CurrentTrainingActivity : FragmentActivity() {
             return
         }
         this.trainingId = trainingId
-
+        viewModel.trainingWithExercises.observe(this) {
+            startTrainingService()
+        }
         viewModel.fetchTraining(trainingId)
+    }
+
+    private fun startTrainingService() {
+        val serviceIntent = Intent(this, TrainingService::class.java)
+        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
     }
 
     private fun observeNavigation() {

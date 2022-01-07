@@ -19,8 +19,8 @@ class TrainingRepository(
         return trainingDao.getAllTrainings()
     }
 
-    fun fetchTrainingById(id: Long): TrainingWithExercises {
-        return trainingsList.first { it.training.id == id }
+    suspend fun fetchTrainingById(id: Long): TrainingWithExercises = withContext(Dispatchers.IO) {
+        trainingDao.getTrainingWithExercisesById(id)
     }
 
     fun insertTrainingStatistics(trainingStatistics: TrainingStatistics): Long {
