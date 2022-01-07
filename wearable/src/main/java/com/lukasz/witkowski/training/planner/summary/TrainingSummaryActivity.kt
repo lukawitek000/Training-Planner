@@ -7,12 +7,14 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.currentTraining.service.TrainingService
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSummaryBinding
 import com.lukasz.witkowski.training.planner.trainingsList.TrainingsListActivity
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class TrainingSummaryActivity : ComponentActivity() {
@@ -21,11 +23,14 @@ class TrainingSummaryActivity : ComponentActivity() {
 
     private lateinit var trainingService: TrainingService
 
+    private val viewModel by viewModels<TrainingSummaryViewModel>()
+
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as TrainingService.LocalBinder).getService()
+            viewModel.trainingId = trainingService.trainingId
             displaySummaryProperties()
-            trainingService.stopCurrentService() // TODO stop training service after putting statistics to database
+            trainingService.trainingStatistics?.let { viewModel.insertTrainingStatistics(it) }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) = Unit
@@ -41,6 +46,14 @@ class TrainingSummaryActivity : ComponentActivity() {
             val intent = Intent(this, TrainingsListActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
             startActivity(intent)
+        }
+        observeInsertingStatistics()
+    }
+
+    private fun observeInsertingStatistics() {
+        viewModel.statisticsId.observe(this) {
+            Timber.d("Statistics inserted")
+            trainingService.stopCurrentService()
         }
     }
 

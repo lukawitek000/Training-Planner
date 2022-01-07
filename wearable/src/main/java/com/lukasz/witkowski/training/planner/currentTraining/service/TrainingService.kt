@@ -65,7 +65,8 @@ class TrainingService : LifecycleService() {
 
     private val localBinder = LocalBinder()
 
-    private var trainingId = DEFAULT_TRAINING_ID
+    var trainingId = DEFAULT_TRAINING_ID
+        private set
 
     private var isStarted = false
 
