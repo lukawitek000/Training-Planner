@@ -14,6 +14,13 @@
         android:textColor="@color/orange"
         android:text="@string/no_trainings_message"/>
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:indeterminateTint="@color/orange"
+        />
+
 <androidx.wear.widget.WearableRecyclerView
     android:id="@+id/trainings_watch_rv"
     android:layout_width="match_parent"

@@ -5,6 +5,7 @@ import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingStatistics
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.training.planner.trainingsList
+import com.lukasz.witkowski.training.planner.trainingsList.TrainingsListViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext

@@ -4,11 +4,14 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.coroutineScope
 import androidx.wear.widget.WearableLinearLayoutManager
+import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_ID_KEY
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_TITLE_KEY
@@ -36,16 +39,46 @@ class TrainingsListActivity : ComponentActivity() {
 
     private fun getTrainings() {
         // TODO observe trainings returned from the DB
-        lifecycle.coroutineScope.launch {
-            viewModel.trainings.collect() {
-                if(it.isEmpty()){
-                    binding.noTrainingsMessage.visibility = View.VISIBLE
-                } else {
-                    binding.noTrainingsMessage.visibility = View.GONE
-                }
-                adapter.submitList(it)
+        viewModel.trainings.observe(this) {
+            when(it){
+                is ResultHandler.Success -> setTrainingsListToAdapter(it.value)
+                is ResultHandler.Loading -> setLoadingState()
+                is ResultHandler.Error -> handleFetchingDataError(it.cause)
             }
         }
+
+        viewModel.getTrainingsWithExercises()
+
+//        lifecycle.coroutineScope.launch {
+//            viewModel.trainings.collect() {
+//                if(it.isEmpty()){
+//                    binding.noTrainingsMessage.visibility = View.VISIBLE
+//                } else {
+//                    binding.noTrainingsMessage.visibility = View.GONE
+//                }
+//                adapter.submitList(it)
+//            }
+//        }
+    }
+
+    private fun handleFetchingDataError(cause: Exception?) {
+        Timber.w("Fetching data from DB failed ${cause?.localizedMessage}")
+        Toast.makeText(this, "Fetching data from database failed", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun setLoadingState() {
+        binding.progressBar.visibility = View.VISIBLE
+        binding.noTrainingsMessage.visibility = View.GONE
+    }
+
+    private fun setTrainingsListToAdapter(data: List<TrainingWithExercises>) {
+        binding.progressBar.visibility = View.GONE
+        if (data.isEmpty()) {
+            binding.noTrainingsMessage.visibility = View.VISIBLE
+        } else {
+            binding.noTrainingsMessage.visibility = View.GONE
+        }
+        adapter.submitList(data)
     }
 
     private fun setUpTrainingAdapter() {

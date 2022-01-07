@@ -74,8 +74,8 @@ class DataLayerListenerService : WearableListenerService() {
     ) {
         for (i in 1..numberOfTrainings) {
             Timber.d("Read bytes")
-            val byteArray = readBytesSuspending(inputStream)
             try {
+                val byteArray = readBytesSuspending(inputStream)
                 Timber.d("Convert training with exercises")
                 val trainingWithExercises =
                     gson.fromJson(String(byteArray), TrainingWithExercises::class.java)
@@ -105,9 +105,15 @@ class DataLayerListenerService : WearableListenerService() {
             do {
                 arraySize += 256
                 val temp = ByteArray(arraySize)
-                val size = inputStream.read(temp)
-                totalBytes += size
-                listOfArrays.add(temp)
+                var size = 0
+                try {
+                    size = inputStream.read(temp)
+                    totalBytes += size
+                    listOfArrays.add(temp)
+                } catch (e: Exception) {
+                    Timber.e("Failed reading ${e.localizedMessage}")
+                    return@withContext byteArrayOf()
+                }
             } while(size >= arraySize)
             val byteArray = ByteArray(totalBytes)
             var i = 0
