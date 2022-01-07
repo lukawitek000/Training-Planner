@@ -57,10 +57,10 @@ class TrainingSummaryActivity : ComponentActivity() {
             totalBurnedCalories += it.burntCaloriesStatistics.burntCalories
         }
         binding.burnedCaloriesTv.text =
-            getString(R.string.total_burned_calories, totalBurnedCalories.toString())
+            getString(R.string.total_burned_calories, totalBurnedCalories)
         val maxHeartRate = trainingService.trainingStatistics?.exercisesStatistics?.maxByOrNull {
             it.heartRateStatistics.max
         }?.heartRateStatistics?.max ?: 0.0
-        binding.maxHeartRateTv.text = getString(R.string.max_heart_rate, maxHeartRate.toString())
+        binding.maxHeartRateTv.text = getString(R.string.max_heart_rate, maxHeartRate)
     }
 }

@@ -52,6 +52,9 @@ object TimeFormatter {
             timeStringBuilder.append(" ")
             timeStringBuilder.append("${seconds}s")
         }
+        if(timeStringBuilder.isEmpty()) {
+            timeStringBuilder.append("0s")
+        }
         return timeStringBuilder.toString()
     }
 
