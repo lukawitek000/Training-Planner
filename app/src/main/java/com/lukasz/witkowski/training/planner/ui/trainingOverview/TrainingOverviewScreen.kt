@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
@@ -80,7 +81,7 @@ fun TrainingOverviewScreen(
     val statisticsRequest by viewModel.statistics.collectAsState()
 
     Scaffold(modifier = modifier) {
-        Column {
+        Column() {
             when(trainingRequest) {
                 is ResultHandler.Loading -> { LoadingScreen(Modifier.fillMaxSize()) }
                 is ResultHandler.Success -> {
@@ -123,12 +124,11 @@ fun TrainingOverviewContent(
     Column(modifier = modifier
         .fillMaxWidth()
         .padding(8.dp)
-        .background(Color.Green)
     ) {
         Text(modifier = Modifier.fillMaxWidth(), text = training.title, fontSize = 28.sp, textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.height(16.dp))
         if(training.description.isNotEmpty()) {
-            Text(text = training.description, color = Color.Red, fontSize = 18.sp)
+            Text(text = training.description, fontSize = 18.sp)
             Spacer(modifier = Modifier.height(16.dp))
         }
         if(trainingWithExercises.exercises.isNotEmpty()) {
@@ -153,9 +153,7 @@ fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<Training
         animationSpec = tween(durationMillis = 200, easing = LinearEasing)
     )
 
-    ListCardItem(modifier = Modifier.clickable {
-        isExpanded = !isExpanded
-    }) {
+    ListCardItem(modifier = modifier, onCardClicked = { isExpanded = !isExpanded }) {
         Column(Modifier.fillMaxWidth()) {
             Row(
                 Modifier

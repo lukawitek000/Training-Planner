@@ -141,13 +141,14 @@ private fun ExercisesList(
 ) {
     LazyColumn() {
         items(exercisesList) { exercise ->
-            ListCardItem(modifier = Modifier.clickable {
-                if (pickingExerciseMode) {
-                    pickExercise(exercise)
-                } else {
-                    openDialog(exercise)
+            ListCardItem(modifier = Modifier,
+                onCardClicked = {
+                    if (pickingExerciseMode) {
+                        pickExercise(exercise)
+                    } else {
+                        openDialog(exercise)
+                    }
                 }
-            }
             ) {
                 ExerciseListItemContent(
                     exercise = exercise,

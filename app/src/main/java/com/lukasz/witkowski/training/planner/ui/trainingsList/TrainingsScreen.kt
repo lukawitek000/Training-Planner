@@ -50,9 +50,8 @@ fun TrainingsScreen(
             contentPadding = innerPadding
         ) {
             items(trainings) { training ->
-                ListCardItem(modifier = Modifier.clickable {
-                    navigateToTrainingOverview(training.id)
-                },) {
+                ListCardItem(modifier = Modifier,
+                onCardClicked = { navigateToTrainingOverview(training.id) }) {
                     TrainingListItemContent(
                         training = training
                     )
