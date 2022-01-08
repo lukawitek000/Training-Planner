@@ -1,26 +1,56 @@
 package com.lukasz.witkowski.training.planner.ui.trainingOverview
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.ArrowDropUp
+import androidx.compose.material.icons.outlined.ArrowDropDown
+import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.models.Training
+import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 
+@ExperimentalAnimationApi
 @Composable
 fun TrainingOverviewScreen(
     modifier: Modifier,
@@ -49,6 +79,7 @@ fun TrainingOverviewScreen(
 
 
 
+@ExperimentalAnimationApi
 @Composable
 fun TrainingOverviewContent(
     modifier: Modifier = Modifier,
@@ -64,7 +95,53 @@ fun TrainingOverviewContent(
         if(training.description.isNotEmpty()) {
             Text(text = training.description, color = Color.Red)
         }
+        if(trainingWithExercises.exercises.isNotEmpty()) {
+            TrainingExercisesExpandableList(
+                modifier = Modifier,
+                exercises = trainingWithExercises.exercises
+            )
+        }
     }
+}
+
+
+@ExperimentalAnimationApi
+@Composable
+fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<TrainingExercise>) {
+
+    var isExpanded by remember { mutableStateOf(false) }
+
+    val angle: Float by animateFloatAsState(
+        targetValue = if(!isExpanded) 0f else 180f,
+        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+    )
+
+    ListCardItem(modifier = Modifier.clickable {
+        isExpanded = !isExpanded
+    }) {
+        Column(Modifier.fillMaxWidth()) {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = "Exercises", fontSize = 18.sp)
+                Icon(
+                    Icons.Default.ArrowDropDown,
+                    modifier = Modifier.rotate(angle),
+                    contentDescription = "Expand exercises list arrow"
+                )
+            }
+            AnimatedVisibility(visible = isExpanded) {
+                Text(text = "Expanded")
+            }
+
+        }
+
+    }
+
 }
 
 
