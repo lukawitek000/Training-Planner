@@ -116,8 +116,9 @@ fun SetTrainingExerciseRestTimeDialog(
     setRestTimeToExercise: (TrainingExercise, Int, Int) -> Unit,
     closeDialog: () -> Unit
 ) {
-    var minutes by remember { mutableStateOf(0) }
-    var seconds by remember { mutableStateOf(0) }
+    val (currentMinutes, currentSeconds) = TimeFormatter.calculateMinutesAndSeconds(trainingExercise.restTime)
+    var minutes by remember { mutableStateOf(currentMinutes) }
+    var seconds by remember { mutableStateOf(currentSeconds) }
 
     DialogContainer(
         closeDialog = closeDialog,

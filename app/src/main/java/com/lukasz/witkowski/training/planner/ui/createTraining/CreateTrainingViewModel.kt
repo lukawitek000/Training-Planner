@@ -96,6 +96,11 @@ class CreateTrainingViewModel @Inject constructor(
 
     fun setRestTimeToExercise(trainingExercise: TrainingExercise, restTimeMinutes: Int, restTimeSeconds: Int) {
         val timeInMillis = TimeFormatter.timeToMillis(minutes = restTimeMinutes, seconds = restTimeSeconds)
+        val exercises = trainingExercises.value
+        val index = exercises.indexOf(trainingExercise)
+        if(index >= 0) {
+            exercises[index].restTime = timeInMillis
+        }
 //        TODO("Not yet implemented")
     }
 }
