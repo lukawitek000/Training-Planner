@@ -55,6 +55,7 @@ class CurrentTrainingActivity : FragmentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.TrainingPlannerTheme)
         super.onCreate(savedInstanceState)
         binding = ActivityCurrentTrainingBinding.inflate(layoutInflater)
         setContentView(binding.root)

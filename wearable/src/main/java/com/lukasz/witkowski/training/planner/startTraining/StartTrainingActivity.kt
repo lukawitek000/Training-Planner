@@ -21,6 +21,7 @@ class StartTrainingActivity : ComponentActivity() {
     private val viewModel by viewModels<StartTrainingViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.TrainingPlannerTheme)
         super.onCreate(savedInstanceState)
         binding = ActivityStartTrainingBinding.inflate(layoutInflater)
         setContentView(binding.root)

@@ -41,6 +41,7 @@ class TrainingSummaryActivity : ComponentActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.TrainingPlannerTheme)
         super.onCreate(savedInstanceState)
         binding = ActivityTrainingSummaryBinding.inflate(layoutInflater)
         setContentView(binding.root)
