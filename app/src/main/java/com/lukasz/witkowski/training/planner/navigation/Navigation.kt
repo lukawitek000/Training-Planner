@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.navigation
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -37,6 +38,7 @@ import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOvervie
 import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsScreen
 
+@ExperimentalAnimationApi
 @Composable
 fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
     NavHost(navController = navController, startDestination = NavItem.Trainings.route) {

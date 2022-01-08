@@ -32,4 +32,6 @@ interface StatisticsDao {
     @Query("SELECT * FROM TrainingStatistics WHERE isSynchronized=0")
     fun getNotSynchronizedStatistics(): Flow<List<TrainingCompleteStatistics>>
 
+    @Query("SELECT * FROM TrainingStatistics WHERE trainingId=:trainingId")
+    fun getTrainingCompleteStatisticsByTrainingId(trainingId: Long) : TrainingCompleteStatistics
 }

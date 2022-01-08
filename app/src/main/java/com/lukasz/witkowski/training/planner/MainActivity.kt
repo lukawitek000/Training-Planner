@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -24,6 +25,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var isServiceStarted = false
 
+    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -66,6 +68,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@ExperimentalAnimationApi
 @Composable
 fun TrainingPlannerApp() {
     val navController = rememberNavController()
@@ -93,6 +96,7 @@ fun TrainingPlannerApp() {
 }
 
 
+@ExperimentalAnimationApi
 @Preview(showBackground = true)
 @Composable
 fun TrainingPlannerPreview() {

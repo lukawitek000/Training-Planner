@@ -64,6 +64,7 @@ import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 import com.lukasz.witkowski.training.planner.ui.theme.Shapes
+import timber.log.Timber
 
 @ExperimentalAnimationApi
 @Composable
@@ -73,25 +74,46 @@ fun TrainingOverviewScreen(
     navigateBack: () -> Unit
 ) {
     val trainingRequest by viewModel.training.collectAsState()
+    val statisticsRequest by viewModel.statistics.collectAsState()
 
     Scaffold(modifier = modifier) {
-        when(trainingRequest) {
-            is ResultHandler.Loading -> { LoadingScreen(Modifier.fillMaxSize()) }
-            is ResultHandler.Success -> {
-                TrainingOverviewContent(
-                    modifier = Modifier,
-                    trainingWithExercises = (trainingRequest as ResultHandler.Success<TrainingWithExercises>).value
-                )
+        Column {
+            when(trainingRequest) {
+                is ResultHandler.Loading -> { LoadingScreen(Modifier.fillMaxSize()) }
+                is ResultHandler.Success -> {
+                    TrainingOverviewContent(
+                        modifier = Modifier,
+                        trainingWithExercises = (trainingRequest as ResultHandler.Success<TrainingWithExercises>).value
+                    )
+                }
+                is ResultHandler.Error ->  {
+                    Toast.makeText(LocalContext.current, (trainingRequest as ResultHandler.Error).message, Toast.LENGTH_SHORT).show()
+                    navigateBack()
+                }
             }
-            is ResultHandler.Error ->  {
-                Toast.makeText(LocalContext.current, (trainingRequest as ResultHandler.Error).message, Toast.LENGTH_SHORT).show()
-                navigateBack()
+            Text(modifier = Modifier.fillMaxWidth(), text = "Statistics", fontSize = 28.sp, textAlign = TextAlign.Center)
+            Spacer(modifier = Modifier.height(16.dp))
+            when(statisticsRequest) {
+                is ResultHandler.Loading -> { LoadingScreen(Modifier.fillMaxSize()) }
+                is ResultHandler.Success -> {
+                    TrainingStatisticsList(
+                        modifier = Modifier
+                    )
+                }
+                is ResultHandler.Error ->  {
+                    val message = (trainingRequest as ResultHandler.Error).message
+                    Text(text = message, fontSize = 18.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+                }
             }
         }
-
     }
 }
 
+@Composable
+fun TrainingStatisticsList(modifier: Modifier) {
+    Text(text = "Training statistics received", color = Color.Red)
+    Timber.d("Training statistics ")
+}
 
 
 @ExperimentalAnimationApi
@@ -102,19 +124,22 @@ fun TrainingOverviewContent(
 ) {
     val training = trainingWithExercises.training
     Column(modifier = modifier
-        .fillMaxSize()
+        .fillMaxWidth()
         .padding(8.dp)
         .background(Color.Green)
     ) {
-        Text(training.title)
+        Text(modifier = Modifier.fillMaxWidth(), text = training.title, fontSize = 28.sp, textAlign = TextAlign.Center)
+        Spacer(modifier = Modifier.height(16.dp))
         if(training.description.isNotEmpty()) {
-            Text(text = training.description, color = Color.Red)
+            Text(text = training.description, color = Color.Red, fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(16.dp))
         }
         if(trainingWithExercises.exercises.isNotEmpty()) {
             TrainingExercisesExpandableList(
                 modifier = Modifier,
                 exercises = trainingWithExercises.exercises
             )
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }
