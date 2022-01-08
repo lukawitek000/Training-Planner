@@ -44,7 +44,8 @@ sealed class NavItem(
             CreateExercise,
             CreateTraining,
             PickExercise,
-            CreateTrainingGraph
+            CreateTrainingGraph,
+            TrainingOverview
         )
     }
 }

@@ -74,7 +74,7 @@ fun TrainingPlannerApp() {
     val navController = rememberNavController()
     val backStackEntry = navController.currentBackStackEntryAsState()
     val currentScreen = NavItem.Items.list.find {
-        it.route == backStackEntry.value?.destination?.route
+        it.route.substringBefore('/') == backStackEntry.value?.destination?.route?.substringBefore('/')
     } ?: NavItem.Trainings
     // TODO research how to better handle top bar with navigation
     Scaffold(
