@@ -7,7 +7,12 @@ import androidx.compose.material.icons.outlined.ShoppingCart
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.ui.graphics.vector.ImageVector
 
-sealed class NavItem(val route: String, val icon: ImageVector?, val title: String, val isBackArrow: Boolean = false){
+sealed class NavItem(
+    val route: String,
+    val icon: ImageVector?,
+    val title: String,
+    val isBackArrow: Boolean = false
+) {
     object Trainings : NavItem("trainings", Icons.Outlined.ShoppingCart, "Trainings")
     object Exercises : NavItem("exercises", Icons.Outlined.Send, "Exercises")
     object Calendar : NavItem("calendar", Icons.Outlined.DateRange, "Calendar")
@@ -21,7 +26,8 @@ sealed class NavItem(val route: String, val icon: ImageVector?, val title: Strin
 
     object CreateExercise : NavItem("create-exercise", null, "Create Exercise", true)
 
-    object CreateTrainingGraph : NavItem("create-training-graph", null, "Create Training Graph", true)
+    object CreateTrainingGraph :
+        NavItem("create-training-graph", null, "Create Training Graph", true)
 
     object CreateTraining : NavItem("create-training", null, "Create Training", true)
 
@@ -29,7 +35,13 @@ sealed class NavItem(val route: String, val icon: ImageVector?, val title: Strin
 
     object Items {
         val list = listOf<NavItem>(
-            Trainings, Exercises, Calendar, Statistics, CreateExercise, CreateTraining, PickExercise,
+            Trainings,
+            Exercises,
+            Calendar,
+            Statistics,
+            CreateExercise,
+            CreateTraining,
+            PickExercise,
             CreateTrainingGraph
         )
     }

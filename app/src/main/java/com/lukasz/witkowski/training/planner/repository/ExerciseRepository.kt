@@ -10,9 +10,9 @@ import kotlinx.coroutines.withContext
 class ExerciseRepository
 constructor(
     private val exerciseDao: ExerciseDao
-){
+) {
 
-    suspend fun insertExercise(exercise: Exercise) : Long {
+    suspend fun insertExercise(exercise: Exercise): Long {
         return withContext(Dispatchers.IO) {
             exerciseDao.insert(exercise = exercise)
         }
@@ -23,7 +23,7 @@ constructor(
     }
 
     fun loadExercises(filterCategories: List<Category> = emptyList()): LiveData<List<Exercise>> {
-        return if(filterCategories.isEmpty()) {
+        return if (filterCategories.isEmpty()) {
             exerciseDao.getAll()
         } else {
             exerciseDao.getExercisesFromCategories(filterCategories)

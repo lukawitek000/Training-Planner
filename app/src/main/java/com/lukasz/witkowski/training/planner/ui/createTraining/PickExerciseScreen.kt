@@ -99,20 +99,11 @@ fun SetTrainingExercisePropertiesDialog(
     closeDialog: () -> Unit,
     saveTrainingExercise: (reps: String, sets: String, minutes: Int, seconds: Int) -> Unit
 ) {
-
     var reps by remember { mutableStateOf("") }
     var sets by remember { mutableStateOf("") }
-
-    var minutes by remember {
-        mutableStateOf(0)
-    }
-    var seconds by remember {
-        mutableStateOf(0)
-    }
-
+    var minutes by remember { mutableStateOf(0) }
+    var seconds by remember { mutableStateOf(0) }
     var isTimerSetEnable by remember { mutableStateOf(true) }
-
-
 
     Dialog(
         onDismissRequest = { closeDialog() })
@@ -205,7 +196,6 @@ fun SetTrainingExercisePropertiesDialog(
                         text = "Do not set timer"
                     )
                 }
-
             }
         }
     }

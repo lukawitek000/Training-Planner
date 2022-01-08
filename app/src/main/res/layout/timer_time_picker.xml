@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:padding="8dp">
-
 
     <NumberPicker
         android:id="@+id/minutes_picker"
@@ -22,7 +20,7 @@
         android:id="@+id/minutes_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Minutes"
+        android:text="@string/minutes"
         app:layout_constraintEnd_toEndOf="@+id/minutes_picker"
         app:layout_constraintStart_toStartOf="@+id/minutes_picker"
         app:layout_constraintTop_toBottomOf="@+id/minutes_picker" />
@@ -41,10 +39,8 @@
         android:id="@+id/seconds_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Seconds"
+        android:text="@string/seconds"
         app:layout_constraintEnd_toEndOf="@+id/seconds_picker"
         app:layout_constraintStart_toStartOf="@+id/seconds_picker"
         app:layout_constraintTop_toBottomOf="@+id/seconds_picker" />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

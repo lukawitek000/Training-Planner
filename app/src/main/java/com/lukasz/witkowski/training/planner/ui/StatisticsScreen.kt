@@ -13,13 +13,15 @@ import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
-fun StatisticsScreen(){
+fun StatisticsScreen() {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .background(Color.Black)
             .wrapContentSize(Alignment.Center)
     ) {
-        Text(text = "Statistics Screen",
+        Text(
+            text = "Statistics Screen",
             color = Color.Magenta
         )
     }

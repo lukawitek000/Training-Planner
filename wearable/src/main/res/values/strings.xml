@@ -1,8 +1,16 @@
 <resources>
     <string name="app_name">Wearable</string>
-    <!--
-    This string is used for square devices and overridden by hello_world in
-    values-round/strings.xml for round devices.
-    -->
-    <string name="hello_world">Hello Square World!</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="start_training_question">Do you want to start %1$s training?</string>
+    <string name="next">NEXT</string>
+    <string name="reps_text">Reps: %1$d</string>
+    <string name="sets_text">Sets: %1$d</string>
+    <string name="play_or_pause_control_button">Play or pause control button</string>
+    <string name="total_training_time">Total time: %1$s</string>
+    <string name="total_burned_calories">%1$.1f kcal</string>
+    <string name="max_heart_rate">%1$.1f BPM</string>
+    <string name="summary">Summary</string>
+    <string name="no_trainings_message">Training list is empty.\nUse mobile application to create them.</string>
+    <string name="loading_info">Loading...</string>
 </resources>

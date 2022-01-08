@@ -8,6 +8,9 @@ import androidx.room.Transaction
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.models.statistics.ExerciseStatistics
+import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
+import com.lukasz.witkowski.shared.models.statistics.TrainingStatistics
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -15,6 +18,9 @@ interface TrainingDao {
 
     @Query("SELECT * FROM Training")
     fun getAllTrainings(): Flow<List<Training>>
+
+    @Query("SELECT * FROM Training")
+    fun getAllTrainingsWithExercises(): Flow<List<TrainingWithExercises>>
 
     @Transaction
     fun insertTrainingWithTrainingExercises(trainingWithExercises: TrainingWithExercises) {
@@ -30,4 +36,13 @@ interface TrainingDao {
 
     @Insert(onConflict = REPLACE)
     fun insertTrainingExercise(trainingExercise: TrainingExercise): Long
+
+    @Query("SELECT * FROM TRAINING WHERE isSynchronized=0")
+    fun getNotSynchronizedTrainingsWithExercises(): Flow<List<TrainingWithExercises>>
+
+    @Query("SELECT * FROM TRAINING WHERE id=:id")
+    fun getTrainingWithExercisesById(id: Long): TrainingWithExercises
+
+
+
 }

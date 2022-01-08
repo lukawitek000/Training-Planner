@@ -13,13 +13,15 @@ import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
-fun CalendarScreen(){
+fun CalendarScreen() {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .background(Color.Black)
             .wrapContentSize(Alignment.Center)
     ) {
-        Text(text = "Calendar Screen",
+        Text(
+            text = "Calendar Screen",
             color = Color.Green
         )
     }

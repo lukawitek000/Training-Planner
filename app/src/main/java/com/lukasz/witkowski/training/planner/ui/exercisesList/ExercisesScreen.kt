@@ -5,16 +5,34 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.AlertDialog
+import androidx.compose.material.Button
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,14 +47,15 @@ import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.utils.categoriesWithoutNone
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
+import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 
 @Composable
-fun ExercisesScreen(modifier: Modifier = Modifier,
-                    viewModel: ExercisesListViewModel,
-                    onCreateExerciseFabClicked: () -> Unit = {}
-){
+fun ExercisesScreen(
+    modifier: Modifier = Modifier,
+    viewModel: ExercisesListViewModel,
+    onCreateExerciseFabClicked: () -> Unit = {}
+) {
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
@@ -45,9 +64,7 @@ fun ExercisesScreen(modifier: Modifier = Modifier,
             }
         }
     ) {
-
         ExercisesScreenContent(viewModel)
-
     }
 }
 
@@ -58,6 +75,7 @@ fun ExercisesScreenContent(
     pickExercise: (Exercise) -> Unit = {},
     pickedExercises: List<Exercise> = emptyList()
 ) {
+    // TODO check why this screen is jumping when displayed
     val exercisesList by viewModel.exercises.observeAsState(initial = emptyList())
     val selectedCategoriesList by viewModel.selectedCategories.observeAsState(initial = emptyList())
 
@@ -100,7 +118,7 @@ fun CategoryFilters(
         modifier = modifier.padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        items(categories){ category ->
+        items(categories) { category ->
             CategoryChip(
                 modifier = Modifier.padding(4.dp),
                 isSelected = selectedCategories.any { it == category },
@@ -124,9 +142,9 @@ private fun ExercisesList(
     LazyColumn() {
         items(exercisesList) { exercise ->
             ListCardItem(modifier = Modifier.clickable {
-                if(pickingExerciseMode){
+                if (pickingExerciseMode) {
                     pickExercise(exercise)
-                }else {
+                } else {
                     openDialog(exercise)
                 }
             }
@@ -150,7 +168,7 @@ fun ExerciseListItemContent(
     val imageDescription = "${exercise.name} image"
 
     Row(
-        modifier = if(isHighlighted) modifier.background(Color.Red) else modifier,
+        modifier = if (isHighlighted) modifier.background(Color.Red) else modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         ImageWithDefaultPlaceholder(imageDescription = imageDescription, image = image)
@@ -166,7 +184,7 @@ fun ExerciseListItemContent(
                 fontSize = 14.sp
             )
             val category = exercise.category
-            if(category != Category.None) {
+            if (category != Category.None) {
                 CategoryChip(
                     modifier = Modifier.padding(4.dp),
                     text = category.name
@@ -209,7 +227,7 @@ fun ExerciseInfoAlertDialog(
     closeDialog: () -> Unit
 ) {
 
-    AlertDialog( modifier = modifier
+    AlertDialog(modifier = modifier
         .clip(MaterialTheme.shapes.medium)
         .border(width = 1.dp, Color.Yellow, MaterialTheme.shapes.medium)
         .fillMaxWidth(),
@@ -228,17 +246,23 @@ fun ExerciseInfoAlertDialog(
                 verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "", modifier = Modifier.height(8.dp)) // without Text here image is moving to the top
+                Text(
+                    text = "",
+                    modifier = Modifier.height(8.dp)
+                ) // without Text here image is moving to the top
                 ImageWithDefaultPlaceholder(
                     modifier = Modifier.height(240.dp),
-                    imageDescription = "${exercise.name} image", image = exercise.image)
+                    imageDescription = "${exercise.name} image", image = exercise.image
+                )
                 Text(
                     text = exercise.description,
-                    modifier = Modifier)
-                if(exercise.category != Category.None)
+                    modifier = Modifier
+                )
+                if (exercise.category != Category.None)
                     CategoryChip(
                         modifier = Modifier.padding(top = 4.dp),
-                        text = exercise.category.name)
+                        text = exercise.category.name
+                    )
             }
 
         },
@@ -257,12 +281,4 @@ fun ExerciseInfoAlertDialog(
         }
     )
 
-}
-
-
-
-@Preview(showBackground = true)
-@Composable
-fun ExercisesScreenPreview() {
-    //ExercisesScreen()
 }

@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import androidx.lifecycle.*
 import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.Exercise
-import com.lukasz.witkowski.shared.models.dummyExerciseList
 import com.lukasz.witkowski.shared.utils.allCategories
 import com.lukasz.witkowski.training.planner.repository.ExerciseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,8 +45,6 @@ class CreateExerciseViewModel @Inject constructor(
     fun onImageChange(bitmap: Bitmap){
         _image.value = bitmap
     }
-
-
     fun createExercise(){
         viewModelScope.launch {
             val exercise = Exercise(
@@ -56,7 +53,7 @@ class CreateExerciseViewModel @Inject constructor(
                 category = category.value ?: Category.None,
                 image = image.value
             )
-            exerciseRepository.insertExercise(exercise)
+            exerciseRepository.insertExercise(exercise) // TODO loading indicator, because of the image it is saving very long
         }
     }
 }
