@@ -80,7 +80,7 @@ class CreateTrainingViewModel @Inject constructor(
             exercise = exercise,
             repetitions = repetitions,
             sets = sets,
-            time = timeInMillis.toLong()
+            time = timeInMillis
         )
         addTrainingExercise(trainingExercise)
     }
