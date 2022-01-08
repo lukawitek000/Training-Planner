@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/box_inset_layout_padding"
+    android:background="@color/background_gray"
+    tools:context=".summary.TrainingSummaryActivity"
+    tools:deviceIds="wear">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_boxedEdges="top|right|left"
+        android:paddingBottom="8dp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/inner_layout_padding">
+
+            <TextView
+                android:id="@+id/summary_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/summary"
+                android:textAlignment="center"
+                android:textColor="@color/orange"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/total_time_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/hourglass"
+                android:contentDescription="Training time"
+                app:layout_constraintBottom_toBottomOf="@id/total_time_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/total_time_tv" />
+
+            <TextView
+                android:id="@+id/total_time_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="1h 30min"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/total_time_iv"
+                app:layout_constraintTop_toBottomOf="@+id/summary_title_tv" />
+
+            <ImageView
+                android:id="@+id/burned_calories_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/calories"
+                android:contentDescription="Total burned calories"
+                app:layout_constraintBottom_toBottomOf="@id/burned_calories_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/burned_calories_tv" />
+
+            <TextView
+                android:id="@+id/burned_calories_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="123kcal"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="@id/burned_calories_iv"
+                app:layout_constraintStart_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/total_time_tv" />
+
+            <ImageView
+                android:id="@+id/max_heart_rate_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/heart"
+                android:contentDescription="Maximum heart rate during training"
+                app:layout_constraintBottom_toBottomOf="@id/max_heart_rate_tv"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/max_heart_rate_tv" />
+
+            <TextView
+                android:id="@+id/max_heart_rate_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="100 BPM"
+                android:textColor="@color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/max_heart_rate_iv"
+                app:layout_constraintTop_toBottomOf="@+id/burned_calories_tv" />
+
+            <Button
+                android:id="@+id/exit_training_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_shape"
+                android:backgroundTint="@color/gray"
+                android:layout_marginTop="8dp"
+                android:text="EXIT"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/max_heart_rate_tv"
+                tools:layout_editor_absoluteX="3dp" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.wear.widget.BoxInsetLayout>
