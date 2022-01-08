@@ -37,7 +37,7 @@ fun TrainingsScreen(
     onCreateTrainingFabClicked: () -> Unit = {},
     navigateToTrainingOverview: (Long) -> Unit
 ) {
-    val trainings by viewModel.allTrainings.collectAsState()
+    val trainings by viewModel.allTrainings.collectAsState(emptyList())
     Scaffold(
         modifier = Modifier.padding(innerPadding),
         floatingActionButton = {

@@ -16,9 +16,5 @@ class TrainingsListViewModel @Inject constructor(
     private val trainingRepository: TrainingRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
-    val allTrainings: StateFlow<List<Training>>
-        get() = trainingRepository.getAllTrainings()
-            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList<Training>())
-    //TODO check if this stateIn is a good way of converting Flow to StateFlow
+    val allTrainings = trainingRepository.getAllTrainings()
 }

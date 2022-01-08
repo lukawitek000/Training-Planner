@@ -100,6 +100,7 @@ private fun NavGraphBuilder.createTrainingNavGraph(
         startDestination = NavItem.CreateTraining.route,
         route = NavItem.CreateTrainingGraph.route
     ) {
+
         composable(NavItem.CreateTraining.route) {
             val createTrainingBackStackEntry = remember { navController.getBackStackEntry(NavItem.CreateTrainingGraph.route) }
             val createTrainingViewModel: CreateTrainingViewModel =
