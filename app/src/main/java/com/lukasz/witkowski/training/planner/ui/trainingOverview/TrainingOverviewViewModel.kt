@@ -58,7 +58,7 @@ class TrainingOverviewViewModel @Inject constructor(
                 if (generalStatistics.isEmpty()) throw Exception()
                 _statistics.value = ResultHandler.Success(value = generalStatistics)
             } catch (e: Exception) {
-                _statistics.value = ResultHandler.Error(message = "There is no statistics for this training")
+                _statistics.value = ResultHandler.Error(message = "No statistics for this training.")
             }
         }
     }

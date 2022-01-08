@@ -1,5 +1,8 @@
 package com.lukasz.witkowski.shared.utils
 
+import java.text.SimpleDateFormat
+import java.util.*
+
 object TimeFormatter {
 
     const val SECONDS_IN_MINUTE = 60L
@@ -67,5 +70,9 @@ object TimeFormatter {
         return Pair(minutes.toInt(), seconds.toInt())
     }
 
-
+    fun convertMillisToDate(millis: Long): String {
+        val date = Date(millis)
+        val format = SimpleDateFormat("HH:mm dd.MM.yyyy", Locale.getDefault())
+        return format.format(date)
+    }
 }

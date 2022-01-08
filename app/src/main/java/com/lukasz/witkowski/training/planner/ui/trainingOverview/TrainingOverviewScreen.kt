@@ -49,6 +49,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -58,8 +59,10 @@ import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.shared.utils.TimeFormatter
+import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
@@ -97,7 +100,8 @@ fun TrainingOverviewScreen(
                 is ResultHandler.Loading -> { LoadingScreen(Modifier.fillMaxSize()) }
                 is ResultHandler.Success -> {
                     TrainingStatisticsList(
-                        modifier = Modifier
+                        modifier = Modifier,
+                        generalStatistics = (statisticsRequest as ResultHandler.Success).value
                     )
                 }
                 is ResultHandler.Error ->  {
@@ -108,13 +112,6 @@ fun TrainingOverviewScreen(
         }
     }
 }
-
-@Composable
-fun TrainingStatisticsList(modifier: Modifier) {
-    Text(text = "Training statistics received", color = Color.Red)
-    Timber.d("Training statistics ")
-}
-
 
 @ExperimentalAnimationApi
 @Composable
@@ -185,9 +182,7 @@ fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<Training
                 }
             }
         }
-
     }
-
 }
 
 @Composable
@@ -252,6 +247,60 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExer
         }
     }
 }
+
+@Composable
+fun TrainingStatisticsList(
+    modifier: Modifier,
+    generalStatistics: List<GeneralStatistics>
+) {
+    LazyColumn(modifier = modifier) {
+        items(generalStatistics) {
+            SingleTrainingStatisticsItem(
+                modifier = Modifier,
+                generalStatistics = it
+            )
+        }
+    }
+}
+
+@Composable
+fun SingleTrainingStatisticsItem(modifier: Modifier = Modifier, generalStatistics: GeneralStatistics) {
+    val time = TimeFormatter.millisToTime(generalStatistics.time)
+    val burnedCalories = if(generalStatistics.burnedCalories == 0.0) stringResource(R.string.no_data) else stringResource(
+        id = R.string.total_burned_calories, generalStatistics.burnedCalories
+    )
+    val maxHeartRateStatistics = if(generalStatistics.maxHeartRate == 0.0) stringResource(R.string.no_data) else stringResource(
+        id = R.string.max_heart_rate, generalStatistics.maxHeartRate
+    )
+    val fontSize = 18.sp
+    ListCardItem(modifier = modifier) {
+        Column {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = TimeFormatter.convertMillisToDate(generalStatistics.date),
+                fontSize = fontSize,
+                textAlign = TextAlign.End,
+                color = Color.Red
+            )
+            Text(text = stringResource(id = R.string.time_text, time), fontSize = fontSize)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = stringResource(id = R.string.burned_calories_text, burnedCalories), fontSize = fontSize)
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = stringResource(id = R.string.max_heart_rate_text, maxHeartRateStatistics), fontSize = fontSize)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun SingleTrainingStatisticsItemPrev() {
+    SingleTrainingStatisticsItem(
+        generalStatistics = GeneralStatistics(
+            0L, 60000L, System.currentTimeMillis(), 12.1, 123.0
+        )
+    )
+}
+
 
 @Preview
 @Composable
