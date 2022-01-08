@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import com.lukasz.witkowski.shared.utils.TimeFormatter
@@ -91,5 +92,17 @@ class TrainingSummaryActivity : ComponentActivity() {
             it.heartRateStatistics.max
         }?.heartRateStatistics?.max ?: 0.0
         binding.maxHeartRateTv.text = getString(R.string.max_heart_rate, maxHeartRate)
+        hideEmptyHealthStatistics(totalBurnedCalories, maxHeartRate)
+    }
+
+    private fun hideEmptyHealthStatistics(totalBurnedCalories: Double, maxHeartRate: Double) {
+        if(maxHeartRate == 0.0) {
+            binding.maxHeartRateTv.visibility = View.GONE
+            binding.maxHeartRateIv.visibility = View.GONE
+        }
+        if(totalBurnedCalories == 0.0) {
+            binding.burnedCaloriesTv.visibility = View.GONE
+            binding.burnedCaloriesIv.visibility = View.GONE
+        }
     }
 }
