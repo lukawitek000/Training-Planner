@@ -11,14 +11,22 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -37,18 +45,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lukasz.witkowski.shared.models.Category
+import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.ResultHandler
+import com.lukasz.witkowski.shared.utils.TimeFormatter
+import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
+import com.lukasz.witkowski.training.planner.ui.theme.Shapes
 
 @ExperimentalAnimationApi
 @Composable
@@ -135,13 +150,101 @@ fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<Training
                 )
             }
             AnimatedVisibility(visible = isExpanded) {
-                Text(text = "Expanded")
+                LazyColumn() {
+                    items(exercises) {
+                        SingleTrainingExerciseInformation(
+                            modifier = Modifier,
+                            exercise = it
+                        )
+                    }
+                }
             }
-
         }
 
     }
 
+}
+
+@Composable
+fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExercise) {
+    Box(modifier = modifier
+        .padding(8.dp)
+        .fillMaxWidth()
+        .clip(Shapes.medium)
+        .border(1.dp, Color.Magenta, Shapes.medium)
+        .background(Color.Gray)
+        .padding(8.dp)
+    ) {
+        Column() {
+            Text(text = exercise.exercise.name, fontSize = 24.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(text = exercise.exercise.description, fontSize = 18.sp)
+            Spacer(modifier = Modifier.height(16.dp))
+            if(exercise.exercise.category != Category.None) {
+                CategoryChip(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = exercise.exercise.category.name
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "Reps:")
+                    Text(text = exercise.repetitions.toString())
+                }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "Sets:")
+                    Text(text = exercise.sets.toString())
+                }
+                if(exercise.time > 0L) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(text = "Time:")
+                        Text(text = TimeFormatter.millisToTime(exercise.time))
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            if(exercise.restTime > 0L) {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(text = "Rest time: ")
+                    Text(text = TimeFormatter.millisToTime(exercise.restTime))
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun SingleExercisePrev() {
+    SingleTrainingExerciseInformation(
+        Modifier,
+        TrainingExercise(
+            exercise = Exercise(
+                name = "Super exercise",
+                description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
+                category = Category.Back
+            ),
+            sets = 10,
+            repetitions = 100,
+            time = 141000,
+            restTime = 53988
+        )
+    )
 }
 
 
