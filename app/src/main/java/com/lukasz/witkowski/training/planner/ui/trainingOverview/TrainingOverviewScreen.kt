@@ -101,7 +101,7 @@ fun TrainingOverviewScreen(
                     )
                 }
                 is ResultHandler.Error ->  {
-                    val message = (trainingRequest as ResultHandler.Error).message
+                    val message = (statisticsRequest as ResultHandler.Error).message
                     Text(text = message, fontSize = 18.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
                 }
             }

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.repository.StatisticsRepository
@@ -29,8 +30,8 @@ class TrainingOverviewViewModel @Inject constructor(
     private val _training = MutableStateFlow<ResultHandler<TrainingWithExercises>>(ResultHandler.Loading)
     val training: StateFlow<ResultHandler<TrainingWithExercises>> = _training
 
-    private val _statistics = MutableStateFlow<ResultHandler<TrainingCompleteStatistics>>(ResultHandler.Loading)
-    val statistics: StateFlow<ResultHandler<TrainingCompleteStatistics>> = _statistics
+    private val _statistics = MutableStateFlow<ResultHandler<List<GeneralStatistics>>>(ResultHandler.Loading)
+    val statistics: StateFlow<ResultHandler<List<GeneralStatistics>>> = _statistics
 
     init {
         fetchTrainingDetails()
@@ -53,8 +54,9 @@ class TrainingOverviewViewModel @Inject constructor(
         viewModelScope.launch {
             _statistics.value = ResultHandler.Loading
             try {
-                val trainingCompleteStatistics = statisticsRepository.getTrainingCompleteStatisticsByTrainingId(trainingId!!)
-                _statistics.value = ResultHandler.Success(value = trainingCompleteStatistics)
+                val generalStatistics = statisticsRepository.getTrainingCompleteStatisticsByTrainingId(trainingId!!)
+                if (generalStatistics.isEmpty()) throw Exception()
+                _statistics.value = ResultHandler.Success(value = generalStatistics)
             } catch (e: Exception) {
                 _statistics.value = ResultHandler.Error(message = "There is no statistics for this training")
             }
