@@ -35,5 +35,6 @@ class TrainingDataReceiverService : DataLayerListenerService() {
     override suspend fun <T> handleReceivedData(data: T) {
         val trainingWithExercises = (data as? TrainingWithExercises) ?: return
         Timber.d("Received Training $trainingWithExercises")
+        syncDataRepository.insertTrainingWithExercises(trainingWithExercises)
     }
 }

@@ -40,5 +40,6 @@ class StatisticsDataReceiverService: DataLayerListenerService() {
     override suspend fun <T> handleReceivedData(data: T) {
         val trainingCompleteStatistics = (data as? TrainingCompleteStatistics) ?: return
         Timber.d("Received statistics $trainingCompleteStatistics")
+        syncDataRepository.insertTrainingCompleteStatistics(trainingCompleteStatistics)
     }
 }
