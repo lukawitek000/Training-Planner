@@ -33,6 +33,8 @@ sealed class NavItem(
 
     object PickExercise : NavItem("pick-exercise", null, "Pick Exercise", true)
 
+    object TrainingOverview : NavItem("training-overview", null, "Training overview", true)
+
     object Items {
         val list = listOf<NavItem>(
             Trainings,

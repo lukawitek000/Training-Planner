@@ -19,8 +19,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.lukasz.witkowski.training.planner.ui.*
 import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseScreen
@@ -30,6 +32,8 @@ import com.lukasz.witkowski.training.planner.ui.createTraining.CreateTrainingVie
 import com.lukasz.witkowski.training.planner.ui.createTraining.PickExerciseScreen
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesScreen
+import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewScreen
+import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewViewModel
 import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsScreen
 
@@ -39,9 +43,12 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
 
         composable(NavItem.Trainings.route) {
             val trainingsListViewModel: TrainingsListViewModel = hiltViewModel()
-            TrainingsScreen(innerPadding = innerPadding, viewModel = trainingsListViewModel) {
-                navController.navigate(route = NavItem.CreateTraining.route)
-            }
+            TrainingsScreen(
+                innerPadding = innerPadding,
+                viewModel = trainingsListViewModel,
+                onCreateTrainingFabClicked = { navController.navigate(route = NavItem.CreateTraining.route) },
+                navigateToTrainingOverview = { navController.navigate(route = "${NavItem.TrainingOverview.route}/$it") }
+            )
         }
 
         composable(NavItem.Exercises.route) {
@@ -68,6 +75,17 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
         }
         createTrainingNavGraph(innerPadding, navController)
 
+        composable(
+            "${NavItem.TrainingOverview.route}/{trainingId}",
+            arguments = listOf(navArgument("trainingId") { type = NavType.LongType })
+        ) {
+            val viewModel: TrainingOverviewViewModel = hiltViewModel()
+            TrainingOverviewScreen(
+                modifier = Modifier.padding(innerPadding),
+                viewModel = viewModel,
+                navigateBack = { navController.navigateUp() }
+            )
+        }
 
     }
 }
