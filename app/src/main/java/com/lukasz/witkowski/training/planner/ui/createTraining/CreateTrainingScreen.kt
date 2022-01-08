@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.ui.createTraining
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
@@ -60,18 +62,29 @@ fun CreateTrainingScreen(
     val exercises by viewModel.trainingExercises.collectAsState()
     var openDialog by remember { mutableStateOf(false) }
     var trainingExercise: TrainingExercise? = null
+    val fabEnabled = title.isNotEmpty() && exercises.isNotEmpty()
+    var showToast by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                viewModel.createTraining()
-                navigateBack()
-            }) {
+                if(fabEnabled) {
+                    viewModel.createTraining()
+                    navigateBack()
+                } else {
+                    showToast = true
+                }
+            },
+            ) {
                 Icon(imageVector = Icons.Default.Done, contentDescription = "Create training")
             }
         }
     ) {
+        if(showToast) {
+            Toast.makeText(LocalContext.current, "Title and exercises are required", Toast.LENGTH_SHORT).show()
+            showToast = false
+        }
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -79,9 +92,16 @@ fun CreateTrainingScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            TextDataInputs(title, viewModel, description)
+            TextDataInputs(
+                title,
+                description,
+                onTitleChanged = { viewModel.onTrainingTitleChanged(it) },
+                onDescriptionChanged = {  viewModel.onTrainingDescriptionChanged(it) }
+            )
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { onAddExerciseClicked() }) {
+            Button(
+                onClick = { onAddExerciseClicked() }
+            ) {
                 Text(text = "Add Exercises")
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -91,8 +111,6 @@ fun CreateTrainingScreen(
                 setRestTimeToTrainingExercise = {
                     trainingExercise = it
                     openDialog = true
-                    Timber.d("Open dialog $openDialog, training Exercise $trainingExercise")
-//                    viewModel.setRestTimeToExercise(it)
                 }
             )
         }
@@ -146,21 +164,22 @@ fun SetTrainingExerciseRestTimeDialog(
 @Composable
 private fun TextDataInputs(
     title: String,
-    viewModel: CreateTrainingViewModel,
-    description: String
+    description: String,
+    onTitleChanged: (String) -> Unit,
+    onDescriptionChanged: (String) -> Unit
 ) {
     TextField(
         text = title,
-        onTextChange = { viewModel.onTrainingTitleChanged(it) },
+        onTextChange = { onTitleChanged(it) },
         label = "Title",
         imeAction = ImeAction.Next
     )
     Spacer(modifier = Modifier.height(16.dp))
     TextField(
         text = description,
-        onTextChange = { viewModel.onTrainingDescriptionChanged(it) },
+        onTextChange = { onDescriptionChanged(it) },
         label = "Description",
-        imeAction = ImeAction.Next
+        imeAction = ImeAction.Done
     )
 }
 
