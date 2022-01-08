@@ -56,6 +56,10 @@ object TimeFormatter {
         return timeStringBuilder.toString()
     }
 
+    fun timeToMillis(hour: Int = 0, minutes: Int = 0, seconds: Int): Long {
+         return (((hour * MINUTES_IN_HOUR) + minutes) * SECONDS_IN_MINUTE + seconds) * MILLIS_IN_SECOND
+    }
+
 
     private fun calculateMinutesAndSeconds(millis: Long): Pair<Long, Long> {
         val millisToSeconds = millis / MILLIS_IN_SECOND

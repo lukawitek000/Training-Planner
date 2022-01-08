@@ -7,6 +7,7 @@ import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.shared.utils.TimeFormatter.MILLIS_IN_SECOND
 import com.lukasz.witkowski.shared.utils.TimeFormatter.SECONDS_IN_MINUTE
 import com.lukasz.witkowski.training.planner.repository.TrainingRepository
@@ -15,7 +16,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlin.math.min
 
 @HiltViewModel
 class CreateTrainingViewModel @Inject constructor(
@@ -73,7 +76,7 @@ class CreateTrainingViewModel @Inject constructor(
         minutes: Int,
         seconds: Int
     ) {
-        val timeInMillis = (minutes * SECONDS_IN_MINUTE + seconds) * MILLIS_IN_SECOND
+        val timeInMillis = TimeFormatter.timeToMillis(minutes = minutes, seconds = seconds)
         val repetitions = reps.toIntOrNull() ?: 1
         val sets = sets.toIntOrNull() ?: 1
         val trainingExercise = TrainingExercise(
@@ -89,5 +92,10 @@ class CreateTrainingViewModel @Inject constructor(
         val mutableExercises = trainingExercises.value.toMutableList()
         mutableExercises.remove(trainingExercise)
         _trainingExercises.value = mutableExercises
+    }
+
+    fun setRestTimeToExercise(trainingExercise: TrainingExercise, restTimeMinutes: Int, restTimeSeconds: Int) {
+        val timeInMillis = TimeFormatter.timeToMillis(minutes = restTimeMinutes, seconds = restTimeSeconds)
+//        TODO("Not yet implemented")
     }
 }

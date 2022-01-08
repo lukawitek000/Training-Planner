@@ -2,4 +2,6 @@
     <string name="app_name">Training Planner</string>
     <string name="minutes">Minutes</string>
     <string name="seconds">Seconds</string>
+    <string name="rest_time_info">Set rest time that will be automatically measured after the exercise.\nTo set a rest time between sets, you have to set it to the last exercise in the training.</string>
+    <string name="rest_time_title">Rest time</string>
 </resources>

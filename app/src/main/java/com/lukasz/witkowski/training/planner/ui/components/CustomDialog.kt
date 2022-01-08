@@ -1,13 +1,20 @@
 package com.lukasz.witkowski.training.planner.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -24,12 +31,17 @@ fun DialogContainer(
     Dialog(
         onDismissRequest = { closeDialog() })
     {
-        Scaffold(
+        Surface(
             modifier = modifier
-                .height(600.dp)
                 .clip(MaterialTheme.shapes.medium),
-            floatingActionButton = {
-                FloatingActionButton(onClick = {
+            color = Color.Gray
+        )
+        {
+            Column() {
+                content()
+                FloatingActionButton(
+                    modifier = Modifier.align(Alignment.End).padding(8.dp),
+                    onClick = {
                     saveData()
                     closeDialog()
                 }) {
@@ -38,11 +50,8 @@ fun DialogContainer(
                         contentDescription = "Done"
                     )
                 }
-            },
-            backgroundColor = Color.Gray
-        )
-        {
-            content()
+            }
+
         }
     }
 }
