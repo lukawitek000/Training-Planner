@@ -9,7 +9,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.lukasz.witkowski.training.wearable"
+        applicationId "com.lukasz.witkowski.training.planner"
         minSdk 30
         targetSdk 31
         versionCode 1
@@ -71,4 +71,12 @@ dependencies {
 
     // Ongoing Activity.
     implementation "androidx.wear:wear-ongoing:1.0.0"
+
+    // Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.0"
+
+    // Gson for json serialization
+    implementation 'com.google.code.gson:gson:2.8.9'
 }

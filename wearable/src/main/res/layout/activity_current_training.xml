@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,14 +8,24 @@
     android:padding="@dimen/box_inset_layout_padding"
     tools:context=".currentTraining.CurrentTrainingActivity"
     tools:deviceIds="wear">
-    <androidx.wear.widget.SwipeDismissFrameLayout
-        android:id="@+id/swipe_dismiss_layout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/current_training_fragment_container"
+
+        <include
+            android:id="@+id/loading_view"
+            layout="@layout/loading_view"
+            />
+
+        <androidx.wear.widget.SwipeDismissFrameLayout
+            android:id="@+id/swipe_dismiss_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </androidx.wear.widget.SwipeDismissFrameLayout>
+            android:layout_height="match_parent">
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/current_training_fragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+        </androidx.wear.widget.SwipeDismissFrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.wear.widget.BoxInsetLayout>

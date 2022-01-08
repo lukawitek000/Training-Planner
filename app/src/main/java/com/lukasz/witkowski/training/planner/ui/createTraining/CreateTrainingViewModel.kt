@@ -7,7 +7,7 @@ import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
-import com.lukasz.witkowski.shared.utils.TimeFormatter.MILLIS_IN_SECONDS
+import com.lukasz.witkowski.shared.utils.TimeFormatter.MILLIS_IN_SECOND
 import com.lukasz.witkowski.shared.utils.TimeFormatter.SECONDS_IN_MINUTE
 import com.lukasz.witkowski.training.planner.repository.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -73,7 +73,7 @@ class CreateTrainingViewModel @Inject constructor(
         minutes: Int,
         seconds: Int
     ) {
-        val timeInMillis = (minutes * SECONDS_IN_MINUTE + seconds) * MILLIS_IN_SECONDS
+        val timeInMillis = (minutes * SECONDS_IN_MINUTE + seconds) * MILLIS_IN_SECOND
         val repetitions = reps.toIntOrNull() ?: 1
         val sets = sets.toIntOrNull() ?: 1
         val trainingExercise = TrainingExercise(

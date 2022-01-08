@@ -9,6 +9,7 @@ import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -71,7 +72,6 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
     }
 }
 
-@SuppressLint("UnrememberedGetBackStackEntry")
 private fun NavGraphBuilder.createTrainingNavGraph(
     innerPadding: PaddingValues,
     navController: NavHostController
@@ -81,8 +81,9 @@ private fun NavGraphBuilder.createTrainingNavGraph(
         route = NavItem.CreateTrainingGraph.route
     ) {
         composable(NavItem.CreateTraining.route) {
+            val createTrainingBackStackEntry = remember { navController.getBackStackEntry(NavItem.CreateTrainingGraph.route) }
             val createTrainingViewModel: CreateTrainingViewModel =
-                hiltViewModel(navController.getBackStackEntry(NavItem.Trainings.route))
+                hiltViewModel(createTrainingBackStackEntry)
             CreateTrainingScreen(
                 modifier = Modifier.padding(innerPadding),
                 viewModel = createTrainingViewModel,
@@ -93,8 +94,9 @@ private fun NavGraphBuilder.createTrainingNavGraph(
         }
         composable(NavItem.PickExercise.route) {
             val viewModel: ExercisesListViewModel = hiltViewModel()
+            val createTrainingBackStackEntry = remember { navController.getBackStackEntry(NavItem.CreateTrainingGraph.route) }
             val createTrainingViewModel: CreateTrainingViewModel =
-                hiltViewModel(navController.getBackStackEntry(NavItem.Trainings.route))
+                hiltViewModel(createTrainingBackStackEntry)
             PickExerciseScreen(
                 modifier = Modifier.padding(innerPadding),
                 viewModel = viewModel,
