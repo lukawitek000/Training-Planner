@@ -67,6 +67,7 @@ fun CreateTrainingScreen(
 
     Scaffold(
         modifier = modifier,
+        backgroundColor = Color.Red,
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 if(fabEnabled) {
@@ -91,7 +92,6 @@ fun CreateTrainingScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             TextDataInputs(
                 title,
                 description,
