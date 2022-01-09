@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -145,7 +146,7 @@ fun SetTrainingExerciseRestTimeDialog(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = stringResource(id = R.string.rest_time_title), fontSize = 32.sp)
+            Text(text = stringResource(id = R.string.rest_time_title), fontSize = 32.sp, color = MaterialTheme.colors.primary)
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = stringResource(id = R.string.rest_time_info), textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(16.dp))

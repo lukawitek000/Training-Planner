@@ -26,6 +26,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.material.TextField
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -123,8 +124,9 @@ fun TimerTimePicker(
     secondsMin: Int = 0,
     secondsMax: Int = 59,
 ) {
+    val timerPickerModifier = if(isTimePickerEnabled) modifier else modifier.alpha(0.2f)
     AndroidView(
-        modifier = modifier,
+        modifier = timerPickerModifier,
         factory = { context ->
             val view = LayoutInflater.from(context).inflate(R.layout.timer_time_picker, null)
             val minutesPicker = view.findViewById<NumberPicker>(R.id.minutes_picker)

@@ -14,4 +14,9 @@
     <style name="Theme.TrainingPlanner.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.TrainingPlanner.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="AppTheme.Picker" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="android:textColorPrimary">@color/primary_orange</item>
+        <item name="colorControlNormal">@color/primary_orange</item>
+    </style>
 </resources>

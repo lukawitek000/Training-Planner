@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxColors
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -174,13 +177,18 @@ fun SetTrainingExercisePropertiesDialog(
             ) {
                 Checkbox(
                     checked = !isTimerSetEnable,
-                    onCheckedChange = { isTimerSetEnable = !isTimerSetEnable }
+                    onCheckedChange = { isTimerSetEnable = !isTimerSetEnable },
+                    colors = CheckboxDefaults.colors(uncheckedColor = MaterialTheme.colors.primary)
                 )
+                Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Do not set timer"
+                    text = "Do not set timer",
+                    color = MaterialTheme.colors.primary
                 )
             }
         }
 
     }
 }
+
+
