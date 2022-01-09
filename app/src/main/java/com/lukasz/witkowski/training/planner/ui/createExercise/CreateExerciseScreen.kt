@@ -191,8 +191,7 @@ fun UploadImageButton(
     }
     Spacer(modifier = Modifier.height(16.dp))
     Button(
-        onClick = { launcher.launch("image/*") },
-        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Yellow)
+        onClick = { launcher.launch("image/*") }
     ) {
         Text(text = "Upload image", color = Color.Black)
     }
