@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.ui.components
 import android.view.LayoutInflater
 import android.widget.NumberPicker
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,19 +35,23 @@ import androidx.compose.ui.viewinterop.AndroidView
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark5
+import com.lukasz.witkowski.training.planner.ui.theme.OrangeTransparent
 
 @Composable
 fun ListCardItem(
     modifier: Modifier = Modifier,
     onCardClicked: () -> Unit = {},
+    markedSelected: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    val backgroundColor = if(markedSelected) OrangeTransparent else LightDark5
+    val borderModifier = if(markedSelected) Modifier.border(2.dp, MaterialTheme.colors.primary, MaterialTheme.shapes.medium) else Modifier
     Card(
         modifier = modifier
             .padding(4.dp)
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
-        backgroundColor = LightDark5
+            .fillMaxWidth()
+            .then(borderModifier),
+        backgroundColor = backgroundColor
     ) {
         Box(modifier = Modifier
             .clickable {

@@ -167,11 +167,11 @@ private fun ExercisesList(
                     } else {
                         openDialog(exercise)
                     }
-                }
+                },
+                markedSelected = pickedExercises.contains(exercise)
             ) {
                 ExerciseListItemContent(
-                    exercise = exercise,
-                    isHighlighted = pickedExercises.contains(exercise)
+                    exercise = exercise
                 )
             }
         }
@@ -181,15 +181,14 @@ private fun ExercisesList(
 @Composable
 fun ExerciseListItemContent(
     modifier: Modifier = Modifier,
-    exercise: Exercise,
-    isHighlighted: Boolean = false
+    exercise: Exercise
 ) {
     val image = exercise.image
     val imageDescription = "${exercise.name} image"
     val category = exercise.category
 
     Row(
-        modifier = (if (isHighlighted) modifier.background(Color.Red) else modifier),
+        modifier =  modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         ImageWithDefaultPlaceholder(imageDescription = imageDescription, image = image)
