@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,6 +24,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
+import androidx.compose.material.Divider
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -46,6 +48,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.models.Category
@@ -53,10 +56,12 @@ import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.utils.categoriesWithoutNone
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
+import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
+import timber.log.Timber
 
 @Composable
 fun ExercisesScreen(
@@ -216,10 +221,12 @@ fun ExerciseListItemContent(
 private fun ImageWithDefaultPlaceholder(
     modifier: Modifier = Modifier,
     imageDescription: String,
-    image: Bitmap?
+    image: Bitmap?,
+    heightMin: Dp = 60.dp,
+    heightMax: Dp = 120.dp
 ) {
     val imageModifier = modifier
-        .heightIn(min = 60.dp, max = 120.dp)
+        .heightIn(min = heightMin, max = heightMax)
         .padding(4.dp)
         .clip(RoundedCornerShape(16.dp))
     ImageContainer() {
@@ -246,58 +253,39 @@ fun ExerciseInfoAlertDialog(
     closeDialog: () -> Unit
 ) {
 
-    AlertDialog(modifier = modifier
-        .clip(MaterialTheme.shapes.medium)
-        .border(width = 1.dp, Color.Yellow, MaterialTheme.shapes.medium)
-        .fillMaxWidth(),
-        onDismissRequest = closeDialog,
-        title = {
+    DialogContainer(modifier = modifier,
+        closeDialog = closeDialog,
+        saveData = {}
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
-                modifier = Modifier.fillMaxWidth(),
                 text = exercise.name,
-                fontSize = 32.sp,
-                textAlign = TextAlign.Center
+                fontSize = 32.sp
             )
-        },
-        text = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "",
-                    modifier = Modifier.height(8.dp)
-                ) // without Text here image is moving to the top
-                ImageWithDefaultPlaceholder(
-                    modifier = Modifier.height(240.dp),
-                    imageDescription = "${exercise.name} image", image = exercise.image
-                )
+            Divider(Modifier.padding(8.dp), color = MaterialTheme.colors.primary)
+            ImageWithDefaultPlaceholder(
+                modifier = Modifier,
+                imageDescription = "${exercise.name} image", image = exercise.image,
+                heightMax = 350.dp
+            )
+            if(exercise.description.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = exercise.description,
                     modifier = Modifier
                 )
-                if (exercise.category != Category.None)
-                    CategoryChip(
-                        modifier = Modifier.padding(top = 4.dp),
-                        text = exercise.category.name
-                    )
             }
-
-        },
-        buttons = {
-            Row(horizontalArrangement = Arrangement.Center) {
-
-            }
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                onClick = closeDialog
-            ) {
-                Text(text = "Ok")
+            if (exercise.category != Category.None) {
+                Spacer(modifier = Modifier.height(16.dp))
+                CategoryChip(
+                    modifier = Modifier.padding(top = 4.dp),
+                    text = exercise.category.name
+                )
             }
         }
-    )
-
+    }
 }
+
