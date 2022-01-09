@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.widget.NumberPicker
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +15,7 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -39,9 +41,11 @@ fun ListCardItem(
         shape = RoundedCornerShape(16.dp),
         backgroundColor = LightDark5
     ) {
-        Box(modifier = Modifier.clickable {
-            onCardClicked()
-        }.padding(8.dp)) {
+        Box(modifier = Modifier
+            .clickable {
+                onCardClicked()
+            }
+            .padding(8.dp)) {
             content()
         }
     }
@@ -116,4 +120,14 @@ fun TimerTimePicker(
             view
         }
     )
+}
+
+@Composable
+fun NoDataMessage(modifier: Modifier, text: String) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = text)
+    }
 }

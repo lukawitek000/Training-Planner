@@ -38,3 +38,4 @@ class ExercisesListViewModel @Inject constructor(
         _selectedCategories.value = list.toList()
     }
 }
+

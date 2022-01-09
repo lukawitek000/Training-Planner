@@ -49,6 +49,7 @@ import com.lukasz.witkowski.shared.utils.categoriesWithoutNone
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
+import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
 
 @Composable
 fun ExercisesScreen(
@@ -75,7 +76,6 @@ fun ExercisesScreenContent(
     pickExercise: (Exercise) -> Unit = {},
     pickedExercises: List<Exercise> = emptyList()
 ) {
-    // TODO check why this screen is jumping when displayed
     val exercisesList by viewModel.exercises.observeAsState(initial = emptyList())
     val selectedCategoriesList by viewModel.selectedCategories.observeAsState(initial = emptyList())
 
@@ -94,16 +94,23 @@ fun ExercisesScreenContent(
             selectedCategories = selectedCategoriesList,
             selectCategory = { viewModel.selectCategory(it) }
         )
-        ExercisesList(
-            exercisesList = exercisesList,
-            openDialog = {
-                isExerciseDialogOpen = true
-                exercise = it
-            },
-            pickingExerciseMode = pickingExerciseMode,
-            pickExercise = pickExercise,
-            pickedExercises = pickedExercises
-        )
+        if(exercisesList.isNotEmpty()) {
+            ExercisesList(
+                exercisesList = exercisesList,
+                openDialog = {
+                    isExerciseDialogOpen = true
+                    exercise = it
+                },
+                pickingExerciseMode = pickingExerciseMode,
+                pickExercise = pickExercise,
+                pickedExercises = pickedExercises
+            )
+        } else {
+            NoDataMessage(
+                modifier = Modifier,
+                text = if(selectedCategoriesList.isEmpty()) "No exercises. Create your first exercise." else "No exercises for selected categories."
+            )
+        }
     }
 }
 
