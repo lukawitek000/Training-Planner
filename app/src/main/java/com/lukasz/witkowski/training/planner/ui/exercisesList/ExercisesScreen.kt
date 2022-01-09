@@ -28,6 +28,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -76,8 +77,8 @@ fun ExercisesScreenContent(
     pickExercise: (Exercise) -> Unit = {},
     pickedExercises: List<Exercise> = emptyList()
 ) {
-    val exercisesList by viewModel.exercises.observeAsState(initial = emptyList())
-    val selectedCategoriesList by viewModel.selectedCategories.observeAsState(initial = emptyList())
+    val exercisesList by viewModel.exercises.collectAsState(emptyList())
+    val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
 
     var isExerciseDialogOpen by remember { mutableStateOf(false) }
     var exercise by remember {
