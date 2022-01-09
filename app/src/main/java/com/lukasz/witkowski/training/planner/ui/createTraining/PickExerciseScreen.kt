@@ -15,14 +15,18 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Snackbar
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,11 +39,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.lukasz.witkowski.shared.models.Exercise
+import com.lukasz.witkowski.training.planner.ui.components.CustomSnackbar
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesScreenContent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @Composable
@@ -52,6 +59,7 @@ fun PickExerciseScreen(
     //val pickedExercises by viewModel.pickedExercises.collectAsState()
     val pickedTrainingExercises by createTrainingViewModel.trainingExercises.collectAsState()
     var openDialog by remember { mutableStateOf(false) }
+    var showSnackbar by remember { mutableStateOf(false) }
     val trainingTitle by createTrainingViewModel.title.collectAsState()
 
     var exercise = Exercise()
@@ -68,12 +76,26 @@ fun PickExerciseScreen(
         ExercisesScreenContent(
             viewModel = viewModel,
             pickingExerciseMode = true,
-            pickExercise = {
-                exercise = it
-                openDialog = true
+            pickExercise = { pickedExercise ->
+//                coroutineScope.launch {
+                    if(pickedTrainingExercises.any { it.exercise.id == pickedExercise.id }) {
+                        showSnackbar = true
+                    } else {
+                        exercise = pickedExercise
+                        openDialog = true
+                    }
+//                }
+                
             },
             pickedExercises = pickedTrainingExercises.map { it.exercise }
         )
+        if(showSnackbar) {
+            CustomSnackbar(
+                text = "Exercise already in the training. Do you want to add it one more time?",
+                okButtonText = "Yes",
+                cancelButtonText = "No"
+                )
+        }
         if (openDialog) {
             SetTrainingExercisePropertiesDialog(
                 exercise = exercise,

@@ -5,7 +5,9 @@ import android.widget.NumberPicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,9 +15,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Snackbar
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -31,6 +35,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.lukasz.witkowski.training.planner.R
@@ -158,4 +163,36 @@ fun NoDataMessage(modifier: Modifier, text: String) {
     ) {
         Text(text = text)
     }
+}
+
+@Composable
+fun CustomSnackbar(
+    modifier: Modifier = Modifier,
+    text: String,
+    onOkActionButtonClicked: () -> Unit = {},
+    onCancelActionButtonClicked: () -> Unit = {},
+    okButtonText: String = "OK",
+    cancelButtonText: String = "Cancel"
+) {
+    Snackbar(
+        modifier = modifier,
+        action = {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(onClick = onCancelActionButtonClicked) {
+                    Text(text = cancelButtonText)
+                }
+                Button(onClick = onOkActionButtonClicked) {
+                    Text(text = okButtonText)
+                }
+            }
+        },
+        actionOnNewLine = true,
+        backgroundColor = LightDark12
+    ) {
+        Text(text, color = MaterialTheme.colors.primary, textAlign = TextAlign.Center)
+    }
+    
 }
