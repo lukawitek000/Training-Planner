@@ -11,6 +11,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
@@ -23,7 +24,8 @@ fun CategoryChip(
     isSelected: Boolean = true,
     text: String,
     selectionChanged: (Boolean) -> Unit = {},
-    isClickable: Boolean = false
+    isClickable: Boolean = false,
+    fontSize: TextUnit = 16.sp
 ) {
     val shape = RoundedCornerShape(16.dp)
     Surface(
@@ -36,7 +38,7 @@ fun CategoryChip(
         Text(
             text = text,
             modifier = Modifier.padding(8.dp),
-            fontSize = 16.sp,
+            fontSize = fontSize,
             textAlign = TextAlign.Center
         )
     }

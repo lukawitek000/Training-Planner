@@ -8,8 +8,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -179,28 +181,30 @@ fun ExerciseListItemContent(
 ) {
     val image = exercise.image
     val imageDescription = "${exercise.name} image"
+    val category = exercise.category
 
     Row(
-        modifier = if (isHighlighted) modifier.background(Color.Red) else modifier,
+        modifier = (if (isHighlighted) modifier.background(Color.Red) else modifier),
         verticalAlignment = Alignment.CenterVertically
     ) {
         ImageWithDefaultPlaceholder(imageDescription = imageDescription, image = image)
 
         Spacer(modifier = Modifier.width(16.dp))
-        Column {
+        Column(
+            modifier = Modifier,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
             Text(
                 text = exercise.name,
-                fontSize = 24.sp
+                fontSize = 28.sp
             )
-            Text(
-                text = exercise.description,
-                fontSize = 14.sp
-            )
-            val category = exercise.category
+
             if (category != Category.None) {
+                Spacer(modifier = Modifier.height(16.dp))
                 CategoryChip(
                     modifier = Modifier,
-                    text = category.name
+                    text = category.name,
+                    fontSize = 14.sp
                 )
             }
 
