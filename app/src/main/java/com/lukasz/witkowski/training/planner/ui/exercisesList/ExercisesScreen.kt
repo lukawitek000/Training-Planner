@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -49,8 +50,10 @@ import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.utils.categoriesWithoutNone
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
+import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
+import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
 
 @Composable
 fun ExercisesScreen(
@@ -195,7 +198,7 @@ fun ExerciseListItemContent(
             val category = exercise.category
             if (category != Category.None) {
                 CategoryChip(
-                    modifier = Modifier.padding(4.dp),
+                    modifier = Modifier,
                     text = category.name
                 )
             }
@@ -214,18 +217,20 @@ private fun ImageWithDefaultPlaceholder(
         .heightIn(min = 60.dp, max = 120.dp)
         .padding(4.dp)
         .clip(RoundedCornerShape(16.dp))
-    if (image == null) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            modifier = imageModifier,
-            contentDescription = imageDescription
-        )
-    } else {
-        Image(
-            bitmap = image.asImageBitmap(),
-            modifier = imageModifier,
-            contentDescription = imageDescription
-        )
+    ImageContainer() {
+        if (image == null) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcher_foreground),
+                modifier = imageModifier,
+                contentDescription = imageDescription
+            )
+        } else {
+            Image(
+                bitmap = image.asImageBitmap(),
+                modifier = imageModifier,
+                contentDescription = imageDescription
+            )
+        }
     }
 }
 

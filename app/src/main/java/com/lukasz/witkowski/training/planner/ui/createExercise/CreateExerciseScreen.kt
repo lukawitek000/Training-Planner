@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -20,6 +21,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -32,7 +34,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.utils.allCategories
+import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.TextField
+import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import com.skydoves.landscapist.glide.GlideImage
 
@@ -93,7 +97,6 @@ fun CreateExerciseScreen(
             )
         }
     }
-
 }
 
 @Composable
@@ -174,14 +177,15 @@ fun UploadImageButton(
     )
     val placeholder =
         Uri.parse("android.resource://com.lukasz.witkowski.training.planner/drawable/ic_launcher_foreground")
-    GlideImage(
-        imageModel = image ?: placeholder,
-        contentScale = ContentScale.Fit,
-        modifier = Modifier
-            .width(200.dp)
-            .height(200.dp)
-            .border(BorderStroke(2.dp, Color.Black))
-    )
+    ImageContainer {
+        GlideImage(
+            imageModel = image ?: placeholder,
+            contentScale = ContentScale.Fit,
+            modifier = Modifier
+                .width(200.dp)
+                .height(200.dp)
+        )
+    }
     Spacer(modifier = Modifier.height(16.dp))
     Button(
         onClick = { launcher.launch("image/*") },
