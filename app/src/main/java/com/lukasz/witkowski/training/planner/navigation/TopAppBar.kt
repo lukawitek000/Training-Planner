@@ -1,5 +1,7 @@
 package com.lukasz.witkowski.training.planner.navigation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -11,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
+@ExperimentalAnimationApi
 @Composable
 fun TopBar(
     modifier: Modifier = Modifier,
@@ -20,7 +23,7 @@ fun TopBar(
 ) {
     TopAppBar(modifier = modifier) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            if (showBackArrow) {
+            AnimatedVisibility (showBackArrow) {
                 IconButton(onClick = { navigateBack() }) {
                     Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Go back")
                 }
