@@ -81,7 +81,8 @@ fun CreateExerciseScreen(
                 text = description,
                 onTextChange = { viewModel.onExerciseDescriptionChange(it) },
                 label = "Description",
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Done,
+                maxLines = 5
             )
             Spacer(modifier = Modifier.height(16.dp))
             DropDownInput(

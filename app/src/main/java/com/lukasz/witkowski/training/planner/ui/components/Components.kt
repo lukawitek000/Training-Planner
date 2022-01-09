@@ -59,23 +59,19 @@ fun TextField(
     onTextChange: (String) -> Unit,
     label: String,
     imeAction: ImeAction = ImeAction.Default,
-    keyboardType: KeyboardType = KeyboardType.Text
+    keyboardType: KeyboardType = KeyboardType.Text,
+    maxLines: Int = 1
 ) {
     val keyboardController = LocalFocusManager.current
     val fr = FocusRequester.Default
     OutlinedTextField(
         value = text,
         onValueChange = onTextChange,
-        modifier = modifier.focusRequester(fr),
+        modifier = modifier.fillMaxWidth().focusRequester(fr),
         label = {
             Text(text = label)
         },
-        maxLines = 1,
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = Color.Red,
-            cursorColor = Color.Red,
-
-            ),
+        maxLines = maxLines,
         keyboardOptions = KeyboardOptions(imeAction = imeAction, keyboardType = keyboardType),
         keyboardActions = KeyboardActions(
             onNext = { fr.requestFocus() },

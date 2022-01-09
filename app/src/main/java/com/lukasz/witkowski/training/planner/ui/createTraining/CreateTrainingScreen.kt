@@ -67,7 +67,6 @@ fun CreateTrainingScreen(
 
     Scaffold(
         modifier = modifier,
-        backgroundColor = Color.Red,
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 if(fabEnabled) {
@@ -179,7 +178,8 @@ private fun TextDataInputs(
         text = description,
         onTextChange = { onDescriptionChanged(it) },
         label = "Description",
-        imeAction = ImeAction.Done
+        imeAction = ImeAction.Done,
+        maxLines = 4
     )
 }
 
