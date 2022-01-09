@@ -19,13 +19,12 @@ constructor(
         }
     }
 
-    suspend fun loadExercises(filterCategories: List<Category> = emptyList()): List<Exercise> = withContext(Dispatchers.IO) {
-        if (filterCategories.isEmpty()) {
+    fun loadExercises(filterCategories: List<Category> = emptyList()): Flow<List<Exercise>> {
+        return if (filterCategories.isEmpty()) {
             exerciseDao.getAll()
         } else {
             exerciseDao.getExercisesFromCategories(filterCategories)
         }
-
     }
 
 }

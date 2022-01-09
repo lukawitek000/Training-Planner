@@ -7,7 +7,7 @@ import com.lukasz.witkowski.shared.models.Category
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-open class BaseListViewModel() : ViewModel() {
+abstract class BaseCategoryFilteredListViewModel() : ViewModel() {
 
     private val _selectedCategories = MutableStateFlow<List<Category>>(emptyList())
     val selectedCategories: StateFlow<List<Category>> = _selectedCategories
@@ -20,6 +20,9 @@ open class BaseListViewModel() : ViewModel() {
             list.add(category)
         }
         _selectedCategories.value = list.toList()
+        fetchData()
     }
+
+    abstract fun fetchData()
 
 }

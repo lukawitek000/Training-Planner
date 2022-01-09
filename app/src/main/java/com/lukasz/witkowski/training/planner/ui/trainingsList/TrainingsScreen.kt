@@ -28,8 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.lukasz.witkowski.shared.models.Training
+import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.utils.categoriesWithoutNone
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
+import com.lukasz.witkowski.training.planner.ui.exercisesList.CategoryFilters
 
 @Composable
 fun TrainingsScreen(
@@ -38,7 +41,9 @@ fun TrainingsScreen(
     onCreateTrainingFabClicked: () -> Unit = {},
     navigateToTrainingOverview: (Long) -> Unit
 ) {
-    val trainings by viewModel.allTrainings.collectAsState(emptyList())
+    val trainings by viewModel.trainings.collectAsState(emptyList())
+    val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
+
     Scaffold(
         modifier = Modifier.padding(innerPadding),
         floatingActionButton = {
@@ -47,21 +52,31 @@ fun TrainingsScreen(
             }
         }
     ) {
-        if(trainings.isNotEmpty()) {
-            LazyColumn(
-                contentPadding = innerPadding
-            ) {
-                items(trainings) { training ->
-                    ListCardItem(modifier = Modifier,
-                        onCardClicked = { navigateToTrainingOverview(training.id) }) {
-                        TrainingListItemContent(
-                            training = training
-                        )
+        Column() {
+            CategoryFilters(
+                categories = categoriesWithoutNone,
+                selectedCategories = selectedCategoriesList,
+                selectCategory = { viewModel.selectCategory(it) }
+            )
+            if (trainings.isNotEmpty()) {
+                LazyColumn(
+                    contentPadding = innerPadding
+                ) {
+                    items(trainings) { trainingWithExercises ->
+                        ListCardItem(modifier = Modifier,
+                            onCardClicked = { navigateToTrainingOverview(trainingWithExercises.training.id) }) {
+                            TrainingListItemContent(
+                                trainingWithExercises = trainingWithExercises
+                            )
+                        }
                     }
                 }
+            } else {
+                NoDataMessage(
+                    modifier = Modifier,
+                    text = "No trainings. Create your first training"
+                )
             }
-        } else {
-            NoDataMessage(modifier = Modifier, text = "No trainings. Create your first training")
         }
     }
 }
@@ -69,7 +84,7 @@ fun TrainingsScreen(
 @Composable
 fun TrainingListItemContent(
     modifier: Modifier = Modifier,
-    training: Training
+    trainingWithExercises: TrainingWithExercises
 ) {
     Row(
         modifier = modifier,
@@ -82,11 +97,11 @@ fun TrainingListItemContent(
                 .weight(1f)
         ) {
             Text(
-                text = training.title,
+                text = trainingWithExercises.training.title,
                 fontSize = 24.sp
             )
             Text(
-                text = training.description,
+                text = trainingWithExercises.training.description,
                 fontSize = 14.sp
             )
         }

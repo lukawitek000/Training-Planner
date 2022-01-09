@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.repository
 
 import com.lukasz.witkowski.shared.db.TrainingDao
+import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -10,7 +11,7 @@ class TrainingRepository constructor(
     private val trainingDao: TrainingDao
 ) {
 
-    fun getAllTrainings() = trainingDao.getAllTrainings()
+    fun getAllTrainingsWithExercises() = trainingDao.getAllTrainingsWithExercises()
 
     suspend fun insertTrainingWithExercises(trainingWithExercises: TrainingWithExercises) {
         withContext(Dispatchers.IO) {
@@ -20,5 +21,13 @@ class TrainingRepository constructor(
 
     suspend fun getTrainingById(trainingId: Long): TrainingWithExercises = withContext(Dispatchers.IO) {
         trainingDao.getTrainingWithExercisesById(trainingId)
+    }
+
+    fun loadTrainingsWithExercises(filterCategories: List<Category>) : Flow<List<TrainingWithExercises>>{
+        return if (filterCategories.isEmpty()) {
+            trainingDao.getAllTrainingsWithExercises()
+        } else {
+            trainingDao.getTrainingsWithExercisesFromCategories(filterCategories)
+        }
     }
 }

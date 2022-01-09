@@ -13,10 +13,10 @@ import kotlinx.coroutines.flow.Flow
 interface ExerciseDao {
 
     @Query("SELECT * FROM Exercise")
-    fun getAll(): List<Exercise>
+    fun getAll(): Flow<List<Exercise>>
 
     @Query("SELECT * FROM Exercise WHERE category IN (:categories)")
-    fun getExercisesFromCategories(categories: List<Category>): List<Exercise>
+    fun getExercisesFromCategories(categories: List<Category>): Flow<List<Exercise>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(exercise: Exercise): Long
