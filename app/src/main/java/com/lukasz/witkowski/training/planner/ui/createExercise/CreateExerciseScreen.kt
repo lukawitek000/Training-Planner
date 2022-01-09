@@ -59,22 +59,29 @@ fun CreateExerciseScreen(
     val selectedCategory by viewModel.category.observeAsState(initial = Category.None)
     val savingState by viewModel.savingState.collectAsState()
 
-    val scaffoldState = rememberScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
+    var showToast by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
-        scaffoldState = scaffoldState,
         floatingActionButton = {
             if(savingState is ResultHandler.Idle) {
                 FloatingActionButton(onClick = {
-                    viewModel.createExercise()
-                }) {
+                    if(title.isNotEmpty()) {
+                        viewModel.createExercise()
+                    } else {
+                        showToast = true
+                    }
+                },
+                    ) {
                     Icon(imageVector = Icons.Default.Create, contentDescription = "Create exercise")
                 }
             }
         }
     ) {
+        if(showToast) {
+            Toast.makeText(LocalContext.current, "Exercise title is required", Toast.LENGTH_SHORT).show()
+            showToast = false
+        }
         when(savingState) {
             is ResultHandler.Idle -> {
                 CreateExerciseForm(
@@ -99,7 +106,7 @@ fun CreateExerciseScreen(
                 } else {
                     "Exercise saved"
                 }
-                LaunchedEffect(scaffoldState.snackbarHostState) {
+                LaunchedEffect(Unit) {
                     navigateBack(message)
                 }
             }
