@@ -2,12 +2,15 @@ package com.lukasz.witkowski.training.planner.ui.createTraining
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxColors
 import androidx.compose.material.CheckboxDefaults
@@ -32,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -39,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.lukasz.witkowski.shared.models.Exercise
-import com.lukasz.witkowski.training.planner.ui.components.CustomSnackbar
+import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
@@ -56,10 +60,9 @@ fun PickExerciseScreen(
     createTrainingViewModel: CreateTrainingViewModel,
     navigateBack: () -> Unit
 ) {
-    //val pickedExercises by viewModel.pickedExercises.collectAsState()
     val pickedTrainingExercises by createTrainingViewModel.trainingExercises.collectAsState()
     var openDialog by remember { mutableStateOf(false) }
-    var showSnackbar by remember { mutableStateOf(false) }
+    var showInfoDialog by remember { mutableStateOf(false) }
     val trainingTitle by createTrainingViewModel.title.collectAsState()
 
     var exercise = Exercise()
@@ -77,24 +80,21 @@ fun PickExerciseScreen(
             viewModel = viewModel,
             pickingExerciseMode = true,
             pickExercise = { pickedExercise ->
-//                coroutineScope.launch {
-                    if(pickedTrainingExercises.any { it.exercise.id == pickedExercise.id }) {
-                        showSnackbar = true
-                    } else {
-                        exercise = pickedExercise
-                        openDialog = true
-                    }
-//                }
-                
+                exercise = pickedExercise
+                if(pickedTrainingExercises.any { it.exercise.id == pickedExercise.id }) {
+                    showInfoDialog = true
+                } else {
+                    openDialog = true
+                }
             },
             pickedExercises = pickedTrainingExercises.map { it.exercise }
         )
-        if(showSnackbar) {
-            CustomSnackbar(
-                text = "Exercise already in the training. Do you want to add it one more time?",
-                okButtonText = "Yes",
-                cancelButtonText = "No"
-                )
+        if(showInfoDialog) {
+            InfoDialog(
+                exercise = exercise,
+                closeInfoDialog = { showInfoDialog = false },
+                openSettingExerciseDialog = { openDialog = true }
+            )
         }
         if (openDialog) {
             SetTrainingExercisePropertiesDialog(
@@ -114,6 +114,44 @@ fun PickExerciseScreen(
         }
     }
 
+}
+
+@Composable
+private fun InfoDialog(
+    exercise: Exercise,
+    closeInfoDialog: () -> Unit,
+    openSettingExerciseDialog: () -> Unit
+) {
+    DialogContainer(
+        closeDialog = closeInfoDialog,
+        saveData = {},
+        showFab = false
+    ) {
+        Column(Modifier.padding(8.dp)) {
+            Text(
+                text = stringResource(
+                    id = R.string.add_training_exercise_one_more_time_info,
+                    exercise.name
+                ),
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(onClick = closeInfoDialog) {
+                    Text(text = "No")
+                }
+                Button(onClick = {
+                    closeInfoDialog()
+                    openSettingExerciseDialog()
+                }) {
+                    Text(text = "Yes")
+                }
+            }
+        }
+    }
 }
 
 

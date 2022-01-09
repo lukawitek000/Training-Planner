@@ -164,35 +164,3 @@ fun NoDataMessage(modifier: Modifier, text: String) {
         Text(text = text)
     }
 }
-
-@Composable
-fun CustomSnackbar(
-    modifier: Modifier = Modifier,
-    text: String,
-    onOkActionButtonClicked: () -> Unit = {},
-    onCancelActionButtonClicked: () -> Unit = {},
-    okButtonText: String = "OK",
-    cancelButtonText: String = "Cancel"
-) {
-    Snackbar(
-        modifier = modifier,
-        action = {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Button(onClick = onCancelActionButtonClicked) {
-                    Text(text = cancelButtonText)
-                }
-                Button(onClick = onOkActionButtonClicked) {
-                    Text(text = okButtonText)
-                }
-            }
-        },
-        actionOnNewLine = true,
-        backgroundColor = LightDark12
-    ) {
-        Text(text, color = MaterialTheme.colors.primary, textAlign = TextAlign.Center)
-    }
-    
-}

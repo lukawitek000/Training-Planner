@@ -10,4 +10,5 @@
     <string name="burned_calories_text">Burned calories: %1$s</string>
     <string name="time_text">Time: %1$s</string>
     <string name="max_heart_rate_text">Max heart rate: %1$s</string>
+    <string name="add_training_exercise_one_more_time_info">The exercise %1$s is already added to the training.\nDo you want to add it one more time?</string>
 </resources>

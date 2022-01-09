@@ -28,6 +28,7 @@ fun DialogContainer(
     modifier: Modifier = Modifier,
     closeDialog: () -> Unit,
     saveData: () -> Unit,
+    showFab: Boolean = true,
     content: @Composable () -> Unit
 ) {
     Dialog(
@@ -41,16 +42,18 @@ fun DialogContainer(
         {
             Column() {
                 content()
-                FloatingActionButton(
-                    modifier = Modifier.align(Alignment.End).padding(8.dp),
-                    onClick = {
-                    saveData()
-                    closeDialog()
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = "Done"
-                    )
+                if(showFab) {
+                    FloatingActionButton(
+                        modifier = Modifier.align(Alignment.End).padding(8.dp),
+                        onClick = {
+                            saveData()
+                            closeDialog()
+                        }) {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = "Done"
+                        )
+                    }
                 }
             }
 
