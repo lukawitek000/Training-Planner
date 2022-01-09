@@ -28,6 +28,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -113,7 +114,7 @@ fun DropDownInput(
     else
         Icons.Filled.ArrowDropDown
     Column() {
-        OutlinedTextField(
+        TextField(
             value = selectedText,
             onValueChange = { onSuggestionSelected(it) },
             modifier = Modifier
@@ -121,11 +122,13 @@ fun DropDownInput(
                 .onGloballyPositioned { coordinates ->
                     textFieldSize = coordinates.size.toSize()
                 },
-            label = { Text(text = label) },
+            label = { Text(text = label, color = MaterialTheme.colors.primaryVariant) },
+            textStyle = TextStyle(color = MaterialTheme.colors.primary),
             trailingIcon = {
                 Icon(
                     imageVector = icon,
                     contentDescription = "Drop down arrow",
+                    tint = MaterialTheme.colors.primary,
                     modifier = Modifier.clickable { expanded = !expanded }
                 )
             },
@@ -141,7 +144,7 @@ fun DropDownInput(
                     onSuggestionSelected(it)
                     expanded = !expanded
                 }) {
-                    Text(text = it)
+                    Text(text = it, color = MaterialTheme.colors.primary)
                 }
             }
         }

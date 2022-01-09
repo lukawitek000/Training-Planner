@@ -24,7 +24,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.material.TextField
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -84,15 +86,16 @@ fun TextField(
 ) {
     val keyboardController = LocalFocusManager.current
     val fr = FocusRequester.Default
-    OutlinedTextField(
+    TextField(
         value = text,
         onValueChange = onTextChange,
         modifier = modifier
             .fillMaxWidth()
             .focusRequester(fr),
         label = {
-            Text(text = label)
+            Text(text = label, color = MaterialTheme.colors.primaryVariant)
         },
+        textStyle = TextStyle(color = MaterialTheme.colors.primary),
         maxLines = maxLines,
         keyboardOptions = KeyboardOptions(imeAction = imeAction, keyboardType = keyboardType),
         keyboardActions = KeyboardActions(
