@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Button
+import androidx.compose.material.Divider
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -49,6 +50,8 @@ import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
+import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
+import com.lukasz.witkowski.training.planner.ui.theme.LightDark5
 import timber.log.Timber
 
 @Composable
@@ -222,7 +225,7 @@ fun TrainingExerciseListItem(
             setRestTimeToTrainingExercise = setRestTimeToTrainingExercise,
             trainingExercise = trainingExercise
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Divider(modifier = Modifier.padding(vertical = 16.dp), color = LightDark12)
     }
     
 }
@@ -246,7 +249,7 @@ private fun TrainingExerciseRestTime(
             Text(text = buttonText)
         }
         if(restTime > 0L) {
-            Text(text = TimeFormatter.millisToTime(restTime), color = Color.Red, fontSize = 18.sp)
+            Text(text = TimeFormatter.millisToTime(restTime), color = MaterialTheme.colors.primary, fontSize = 18.sp)
         }
     }
 }
@@ -262,14 +265,15 @@ private fun TrainingExerciseInfo(
             modifier = Modifier,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "${index + 1}.", fontSize = 32.sp)
+            Text(text = "${index + 1}.", fontSize = 32.sp, color = MaterialTheme.colors.primary)
             Spacer(modifier = Modifier.width(16.dp))
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-                Text(text = trainingExercise.exercise.name, fontSize = 24.sp)
+                Text(text = trainingExercise.exercise.name, fontSize = 24.sp , color = MaterialTheme.colors.primary)
+                Spacer(modifier = Modifier.height(8.dp))
                 ExerciseSetsRepsTimeInfo(trainingExercise)
             }
             Spacer(modifier = Modifier.width(16.dp))
@@ -280,7 +284,8 @@ private fun TrainingExerciseInfo(
                         removeTrainingExercise(trainingExercise)
                     },
                 imageVector = Icons.Default.Close,
-                contentDescription = "Remove training exercise"
+                contentDescription = "Remove training exercise",
+                tint = MaterialTheme.colors.primary
             )
         }
 
@@ -295,14 +300,17 @@ private fun ExerciseSetsRepsTimeInfo(trainingExercise: TrainingExercise) {
     ) {
         Text(
             text = "Reps: ${trainingExercise.repetitions}",
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            color = MaterialTheme.colors.primaryVariant
         )
         Text(
             text = "Sets: ${trainingExercise.sets}",
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            color = MaterialTheme.colors.primaryVariant
         )
         if (trainingExercise.time > 0L) {
-            Text(text = "Time: ${TimeFormatter.millisToMinutesSeconds(trainingExercise.time)}")
+            Text(text = "Time: ${TimeFormatter.millisToMinutesSeconds(trainingExercise.time)}",
+                color = MaterialTheme.colors.primaryVariant)
         } else {
             Spacer(modifier = Modifier.weight(1f))
         }
