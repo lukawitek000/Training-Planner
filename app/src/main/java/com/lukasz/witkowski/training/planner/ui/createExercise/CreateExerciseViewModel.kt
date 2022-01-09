@@ -4,9 +4,11 @@ import android.graphics.Bitmap
 import androidx.lifecycle.*
 import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.Exercise
+import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.shared.utils.allCategories
 import com.lukasz.witkowski.training.planner.repository.ExerciseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,6 +17,8 @@ class CreateExerciseViewModel @Inject constructor(
     private val exerciseRepository: ExerciseRepository,
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
+
+    private val _savingState = MutableStateFlow<ResultHandler<Long>>(ResultHandler.Idle)
 
     private val _title = MutableLiveData("")
     val title: LiveData<String> = _title

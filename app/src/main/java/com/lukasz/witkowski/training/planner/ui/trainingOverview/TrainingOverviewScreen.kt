@@ -94,6 +94,7 @@ fun TrainingOverviewScreen(
                     Toast.makeText(LocalContext.current, (trainingRequest as ResultHandler.Error).message, Toast.LENGTH_SHORT).show()
                     navigateBack()
                 }
+                is ResultHandler.Idle -> {}
             }
             Text(modifier = Modifier.fillMaxWidth(), text = "Statistics", fontSize = 28.sp, textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(16.dp))
@@ -109,6 +110,7 @@ fun TrainingOverviewScreen(
                     val message = (statisticsRequest as ResultHandler.Error).message
                     Text(text = message, fontSize = 18.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
                 }
+                is ResultHandler.Idle -> {}
             }
         }
     }
