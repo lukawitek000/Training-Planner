@@ -20,7 +20,7 @@ sealed class NavItem(
 
     object BottomNavItems {
         val list = listOf(
-            Trainings, Exercises, Calendar, Statistics
+            Trainings, Exercises, /* Calendar, Statistics */
         )
     }
 
