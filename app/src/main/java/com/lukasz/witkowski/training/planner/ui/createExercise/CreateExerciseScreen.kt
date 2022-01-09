@@ -5,6 +5,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -34,12 +35,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.lukasz.witkowski.shared.models.Category
+import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.shared.utils.allCategories
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
+import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import com.skydoves.landscapist.glide.GlideImage
+import java.lang.Error
 
 
 @Composable
@@ -52,51 +56,100 @@ fun CreateExerciseScreen(
     val title: String by viewModel.title.observeAsState("")
     val description by viewModel.description.observeAsState(initial = "")
     val selectedCategory by viewModel.category.observeAsState(initial = Category.None)
+    val savingState by viewModel.savingState.collectAsState()
 
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                viewModel.createExercise()
-                navigateBack()
-            }) {
-                Icon(imageVector = Icons.Default.Create, contentDescription = "Create exercise")
+            if(savingState is ResultHandler.Idle) {
+                FloatingActionButton(onClick = {
+                    viewModel.createExercise()
+                }) {
+                    Icon(imageVector = Icons.Default.Create, contentDescription = "Create exercise")
+                }
             }
         }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            UploadImageButton(
-                image = image,
-                onImageChange = { viewModel.onImageChange(it) }
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                text = title,
-                onTextChange = { viewModel.onExerciseNameChange(it) },
-                label = "Title",
-                imeAction = ImeAction.Next
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                text = description,
-                onTextChange = { viewModel.onExerciseDescriptionChange(it) },
-                label = "Description",
-                imeAction = ImeAction.Done,
-                maxLines = 5
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            DropDownInput(
-                selectedText = selectedCategory.name,
-                suggestions = allCategories.map { it.name },
-                label = "Category",
-                onSuggestionSelected = { viewModel.onCategorySelected(it) }
-            )
+        when(savingState) {
+            is ResultHandler.Idle -> {
+                CreateExerciseForm(
+                    image = image,
+                    title = title,
+                    description = description,
+                    selectedCategory = selectedCategory,
+                    onImageChange = { viewModel.onImageChange(it) },
+                    onExerciseNameChanged = { viewModel.onExerciseNameChange(it) },
+                    onExerciseDescriptionChanged = { viewModel.onExerciseDescriptionChange(it) },
+                    onCategorySelected = { viewModel.onCategorySelected(it) }
+                )
+            }
+            is ResultHandler.Loading -> {
+                LoadingScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    message = "Exercise is saving to the database"
+                )
+            }
+            is ResultHandler.Error -> {
+                val errorMessage = "Saving exercise failed"
+                Toast.makeText(LocalContext.current, errorMessage, Toast.LENGTH_SHORT).show()
+                LaunchedEffect(Unit){
+                navigateBack()
+            }
+            }
+            is ResultHandler.Success -> {
+                Toast.makeText(LocalContext.current, "Exercise saved", Toast.LENGTH_SHORT).show()
+                LaunchedEffect(Unit) {
+                    navigateBack()
+                }
+            }
         }
+    }
+}
+
+@Composable
+private fun CreateExerciseForm(
+    image: Bitmap?,
+    title: String,
+    description: String,
+    selectedCategory: Category,
+    onImageChange: (Bitmap) -> Unit,
+    onExerciseNameChanged: (String) -> Unit,
+    onExerciseDescriptionChanged: (String) -> Unit,
+    onCategorySelected: (String) -> Unit
+
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        UploadImageButton(
+            image = image,
+            onImageChange = onImageChange
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        TextField(
+            text = title,
+            onTextChange = onExerciseNameChanged,
+            label = "Title",
+            imeAction = ImeAction.Next
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        TextField(
+            text = description,
+            onTextChange = onExerciseDescriptionChanged,
+            label = "Description",
+            imeAction = ImeAction.Done,
+            maxLines = 5
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        DropDownInput(
+            selectedText = selectedCategory.name,
+            suggestions = allCategories.map { it.name },
+            label = "Category",
+            onSuggestionSelected = onCategorySelected
+        )
     }
 }
 
