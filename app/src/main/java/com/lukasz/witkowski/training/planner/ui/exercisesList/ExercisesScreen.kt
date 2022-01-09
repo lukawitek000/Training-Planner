@@ -258,12 +258,13 @@ fun ExerciseInfoAlertDialog(
         saveData = {}
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = exercise.name,
-                fontSize = 32.sp
+                fontSize = 32.sp,
+                color = MaterialTheme.colors.primary
             )
             Divider(Modifier.padding(8.dp), color = MaterialTheme.colors.primary)
             ImageWithDefaultPlaceholder(

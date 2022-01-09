@@ -56,7 +56,6 @@ fun PickExerciseScreen(
         modifier = modifier,
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                //createTrainingViewModel.addPickedTrainingExercises()
                 navigateBack()
             }) {
                 Icon(imageVector = Icons.Default.Done, contentDescription = "Pick Exercises")
@@ -112,14 +111,15 @@ fun SetTrainingExercisePropertiesDialog(
         saveData = { saveTrainingExercise(reps, sets, minutes, seconds) }) {
 
         Column(
-            modifier = modifier,
+            modifier = modifier.padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "Configure the ${exercise.name} exercise for the $trainingTitle training",
-                fontSize = 24.sp,
+                fontSize = 32.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
+                color = MaterialTheme.colors.primary
             )
 
             TextField(
