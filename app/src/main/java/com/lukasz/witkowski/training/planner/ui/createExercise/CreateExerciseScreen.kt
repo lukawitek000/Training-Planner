@@ -106,7 +106,7 @@ fun DropDownInput(
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
     var expanded by remember { mutableStateOf(false) }
     val icon = if (expanded)
-        Icons.Filled.ArrowDropUp //it requires androidx.compose.material:material-icons-extended
+        Icons.Filled.ArrowDropUp
     else
         Icons.Filled.ArrowDropDown
     Column() {
