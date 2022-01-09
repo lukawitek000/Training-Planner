@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.navigation
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,7 +42,7 @@ import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsScreen
 
 @ExperimentalAnimationApi
 @Composable
-fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
+fun Navigation(navController: NavHostController, innerPadding: PaddingValues, showToast: (String) -> Unit) {
     NavHost(navController = navController, startDestination = NavItem.Trainings.route) {
 
         composable(NavItem.Trainings.route) {
@@ -73,7 +75,10 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues) {
             CreateExerciseScreen(
                 Modifier.padding(innerPadding),
                 viewModel = viewModel,
-                navigateBack = { navController.navigateUp() })
+                navigateBack = {
+                    showToast(it)
+                    navController.navigateUp()
+                })
         }
         createTrainingNavGraph(innerPadding, navController)
 

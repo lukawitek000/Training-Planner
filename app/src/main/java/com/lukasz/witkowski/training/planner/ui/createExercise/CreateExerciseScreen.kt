@@ -43,6 +43,7 @@ import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import com.skydoves.landscapist.glide.GlideImage
+import kotlinx.coroutines.launch
 import java.lang.Error
 
 
@@ -50,7 +51,7 @@ import java.lang.Error
 fun CreateExerciseScreen(
     modifier: Modifier = Modifier,
     viewModel: CreateExerciseViewModel,
-    navigateBack: () -> Unit
+    navigateBack: (String) -> Unit
 ) {
     val image by viewModel.image.observeAsState()
     val title: String by viewModel.title.observeAsState("")
@@ -58,8 +59,12 @@ fun CreateExerciseScreen(
     val selectedCategory by viewModel.category.observeAsState(initial = Category.None)
     val savingState by viewModel.savingState.collectAsState()
 
+    val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         modifier = modifier,
+        scaffoldState = scaffoldState,
         floatingActionButton = {
             if(savingState is ResultHandler.Idle) {
                 FloatingActionButton(onClick = {
@@ -83,23 +88,19 @@ fun CreateExerciseScreen(
                     onCategorySelected = { viewModel.onCategorySelected(it) }
                 )
             }
-            is ResultHandler.Loading -> {
+            else -> {
                 LoadingScreen(
                     modifier = Modifier.fillMaxSize(),
                     message = "Exercise is saving to the database"
                 )
-            }
-            is ResultHandler.Error -> {
-                val errorMessage = "Saving exercise failed"
-                Toast.makeText(LocalContext.current, errorMessage, Toast.LENGTH_SHORT).show()
-                LaunchedEffect(Unit){
-                navigateBack()
-            }
-            }
-            is ResultHandler.Success -> {
-                Toast.makeText(LocalContext.current, "Exercise saved", Toast.LENGTH_SHORT).show()
-                LaunchedEffect(Unit) {
-                    navigateBack()
+                if(savingState is ResultHandler.Loading) return@Scaffold
+                val message = if(savingState is ResultHandler.Error) {
+                    "Saving exercise failed"
+                } else {
+                    "Exercise saved"
+                }
+                LaunchedEffect(scaffoldState.snackbarHostState) {
+                    navigateBack(message)
                 }
             }
         }

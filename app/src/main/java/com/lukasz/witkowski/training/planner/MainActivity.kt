@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
@@ -38,9 +39,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TrainingPlannerTheme {
-                TrainingPlannerApp()
+                TrainingPlannerApp(showToast = { showToast(it) })
             }
         }
+    }
+
+    private fun showToast(message: String) {
+        if(message.isEmpty()) return
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onStart() {
@@ -78,7 +84,7 @@ class MainActivity : ComponentActivity() {
 
 @ExperimentalAnimationApi
 @Composable
-fun TrainingPlannerApp() {
+fun TrainingPlannerApp(showToast: (String) -> Unit) {
     val navController = rememberNavController()
     val backStackEntry = navController.currentBackStackEntryAsState()
     val currentScreen = NavItem.Items.list.find {
@@ -104,7 +110,7 @@ fun TrainingPlannerApp() {
             }
         }
     ) {
-        Navigation(navController = navController, it)
+        Navigation(navController = navController, innerPadding = it, showToast = showToast)
     }
 }
 
@@ -114,6 +120,6 @@ fun TrainingPlannerApp() {
 @Composable
 fun TrainingPlannerPreview() {
     TrainingPlannerTheme {
-        TrainingPlannerApp()
+        TrainingPlannerApp({})
     }
 }
