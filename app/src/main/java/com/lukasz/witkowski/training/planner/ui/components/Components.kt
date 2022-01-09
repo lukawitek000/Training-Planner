@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.ui.theme.LightDark5
 
 @Composable
 fun ListCardItem(
@@ -36,7 +37,7 @@ fun ListCardItem(
             .padding(4.dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        backgroundColor = Color.DarkGray
+        backgroundColor = LightDark5
     ) {
         Box(modifier = Modifier.clickable {
             onCardClicked()

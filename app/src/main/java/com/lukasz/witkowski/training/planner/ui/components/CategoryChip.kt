@@ -13,6 +13,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
+import com.lukasz.witkowski.training.planner.ui.theme.Orange
 
 
 @Composable
@@ -29,7 +31,7 @@ fun CategoryChip(
             .clip(shape = shape)
             .then(if (isClickable) Modifier.clickable { selectionChanged(!isSelected) } else Modifier),
         elevation = 4.dp,
-        color = if (isSelected) Color.Yellow else Color.DarkGray
+        color = if (isSelected) Orange else LightDark12
     ) {
         Text(
             text = text,
