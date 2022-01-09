@@ -120,11 +120,11 @@ fun TrainingListItemContent(
                 }
             }
         }
-        Icon(
-            modifier = Modifier.size(40.dp),
-            imageVector = Icons.Filled.PlayArrow,
-            contentDescription = "Start training",
-            tint = MaterialTheme.colors.primary,
-        )
+//        Icon(
+//            modifier = Modifier.size(40.dp),
+//            imageVector = Icons.Filled.PlayArrow,
+//            contentDescription = "Start training",
+//            tint = MaterialTheme.colors.primary,
+//        )
     }
 }
