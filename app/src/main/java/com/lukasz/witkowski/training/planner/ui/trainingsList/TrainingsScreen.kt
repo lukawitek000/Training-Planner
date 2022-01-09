@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
+import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
 
 @Composable
 fun TrainingsScreen(
@@ -46,17 +47,21 @@ fun TrainingsScreen(
             }
         }
     ) {
-        LazyColumn(
-            contentPadding = innerPadding
-        ) {
-            items(trainings) { training ->
-                ListCardItem(modifier = Modifier,
-                onCardClicked = { navigateToTrainingOverview(training.id) }) {
-                    TrainingListItemContent(
-                        training = training
-                    )
+        if(trainings.isNotEmpty()) {
+            LazyColumn(
+                contentPadding = innerPadding
+            ) {
+                items(trainings) { training ->
+                    ListCardItem(modifier = Modifier,
+                        onCardClicked = { navigateToTrainingOverview(training.id) }) {
+                        TrainingListItemContent(
+                            training = training
+                        )
+                    }
                 }
             }
+        } else {
+            NoDataMessage(modifier = Modifier, text = "No trainings. Create your first training")
         }
     }
 }
