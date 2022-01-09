@@ -34,7 +34,7 @@ fun BottomNavigationBar(
                 selected = selected,
                 onClick = { onItemClick(item) },
                 selectedContentColor = MaterialTheme.colors.primary,
-                unselectedContentColor = LightDark5,
+                unselectedContentColor = Color.Black,
                 icon = {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(imageVector = item.icon, contentDescription = item.title)
