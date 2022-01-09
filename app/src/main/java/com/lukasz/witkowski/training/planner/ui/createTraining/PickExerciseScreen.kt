@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.ui.createTraining
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.lukasz.witkowski.shared.models.Exercise
+import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesListViewModel
@@ -105,98 +107,80 @@ fun SetTrainingExercisePropertiesDialog(
     var seconds by remember { mutableStateOf(0) }
     var isTimerSetEnable by remember { mutableStateOf(true) }
 
-    Dialog(
-        onDismissRequest = { closeDialog() })
-    {
-        Scaffold(
-            modifier = Modifier
-                .height(600.dp)
-                .clip(MaterialTheme.shapes.medium),
-            floatingActionButton = {
-                FloatingActionButton(onClick = {
-                    saveTrainingExercise(reps, sets, minutes, seconds)
-                    closeDialog()
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = "Done exercise configuration"
-                    )
-                }
-            },
-            backgroundColor = Color.Gray
+    DialogContainer(
+        closeDialog = closeDialog,
+        saveData = { saveTrainingExercise(reps, sets, minutes, seconds) }) {
+
+        Column(
+            modifier = modifier,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier,
-                horizontalAlignment = Alignment.CenterHorizontally
+            Text(
+                text = "Configure the ${exercise.name} exercise for the $trainingTitle training",
+                fontSize = 24.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(16.dp)
+            )
+
+            TextField(
+                text = reps,
+                onTextChange = { reps = it },
+                label = "Reps",
+                imeAction = ImeAction.Next,
+                keyboardType = KeyboardType.Number
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            TextField(
+                text = sets,
+                onTextChange = { sets = it },
+                label = "Sets",
+                imeAction = ImeAction.Done,
+                keyboardType = KeyboardType.Number
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            if (isTimerSetEnable) {
+                TimerTimePicker(
+                    minutes = minutes,
+                    seconds = seconds,
+                    onMinutesChange = {
+                        Timber.d("New value minutes $it")
+                        minutes = it
+                    },
+                    onSecondsChange = {
+                        Timber.d("New value seconds $it")
+                        seconds = it
+                    },
+                    isTimePickerEnabled = isTimerSetEnable
+                )
+            } else {
+                TimerTimePicker(
+                    minutes = 0,
+                    seconds = 0,
+                    onMinutesChange = {},
+                    onSecondsChange = {},
+                    isTimePickerEnabled = isTimerSetEnable
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .align(Alignment.Start)
+                    .clip(MaterialTheme.shapes.medium)
+                    .clickable {
+                        isTimerSetEnable = !isTimerSetEnable
+                    }
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Checkbox(
+                    checked = !isTimerSetEnable,
+                    onCheckedChange = { isTimerSetEnable = !isTimerSetEnable }
+                )
                 Text(
-                    text = "Configure the ${exercise.name} exercise for the $trainingTitle training",
-                    fontSize = 28.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(16.dp)
+                    text = "Do not set timer"
                 )
-
-                TextField(
-                    text = reps,
-                    onTextChange = { reps = it },
-                    label = "Reps",
-                    imeAction = ImeAction.Next,
-                    keyboardType = KeyboardType.Number
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                TextField(
-                    text = sets,
-                    onTextChange = { sets = it },
-                    label = "Sets",
-                    imeAction = ImeAction.Done,
-                    keyboardType = KeyboardType.Number
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                if (isTimerSetEnable) {
-                    TimerTimePicker(
-                        minutes = minutes,
-                        seconds = seconds,
-                        onMinutesChange = {
-                            Timber.d("New value minutes $it")
-                            minutes = it
-                        },
-                        onSecondsChange = {
-                            Timber.d("New value seconds $it")
-                            seconds = it
-                        },
-                        isTimePickerEnabled = isTimerSetEnable
-                    )
-                } else {
-                    TimerTimePicker(
-                        minutes = 0,
-                        seconds = 0,
-                        onMinutesChange = {},
-                        onSecondsChange = {},
-                        isTimePickerEnabled = isTimerSetEnable
-                    )
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Row(
-                    modifier = Modifier
-                        .align(Alignment.Start)
-                        .clip(MaterialTheme.shapes.medium)
-                        .clickable {
-                            isTimerSetEnable = !isTimerSetEnable
-                        }
-                        .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Checkbox(
-                        checked = !isTimerSetEnable,
-                        onCheckedChange = { isTimerSetEnable = !isTimerSetEnable }
-                    )
-                    Text(
-                        text = "Do not set timer"
-                    )
-                }
             }
         }
+
     }
 }

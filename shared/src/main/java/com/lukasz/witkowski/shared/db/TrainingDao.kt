@@ -42,7 +42,4 @@ interface TrainingDao {
 
     @Query("SELECT * FROM TRAINING WHERE id=:id")
     fun getTrainingWithExercisesById(id: Long): TrainingWithExercises
-
-
-
 }

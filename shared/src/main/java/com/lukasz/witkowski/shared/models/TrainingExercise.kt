@@ -16,5 +16,5 @@ data class TrainingExercise(
     val repetitions: Int = 1,
     val sets: Int = 1,
     val time: Long = 0L,
-    val restTime: Long = 0L // Rest time after exercise
+    var restTime: Long = 0L // Rest time after exercise
 )

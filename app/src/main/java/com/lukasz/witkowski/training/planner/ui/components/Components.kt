@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.ui.components
 
 import android.view.LayoutInflater
 import android.widget.NumberPicker
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,7 @@ import com.lukasz.witkowski.training.planner.R
 @Composable
 fun ListCardItem(
     modifier: Modifier = Modifier,
+    onCardClicked: () -> Unit = {},
     content: @Composable () -> Unit
 ) {
     Card(
@@ -36,7 +38,9 @@ fun ListCardItem(
         shape = RoundedCornerShape(16.dp),
         backgroundColor = Color.DarkGray
     ) {
-        Box(modifier = Modifier.padding(8.dp)) {
+        Box(modifier = Modifier.clickable {
+            onCardClicked()
+        }.padding(8.dp)) {
             content()
         }
     }

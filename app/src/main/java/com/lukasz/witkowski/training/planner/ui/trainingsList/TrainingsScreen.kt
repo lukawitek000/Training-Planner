@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.ui.trainingsList
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
@@ -32,9 +34,10 @@ import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 fun TrainingsScreen(
     innerPadding: PaddingValues = PaddingValues(),
     viewModel: TrainingsListViewModel,
-    onCreateTrainingFabClicked: () -> Unit = {}
+    onCreateTrainingFabClicked: () -> Unit = {},
+    navigateToTrainingOverview: (Long) -> Unit
 ) {
-    val trainings by viewModel.allTrainings.collectAsState()
+    val trainings by viewModel.allTrainings.collectAsState(emptyList())
     Scaffold(
         modifier = Modifier.padding(innerPadding),
         floatingActionButton = {
@@ -47,8 +50,11 @@ fun TrainingsScreen(
             contentPadding = innerPadding
         ) {
             items(trainings) { training ->
-                ListCardItem() {
-                    TrainingListItemContent(training = training)
+                ListCardItem(modifier = Modifier,
+                onCardClicked = { navigateToTrainingOverview(training.id) }) {
+                    TrainingListItemContent(
+                        training = training
+                    )
                 }
             }
         }

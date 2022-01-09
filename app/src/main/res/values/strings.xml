@@ -2,4 +2,12 @@
     <string name="app_name">Training Planner</string>
     <string name="minutes">Minutes</string>
     <string name="seconds">Seconds</string>
+    <string name="rest_time_info">Set rest time that will be automatically measured after the exercise.\nTo set a rest time between sets, you have to set it to the last exercise in the training.</string>
+    <string name="rest_time_title">Rest time</string>
+    <string name="total_burned_calories">%1$.1f kcal</string>
+    <string name="max_heart_rate">%1$.1f BPM</string>
+    <string name="no_data">No data</string>
+    <string name="burned_calories_text">Burned calories: %1$s</string>
+    <string name="time_text">Time: %1$s</string>
+    <string name="max_heart_rate_text">Max heart rate: %1$s</string>
 </resources>

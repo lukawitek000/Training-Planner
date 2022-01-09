@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.repository
 import com.lukasz.witkowski.shared.db.TrainingDao
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
 class TrainingRepository constructor(
@@ -15,5 +16,9 @@ class TrainingRepository constructor(
         withContext(Dispatchers.IO) {
             trainingDao.insertTrainingWithTrainingExercises(trainingWithExercises = trainingWithExercises)
         }
+    }
+
+    suspend fun getTrainingById(trainingId: Long): TrainingWithExercises = withContext(Dispatchers.IO) {
+        trainingDao.getTrainingWithExercisesById(trainingId)
     }
 }
