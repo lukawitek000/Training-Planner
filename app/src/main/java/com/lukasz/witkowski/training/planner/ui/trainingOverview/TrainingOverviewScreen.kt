@@ -18,18 +18,22 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -67,6 +71,7 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
+import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
 import com.lukasz.witkowski.training.planner.ui.theme.Shapes
 import timber.log.Timber
 
@@ -79,35 +84,66 @@ fun TrainingOverviewScreen(
 ) {
     val trainingRequest by viewModel.training.collectAsState()
     val statisticsRequest by viewModel.statistics.collectAsState()
-
     Scaffold(modifier = modifier) {
-        Column() {
-            when(trainingRequest) {
-                is ResultHandler.Loading -> { LoadingScreen(Modifier.fillMaxSize()) }
-                is ResultHandler.Success -> {
-                    TrainingOverviewContent(
-                        modifier = Modifier,
-                        trainingWithExercises = (trainingRequest as ResultHandler.Success<TrainingWithExercises>).value
-                    )
-                }
-                is ResultHandler.Error ->  {
-                    Toast.makeText(LocalContext.current, (trainingRequest as ResultHandler.Error).message, Toast.LENGTH_SHORT).show()
-                    navigateBack()
+        LazyColumn(
+            modifier = Modifier
+                .padding(8.dp),
+        ) {
+            item {
+                when (trainingRequest) {
+                    is ResultHandler.Loading -> {
+                        LoadingScreen(Modifier.fillMaxSize())
+                    }
+                    is ResultHandler.Success -> {
+                        TrainingOverviewContent(
+                            modifier = Modifier,
+                            trainingWithExercises = (trainingRequest as ResultHandler.Success<TrainingWithExercises>).value
+                        )
+                    }
+                    is ResultHandler.Error -> {
+                        Toast.makeText(
+                            LocalContext.current,
+                            (trainingRequest as ResultHandler.Error).message,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        navigateBack()
+                    }
+                    is ResultHandler.Idle -> {}
                 }
             }
-            Text(modifier = Modifier.fillMaxWidth(), text = "Statistics", fontSize = 28.sp, textAlign = TextAlign.Center)
-            Spacer(modifier = Modifier.height(16.dp))
-            when(statisticsRequest) {
-                is ResultHandler.Loading -> { LoadingScreen(Modifier.fillMaxSize()) }
-                is ResultHandler.Success -> {
-                    TrainingStatisticsList(
-                        modifier = Modifier,
-                        generalStatistics = (statisticsRequest as ResultHandler.Success).value
-                    )
-                }
-                is ResultHandler.Error ->  {
-                    val message = (statisticsRequest as ResultHandler.Error).message
-                    Text(text = message, fontSize = 18.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+            item {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "Statistics",
+                    fontSize = 26.sp,
+                    color = MaterialTheme.colors.primary
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+            item {
+                when (statisticsRequest) {
+                    is ResultHandler.Loading -> {
+                        LoadingScreen(Modifier.fillMaxSize())
+                    }
+                    is ResultHandler.Success -> {
+                        TrainingStatisticsList(
+                            modifier = Modifier,
+                            generalStatistics = (statisticsRequest as ResultHandler.Success).value
+                        )
+                    }
+                    is ResultHandler.Error -> {
+                        val message = (statisticsRequest as ResultHandler.Error).message
+                        Box(
+                             modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = message,
+                                fontSize = 18.sp,
+                            )
+                        }
+                    }
+                    is ResultHandler.Idle -> {}
                 }
             }
         }
@@ -125,7 +161,7 @@ fun TrainingOverviewContent(
         .fillMaxWidth()
         .padding(8.dp)
     ) {
-        Text(modifier = Modifier.fillMaxWidth(), text = training.title, fontSize = 28.sp, textAlign = TextAlign.Center)
+        Text(modifier = Modifier.fillMaxWidth(), text = training.title, fontSize = 32.sp, textAlign = TextAlign.Center, color = MaterialTheme.colors.primary)
         Spacer(modifier = Modifier.height(16.dp))
         if(training.description.isNotEmpty()) {
             Text(text = training.description, fontSize = 18.sp)
@@ -170,7 +206,7 @@ fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<Training
                 )
             }
             AnimatedVisibility(visible = isExpanded) {
-                LazyColumn() {
+                LazyColumn(modifier = Modifier.heightIn(max = 500.dp)) {
                     items(exercises) {
                         SingleTrainingExerciseInformation(
                             modifier = Modifier,
@@ -185,13 +221,9 @@ fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<Training
 
 @Composable
 fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExercise) {
-    Box(modifier = modifier
-        .padding(8.dp)
-        .fillMaxWidth()
-        .clip(Shapes.medium)
-        .border(1.dp, Color.Magenta, Shapes.medium)
-        .background(Color.Gray)
-        .padding(8.dp)
+    ListCardItem(
+        modifier = modifier,
+        backgroundColor = LightDark12
     ) {
         Column() {
             Text(text = exercise.exercise.name, fontSize = 24.sp, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
@@ -251,7 +283,7 @@ fun TrainingStatisticsList(
     modifier: Modifier,
     generalStatistics: List<GeneralStatistics>
 ) {
-    LazyColumn(modifier = modifier) {
+    LazyColumn(modifier = modifier.heightIn(max = 500.dp)) {
         items(generalStatistics) {
             SingleTrainingStatisticsItem(
                 modifier = Modifier,
@@ -270,15 +302,14 @@ fun SingleTrainingStatisticsItem(modifier: Modifier = Modifier, generalStatistic
     val maxHeartRateStatistics = if(generalStatistics.maxHeartRate == 0.0) stringResource(R.string.no_data) else stringResource(
         id = R.string.max_heart_rate, generalStatistics.maxHeartRate
     )
-    val fontSize = 18.sp
+    val fontSize = 16.sp
     ListCardItem(modifier = modifier) {
-        Column {
+        Column(modifier = Modifier.padding(8.dp)) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = TimeFormatter.convertMillisToDate(generalStatistics.date),
                 fontSize = fontSize,
-                textAlign = TextAlign.End,
-                color = Color.Red
+                textAlign = TextAlign.End
             )
             Text(text = stringResource(id = R.string.time_text, time), fontSize = fontSize)
             Spacer(modifier = Modifier.height(8.dp))

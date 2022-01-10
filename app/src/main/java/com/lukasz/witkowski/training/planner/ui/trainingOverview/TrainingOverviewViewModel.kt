@@ -27,10 +27,10 @@ class TrainingOverviewViewModel @Inject constructor(
 
     private val trainingId = savedStateHandle.get<Long>("trainingId")
 
-    private val _training = MutableStateFlow<ResultHandler<TrainingWithExercises>>(ResultHandler.Loading)
+    private val _training = MutableStateFlow<ResultHandler<TrainingWithExercises>>(ResultHandler.Idle)
     val training: StateFlow<ResultHandler<TrainingWithExercises>> = _training
 
-    private val _statistics = MutableStateFlow<ResultHandler<List<GeneralStatistics>>>(ResultHandler.Loading)
+    private val _statistics = MutableStateFlow<ResultHandler<List<GeneralStatistics>>>(ResultHandler.Idle)
     val statistics: StateFlow<ResultHandler<List<GeneralStatistics>>> = _statistics
 
     init {

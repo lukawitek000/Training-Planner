@@ -10,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:theme="@style/AppTheme.Picker"
         app:layout_constraintEnd_toStartOf="@+id/seconds_picker"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -21,6 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/minutes"
+        android:textColor="@color/primary_orange"
         app:layout_constraintEnd_toEndOf="@+id/minutes_picker"
         app:layout_constraintStart_toStartOf="@+id/minutes_picker"
         app:layout_constraintTop_toBottomOf="@+id/minutes_picker" />
@@ -30,6 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:theme="@style/AppTheme.Picker"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/minutes_picker"
@@ -40,6 +43,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/seconds"
+        android:textColor="@color/primary_orange"
         app:layout_constraintEnd_toEndOf="@+id/seconds_picker"
         app:layout_constraintStart_toStartOf="@+id/seconds_picker"
         app:layout_constraintTop_toBottomOf="@+id/seconds_picker" />

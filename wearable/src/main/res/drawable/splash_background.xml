@@ -4,7 +4,7 @@
         android:drawable="@drawable/splash_background_gradient"/>
     <item>
         <bitmap android:gravity="center"
-            android:src="@drawable/logo"
+            android:src="@drawable/logo_dumbbell"
             android:tint="@color/orange"
             />
     </item>

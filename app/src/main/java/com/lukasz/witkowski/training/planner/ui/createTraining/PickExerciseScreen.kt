@@ -2,29 +2,40 @@ package com.lukasz.witkowski.training.planner.ui.createTraining
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxColors
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Snackbar
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -32,11 +43,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.lukasz.witkowski.shared.models.Exercise
+import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesScreenContent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @Composable
@@ -46,9 +60,9 @@ fun PickExerciseScreen(
     createTrainingViewModel: CreateTrainingViewModel,
     navigateBack: () -> Unit
 ) {
-    //val pickedExercises by viewModel.pickedExercises.collectAsState()
     val pickedTrainingExercises by createTrainingViewModel.trainingExercises.collectAsState()
     var openDialog by remember { mutableStateOf(false) }
+    var showInfoDialog by remember { mutableStateOf(false) }
     val trainingTitle by createTrainingViewModel.title.collectAsState()
 
     var exercise = Exercise()
@@ -56,7 +70,6 @@ fun PickExerciseScreen(
         modifier = modifier,
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                //createTrainingViewModel.addPickedTrainingExercises()
                 navigateBack()
             }) {
                 Icon(imageVector = Icons.Default.Done, contentDescription = "Pick Exercises")
@@ -66,12 +79,23 @@ fun PickExerciseScreen(
         ExercisesScreenContent(
             viewModel = viewModel,
             pickingExerciseMode = true,
-            pickExercise = {
-                exercise = it
-                openDialog = true
+            pickExercise = { pickedExercise ->
+                exercise = pickedExercise
+                if(pickedTrainingExercises.any { it.exercise.id == pickedExercise.id }) {
+                    showInfoDialog = true
+                } else {
+                    openDialog = true
+                }
             },
             pickedExercises = pickedTrainingExercises.map { it.exercise }
         )
+        if(showInfoDialog) {
+            InfoDialog(
+                exercise = exercise,
+                closeInfoDialog = { showInfoDialog = false },
+                openSettingExerciseDialog = { openDialog = true }
+            )
+        }
         if (openDialog) {
             SetTrainingExercisePropertiesDialog(
                 exercise = exercise,
@@ -90,6 +114,44 @@ fun PickExerciseScreen(
         }
     }
 
+}
+
+@Composable
+private fun InfoDialog(
+    exercise: Exercise,
+    closeInfoDialog: () -> Unit,
+    openSettingExerciseDialog: () -> Unit
+) {
+    DialogContainer(
+        closeDialog = closeInfoDialog,
+        saveData = {},
+        showFab = false
+    ) {
+        Column(Modifier.padding(8.dp)) {
+            Text(
+                text = stringResource(
+                    id = R.string.add_training_exercise_one_more_time_info,
+                    exercise.name
+                ),
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Button(onClick = closeInfoDialog) {
+                    Text(text = "No")
+                }
+                Button(onClick = {
+                    closeInfoDialog()
+                    openSettingExerciseDialog()
+                }) {
+                    Text(text = "Yes")
+                }
+            }
+        }
+    }
 }
 
 
@@ -112,14 +174,15 @@ fun SetTrainingExercisePropertiesDialog(
         saveData = { saveTrainingExercise(reps, sets, minutes, seconds) }) {
 
         Column(
-            modifier = modifier,
+            modifier = modifier.padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "Configure the ${exercise.name} exercise for the $trainingTitle training",
-                fontSize = 24.sp,
+                fontSize = 32.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(16.dp),
+                color = MaterialTheme.colors.primary
             )
 
             TextField(
@@ -174,13 +237,18 @@ fun SetTrainingExercisePropertiesDialog(
             ) {
                 Checkbox(
                     checked = !isTimerSetEnable,
-                    onCheckedChange = { isTimerSetEnable = !isTimerSetEnable }
+                    onCheckedChange = { isTimerSetEnable = !isTimerSetEnable },
+                    colors = CheckboxDefaults.colors(uncheckedColor = MaterialTheme.colors.primary)
                 )
+                Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Do not set timer"
+                    text = "Do not set timer",
+                    color = MaterialTheme.colors.primary
                 )
             }
         }
 
     }
 }
+
+

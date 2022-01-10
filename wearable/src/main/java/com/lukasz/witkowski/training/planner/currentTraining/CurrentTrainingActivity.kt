@@ -97,6 +97,7 @@ class CurrentTrainingActivity : FragmentActivity() {
                 is ResultHandler.Loading -> showProgressBar()
                 is ResultHandler.Success -> startTraining()
                 is ResultHandler.Error -> handleError()
+                is ResultHandler.Idle -> {}
             }
             startTrainingService()
         }

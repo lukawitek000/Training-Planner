@@ -6,9 +6,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -20,14 +24,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
+import androidx.compose.material.Divider
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +48,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.models.Category
@@ -48,7 +56,12 @@ import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.utils.categoriesWithoutNone
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
+import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
+import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
+import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
+import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
+import timber.log.Timber
 
 @Composable
 fun ExercisesScreen(
@@ -75,9 +88,8 @@ fun ExercisesScreenContent(
     pickExercise: (Exercise) -> Unit = {},
     pickedExercises: List<Exercise> = emptyList()
 ) {
-    // TODO check why this screen is jumping when displayed
-    val exercisesList by viewModel.exercises.observeAsState(initial = emptyList())
-    val selectedCategoriesList by viewModel.selectedCategories.observeAsState(initial = emptyList())
+    val exercisesList by viewModel.exercises.collectAsState(emptyList())
+    val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
 
     var isExerciseDialogOpen by remember { mutableStateOf(false) }
     var exercise by remember {
@@ -94,16 +106,23 @@ fun ExercisesScreenContent(
             selectedCategories = selectedCategoriesList,
             selectCategory = { viewModel.selectCategory(it) }
         )
-        ExercisesList(
-            exercisesList = exercisesList,
-            openDialog = {
-                isExerciseDialogOpen = true
-                exercise = it
-            },
-            pickingExerciseMode = pickingExerciseMode,
-            pickExercise = pickExercise,
-            pickedExercises = pickedExercises
-        )
+        if(exercisesList.isNotEmpty()) {
+            ExercisesList(
+                exercisesList = exercisesList,
+                openDialog = {
+                    isExerciseDialogOpen = true
+                    exercise = it
+                },
+                pickingExerciseMode = pickingExerciseMode,
+                pickExercise = pickExercise,
+                pickedExercises = pickedExercises
+            )
+        } else {
+            NoDataMessage(
+                modifier = Modifier,
+                text = if(selectedCategoriesList.isEmpty()) "No exercises. Create your first exercise." else "No exercises for selected categories."
+            )
+        }
     }
 }
 
@@ -148,11 +167,11 @@ private fun ExercisesList(
                     } else {
                         openDialog(exercise)
                     }
-                }
+                },
+                markedSelected = pickedExercises.contains(exercise)
             ) {
                 ExerciseListItemContent(
-                    exercise = exercise,
-                    isHighlighted = pickedExercises.contains(exercise)
+                    exercise = exercise
                 )
             }
         }
@@ -162,33 +181,34 @@ private fun ExercisesList(
 @Composable
 fun ExerciseListItemContent(
     modifier: Modifier = Modifier,
-    exercise: Exercise,
-    isHighlighted: Boolean = false
+    exercise: Exercise
 ) {
     val image = exercise.image
     val imageDescription = "${exercise.name} image"
+    val category = exercise.category
 
     Row(
-        modifier = if (isHighlighted) modifier.background(Color.Red) else modifier,
+        modifier =  modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         ImageWithDefaultPlaceholder(imageDescription = imageDescription, image = image)
 
         Spacer(modifier = Modifier.width(16.dp))
-        Column {
+        Column(
+            modifier = Modifier,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
             Text(
                 text = exercise.name,
-                fontSize = 24.sp
+                fontSize = 28.sp
             )
-            Text(
-                text = exercise.description,
-                fontSize = 14.sp
-            )
-            val category = exercise.category
+
             if (category != Category.None) {
+                Spacer(modifier = Modifier.height(16.dp))
                 CategoryChip(
-                    modifier = Modifier.padding(4.dp),
-                    text = category.name
+                    modifier = Modifier,
+                    text = category.name,
+                    fontSize = 14.sp
                 )
             }
 
@@ -200,24 +220,28 @@ fun ExerciseListItemContent(
 private fun ImageWithDefaultPlaceholder(
     modifier: Modifier = Modifier,
     imageDescription: String,
-    image: Bitmap?
+    image: Bitmap?,
+    heightMin: Dp = 60.dp,
+    heightMax: Dp = 120.dp
 ) {
     val imageModifier = modifier
-        .heightIn(min = 60.dp, max = 120.dp)
+        .heightIn(min = heightMin, max = heightMax)
         .padding(4.dp)
         .clip(RoundedCornerShape(16.dp))
-    if (image == null) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            modifier = imageModifier,
-            contentDescription = imageDescription
-        )
-    } else {
-        Image(
-            bitmap = image.asImageBitmap(),
-            modifier = imageModifier,
-            contentDescription = imageDescription
-        )
+    ImageContainer() {
+        if (image == null) {
+            Image(
+                painter = painterResource(id = R.drawable.exercise_default),
+                modifier = imageModifier,
+                contentDescription = imageDescription
+            )
+        } else {
+            Image(
+                bitmap = image.asImageBitmap(),
+                modifier = imageModifier,
+                contentDescription = imageDescription
+            )
+        }
     }
 }
 
@@ -228,58 +252,40 @@ fun ExerciseInfoAlertDialog(
     closeDialog: () -> Unit
 ) {
 
-    AlertDialog(modifier = modifier
-        .clip(MaterialTheme.shapes.medium)
-        .border(width = 1.dp, Color.Yellow, MaterialTheme.shapes.medium)
-        .fillMaxWidth(),
-        onDismissRequest = closeDialog,
-        title = {
+    DialogContainer(modifier = modifier,
+        closeDialog = closeDialog,
+        saveData = {}
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
-                modifier = Modifier.fillMaxWidth(),
                 text = exercise.name,
                 fontSize = 32.sp,
-                textAlign = TextAlign.Center
+                color = MaterialTheme.colors.primary
             )
-        },
-        text = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.SpaceEvenly,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(
-                    text = "",
-                    modifier = Modifier.height(8.dp)
-                ) // without Text here image is moving to the top
-                ImageWithDefaultPlaceholder(
-                    modifier = Modifier.height(240.dp),
-                    imageDescription = "${exercise.name} image", image = exercise.image
-                )
+            Divider(Modifier.padding(8.dp), color = MaterialTheme.colors.primary)
+            ImageWithDefaultPlaceholder(
+                modifier = Modifier,
+                imageDescription = "${exercise.name} image", image = exercise.image,
+                heightMax = 350.dp
+            )
+            if(exercise.description.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = exercise.description,
                     modifier = Modifier
                 )
-                if (exercise.category != Category.None)
-                    CategoryChip(
-                        modifier = Modifier.padding(top = 4.dp),
-                        text = exercise.category.name
-                    )
             }
-
-        },
-        buttons = {
-            Row(horizontalArrangement = Arrangement.Center) {
-
-            }
-            Button(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                onClick = closeDialog
-            ) {
-                Text(text = "Ok")
+            if (exercise.category != Category.None) {
+                Spacer(modifier = Modifier.height(16.dp))
+                CategoryChip(
+                    modifier = Modifier.padding(top = 4.dp),
+                    text = exercise.category.name
+                )
             }
         }
-    )
-
+    }
 }
+

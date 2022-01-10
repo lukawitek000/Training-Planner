@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Wearable</string>
+    <string name="app_name">Training Planner</string>
     <string name="yes">YES</string>
     <string name="no">NO</string>
     <string name="start_training_question">Do you want to start %1$s training?</string>

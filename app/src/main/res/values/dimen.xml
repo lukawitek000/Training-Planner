@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="number_picker_disabled_alpha" type="dimen" format="float">0.5</item>
+</resources>

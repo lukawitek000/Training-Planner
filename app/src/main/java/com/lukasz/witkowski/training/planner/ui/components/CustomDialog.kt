@@ -20,12 +20,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
+import com.lukasz.witkowski.training.planner.ui.theme.LightDark5
 
 @Composable
 fun DialogContainer(
     modifier: Modifier = Modifier,
     closeDialog: () -> Unit,
     saveData: () -> Unit,
+    showFab: Boolean = true,
     content: @Composable () -> Unit
 ) {
     Dialog(
@@ -34,21 +37,23 @@ fun DialogContainer(
         Surface(
             modifier = modifier
                 .clip(MaterialTheme.shapes.medium),
-            color = Color.Gray
+            color = LightDark5
         )
         {
             Column() {
                 content()
-                FloatingActionButton(
-                    modifier = Modifier.align(Alignment.End).padding(8.dp),
-                    onClick = {
-                    saveData()
-                    closeDialog()
-                }) {
-                    Icon(
-                        imageVector = Icons.Default.Done,
-                        contentDescription = "Done"
-                    )
+                if(showFab) {
+                    FloatingActionButton(
+                        modifier = Modifier.align(Alignment.End).padding(8.dp),
+                        onClick = {
+                            saveData()
+                            closeDialog()
+                        }) {
+                        Icon(
+                            imageVector = Icons.Default.Done,
+                            contentDescription = "Done"
+                        )
+                    }
                 }
             }
 

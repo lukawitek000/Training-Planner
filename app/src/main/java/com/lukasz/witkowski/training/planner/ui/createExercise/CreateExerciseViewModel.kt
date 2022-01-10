@@ -4,9 +4,12 @@ import android.graphics.Bitmap
 import androidx.lifecycle.*
 import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.Exercise
+import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.shared.utils.allCategories
 import com.lukasz.witkowski.training.planner.repository.ExerciseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,6 +18,9 @@ class CreateExerciseViewModel @Inject constructor(
     private val exerciseRepository: ExerciseRepository,
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
+
+    private val _savingState = MutableStateFlow<ResultHandler<Long>>(ResultHandler.Idle)
+    val savingState: StateFlow<ResultHandler<Long>> = _savingState
 
     private val _title = MutableLiveData("")
     val title: LiveData<String> = _title
@@ -47,13 +53,20 @@ class CreateExerciseViewModel @Inject constructor(
     }
     fun createExercise(){
         viewModelScope.launch {
+            _savingState.value = ResultHandler.Loading
             val exercise = Exercise(
                 name = title.value ?: "",
                 description = description.value ?: "",
                 category = category.value ?: Category.None,
                 image = image.value
             )
-            exerciseRepository.insertExercise(exercise) // TODO loading indicator, because of the image it is saving very long
+            try {
+
+                val exerciseId = exerciseRepository.insertExercise(exercise)
+                _savingState.value = ResultHandler.Success(exerciseId)
+            } catch (e: Exception) {
+                _savingState.value = ResultHandler.Error(message = "Saving exercise failed")
+            }
         }
     }
 }
