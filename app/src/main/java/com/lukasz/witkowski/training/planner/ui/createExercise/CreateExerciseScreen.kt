@@ -240,7 +240,7 @@ fun UploadImageButton(
         }
     )
     val placeholder =
-        Uri.parse("android.resource://com.lukasz.witkowski.training.planner/drawable/ic_launcher_foreground")
+        Uri.parse("android.resource://com.lukasz.witkowski.training.planner/drawable/exercise_default")
     ImageContainer {
         GlideImage(
             imageModel = image ?: placeholder,
