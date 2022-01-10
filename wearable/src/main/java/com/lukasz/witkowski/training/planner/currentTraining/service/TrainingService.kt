@@ -145,8 +145,7 @@ class TrainingService : LifecycleService() {
             .build()
         val ongoingActivity =
             OngoingActivity.Builder(applicationContext, NOTIFICATION_ID, notificationBuilder)
-                .setAnimatedIcon(R.drawable.common_google_signin_btn_icon_dark)
-                .setStaticIcon(R.drawable.common_full_open_on_phone)
+                .setStaticIcon(R.drawable.logo)
                 .setTouchIntent(pendingIntent)
                 .setStatus(ongoingActivityStatus)
                 .build()
