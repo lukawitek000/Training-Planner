@@ -48,16 +48,17 @@ fun ListCardItem(
     modifier: Modifier = Modifier,
     onCardClicked: () -> Unit = {},
     markedSelected: Boolean = false,
+    backgroundColor: Color = LightDark5,
     content: @Composable () -> Unit
 ) {
-    val backgroundColor = if(markedSelected) OrangeTransparent else LightDark5
+    val bgdColor = if(markedSelected) OrangeTransparent else backgroundColor
     val borderModifier = if(markedSelected) Modifier.border(2.dp, MaterialTheme.colors.primary, MaterialTheme.shapes.medium) else Modifier
     Card(
         modifier = modifier
             .padding(4.dp)
             .fillMaxWidth()
             .then(borderModifier),
-        backgroundColor = backgroundColor
+        backgroundColor = bgdColor
     ) {
         Box(modifier = Modifier
             .clickable {
