@@ -13,8 +13,12 @@ import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
+import androidx.compose.material.rememberDrawerState
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -30,6 +34,7 @@ import com.lukasz.witkowski.training.planner.navigation.TopBar
 import com.lukasz.witkowski.training.planner.service.SendingTrainingsService
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -87,10 +92,12 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TrainingPlannerApp(showToast: (String) -> Unit) {
     val navController = rememberNavController()
-    val backStackEntry = navController.currentBackStackEntryAsState()
+    val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = NavItem.Items.list.find {
-        it.route.substringBefore('/') == backStackEntry.value?.destination?.route?.substringBefore('/')
+        it.route.substringBefore('/') == backStackEntry?.destination?.route?.substringBefore('/')
     } ?: NavItem.Trainings
+    val scaffoldState = rememberScaffoldState()
+
     Scaffold(
         bottomBar = {
             AnimatedVisibility(
@@ -99,7 +106,7 @@ fun TrainingPlannerApp(showToast: (String) -> Unit) {
                 exit = slideOutVertically(targetOffsetY = { it }),
             ) {
                 BottomNavigationBar(
-                    backStackEntry = backStackEntry.value,
+                    backStackEntry = backStackEntry,
                     onItemClick = {
                         navController.navigate(it.route) {
                             // Pop up to the start destination of the graph to
@@ -120,7 +127,8 @@ fun TrainingPlannerApp(showToast: (String) -> Unit) {
             TopBar(title = currentScreen.title, showBackArrow = currentScreen.isBackArrow) {
                 navController.navigateUp()
             }
-        }
+        },
+        scaffoldState = scaffoldState
     ) {
         Navigation(navController = navController, innerPadding = it, showToast = showToast)
     }
