@@ -101,6 +101,5 @@ class CreateTrainingViewModel @Inject constructor(
         if(index >= 0) {
             exercises[index].restTime = timeInMillis
         }
-//        TODO("Not yet implemented")
     }
 }
