@@ -28,9 +28,18 @@ class SendingTrainingsService : SendingDataService() {
         lifecycleScope.launch {
             syncDataRepository.getNotSynchronizedTrainings().collect {
                 if (it.isNotEmpty()) {
+                    removeImages(it)
                     Timber.d("Send trainings ${it.size} $it")
                     sendData(data = it, path = TRAINING_PATH)
                 }
+            }
+        }
+    }
+
+    private fun removeImages(it: List<TrainingWithExercises>) {
+        it.forEach { trainingWithExercises ->
+            trainingWithExercises.exercises.forEach { trainingExercise ->
+                trainingExercise.exercise.image = null
             }
         }
     }
