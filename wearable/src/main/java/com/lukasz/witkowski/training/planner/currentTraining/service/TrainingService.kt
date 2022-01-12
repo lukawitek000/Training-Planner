@@ -177,6 +177,7 @@ class TrainingService : LifecycleService() {
         currentTrainingProgressHelper.currentTrainingState.observe(this) {
             when (it) {
                 is CurrentTrainingState.SummaryState -> {
+                    trainingCompleteStatistics?.trainingStatistics?.totalTime = currentTrainingProgressHelper.trainingTime
                     lifecycleScope.launch {
                         endExercise()
                     }
@@ -319,7 +320,6 @@ class TrainingService : LifecycleService() {
     private suspend fun endExercise() {
         if (isExerciseInProgress()) {
             exerciseClient.endExercise().await()
-            trainingCompleteStatistics?.trainingStatistics?.totalTime = currentTrainingProgressHelper.trainingTime
         }
     }
 
