@@ -4,7 +4,9 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.wearable.ChannelClient
 import com.google.android.gms.wearable.Wearable
+import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
+import com.lukasz.witkowski.shared.models.statistics.TrainingWithStatistics
 import com.lukasz.witkowski.shared.repository.SyncDataRepository
 import com.lukasz.witkowski.shared.utils.STATISTICS_PATH
 import com.lukasz.witkowski.shared.utils.SYNC_FAILURE
@@ -34,7 +36,7 @@ abstract class SendingDataService : LifecycleService() {
     private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(this) }
 
     abstract fun observeNotSynchronizedData()
-    abstract suspend fun handleSyncResponse(syncResponse: Int)
+    abstract suspend fun handleSyncResponse(id: Long, syncResponse: Int)
 
     private suspend fun getConnectedNodes(): String? {
         val nodeClient = Wearable.getNodeClient(this)
@@ -76,11 +78,18 @@ abstract class SendingDataService : LifecycleService() {
         try {
             val byteArray = gson.toJson(data).toByteArray()
             val job = exchangeDataAsync(outputStream, byteArray, inputStream)
-            handleSyncResponse(job.await())
+            val id = getDataId(data)
+            handleSyncResponse(id, job.await())
         } catch (e: Exception) {
             e.printStackTrace()
             Timber.d("Saving item failed ${e.localizedMessage}")
         }
+    }
+
+    private fun <T> getDataId(data: T): Long = when(data) {
+        is TrainingWithExercises -> data.training.id
+        is TrainingCompleteStatistics -> data.trainingStatistics.id
+        else -> -1
     }
 
     private fun CoroutineScope.exchangeDataAsync(

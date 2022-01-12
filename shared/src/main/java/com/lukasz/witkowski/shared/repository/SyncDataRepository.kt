@@ -31,4 +31,12 @@ constructor(private val trainingDao: TrainingDao, private val statisticsDao: Sta
             trainingDao.insertTrainingWithTrainingExercises(trainingWithExercises)
         }
     }
+
+    suspend fun updateSynchronizedTraining(id: Long) = withContext(Dispatchers.IO) {
+        trainingDao.updateSynchronizedTrainingById(id)
+    }
+
+    suspend fun updateSynchronizedStatistics(id: Long) = withContext(Dispatchers.IO) {
+        statisticsDao.updateSynchronizedStatisticsById(id)
+    }
 }

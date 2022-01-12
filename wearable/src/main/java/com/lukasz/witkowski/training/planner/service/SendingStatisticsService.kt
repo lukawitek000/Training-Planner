@@ -38,7 +38,12 @@ class SendingStatisticsService : SendingDataService() {
         }
     }
 
-    override suspend fun handleSyncResponse(syncResponse: Int) {
-        Timber.d("Sync response $syncResponse")
+    override suspend fun handleSyncResponse(id: Long, syncResponse: Int) {
+        Timber.d("Sending statistics $id response $syncResponse")
+        if(syncResponse == SYNC_SUCCESSFUL) {
+            syncDataRepository.updateSynchronizedStatistics(id)
+        } else {
+            Timber.w("Sending statistics $id failed")
+        }
     }
 }
