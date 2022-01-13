@@ -80,7 +80,7 @@ object CurrentTrainingProgressHelper {
     }
 
     fun navigateToTrainingRestTime() {
-        if (restTime > TimeFormatter.MILLIS_IN_SECOND) {
+        if (restTime > TimeFormatter.MILLIS_IN_SECOND && !isLastExercise()) {
             _currentTrainingState.value = CurrentTrainingState.RestTimeState(restTime, trainingId)
         } else {
             navigateToTrainingExercise()

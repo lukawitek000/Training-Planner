@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
@@ -10,7 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
@@ -36,15 +40,29 @@ fun BottomNavigationBar(
                 selectedContentColor = MaterialTheme.colors.primary,
                 unselectedContentColor = Color.Black,
                 icon = {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(imageVector = item.icon, contentDescription = item.title)
-                        Text(
-                            text = item.title,
-                            textAlign = TextAlign.Center
-                        )
-                    }
+                    NavigationIcon(item)
                 }
             )
         }
+    }
+}
+
+@Composable
+private fun NavigationIcon(item: NavItem) {
+    if(item.icon == null) return
+    Column(
+        Modifier.padding(vertical = 2.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Icon(
+            modifier = Modifier.weight(3f),
+            painter = painterResource(id = item.icon),
+            contentDescription = item.title
+        )
+        Text(
+            modifier = Modifier.weight(2f),
+            text = item.title,
+            textAlign = TextAlign.Center
+        )
     }
 }

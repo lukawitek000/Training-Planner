@@ -28,6 +28,7 @@ class SendingTrainingsService : SendingDataService() {
         lifecycleScope.launch {
             syncDataRepository.getNotSynchronizedTrainings().collect {
                 if (it.isNotEmpty()) {
+                    removeImages(it)
                     Timber.d("Send trainings ${it.size} $it")
                     sendData(data = it, path = TRAINING_PATH)
                 }
@@ -35,7 +36,20 @@ class SendingTrainingsService : SendingDataService() {
         }
     }
 
-    override suspend fun handleSyncResponse(syncResponse: Int) {
-        Timber.d("Sync response $syncResponse")
+    private fun removeImages(it: List<TrainingWithExercises>) {
+        it.forEach { trainingWithExercises ->
+            trainingWithExercises.exercises.forEach { trainingExercise ->
+                trainingExercise.exercise.image = null
+            }
+        }
+    }
+
+    override suspend fun handleSyncResponse(id: Long, syncResponse: Int) {
+        Timber.d("Sending training $id response $syncResponse")
+        if(syncResponse == SYNC_SUCCESSFUL) {
+            syncDataRepository.updateSynchronizedTraining(id)
+        } else {
+            Timber.w("Sending training $id failed")
+        }
     }
 }

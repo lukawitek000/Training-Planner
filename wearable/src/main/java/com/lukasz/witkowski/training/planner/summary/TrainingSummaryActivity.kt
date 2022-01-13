@@ -81,15 +81,16 @@ class TrainingSummaryActivity : ComponentActivity() {
     }
 
     private fun displaySummaryProperties() {
+        val trainingCompleteStatistics = trainingService.trainingCompleteStatistics ?: return
         binding.totalTimeTv.text =
-            TimeFormatter.millisToTime(trainingService.currentTrainingProgressHelper.trainingTime)
+            TimeFormatter.millisToTime(trainingCompleteStatistics.trainingStatistics.totalTime)
         var totalBurnedCalories = 0.0
-        trainingService.trainingCompleteStatistics?.exercisesStatistics?.forEach {
+        trainingCompleteStatistics.exercisesStatistics.forEach {
             totalBurnedCalories += it.burntCaloriesStatistics.burntCalories
         }
         binding.burnedCaloriesTv.text =
             getString(R.string.total_burned_calories, totalBurnedCalories)
-        val maxHeartRate = trainingService.trainingCompleteStatistics?.exercisesStatistics?.maxByOrNull {
+        val maxHeartRate = trainingCompleteStatistics.exercisesStatistics.maxByOrNull {
             it.heartRateStatistics.max
         }?.heartRateStatistics?.max ?: 0.0
         binding.maxHeartRateTv.text = getString(R.string.max_heart_rate, maxHeartRate)

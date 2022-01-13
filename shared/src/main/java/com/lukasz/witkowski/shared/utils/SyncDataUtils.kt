@@ -38,3 +38,7 @@ suspend fun InputStream.readSuspending() = withContext(Dispatchers.IO) {
     read()
 }
 
+suspend fun InputStream.readSuspending(buffer: ByteArray): Int = withContext(Dispatchers.IO) {
+    read(buffer)
+}
+

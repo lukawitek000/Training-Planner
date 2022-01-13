@@ -34,4 +34,7 @@ interface StatisticsDao {
 
     @Query("SELECT * FROM TrainingStatistics WHERE trainingId=:trainingId")
     fun getTrainingCompleteStatisticsByTrainingId(trainingId: Long) : List<TrainingCompleteStatistics>
+
+    @Query("UPDATE TrainingStatistics SET isSynchronized=1 WHERE TrainingIdStatistics=:id")
+    fun updateSynchronizedStatisticsById(id: Long)
 }

@@ -46,4 +46,8 @@ interface TrainingDao {
 
     @Query("SELECT * FROM TRAINING WHERE id in (SELECT trainingId FROM TrainingExercise WHERE category IN (:filterCategories))")
     fun getTrainingsWithExercisesFromCategories(filterCategories: List<Category>): Flow<List<TrainingWithExercises>>
+
+    @Query("UPDATE training SET isSynchronized=1 WHERE id=:id")
+    fun updateSynchronizedTrainingById(id: Long)
+
 }

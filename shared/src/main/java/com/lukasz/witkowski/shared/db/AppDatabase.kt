@@ -11,7 +11,7 @@ import com.lukasz.witkowski.shared.models.statistics.TrainingStatistics
 
 @Database(
     entities = [Exercise::class, Training::class, TrainingExercise::class, ExerciseStatistics::class, TrainingStatistics::class],
-    version = 6
+    version = 7
 )
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {

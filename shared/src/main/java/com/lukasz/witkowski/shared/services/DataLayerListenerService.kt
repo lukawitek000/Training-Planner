@@ -43,7 +43,7 @@ abstract class DataLayerListenerService : WearableListenerService() {
         val outputStream = channelClient.getOutputStream(channel).await()
         val numberOfItems = inputStream.readSuspending()
         Timber.d("Number of items $numberOfItems")
-        for(i in 1..numberOfItems) {
+        for (i in 1..numberOfItems) {
             receiveSingleData(inputStream, outputStream, type)
         }
         outputStream.closeSuspending()
@@ -76,7 +76,7 @@ abstract class DataLayerListenerService : WearableListenerService() {
     }
 
     // Reads bytes till everything is received
-    protected suspend fun readBytesSuspending(inputStream: InputStream) =
+    private suspend fun readBytesSuspending(inputStream: InputStream) =
         withContext(Dispatchers.IO) {
             var arraySize = 0
             val listOfArrays = mutableListOf<ByteArray>()
@@ -86,20 +86,23 @@ abstract class DataLayerListenerService : WearableListenerService() {
                 val temp = ByteArray(arraySize)
                 var size = 0
                 try {
-                    size = inputStream.read(temp)
+                    size = inputStream.readSuspending(temp)
+                    if (size == -1) {
+                        break
+                    }
                     totalBytes += size
                     listOfArrays.add(temp)
                 } catch (e: Exception) {
                     Timber.e("Failed reading ${e.localizedMessage}")
                     return@withContext byteArrayOf()
                 }
-            } while(size >= arraySize)
+            } while (size >= arraySize)
             val byteArray = ByteArray(totalBytes)
             var i = 0
             Timber.d("Byte array size $totalBytes")
-            for(array in listOfArrays){
-                for(byte in array) {
-                    if(i >= totalBytes) return@withContext byteArray
+            for (array in listOfArrays) {
+                for (byte in array) {
+                    if (i >= totalBytes) return@withContext byteArray
                     byteArray[i] = byte
                     i++
                 }
