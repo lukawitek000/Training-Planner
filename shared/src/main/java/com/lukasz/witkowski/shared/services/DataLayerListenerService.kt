@@ -86,7 +86,10 @@ abstract class DataLayerListenerService : WearableListenerService() {
                 val temp = ByteArray(arraySize)
                 var size = 0
                 try {
-                    size = inputStream.read(temp)
+                    size = inputStream.readSuspending(temp)
+                    if(size == -1) {
+                        break
+                    }
                     totalBytes += size
                     listOfArrays.add(temp)
                 } catch (e: Exception) {
