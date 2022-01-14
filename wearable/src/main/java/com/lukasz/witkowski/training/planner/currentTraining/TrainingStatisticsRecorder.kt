@@ -242,19 +242,15 @@ class TrainingStatisticsRecorder @Inject constructor(
         exerciseTime: Long
     ) {
         if (trainingCompleteStatistics == null) return
-
         val exercisesStatistics = trainingCompleteStatistics!!.exercisesStatistics.toMutableList()
         val currentCaloriesStatistics = getCaloriesStatistics()
         val currentHeartRateStatistics = getHeartRateStatistics()
         val (currentExerciseId, currentSet) = exercisesIdAndSetQueue.poll() ?: return
-        val savedSets = if (currentSet - 1 == 0) 1 else currentSet - 1
-        val index = exercisesStatistics.indexOfFirst { it.trainingExerciseId == currentExerciseId }
-        if (index != -1) {
+        if (hasCurrentExerciseStatistics(exercisesStatistics, currentExerciseId)) {
             updateStatisticsInTheList(
+                currentExerciseId,
                 exercisesStatistics,
-                index,
                 currentHeartRateStatistics,
-                savedSets,
                 currentSet,
                 currentCaloriesStatistics,
                 exerciseTime
@@ -270,6 +266,11 @@ class TrainingStatisticsRecorder @Inject constructor(
         }
         trainingCompleteStatistics!!.exercisesStatistics = exercisesStatistics
     }
+
+    private fun hasCurrentExerciseStatistics(
+        exercisesStatistics: MutableList<ExerciseStatistics>,
+        currentExerciseId: Long
+    ) = exercisesStatistics.any { it.trainingExerciseId == currentExerciseId }
 
     private fun addExerciseStatistics(
         currentExerciseId: Long,
@@ -288,14 +289,15 @@ class TrainingStatisticsRecorder @Inject constructor(
     }
 
     private fun updateStatisticsInTheList(
+        currentExerciseId: Long,
         exercisesStatistics: MutableList<ExerciseStatistics>,
-        index: Int,
         currentHeartRateStatistics: HeartRateStatistics,
-        savedSets: Int,
         currentSet: Int,
         currentCaloriesStatistics: CaloriesStatistics,
         exerciseTime: Long
     ) {
+        val index = exercisesStatistics.indexOfFirst { it.trainingExerciseId == currentExerciseId }
+        val savedSets = if (currentSet == 1) 1 else currentSet - 1
         val exerciseStatistics = exercisesStatistics[index]
         val heartRateStatistics = updateExerciseHeartRateStatistics(
             currentHeartRateStatistics,
