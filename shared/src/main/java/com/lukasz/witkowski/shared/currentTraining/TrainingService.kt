@@ -70,6 +70,7 @@ open class TrainingService : LifecycleService() {
                     timerHelper.cancelTimer()
                 }
                 is CurrentTrainingState.RestTimeState -> {
+                    timerHelper.cancelTimer()
                     timerHelper.startTimer(trainingProgressController.restTime)
                 }
             }
