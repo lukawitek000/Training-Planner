@@ -137,4 +137,12 @@ class TrainingProgressController @AssistedInject constructor(
             it.sets >= nextSet
         }
     }
+
+    fun navigateToTheNextScreen() {
+        if (isExerciseState) {
+            navigateToTrainingRestTime()
+        } else if (isRestTimeState) {
+            navigateToTrainingExercise()
+        }
+    }
 }
