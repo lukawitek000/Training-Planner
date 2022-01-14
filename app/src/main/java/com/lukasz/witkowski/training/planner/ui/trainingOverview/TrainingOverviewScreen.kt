@@ -59,6 +59,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.github.tehras.charts.line.LineChart
+import com.github.tehras.charts.line.LineChartData
 import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.Training
@@ -292,16 +294,45 @@ fun SingleTrainingStatisticsItem(modifier: Modifier = Modifier, generalStatistic
             Text(text = stringResource(id = R.string.burned_calories_text, burnedCalories), fontSize = fontSize)
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = stringResource(id = R.string.max_heart_rate_text, maxHeartRateStatistics), fontSize = fontSize)
+            Spacer(modifier = Modifier.height(8.dp))
+            HeartRateLineChart(
+                modifier = Modifier,
+                data = generalStatistics.heartRateDuringTraining
+            )
         }
     }
 }
+
+@Composable
+fun HeartRateLineChart(
+    modifier: Modifier = Modifier,
+    data: List<Double>
+) {
+    val lineChartData = LineChartData(
+        points = data.map { LineChartData.Point(it.toFloat(), label = "") },
+        padBy = 1.0f,
+        startAtZero = false
+    )
+    LineChart(
+        modifier = modifier,
+        lineChartData = lineChartData
+    )
+}
+
+@Preview
+@Composable
+fun HeartRateLineChartPreview() {
+    HeartRateLineChart(data = listOf(13.0, 41.0, 124.0, 0.0, 151.0))
+}
+
+
 
 @Preview
 @Composable
 fun SingleTrainingStatisticsItemPrev() {
     SingleTrainingStatisticsItem(
         generalStatistics = GeneralStatistics(
-            0L, 60000L, System.currentTimeMillis(), 12.1, 123.0
+            0L, 60000L, System.currentTimeMillis(), 12.1, 123.0, heartRateDuringTraining = listOf()
         )
     )
 }

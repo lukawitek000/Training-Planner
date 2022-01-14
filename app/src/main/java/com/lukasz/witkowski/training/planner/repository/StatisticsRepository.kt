@@ -35,7 +35,8 @@ class StatisticsRepository constructor(private val statisticsDao: StatisticsDao)
             time = trainingStatistics.totalTime,
             date = trainingStatistics.date,
             burnedCalories = totalBurnedCalories,
-            maxHeartRate = maxHeartRate
+            maxHeartRate = maxHeartRate,
+            heartRateDuringTraining = trainingStatistics.heartRateHistory
         )
     }
 
