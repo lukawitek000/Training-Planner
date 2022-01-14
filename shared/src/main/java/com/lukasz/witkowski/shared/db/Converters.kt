@@ -3,9 +3,11 @@ package com.lukasz.witkowski.shared.db
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.room.TypeConverter
+import com.google.gson.Gson
 import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.utils.allCategories
 import java.io.ByteArrayOutputStream
+import java.lang.Exception
 import kotlin.math.roundToInt
 
 class Converters {
@@ -49,5 +51,17 @@ class Converters {
             return null
         }
         return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    }
+
+    @TypeConverter
+    fun fromDoubleListToString(list: List<Double>): String {
+        return Gson().toJson(list)
+    }
+
+    @TypeConverter
+    fun fromStringToDoubleList(value: String): List<Double> = try {
+        Gson().fromJson(value, Array<Double>::class.java).toList()
+    } catch (e: Exception) {
+        emptyList()
     }
 }

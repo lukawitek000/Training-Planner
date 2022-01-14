@@ -178,7 +178,7 @@ class TrainingService : LifecycleService() {
         currentTrainingProgressHelper.currentTrainingState.observe(this) {
             when (it) {
                 is CurrentTrainingState.SummaryState -> {
-                    trainingCompleteStatistics?.trainingStatistics?.totalTime = currentTrainingProgressHelper.trainingTime
+                    saveTrainingStatistics()
                     lifecycleScope.launch {
                         endExercise()
                     }
@@ -194,6 +194,12 @@ class TrainingService : LifecycleService() {
                 }
             }
         }
+    }
+
+    private fun saveTrainingStatistics() {
+        trainingCompleteStatistics?.trainingStatistics?.totalTime =
+            currentTrainingProgressHelper.trainingTime
+        trainingCompleteStatistics?.trainingStatistics?.heartRateHistory = heartRateDuringTraining
     }
 
     private val exerciseUpdateListener = object : ExerciseUpdateListener {
@@ -217,7 +223,7 @@ class TrainingService : LifecycleService() {
         if(!oldState.isEnded && exerciseUpdate.state.isEnded) {
             // Exercise ended
             val exerciseTime = exerciseUpdate.activeDuration.toMillis()
-            saveRecordedHealthStatistics(caloriesCumulativeData, heartRateStatisticalData, heartRateDuringTraining, exerciseTime)
+            saveRecordedHealthStatistics(caloriesCumulativeData, heartRateStatisticalData, exerciseTime)
             when(exerciseUpdate.state) {
                 ExerciseState.TERMINATED -> {
                     // Another app started tracking an exercise
@@ -258,14 +264,12 @@ class TrainingService : LifecycleService() {
     private fun saveRecordedHealthStatistics(
         calories: CumulativeDataPoint?,
         heartRate: StatisticalDataPoint?,
-        heartRateDuringTraining: List<Double>,
         exerciseTime: Long
     ) {
         // TODO extract to separate class
         if(trainingCompleteStatistics == null) {
             initTrainingStatistics()
         }
-        Timber.d("Heart rate during training $heartRateDuringTraining")
         val exercisesStatistics = trainingCompleteStatistics!!.exercisesStatistics.toMutableList()
         val currentCaloriesStatistics = CaloriesStatistics(calories?.total?.asDouble() ?: 0.0)
         val currentHeartRateStatistics = HeartRateStatistics(
