@@ -9,10 +9,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import timber.log.Timber
 
-class TrainingProgressController @AssistedInject constructor(
-    @Assisted
-    private val trainingWithExercises: TrainingWithExercises
-) {
+class TrainingProgressController {
+
+    private lateinit var trainingWithExercises: TrainingWithExercises
 
     private val trainingId: Long
         get() = trainingWithExercises.training.id
@@ -34,7 +33,8 @@ class TrainingProgressController @AssistedInject constructor(
     val trainingTime: Long
         get() = System.currentTimeMillis() - startTrainingTime
 
-    fun startTraining() {
+    fun startTraining(trainingWithExercises: TrainingWithExercises) {
+        this.trainingWithExercises = trainingWithExercises
         startTrainingTime = System.currentTimeMillis()
         if (_currentTrainingState.value == null || _currentTrainingState.value is CurrentTrainingState.SummaryState || isDifferentTrainingRunning()) {
             val exercise = trainingWithExercises.exercises[currentExerciseIndex]

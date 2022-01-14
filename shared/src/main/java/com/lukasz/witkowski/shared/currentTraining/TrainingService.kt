@@ -2,6 +2,8 @@ package com.lukasz.witkowski.shared.currentTraining
 
 import android.app.Service
 import android.content.Intent
+import android.os.Binder
+import android.os.IBinder
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
@@ -12,7 +14,7 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class TrainingService : LifecycleService() {
+open class TrainingService : LifecycleService() {
 
     companion object {
         const val TRAINING_ID_KEY = "TrainingIdKey"
@@ -22,12 +24,19 @@ class TrainingService : LifecycleService() {
     lateinit var timerHelper: TimerHelper
 
     @Inject
-    lateinit var trainingProgressControllerFactory: TrainingProgressControllerFactory
-
-    @Inject
     lateinit var trainingRepository: TrainingRepository
 
-    private lateinit var trainingProgressController: TrainingProgressController
+    @Inject
+    lateinit var trainingProgressController: TrainingProgressController
+
+    protected var isStarted = false
+
+    fun stopCurrentService() {
+        timerHelper.cancelTimer()
+        stopForeground(true)
+        stopSelf()
+//        isStarted = false
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
@@ -40,14 +49,13 @@ class TrainingService : LifecycleService() {
     private fun fetchTrainingWithExercises(trainingId: Long) {
         lifecycleScope.launch {
             val trainingWithExercises = trainingRepository.fetchTrainingById(trainingId)
-            getTrainingProgressController(trainingWithExercises)
-            startTraining()
+            startTraining(trainingWithExercises)
         }
     }
 
-    private fun startTraining() {
+    private fun startTraining(trainingWithExercises: TrainingWithExercises) {
         Timber.d("Start training")
-        trainingProgressController.startTraining()
+        trainingProgressController.startTraining(trainingWithExercises)
         onTimerFinishedListener()
         observeTrainingState()
     }
@@ -90,9 +98,5 @@ class TrainingService : LifecycleService() {
 //                VibrationEffect.DEFAULT_AMPLITUDE
 //            )
 //        )
-    }
-
-    private fun getTrainingProgressController(trainingWithExercises: TrainingWithExercises) {
-        trainingProgressController = TrainingProgressController(trainingWithExercises)
     }
 }

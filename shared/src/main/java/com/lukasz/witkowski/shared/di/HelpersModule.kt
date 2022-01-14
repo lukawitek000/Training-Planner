@@ -10,11 +10,18 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ServiceComponent::class)
+@InstallIn(SingletonComponent::class)
 object HelpersModule {
 
+    @Singleton
     @Provides
     fun provideTimerHelper(): TimerHelper {
         return TimerHelper()
+    }
+
+    @Singleton
+    @Provides
+    fun provideTrainingProgressController(): TrainingProgressController {
+        return TrainingProgressController()
     }
 }

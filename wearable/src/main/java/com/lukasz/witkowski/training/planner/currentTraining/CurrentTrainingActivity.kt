@@ -13,10 +13,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.wear.widget.SwipeDismissFrameLayout
-import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.currentTraining.CurrentTrainingState
+import com.lukasz.witkowski.shared.currentTraining.TrainingService
+import com.lukasz.witkowski.shared.currentTraining.TrainingService.Companion.TRAINING_ID_KEY
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.currentTraining.service.TrainingService
 import com.lukasz.witkowski.training.planner.databinding.ActivityCurrentTrainingBinding
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.summary.TrainingSummaryActivity
@@ -32,7 +33,7 @@ class CurrentTrainingActivity : FragmentActivity() {
         private const val TRAINING_REST_TIME_TAG = "Training rest time"
     }
 
-    private lateinit var trainingService: TrainingService
+    private lateinit var trainingService: WearableTrainingService
     private var trainingId = 0L
 
     private lateinit var binding: ActivityCurrentTrainingBinding
@@ -40,12 +41,13 @@ class CurrentTrainingActivity : FragmentActivity() {
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            trainingService = (service as TrainingService.LocalBinder).getService()
+            trainingService = (service as WearableTrainingService.LocalBinder).getService()
+            Timber.d("Service connected")
             val training = (viewModel.trainingWithExercises.value as? ResultHandler.Success)?.value
-            if (!trainingService.isTrainingStarted() && training != null) {
-                trainingService.startTraining(training)
-            }
-            navigateToState(trainingService.currentTrainingProgressHelper.currentTrainingState.value)
+//            if (!trainingService.isTrainingStarted() && training != null) {
+//                trainingService.startTraining(training)
+//            }
+            navigateToState(trainingService.trainingProgressController.currentTrainingState.value)
             observeNavigation()
             observeHealthIndicatorsSupport()
             observeHealthService()
@@ -95,11 +97,11 @@ class CurrentTrainingActivity : FragmentActivity() {
         viewModel.trainingWithExercises.observe(this) {
             when(it){
                 is ResultHandler.Loading -> showProgressBar()
-                is ResultHandler.Success -> startTraining()
+                is ResultHandler.Success -> startTraining(it.value.training.id)
                 is ResultHandler.Error -> handleError()
                 is ResultHandler.Idle -> {}
             }
-            startTrainingService()
+//            startTrainingService()
         }
         viewModel.fetchTraining(trainingId)
     }
@@ -114,19 +116,20 @@ class CurrentTrainingActivity : FragmentActivity() {
         binding.loadingView.loadingLayout.visibility = View.VISIBLE
     }
 
-    private fun startTraining() {
+    private fun startTraining(trainingId: Long) {
         binding.swipeDismissLayout.visibility = View.VISIBLE
         binding.loadingView.loadingLayout.visibility = View.GONE
-        startTrainingService()
+        startTrainingService(trainingId)
     }
 
-    private fun startTrainingService() {
-        val serviceIntent = Intent(this, TrainingService::class.java)
+    private fun startTrainingService(trainingId: Long) {
+        val serviceIntent = Intent(this, WearableTrainingService::class.java)
+        serviceIntent.putExtra(TRAINING_ID_KEY, trainingId)
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
     }
 
     private fun observeNavigation() {
-        trainingService.currentTrainingProgressHelper.currentTrainingState.observe(this) {
+        trainingService.trainingProgressController.currentTrainingState.observe(this) {
             Timber.d("State has changed $it")
             navigateToState(it)
         }
@@ -193,32 +196,32 @@ class CurrentTrainingActivity : FragmentActivity() {
     }
 
     private fun observeHealthIndicatorsSupport() {
-        trainingService.isHeartRateSupported.observe(this) {
-            Timber.d("Is Heart rate supported = $it")
-            if (!it) {
-                Toast.makeText(this, "The Heart rate is not supported", Toast.LENGTH_SHORT).show()
-            }
-        }
-        trainingService.isBurntKcalSupported.observe(this) {
-            Timber.d("Is burnt calories supported = $it")
-            if (!it) {
-                Toast.makeText(this, "The burnt Kcal is not supported", Toast.LENGTH_SHORT).show()
-            }
-        }
-        trainingService.isWorkoutExerciseSupported.observe(this) {
-            Timber.d("Is workout supported = $it")
-            if (!it) {
-                Toast.makeText(this, "The Workout exercise is not supported", Toast.LENGTH_SHORT)
-                    .show()
-            }
-        }
+//        trainingService.isHeartRateSupported.observe(this) {
+//            Timber.d("Is Heart rate supported = $it")
+//            if (!it) {
+//                Toast.makeText(this, "The Heart rate is not supported", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//        trainingService.isBurntKcalSupported.observe(this) {
+//            Timber.d("Is burnt calories supported = $it")
+//            if (!it) {
+//                Toast.makeText(this, "The burnt Kcal is not supported", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//        trainingService.isWorkoutExerciseSupported.observe(this) {
+//            Timber.d("Is workout supported = $it")
+//            if (!it) {
+//                Toast.makeText(this, "The Workout exercise is not supported", Toast.LENGTH_SHORT)
+//                    .show()
+//            }
+//        }
     }
 
     private fun observeHealthService() {
-        trainingService.exerciseUpdatesEndedMessage.observe(this) {
-            if (it.isNotEmpty()) {
-                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-            }
-        }
+//        trainingService.exerciseUpdatesEndedMessage.observe(this) {
+//            if (it.isNotEmpty()) {
+//                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+//            }
+//        }
     }
 }

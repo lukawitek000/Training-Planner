@@ -9,11 +9,12 @@ import android.os.IBinder
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
+import com.lukasz.witkowski.shared.currentTraining.TrainingService
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.shared.utils.startSendingDataService
 import com.lukasz.witkowski.shared.utils.stopSendingDataService
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.currentTraining.service.TrainingService
+import com.lukasz.witkowski.training.planner.currentTraining.WearableTrainingService
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSummaryBinding
 import com.lukasz.witkowski.training.planner.service.SendingStatisticsService
 import com.lukasz.witkowski.training.planner.trainingsList.TrainingsListActivity
@@ -24,17 +25,17 @@ import timber.log.Timber
 class TrainingSummaryActivity : ComponentActivity() {
 
     private lateinit var binding: ActivityTrainingSummaryBinding
-    private lateinit var trainingService: TrainingService
+    private lateinit var trainingService: WearableTrainingService
     private var isServiceStarted = false
     private val viewModel by viewModels<TrainingSummaryViewModel>()
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            trainingService = (service as TrainingService.LocalBinder).getService()
-            observeInsertingStatistics()
-            viewModel.trainingId = trainingService.trainingId
-            displaySummaryProperties()
-            trainingService.trainingCompleteStatistics?.let { viewModel.insertTrainingStatistics(it) }
+            trainingService = (service as WearableTrainingService.LocalBinder).getService()
+//            observeInsertingStatistics()
+//            viewModel.trainingId = trainingService.trainingId
+//            displaySummaryProperties()
+//            trainingService.trainingCompleteStatistics?.let { viewModel.insertTrainingStatistics(it) }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) = Unit
@@ -45,7 +46,7 @@ class TrainingSummaryActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTrainingSummaryBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val serviceIntent = Intent(this, TrainingService::class.java)
+        val serviceIntent = Intent(this, WearableTrainingService::class.java)
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
         binding.exitTrainingBtn.setOnClickListener {
             val intent = Intent(this, TrainingsListActivity::class.java)
@@ -80,31 +81,31 @@ class TrainingSummaryActivity : ComponentActivity() {
         }
     }
 
-    private fun displaySummaryProperties() {
-        val trainingCompleteStatistics = trainingService.trainingCompleteStatistics ?: return
-        binding.totalTimeTv.text =
-            TimeFormatter.millisToTime(trainingCompleteStatistics.trainingStatistics.totalTime)
-        var totalBurnedCalories = 0.0
-        trainingCompleteStatistics.exercisesStatistics.forEach {
-            totalBurnedCalories += it.burntCaloriesStatistics.burntCalories
-        }
-        binding.burnedCaloriesTv.text =
-            getString(R.string.total_burned_calories, totalBurnedCalories)
-        val maxHeartRate = trainingCompleteStatistics.exercisesStatistics.maxByOrNull {
-            it.heartRateStatistics.max
-        }?.heartRateStatistics?.max ?: 0.0
-        binding.maxHeartRateTv.text = getString(R.string.max_heart_rate, maxHeartRate)
-        hideEmptyHealthStatistics(totalBurnedCalories, maxHeartRate)
-    }
-
-    private fun hideEmptyHealthStatistics(totalBurnedCalories: Double, maxHeartRate: Double) {
-        if(maxHeartRate == 0.0) {
-            binding.maxHeartRateTv.visibility = View.GONE
-            binding.maxHeartRateIv.visibility = View.GONE
-        }
-        if(totalBurnedCalories == 0.0) {
-            binding.burnedCaloriesTv.visibility = View.GONE
-            binding.burnedCaloriesIv.visibility = View.GONE
-        }
-    }
+//    private fun displaySummaryProperties() {
+//        val trainingCompleteStatistics = trainingService.trainingCompleteStatistics ?: return
+//        binding.totalTimeTv.text =
+//            TimeFormatter.millisToTime(trainingCompleteStatistics.trainingStatistics.totalTime)
+//        var totalBurnedCalories = 0.0
+//        trainingCompleteStatistics.exercisesStatistics.forEach {
+//            totalBurnedCalories += it.burntCaloriesStatistics.burntCalories
+//        }
+//        binding.burnedCaloriesTv.text =
+//            getString(R.string.total_burned_calories, totalBurnedCalories)
+//        val maxHeartRate = trainingCompleteStatistics.exercisesStatistics.maxByOrNull {
+//            it.heartRateStatistics.max
+//        }?.heartRateStatistics?.max ?: 0.0
+//        binding.maxHeartRateTv.text = getString(R.string.max_heart_rate, maxHeartRate)
+//        hideEmptyHealthStatistics(totalBurnedCalories, maxHeartRate)
+//    }
+//
+//    private fun hideEmptyHealthStatistics(totalBurnedCalories: Double, maxHeartRate: Double) {
+//        if(maxHeartRate == 0.0) {
+//            binding.maxHeartRateTv.visibility = View.GONE
+//            binding.maxHeartRateIv.visibility = View.GONE
+//        }
+//        if(totalBurnedCalories == 0.0) {
+//            binding.burnedCaloriesTv.visibility = View.GONE
+//            binding.burnedCaloriesIv.visibility = View.GONE
+//        }
+//    }
 }

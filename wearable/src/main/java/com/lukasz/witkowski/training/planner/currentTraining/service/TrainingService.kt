@@ -33,6 +33,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
+import com.lukasz.witkowski.shared.currentTraining.CurrentTrainingState
 import com.lukasz.witkowski.shared.models.statistics.CaloriesStatistics
 import com.lukasz.witkowski.shared.models.statistics.ExerciseStatistics
 import com.lukasz.witkowski.shared.models.statistics.HeartRateStatistics
@@ -41,7 +42,6 @@ import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.currentTraining.CurrentTrainingActivity
-import com.lukasz.witkowski.training.planner.currentTraining.CurrentTrainingState
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -52,7 +52,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 @AndroidEntryPoint
-class TrainingService : LifecycleService() {
+class TrainingServiceOld : LifecycleService() {
 
     @Inject
     lateinit var exerciseClient: ExerciseClient
@@ -421,7 +421,7 @@ class TrainingService : LifecycleService() {
     }
 
     inner class LocalBinder : Binder() {
-        fun getService() = this@TrainingService
+        fun getService() = this@TrainingServiceOld
     }
 
     private companion object {

@@ -2,10 +2,10 @@ package com.lukasz.witkowski.training.planner.currentTraining.service
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.lukasz.witkowski.shared.currentTraining.CurrentTrainingState
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.TimeFormatter
-import com.lukasz.witkowski.training.planner.currentTraining.CurrentTrainingState
 import timber.log.Timber
 
 object CurrentTrainingProgressHelper {
