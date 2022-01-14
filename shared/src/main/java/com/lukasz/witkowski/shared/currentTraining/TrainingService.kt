@@ -3,7 +3,11 @@ package com.lukasz.witkowski.shared.currentTraining
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
@@ -87,17 +91,22 @@ open class TrainingService : LifecycleService() {
     }
 
     private fun vibrate() {
-//        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-//            val vibrator = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
-//            vibrator.defaultVibrator
-//        } else {
-//            getSystemService(VIBRATOR_SERVICE) as Vibrator
-//        }
-//        vibrator.vibrate(
-//            VibrationEffect.createOneShot(
-//                300,
-//                VibrationEffect.DEFAULT_AMPLITUDE
-//            )
-//        )
+        val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val vibrator = getSystemService(VIBRATOR_MANAGER_SERVICE) as VibratorManager
+            vibrator.defaultVibrator
+        } else {
+            getSystemService(VIBRATOR_SERVICE) as Vibrator
+        }
+        val vibrationTime = 300L
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(
+                VibrationEffect.createOneShot(
+                    vibrationTime,
+                    VibrationEffect.DEFAULT_AMPLITUDE
+                )
+            )
+        } else {
+            vibrator.vibrate(vibrationTime)
+        }
     }
 }

@@ -8,7 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
-
+// TODO check it for service component
 @Module
 @InstallIn(SingletonComponent::class)
 object HelpersModule {
