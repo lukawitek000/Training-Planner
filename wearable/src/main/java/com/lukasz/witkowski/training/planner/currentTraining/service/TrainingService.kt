@@ -340,9 +340,13 @@ class TrainingService : LifecycleService() {
                 DataType.TOTAL_CALORIES,
                 DataType.HEART_RATE_BPM
             )
+            val dataTypes = setOf(
+                DataType.HEART_RATE_BPM
+            )
             exerciseConfig = ExerciseConfig.builder()
                 .setExerciseType(exerciseType)
                 .setAggregateDataTypes(aggregateDataTypes)
+                .setDataTypes(dataTypes)
                 .build()
         } else {
             _isWorkoutExerciseSupported.value = false
