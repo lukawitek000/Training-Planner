@@ -13,7 +13,7 @@ class TrainingProgressController {
 
     private lateinit var trainingWithExercises: TrainingWithExercises
 
-    private val trainingId: Long
+    val trainingId: Long
         get() = trainingWithExercises.training.id
 
     private val _currentTrainingState = MutableLiveData<CurrentTrainingState>()

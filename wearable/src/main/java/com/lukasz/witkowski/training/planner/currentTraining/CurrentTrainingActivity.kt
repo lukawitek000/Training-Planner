@@ -34,7 +34,6 @@ class CurrentTrainingActivity : FragmentActivity() {
     }
 
     private lateinit var trainingService: WearableTrainingService
-    private var trainingId = 0L
 
     private lateinit var binding: ActivityCurrentTrainingBinding
     private val viewModel: CurrentTrainingViewModel by viewModels()
@@ -43,10 +42,6 @@ class CurrentTrainingActivity : FragmentActivity() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as WearableTrainingService.LocalBinder).getService()
             Timber.d("Service connected")
-            val training = (viewModel.trainingWithExercises.value as? ResultHandler.Success)?.value
-//            if (!trainingService.isTrainingStarted() && training != null) {
-//                trainingService.startTraining(training)
-//            }
             navigateToState(trainingService.trainingProgressController.currentTrainingState.value)
             observeNavigation()
             observeHealthIndicatorsSupport()
@@ -93,17 +88,19 @@ class CurrentTrainingActivity : FragmentActivity() {
             finish()
             return
         }
-        this.trainingId = trainingId
+        observeFetchingTrainingWithExercises()
+        viewModel.fetchTraining(trainingId)
+    }
+
+    private fun observeFetchingTrainingWithExercises() {
         viewModel.trainingWithExercises.observe(this) {
-            when(it){
+            when (it) {
                 is ResultHandler.Loading -> showProgressBar()
                 is ResultHandler.Success -> startTraining(it.value.training.id)
                 is ResultHandler.Error -> handleError()
                 is ResultHandler.Idle -> {}
             }
-//            startTrainingService()
         }
-        viewModel.fetchTraining(trainingId)
     }
 
     private fun handleError() {

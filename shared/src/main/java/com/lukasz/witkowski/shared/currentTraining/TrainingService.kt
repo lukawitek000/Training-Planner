@@ -1,15 +1,21 @@
 package com.lukasz.witkowski.shared.currentTraining
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
-import android.os.Binder
 import android.os.Build
-import android.os.IBinder
+import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import androidx.annotation.DrawableRes
+import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import com.lukasz.witkowski.shared.R
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.repository.TrainingRepository
 import dagger.hilt.android.AndroidEntryPoint
@@ -18,10 +24,17 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-open class TrainingService : LifecycleService() {
+abstract class TrainingService : LifecycleService() {
 
     companion object {
         const val TRAINING_ID_KEY = "TrainingIdKey"
+
+        const val NOTIFICATION_ID = 1
+        const val NOTIFICATION_CHANNEL_ID = "com.lukasz.witkowski.training.wearable.ONGOING_TRAINING"
+        const val NOTIFICATION_CHANNEL_NAME = "Ongoing Training"
+        const val NOTIFICATION_TITLE = "Training"
+        const val NOTIFICATION_TEXT = "Training is active"
+        const val ONGOING_STATUS_TEMPLATE = "Ongoing Exercise #duration#"
     }
 
     @Inject
@@ -35,20 +48,46 @@ open class TrainingService : LifecycleService() {
 
     protected var isStarted = false
 
-    fun stopCurrentService() {
-        timerHelper.cancelTimer()
-        stopForeground(true)
-        stopSelf()
-//        isStarted = false
-    }
+    abstract fun buildNotification(trainingId: Long): Notification
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         Timber.d("onStartCommand")
         val trainingId = intent?.extras?.getLong(TRAINING_ID_KEY)!!
         fetchTrainingWithExercises(trainingId)
+        createNotificationChannel()
+        startForeground(NOTIFICATION_ID, buildNotification(trainingId))
         return Service.START_STICKY
     }
+
+    fun stopCurrentService() {
+        timerHelper.cancelTimer()
+        stopForeground(true)
+        stopSelf()
+        isStarted = false
+    }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                NOTIFICATION_CHANNEL_NAME,
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
+            val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            manager.createNotificationChannel(notificationChannel)
+        }
+    }
+
+    protected fun createNotificationBuilder(pendingIntent: PendingIntent?, icon: Int) =
+        NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            .setContentTitle(NOTIFICATION_TITLE)
+            .setContentText(NOTIFICATION_TEXT)
+            .setSmallIcon(icon)
+            .setContentIntent(pendingIntent)
+            .setOngoing(true)
+            .setCategory(NotificationCompat.CATEGORY_WORKOUT)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
     private fun fetchTrainingWithExercises(trainingId: Long) {
         lifecycleScope.launch {
