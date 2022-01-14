@@ -5,5 +5,6 @@ data class GeneralStatistics(
     val time: Long,
     val date: Long,
     val burnedCalories: Double,
-    val maxHeartRate: Double
+    val maxHeartRate: Double,
+    val heartRateDuringTraining: List<Double>
 )

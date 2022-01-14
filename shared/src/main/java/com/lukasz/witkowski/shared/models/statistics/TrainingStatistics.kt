@@ -12,5 +12,6 @@ data class TrainingStatistics(
     var trainingId: Long,
     var totalTime: Long = 0L,
     val date: Long,
+    var heartRateHistory: List<Double> = emptyList(),
     var isSynchronized: Boolean = false
 )

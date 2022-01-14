@@ -33,7 +33,7 @@ interface StatisticsDao {
     fun getNotSynchronizedStatistics(): Flow<List<TrainingCompleteStatistics>>
 
     @Query("SELECT * FROM TrainingStatistics WHERE trainingId=:trainingId")
-    fun getTrainingCompleteStatisticsByTrainingId(trainingId: Long) : List<TrainingCompleteStatistics>
+    fun getTrainingCompleteStatisticsByTrainingId(trainingId: Long) : Flow<List<TrainingCompleteStatistics>>
 
     @Query("UPDATE TrainingStatistics SET isSynchronized=1 WHERE TrainingIdStatistics=:id")
     fun updateSynchronizedStatisticsById(id: Long)

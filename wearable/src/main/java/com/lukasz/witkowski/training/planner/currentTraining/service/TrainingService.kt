@@ -83,6 +83,7 @@ class TrainingService : LifecycleService() {
     private var exerciseState = ExerciseState.USER_ENDED
     private var caloriesCumulativeData: CumulativeDataPoint? = null
     private var heartRateStatisticalData: StatisticalDataPoint? = null
+    private val heartRateDuringTraining = mutableListOf<Double>()
     private val _exerciseUpdatesEndedMessage = MutableLiveData("")
     val exerciseUpdatesEndedMessage: LiveData<String> = _exerciseUpdatesEndedMessage
 
@@ -177,7 +178,7 @@ class TrainingService : LifecycleService() {
         currentTrainingProgressHelper.currentTrainingState.observe(this) {
             when (it) {
                 is CurrentTrainingState.SummaryState -> {
-                    trainingCompleteStatistics?.trainingStatistics?.totalTime = currentTrainingProgressHelper.trainingTime
+                    saveTrainingStatistics()
                     lifecycleScope.launch {
                         endExercise()
                     }
@@ -193,6 +194,12 @@ class TrainingService : LifecycleService() {
                 }
             }
         }
+    }
+
+    private fun saveTrainingStatistics() {
+        trainingCompleteStatistics?.trainingStatistics?.totalTime =
+            currentTrainingProgressHelper.trainingTime
+        trainingCompleteStatistics?.trainingStatistics?.heartRateHistory = heartRateDuringTraining
     }
 
     private val exerciseUpdateListener = object : ExerciseUpdateListener {
@@ -240,9 +247,25 @@ class TrainingService : LifecycleService() {
         val aggregatedMetrics = exerciseUpdate.latestAggregateMetrics
         caloriesCumulativeData = (aggregatedMetrics[DataType.TOTAL_CALORIES] as? CumulativeDataPoint) ?: caloriesCumulativeData
         heartRateStatisticalData = (aggregatedMetrics[DataType.HEART_RATE_BPM] as? StatisticalDataPoint) ?: heartRateStatisticalData
+        val latestMetrics = exerciseUpdate.latestMetrics
+        latestMetrics[DataType.HEART_RATE_BPM]?.let {
+            try {
+                val heartRate = it.last().value.asDouble()
+                if(heartRate != 0.0) {
+                    heartRateDuringTraining.add(heartRate)
+                }
+            }catch (e: IllegalStateException) {
+                Timber.w("Heart rate is not double")
+            }
+
+        }
     }
 
-    private fun saveRecordedHealthStatistics(calories: CumulativeDataPoint?, heartRate: StatisticalDataPoint?, exerciseTime: Long) {
+    private fun saveRecordedHealthStatistics(
+        calories: CumulativeDataPoint?,
+        heartRate: StatisticalDataPoint?,
+        exerciseTime: Long
+    ) {
         // TODO extract to separate class
         if(trainingCompleteStatistics == null) {
             initTrainingStatistics()
@@ -340,9 +363,13 @@ class TrainingService : LifecycleService() {
                 DataType.TOTAL_CALORIES,
                 DataType.HEART_RATE_BPM
             )
+            val dataTypes = setOf(
+                DataType.HEART_RATE_BPM
+            )
             exerciseConfig = ExerciseConfig.builder()
                 .setExerciseType(exerciseType)
                 .setAggregateDataTypes(aggregateDataTypes)
+                .setDataTypes(dataTypes)
                 .build()
         } else {
             _isWorkoutExerciseSupported.value = false

@@ -11,6 +11,7 @@ import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.repository.StatisticsRepository
 import com.lukasz.witkowski.training.planner.repository.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -25,41 +26,41 @@ class TrainingOverviewViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val trainingId = savedStateHandle.get<Long>("trainingId")
+    private val trainingId = savedStateHandle.get<Long>("trainingId") ?: -1
 
-    private val _training = MutableStateFlow<ResultHandler<TrainingWithExercises>>(ResultHandler.Idle)
-    val training: StateFlow<ResultHandler<TrainingWithExercises>> = _training
+    private val _training = trainingRepository.getTrainingById(trainingId)
+    val training: Flow<TrainingWithExercises> = _training
 
-    private val _statistics = MutableStateFlow<ResultHandler<List<GeneralStatistics>>>(ResultHandler.Idle)
-    val statistics: StateFlow<ResultHandler<List<GeneralStatistics>>> = _statistics
+    private val _statistics = statisticsRepository.getTrainingCompleteStatisticsByTrainingId(trainingId)
+    val statistics: Flow<List<GeneralStatistics>> = _statistics
 
-    init {
-        fetchTrainingDetails()
-        fetchTrainingStatistics()
-    }
+//    init {
+//        fetchTrainingDetails()
+//        fetchTrainingStatistics()
+//    }
 
-    private fun fetchTrainingDetails() {
-        viewModelScope.launch {
-            _training.value = ResultHandler.Loading
-            try {
-                val trainingWithExercises = trainingRepository.getTrainingById(trainingId!!)
-                _training.value = ResultHandler.Success(value = trainingWithExercises)
-            } catch (e: Exception) {
-                _training.value = ResultHandler.Error(message = "There is no training in database")
-            }
-        }
-    }
+//    private fun fetchTrainingDetails() {
+//        viewModelScope.launch {
+//            _training.value = ResultHandler.Loading
+//            try {
+//                val trainingWithExercises = trainingRepository.getTrainingById(trainingId!!)
+//                _training.value = ResultHandler.Success(value = trainingWithExercises)
+//            } catch (e: Exception) {
+//                _training.value = ResultHandler.Error(message = "There is no training in database")
+//            }
+//        }
+//    }
 
-    private fun fetchTrainingStatistics() {
-        viewModelScope.launch {
-            _statistics.value = ResultHandler.Loading
-            try {
-                val generalStatistics = statisticsRepository.getTrainingCompleteStatisticsByTrainingId(trainingId!!)
-                if (generalStatistics.isEmpty()) throw Exception()
-                _statistics.value = ResultHandler.Success(value = generalStatistics)
-            } catch (e: Exception) {
-                _statistics.value = ResultHandler.Error(message = "No statistics for this training.")
-            }
-        }
-    }
+//    private fun fetchTrainingStatistics() {
+//        viewModelScope.launch {
+//            _statistics.value = ResultHandler.Loading
+//            try {
+//                val generalStatistics = statisticsRepository.getTrainingCompleteStatisticsByTrainingId(trainingId!!)
+//                if (generalStatistics.isEmpty()) throw Exception()
+//                _statistics.value = ResultHandler.Success(value = generalStatistics)
+//            } catch (e: Exception) {
+//                _statistics.value = ResultHandler.Error(message = "No statistics for this training.")
+//            }
+//        }
+//    }
 }
