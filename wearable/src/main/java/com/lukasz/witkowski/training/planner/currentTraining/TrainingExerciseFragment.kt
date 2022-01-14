@@ -50,7 +50,7 @@ class TrainingExerciseFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentTrainingExerciseBinding.inflate(inflater, container, false)
-        val serviceIntent = Intent(requireContext(), TrainingService::class.java)
+        val serviceIntent = Intent(requireContext(), WearableTrainingService::class.java)
         requireActivity().bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
 
         return binding.root
