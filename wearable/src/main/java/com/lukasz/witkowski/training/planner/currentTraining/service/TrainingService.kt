@@ -83,6 +83,7 @@ class TrainingService : LifecycleService() {
     private var exerciseState = ExerciseState.USER_ENDED
     private var caloriesCumulativeData: CumulativeDataPoint? = null
     private var heartRateStatisticalData: StatisticalDataPoint? = null
+    private val heartRateDuringTraining = mutableListOf<Double>()
     private val _exerciseUpdatesEndedMessage = MutableLiveData("")
     val exerciseUpdatesEndedMessage: LiveData<String> = _exerciseUpdatesEndedMessage
 
@@ -216,7 +217,7 @@ class TrainingService : LifecycleService() {
         if(!oldState.isEnded && exerciseUpdate.state.isEnded) {
             // Exercise ended
             val exerciseTime = exerciseUpdate.activeDuration.toMillis()
-            saveRecordedHealthStatistics(caloriesCumulativeData, heartRateStatisticalData, exerciseTime)
+            saveRecordedHealthStatistics(caloriesCumulativeData, heartRateStatisticalData, heartRateDuringTraining, exerciseTime)
             when(exerciseUpdate.state) {
                 ExerciseState.TERMINATED -> {
                     // Another app started tracking an exercise
@@ -240,13 +241,31 @@ class TrainingService : LifecycleService() {
         val aggregatedMetrics = exerciseUpdate.latestAggregateMetrics
         caloriesCumulativeData = (aggregatedMetrics[DataType.TOTAL_CALORIES] as? CumulativeDataPoint) ?: caloriesCumulativeData
         heartRateStatisticalData = (aggregatedMetrics[DataType.HEART_RATE_BPM] as? StatisticalDataPoint) ?: heartRateStatisticalData
+        val latestMetrics = exerciseUpdate.latestMetrics
+        latestMetrics[DataType.HEART_RATE_BPM]?.let {
+            try {
+                val heartRate = it.last().value.asDouble()
+                if(heartRate != 0.0) {
+                    heartRateDuringTraining.add(heartRate)
+                }
+            }catch (e: IllegalStateException) {
+                Timber.w("Heart rate is not double")
+            }
+
+        }
     }
 
-    private fun saveRecordedHealthStatistics(calories: CumulativeDataPoint?, heartRate: StatisticalDataPoint?, exerciseTime: Long) {
+    private fun saveRecordedHealthStatistics(
+        calories: CumulativeDataPoint?,
+        heartRate: StatisticalDataPoint?,
+        heartRateDuringTraining: List<Double>,
+        exerciseTime: Long
+    ) {
         // TODO extract to separate class
         if(trainingCompleteStatistics == null) {
             initTrainingStatistics()
         }
+        Timber.d("Heart rate during training $heartRateDuringTraining")
         val exercisesStatistics = trainingCompleteStatistics!!.exercisesStatistics.toMutableList()
         val currentCaloriesStatistics = CaloriesStatistics(calories?.total?.asDouble() ?: 0.0)
         val currentHeartRateStatistics = HeartRateStatistics(
