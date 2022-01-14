@@ -82,34 +82,18 @@ fun TrainingOverviewScreen(
     viewModel: TrainingOverviewViewModel,
     navigateBack: () -> Unit
 ) {
-    val trainingRequest by viewModel.training.collectAsState()
-    val statisticsRequest by viewModel.statistics.collectAsState()
+    val trainingWithExercises by viewModel.training.collectAsState(TrainingWithExercises(Training(title = ""), emptyList()))
+    val generalStatistics by viewModel.statistics.collectAsState(emptyList())
     Scaffold(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
                 .padding(8.dp),
         ) {
             item {
-                when (trainingRequest) {
-                    is ResultHandler.Loading -> {
-                        LoadingScreen(Modifier.fillMaxSize())
-                    }
-                    is ResultHandler.Success -> {
-                        TrainingOverviewContent(
-                            modifier = Modifier,
-                            trainingWithExercises = (trainingRequest as ResultHandler.Success<TrainingWithExercises>).value
-                        )
-                    }
-                    is ResultHandler.Error -> {
-                        Toast.makeText(
-                            LocalContext.current,
-                            (trainingRequest as ResultHandler.Error).message,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        navigateBack()
-                    }
-                    is ResultHandler.Idle -> {}
-                }
+                TrainingOverviewContent(
+                    modifier = Modifier,
+                    trainingWithExercises = trainingWithExercises
+                )
             }
             item {
                 Text(
@@ -121,29 +105,21 @@ fun TrainingOverviewScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
-                when (statisticsRequest) {
-                    is ResultHandler.Loading -> {
-                        LoadingScreen(Modifier.fillMaxSize())
-                    }
-                    is ResultHandler.Success -> {
-                        TrainingStatisticsList(
-                            modifier = Modifier,
-                            generalStatistics = (statisticsRequest as ResultHandler.Success).value
+                if(generalStatistics.isNotEmpty()) {
+                    TrainingStatisticsList(
+                        modifier = Modifier,
+                        generalStatistics = generalStatistics
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.no_statistics),
+                            fontSize = 18.sp,
                         )
                     }
-                    is ResultHandler.Error -> {
-                        val message = (statisticsRequest as ResultHandler.Error).message
-                        Box(
-                             modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = message,
-                                fontSize = 18.sp,
-                            )
-                        }
-                    }
-                    is ResultHandler.Idle -> {}
                 }
             }
         }

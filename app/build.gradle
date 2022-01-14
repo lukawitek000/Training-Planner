@@ -106,7 +106,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.0"
 
-    // Plots
-    def charts_version = '1.0.1"'
-    implementation "com.github.tehras:charts:${charts_version}"
+//    // Plots
+//    def charts_version = '1.0.1"'
+//    implementation "com.github.tehras:charts:${charts_version}"
 }

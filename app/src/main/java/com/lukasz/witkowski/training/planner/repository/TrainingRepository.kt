@@ -19,8 +19,8 @@ class TrainingRepository constructor(
         }
     }
 
-    suspend fun getTrainingById(trainingId: Long): TrainingWithExercises = withContext(Dispatchers.IO) {
-        trainingDao.getTrainingWithExercisesById(trainingId)
+    fun getTrainingById(trainingId: Long): Flow<TrainingWithExercises> {
+        return trainingDao.getTrainingWithExercisesById(trainingId)
     }
 
     fun loadTrainingsWithExercises(filterCategories: List<Category>) : Flow<List<TrainingWithExercises>>{
