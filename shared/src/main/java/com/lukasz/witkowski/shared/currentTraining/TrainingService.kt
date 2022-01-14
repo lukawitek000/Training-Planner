@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.shared.currentTraining
 
 import androidx.lifecycle.LifecycleService
+import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -11,7 +12,13 @@ class TrainingService : LifecycleService() {
     lateinit var timerHelper: TimerHelper
 
     @Inject
-    lateinit var trainingProgressController: TrainingProgressController
+    lateinit var trainingProgressControllerFactory: TrainingProgressControllerFactory
+
+    private lateinit var trainingProgressController: TrainingProgressController
+
+    fun getTrainingProgressController(trainingWithExercises: TrainingWithExercises) {
+        trainingProgressController = TrainingProgressController(trainingWithExercises)
+    }
 
 
 

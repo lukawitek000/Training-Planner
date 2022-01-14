@@ -5,11 +5,16 @@ import androidx.lifecycle.MutableLiveData
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.TimeFormatter
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import timber.log.Timber
 
-class TrainingProgressController {
+class TrainingProgressController @AssistedInject constructor(
+    @Assisted
+    val trainingWithExercises: TrainingWithExercises
+) {
 
-    private lateinit var trainingWithExercises: TrainingWithExercises
+//    private lateinit var trainingWithExercises: TrainingWithExercises
 
     private val trainingId: Long
         get() = trainingWithExercises.training.id
@@ -33,7 +38,7 @@ class TrainingProgressController {
         get() = System.currentTimeMillis() - startTrainingTime
 
     fun startTraining(trainingWithExercises: TrainingWithExercises) {
-        this.trainingWithExercises = trainingWithExercises
+//        this.trainingWithExercises = trainingWithExercises
         startTrainingTime = System.currentTimeMillis()
         if (_currentTrainingState.value == null || _currentTrainingState.value is CurrentTrainingState.SummaryState || isDifferentTrainingRunning()) {
             val exercise = trainingWithExercises.exercises[currentExerciseIndex]
