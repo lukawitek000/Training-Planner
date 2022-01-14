@@ -11,17 +11,14 @@ import timber.log.Timber
 
 class TrainingProgressController @AssistedInject constructor(
     @Assisted
-    val trainingWithExercises: TrainingWithExercises
+    private val trainingWithExercises: TrainingWithExercises
 ) {
-
-//    private lateinit var trainingWithExercises: TrainingWithExercises
 
     private val trainingId: Long
         get() = trainingWithExercises.training.id
 
     private val _currentTrainingState = MutableLiveData<CurrentTrainingState>()
     val currentTrainingState: LiveData<CurrentTrainingState> = _currentTrainingState
-
 
     private var currentExerciseIndex = 0
     var currentSet = 1
@@ -37,8 +34,7 @@ class TrainingProgressController @AssistedInject constructor(
     val trainingTime: Long
         get() = System.currentTimeMillis() - startTrainingTime
 
-    fun startTraining(trainingWithExercises: TrainingWithExercises) {
-//        this.trainingWithExercises = trainingWithExercises
+    fun startTraining() {
         startTrainingTime = System.currentTimeMillis()
         if (_currentTrainingState.value == null || _currentTrainingState.value is CurrentTrainingState.SummaryState || isDifferentTrainingRunning()) {
             val exercise = trainingWithExercises.exercises[currentExerciseIndex]

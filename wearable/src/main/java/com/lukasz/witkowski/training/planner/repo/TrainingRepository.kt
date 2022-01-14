@@ -26,7 +26,7 @@ class TrainingRepository(
     }
 
     suspend fun fetchTrainingById(id: Long): TrainingWithExercises = withContext(Dispatchers.IO) {
-        trainingDao.getTrainingWithExercisesById(id)
+        trainingDao.getTrainingWithExercisesByIdAsync(id)
     }
 
     suspend fun insertTrainingCompleteStatistics(trainingCompleteStatistics: TrainingCompleteStatistics): Long =

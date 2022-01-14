@@ -44,6 +44,9 @@ interface TrainingDao {
     @Query("SELECT * FROM TRAINING WHERE id=:id")
     fun getTrainingWithExercisesById(id: Long): Flow<TrainingWithExercises>
 
+    @Query("SELECT * FROM TRAINING WHERE id=:id")
+    suspend fun getTrainingWithExercisesByIdAsync(id: Long): TrainingWithExercises
+
     @Query("SELECT * FROM TRAINING WHERE id in (SELECT trainingId FROM TrainingExercise WHERE category IN (:filterCategories))")
     fun getTrainingsWithExercisesFromCategories(filterCategories: List<Category>): Flow<List<TrainingWithExercises>>
 

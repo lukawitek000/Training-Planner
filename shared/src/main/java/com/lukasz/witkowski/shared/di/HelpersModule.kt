@@ -17,9 +17,4 @@ object HelpersModule {
     fun provideTimerHelper(): TimerHelper {
         return TimerHelper()
     }
-
-    @Provides
-    fun provideTrainingProgressController(): TrainingProgressController {
-        return TrainingProgressController()
-    }
 }
