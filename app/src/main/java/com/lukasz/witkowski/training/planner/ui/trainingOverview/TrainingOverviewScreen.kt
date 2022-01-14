@@ -303,10 +303,28 @@ fun SingleTrainingStatisticsItem(
                 text = stringResource(id = R.string.max_heart_rate_text, maxHeartRateStatistics),
                 fontSize = fontSize
             )
-            HeartRateLineChart(
-                modifier = Modifier,
-                data = generalStatistics.heartRateDuringTraining
-            )
+            if(generalStatistics.heartRateDuringTraining.isNotEmpty()) {
+                Spacer(modifier = Modifier.height(8.dp))
+                ListCardItem(
+                    backgroundColor = LightDark12
+                ) {
+                    Column() {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = stringResource(id = R.string.heart_rate_plot),
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colors.primary
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        HeartRateLineChart(
+                            modifier = Modifier,
+                            data = generalStatistics.heartRateDuringTraining
+                        )
+
+                    }
+                }
+            }
         }
     }
 }
@@ -318,13 +336,14 @@ fun HeartRateLineChart(
 ) {
     val lineChartData = LineChartData(
         points = data.mapIndexed { index, heartRate -> LineChartData.Point(heartRate.toFloat(), label = "") },
-        padBy = 1.0f,
+        padBy = 50.0f,
         startAtZero = false
     )
     if(lineChartData.points.isNotEmpty()) {
-        Spacer(modifier = Modifier.height(8.dp))
         LineChart(
-            modifier = modifier.heightIn(max = 200.dp).padding(16.dp),
+            modifier = modifier
+                .heightIn(max = 200.dp)
+                .padding(16.dp),
             lineChartData = lineChartData,
             pointDrawer = EmptyPointDrawer,
             lineDrawer = SolidLineDrawer(color = MaterialTheme.colors.primary),
