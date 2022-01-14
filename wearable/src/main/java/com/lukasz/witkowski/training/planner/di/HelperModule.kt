@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.di
 import android.content.Context
 import androidx.health.services.client.ExerciseClient
 import androidx.health.services.client.HealthServices
+import com.lukasz.witkowski.training.planner.currentTraining.TrainingStatisticsRecorder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,5 +20,11 @@ object HelperModule {
     @Provides
     fun provideExerciseClient(@ApplicationContext context: Context): ExerciseClient {
         return HealthServices.getClient(context).exerciseClient
+    }
+
+    @Singleton
+    @Provides
+    fun provideTrainingStatisticsRecorder(exerciseClient: ExerciseClient): TrainingStatisticsRecorder {
+        return TrainingStatisticsRecorder(exerciseClient)
     }
 }

@@ -48,7 +48,7 @@ abstract class TrainingService : LifecycleService() {
 
     protected var isStarted = false
 
-    abstract fun buildNotification(trainingId: Long): Notification
+    abstract fun buildNotification(trainingId: Long): Notification // TODO for mobile app this service can be used so it should be open method
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
@@ -96,7 +96,7 @@ abstract class TrainingService : LifecycleService() {
         }
     }
 
-    private fun startTraining(trainingWithExercises: TrainingWithExercises) {
+    open fun startTraining(trainingWithExercises: TrainingWithExercises) {
         Timber.d("Start training")
         trainingProgressController.startTraining(trainingWithExercises)
         onTimerFinishedListener()
@@ -107,17 +107,29 @@ abstract class TrainingService : LifecycleService() {
         trainingProgressController.currentTrainingState.observe(this) {
             when (it) {
                 is CurrentTrainingState.SummaryState -> {
-                    timerHelper.cancelTimer()
+                    handleSummaryState()
                 }
                 is CurrentTrainingState.ExerciseState -> {
-                    timerHelper.cancelTimer()
+                    handleExerciseState(it)
                 }
                 is CurrentTrainingState.RestTimeState -> {
-                    timerHelper.cancelTimer()
-                    timerHelper.startTimer(trainingProgressController.restTime)
+                    handleRestTimeState()
                 }
             }
         }
+    }
+
+    open fun handleSummaryState() {
+        timerHelper.cancelTimer()
+    }
+
+    open fun handleExerciseState(exerciseState: CurrentTrainingState.ExerciseState) {
+        timerHelper.cancelTimer()
+    }
+
+    open fun handleRestTimeState() {
+        timerHelper.cancelTimer()
+        timerHelper.startTimer(trainingProgressController.restTime)
     }
 
     private fun onTimerFinishedListener() {

@@ -78,7 +78,6 @@ class TrainingExerciseFragment : Fragment() {
         binding.nextBtn.setOnClickListener {
             timer.cancelTimer()
             navigateFurther()
-//            trainingService.currentTrainingProgressHelper.navigateToTrainingRestTime()
         }
     }
 

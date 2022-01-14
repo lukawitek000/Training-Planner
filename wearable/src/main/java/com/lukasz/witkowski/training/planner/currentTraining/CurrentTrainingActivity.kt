@@ -88,19 +88,15 @@ class CurrentTrainingActivity : FragmentActivity() {
             finish()
             return
         }
-        observeFetchingTrainingWithExercises()
-        viewModel.fetchTraining(trainingId)
-    }
-
-    private fun observeFetchingTrainingWithExercises() {
         viewModel.trainingWithExercises.observe(this) {
-            when (it) {
+            when(it){
                 is ResultHandler.Loading -> showProgressBar()
                 is ResultHandler.Success -> startTraining(it.value.training.id)
                 is ResultHandler.Error -> handleError()
                 is ResultHandler.Idle -> {}
             }
         }
+        viewModel.fetchTraining(trainingId)
     }
 
     private fun handleError() {
@@ -193,32 +189,32 @@ class CurrentTrainingActivity : FragmentActivity() {
     }
 
     private fun observeHealthIndicatorsSupport() {
-//        trainingService.isHeartRateSupported.observe(this) {
-//            Timber.d("Is Heart rate supported = $it")
-//            if (!it) {
-//                Toast.makeText(this, "The Heart rate is not supported", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//        trainingService.isBurntKcalSupported.observe(this) {
-//            Timber.d("Is burnt calories supported = $it")
-//            if (!it) {
-//                Toast.makeText(this, "The burnt Kcal is not supported", Toast.LENGTH_SHORT).show()
-//            }
-//        }
-//        trainingService.isWorkoutExerciseSupported.observe(this) {
-//            Timber.d("Is workout supported = $it")
-//            if (!it) {
-//                Toast.makeText(this, "The Workout exercise is not supported", Toast.LENGTH_SHORT)
-//                    .show()
-//            }
-//        }
+        trainingService.trainingStatisticsRecorder.isHeartRateSupported.observe(this) {
+            Timber.d("Is Heart rate supported = $it")
+            if (!it) {
+                Toast.makeText(this, "The Heart rate is not supported", Toast.LENGTH_SHORT).show()
+            }
+        }
+        trainingService.trainingStatisticsRecorder.isBurntKcalSupported.observe(this) {
+            Timber.d("Is burnt calories supported = $it")
+            if (!it) {
+                Toast.makeText(this, "The burnt Kcal is not supported", Toast.LENGTH_SHORT).show()
+            }
+        }
+        trainingService.trainingStatisticsRecorder.isWorkoutExerciseSupported.observe(this) {
+            Timber.d("Is workout supported = $it")
+            if (!it) {
+                Toast.makeText(this, "The Workout exercise is not supported", Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
     }
 
     private fun observeHealthService() {
-//        trainingService.exerciseUpdatesEndedMessage.observe(this) {
-//            if (it.isNotEmpty()) {
-//                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-//            }
-//        }
+        trainingService.trainingStatisticsRecorder.exerciseUpdatesEndedMessage.observe(this) {
+            if (it.isNotEmpty()) {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 }

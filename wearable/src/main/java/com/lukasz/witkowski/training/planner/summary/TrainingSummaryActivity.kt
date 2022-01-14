@@ -32,10 +32,10 @@ class TrainingSummaryActivity : ComponentActivity() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as WearableTrainingService.LocalBinder).getService()
-//            observeInsertingStatistics()
-//            viewModel.trainingId = trainingService.trainingId
-//            displaySummaryProperties()
-//            trainingService.trainingCompleteStatistics?.let { viewModel.insertTrainingStatistics(it) }
+            observeInsertingStatistics()
+            viewModel.trainingId = trainingService.trainingProgressController.trainingId
+            displaySummaryProperties()
+            trainingService.trainingStatisticsRecorder.trainingCompleteStatistics?.let { viewModel.insertTrainingStatistics(it) }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) = Unit
@@ -81,31 +81,31 @@ class TrainingSummaryActivity : ComponentActivity() {
         }
     }
 
-//    private fun displaySummaryProperties() {
-//        val trainingCompleteStatistics = trainingService.trainingCompleteStatistics ?: return
-//        binding.totalTimeTv.text =
-//            TimeFormatter.millisToTime(trainingCompleteStatistics.trainingStatistics.totalTime)
-//        var totalBurnedCalories = 0.0
-//        trainingCompleteStatistics.exercisesStatistics.forEach {
-//            totalBurnedCalories += it.burntCaloriesStatistics.burntCalories
-//        }
-//        binding.burnedCaloriesTv.text =
-//            getString(R.string.total_burned_calories, totalBurnedCalories)
-//        val maxHeartRate = trainingCompleteStatistics.exercisesStatistics.maxByOrNull {
-//            it.heartRateStatistics.max
-//        }?.heartRateStatistics?.max ?: 0.0
-//        binding.maxHeartRateTv.text = getString(R.string.max_heart_rate, maxHeartRate)
-//        hideEmptyHealthStatistics(totalBurnedCalories, maxHeartRate)
-//    }
-//
-//    private fun hideEmptyHealthStatistics(totalBurnedCalories: Double, maxHeartRate: Double) {
-//        if(maxHeartRate == 0.0) {
-//            binding.maxHeartRateTv.visibility = View.GONE
-//            binding.maxHeartRateIv.visibility = View.GONE
-//        }
-//        if(totalBurnedCalories == 0.0) {
-//            binding.burnedCaloriesTv.visibility = View.GONE
-//            binding.burnedCaloriesIv.visibility = View.GONE
-//        }
-//    }
+    private fun displaySummaryProperties() {
+        val trainingCompleteStatistics = trainingService.trainingStatisticsRecorder.trainingCompleteStatistics ?: return
+        binding.totalTimeTv.text =
+            TimeFormatter.millisToTime(trainingCompleteStatistics.trainingStatistics.totalTime)
+        var totalBurnedCalories = 0.0
+        trainingCompleteStatistics.exercisesStatistics.forEach {
+            totalBurnedCalories += it.burntCaloriesStatistics.burntCalories
+        }
+        binding.burnedCaloriesTv.text =
+            getString(R.string.total_burned_calories, totalBurnedCalories)
+        val maxHeartRate = trainingCompleteStatistics.exercisesStatistics.maxByOrNull {
+            it.heartRateStatistics.max
+        }?.heartRateStatistics?.max ?: 0.0
+        binding.maxHeartRateTv.text = getString(R.string.max_heart_rate, maxHeartRate)
+        hideEmptyHealthStatistics(totalBurnedCalories, maxHeartRate)
+    }
+
+    private fun hideEmptyHealthStatistics(totalBurnedCalories: Double, maxHeartRate: Double) {
+        if(maxHeartRate == 0.0) {
+            binding.maxHeartRateTv.visibility = View.GONE
+            binding.maxHeartRateIv.visibility = View.GONE
+        }
+        if(totalBurnedCalories == 0.0) {
+            binding.burnedCaloriesTv.visibility = View.GONE
+            binding.burnedCaloriesIv.visibility = View.GONE
+        }
+    }
 }
