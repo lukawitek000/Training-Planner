@@ -10,6 +10,7 @@ import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import com.lukasz.witkowski.shared.currentTraining.TrainingService
+import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.shared.utils.startSendingDataService
 import com.lukasz.witkowski.shared.utils.stopSendingDataService
@@ -34,7 +35,6 @@ class TrainingSummaryActivity : ComponentActivity() {
             trainingService = (service as WearableTrainingService.LocalBinder).getService()
             observeInsertingStatistics()
             viewModel.trainingId = trainingService.trainingProgressController.trainingId
-            displaySummaryProperties()
             trainingService.trainingStatisticsRecorder.trainingCompleteStatistics?.let { viewModel.insertTrainingStatistics(it) }
         }
 
@@ -59,6 +59,7 @@ class TrainingSummaryActivity : ComponentActivity() {
         viewModel.statisticsId.observe(this) {
             Timber.d("Statistics inserted")
             trainingService.stopCurrentService()
+            displaySummaryProperties()
         }
     }
 
@@ -82,18 +83,11 @@ class TrainingSummaryActivity : ComponentActivity() {
     }
 
     private fun displaySummaryProperties() {
-        val trainingCompleteStatistics = trainingService.trainingStatisticsRecorder.trainingCompleteStatistics ?: return
-        binding.totalTimeTv.text =
-            TimeFormatter.millisToTime(trainingCompleteStatistics.trainingStatistics.totalTime)
-        var totalBurnedCalories = 0.0
-        trainingCompleteStatistics.exercisesStatistics.forEach {
-            totalBurnedCalories += it.burntCaloriesStatistics.burntCalories
-        }
+        binding.totalTimeTv.text = viewModel.getTrainingTotalTime()
+        val totalBurnedCalories = viewModel.calculateTotalBurnedCalories()
         binding.burnedCaloriesTv.text =
             getString(R.string.total_burned_calories, totalBurnedCalories)
-        val maxHeartRate = trainingCompleteStatistics.exercisesStatistics.maxByOrNull {
-            it.heartRateStatistics.max
-        }?.heartRateStatistics?.max ?: 0.0
+        val maxHeartRate = viewModel.calculateMaxHeartRate()
         binding.maxHeartRateTv.text = getString(R.string.max_heart_rate, maxHeartRate)
         hideEmptyHealthStatistics(totalBurnedCalories, maxHeartRate)
     }
