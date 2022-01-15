@@ -5,12 +5,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.FloatingActionButton
@@ -23,20 +21,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.currentTraining.CurrentTrainingState
 import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.TrainingExercise
-import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.service.PhoneTrainingService
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ImageWithDefaultPlaceholder
 
 @Composable
@@ -51,7 +45,7 @@ fun CurrentTrainingScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(onClick = { viewModel.trainingProgressController.navigateToTheNextScreen() }) {
+            FloatingActionButton(onClick = { viewModel.navigateToTheNextScreen() }) {
                 Text(text = "Next")
             }
         }
@@ -65,8 +59,8 @@ fun CurrentTrainingScreen(
                     modifier = Modifier,
                     currentTrainingState = currentTrainingState,
                     timeLeft = timeLeft,
-                    startTimer = { viewModel.timerHelper.startTimer(it) },
-                    pauseTimer = { viewModel.timerHelper.pauseTimer() }
+                    handleTimerAction = { viewModel.handleTimerAction(it) },
+                    timerButtonText = "START/PAUSE/RESUME" // TODO text is not changing
                 )
             }
             is ResultHandler.Error -> {
@@ -91,8 +85,8 @@ fun CurrentTrainingContent(
     modifier: Modifier,
     currentTrainingState: CurrentTrainingState,
     timeLeft: Long,
-    startTimer: (Long) -> Unit,
-    pauseTimer: () -> Unit
+    handleTimerAction: (Long) -> Unit,
+    timerButtonText: String
 ) {
     Column(modifier.fillMaxSize()) {
         when(currentTrainingState) {
@@ -101,8 +95,8 @@ fun CurrentTrainingContent(
                     modifier = Modifier,
                     trainingExercise = currentTrainingState.exercise,
                     timeLeft = timeLeft,
-                    startTimer = startTimer,
-                    pauseTimer = pauseTimer
+                    handleTimerAction = handleTimerAction,
+                    timerButtonText = timerButtonText
                 )
             }
             is CurrentTrainingState.RestTimeState -> {
@@ -131,44 +125,72 @@ fun CurrentExerciseContent(
     modifier: Modifier = Modifier,
     trainingExercise: TrainingExercise,
     timeLeft: Long,
-    startTimer: (Long) -> Unit,
-    pauseTimer: () -> Unit
+    handleTimerAction: (Long) -> Unit,
+    timerButtonText: String
 ) {
     Column(modifier = modifier.fillMaxSize()) {
         ExerciseDescription(exercise = trainingExercise.exercise)
         Spacer(modifier = Modifier.height(16.dp))
         RepsAndSetsRow(modifier = Modifier, trainingExercise = trainingExercise)
         Spacer(modifier = Modifier.height(16.dp))
-        TrainingTimer(
+        TrainingExerciseTimer(
             modifier = Modifier,
-            time = timeLeft,
+            timeLeft = timeLeft,
             totalTime = trainingExercise.time,
-            startTimer = startTimer,
-            pauseTimer = pauseTimer
+            handleTimerAction = handleTimerAction,
+            timerButtonText = timerButtonText
         )
     }
 }
 
 @Composable
-fun TrainingTimer(
+fun TrainingExerciseTimer(
     modifier: Modifier = Modifier,
-    time: Long,
+    timeLeft: Long,
     totalTime: Long,
-    startTimer: (Long) -> Unit,
-    pauseTimer: () -> Unit
+    handleTimerAction: (Long) -> Unit,
+    timerButtonText: String
 ) {
-    Column(modifier.fillMaxSize()) {
-        Box(modifier = Modifier, contentAlignment = Alignment.Center) {
-            CircularProgressIndicator(
-                modifier = Modifier.fillMaxWidth()
-            )
-            Text(text = TimeFormatter.millisToTime(time))
-        }
-        Button(onClick = { startTimer(totalTime) }) {
-            Text(text = "Start")
+    Column(
+        modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        TimerWithProgressBar(
+            modifier = Modifier.weight(3f),
+            timeLeft = timeLeft,
+            totalTime = totalTime
+        )
+        Box(
+            modifier = Modifier.weight(1f),
+            contentAlignment = Alignment.Center
+        ) {
+            Button(
+                modifier = Modifier,
+                onClick = { handleTimerAction(totalTime) }
+            ) {
+                Text(text = timerButtonText, modifier = Modifier.padding(horizontal = 8.dp))
+            }
         }
     }
 
+}
+
+@Composable
+private fun TimerWithProgressBar(modifier: Modifier = Modifier, timeLeft: Long, totalTime: Long) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(36.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator( // TODO text is not in the center, the progress bar is heigher than box
+            modifier = Modifier
+                .fillMaxSize(),
+            strokeWidth = 20.dp,
+            progress = ((timeLeft - TimeFormatter.MILLIS_IN_SECOND).toFloat() / totalTime.toFloat())
+        )
+        Text(text = TimeFormatter.millisToTime(timeLeft), fontSize = 48.sp)
+    }
 }
 
 @Composable

@@ -10,6 +10,7 @@ import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.repository.StatisticsRepository
 import com.lukasz.witkowski.training.planner.repository.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -45,6 +46,35 @@ class CurrentTrainingViewModel @Inject constructor(
     private fun startTraining(trainingWithExercises: TrainingWithExercises) {
         trainingProgressController.startTraining(trainingWithExercises)
     }
+
+    fun navigateToTheNextScreen() {
+        timerHelper.cancelTimer()
+        trainingProgressController.navigateToTheNextScreen()
+    }
+
+    fun pauseTimer() {
+        timerHelper.pauseTimer()
+    }
+
+    fun resumeTimer() {
+        timerHelper.resumeTimer()
+    }
+
+    fun handleTimerAction(totalTime: Long) {
+        if(!isTimerRunning && !isTimerPaused) {
+            timerHelper.startTimer(totalTime)
+        } else if(isTimerPaused) {
+            timerHelper.resumeTimer()
+        } else if (isTimerRunning) {
+            timerHelper.pauseTimer()
+        }
+    }
+
+    private val isTimerRunning: Boolean
+        get() = timerHelper.isRunning
+
+    private val isTimerPaused: Boolean
+        get() = timerHelper.isPaused
 
 
 }

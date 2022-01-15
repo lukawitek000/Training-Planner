@@ -73,7 +73,7 @@ class MainActivity : ComponentActivity() {
         Timber.d("Stop current training service ${::trainingService.isInitialized}")
         if(::trainingService.isInitialized) {
             trainingService.stopCurrentService()
-            unbindService(connection)
+//            unbindService(connection)
         }
     }
 
