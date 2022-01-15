@@ -56,6 +56,7 @@ import me.bytebeats.views.charts.line.render.line.SolidLineDrawer
 import me.bytebeats.views.charts.line.render.point.EmptyPointDrawer
 import me.bytebeats.views.charts.line.render.xaxis.SimpleXAxisDrawer
 import me.bytebeats.views.charts.line.render.yaxis.SimpleYAxisDrawer
+import timber.log.Timber
 
 @ExperimentalAnimationApi
 @Composable
@@ -303,7 +304,7 @@ fun SingleTrainingStatisticsItem(
                 text = stringResource(id = R.string.max_heart_rate_text, maxHeartRateStatistics),
                 fontSize = fontSize
             )
-            if(generalStatistics.heartRateDuringTraining.isNotEmpty()) {
+            if(generalStatistics.heartRateDuringTraining.size > 1) {
                 Spacer(modifier = Modifier.height(8.dp))
                 ListCardItem(
                     backgroundColor = LightDark12
@@ -339,7 +340,7 @@ fun HeartRateLineChart(
         padBy = 50.0f,
         startAtZero = false
     )
-    if(lineChartData.points.isNotEmpty()) {
+    if(lineChartData.points.size > 1) {
         LineChart(
             modifier = modifier
                 .heightIn(max = 200.dp)
