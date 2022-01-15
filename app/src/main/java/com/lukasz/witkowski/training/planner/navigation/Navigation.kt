@@ -55,7 +55,8 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues, sh
                 innerPadding = innerPadding,
                 viewModel = trainingsListViewModel,
                 onCreateTrainingFabClicked = { navController.navigate(route = NavItem.CreateTraining.route) },
-                navigateToTrainingOverview = { navController.navigate(route = "${NavItem.TrainingOverview.route}/$it") }
+                navigateToTrainingOverview = { navController.navigate(route = "${NavItem.TrainingOverview.route}/$it") },
+                navigateToCurrentTraining = { navController.navigate(route = "${NavItem.CurrentTraining.route}/$it") }
             )
         }
 
@@ -99,9 +100,9 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues, sh
         }
 
         composable(
-            "${NavItem.CurrentTraining.route}/trainingId",
+            "${NavItem.CurrentTraining.route}/{trainingId}",
             arguments = listOf(navArgument("trainingId") { type = NavType.LongType }),
-            deepLinks = listOf(navDeepLink { uriPattern = "$uri/trainingId={trainingId}" })
+//            deepLinks = listOf(navDeepLink { uriPattern = "$uri/trainingId={trainingId}" })
         ) {
             val viewModel: CurrentTrainingViewModel = hiltViewModel()
             CurrentTrainingScreen(

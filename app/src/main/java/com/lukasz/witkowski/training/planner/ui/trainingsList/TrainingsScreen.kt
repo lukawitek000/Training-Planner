@@ -45,7 +45,8 @@ fun TrainingsScreen(
     innerPadding: PaddingValues = PaddingValues(),
     viewModel: TrainingsListViewModel,
     onCreateTrainingFabClicked: () -> Unit = {},
-    navigateToTrainingOverview: (Long) -> Unit
+    navigateToTrainingOverview: (Long) -> Unit,
+    navigateToCurrentTraining: (Long) -> Unit
 ) {
     val trainings by viewModel.trainings.collectAsState(emptyList())
     val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
@@ -72,7 +73,8 @@ fun TrainingsScreen(
                         ListCardItem(modifier = Modifier,
                             onCardClicked = { navigateToTrainingOverview(trainingWithExercises.training.id) }) {
                             TrainingListItemContent(
-                                trainingWithExercises = trainingWithExercises
+                                trainingWithExercises = trainingWithExercises,
+                                navigateToCurrentTraining = { navigateToCurrentTraining(trainingWithExercises.training.id) }
                             )
                         }
                     }
@@ -90,7 +92,8 @@ fun TrainingsScreen(
 @Composable
 fun TrainingListItemContent(
     modifier: Modifier = Modifier,
-    trainingWithExercises: TrainingWithExercises
+    trainingWithExercises: TrainingWithExercises,
+    navigateToCurrentTraining: () -> Unit
 ) {
     val categories = trainingWithExercises.exercises.map { it.exercise.category }.filter { it != Category.None }
     Row(
@@ -120,11 +123,13 @@ fun TrainingListItemContent(
                 }
             }
         }
-//        Icon(
-//            modifier = Modifier.size(40.dp),
-//            imageVector = Icons.Filled.PlayArrow,
-//            contentDescription = "Start training",
-//            tint = MaterialTheme.colors.primary,
-//        )
+        Icon(
+            modifier = Modifier
+                .size(40.dp)
+                .clickable { navigateToCurrentTraining() },
+            imageVector = Icons.Filled.PlayArrow,
+            contentDescription = "Start training",
+            tint = MaterialTheme.colors.primary,
+        )
     }
 }
