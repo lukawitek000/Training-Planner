@@ -51,7 +51,6 @@ class TrainingSummaryActivity : ComponentActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 trainingService.trainingStatisticsRecorder.isTrainingEnded.collect {
                     if(it) {
-                        Timber.d("TrainingStatisticsRecorder in acitvity statistics ${trainingService.trainingStatisticsRecorder.trainingCompleteStatistics}")
                         trainingService.trainingStatisticsRecorder.trainingCompleteStatistics?.let { viewModel.insertTrainingStatistics(it) }
                     }
                 }
@@ -77,7 +76,6 @@ class TrainingSummaryActivity : ComponentActivity() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.statisticsId.collect {
-                    Timber.d("Statistics inserted $it")
                     if(it != TrainingSummaryViewModel.NO_STATISTICS_ID) {
                         trainingService.stopCurrentService()
                         displaySummaryProperties()
@@ -113,7 +111,6 @@ class TrainingSummaryActivity : ComponentActivity() {
         binding.burnedCaloriesTv.text =
             getString(R.string.total_burned_calories, totalBurnedCalories)
         val maxHeartRate = viewModel.calculateMaxHeartRate()
-        Timber.d("Display recorder prorties $maxHeartRate $totalBurnedCalories")
         binding.maxHeartRateTv.text = getString(R.string.max_heart_rate, maxHeartRate)
         hideEmptyHealthStatistics(totalBurnedCalories, maxHeartRate)
     }

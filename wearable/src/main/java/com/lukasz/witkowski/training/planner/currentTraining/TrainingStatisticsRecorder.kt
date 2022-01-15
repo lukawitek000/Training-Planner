@@ -100,7 +100,6 @@ class TrainingStatisticsRecorder @Inject constructor(
     private fun saveTrainingStatistics(trainingTime: Long) {
         trainingCompleteStatistics?.trainingStatistics?.totalTime = trainingTime
         trainingCompleteStatistics?.trainingStatistics?.heartRateHistory = heartRateDuringTraining
-        Timber.d("Save statistics Training ended $trainingCompleteStatistics")
     }
 
     fun finishExercise() {
@@ -128,7 +127,6 @@ class TrainingStatisticsRecorder @Inject constructor(
     private suspend fun endExercise() {
         if (isExerciseInProgress()) {
             exerciseClient.endExercise().await()
-            Timber.d("End exercise")
         }
     }
 
@@ -194,11 +192,7 @@ class TrainingStatisticsRecorder @Inject constructor(
         val oldState = exerciseState
         if (!oldState.isEnded && exerciseUpdate.state.isEnded) {
             // Exercise ended
-                Timber.d("Exercise ended")
             val exerciseTime = exerciseUpdate.activeDuration.toMillis()
-            Timber.d("Exercise ended, $exerciseTime")
-            Timber.d("Recorded calories $caloriesCumulativeData")
-            Timber.d("Recorded heart rate $heartRateStatisticalData")
             saveRecordedHealthStatistics(exerciseTime)
             handleDifferentEndCauses(exerciseUpdate)
             clearRecordedHealthStatistics()
@@ -222,11 +216,9 @@ class TrainingStatisticsRecorder @Inject constructor(
         caloriesCumulativeData =
             (aggregatedMetrics[DataType.TOTAL_CALORIES] as? CumulativeDataPoint)
                 ?: caloriesCumulativeData
-        Timber.d("caloriesCumulativeData $caloriesCumulativeData")
         heartRateStatisticalData =
             (aggregatedMetrics[DataType.HEART_RATE_BPM] as? StatisticalDataPoint)
                 ?: heartRateStatisticalData
-        Timber.d("heartRateStatisticalData $heartRateStatisticalData")
         latestMetrics[DataType.HEART_RATE_BPM]?.let {
             saveCurrentHeartRate(it)
         }
@@ -293,7 +285,6 @@ class TrainingStatisticsRecorder @Inject constructor(
             )
         }
         trainingCompleteStatistics!!.exercisesStatistics = exercisesStatistics
-        Timber.d("Saved training complete statistics $trainingCompleteStatistics")
         informAboutFinishedTraining(isCurrentLastExercise)
     }
 
