@@ -1,7 +1,11 @@
 package com.lukasz.witkowski.training.planner
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,29 +29,48 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.lukasz.witkowski.shared.currentTraining.TrainingService
 import com.lukasz.witkowski.shared.utils.startSendingDataService
 import com.lukasz.witkowski.shared.utils.stopSendingDataService
 import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
 import com.lukasz.witkowski.training.planner.navigation.NavItem
 import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
+import com.lukasz.witkowski.training.planner.service.PhoneTrainingService
 import com.lukasz.witkowski.training.planner.service.SendingTrainingsService
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import java.lang.Exception
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var isServiceStarted = false
+    private lateinit var trainingService: PhoneTrainingService
 
     @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             TrainingPlannerTheme {
-                TrainingPlannerApp(showToast = { showToast(it) })
+                TrainingPlannerApp(showToast = { showToast(it) }, startTrainingService = { startTrainingService(it) })
             }
         }
+    }
+
+    fun startTrainingService(trainingId: Long) {
+        val serviceIntent = Intent(this, PhoneTrainingService::class.java)
+        serviceIntent.putExtra(TrainingService.TRAINING_ID_KEY, trainingId)
+        bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
+    }
+
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            trainingService = (service as PhoneTrainingService.LocalBinder).getService()
+            Timber.d("Service connected")
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) = Unit
     }
 
     private fun showToast(message: String) {
@@ -73,6 +96,11 @@ class MainActivity : ComponentActivity() {
     override fun onDestroy() {
         super.onDestroy()
         stopSendingTrainingService()
+        try {
+            unbindService(connection)
+        } catch (e: Exception) {
+            Timber.w("Unbinding service failed ${e.localizedMessage}")
+        }
     }
 
     private fun startSendingTrainingService() {
@@ -90,7 +118,7 @@ class MainActivity : ComponentActivity() {
 
 @ExperimentalAnimationApi
 @Composable
-fun TrainingPlannerApp(showToast: (String) -> Unit) {
+fun TrainingPlannerApp(showToast: (String) -> Unit, startTrainingService: (Long) -> Unit) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = NavItem.Items.list.find {
@@ -130,7 +158,12 @@ fun TrainingPlannerApp(showToast: (String) -> Unit) {
         },
         scaffoldState = scaffoldState
     ) {
-        Navigation(navController = navController, innerPadding = it, showToast = showToast)
+        Navigation(
+            navController = navController,
+            innerPadding = it,
+            showToast = showToast,
+            startTrainingService = startTrainingService
+        )
     }
 }
 
@@ -140,6 +173,6 @@ fun TrainingPlannerApp(showToast: (String) -> Unit) {
 @Composable
 fun TrainingPlannerPreview() {
     TrainingPlannerTheme {
-        TrainingPlannerApp({})
+        TrainingPlannerApp({}, {})
     }
 }

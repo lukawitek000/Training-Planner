@@ -20,10 +20,11 @@ import com.lukasz.witkowski.training.planner.R
 fun CurrentTrainingScreen(
     modifier: Modifier = Modifier,
     viewModel: CurrentTrainingViewModel,
+    startTrainingService: (Long) -> Unit,
     navigateBack: (String) -> Unit
 ) {
     val trainingFetchState by viewModel.trainingFetchState.collectAsState(initial = ResultHandler.Loading)
-
+    startTrainingService(viewModel.trainingId)
     Scaffold(modifier = modifier.fillMaxSize()) {
         Text(text = "Training id ${viewModel.trainingId}")
         when(trainingFetchState) {
