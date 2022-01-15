@@ -111,7 +111,10 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues, sh
             CurrentTrainingScreen(
                 modifier = Modifier.padding(innerPadding),
                 viewModel = viewModel,
-                navigateBack = {}
+                navigateBack = {
+                    showToast(it)
+                    navController.navigateUp()
+                }
             )
         }
     }

@@ -11,14 +11,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.R
 
 @Composable
 fun CurrentTrainingScreen(
     modifier: Modifier = Modifier,
     viewModel: CurrentTrainingViewModel,
-    navigateBack: () -> Unit
+    navigateBack: (String) -> Unit
 ) {
     val trainingFetchState by viewModel.trainingFetchState.collectAsState(initial = ResultHandler.Loading)
 
@@ -31,7 +33,10 @@ fun CurrentTrainingScreen(
             is ResultHandler.Success -> {
                 CurrentTrainingContent(modifier = Modifier, trainingWithExercises = (trainingFetchState as ResultHandler.Success<TrainingWithExercises>).value)
             }
-            else -> Unit
+            is ResultHandler.Error -> {
+                navigateBack(stringResource(id = R.string.training_not_found))
+            }
+            is ResultHandler.Idle -> Unit
         }
 
     }
