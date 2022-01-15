@@ -23,6 +23,10 @@ class TrainingRepository constructor(
         return trainingDao.getTrainingWithExercisesById(trainingId)
     }
 
+    suspend fun getTrainingByIdAsync(trainingId: Long): TrainingWithExercises = withContext(Dispatchers.IO) {
+        trainingDao.getTrainingWithExercisesByIdAsync(trainingId)
+    }
+
     fun loadTrainingsWithExercises(filterCategories: List<Category>) : Flow<List<TrainingWithExercises>>{
         return if (filterCategories.isEmpty()) {
             trainingDao.getAllTrainingsWithExercises()

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
@@ -42,25 +43,31 @@ import com.lukasz.witkowski.training.planner.ui.exercisesList.ImageWithDefaultPl
 fun CurrentTrainingScreen(
     modifier: Modifier = Modifier,
     viewModel: CurrentTrainingViewModel,
-    navigateBack: (String) -> Unit,
-    trainingService: PhoneTrainingService
+    navigateBack: (String) -> Unit
 ) {
     val trainingFetchState by viewModel.trainingFetchState.collectAsState(initial = ResultHandler.Loading)
-    val currentTrainingState by trainingService.trainingProgressController.currentTrainingState.observeAsState()
-    Scaffold(modifier = modifier.fillMaxSize()) {
-        Text(text = "Training id ${viewModel.trainingId}")
+    val currentTrainingState by viewModel.currentTrainingState.observeAsState(initial = CurrentTrainingState.SummaryState)
+    val timeLeft by viewModel.timerHelper.timeLeft.observeAsState(initial = 0L)
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        floatingActionButton = {
+            FloatingActionButton(onClick = { viewModel.trainingProgressController.navigateToTheNextScreen() }) {
+                Text(text = "Next")
+            }
+        }
+    ) {
         when(trainingFetchState) {
             is ResultHandler.Loading -> {
                 LoadingTrainingContent()
             }
             is ResultHandler.Success -> {
-                currentTrainingState?.let { it1 ->
-                    CurrentTrainingContent(
-                        modifier = Modifier,
-                        currentTrainingState = it1,
-                        navigateFurther = { trainingService.trainingProgressController.navigateToTheNextScreen() }
-                    )
-                }
+                CurrentTrainingContent(
+                    modifier = Modifier,
+                    currentTrainingState = currentTrainingState,
+                    timeLeft = timeLeft,
+                    startTimer = { viewModel.timerHelper.startTimer(it) },
+                    pauseTimer = { viewModel.timerHelper.pauseTimer() }
+                )
             }
             is ResultHandler.Error -> {
                 navigateBack(stringResource(id = R.string.training_not_found))
@@ -83,12 +90,20 @@ private fun LoadingTrainingContent() {
 fun CurrentTrainingContent(
     modifier: Modifier,
     currentTrainingState: CurrentTrainingState,
-    navigateFurther: () -> Unit
+    timeLeft: Long,
+    startTimer: (Long) -> Unit,
+    pauseTimer: () -> Unit
 ) {
-    Column() {
+    Column(modifier.fillMaxSize()) {
         when(currentTrainingState) {
             is CurrentTrainingState.ExerciseState -> {
-                CurrentExerciseContent(modifier = Modifier, trainingExercise = currentTrainingState.exercise)
+                CurrentExerciseContent(
+                    modifier = Modifier,
+                    trainingExercise = currentTrainingState.exercise,
+                    timeLeft = timeLeft,
+                    startTimer = startTimer,
+                    pauseTimer = pauseTimer
+                )
             }
             is CurrentTrainingState.RestTimeState -> {
                 CurrentRestTimeContent(modifier = Modifier, restTime = currentTrainingState.restTime)
@@ -96,9 +111,6 @@ fun CurrentTrainingContent(
             is CurrentTrainingState.SummaryState -> {
                 CurrentTrainingSummaryContent(modifier = Modifier)
             }
-        }
-        Button(onClick = navigateFurther) {
-            Text(text = "Next")
         }
     }
 
@@ -115,24 +127,48 @@ fun CurrentRestTimeContent(modifier: Modifier, restTime: Long) {
 }
 
 @Composable
-fun CurrentExerciseContent(modifier: Modifier = Modifier, trainingExercise: TrainingExercise) {
+fun CurrentExerciseContent(
+    modifier: Modifier = Modifier,
+    trainingExercise: TrainingExercise,
+    timeLeft: Long,
+    startTimer: (Long) -> Unit,
+    pauseTimer: () -> Unit
+) {
     Column(modifier = modifier.fillMaxSize()) {
         ExerciseDescription(exercise = trainingExercise.exercise)
         Spacer(modifier = Modifier.height(16.dp))
         RepsAndSetsRow(modifier = Modifier, trainingExercise = trainingExercise)
         Spacer(modifier = Modifier.height(16.dp))
-        TrainingTimer(modifier = Modifier, time = trainingExercise.time)
+        TrainingTimer(
+            modifier = Modifier,
+            time = timeLeft,
+            totalTime = trainingExercise.time,
+            startTimer = startTimer,
+            pauseTimer = pauseTimer
+        )
     }
 }
 
 @Composable
-fun TrainingTimer(modifier: Modifier, time: Long) {
-    Box(modifier = modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(
-            modifier = Modifier.fillMaxWidth()
-        )
-        Text(text = TimeFormatter.millisToTime(time))
+fun TrainingTimer(
+    modifier: Modifier = Modifier,
+    time: Long,
+    totalTime: Long,
+    startTimer: (Long) -> Unit,
+    pauseTimer: () -> Unit
+) {
+    Column(modifier.fillMaxSize()) {
+        Box(modifier = Modifier, contentAlignment = Alignment.Center) {
+            CircularProgressIndicator(
+                modifier = Modifier.fillMaxWidth()
+            )
+            Text(text = TimeFormatter.millisToTime(time))
+        }
+        Button(onClick = { startTimer(totalTime) }) {
+            Text(text = "Start")
+        }
     }
+
 }
 
 @Composable
@@ -188,20 +224,20 @@ fun ExerciseDescription(modifier: Modifier = Modifier, exercise: Exercise) {
 }
 
 
-@Preview
-@Composable
-fun CurrentExercisePrev() {
-    CurrentExerciseContent(modifier = Modifier, trainingExercise = TrainingExercise(
-        id = 0L,
-        trainingId = 2L,
-        exercise = Exercise(
-            name = "Push ups",
-            description = " r errgerg erg erg erger esr wrt ht ju y kim tu jyk iyk iykt ",
-            image = null
-        ),
-        sets = 3,
-        repetitions = 15,
-        time = 10000L,
-        restTime = 60000L
-    ))
-}
+//@Preview
+//@Composable
+//fun CurrentExercisePrev() {
+//    CurrentExerciseContent(modifier = Modifier, trainingExercise = TrainingExercise(
+//        id = 0L,
+//        trainingId = 2L,
+//        exercise = Exercise(
+//            name = "Push ups",
+//            description = " r errgerg erg erg erger esr wrt ht ju y kim tu jyk iyk iykt ",
+//            image = null
+//        ),
+//        sets = 3,
+//        repetitions = 15,
+//        time = 10000L,
+//        restTime = 60000L
+//    ), 10000L)
+//}

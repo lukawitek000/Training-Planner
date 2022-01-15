@@ -56,8 +56,7 @@ class MainActivity : ComponentActivity() {
                 TrainingPlannerApp(
                     showToast = { showToast(it) },
                     startTrainingService = { startTrainingService(it) },
-                    stopTrainingService = { stopCurrentTrainingService() },
-                    trainingService = trainingService
+                    stopTrainingService = { stopCurrentTrainingService() }
                 )
             }
         }
@@ -135,8 +134,7 @@ class MainActivity : ComponentActivity() {
 fun TrainingPlannerApp(
     showToast: (String) -> Unit,
     startTrainingService: (Long) -> Unit,
-    stopTrainingService: () -> Unit,
-    trainingService: PhoneTrainingService
+    stopTrainingService: () -> Unit
 ) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -183,8 +181,7 @@ fun TrainingPlannerApp(
             innerPadding = it,
             showToast = showToast,
             startTrainingService = startTrainingService,
-            stopTrainingService = stopTrainingService,
-            trainingService = trainingService
+            stopTrainingService = stopTrainingService
         )
     }
 }
