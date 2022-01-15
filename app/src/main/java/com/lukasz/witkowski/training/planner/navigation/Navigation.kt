@@ -50,7 +50,8 @@ fun Navigation(
     navController: NavHostController,
     innerPadding: PaddingValues,
     showToast: (String) -> Unit,
-    startTrainingService: (Long) -> Unit
+    startTrainingService: (Long) -> Unit,
+    stopTrainingService: () -> Unit
 ) {
     val uri = "https://training-planner.com"
     NavHost(navController = navController, startDestination = NavItem.Trainings.route) {
@@ -117,8 +118,8 @@ fun Navigation(
             CurrentTrainingScreen(
                 modifier = Modifier.padding(innerPadding),
                 viewModel = viewModel,
-                startTrainingService = startTrainingService,
                 navigateBack = {
+                    stopTrainingService()
                     showToast(it)
                     navController.navigateUp()
                 }

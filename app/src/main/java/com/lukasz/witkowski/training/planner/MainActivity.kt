@@ -63,14 +63,17 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun startTrainingService(trainingId: Long) {
+        Timber.d("Start training service $trainingId")
         val serviceIntent = Intent(this, PhoneTrainingService::class.java)
         serviceIntent.putExtra(TrainingService.TRAINING_ID_KEY, trainingId)
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
     }
 
     private fun stopCurrentTrainingService() {
+        Timber.d("Stop current training service ${::trainingService.isInitialized}")
         if(::trainingService.isInitialized) {
             trainingService.stopCurrentService()
+            unbindService(connection)
         }
     }
 
@@ -177,7 +180,8 @@ fun TrainingPlannerApp(
             navController = navController,
             innerPadding = it,
             showToast = showToast,
-            startTrainingService = startTrainingService
+            startTrainingService = startTrainingService,
+            stopTrainingService = stopTrainingService
         )
     }
 }

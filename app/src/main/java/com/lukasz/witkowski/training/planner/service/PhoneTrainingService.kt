@@ -9,6 +9,7 @@ import com.lukasz.witkowski.shared.currentTraining.TrainingService
 import com.lukasz.witkowski.training.planner.MainActivity
 import com.lukasz.witkowski.training.planner.R
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class PhoneTrainingService : TrainingService() {
@@ -40,5 +41,10 @@ class PhoneTrainingService : TrainingService() {
         // Build the notification.
         val notificationBuilder = createNotificationBuilder(pendingIntent, R.drawable.logo)
         return notificationBuilder.build()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Timber.d("Phone training service destroyed")
     }
 }
