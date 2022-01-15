@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.FloatingActionButton
@@ -23,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.currentTraining.CurrentTrainingState
@@ -100,7 +102,11 @@ fun CurrentTrainingContent(
                 )
             }
             is CurrentTrainingState.RestTimeState -> {
-                CurrentRestTimeContent(modifier = Modifier, restTime = currentTrainingState.restTime)
+                CurrentRestTimeContent(
+                    modifier = Modifier,
+                    restTime = currentTrainingState.restTime,
+                    timeLeft = timeLeft
+                )
             }
             is CurrentTrainingState.SummaryState -> {
                 CurrentTrainingSummaryContent(modifier = Modifier)
@@ -116,8 +122,17 @@ fun CurrentTrainingSummaryContent(modifier: Modifier) {
 }
 
 @Composable
-fun CurrentRestTimeContent(modifier: Modifier, restTime: Long) {
-    Text("Rest time $restTime")
+fun CurrentRestTimeContent(
+    modifier: Modifier = Modifier,
+    restTime: Long,
+    timeLeft: Long
+) {
+    TimerWithProgressBar(
+        modifier
+            .fillMaxSize(),
+        timeLeft = timeLeft,
+        totalTime = restTime
+    )
 }
 
 @Composable
@@ -128,19 +143,59 @@ fun CurrentExerciseContent(
     handleTimerAction: (Long) -> Unit,
     timerButtonText: String
 ) {
+    val isExerciseWithTime = trainingExercise.time > 0L
     Column(modifier = modifier.fillMaxSize()) {
-        ExerciseDescription(exercise = trainingExercise.exercise)
+        if(isExerciseWithTime) {
+            ExerciseWithTimeDescription(exercise = trainingExercise.exercise)
+        } else {
+            ExerciseWithoutTimeDescription(modifier = Modifier, exercise = trainingExercise.exercise)
+        }
         Spacer(modifier = Modifier.height(16.dp))
         RepsAndSetsRow(modifier = Modifier, trainingExercise = trainingExercise)
         Spacer(modifier = Modifier.height(16.dp))
-        TrainingExerciseTimer(
-            modifier = Modifier,
-            timeLeft = timeLeft,
-            totalTime = trainingExercise.time,
-            handleTimerAction = handleTimerAction,
-            timerButtonText = timerButtonText
-        )
+        if(isExerciseWithTime) {
+            TrainingExerciseTimer(
+                modifier = Modifier,
+                timeLeft = timeLeft,
+                totalTime = trainingExercise.time,
+                handleTimerAction = handleTimerAction,
+                timerButtonText = timerButtonText
+            )
+        } else {
+            Box(modifier = Modifier
+                .fillMaxSize()
+                .padding(64.dp)) {
+                ImageWithDefaultPlaceholder(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(8.dp),
+                    imageDescription = "Exercise image",
+                    image = trainingExercise.exercise.image
+                )
+            }
+        }
     }
+}
+
+@Composable
+fun ExerciseWithoutTimeDescription(modifier: Modifier, exercise: Exercise) {
+    Column(
+        modifier = modifier.padding(8.dp),
+        verticalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = exercise.name,
+            fontSize = 28.sp,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colors.primary
+        )
+        if(exercise.description.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(text = exercise.description, fontSize = 18.sp)
+        }
+    }
+
 }
 
 @Composable
@@ -183,9 +238,8 @@ private fun TimerWithProgressBar(modifier: Modifier = Modifier, timeLeft: Long, 
             .padding(36.dp),
         contentAlignment = Alignment.Center,
     ) {
-        CircularProgressIndicator( // TODO text is not in the center, the progress bar is heigher than box
-            modifier = Modifier
-                .fillMaxSize(),
+        CircularProgressIndicator( // TODO text is not in the center, the progress bar is heigher than box - setting size is not the best solution
+            modifier = Modifier.size(300.dp),
             strokeWidth = 20.dp,
             progress = ((timeLeft - TimeFormatter.MILLIS_IN_SECOND).toFloat() / totalTime.toFloat())
         )
@@ -216,7 +270,7 @@ private fun TrainingExerciseNumbers(modifier: Modifier = Modifier, label: String
 }
 
 @Composable
-fun ExerciseDescription(modifier: Modifier = Modifier, exercise: Exercise) {
+fun ExerciseWithTimeDescription(modifier: Modifier = Modifier, exercise: Exercise) {
     Row(
         modifier
             .fillMaxWidth()
@@ -224,7 +278,7 @@ fun ExerciseDescription(modifier: Modifier = Modifier, exercise: Exercise) {
         ImageWithDefaultPlaceholder(
             modifier = Modifier.padding(8.dp),
             imageDescription = "Exercise image",
-            image = null
+            image = exercise.image
         )
         Column(
             modifier = Modifier.padding(8.dp),
@@ -246,20 +300,8 @@ fun ExerciseDescription(modifier: Modifier = Modifier, exercise: Exercise) {
 }
 
 
-//@Preview
-//@Composable
-//fun CurrentExercisePrev() {
-//    CurrentExerciseContent(modifier = Modifier, trainingExercise = TrainingExercise(
-//        id = 0L,
-//        trainingId = 2L,
-//        exercise = Exercise(
-//            name = "Push ups",
-//            description = " r errgerg erg erg erger esr wrt ht ju y kim tu jyk iyk iykt ",
-//            image = null
-//        ),
-//        sets = 3,
-//        repetitions = 15,
-//        time = 10000L,
-//        restTime = 60000L
-//    ), 10000L)
-//}
+@Preview
+@Composable
+fun CurrentRestTimePrev() {
+    CurrentRestTimeContent(restTime = 10000L, timeLeft = 9000L)
+}
