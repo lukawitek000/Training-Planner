@@ -55,8 +55,11 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues, sh
                 innerPadding = innerPadding,
                 viewModel = trainingsListViewModel,
                 onCreateTrainingFabClicked = { navController.navigate(route = NavItem.CreateTraining.route) },
-                navigateToTrainingOverview = { navController.navigate(route = "${NavItem.TrainingOverview.route}/$it") },
-                navigateToCurrentTraining = { navController.navigate(route = "${NavItem.CurrentTraining.route}/$it") }
+                navigateToTrainingOverview = { navController.navigate(route = "${NavItem.TrainingOverview.route}/$it") }, // TODO show trqining title in the top bar as in the design
+                navigateToCurrentTraining = { trainingId, trainingTitle ->
+                    NavItem.CurrentTraining.title = trainingTitle
+                    navController.navigate(route = "${NavItem.CurrentTraining.route}/$trainingId")
+                }
             )
         }
 

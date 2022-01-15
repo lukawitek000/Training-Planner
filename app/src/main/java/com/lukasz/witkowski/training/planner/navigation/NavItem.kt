@@ -13,7 +13,7 @@ import com.lukasz.witkowski.training.planner.R
 sealed class NavItem(
     val route: String,
     val icon: Int?,
-    val title: String,
+    var title: String,
     val isBackArrow: Boolean = false
 ) {
 

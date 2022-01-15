@@ -46,7 +46,7 @@ fun TrainingsScreen(
     viewModel: TrainingsListViewModel,
     onCreateTrainingFabClicked: () -> Unit = {},
     navigateToTrainingOverview: (Long) -> Unit,
-    navigateToCurrentTraining: (Long) -> Unit
+    navigateToCurrentTraining: (Long, String) -> Unit
 ) {
     val trainings by viewModel.trainings.collectAsState(emptyList())
     val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
@@ -74,7 +74,7 @@ fun TrainingsScreen(
                             onCardClicked = { navigateToTrainingOverview(trainingWithExercises.training.id) }) {
                             TrainingListItemContent(
                                 trainingWithExercises = trainingWithExercises,
-                                navigateToCurrentTraining = { navigateToCurrentTraining(trainingWithExercises.training.id) }
+                                navigateToCurrentTraining = { navigateToCurrentTraining(trainingWithExercises.training.id, trainingWithExercises.training.title) }
                             )
                         }
                     }
