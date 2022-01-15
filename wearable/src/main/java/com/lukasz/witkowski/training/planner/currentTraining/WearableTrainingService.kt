@@ -78,7 +78,7 @@ class WearableTrainingService: TrainingService() {
 
     override fun buildNotification(trainingId: Long): Notification {
         val intent = Intent(applicationContext, CurrentTrainingActivity::class.java)
-        intent.putExtra(StartTrainingActivity.TRAINING_ID_KEY, trainingId)
+        intent.putExtra(StartTrainingActivity.TRAINING_ID_KEY, trainingId) // TODO replace training id, use one from shared/utils/serviceutils
         val pendingIntent = PendingIntent.getActivity(this, NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         // Build the notification.

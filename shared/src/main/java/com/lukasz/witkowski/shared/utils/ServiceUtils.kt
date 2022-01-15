@@ -18,3 +18,5 @@ fun <T> Context.startSendingDataService(cls: Class<T>) = try {
     } catch (e: Exception) {
         false
     }
+
+const val TRAINING_ID_KEY = "trainingId"
