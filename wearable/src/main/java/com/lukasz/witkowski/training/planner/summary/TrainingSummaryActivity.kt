@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.view.View
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
@@ -14,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.lukasz.witkowski.shared.currentTraining.TrainingService
 import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
+import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.shared.utils.startSendingDataService
 import com.lukasz.witkowski.shared.utils.stopSendingDataService
@@ -38,7 +40,6 @@ class TrainingSummaryActivity : ComponentActivity() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as WearableTrainingService.LocalBinder).getService()
-            observeInsertingStatistics()
             observeEndedTraining()
             viewModel.trainingId = trainingService.trainingProgressController.trainingId
         }
@@ -63,6 +64,7 @@ class TrainingSummaryActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTrainingSummaryBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        observeInsertingStatistics()
         val serviceIntent = Intent(this, WearableTrainingService::class.java)
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
         binding.exitTrainingBtn.setOnClickListener {
@@ -75,15 +77,62 @@ class TrainingSummaryActivity : ComponentActivity() {
     private fun observeInsertingStatistics() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.statisticsId.collect {
-                    if(it != TrainingSummaryViewModel.NO_STATISTICS_ID) {
-                        trainingService.stopCurrentService()
-                        displaySummaryProperties()
+                viewModel.insertStatisticsState.collect {
+                    when(it) {
+                        is ResultHandler.Loading -> showLoadingProgressBar()
+                        is ResultHandler.Success -> handleSuccessfulStatisticsRecording()
+                        is ResultHandler.Error -> handleError(it.message)
+                        is ResultHandler.Idle -> Unit
                     }
+
                 }
             }
         }
 
+    }
+
+    private fun handleError(message: String) {
+        Timber.w(message)
+        Toast.makeText(this, resources.getString(R.string.save_statistics_failed), Toast.LENGTH_SHORT).show()
+        hideProgressBar()
+    }
+
+    private fun handleSuccessfulStatisticsRecording() {
+        showStatistics()
+        hideProgressBar()
+        trainingService.stopCurrentService()
+        displaySummaryProperties()
+    }
+
+    private fun hideProgressBar() {
+        binding.loadingStatisticsPb.visibility = View.INVISIBLE
+    }
+
+    private fun showStatistics() {
+        binding.apply {
+            totalTimeIv.visibility = View.VISIBLE
+            totalTimeTv.visibility = View.VISIBLE
+            maxHeartRateTv.visibility = View.VISIBLE
+            maxHeartRateIv.visibility = View.VISIBLE
+            burnedCaloriesTv.visibility = View.VISIBLE
+            burnedCaloriesIv.visibility = View.VISIBLE
+        }
+    }
+
+    private fun showLoadingProgressBar() {
+        hideStatistics()
+        binding.loadingStatisticsPb.visibility = View.VISIBLE
+    }
+
+    private fun hideStatistics() {
+        binding.apply {
+            totalTimeIv.visibility = View.INVISIBLE
+            totalTimeTv.visibility = View.INVISIBLE
+            maxHeartRateTv.visibility = View.INVISIBLE
+            maxHeartRateIv.visibility = View.INVISIBLE
+            burnedCaloriesTv.visibility = View.INVISIBLE
+            burnedCaloriesIv.visibility = View.INVISIBLE
+        }
     }
 
     override fun onDestroy() {

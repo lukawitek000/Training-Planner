@@ -13,4 +13,5 @@
     <string name="summary">Summary</string>
     <string name="no_trainings_message">Training list is empty.\nUse mobile application to create them.</string>
     <string name="loading_info">Loading...</string>
+    <string name="save_statistics_failed">Saving statistics failed</string>
 </resources>

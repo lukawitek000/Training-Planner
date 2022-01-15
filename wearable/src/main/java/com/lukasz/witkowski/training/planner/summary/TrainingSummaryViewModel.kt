@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
+import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.repo.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,8 +24,9 @@ class TrainingSummaryViewModel
 
     var trainingId = 0L
 
-    private val _statisticsId = MutableStateFlow(NO_STATISTICS_ID)
-    val statisticsId: StateFlow<Long> = _statisticsId
+    private val _insertStatisticsState =
+        MutableStateFlow<ResultHandler<Long>>(ResultHandler.Loading)
+    val insertStatisticsState: StateFlow<ResultHandler<Long>> = _insertStatisticsState
 
     private var trainingCompleteStatistics: TrainingCompleteStatistics? = null
 
@@ -32,7 +34,14 @@ class TrainingSummaryViewModel
         viewModelScope.launch {
             trainingCompleteStatistics.trainingStatistics.trainingId = trainingId
             this@TrainingSummaryViewModel.trainingCompleteStatistics = trainingCompleteStatistics
-            _statisticsId.value = repository.insertTrainingCompleteStatistics(trainingCompleteStatistics)
+            try {
+                val statisticsId =
+                    repository.insertTrainingCompleteStatistics(trainingCompleteStatistics)
+                _insertStatisticsState.value = ResultHandler.Success(statisticsId)
+            } catch (e: Exception) {
+                _insertStatisticsState.value = ResultHandler.Error(message = "Inserting to database failed")
+            }
+
         }
     }
 
@@ -52,10 +61,8 @@ class TrainingSummaryViewModel
     }
 
     fun getTrainingTotalTime(): String {
-        return TimeFormatter.millisToTime(trainingCompleteStatistics?.trainingStatistics?.totalTime ?: 0)
-    }
-
-    companion object {
-        const val NO_STATISTICS_ID = -1L
+        return TimeFormatter.millisToTime(
+            trainingCompleteStatistics?.trainingStatistics?.totalTime ?: 0
+        )
     }
 }
