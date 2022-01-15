@@ -65,6 +65,7 @@ fun Navigation(
                 navigateToTrainingOverview = { navController.navigate(route = "${NavItem.TrainingOverview.route}/$it") }, // TODO show trqining title in the top bar as in the design
                 navigateToCurrentTraining = { trainingId, trainingTitle ->
                     NavItem.CurrentTraining.title = trainingTitle
+                    startTrainingService(trainingId)
                     navController.navigate(route = "${NavItem.CurrentTraining.route}/$trainingId")
                 }
             )
