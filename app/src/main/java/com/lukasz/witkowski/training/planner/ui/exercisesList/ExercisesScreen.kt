@@ -217,7 +217,7 @@ fun ExerciseListItemContent(
 }
 
 @Composable
-private fun ImageWithDefaultPlaceholder(
+fun ImageWithDefaultPlaceholder(
     modifier: Modifier = Modifier,
     imageDescription: String,
     image: Bitmap?,
