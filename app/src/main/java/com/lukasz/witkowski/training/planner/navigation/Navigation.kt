@@ -26,6 +26,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import com.lukasz.witkowski.training.planner.ui.*
 import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseScreen
@@ -33,6 +34,8 @@ import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseVie
 import com.lukasz.witkowski.training.planner.ui.createTraining.CreateTrainingScreen
 import com.lukasz.witkowski.training.planner.ui.createTraining.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.ui.createTraining.PickExerciseScreen
+import com.lukasz.witkowski.training.planner.ui.currentTraining.CurrentTrainingScreen
+import com.lukasz.witkowski.training.planner.ui.currentTraining.CurrentTrainingViewModel
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewScreen
@@ -43,6 +46,7 @@ import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsScreen
 @ExperimentalAnimationApi
 @Composable
 fun Navigation(navController: NavHostController, innerPadding: PaddingValues, showToast: (String) -> Unit) {
+    val uri = "https://training-planner.com"
     NavHost(navController = navController, startDestination = NavItem.Trainings.route) {
 
         composable(NavItem.Trainings.route) {
@@ -94,6 +98,18 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues, sh
             )
         }
 
+        composable(
+            "${NavItem.CurrentTraining.route}/trainingId",
+            arguments = listOf(navArgument("trainingId") { type = NavType.LongType }),
+            deepLinks = listOf(navDeepLink { uriPattern = "$uri/trainingId={trainingId}" })
+        ) {
+            val viewModel: CurrentTrainingViewModel = hiltViewModel()
+            CurrentTrainingScreen(
+                modifier = Modifier.padding(innerPadding),
+                viewModel = viewModel,
+                navigateBack = {}
+            )
+        }
     }
 }
 

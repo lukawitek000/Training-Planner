@@ -39,6 +39,8 @@ sealed class NavItem(
 
     object TrainingOverview : NavItem("training-overview", null, "Training overview", true)
 
+    object CurrentTraining: NavItem("current-training", null, "Current training", true)
+
     object Items {
         val list = listOf<NavItem>(
             Trainings,
