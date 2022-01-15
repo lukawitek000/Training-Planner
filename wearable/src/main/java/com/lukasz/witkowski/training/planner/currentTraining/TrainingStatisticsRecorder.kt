@@ -27,6 +27,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.*
@@ -49,6 +51,7 @@ class TrainingStatisticsRecorder @Inject constructor(
     private var exerciseState = ExerciseState.USER_ENDED
 
     private var exercisesIdAndSetQueue: Queue<Pair<Long, Int>> = LinkedList()
+    private var isLastExercise: Queue<Boolean> = LinkedList()
     var trainingCompleteStatistics: TrainingCompleteStatistics? = null
         private set
 
@@ -64,11 +67,22 @@ class TrainingStatisticsRecorder @Inject constructor(
     private val _exerciseUpdatesEndedMessage = MutableLiveData("")
     val exerciseUpdatesEndedMessage: LiveData<String> = _exerciseUpdatesEndedMessage
 
+    private val _isTrainingEnded = MutableStateFlow(false)
+    val isTrainingEnded: StateFlow<Boolean> = _isTrainingEnded
+
+    private var isLastExerciseStatisticsSaved = false
+
     private var caloriesCumulativeData: CumulativeDataPoint? = null
     private var heartRateStatisticalData: StatisticalDataPoint? = null
     private val heartRateDuringTraining = mutableListOf<Double>()
+    private var startTrainingTime = 0L
+    val trainingTime: Long
+        get() = System.currentTimeMillis() - startTrainingTime
+
+
 
     fun initTrainingStatistics(trainingId: Long) {
+        startTrainingTime = System.currentTimeMillis()
         trainingCompleteStatistics = TrainingCompleteStatistics(
             trainingStatistics = TrainingStatistics(
                 trainingId = trainingId,
@@ -83,9 +97,10 @@ class TrainingStatisticsRecorder @Inject constructor(
         monitorHealthIndicators()
     }
 
-    fun saveTrainingStatistics(trainingTime: Long) {
+    private fun saveTrainingStatistics(trainingTime: Long) {
         trainingCompleteStatistics?.trainingStatistics?.totalTime = trainingTime
         trainingCompleteStatistics?.trainingStatistics?.heartRateHistory = heartRateDuringTraining
+        Timber.d("Save statistics Training ended $trainingCompleteStatistics")
     }
 
     fun finishExercise() {
@@ -113,6 +128,7 @@ class TrainingStatisticsRecorder @Inject constructor(
     private suspend fun endExercise() {
         if (isExerciseInProgress()) {
             exerciseClient.endExercise().await()
+            Timber.d("End exercise")
         }
     }
 
@@ -123,11 +139,11 @@ class TrainingStatisticsRecorder @Inject constructor(
 
     private val exerciseUpdateListener = object : ExerciseUpdateListener {
         override fun onAvailabilityChanged(dataType: DataType, availability: Availability) {
-            Timber.d("Availability changed $dataType $availability")
+//            Timber.d("Availability changed $dataType $availability")
         }
 
         override fun onExerciseUpdate(update: ExerciseUpdate) {
-            Timber.d("On exercise update $update")
+//            Timber.d("On exercise update $update")
             processExerciseUpdate(update)
         }
 
@@ -178,15 +194,25 @@ class TrainingStatisticsRecorder @Inject constructor(
         val oldState = exerciseState
         if (!oldState.isEnded && exerciseUpdate.state.isEnded) {
             // Exercise ended
+                Timber.d("Exercise ended")
             val exerciseTime = exerciseUpdate.activeDuration.toMillis()
+            Timber.d("Exercise ended, $exerciseTime")
+            Timber.d("Recorded calories $caloriesCumulativeData")
+            Timber.d("Recorded heart rate $heartRateStatisticalData")
             saveRecordedHealthStatistics(exerciseTime)
             handleDifferentEndCauses(exerciseUpdate)
+            clearRecordedHealthStatistics()
         }
         exerciseState = exerciseUpdate.state
         val aggregatedMetrics = exerciseUpdate.latestAggregateMetrics
         val latestMetrics = exerciseUpdate.latestMetrics
 
         saveLatestMetrics(aggregatedMetrics, latestMetrics)
+    }
+
+    private fun clearRecordedHealthStatistics() {
+        caloriesCumulativeData = null
+        heartRateStatisticalData = null
     }
 
     private fun saveLatestMetrics(
@@ -196,10 +222,11 @@ class TrainingStatisticsRecorder @Inject constructor(
         caloriesCumulativeData =
             (aggregatedMetrics[DataType.TOTAL_CALORIES] as? CumulativeDataPoint)
                 ?: caloriesCumulativeData
+        Timber.d("caloriesCumulativeData $caloriesCumulativeData")
         heartRateStatisticalData =
             (aggregatedMetrics[DataType.HEART_RATE_BPM] as? StatisticalDataPoint)
                 ?: heartRateStatisticalData
-
+        Timber.d("heartRateStatisticalData $heartRateStatisticalData")
         latestMetrics[DataType.HEART_RATE_BPM]?.let {
             saveCurrentHeartRate(it)
         }
@@ -246,6 +273,7 @@ class TrainingStatisticsRecorder @Inject constructor(
         val currentCaloriesStatistics = getCaloriesStatistics()
         val currentHeartRateStatistics = getHeartRateStatistics()
         val (currentExerciseId, currentSet) = exercisesIdAndSetQueue.poll() ?: return
+        val isCurrentLastExercise = isLastExercise.poll() ?: return
         if (hasCurrentExerciseStatistics(exercisesStatistics, currentExerciseId)) {
             updateStatisticsInTheList(
                 currentExerciseId,
@@ -265,6 +293,17 @@ class TrainingStatisticsRecorder @Inject constructor(
             )
         }
         trainingCompleteStatistics!!.exercisesStatistics = exercisesStatistics
+        Timber.d("Saved training complete statistics $trainingCompleteStatistics")
+        informAboutFinishedTraining(isCurrentLastExercise)
+    }
+
+    private fun informAboutFinishedTraining(isLastExercise: Boolean) {
+        if(!_isTrainingEnded.value && isLastExercise) {
+            saveTrainingStatistics(trainingTime)
+            if(trainingCompleteStatistics!!.trainingStatistics.totalTime > 0L) {
+                _isTrainingEnded.value = true
+            }
+        }
     }
 
     private fun hasCurrentExerciseStatistics(
@@ -355,4 +394,8 @@ class TrainingStatisticsRecorder @Inject constructor(
         min = heartRateStatisticalData?.min?.asDouble() ?: 0.0,
         average = heartRateStatisticalData?.average?.asDouble() ?: 0.0
     )
+
+    fun setLastExercise(isLastExercise: Boolean) {
+        this.isLastExercise.offer(isLastExercise)
+    }
 }

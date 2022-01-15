@@ -9,6 +9,9 @@ import android.os.IBinder
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.lukasz.witkowski.shared.currentTraining.TrainingService
 import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
 import com.lukasz.witkowski.shared.utils.TimeFormatter
@@ -20,6 +23,8 @@ import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSummary
 import com.lukasz.witkowski.training.planner.service.SendingStatisticsService
 import com.lukasz.witkowski.training.planner.trainingsList.TrainingsListActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -34,11 +39,24 @@ class TrainingSummaryActivity : ComponentActivity() {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as WearableTrainingService.LocalBinder).getService()
             observeInsertingStatistics()
+            observeEndedTraining()
             viewModel.trainingId = trainingService.trainingProgressController.trainingId
-            trainingService.trainingStatisticsRecorder.trainingCompleteStatistics?.let { viewModel.insertTrainingStatistics(it) }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) = Unit
+    }
+
+    private fun observeEndedTraining() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                trainingService.trainingStatisticsRecorder.isTrainingEnded.collect {
+                    if(it) {
+                        Timber.d("TrainingStatisticsRecorder in acitvity statistics ${trainingService.trainingStatisticsRecorder.trainingCompleteStatistics}")
+                        trainingService.trainingStatisticsRecorder.trainingCompleteStatistics?.let { viewModel.insertTrainingStatistics(it) }
+                    }
+                }
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,11 +74,18 @@ class TrainingSummaryActivity : ComponentActivity() {
     }
 
     private fun observeInsertingStatistics() {
-        viewModel.statisticsId.observe(this) {
-            Timber.d("Statistics inserted")
-            trainingService.stopCurrentService()
-            displaySummaryProperties()
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.statisticsId.collect {
+                    Timber.d("Statistics inserted $it")
+                    if(it != TrainingSummaryViewModel.NO_STATISTICS_ID) {
+                        trainingService.stopCurrentService()
+                        displaySummaryProperties()
+                    }
+                }
+            }
         }
+
     }
 
     override fun onDestroy() {
@@ -88,6 +113,7 @@ class TrainingSummaryActivity : ComponentActivity() {
         binding.burnedCaloriesTv.text =
             getString(R.string.total_burned_calories, totalBurnedCalories)
         val maxHeartRate = viewModel.calculateMaxHeartRate()
+        Timber.d("Display recorder prorties $maxHeartRate $totalBurnedCalories")
         binding.maxHeartRateTv.text = getString(R.string.max_heart_rate, maxHeartRate)
         hideEmptyHealthStatistics(totalBurnedCalories, maxHeartRate)
     }

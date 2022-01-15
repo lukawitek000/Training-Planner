@@ -9,6 +9,8 @@ import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.repo.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,8 +23,8 @@ class TrainingSummaryViewModel
 
     var trainingId = 0L
 
-    private val _statisticsId = MutableLiveData(0L)
-    val statisticsId: LiveData<Long> = _statisticsId
+    private val _statisticsId = MutableStateFlow(NO_STATISTICS_ID)
+    val statisticsId: StateFlow<Long> = _statisticsId
 
     private var trainingCompleteStatistics: TrainingCompleteStatistics? = null
 
@@ -51,5 +53,9 @@ class TrainingSummaryViewModel
 
     fun getTrainingTotalTime(): String {
         return TimeFormatter.millisToTime(trainingCompleteStatistics?.trainingStatistics?.totalTime ?: 0)
+    }
+
+    companion object {
+        const val NO_STATISTICS_ID = -1L
     }
 }

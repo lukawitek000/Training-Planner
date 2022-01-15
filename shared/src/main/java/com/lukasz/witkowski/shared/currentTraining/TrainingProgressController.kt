@@ -29,13 +29,8 @@ class TrainingProgressController {
     var exerciseTime = 0L
         private set
 
-    private var startTrainingTime = 0L
-    val trainingTime: Long
-        get() = System.currentTimeMillis() - startTrainingTime
-
     fun startTraining(trainingWithExercises: TrainingWithExercises) {
         this.trainingWithExercises = trainingWithExercises
-        startTrainingTime = System.currentTimeMillis()
         if (_currentTrainingState.value == null || _currentTrainingState.value is CurrentTrainingState.SummaryState || isDifferentTrainingRunning()) {
             val exercise = trainingWithExercises.exercises[currentExerciseIndex]
             restTime = setRestTime(exercise)

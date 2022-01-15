@@ -52,13 +52,13 @@ class WearableTrainingService: TrainingService() {
     override fun handleSummaryState() {
         super.handleSummaryState()
         trainingStatisticsRecorder.finishExercise()
-        trainingStatisticsRecorder.saveTrainingStatistics(trainingProgressController.trainingTime)
     }
 
     override fun handleExerciseState(exerciseState: CurrentTrainingState.ExerciseState) {
         super.handleExerciseState(exerciseState)
         val exerciseId = exerciseState.exercise.id
         val currentSet = trainingProgressController.currentSet
+        trainingStatisticsRecorder.setLastExercise(trainingProgressController.isLastExercise())
         trainingStatisticsRecorder.startRecordingExerciseStatistics(exerciseId, currentSet)
     }
 
