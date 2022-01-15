@@ -28,6 +28,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
+import com.lukasz.witkowski.training.planner.service.PhoneTrainingService
 import com.lukasz.witkowski.training.planner.ui.*
 import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseViewModel

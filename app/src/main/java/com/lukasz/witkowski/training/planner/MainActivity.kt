@@ -53,15 +53,25 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TrainingPlannerTheme {
-                TrainingPlannerApp(showToast = { showToast(it) }, startTrainingService = { startTrainingService(it) })
+                TrainingPlannerApp(
+                    showToast = { showToast(it) },
+                    startTrainingService = { startTrainingService(it) },
+                    stopTrainingService = { stopCurrentTrainingService() }
+                )
             }
         }
     }
 
-    fun startTrainingService(trainingId: Long) {
+    private fun startTrainingService(trainingId: Long) {
         val serviceIntent = Intent(this, PhoneTrainingService::class.java)
         serviceIntent.putExtra(TrainingService.TRAINING_ID_KEY, trainingId)
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
+    }
+
+    private fun stopCurrentTrainingService() {
+        if(::trainingService.isInitialized) {
+            trainingService.stopCurrentService()
+        }
     }
 
     private val connection = object : ServiceConnection {
@@ -118,7 +128,11 @@ class MainActivity : ComponentActivity() {
 
 @ExperimentalAnimationApi
 @Composable
-fun TrainingPlannerApp(showToast: (String) -> Unit, startTrainingService: (Long) -> Unit) {
+fun TrainingPlannerApp(
+    showToast: (String) -> Unit,
+    startTrainingService: (Long) -> Unit,
+    stopTrainingService: () -> Unit
+) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = NavItem.Items.list.find {
@@ -153,6 +167,7 @@ fun TrainingPlannerApp(showToast: (String) -> Unit, startTrainingService: (Long)
         },
         topBar = {
             TopBar(title = currentScreen.title, showBackArrow = currentScreen.isBackArrow) {
+                stopTrainingService()
                 navController.navigateUp()
             }
         },
@@ -164,15 +179,5 @@ fun TrainingPlannerApp(showToast: (String) -> Unit, startTrainingService: (Long)
             showToast = showToast,
             startTrainingService = startTrainingService
         )
-    }
-}
-
-
-@ExperimentalAnimationApi
-@Preview(showBackground = true)
-@Composable
-fun TrainingPlannerPreview() {
-    TrainingPlannerTheme {
-        TrainingPlannerApp({}, {})
     }
 }

@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.lukasz.witkowski.training.planner">
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
     <application
         android:name=".TrainingPlannerApplication"
         android:usesCleartextTraffic="true"
