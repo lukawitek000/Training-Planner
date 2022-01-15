@@ -24,9 +24,6 @@
         android:supportsRtl="true"
         android:theme="@style/SplashTheme">
 
-<!--        <service-->
-<!--            android:name=".currentTraining.service.TrainingService1"-->
-<!--            android:exported="false" />-->
         <service
             android:name=".currentTraining.WearableTrainingService"
             android:exported="false" />
