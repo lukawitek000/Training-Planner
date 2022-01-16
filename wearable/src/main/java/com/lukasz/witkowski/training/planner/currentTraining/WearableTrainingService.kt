@@ -5,26 +5,13 @@ import android.app.PendingIntent
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import androidx.concurrent.futures.await
-import androidx.core.app.NotificationCompat
-import androidx.health.services.client.ExerciseClient
-import androidx.health.services.client.data.DataType
-import androidx.health.services.client.data.ExerciseConfig
-import androidx.health.services.client.data.ExerciseTrackedStatus
-import androidx.health.services.client.data.ExerciseType
-import androidx.lifecycle.lifecycleScope
 import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
 import com.lukasz.witkowski.shared.currentTraining.CurrentTrainingState
 import com.lukasz.witkowski.shared.currentTraining.TrainingService
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
-import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
-import com.lukasz.witkowski.shared.models.statistics.TrainingStatistics
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.util.*
 import javax.inject.Inject
 
@@ -33,6 +20,7 @@ class WearableTrainingService: TrainingService() {
 
     companion object {
         private const val NOTIFICATION_REQUEST_CODE = 12
+        const val TRAINING_ID_KEY = "trainingId"
     }
 
     @Inject
@@ -78,7 +66,7 @@ class WearableTrainingService: TrainingService() {
 
     override fun buildNotification(trainingId: Long): Notification {
         val intent = Intent(applicationContext, CurrentTrainingActivity::class.java)
-        intent.putExtra(StartTrainingActivity.TRAINING_ID_KEY, trainingId)
+        intent.putExtra(TRAINING_ID_KEY, trainingId)
         val pendingIntent = PendingIntent.getActivity(this, NOTIFICATION_REQUEST_CODE, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         // Build the notification.

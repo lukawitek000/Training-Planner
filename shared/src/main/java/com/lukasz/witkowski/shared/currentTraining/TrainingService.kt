@@ -48,7 +48,7 @@ abstract class TrainingService : LifecycleService() {
 
     protected var isStarted = false
 
-    abstract fun buildNotification(trainingId: Long): Notification // TODO for mobile app this service can be used so it should be open method
+    abstract fun buildNotification(trainingId: Long): Notification
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)

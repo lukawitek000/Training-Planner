@@ -14,12 +14,10 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.wear.widget.SwipeDismissFrameLayout
 import com.lukasz.witkowski.shared.currentTraining.CurrentTrainingState
-import com.lukasz.witkowski.shared.currentTraining.TrainingService
 import com.lukasz.witkowski.shared.currentTraining.TrainingService.Companion.TRAINING_ID_KEY
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.ActivityCurrentTrainingBinding
-import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.summary.TrainingSummaryActivity
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -82,7 +80,7 @@ class CurrentTrainingActivity : FragmentActivity() {
     }
 
     private fun fetchTrainingInformation() {
-        val trainingId = intent.extras?.getLong(StartTrainingActivity.TRAINING_ID_KEY)
+        val trainingId = intent.extras?.getLong(WearableTrainingService.TRAINING_ID_KEY)
         Timber.d("Received training id $trainingId")
         if (trainingId == null) {
             finish()
