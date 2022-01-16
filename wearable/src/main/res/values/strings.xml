@@ -14,4 +14,8 @@
     <string name="no_trainings_message">Training list is empty.\nUse mobile application to create them.</string>
     <string name="loading_info">Loading...</string>
     <string name="save_statistics_failed">Saving statistics failed</string>
+    <string name="exit">Exit</string>
+    <string name="maximum_heart_rate_during_training">Maximum heart rate during training</string>
+    <string name="total_burned_calories_description">Total burned calories</string>
+    <string name="training_time">Training time</string>
 </resources>
