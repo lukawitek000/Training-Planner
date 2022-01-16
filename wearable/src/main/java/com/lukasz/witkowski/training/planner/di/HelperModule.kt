@@ -7,22 +7,21 @@ import com.lukasz.witkowski.training.planner.currentTraining.TrainingStatisticsR
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
-
+import dagger.hilt.android.scopes.ServiceScoped
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ServiceComponent::class)
 object HelperModule {
 
-    @Singleton
+    @ServiceScoped
     @Provides
     fun provideExerciseClient(@ApplicationContext context: Context): ExerciseClient {
         return HealthServices.getClient(context).exerciseClient
     }
 
-    @Singleton
+    @ServiceScoped
     @Provides
     fun provideTrainingStatisticsRecorder(exerciseClient: ExerciseClient): TrainingStatisticsRecorder {
         return TrainingStatisticsRecorder(exerciseClient)

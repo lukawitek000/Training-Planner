@@ -6,20 +6,19 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ServiceComponent
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
-// TODO check it for service component
+import dagger.hilt.android.scopes.ServiceScoped
+
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ServiceComponent::class)
 object HelpersModule {
 
-    @Singleton
+    @ServiceScoped
     @Provides
     fun provideTimerHelper(): TimerHelper {
         return TimerHelper()
     }
 
-    @Singleton
+    @ServiceScoped
     @Provides
     fun provideTrainingProgressController(): TrainingProgressController {
         return TrainingProgressController()
