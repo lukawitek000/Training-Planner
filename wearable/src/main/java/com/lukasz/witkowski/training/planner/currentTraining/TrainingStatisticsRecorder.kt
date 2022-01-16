@@ -293,6 +293,7 @@ class TrainingStatisticsRecorder @Inject constructor(
             saveTrainingStatistics(trainingTime)
             if(trainingCompleteStatistics!!.trainingStatistics.totalTime > 0L) {
                 _isTrainingEnded.value = true
+                _isTrainingEnded.value = false
             }
         }
     }
