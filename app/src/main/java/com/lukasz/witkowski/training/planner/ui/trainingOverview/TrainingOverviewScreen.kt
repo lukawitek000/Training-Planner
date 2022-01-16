@@ -304,7 +304,7 @@ fun SingleTrainingStatisticsItem(
                 text = stringResource(id = R.string.max_heart_rate_text, maxHeartRateStatistics),
                 fontSize = fontSize
             )
-            if(generalStatistics.heartRateDuringTraining.size > 1) {
+            if(areHeartRateStatisticsAvailable(generalStatistics.heartRateDuringTraining)) {
                 Spacer(modifier = Modifier.height(8.dp))
                 ListCardItem(
                     backgroundColor = LightDark12
@@ -330,6 +330,9 @@ fun SingleTrainingStatisticsItem(
     }
 }
 
+fun areHeartRateStatisticsAvailable(heartRateDuringTraining: List<Double>) =
+    heartRateDuringTraining.size > 1 && heartRateDuringTraining.any { it != heartRateDuringTraining.first() }
+
 @Composable
 fun HeartRateLineChart(
     modifier: Modifier = Modifier,
@@ -340,7 +343,7 @@ fun HeartRateLineChart(
         padBy = 50.0f,
         startAtZero = false
     )
-    if(lineChartData.points.size > 1) {
+    if(areHeartRateStatisticsAvailable(data)) {
         LineChart(
             modifier = modifier
                 .heightIn(max = 200.dp)
@@ -364,7 +367,7 @@ fun HeartRateLineChart(
 @Preview
 @Composable
 fun HeartRateLineChartPreview() {
-    HeartRateLineChart(data = listOf(13.0, 41.0, 124.0, 0.0, 151.0))
+    HeartRateLineChart(data = listOf(13.0, 13.0, 13.0))
 }
 
 
