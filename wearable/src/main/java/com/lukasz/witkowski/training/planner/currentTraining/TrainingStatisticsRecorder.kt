@@ -256,7 +256,6 @@ class TrainingStatisticsRecorder @Inject constructor(
         }
     }
 
-    // TODO test recording statistics on the watch are different values than on the phone (kcal)
     private fun saveRecordedHealthStatistics(
         exerciseTime: Long
     ) {
