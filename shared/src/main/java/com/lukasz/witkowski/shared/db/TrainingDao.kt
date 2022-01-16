@@ -9,9 +9,6 @@ import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
-import com.lukasz.witkowski.shared.models.statistics.ExerciseStatistics
-import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
-import com.lukasz.witkowski.shared.models.statistics.TrainingStatistics
 import kotlinx.coroutines.flow.Flow
 
 @Dao

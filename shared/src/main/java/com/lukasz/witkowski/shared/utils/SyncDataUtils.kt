@@ -26,6 +26,7 @@ suspend fun OutputStream.writeSuspending(byteArray: ByteArray) = withContext(Dis
     write(byteArray)
     flush()
 }
+
 suspend fun OutputStream.writeIntSuspending(number: Int) = withContext(Dispatchers.IO) {
     write(number)
 }

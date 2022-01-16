@@ -7,15 +7,12 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.Build
-import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import androidx.annotation.DrawableRes
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
-import com.lukasz.witkowski.shared.R
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.repository.TrainingRepository
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,11 +27,11 @@ abstract class TrainingService : LifecycleService() {
         const val TRAINING_ID_KEY = "TrainingIdKey"
 
         const val NOTIFICATION_ID = 1
-        const val NOTIFICATION_CHANNEL_ID = "com.lukasz.witkowski.training.wearable.ONGOING_TRAINING"
+        const val NOTIFICATION_CHANNEL_ID =
+            "com.lukasz.witkowski.training.wearable.ONGOING_TRAINING"
         const val NOTIFICATION_CHANNEL_NAME = "Ongoing Training"
         const val NOTIFICATION_TITLE = "Training"
         const val NOTIFICATION_TEXT = "Training is active"
-        const val ONGOING_STATUS_TEMPLATE = "Ongoing Exercise #duration#"
     }
 
     @Inject
@@ -149,7 +146,7 @@ abstract class TrainingService : LifecycleService() {
             getSystemService(VIBRATOR_SERVICE) as Vibrator
         }
         val vibrationTime = 300L
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(
                 VibrationEffect.createOneShot(
                     vibrationTime,

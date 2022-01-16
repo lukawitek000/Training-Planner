@@ -7,7 +7,6 @@ import com.google.gson.Gson
 import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.utils.allCategories
 import java.io.ByteArrayOutputStream
-import java.lang.Exception
 import kotlin.math.roundToInt
 
 class Converters {

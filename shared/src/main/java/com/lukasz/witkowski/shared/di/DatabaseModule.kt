@@ -40,6 +40,7 @@ object DatabaseModule {
     fun provideTrainingDao(appDatabase: AppDatabase): TrainingDao {
         return appDatabase.trainingDao()
     }
+
     @Singleton
     @Provides
     fun provideStatisticsDao(appDatabase: AppDatabase): StatisticsDao {
