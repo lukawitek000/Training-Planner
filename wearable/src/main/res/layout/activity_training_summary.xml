@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:padding="@dimen/box_inset_layout_padding"
     android:background="@color/background_gray"
-    tools:context=".summary.TrainingSummaryActivity"
+    tools:context=".ui.summary.TrainingSummaryActivity"
     tools:deviceIds="wear">
 
     <ScrollView

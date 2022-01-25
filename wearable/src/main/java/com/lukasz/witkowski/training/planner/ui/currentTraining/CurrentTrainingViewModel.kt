@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.trainingsList
+package com.lukasz.witkowski.training.planner.ui.currentTraining
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -13,23 +13,20 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TrainingsListViewModel
+class CurrentTrainingViewModel
 @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val trainingRepository: TrainingRepository
 ) : ViewModel() {
 
+    private val _trainingWithExercises = MutableLiveData<ResultHandler<TrainingWithExercises>>()
+    val trainingWithExercises: LiveData<ResultHandler<TrainingWithExercises>> = _trainingWithExercises
 
-    private val _trainings = MutableLiveData<ResultHandler<List<TrainingWithExercises>>>()
-    val trainings: LiveData<ResultHandler<List<TrainingWithExercises>>> = _trainings
-
-    fun getTrainingsWithExercises() {
+    fun fetchTraining(trainingId: Long) {
         viewModelScope.launch {
-            _trainings.value = ResultHandler.Loading
-            trainingRepository.getAllTrainingsWithExercises().collect {
-                _trainings.value = ResultHandler.Success(it)
-//                _trainings.value = ResultHandler.Success(trainingRepository.getDummyTrainings())
-            }
+            _trainingWithExercises.value = ResultHandler.Loading
+//            _trainingWithExercises.value = ResultHandler.Success(trainingRepository.fetchDummyTrainingById(trainingId))
+            _trainingWithExercises.value = ResultHandler.Success(trainingRepository.fetchTrainingById(trainingId))
         }
     }
 }

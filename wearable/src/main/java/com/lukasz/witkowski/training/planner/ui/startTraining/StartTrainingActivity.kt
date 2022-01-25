@@ -1,11 +1,11 @@
-package com.lukasz.witkowski.training.planner.startTraining
+package com.lukasz.witkowski.training.planner.ui.startTraining
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.currentTraining.CurrentTrainingActivity
+import com.lukasz.witkowski.training.planner.ui.currentTraining.CurrentTrainingActivity
 import com.lukasz.witkowski.training.planner.databinding.ActivityStartTrainingBinding
 import dagger.hilt.android.AndroidEntryPoint
 

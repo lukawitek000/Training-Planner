@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.currentTraining
+package com.lukasz.witkowski.training.planner.ui.currentTraining
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.lukasz.witkowski.shared.currentTraining.CurrentTrainingState
 import com.lukasz.witkowski.shared.currentTraining.TimerHelper
-import com.lukasz.witkowski.shared.currentTraining.TrainingService
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R

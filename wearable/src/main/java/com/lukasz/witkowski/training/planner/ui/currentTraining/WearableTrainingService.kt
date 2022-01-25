@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.currentTraining
+package com.lukasz.witkowski.training.planner.ui.currentTraining
 
 import android.app.Notification
 import android.app.PendingIntent
@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import androidx.wear.ongoing.OngoingActivity
-import androidx.wear.ongoing.Status
 import com.lukasz.witkowski.shared.currentTraining.CurrentTrainingState
 import com.lukasz.witkowski.shared.currentTraining.TrainingService
 import com.lukasz.witkowski.shared.models.TrainingWithExercises

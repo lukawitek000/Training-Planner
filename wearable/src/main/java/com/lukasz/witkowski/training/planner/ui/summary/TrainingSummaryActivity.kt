@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.summary
+package com.lukasz.witkowski.training.planner.ui.summary
 
 import android.content.ComponentName
 import android.content.Context
@@ -13,19 +13,15 @@ import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.lukasz.witkowski.shared.currentTraining.TrainingService
-import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
 import com.lukasz.witkowski.shared.utils.ResultHandler
-import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.shared.utils.startSendingDataService
 import com.lukasz.witkowski.shared.utils.stopSendingDataService
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.currentTraining.WearableTrainingService
+import com.lukasz.witkowski.training.planner.ui.currentTraining.WearableTrainingService
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSummaryBinding
 import com.lukasz.witkowski.training.planner.service.SendingStatisticsService
-import com.lukasz.witkowski.training.planner.trainingsList.TrainingsListActivity
+import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsListActivity
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 

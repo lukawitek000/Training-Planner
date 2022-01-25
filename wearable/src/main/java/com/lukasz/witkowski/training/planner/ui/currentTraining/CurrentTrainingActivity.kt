@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.currentTraining
+package com.lukasz.witkowski.training.planner.ui.currentTraining
 
 import android.content.ComponentName
 import android.content.Context
@@ -18,7 +18,7 @@ import com.lukasz.witkowski.shared.currentTraining.TrainingService.Companion.TRA
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.ActivityCurrentTrainingBinding
-import com.lukasz.witkowski.training.planner.summary.TrainingSummaryActivity
+import com.lukasz.witkowski.training.planner.ui.summary.TrainingSummaryActivity
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import java.lang.Exception

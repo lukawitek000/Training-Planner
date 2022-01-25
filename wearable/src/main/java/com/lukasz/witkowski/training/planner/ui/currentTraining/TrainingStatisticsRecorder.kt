@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.currentTraining
+package com.lukasz.witkowski.training.planner.ui.currentTraining
 
 import androidx.concurrent.futures.await
 import androidx.health.services.client.ExerciseClient
