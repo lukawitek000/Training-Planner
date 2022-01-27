@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.trainingsList
+package com.lukasz.witkowski.training.planner.ui.trainingsList
 
 import android.Manifest
 import android.content.Intent
@@ -8,20 +8,18 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.lifecycle.coroutineScope
 import androidx.wear.widget.WearableLinearLayoutManager
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.shared.utils.startSendingDataService
 import com.lukasz.witkowski.shared.utils.stopSendingDataService
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
-import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_ID_KEY
-import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_TITLE_KEY
+import com.lukasz.witkowski.training.planner.ui.startTraining.StartTrainingActivity
+import com.lukasz.witkowski.training.planner.ui.startTraining.StartTrainingActivity.Companion.TRAINING_ID_KEY
+import com.lukasz.witkowski.training.planner.ui.startTraining.StartTrainingActivity.Companion.TRAINING_TITLE_KEY
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingsListBinding
 import com.lukasz.witkowski.training.planner.service.SendingStatisticsService
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint

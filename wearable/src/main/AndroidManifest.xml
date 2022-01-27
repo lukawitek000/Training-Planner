@@ -25,17 +25,17 @@
         android:theme="@style/SplashTheme">
 
         <service
-            android:name=".currentTraining.service.TrainingService"
+            android:name="com.lukasz.witkowski.training.planner.ui.currentTraining.WearableTrainingService"
             android:exported="false" />
         <activity
-            android:name=".summary.TrainingSummaryActivity"
+            android:name="com.lukasz.witkowski.training.planner.ui.summary.TrainingSummaryActivity"
             android:exported="false" />
         <activity
-            android:name=".currentTraining.CurrentTrainingActivity"
+            android:name="com.lukasz.witkowski.training.planner.ui.currentTraining.CurrentTrainingActivity"
             android:noHistory="true"
             android:exported="false" />
         <activity
-            android:name=".startTraining.StartTrainingActivity"
+            android:name="com.lukasz.witkowski.training.planner.ui.startTraining.StartTrainingActivity"
             android:exported="false"
             android:noHistory="true" />
 
@@ -55,7 +55,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".trainingsList.TrainingsListActivity"
+            android:name="com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsListActivity"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>

@@ -15,8 +15,9 @@ interface StatisticsDao {
 
     @Transaction
     fun insertTrainingCompleteStatistics(trainingCompleteStatistics: TrainingCompleteStatistics): Long {
-        val trainingStatisticsId = insertTrainingStatistics(trainingCompleteStatistics.trainingStatistics)
-        for(exerciseStatistics in trainingCompleteStatistics.exercisesStatistics) {
+        val trainingStatisticsId =
+            insertTrainingStatistics(trainingCompleteStatistics.trainingStatistics)
+        for (exerciseStatistics in trainingCompleteStatistics.exercisesStatistics) {
             exerciseStatistics.trainingStatisticsId = trainingStatisticsId
             insertExerciseStatistics(exerciseStatistics)
         }
@@ -33,7 +34,7 @@ interface StatisticsDao {
     fun getNotSynchronizedStatistics(): Flow<List<TrainingCompleteStatistics>>
 
     @Query("SELECT * FROM TrainingStatistics WHERE trainingId=:trainingId")
-    fun getTrainingCompleteStatisticsByTrainingId(trainingId: Long) : Flow<List<TrainingCompleteStatistics>>
+    fun getTrainingCompleteStatisticsByTrainingId(trainingId: Long): Flow<List<TrainingCompleteStatistics>>
 
     @Query("UPDATE TrainingStatistics SET isSynchronized=1 WHERE TrainingIdStatistics=:id")
     fun updateSynchronizedStatisticsById(id: Long)

@@ -1,11 +1,19 @@
-package com.lukasz.witkowski.training.planner.currentTraining.service
+package com.lukasz.witkowski.training.planner.ui.currentTraining
 
 import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import com.lukasz.witkowski.shared.utils.TimeFormatter
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-object TimerHelper {
+@HiltViewModel
+class TimerViewModel
+@Inject constructor(
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     private var millisLeft = 0L
     private var timer: CountDownTimer? = null
@@ -25,7 +33,6 @@ object TimerHelper {
         private set
 
     fun startTimer(time: Long) {
-        timer?.cancel()
         timer = object : CountDownTimer(time, TimeFormatter.MILLIS_IN_SECOND) {
             override fun onTick(millisUntilFinished: Long) {
                 millisLeft = millisUntilFinished
@@ -34,7 +41,9 @@ object TimerHelper {
             }
 
             override fun onFinish() {
-                cancelTimer()
+                timer = null
+                isRunning = false
+                isPaused = false
                 _timerFinished.value = true
             }
         }.start()
@@ -57,5 +66,10 @@ object TimerHelper {
         timer = null
         isRunning = false
         isPaused = false
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        cancelTimer()
     }
 }

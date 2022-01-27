@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:padding="@dimen/box_inset_layout_padding"
     android:background="@color/background_gray"
-    tools:context=".startTraining.StartTrainingActivity"
+    tools:context=".ui.startTraining.StartTrainingActivity"
     tools:deviceIds="wear">
 
         <LinearLayout

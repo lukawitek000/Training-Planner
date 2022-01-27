@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.trainingsList
+package com.lukasz.witkowski.training.planner.ui.trainingsList
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

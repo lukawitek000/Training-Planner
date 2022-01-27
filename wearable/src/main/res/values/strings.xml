@@ -8,9 +8,14 @@
     <string name="sets_text">Sets: %1$d</string>
     <string name="play_or_pause_control_button">Play or pause control button</string>
     <string name="total_training_time">Total time: %1$s</string>
-    <string name="total_burned_calories">%1$.1f kcal</string>
+    <string name="total_burned_calories">%1$.1f cal</string>
     <string name="max_heart_rate">%1$.1f BPM</string>
     <string name="summary">Summary</string>
     <string name="no_trainings_message">Training list is empty.\nUse mobile application to create them.</string>
     <string name="loading_info">Loading...</string>
+    <string name="save_statistics_failed">Saving statistics failed</string>
+    <string name="exit">Exit</string>
+    <string name="maximum_heart_rate_during_training">Maximum heart rate during training</string>
+    <string name="total_burned_calories_description">Total burned calories</string>
+    <string name="training_time">Training time</string>
 </resources>

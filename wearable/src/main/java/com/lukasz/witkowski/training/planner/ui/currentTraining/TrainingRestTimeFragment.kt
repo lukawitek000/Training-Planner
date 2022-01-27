@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.currentTraining
+package com.lukasz.witkowski.training.planner.ui.currentTraining
 
 import android.content.ComponentName
 import android.content.Context
@@ -10,9 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.lukasz.witkowski.shared.currentTraining.CurrentTrainingState
+import com.lukasz.witkowski.shared.currentTraining.TimerHelper
 import com.lukasz.witkowski.shared.utils.TimeFormatter
-import com.lukasz.witkowski.training.planner.currentTraining.service.TimerHelper
-import com.lukasz.witkowski.training.planner.currentTraining.service.TrainingService
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingRestTimeBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,12 +21,12 @@ class TrainingRestTimeFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingRestTimeBinding
 
-    private lateinit var trainingService: TrainingService
+    private lateinit var trainingService: WearableTrainingService
     private lateinit var timer: TimerHelper
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            trainingService = (service as TrainingService.LocalBinder).getService()
+            trainingService = (service as WearableTrainingService.LocalBinder).getService()
             timer = trainingService.timerHelper
             observeRestTimer()
             observeState()
@@ -46,18 +46,18 @@ class TrainingRestTimeFragment : Fragment() {
     ): View {
         binding = FragmentTrainingRestTimeBinding.inflate(layoutInflater, container, false)
         observeSkipRestTimeButton()
-        val serviceIntent = Intent(requireContext(), TrainingService::class.java)
+        val serviceIntent = Intent(requireContext(), WearableTrainingService::class.java)
         requireActivity().bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
         return binding.root
     }
 
     private fun observeState() {
-        trainingService.currentTrainingProgressHelper.currentTrainingState.observe(
+        trainingService.trainingProgressController.currentTrainingState.observe(
             viewLifecycleOwner
         ) {
             if (it is CurrentTrainingState.RestTimeState) {
                 if (!timer.isRunning && !timer.isPaused) {
-                    timer.startTimer(trainingService.currentTrainingProgressHelper.restTime)
+                    timer.startTimer(trainingService.trainingProgressController.restTime)
                 }
             }
         }
@@ -77,6 +77,6 @@ class TrainingRestTimeFragment : Fragment() {
 
     private fun exitRestTimeFragment() {
         timer.cancelTimer()
-        trainingService.currentTrainingProgressHelper.navigateToTrainingExercise()
+        trainingService.trainingProgressController.navigateToTrainingExercise()
     }
 }

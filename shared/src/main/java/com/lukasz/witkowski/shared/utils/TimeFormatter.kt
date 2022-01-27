@@ -30,7 +30,7 @@ object TimeFormatter {
             timeStringBuilder.append(minutes)
         }
         timeStringBuilder.append(":")
-        if(seconds < 10) {
+        if (seconds < 10) {
             timeStringBuilder.append("0$seconds")
         } else {
             timeStringBuilder.append(seconds)
@@ -42,25 +42,25 @@ object TimeFormatter {
         val (minutes, seconds) = calculateMinutesAndSeconds(millis)
         val hours = millis / MILLIS_IN_SECOND / SECONDS_IN_MINUTE / MINUTES_IN_HOUR
         val timeStringBuilder = StringBuilder()
-        if(hours > 0) {
+        if (hours > 0) {
             timeStringBuilder.append("${hours}h")
         }
-        if(minutes > 0) {
+        if (minutes > 0) {
             timeStringBuilder.append(" ")
             timeStringBuilder.append("${minutes}min")
         }
-        if(seconds > 0 && hours <= 0) {
+        if (seconds > 0 && hours <= 0) {
             timeStringBuilder.append(" ")
             timeStringBuilder.append("${seconds}s")
         }
-        if(timeStringBuilder.isEmpty()) {
+        if (timeStringBuilder.isEmpty()) {
             timeStringBuilder.append("0s")
         }
         return timeStringBuilder.toString()
     }
 
     fun timeToMillis(hour: Int = 0, minutes: Int = 0, seconds: Int): Long {
-         return (((hour * MINUTES_IN_HOUR) + minutes) * SECONDS_IN_MINUTE + seconds) * MILLIS_IN_SECOND
+        return (((hour * MINUTES_IN_HOUR) + minutes) * SECONDS_IN_MINUTE + seconds) * MILLIS_IN_SECOND
     }
 
     fun calculateMinutesAndSeconds(millis: Long): Pair<Int, Int> {

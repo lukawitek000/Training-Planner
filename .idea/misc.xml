@@ -23,7 +23,13 @@
         <entry key="../../../../../../layout/compose-model-1641658098327.xml" value="0.3416666666666667" />
         <entry key="../../../../../../layout/compose-model-1641659308922.xml" value="0.1" />
         <entry key="../../../../../../layout/compose-model-1641925684117.xml" value="0.1" />
+        <entry key="../../../../../../layout/compose-model-1642251527134.xml" value="0.1" />
+        <entry key="../../../../../../layout/compose-model-1642251687717.xml" value="0.1361111111111111" />
+        <entry key="../../../../../../layout/compose-model-1642251697246.xml" value="0.1" />
+        <entry key="../../../../../../layout/compose-model-1642254020670.xml" value="0.1361111111111111" />
+        <entry key="../../../../../../layout/compose-model-1642254522992.xml" value="1.0" />
         <entry key="../../../../../../layout/custom_preview.xml" value="0.20260416666666667" />
+        <entry key="../../../../.gradle/android_gradle/caches/transforms-3/68a90c4f03196eab431b4532e1309cda/transformed/jetified-play-services-base-17.5.0/res/drawable/common_google_signin_btn_icon_dark.xml" value="0.1527777777777778" />
         <entry key="../../../../.gradle/android_gradle/caches/transforms-3/e5e8811e9f75031c873e3e0d1e20c064/transformed/jetified-play-services-base-17.5.0/res/drawable/common_google_signin_btn_icon_dark.xml" value="0.7222222222222222" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.12222222222222222" />
         <entry key="app/src/main/res/drawable-v24/splash_background.xml" value="0.1" />
@@ -49,8 +55,8 @@
         <entry key="wearable/src/main/res/layout/activity_main.xml" value="1.7607142857142857" />
         <entry key="wearable/src/main/res/layout/activity_start_training.xml" value="0.7392739273927392" />
         <entry key="wearable/src/main/res/layout/activity_training_exercise.xml" value="0.5" />
-        <entry key="wearable/src/main/res/layout/activity_training_summary.xml" value="0.5435267857142857" />
-        <entry key="wearable/src/main/res/layout/activity_trainings_list.xml" value="0.5219512195121951" />
+        <entry key="wearable/src/main/res/layout/activity_training_summary.xml" value="1.0" />
+        <entry key="wearable/src/main/res/layout/activity_trainings_list.xml" value="0.34697732997481107" />
         <entry key="wearable/src/main/res/layout/category_list_item.xml" value="2.157142857142857" />
         <entry key="wearable/src/main/res/layout/fragment_training_exercise.xml" value="0.8181818181818182" />
         <entry key="wearable/src/main/res/layout/fragment_training_rest_time.xml" value="0.7737478411053541" />

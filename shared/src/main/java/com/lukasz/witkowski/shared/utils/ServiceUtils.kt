@@ -12,9 +12,9 @@ fun <T> Context.stopSendingDataService(cls: Class<T>) = try {
 }
 
 fun <T> Context.startSendingDataService(cls: Class<T>) = try {
-        val intent = Intent(this, cls)
-        startService(intent)
-        true
-    } catch (e: Exception) {
-        false
-    }
+    val intent = Intent(this, cls)
+    startService(intent)
+    true
+} catch (e: Exception) {
+    false
+}

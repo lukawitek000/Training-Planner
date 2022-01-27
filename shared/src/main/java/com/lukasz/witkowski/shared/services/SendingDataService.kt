@@ -6,9 +6,7 @@ import com.google.android.gms.wearable.ChannelClient
 import com.google.android.gms.wearable.Wearable
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
-import com.lukasz.witkowski.shared.models.statistics.TrainingWithStatistics
 import com.lukasz.witkowski.shared.repository.SyncDataRepository
-import com.lukasz.witkowski.shared.utils.STATISTICS_PATH
 import com.lukasz.witkowski.shared.utils.SYNC_FAILURE
 import com.lukasz.witkowski.shared.utils.closeSuspending
 import com.lukasz.witkowski.shared.utils.gson
@@ -38,11 +36,11 @@ abstract class SendingDataService : LifecycleService() {
     abstract fun observeNotSynchronizedData()
     abstract suspend fun handleSyncResponse(id: Long, syncResponse: Int)
 
-    private suspend fun getConnectedNodes(): String? {
+    private suspend fun getConnectedNodes(): List<String> {
         val nodeClient = Wearable.getNodeClient(this)
         val nodes = nodeClient.connectedNodes.await()
         Timber.d("Available nodes $nodes")
-        return nodes.firstOrNull()?.id
+        return nodes.map { it.id }
     }
 
     override fun onCreate() {
@@ -52,21 +50,23 @@ abstract class SendingDataService : LifecycleService() {
 
     protected fun <T> sendData(data: List<T>, path: String) {
         lifecycleScope.launch {
-            val nodeId = getConnectedNodes() ?: return@launch // TODO send to all nodes
-            val channel = channelClient.openChannel(nodeId, path).await()
-            val outputStream = channelClient.getOutputStream(channel).await()
-            val inputStream = channelClient.getInputStream(channel).await()
-            outputStream.writeIntSuspending(data.size)
-            for(item in data) {
-                sendSingleData(
-                    data = item,
-                    outputStream = outputStream,
-                    inputStream = inputStream
-                )
+            val nodesIds = getConnectedNodes()
+            for (nodeId in nodesIds) {
+                val channel = channelClient.openChannel(nodeId, path).await()
+                val outputStream = channelClient.getOutputStream(channel).await()
+                val inputStream = channelClient.getInputStream(channel).await()
+                outputStream.writeIntSuspending(data.size)
+                for (item in data) {
+                    sendSingleData(
+                        data = item,
+                        outputStream = outputStream,
+                        inputStream = inputStream
+                    )
+                }
+                outputStream.closeSuspending()
+                inputStream.closeSuspending()
+                channelClient.close(channel)
             }
-            outputStream.closeSuspending()
-            inputStream.closeSuspending()
-            channelClient.close(channel)
         }
     }
 
@@ -86,7 +86,7 @@ abstract class SendingDataService : LifecycleService() {
         }
     }
 
-    private fun <T> getDataId(data: T): Long = when(data) {
+    private fun <T> getDataId(data: T): Long = when (data) {
         is TrainingWithExercises -> data.training.id
         is TrainingCompleteStatistics -> data.trainingStatistics.id
         else -> -1

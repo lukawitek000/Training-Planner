@@ -1,47 +1,36 @@
-package com.lukasz.witkowski.training.planner.currentTraining.service
+package com.lukasz.witkowski.shared.currentTraining
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.TimeFormatter
-import com.lukasz.witkowski.training.planner.currentTraining.CurrentTrainingState
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import timber.log.Timber
 
-object CurrentTrainingProgressHelper {
+class TrainingProgressController {
+
     private lateinit var trainingWithExercises: TrainingWithExercises
 
-    private var startTrainingTime = 0L
-    val trainingTime: Long
-        get() = System.currentTimeMillis() - startTrainingTime
-
-    private var currentExerciseIndex = 0
-    var currentSet = 1
-        private set
-    private val trainingId: Long
+    val trainingId: Long
         get() = trainingWithExercises.training.id
 
     private val _currentTrainingState = MutableLiveData<CurrentTrainingState>()
     val currentTrainingState: LiveData<CurrentTrainingState> = _currentTrainingState
 
-    val isExerciseState: Boolean
-        get() {
-            return currentTrainingState.value is CurrentTrainingState.ExerciseState
-        }
-
-    val isRestTimeState: Boolean
-        get() {
-            return currentTrainingState.value is CurrentTrainingState.RestTimeState
-        }
+    private var currentExerciseIndex = 0
+    var currentSet = 1
+        private set
 
     var restTime = 0L
         private set
+
     var exerciseTime = 0L
         private set
 
     fun startTraining(trainingWithExercises: TrainingWithExercises) {
         this.trainingWithExercises = trainingWithExercises
-        startTrainingTime = System.currentTimeMillis()
         if (_currentTrainingState.value == null || _currentTrainingState.value is CurrentTrainingState.SummaryState || isDifferentTrainingRunning()) {
             val exercise = trainingWithExercises.exercises[currentExerciseIndex]
             restTime = setRestTime(exercise)
@@ -125,12 +114,30 @@ object CurrentTrainingProgressHelper {
         return state.exercise.restTime > TimeFormatter.MILLIS_IN_SECOND
     }
 
+    val isExerciseState: Boolean
+        get() {
+            return _currentTrainingState.value is CurrentTrainingState.ExerciseState
+        }
+
+    val isRestTimeState: Boolean
+        get() {
+            return _currentTrainingState.value is CurrentTrainingState.RestTimeState
+        }
+
     fun isLastExercise(): Boolean {
         val exercises = trainingWithExercises.exercises
         if (getNextExerciseIndexFromCurrentSet(exercises) != -1) return false
         val nextSet = currentSet + 1
         return !exercises.any {
             it.sets >= nextSet
+        }
+    }
+
+    fun navigateToTheNextScreen() {
+        if (isExerciseState) {
+            navigateToTrainingRestTime()
+        } else if (isRestTimeState) {
+            navigateToTrainingExercise()
         }
     }
 }
