@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.shared.di
 
-import com.lukasz.witkowski.shared.currentTraining.TimerHelper
-import com.lukasz.witkowski.shared.currentTraining.TrainingProgressController
+import com.lukasz.witkowski.shared.trainingControllers.TimerHelper
+import com.lukasz.witkowski.shared.trainingControllers.TrainingProgressController
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

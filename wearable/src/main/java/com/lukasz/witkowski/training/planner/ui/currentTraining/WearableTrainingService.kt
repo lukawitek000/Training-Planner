@@ -6,8 +6,8 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import androidx.wear.ongoing.OngoingActivity
-import com.lukasz.witkowski.shared.currentTraining.CurrentTrainingState
-import com.lukasz.witkowski.shared.currentTraining.TrainingService
+import com.lukasz.witkowski.shared.trainingControllers.CurrentTrainingState
+import com.lukasz.witkowski.shared.trainingControllers.TrainingService
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.training.planner.R
 import dagger.hilt.android.AndroidEntryPoint

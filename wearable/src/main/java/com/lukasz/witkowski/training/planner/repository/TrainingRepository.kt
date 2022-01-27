@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.repo
+package com.lukasz.witkowski.training.planner.repository
 
 import com.lukasz.witkowski.shared.db.StatisticsDao
 import com.lukasz.witkowski.shared.db.TrainingDao

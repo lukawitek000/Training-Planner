@@ -1,12 +1,10 @@
-package com.lukasz.witkowski.shared.currentTraining
+package com.lukasz.witkowski.shared.trainingControllers
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.TimeFormatter
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedInject
 import timber.log.Timber
 
 class TrainingProgressController {

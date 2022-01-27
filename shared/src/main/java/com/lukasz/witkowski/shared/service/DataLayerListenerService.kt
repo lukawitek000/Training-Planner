@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.shared.services
+package com.lukasz.witkowski.shared.service
 
 import com.google.android.gms.wearable.ChannelClient
 import com.google.android.gms.wearable.Wearable

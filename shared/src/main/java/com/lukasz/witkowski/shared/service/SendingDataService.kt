@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.shared.services
+package com.lukasz.witkowski.shared.service
 
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope

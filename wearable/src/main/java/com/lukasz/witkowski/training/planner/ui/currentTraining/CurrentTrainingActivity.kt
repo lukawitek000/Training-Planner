@@ -13,8 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentTransaction
 import androidx.wear.widget.SwipeDismissFrameLayout
-import com.lukasz.witkowski.shared.currentTraining.CurrentTrainingState
-import com.lukasz.witkowski.shared.currentTraining.TrainingService.Companion.TRAINING_ID_KEY
+import com.lukasz.witkowski.shared.trainingControllers.CurrentTrainingState
+import com.lukasz.witkowski.shared.trainingControllers.TrainingService.Companion.TRAINING_ID_KEY
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.ActivityCurrentTrainingBinding

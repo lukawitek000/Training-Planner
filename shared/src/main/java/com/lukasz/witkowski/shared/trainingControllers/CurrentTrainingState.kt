@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.shared.currentTraining
+package com.lukasz.witkowski.shared.trainingControllers
 
 import com.lukasz.witkowski.shared.models.TrainingExercise
 
