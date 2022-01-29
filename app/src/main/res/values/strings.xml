@@ -13,4 +13,6 @@
     <string name="add_training_exercise_one_more_time_info">The exercise %1$s is already added to the training.\nDo you want to add it one more time?</string>
     <string name="no_statistics">No statistics for this training.</string>
     <string name="heart_rate_plot">Heart rate (BPM)</string>
+    <string name="no_trainings_info">No trainings. Create your first training</string>
+    <string name="create_training">Create training</string>
 </resources>
