@@ -136,12 +136,9 @@ class TrainingStatisticsRecorder @Inject constructor(
     }
 
     private val exerciseUpdateListener = object : ExerciseUpdateListener {
-        override fun onAvailabilityChanged(dataType: DataType, availability: Availability) {
-//            Timber.d("Availability changed $dataType $availability")
-        }
+        override fun onAvailabilityChanged(dataType: DataType, availability: Availability) = Unit
 
         override fun onExerciseUpdate(update: ExerciseUpdate) {
-//            Timber.d("On exercise update $update")
             processExerciseUpdate(update)
         }
 
@@ -153,17 +150,15 @@ class TrainingStatisticsRecorder @Inject constructor(
         val exerciseType = ExerciseType.WORKOUT
         if (exerciseType in capabilities.supportedExerciseTypes) {
             configureExerciseCapabilities(capabilities, exerciseType)
-            exerciseClient.setUpdateListener(exerciseUpdateListener)
             configureExercise(exerciseType)
+            exerciseClient.setUpdateListener(exerciseUpdateListener)
         } else {
             _isWorkoutExerciseSupported.value = false
         }
     }
 
     private fun configureExercise(exerciseType: ExerciseType) {
-        // Types for which we want to receive aggregate metrics.
         val aggregateDataTypes = setOf(
-            // "Total" here refers not to the aggregation but to basal + activity.
             DataType.TOTAL_CALORIES,
             DataType.HEART_RATE_BPM
         )
