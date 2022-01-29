@@ -57,7 +57,7 @@
         <entry key="wearable/src/main/res/layout/activity_start_training.xml" value="0.7392739273927392" />
         <entry key="wearable/src/main/res/layout/activity_training_exercise.xml" value="0.5" />
         <entry key="wearable/src/main/res/layout/activity_training_summary.xml" value="1.0" />
-        <entry key="wearable/src/main/res/layout/activity_trainings_list.xml" value="1.0" />
+        <entry key="wearable/src/main/res/layout/activity_trainings_list.xml" value="0.7583333333333333" />
         <entry key="wearable/src/main/res/layout/category_list_item.xml" value="2.157142857142857" />
         <entry key="wearable/src/main/res/layout/fragment_training_exercise.xml" value="0.8181818181818182" />
         <entry key="wearable/src/main/res/layout/fragment_training_rest_time.xml" value="0.7737478411053541" />
