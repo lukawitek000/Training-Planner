@@ -149,9 +149,10 @@ class TrainingStatisticsRecorder @Inject constructor(
         val capabilities = exerciseClient.capabilities.await()
         val exerciseType = ExerciseType.WORKOUT
         if (exerciseType in capabilities.supportedExerciseTypes) {
-            configureExerciseCapabilities(capabilities, exerciseType)
-            configureExercise(exerciseType)
-            exerciseClient.setUpdateListener(exerciseUpdateListener)
+            if(configureExerciseCapabilities(capabilities, exerciseType)) {
+                configureExercise(exerciseType)
+                exerciseClient.setUpdateListener(exerciseUpdateListener)
+            }
         } else {
             _isWorkoutExerciseSupported.value = false
         }
@@ -175,12 +176,13 @@ class TrainingStatisticsRecorder @Inject constructor(
     private fun configureExerciseCapabilities(
         capabilities: ExerciseCapabilities,
         exerciseType: ExerciseType
-    ) {
+    ): Boolean {
         val exerciseCapabilities = capabilities.getExerciseTypeCapabilities(exerciseType)
         _isHeartRateSupported.value =
             DataType.HEART_RATE_BPM in exerciseCapabilities.supportedDataTypes
         _isBurntKcalSupported.value =
             DataType.TOTAL_CALORIES in exerciseCapabilities.supportedDataTypes
+        return isHeartRateSupported.value!! || isBurntKcalSupported.value!!
     }
 
     private fun processExerciseUpdate(exerciseUpdate: ExerciseUpdate) {
