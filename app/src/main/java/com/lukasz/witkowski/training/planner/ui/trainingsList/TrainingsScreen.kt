@@ -73,7 +73,7 @@ fun TrainingsScreen(
 }
 
 @Composable
-private fun TrainingsList(
+fun TrainingsList(
     innerPadding: PaddingValues,
     trainings: List<TrainingWithExercises>,
     navigateToTrainingOverview: (Long) -> Unit
