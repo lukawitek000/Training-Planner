@@ -49,7 +49,6 @@ abstract class TrainingService : LifecycleService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        Timber.d("onStartCommand")
         val trainingId = intent?.extras?.getLong(TRAINING_ID_KEY)!!
         fetchTrainingWithExercises(trainingId)
         createNotificationChannel()
