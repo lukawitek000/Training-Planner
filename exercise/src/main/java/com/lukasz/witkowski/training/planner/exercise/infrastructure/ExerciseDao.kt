@@ -21,7 +21,7 @@ interface ExerciseDao {
     fun getExercisesFromCategories(categories: List<Category>): Flow<List<DbExercise>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(exercise: DbExercise): Long
+    suspend fun insert(exercise: DbExercise): String
 
     @Delete
     suspend fun delete(exercise: DbExercise)

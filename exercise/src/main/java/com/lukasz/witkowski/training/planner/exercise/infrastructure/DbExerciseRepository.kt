@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
+import com.lukasz.witkowski.training.planner.exercise.domain.Category
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import kotlinx.coroutines.flow.Flow
@@ -14,9 +15,9 @@ class DbExerciseRepository(private val exerciseDao: ExerciseDao) : ExerciseRepos
         return exerciseDao.getAll().map { it.map { dbExercise -> ExerciseMapper.toExercise(dbExercise) } }
     }
 
-    override suspend fun insert(exercise: Exercise) {
+    override suspend fun insert(exercise: Exercise) : String {
         val dbExercise = ExerciseMapper.toDbExercise(exercise)
-        exerciseDao.insert(dbExercise)
+        return exerciseDao.insert(dbExercise)
     }
 
     override suspend fun delete(exercise: Exercise) {
