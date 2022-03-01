@@ -64,7 +64,7 @@ class CreateExerciseViewModel @Inject constructor(
             )
             try {
 
-                val exerciseId = exerciseService.createExercise(exercise)
+                val exerciseId = exerciseService.createExercise(exercise) // Long is not an id!!!
                 _savingState.value = ResultHandler.Success(0L) // TODO result handler requires long but exercise id was changed to String (UUID)
             } catch (e: Exception) {
                 _savingState.value = ResultHandler.Error(message = "Saving exercise failed")

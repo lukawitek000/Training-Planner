@@ -17,11 +17,8 @@ interface ExerciseDao {
     @Query("SELECT * FROM Exercise WHERE :id == id")
     fun getById(id: String): Flow<DbExercise>
 
-    @Query("SELECT * FROM Exercise WHERE category IN (:categories)")
-    fun getExercisesFromCategories(categories: List<Category>): Flow<List<DbExercise>>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(exercise: DbExercise): String
+    suspend fun insert(exercise: DbExercise): Long
 
     @Delete
     suspend fun delete(exercise: DbExercise)

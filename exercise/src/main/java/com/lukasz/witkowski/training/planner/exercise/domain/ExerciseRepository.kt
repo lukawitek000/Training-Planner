@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface ExerciseRepository {
     fun getById(id: String) : Flow<Exercise>
     fun getAll() : Flow<List<Exercise>>
-    suspend fun insert(exercise: Exercise) : String
+    suspend fun insert(exercise: Exercise) : Long
     // TODO is it better to delete by Id or object??
     suspend fun delete(exercise: Exercise)
 }

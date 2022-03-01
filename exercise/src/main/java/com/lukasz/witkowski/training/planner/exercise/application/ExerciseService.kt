@@ -10,7 +10,7 @@ class ExerciseService(
     private val exerciseRepository: ExerciseRepository
 ) {
 
-    suspend fun createExercise(exercise: Exercise) : String {
+    suspend fun createExercise(exercise: Exercise) : Long {
         return exerciseRepository.insert(exercise)
     }
 
@@ -20,7 +20,7 @@ class ExerciseService(
 
     fun getAllExercises(categories: List<Category>) : Flow<List<Exercise>> {
         return exerciseRepository.getAll().map {
-            it.filter { exercise ->  categories.contains(exercise.category) }
+            it.filter { exercise ->  categories.contains(exercise.category)  || categories.isEmpty()}
         }
     }
 

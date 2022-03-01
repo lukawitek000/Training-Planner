@@ -15,7 +15,7 @@ class DbExerciseRepository(private val exerciseDao: ExerciseDao) : ExerciseRepos
         return exerciseDao.getAll().map { it.map { dbExercise -> ExerciseMapper.toExercise(dbExercise) } }
     }
 
-    override suspend fun insert(exercise: Exercise) : String {
+    override suspend fun insert(exercise: Exercise) : Long {
         val dbExercise = ExerciseMapper.toDbExercise(exercise)
         return exerciseDao.insert(dbExercise)
     }
