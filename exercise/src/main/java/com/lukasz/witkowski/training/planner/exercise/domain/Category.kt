@@ -15,3 +15,4 @@ sealed class Category(val name: String) {
 
 
 val allCategories = Category::class.sealedSubclasses.map { it.objectInstance as Category }
+val categoriesWithoutNone = allCategories.filter { it.name.isNotEmpty() }

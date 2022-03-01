@@ -2,17 +2,10 @@ package com.lukasz.witkowski.training.planner.ui.exercisesList
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -22,46 +15,38 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.models.Category
-import com.lukasz.witkowski.shared.models.Exercise
-import com.lukasz.witkowski.shared.utils.categoriesWithoutNone
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.domain.Category
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
+import com.lukasz.witkowski.training.planner.exercise.domain.categoriesWithoutNone
+import com.lukasz.witkowski.training.planner.exercise.presentation.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
-import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
-import timber.log.Timber
 
 @Composable
 fun ExercisesScreen(
@@ -106,7 +91,7 @@ fun ExercisesScreenContent(
             selectedCategories = selectedCategoriesList,
             selectCategory = { viewModel.selectCategory(it) }
         )
-        if(exercisesList.isNotEmpty()) {
+        if (exercisesList.isNotEmpty()) {
             ExercisesList(
                 exercisesList = exercisesList,
                 openDialog = {
@@ -120,7 +105,7 @@ fun ExercisesScreenContent(
         } else {
             NoDataMessage(
                 modifier = Modifier,
-                text = if(selectedCategoriesList.isEmpty()) "No exercises. Create your first exercise." else "No exercises for selected categories."
+                text = if (selectedCategoriesList.isEmpty()) "No exercises. Create your first exercise." else "No exercises for selected categories."
             )
         }
     }
@@ -160,7 +145,8 @@ private fun ExercisesList(
 ) {
     LazyColumn() {
         items(exercisesList) { exercise ->
-            ListCardItem(modifier = Modifier,
+            ListCardItem(
+                modifier = Modifier,
                 onCardClicked = {
                     if (pickingExerciseMode) {
                         pickExercise(exercise)
@@ -188,7 +174,7 @@ fun ExerciseListItemContent(
     val category = exercise.category
 
     Row(
-        modifier =  modifier,
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         ImageWithDefaultPlaceholder(imageDescription = imageDescription, image = image)
@@ -257,7 +243,9 @@ fun ExerciseInfoAlertDialog(
         saveData = {}
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
@@ -271,7 +259,7 @@ fun ExerciseInfoAlertDialog(
                 imageDescription = "${exercise.name} image", image = exercise.image,
                 heightMax = 350.dp
             )
-            if(exercise.description.isNotEmpty()) {
+            if (exercise.description.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = exercise.description,
