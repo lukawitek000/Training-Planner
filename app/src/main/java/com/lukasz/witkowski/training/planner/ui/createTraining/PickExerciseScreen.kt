@@ -34,8 +34,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
+import com.lukasz.witkowski.training.planner.exercise.presentation.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
@@ -70,13 +71,14 @@ fun PickExerciseScreen(
             pickingExerciseMode = true,
             pickExercise = { pickedExercise ->
                 exercise = pickedExercise
-                if(pickedTrainingExercises.any { it.exercise.id == pickedExercise.id }) {
+                // TODO picking was made by choosing id it.exercise.id == pickedExercise.id
+                if(pickedTrainingExercises.any { it.name == pickedExercise.name }) {
                     showInfoDialog = true
                 } else {
                     openDialog = true
                 }
             },
-            pickedExercises = pickedTrainingExercises.map { it.exercise }
+            pickedExercises = pickedTrainingExercises.map { Exercise(name = it.name, description = it.description) } // TODO check this mapping
         )
         if(showInfoDialog) {
             InfoDialog(

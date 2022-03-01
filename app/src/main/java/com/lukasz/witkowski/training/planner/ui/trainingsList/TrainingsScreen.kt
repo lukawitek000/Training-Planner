@@ -24,10 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
-import com.lukasz.witkowski.shared.utils.categoriesWithoutNone
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.domain.Category
+import com.lukasz.witkowski.training.planner.exercise.domain.categoriesWithoutNone
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
@@ -98,7 +98,7 @@ fun TrainingListItemContent(
     trainingWithExercises: TrainingWithExercises
 ) {
     val categories =
-        trainingWithExercises.exercises.map { it.exercise.category }.filter { it != Category.None }
+        trainingWithExercises.exercises.map { it.category }.filter { it != Category.None.name }
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -116,10 +116,10 @@ fun TrainingListItemContent(
             if (categories.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 LazyRow {
-                    items(categories) { item: Category ->
+                    items(categories) { item: String ->
                         CategoryChip(
                             modifier = Modifier.padding(end = 8.dp),
-                            text = item.name,
+                            text = item,
                             fontSize = 14.sp
                         )
                     }

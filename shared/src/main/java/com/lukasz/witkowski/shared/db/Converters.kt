@@ -4,24 +4,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.room.TypeConverter
 import com.google.gson.Gson
-import com.lukasz.witkowski.shared.models.Category
-import com.lukasz.witkowski.shared.utils.allCategories
 import java.io.ByteArrayOutputStream
 import kotlin.math.roundToInt
 
 class Converters {
-
-    @TypeConverter
-    fun fromCategoryToString(category: Category): String {
-        return category.name
-    }
-
-    @TypeConverter
-    fun fromStringToCategory(name: String): Category {
-        return allCategories.firstOrNull {
-            it.name == name
-        } ?: Category.None
-    }
 
     @TypeConverter
     fun fromBitmapToByteArray(bitmap: Bitmap?): ByteArray? {

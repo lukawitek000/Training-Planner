@@ -27,7 +27,6 @@ import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOvervie
 import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsScreen
 
-@ExperimentalAnimationApi
 @Composable
 fun Navigation(navController: NavHostController, innerPadding: PaddingValues, showToast: (String) -> Unit) {
     NavHost(navController = navController, startDestination = NavItem.Trainings.route) {

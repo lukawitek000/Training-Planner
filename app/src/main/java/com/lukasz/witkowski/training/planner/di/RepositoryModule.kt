@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.di
 
-import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDao
 import com.lukasz.witkowski.shared.db.StatisticsDao
 import com.lukasz.witkowski.shared.db.TrainingDao
 import com.lukasz.witkowski.training.planner.repository.StatisticsRepository

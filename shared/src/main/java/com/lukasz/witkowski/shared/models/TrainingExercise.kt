@@ -11,8 +11,9 @@ data class TrainingExercise(
     @ColumnInfo(name = "TrainingExerciseId")
     val id: Long = 0L,
     var trainingId: Long = 0L,
-    @Embedded
-    val exercise: Exercise,
+    val name: String = "",
+    val description: String = "",
+    val category: String = "",
     val repetitions: Int = 1,
     val sets: Int = 1,
     val time: Long = 0L,
