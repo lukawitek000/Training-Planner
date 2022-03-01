@@ -1,8 +1,11 @@
 package com.lukasz.witkowski.training.planner.exercise.domain
 
+import kotlinx.coroutines.flow.Flow
+
 interface ExerciseRepository {
-    fun getById(id: Long) : Exercise
-    fun getAll() : List<Exercise>
-    fun insert(exercise: Exercise)
-    fun delete(exercise: Exercise)
+    fun getById(id: String) : Flow<Exercise>
+    fun getAll() : Flow<List<Exercise>>
+    suspend fun insert(exercise: Exercise)
+    // TODO is it better to delete by Id or object??
+    suspend fun delete(exercise: Exercise)
 }

@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.repository
 
-import androidx.lifecycle.LiveData
-import com.lukasz.witkowski.shared.db.ExerciseDao
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDao
 import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.Exercise
 import kotlinx.coroutines.Dispatchers

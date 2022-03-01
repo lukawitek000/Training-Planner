@@ -3,7 +3,7 @@ package com.lukasz.witkowski.shared.di
 import android.content.Context
 import androidx.room.Room
 import com.lukasz.witkowski.shared.db.AppDatabase
-import com.lukasz.witkowski.shared.db.ExerciseDao
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.db.ExerciseDao
 import com.lukasz.witkowski.shared.db.StatisticsDao
 import com.lukasz.witkowski.shared.db.TrainingDao
 import dagger.Module
@@ -31,7 +31,7 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideExerciseDao(appDatabase: AppDatabase): ExerciseDao {
+    fun provideExerciseDao(appDatabase: AppDatabase): com.lukasz.witkowski.training.planner.exercise.infrastructure.db.ExerciseDao {
         return appDatabase.exerciseDao()
     }
 
