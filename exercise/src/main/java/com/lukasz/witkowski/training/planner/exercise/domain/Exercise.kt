@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.domain
 
 import android.graphics.Bitmap
-import com.lukasz.witkowski.shared.models.Category
 import java.util.*
 
 data class Exercise(

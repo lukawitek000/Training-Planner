@@ -2,9 +2,9 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.lukasz.witkowski.shared.models.Category
-import com.lukasz.witkowski.shared.utils.allCategories
+import com.lukasz.witkowski.training.planner.exercise.domain.Category
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
+import com.lukasz.witkowski.training.planner.exercise.domain.allCategories
 import java.io.ByteArrayOutputStream
 import kotlin.math.roundToInt
 

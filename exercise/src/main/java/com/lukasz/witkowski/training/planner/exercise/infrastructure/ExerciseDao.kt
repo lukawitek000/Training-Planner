@@ -5,7 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.lukasz.witkowski.shared.models.Category
+import com.lukasz.witkowski.training.planner.exercise.domain.Category
 import kotlinx.coroutines.flow.Flow
 
 @Dao
