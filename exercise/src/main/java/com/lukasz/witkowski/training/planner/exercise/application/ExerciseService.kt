@@ -18,9 +18,9 @@ class ExerciseService(
         return exerciseRepository.getAll()
     }
 
-    fun getAllExercises(categories: List<Category>) : Flow<List<Exercise>> {
+    fun getExercisesFromCategories(categories: List<Category>) : Flow<List<Exercise>> {
         return exerciseRepository.getAll().map {
-            it.filter { exercise ->  categories.contains(exercise.category)  || categories.isEmpty()}
+            it.filter { exercise ->  categories.contains(exercise.category)}
         }
     }
 
