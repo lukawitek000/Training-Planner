@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.shared.models
+package com.lukasz.witkowski.training.planner.exercise.domain
 
 sealed class Category(val name: String) {
 
@@ -12,3 +12,7 @@ sealed class Category(val name: String) {
     object Abs : Category("Abs")
     object Stretching : Category("Stretching")
 }
+
+
+val allCategories = Category::class.sealedSubclasses.map { it.objectInstance as Category }
+val categoriesWithoutNone = allCategories.filter { it.name.isNotEmpty() }

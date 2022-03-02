@@ -5,7 +5,6 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,20 +32,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.models.Category
-import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.domain.Category
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
@@ -56,9 +53,7 @@ import me.bytebeats.views.charts.line.render.line.SolidLineDrawer
 import me.bytebeats.views.charts.line.render.point.EmptyPointDrawer
 import me.bytebeats.views.charts.line.render.xaxis.SimpleXAxisDrawer
 import me.bytebeats.views.charts.line.render.yaxis.SimpleYAxisDrawer
-import timber.log.Timber
 
-@ExperimentalAnimationApi
 @Composable
 fun TrainingOverviewScreen(
     modifier: Modifier,
@@ -115,7 +110,6 @@ fun TrainingOverviewScreen(
     }
 }
 
-@ExperimentalAnimationApi
 @Composable
 fun TrainingOverviewContent(
     modifier: Modifier = Modifier,
@@ -150,7 +144,6 @@ fun TrainingOverviewContent(
 }
 
 
-@ExperimentalAnimationApi
 @Composable
 fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<TrainingExercise>) {
 
@@ -199,18 +192,18 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExer
     ) {
         Column() {
             Text(
-                text = exercise.exercise.name,
+                text = exercise.name,
                 fontSize = 24.sp,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = exercise.exercise.description, fontSize = 18.sp)
+            Text(text = exercise.description, fontSize = 18.sp)
             Spacer(modifier = Modifier.height(16.dp))
-            if (exercise.exercise.category != Category.None) {
+            if (exercise.category != Category.None.name) {
                 CategoryChip(
                     modifier = Modifier.fillMaxWidth(),
-                    text = exercise.exercise.category.name
+                    text = exercise.category
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -388,11 +381,9 @@ fun SingleExercisePrev() {
     SingleTrainingExerciseInformation(
         Modifier,
         TrainingExercise(
-            exercise = Exercise(
-                name = "Super exercise",
-                description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
-                category = Category.Back
-            ),
+            name = "Super exercise",
+            description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
+            category = Category.Back.name,
             sets = 10,
             repetitions = 100,
             time = 141000,

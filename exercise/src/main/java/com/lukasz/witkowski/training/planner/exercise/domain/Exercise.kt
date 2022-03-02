@@ -1,13 +1,10 @@
-package com.lukasz.witkowski.shared.models
+package com.lukasz.witkowski.training.planner.exercise.domain
 
 import android.graphics.Bitmap
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import java.util.*
 
-@Entity
 data class Exercise(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0L,
+    val id: String = UUID.randomUUID().toString(),
     val name: String = "",
     val description: String = "",
     val category: Category = Category.None,

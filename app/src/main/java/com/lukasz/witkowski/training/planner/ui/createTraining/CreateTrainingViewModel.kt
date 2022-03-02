@@ -3,22 +3,18 @@ package com.lukasz.witkowski.training.planner.ui.createTraining
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.TimeFormatter
-import com.lukasz.witkowski.shared.utils.TimeFormatter.MILLIS_IN_SECOND
-import com.lukasz.witkowski.shared.utils.TimeFormatter.SECONDS_IN_MINUTE
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.repository.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import kotlin.math.min
 
 @HiltViewModel
 class CreateTrainingViewModel @Inject constructor(
@@ -80,7 +76,9 @@ class CreateTrainingViewModel @Inject constructor(
         val repetitions = reps.toIntOrNull() ?: 1
         val sets = sets.toIntOrNull() ?: 1
         val trainingExercise = TrainingExercise(
-            exercise = exercise,
+            name = exercise.name,
+            description = exercise.description,
+            category = exercise.category.name,
             repetitions = repetitions,
             sets = sets,
             time = timeInMillis

@@ -1,12 +1,12 @@
-package com.lukasz.witkowski.training.planner.ui.createExercise
+package com.lukasz.witkowski.training.planner.exercise.presentation
 
 import android.graphics.Bitmap
 import androidx.lifecycle.*
-import com.lukasz.witkowski.shared.models.Category
-import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.utils.ResultHandler
-import com.lukasz.witkowski.shared.utils.allCategories
-import com.lukasz.witkowski.training.planner.repository.ExerciseRepository
+import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
+import com.lukasz.witkowski.training.planner.exercise.domain.Category
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
+import com.lukasz.witkowski.training.planner.exercise.domain.allCategories
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CreateExerciseViewModel @Inject constructor(
-    private val exerciseRepository: ExerciseRepository,
+    private val exerciseService: ExerciseService,
     private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
@@ -40,6 +40,7 @@ class CreateExerciseViewModel @Inject constructor(
     val category: LiveData<Category> = _category
 
     fun onCategorySelected(newCategory: String) {
+        // TODO Exercise model for presentation layer should have category as String
         _category.value = allCategories.firstOrNull {
             it.name == newCategory
         } ?: Category.None
@@ -51,6 +52,7 @@ class CreateExerciseViewModel @Inject constructor(
     fun onImageChange(bitmap: Bitmap){
         _image.value = bitmap
     }
+
     fun createExercise(){
         viewModelScope.launch {
             _savingState.value = ResultHandler.Loading
@@ -62,8 +64,8 @@ class CreateExerciseViewModel @Inject constructor(
             )
             try {
 
-                val exerciseId = exerciseRepository.insertExercise(exercise)
-                _savingState.value = ResultHandler.Success(exerciseId)
+                val exerciseId = exerciseService.createExercise(exercise) // Long is not an id!!!
+                _savingState.value = ResultHandler.Success(0L) // TODO result handler requires long but exercise id was changed to String (UUID)
             } catch (e: Exception) {
                 _savingState.value = ResultHandler.Error(message = "Saving exercise failed")
             }

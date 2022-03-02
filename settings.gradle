@@ -10,3 +10,4 @@ rootProject.name = "Training Planner"
 include ':app'
 include ':wearable'
 include ':shared'
+include ':exercise'

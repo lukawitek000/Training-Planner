@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.ui.createTraining
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,45 +11,36 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxColors
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Snackbar
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
+import com.lukasz.witkowski.training.planner.exercise.presentation.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
-import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesScreenContent
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @Composable
@@ -81,13 +71,14 @@ fun PickExerciseScreen(
             pickingExerciseMode = true,
             pickExercise = { pickedExercise ->
                 exercise = pickedExercise
-                if(pickedTrainingExercises.any { it.exercise.id == pickedExercise.id }) {
+                // TODO picking was made by choosing id it.exercise.id == pickedExercise.id
+                if(pickedTrainingExercises.any { it.name == pickedExercise.name }) {
                     showInfoDialog = true
                 } else {
                     openDialog = true
                 }
             },
-            pickedExercises = pickedTrainingExercises.map { it.exercise }
+            pickedExercises = pickedTrainingExercises.map { Exercise(name = it.name, description = it.description) } // TODO check this mapping
         )
         if(showInfoDialog) {
             InfoDialog(

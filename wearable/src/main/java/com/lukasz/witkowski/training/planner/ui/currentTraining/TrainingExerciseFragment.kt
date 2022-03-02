@@ -142,7 +142,7 @@ class TrainingExerciseFragment : Fragment() {
     }
 
     private fun setExerciseDataToUi(trainingExercise: TrainingExercise, exerciseTime: Long) {
-        binding.exerciseNameTv.text = trainingExercise.exercise.name
+        binding.exerciseNameTv.text = trainingExercise.name
         binding.repetitionsTv.text = getString(R.string.reps_text, trainingExercise.repetitions)
         binding.setsTv.text = getString(R.string.sets_text, trainingExercise.sets)
         binding.apply {

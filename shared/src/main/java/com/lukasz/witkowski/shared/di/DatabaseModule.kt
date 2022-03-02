@@ -3,7 +3,6 @@ package com.lukasz.witkowski.shared.di
 import android.content.Context
 import androidx.room.Room
 import com.lukasz.witkowski.shared.db.AppDatabase
-import com.lukasz.witkowski.shared.db.ExerciseDao
 import com.lukasz.witkowski.shared.db.StatisticsDao
 import com.lukasz.witkowski.shared.db.TrainingDao
 import dagger.Module
@@ -27,12 +26,6 @@ object DatabaseModule {
         )
             .fallbackToDestructiveMigration()
             .build()
-    }
-
-    @Singleton
-    @Provides
-    fun provideExerciseDao(appDatabase: AppDatabase): ExerciseDao {
-        return appDatabase.exerciseDao()
     }
 
     @Singleton

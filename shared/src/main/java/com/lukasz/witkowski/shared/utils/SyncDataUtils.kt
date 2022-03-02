@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.shared.utils
 
 import com.google.gson.GsonBuilder
-import com.lukasz.witkowski.shared.models.Category
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.InputStream
@@ -11,7 +10,7 @@ const val TRAINING_PATH = "/training"
 const val STATISTICS_PATH = "/statistics"
 
 val gson = GsonBuilder()
-    .registerTypeAdapter(Category::class.java, CategoryAdapter())
+//    .registerTypeAdapter(Category::class.java, CategoryAdapter())
     .create()
 
 

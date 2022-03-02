@@ -8,21 +8,37 @@ import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Button
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.Create
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -34,17 +50,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.utils.ResultHandler
-import com.lukasz.witkowski.shared.utils.allCategories
+import com.lukasz.witkowski.training.planner.exercise.domain.Category
+import com.lukasz.witkowski.training.planner.exercise.domain.allCategories
+import com.lukasz.witkowski.training.planner.exercise.presentation.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 import com.lukasz.witkowski.training.planner.ui.components.TextField
-import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import com.skydoves.landscapist.glide.GlideImage
-import kotlinx.coroutines.launch
-import java.lang.Error
 
 
 @Composable
@@ -64,25 +78,27 @@ fun CreateExerciseScreen(
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
-            if(savingState is ResultHandler.Idle) {
-                FloatingActionButton(onClick = {
-                    if(title.isNotEmpty()) {
-                        viewModel.createExercise()
-                    } else {
-                        showToast = true
-                    }
-                },
-                    ) {
+            if (savingState is ResultHandler.Idle) {
+                FloatingActionButton(
+                    onClick = {
+                        if (title.isNotEmpty()) {
+                            viewModel.createExercise()
+                        } else {
+                            showToast = true
+                        }
+                    },
+                ) {
                     Icon(imageVector = Icons.Default.Create, contentDescription = "Create exercise")
                 }
             }
         }
     ) {
-        if(showToast) {
-            Toast.makeText(LocalContext.current, "Exercise title is required", Toast.LENGTH_SHORT).show()
+        if (showToast) {
+            Toast.makeText(LocalContext.current, "Exercise title is required", Toast.LENGTH_SHORT)
+                .show()
             showToast = false
         }
-        when(savingState) {
+        when (savingState) {
             is ResultHandler.Idle -> {
                 CreateExerciseForm(
                     image = image,
@@ -100,8 +116,8 @@ fun CreateExerciseScreen(
                     modifier = Modifier.fillMaxSize(),
                     message = "Exercise is saving to the database"
                 )
-                if(savingState is ResultHandler.Loading) return@Scaffold
-                val message = if(savingState is ResultHandler.Error) {
+                if (savingState is ResultHandler.Loading) return@Scaffold
+                val message = if (savingState is ResultHandler.Error) {
                     "Saving exercise failed"
                 } else {
                     "Exercise saved"

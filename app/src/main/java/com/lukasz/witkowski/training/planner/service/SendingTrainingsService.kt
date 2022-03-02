@@ -25,11 +25,11 @@ class SendingTrainingsService : SendingDataService() {
     }
 
     private fun removeImages(it: List<TrainingWithExercises>) {
-        it.forEach { trainingWithExercises ->
-            trainingWithExercises.exercises.forEach { trainingExercise ->
-                trainingExercise.exercise.image = null
-            }
-        }
+//        it.forEach { trainingWithExercises ->
+//            trainingWithExercises.exercises.forEach { trainingExercise ->
+//                trainingExercise.exercise.image = null
+//            }
+//        }
     }
 
     override suspend fun handleSyncResponse(id: Long, syncResponse: Int) {

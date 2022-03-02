@@ -41,7 +41,6 @@ import timber.log.Timber
 class MainActivity : ComponentActivity() {
     private var isServiceStarted = false
 
-    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -89,7 +88,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@ExperimentalAnimationApi
 @Composable
 fun TrainingPlannerApp(showToast: (String) -> Unit) {
     val navController = rememberNavController()

@@ -1,13 +1,11 @@
 package com.lukasz.witkowski.training.planner.ui.createTraining
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -42,17 +39,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.domain.Category
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
-import com.lukasz.witkowski.training.planner.ui.theme.LightDark5
-import timber.log.Timber
 
 @Composable
 fun CreateTrainingScreen(
@@ -272,7 +267,7 @@ private fun TrainingExerciseInfo(
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-                Text(text = trainingExercise.exercise.name, fontSize = 24.sp , color = MaterialTheme.colors.primary)
+                Text(text = trainingExercise.name, fontSize = 24.sp , color = MaterialTheme.colors.primary)
                 Spacer(modifier = Modifier.height(8.dp))
                 ExerciseSetsRepsTimeInfo(trainingExercise)
             }
@@ -322,7 +317,9 @@ private fun ExerciseSetsRepsTimeInfo(trainingExercise: TrainingExercise) {
 fun TrainingExerciseListItemPreview() {
     TrainingExerciseListItem(
         trainingExercise = TrainingExercise(
-            exercise = Exercise(name = "New exercise"),
+            name = "New exercise",
+            description = "",
+            category = "None",
             repetitions = 10,
             sets = 5,
             time = 1000,
@@ -337,7 +334,7 @@ fun TrainingExerciseListItemPreview() {
 @Composable
 fun RestTimeDialogPreview() {
     SetTrainingExerciseRestTimeDialog(
-        trainingExercise = TrainingExercise(exercise = Exercise()),
+        trainingExercise = TrainingExercise(),
         closeDialog = {},
         setRestTimeToExercise = { trainingExercise, i, i2 ->  }
     )

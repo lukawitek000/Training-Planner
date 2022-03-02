@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.training.planner.databinding.TrainingListItemBinding
 
@@ -29,15 +28,15 @@ class TrainingsAdapter(private val onTrainingClicked: (Long, String) -> Unit) :
         fun bind(item: TrainingWithExercises) {
             binding.trainingNameTv.text = item.training.title
             val categories = item.exercises.filter {
-                it.exercise.category != Category.None
-            }.map { it.exercise.category }
+                it.category != "None"
+            }.map { it.category }
             setUpCategoriesRecyclerView(categories)
             binding.root.setOnClickListener {
                 onTrainingClicked(item.training.id, item.training.title)
             }
         }
 
-        private fun setUpCategoriesRecyclerView(categories: List<Category>) {
+        private fun setUpCategoriesRecyclerView(categories: List<String>) {
             binding.categoriesRv.adapter = CategoriesAdapter(categories)
             binding.categoriesRv.layoutManager =
                 LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)

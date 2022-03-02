@@ -1,25 +1,12 @@
 package com.lukasz.witkowski.training.planner.navigation
 
-import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -27,20 +14,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.lukasz.witkowski.training.planner.exercise.presentation.CreateExerciseViewModel
+import com.lukasz.witkowski.training.planner.exercise.presentation.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.ui.*
 import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseScreen
-import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.ui.createTraining.CreateTrainingScreen
 import com.lukasz.witkowski.training.planner.ui.createTraining.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.ui.createTraining.PickExerciseScreen
-import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewScreen
 import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewViewModel
 import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsScreen
 
-@ExperimentalAnimationApi
 @Composable
 fun Navigation(navController: NavHostController, innerPadding: PaddingValues, showToast: (String) -> Unit) {
     NavHost(navController = navController, startDestination = NavItem.Trainings.route) {

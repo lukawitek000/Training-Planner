@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import androidx.room.Transaction
-import com.lukasz.witkowski.shared.models.Category
 import com.lukasz.witkowski.shared.models.Training
 import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.models.TrainingWithExercises
@@ -45,7 +44,7 @@ interface TrainingDao {
     suspend fun getTrainingWithExercisesByIdAsync(id: Long): TrainingWithExercises
 
     @Query("SELECT * FROM TRAINING WHERE id in (SELECT trainingId FROM TrainingExercise WHERE category IN (:filterCategories))")
-    fun getTrainingsWithExercisesFromCategories(filterCategories: List<Category>): Flow<List<TrainingWithExercises>>
+    fun getTrainingsWithExercisesFromCategories(filterCategories: List<String>): Flow<List<TrainingWithExercises>>
 
     @Query("UPDATE training SET isSynchronized=1 WHERE id=:id")
     fun updateSynchronizedTrainingById(id: Long)
