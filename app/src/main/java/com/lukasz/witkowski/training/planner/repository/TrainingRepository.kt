@@ -1,7 +1,5 @@
 package com.lukasz.witkowski.training.planner.repository
 
-import com.lukasz.witkowski.shared.db.TrainingDao
-import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.training.planner.exercise.domain.Category
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

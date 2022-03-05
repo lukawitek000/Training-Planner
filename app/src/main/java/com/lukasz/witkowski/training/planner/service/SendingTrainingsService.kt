@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.service
 
 import androidx.lifecycle.lifecycleScope
-import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.service.SendingDataService
 import com.lukasz.witkowski.shared.utils.SYNC_SUCCESSFUL
 import com.lukasz.witkowski.shared.utils.TRAINING_PATH

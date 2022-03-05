@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.service
 
 import com.google.android.gms.wearable.ChannelClient
-import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.service.DataLayerListenerService
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

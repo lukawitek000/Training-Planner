@@ -2,7 +2,6 @@ package com.lukasz.witkowski.training.planner.ui.trainingOverview
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.training.planner.repository.StatisticsRepository
 import com.lukasz.witkowski.training.planner.repository.TrainingRepository

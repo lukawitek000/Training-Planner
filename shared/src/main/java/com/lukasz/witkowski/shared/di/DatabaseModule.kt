@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import com.lukasz.witkowski.shared.db.AppDatabase
 import com.lukasz.witkowski.shared.db.StatisticsDao
-import com.lukasz.witkowski.shared.db.TrainingDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,12 +25,6 @@ object DatabaseModule {
         )
             .fallbackToDestructiveMigration()
             .build()
-    }
-
-    @Singleton
-    @Provides
-    fun provideTrainingDao(appDatabase: AppDatabase): TrainingDao {
-        return appDatabase.trainingDao()
     }
 
     @Singleton

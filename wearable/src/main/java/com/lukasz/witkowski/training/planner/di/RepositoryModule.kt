@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.di
 
 import com.lukasz.witkowski.shared.db.StatisticsDao
-import com.lukasz.witkowski.shared.db.TrainingDao
 import com.lukasz.witkowski.training.planner.repository.TrainingRepository
 import dagger.Module
 import dagger.Provides

@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.navigation
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -19,12 +18,10 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.ExercisesList
 import com.lukasz.witkowski.training.planner.ui.*
 import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.ui.createTraining.CreateTrainingScreen
-import com.lukasz.witkowski.training.planner.ui.createTraining.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.ui.createTraining.PickExerciseScreen
 import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewScreen
 import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewViewModel
-import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsScreen
 
 @Composable
