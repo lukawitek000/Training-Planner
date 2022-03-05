@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
-import com.lukasz.witkowski.training.planner.exercise.domain.Category
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import kotlinx.coroutines.flow.Flow

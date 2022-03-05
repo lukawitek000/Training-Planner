@@ -7,5 +7,5 @@ data class TrainingPlan(
     val title: String,
     val description: String = "",
     val exercises: List<Exercise>,
-    val isSynchronized: Boolean = false
+    val isSynchronized: Boolean = false // TODO how to handle synchronization flags
 )

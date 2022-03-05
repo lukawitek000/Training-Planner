@@ -4,8 +4,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TrainingPlanRepository {
 
-    suspend fun save(trainingPlan: TrainingPlan): Long
+    suspend fun save(trainingPlan: TrainingPlan)
     fun getAll(): Flow<List<TrainingPlan>>
-    fun getById(id: String) : Flow<TrainingPlan>
-    fun delete(trainingPlan: TrainingPlan)
+    suspend fun delete(trainingPlan: TrainingPlan)
 }
