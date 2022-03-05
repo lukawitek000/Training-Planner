@@ -15,5 +15,6 @@ internal data class DbExercise(
     val image: Bitmap?,
     val repetitions: Int,
     val sets: Int,
-    val time: Long
+    val time: Long,
+    val restTime: Long
 )

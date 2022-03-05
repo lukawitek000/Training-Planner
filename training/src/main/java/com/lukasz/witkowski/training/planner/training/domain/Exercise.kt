@@ -11,5 +11,6 @@ data class Exercise(
     val image: Bitmap? = null,
     val repetitions: Int = 1,
     val sets: Int = 1,
-    val time: Long = 0L
+    val time: Long = 0L,
+    val restTime: Long = 0L
 )

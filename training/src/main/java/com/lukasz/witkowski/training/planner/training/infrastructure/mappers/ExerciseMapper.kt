@@ -15,7 +15,8 @@ internal object ExerciseMapper {
             image = exercise.image,
             repetitions = exercise.repetitions,
             sets = exercise.sets,
-            time = exercise.time
+            time = exercise.time,
+            restTime = exercise.restTime
         )
     }
 
@@ -28,7 +29,8 @@ internal object ExerciseMapper {
             image = dbExercise.image,
             repetitions = dbExercise.repetitions,
             sets = dbExercise.sets,
-            time = dbExercise.time
+            time = dbExercise.time,
+            restTime = dbExercise.restTime
         )
     }
 }
