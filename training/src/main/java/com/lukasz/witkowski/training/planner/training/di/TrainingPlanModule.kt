@@ -1,12 +1,12 @@
-package com.lukasz.witkowski.training.planner.training
+package com.lukasz.witkowski.training.planner.training.di
 
 import android.content.Context
 import androidx.room.Room
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
-import com.lukasz.witkowski.training.planner.training.infrastructure.DbTrainingPlanRepository
-import com.lukasz.witkowski.training.planner.training.infrastructure.TrainingPlanDao
-import com.lukasz.witkowski.training.planner.training.infrastructure.TrainingPlanDatabase
+import com.lukasz.witkowski.training.planner.training.infrastructure.db.DbTrainingPlanRepository
+import com.lukasz.witkowski.training.planner.training.infrastructure.db.TrainingPlanDao
+import com.lukasz.witkowski.training.planner.training.infrastructure.db.TrainingPlanDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

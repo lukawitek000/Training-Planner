@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.exercise
+package com.lukasz.witkowski.training.planner.exercise.di
 
 import android.content.Context
 import androidx.room.Room

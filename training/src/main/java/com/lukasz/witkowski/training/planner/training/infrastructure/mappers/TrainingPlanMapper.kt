@@ -1,8 +1,8 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.mappers
 
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.infrastructure.DbTrainingPlan
-import com.lukasz.witkowski.training.planner.training.infrastructure.DbTrainingPlanWithExercises
+import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingPlan
+import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingPlanWithExercises
 
 internal object TrainingPlanMapper {
     fun toDbTrainingPlanWithExercises(trainingPlan: TrainingPlan): DbTrainingPlanWithExercises {

@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.mappers
 
 import com.lukasz.witkowski.training.planner.training.domain.Exercise
-import com.lukasz.witkowski.training.planner.training.infrastructure.DbExercise
+import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbExercise
 
 internal object ExerciseMapper {
 

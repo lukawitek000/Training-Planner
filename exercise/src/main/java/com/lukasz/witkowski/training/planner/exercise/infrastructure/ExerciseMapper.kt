@@ -10,6 +10,7 @@ import kotlin.math.roundToInt
 
 // TODO The conversion can be made using TypeConverter from Room??
 // The mapper is better if the external library would change, mapper has to be adjusted only
+// On the other hand external library may not need converting
 object ExerciseMapper {
 
     fun toDbExercise(exercise: Exercise): DbExercise {

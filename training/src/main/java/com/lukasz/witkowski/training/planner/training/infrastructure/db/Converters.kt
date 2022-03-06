@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure
+package com.lukasz.witkowski.training.planner.training.infrastructure.db
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

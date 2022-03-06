@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.domain
 
+// TODO how to store category??, it used by the Training module, to filter, to show categories
 sealed class Category(val name: String) {
 
     object None : Category("")

@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure
+package com.lukasz.witkowski.training.planner.training.infrastructure.db
 
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository

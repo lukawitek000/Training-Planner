@@ -6,6 +6,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
+// TODO What application layer is doing except connecting to the domain
 class ExerciseService(
     private val exerciseRepository: ExerciseRepository
 ) {

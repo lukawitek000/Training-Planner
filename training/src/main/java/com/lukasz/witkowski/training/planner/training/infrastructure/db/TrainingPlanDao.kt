@@ -1,10 +1,13 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure
+package com.lukasz.witkowski.training.planner.training.infrastructure.db
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import androidx.room.Transaction
+import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbExercise
+import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingPlan
+import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingPlanWithExercises
 import kotlinx.coroutines.flow.Flow
 
 @Dao
