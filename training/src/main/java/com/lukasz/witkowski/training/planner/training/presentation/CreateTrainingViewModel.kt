@@ -86,7 +86,7 @@ class CreateTrainingViewModel @Inject constructor(
         val exercises = trainingExercises.value.toMutableList()
         val index = exercises.indexOf(exercise)
         if(index >= 0) {
-            exercises[index] = exercises[index].copy(restTime = timeInMillis)
+            exercises[index] = exercises[index].copy(restTime = timeInMillis) // TODO setting rest time does not work
         }
     }
 }

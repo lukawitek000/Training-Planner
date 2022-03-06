@@ -73,6 +73,7 @@ fun PickExerciseScreen(
             pickExercise = { pickedExercise ->
                 exercise = pickedExercise
                 // TODO picking was made by choosing id it.exercise.id == pickedExercise.id
+                // Maybe the presentation layer should keep the exercise with id??
                 if(pickedTrainingExercises.any { it.name == pickedExercise.name }) {
                     showInfoDialog = true
                 } else {
