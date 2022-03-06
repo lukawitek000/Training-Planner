@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.Category
 import com.lukasz.witkowski.training.planner.exercise.domain.categoriesWithoutNone
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.presentation.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
@@ -37,10 +39,10 @@ fun TrainingsScreen(
     innerPadding: PaddingValues = PaddingValues(),
     viewModel: TrainingsListViewModel,
     onCreateTrainingFabClicked: () -> Unit = {},
-    navigateToTrainingOverview: (Long) -> Unit
+    navigateToTrainingOverview: (String) -> Unit
 ) {
-    val trainings by viewModel.trainings.collectAsState(emptyList())
-    val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
+    val trainings by viewModel.trainingPlans.collectAsState(emptyList())
+//    val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
 
     Scaffold(
         modifier = Modifier.padding(innerPadding),
@@ -54,11 +56,11 @@ fun TrainingsScreen(
         }
     ) {
         Column {
-            CategoryFilters(
-                categories = categoriesWithoutNone,
-                selectedCategories = selectedCategoriesList,
-                selectCategory = { viewModel.selectCategory(it) }
-            )
+//            CategoryFilters(
+//                categories = categoriesWithoutNone,
+//                selectedCategories = selectedCategoriesList,
+//                selectCategory = { viewModel.selectCategory(it) }
+//            ) // TODO same categories filter as in exercises screen
             if (trainings.isNotEmpty()) {
                 TrainingsList(innerPadding, trainings, navigateToTrainingOverview)
             } else {
@@ -74,15 +76,15 @@ fun TrainingsScreen(
 @Composable
 fun TrainingsList(
     innerPadding: PaddingValues,
-    trainings: List<TrainingWithExercises>,
-    navigateToTrainingOverview: (Long) -> Unit
+    trainings: List<TrainingPlan>,
+    navigateToTrainingOverview: (String) -> Unit
 ) {
     LazyColumn(
         contentPadding = innerPadding
     ) {
         items(trainings) { trainingWithExercises ->
             ListCardItem(modifier = Modifier,
-                onCardClicked = { navigateToTrainingOverview(trainingWithExercises.training.id) }) {
+                onCardClicked = { navigateToTrainingOverview(trainingWithExercises.id) }) {
                 TrainingListItemContent(
                     trainingWithExercises = trainingWithExercises
                 )
@@ -94,7 +96,7 @@ fun TrainingsList(
 @Composable
 fun TrainingListItemContent(
     modifier: Modifier = Modifier,
-    trainingWithExercises: TrainingWithExercises
+    trainingWithExercises: TrainingPlan
 ) {
     val categories =
         trainingWithExercises.exercises.map { it.category }.filter { it != Category.None.name }
@@ -109,7 +111,7 @@ fun TrainingListItemContent(
                 .weight(1f)
         ) {
             Text(
-                text = trainingWithExercises.training.title,
+                text = trainingWithExercises.title,
                 fontSize = 28.sp
             )
             if (categories.isNotEmpty()) {

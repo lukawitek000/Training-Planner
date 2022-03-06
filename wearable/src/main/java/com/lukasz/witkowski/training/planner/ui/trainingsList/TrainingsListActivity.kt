@@ -18,6 +18,7 @@ import com.lukasz.witkowski.training.planner.ui.startTraining.StartTrainingActiv
 import com.lukasz.witkowski.training.planner.ui.startTraining.StartTrainingActivity.Companion.TRAINING_TITLE_KEY
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingsListBinding
 import com.lukasz.witkowski.training.planner.service.SendingStatisticsService
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -61,7 +62,7 @@ class TrainingsListActivity : ComponentActivity() {
         binding.noTrainingsMessage.visibility = View.GONE
     }
 
-    private fun setTrainingsListToAdapter(data: List<TrainingWithExercises>) {
+    private fun setTrainingsListToAdapter(data: List<TrainingPlan>) {
         binding.loadingView.loadingLayout.visibility = View.GONE
         if (data.isEmpty()) {
             binding.noTrainingsMessage.visibility = View.VISIBLE
@@ -83,7 +84,7 @@ class TrainingsListActivity : ComponentActivity() {
         }
     }
 
-    private fun navigateToStartTrainingActivity(trainingId: Long, trainingTitle: String) {
+    private fun navigateToStartTrainingActivity(trainingId: String, trainingTitle: String) {
         val intent = Intent(this, StartTrainingActivity::class.java)
         intent.putExtra(TRAINING_ID_KEY, trainingId)
         intent.putExtra(TRAINING_TITLE_KEY, trainingTitle)

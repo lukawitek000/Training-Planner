@@ -12,15 +12,15 @@ class TrainingDataReceiverService : DataLayerListenerService() {
     override fun onChannelOpened(channel: ChannelClient.Channel) {
         super.onChannelOpened(channel)
         Timber.d("Channel open $channel")
-        currentChannel = channel
-        coroutineScope.launch {
-            currentChannel?.let { receiveData(it, TrainingWithExercises::class.java) }
-        }
+//        currentChannel = channel
+//        coroutineScope.launch {
+//            currentChannel?.let { receiveData(it, TrainingWithExercises::class.java) }
+//        }
     }
 
     override suspend fun <T> handleReceivedData(data: T) {
-        val trainingWithExercises = (data as? TrainingWithExercises) ?: return
-        Timber.d("Received Training $trainingWithExercises")
-        syncDataRepository.insertTrainingWithExercises(trainingWithExercises)
+//        val trainingWithExercises = (data as? TrainingWithExercises) ?: return
+//        Timber.d("Received Training $trainingWithExercises")
+//        syncDataRepository.insertTrainingWithExercises(trainingWithExercises)
     }
 }

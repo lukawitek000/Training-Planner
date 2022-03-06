@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.ExercisesListViewModel
+import com.lukasz.witkowski.training.planner.training.presentation.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
@@ -94,7 +95,7 @@ fun PickExerciseScreen(
                 closeDialog = { openDialog = false },
                 saveTrainingExercise = { reps, sets, minutes, seconds ->
                     createTrainingViewModel.createTrainingExercise(
-                        exercise,
+                        com.lukasz.witkowski.training.planner.training.domain.Exercise(exercise.id, exercise.name, exercise.description, exercise.category.name), // TODO transformation of exercise and training exercise
                         reps,
                         sets,
                         minutes,
