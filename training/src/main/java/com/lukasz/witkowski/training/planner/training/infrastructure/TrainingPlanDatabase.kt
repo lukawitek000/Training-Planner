@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [DbTrainingPlan::class, DbExercise::class], version = 0, exportSchema = false
+    entities = [DbTrainingPlan::class, DbExercise::class], version = 1, exportSchema = false
 )
 @TypeConverters(Converters::class)
 internal abstract class TrainingPlanDatabase : RoomDatabase() {
