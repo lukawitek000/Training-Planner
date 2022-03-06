@@ -45,6 +45,7 @@ dependencies {
     // Coroutines and Flow
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.0"
 
     // Room - database
     def room_version = "2.4.2"
@@ -59,4 +60,17 @@ dependencies {
 
     // viewmodelscope
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
+
+    // Wearables
+    implementation 'com.google.android.gms:play-services-wearable:17.1.0'
+
+    //Timber
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+
+    // Lifecycle
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
+    implementation "androidx.lifecycle:lifecycle-service:2.4.1"
+
+    // Gson for json serialization
+    implementation 'com.google.code.gson:gson:2.8.9'
 }

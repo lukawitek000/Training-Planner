@@ -89,7 +89,7 @@ class CurrentTrainingActivity : FragmentActivity() {
         viewModel.trainingWithExercises.observe(this) {
             when(it){
                 is ResultHandler.Loading -> showProgressBar()
-                is ResultHandler.Success -> startTraining(it.value.training.id)
+                is ResultHandler.Success -> startTraining(0L)
                 is ResultHandler.Error -> handleError()
                 is ResultHandler.Idle -> {}
             }

@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.training.di
 
+import com.lukasz.witkowski.training.planner.training.domain.SendTrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
+import com.lukasz.witkowski.training.planner.training.infrastructure.WearableChannelSendTrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.DbTrainingPlanRepository
 import dagger.Binds
 import dagger.Module
@@ -15,5 +17,10 @@ internal abstract class RepositoryModule {
     abstract fun bindTrainingPlanRepository(
         dbTrainingPlanRepository: DbTrainingPlanRepository
     ): TrainingPlanRepository
+
+//    @Binds
+//    abstract fun bindSendTrainingPlanRepository(
+//        wearableChannelSendTrainingPlanRepository: WearableChannelSendTrainingPlanRepository
+//    ): SendTrainingPlanRepository
 
 }
