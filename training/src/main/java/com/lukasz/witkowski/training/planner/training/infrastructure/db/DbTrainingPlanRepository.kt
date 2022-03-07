@@ -16,6 +16,10 @@ internal class DbTrainingPlanRepository(
         trainingPlanDao.insertTrainingWithTrainingExercises(trainingPlanWithExercise)
     }
 
+    override suspend fun setTrainingPlanAsSynchronized(id: String) {
+        trainingPlanDao
+    }
+
     override fun getAll(): Flow<List<TrainingPlan>> {
         return trainingPlanDao.getAll().map {
             it.map { dbTrainingPlanWithExercises ->

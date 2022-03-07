@@ -12,7 +12,7 @@ import com.lukasz.witkowski.shared.utils.gson
 import com.lukasz.witkowski.shared.utils.readSuspending
 import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import com.lukasz.witkowski.shared.utils.writeSuspending
-import com.lukasz.witkowski.training.planner.training.domain.SendTrainingPlanRepository
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -28,8 +28,7 @@ import timber.log.Timber
 import java.io.InputStream
 import java.io.OutputStream
 
-// TODO name??
-class WearableChannelSendTrainingPlanRepository(private val context: Context): SendTrainingPlanRepository {
+class WearableChannelClientTrainingPlanSender(private val context: Context): TrainingPlanSender {
 
     companion object {
         private const val SYNCHRONIZATION_FAILED = "Synchronization failed"

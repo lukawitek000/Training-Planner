@@ -30,6 +30,8 @@ internal interface TrainingPlanDao {
     @Query("SELECT * FROM TrainingPlan")
     fun getAll(): Flow<List<DbTrainingPlanWithExercises>>
 
+    @Query("UPDATE TrainingPlan SET isSynchronized=1 WHERE id=:id")
+    fun setTrainingPlanAsSynchronized(id: String)
 
     @Transaction
     suspend fun deleteTrainingPlanWithExercises(dbTrainingPlanWithExercises: DbTrainingPlanWithExercises) {

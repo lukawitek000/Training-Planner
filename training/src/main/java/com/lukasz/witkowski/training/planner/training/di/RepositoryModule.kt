@@ -1,8 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.di
 
-import com.lukasz.witkowski.training.planner.training.domain.SendTrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
-import com.lukasz.witkowski.training.planner.training.infrastructure.WearableChannelSendTrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.DbTrainingPlanRepository
 import dagger.Binds
 import dagger.Module

@@ -8,5 +8,6 @@ internal data class DbTrainingPlan(
     @PrimaryKey
     val id: String,
     val name: String,
-    val description: String
+    val description: String,
+    val isSynchronized: Boolean
 )
