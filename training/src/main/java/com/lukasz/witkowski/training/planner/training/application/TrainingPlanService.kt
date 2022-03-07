@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.application
 
+import com.lukasz.witkowski.training.planner.exercise.domain.Category
 import com.lukasz.witkowski.training.planner.training.domain.SendTrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
@@ -21,8 +22,14 @@ class TrainingPlanService(
         sendData(listOf(trainingPlan)) // TODO Sending single data like this?? or by providing separate methods in application layer and in domain interface
     }
 
-    fun getAllTrainingPlans(): Flow<List<TrainingPlan>> {
-        return trainingPlanRepository.getAll()
+    fun getAllTrainingPlans(categories: List<Category>): Flow<List<TrainingPlan>> {
+        return trainingPlanRepository.getAll().map {
+            it.filter { trainingPlan -> categories.isEmpty() || hasTrainingPlanCategories(trainingPlan, categories) }
+        }
+    }
+
+    private fun hasTrainingPlanCategories(trainingPlan: TrainingPlan, categories: List<Category>): Boolean {
+        return trainingPlan.exercises.map{ exercise -> exercise.category }.containsAll(categories.map { it.name })
     }
 
     suspend fun sendNotSynchronizedTrainingPlans() {

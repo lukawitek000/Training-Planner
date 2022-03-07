@@ -42,7 +42,7 @@ fun TrainingsScreen(
     navigateToTrainingOverview: (String) -> Unit
 ) {
     val trainings by viewModel.trainingPlans.collectAsState(emptyList())
-//    val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
+    val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
 
     Scaffold(
         modifier = Modifier.padding(innerPadding),
@@ -56,11 +56,11 @@ fun TrainingsScreen(
         }
     ) {
         Column {
-//            CategoryFilters(
-//                categories = categoriesWithoutNone,
-//                selectedCategories = selectedCategoriesList,
-//                selectCategory = { viewModel.selectCategory(it) }
-//            ) // TODO same categories filter as in exercises screen
+            CategoryFilters(
+                categories = categoriesWithoutNone,
+                selectedCategories = selectedCategoriesList,
+                selectCategory = { viewModel.selectCategory(it) }
+            ) // TODO same categories filter as in exercises screen
             if (trainings.isNotEmpty()) {
                 TrainingsList(innerPadding, trainings, navigateToTrainingOverview)
             } else {
