@@ -31,7 +31,7 @@ class ExercisesListViewModel @Inject constructor(
         fetchExercises()
     }
 
-    // TODO Is it good place for filtering??
+    // TODO Is it good place for filtering?? (Service) ViewModel trzymać w małym rozmiarze
     private fun fetchExercises() {
         val fetchedExercises = if(selectedCategories.value.isEmpty()) {
             exerciseService.getAllExercises()

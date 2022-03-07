@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.ExercisesListViewModel
+import com.lukasz.witkowski.training.planner.training.presentation.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
@@ -72,6 +73,7 @@ fun PickExerciseScreen(
             pickExercise = { pickedExercise ->
                 exercise = pickedExercise
                 // TODO picking was made by choosing id it.exercise.id == pickedExercise.id
+                // Maybe the presentation layer should keep the exercise with id??
                 if(pickedTrainingExercises.any { it.name == pickedExercise.name }) {
                     showInfoDialog = true
                 } else {

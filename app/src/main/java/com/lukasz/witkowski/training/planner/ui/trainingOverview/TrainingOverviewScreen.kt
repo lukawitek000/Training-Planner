@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.ui.trainingOverview
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -37,13 +36,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.models.Training
-import com.lukasz.witkowski.shared.models.TrainingExercise
-import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.Category
+import com.lukasz.witkowski.training.planner.training.domain.Exercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
@@ -61,11 +59,7 @@ fun TrainingOverviewScreen(
     navigateBack: () -> Unit
 ) {
     val trainingWithExercises by viewModel.training.collectAsState(
-        TrainingWithExercises(
-            Training(
-                title = ""
-            ), emptyList()
-        )
+        TrainingPlan(title = "", exercises = emptyList())
     )
     val generalStatistics by viewModel.statistics.collectAsState(emptyList())
     Scaffold(modifier = modifier) {
@@ -76,7 +70,7 @@ fun TrainingOverviewScreen(
             item {
                 TrainingOverviewContent(
                     modifier = Modifier,
-                    trainingWithExercises = trainingWithExercises
+                    trainingPlan = trainingWithExercises
                 )
             }
             item {
@@ -113,9 +107,8 @@ fun TrainingOverviewScreen(
 @Composable
 fun TrainingOverviewContent(
     modifier: Modifier = Modifier,
-    trainingWithExercises: TrainingWithExercises
+    trainingPlan: TrainingPlan
 ) {
-    val training = trainingWithExercises.training
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -123,20 +116,20 @@ fun TrainingOverviewContent(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = training.title,
+            text = trainingPlan.title,
             fontSize = 32.sp,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colors.primary
         )
         Spacer(modifier = Modifier.height(16.dp))
-        if (training.description.isNotEmpty()) {
-            Text(text = training.description, fontSize = 18.sp)
+        if (trainingPlan.description.isNotEmpty()) {
+            Text(text = trainingPlan.description, fontSize = 18.sp)
             Spacer(modifier = Modifier.height(16.dp))
         }
-        if (trainingWithExercises.exercises.isNotEmpty()) {
+        if (trainingPlan.exercises.isNotEmpty()) {
             TrainingExercisesExpandableList(
                 modifier = Modifier,
-                exercises = trainingWithExercises.exercises
+                exercises = trainingPlan.exercises
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -145,7 +138,7 @@ fun TrainingOverviewContent(
 
 
 @Composable
-fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<TrainingExercise>) {
+fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<Exercise>) {
 
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -185,7 +178,7 @@ fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<Training
 }
 
 @Composable
-fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExercise) {
+fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: Exercise) {
     ListCardItem(
         modifier = modifier,
         backgroundColor = LightDark12
@@ -380,7 +373,7 @@ fun SingleTrainingStatisticsItemPrev() {
 fun SingleExercisePrev() {
     SingleTrainingExerciseInformation(
         Modifier,
-        TrainingExercise(
+        Exercise(
             name = "Super exercise",
             description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
             category = Category.Back.name,

@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.exercise
+package com.lukasz.witkowski.training.planner.exercise.di
 
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseRepository

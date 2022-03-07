@@ -1,27 +1,23 @@
-package com.lukasz.witkowski.training.planner.ui.createTraining
+package com.lukasz.witkowski.training.planner.training.presentation
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.shared.models.Training
-import com.lukasz.witkowski.shared.models.TrainingExercise
-import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.TimeFormatter
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
-import com.lukasz.witkowski.training.planner.repository.TrainingRepository
+import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
+import com.lukasz.witkowski.training.planner.training.domain.Exercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateTrainingViewModel @Inject constructor(
-    private val trainingRepository: TrainingRepository,
+    private val trainingPlanService: TrainingPlanService,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
 
     private val _title = MutableStateFlow("")
     val title: StateFlow<String>
@@ -40,64 +36,57 @@ class CreateTrainingViewModel @Inject constructor(
     }
 
     fun createTraining() {
-
         viewModelScope.launch {
-            val training = Training(
+            val trainingPlan = TrainingPlan(
                 title = title.value,
-                description = description.value
-            )
-            val trainingWithExercises = TrainingWithExercises(
-                training = training,
+                description = description.value,
                 exercises = trainingExercises.value
             )
-            trainingRepository.insertTrainingWithExercises(trainingWithExercises)
-            Timber.d("Create training $trainingWithExercises")
+            trainingPlanService.saveTrainingPlan(trainingPlan)
         }
     }
 
-    private val _trainingExercises = MutableStateFlow<List<TrainingExercise>>(emptyList())
-    val trainingExercises: StateFlow<List<TrainingExercise>>
+    private val _trainingExercises = MutableStateFlow<List<Exercise>>(emptyList())
+    val trainingExercises: StateFlow<List<Exercise>>
         get() = _trainingExercises
 
-    private fun addTrainingExercise(trainingExercise: TrainingExercise) {
+    private fun addTrainingExercise(exercise: Exercise) {
         val mutableExercises = _trainingExercises.value.toMutableList()
-        mutableExercises.add(trainingExercise)
+        mutableExercises.add(exercise)
         _trainingExercises.value = mutableExercises.toList()
     }
 
     fun createTrainingExercise(
-        exercise: Exercise,
+        exercise: com.lukasz.witkowski.training.planner.exercise.domain.Exercise,
         reps: String,
         sets: String,
         minutes: Int,
         seconds: Int
     ) {
         val timeInMillis = TimeFormatter.timeToMillis(minutes = minutes, seconds = seconds)
-        val repetitions = reps.toIntOrNull() ?: 1
-        val sets = sets.toIntOrNull() ?: 1
-        val trainingExercise = TrainingExercise(
+        val trainingExercise = Exercise(
             name = exercise.name,
             description = exercise.description,
             category = exercise.category.name,
-            repetitions = repetitions,
-            sets = sets,
+            repetitions = reps.toIntOrNull() ?: 1,
+            sets = sets.toIntOrNull() ?: 1,
             time = timeInMillis
         )
         addTrainingExercise(trainingExercise)
     }
 
-    fun removeTrainingExercise(trainingExercise: TrainingExercise) {
+    fun removeTrainingExercise(trainingExercise: Exercise) {
         val mutableExercises = trainingExercises.value.toMutableList()
         mutableExercises.remove(trainingExercise)
         _trainingExercises.value = mutableExercises
     }
 
-    fun setRestTimeToExercise(trainingExercise: TrainingExercise, restTimeMinutes: Int, restTimeSeconds: Int) {
+    fun setRestTimeToExercise(exercise: Exercise, restTimeMinutes: Int, restTimeSeconds: Int) {
         val timeInMillis = TimeFormatter.timeToMillis(minutes = restTimeMinutes, seconds = restTimeSeconds)
-        val exercises = trainingExercises.value
-        val index = exercises.indexOf(trainingExercise)
+        val exercises = trainingExercises.value.toMutableList()
+        val index = exercises.indexOf(exercise)
         if(index >= 0) {
-            exercises[index].restTime = timeInMillis
+            exercises[index] = exercises[index].copy(restTime = timeInMillis) // TODO setting rest time does not work
         }
     }
 }

@@ -39,10 +39,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.domain.Category
+import com.lukasz.witkowski.training.planner.training.domain.Exercise
+import com.lukasz.witkowski.training.planner.training.presentation.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.TextField
@@ -60,7 +60,7 @@ fun CreateTrainingScreen(
     val description by viewModel.description.collectAsState()
     val exercises by viewModel.trainingExercises.collectAsState()
     var openDialog by remember { mutableStateOf(false) }
-    var trainingExercise: TrainingExercise? = null
+    var trainingExercise: Exercise? = null
     val fabEnabled = title.isNotEmpty() && exercises.isNotEmpty()
     var showToast by remember { mutableStateOf(false) }
 
@@ -117,7 +117,7 @@ fun CreateTrainingScreen(
                 modifier = Modifier,
                 trainingExercise = trainingExercise!!,
                 setRestTimeToExercise = { trainingExercise, minutes, seconds ->
-                    viewModel.setRestTimeToExercise(trainingExercise = trainingExercise, restTimeMinutes = minutes, restTimeSeconds = seconds)
+                    viewModel.setRestTimeToExercise(exercise = trainingExercise, restTimeMinutes = minutes, restTimeSeconds = seconds)
                 },
                 closeDialog = { openDialog = false }
             )
@@ -128,8 +128,8 @@ fun CreateTrainingScreen(
 @Composable
 fun SetTrainingExerciseRestTimeDialog(
     modifier: Modifier = Modifier,
-    trainingExercise: TrainingExercise,
-    setRestTimeToExercise: (TrainingExercise, Int, Int) -> Unit,
+    trainingExercise: Exercise,
+    setRestTimeToExercise: (Exercise, Int, Int) -> Unit,
     closeDialog: () -> Unit
 ) {
     val (currentMinutes, currentSeconds) = TimeFormatter.calculateMinutesAndSeconds(trainingExercise.restTime)
@@ -185,9 +185,9 @@ private fun TextDataInputs(
 @Composable
 fun TrainingExercisesList(
     modifier: Modifier = Modifier,
-    exercises: List<TrainingExercise>,
-    removeTrainingExercise: (TrainingExercise) -> Unit,
-    setRestTimeToTrainingExercise: (TrainingExercise) -> Unit
+    exercises: List<Exercise>,
+    removeTrainingExercise: (Exercise) -> Unit,
+    setRestTimeToTrainingExercise: (Exercise) -> Unit
 ) {
     LazyColumn(modifier = modifier) {
         itemsIndexed(exercises) { index, exercise ->
@@ -204,10 +204,10 @@ fun TrainingExercisesList(
 @Composable
 fun TrainingExerciseListItem(
     modifier: Modifier = Modifier,
-    trainingExercise: TrainingExercise,
+    trainingExercise: Exercise,
     index: Int = 0,
-    removeTrainingExercise: (TrainingExercise) -> Unit,
-    setRestTimeToTrainingExercise: (TrainingExercise) -> Unit
+    removeTrainingExercise: (Exercise) -> Unit,
+    setRestTimeToTrainingExercise: (Exercise) -> Unit
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         TrainingExerciseInfo(
@@ -228,8 +228,8 @@ fun TrainingExerciseListItem(
 @Composable
 private fun TrainingExerciseRestTime(
     modifier: Modifier = Modifier,
-    setRestTimeToTrainingExercise: (TrainingExercise) -> Unit,
-    trainingExercise: TrainingExercise
+    setRestTimeToTrainingExercise: (Exercise) -> Unit,
+    trainingExercise: Exercise
 ) {
     val restTime = trainingExercise.restTime
     val buttonText = if(restTime > 0L) "Change rest time" else "Add rest time"
@@ -252,8 +252,8 @@ private fun TrainingExerciseRestTime(
 @Composable
 private fun TrainingExerciseInfo(
     index: Int,
-    trainingExercise: TrainingExercise,
-    removeTrainingExercise: (TrainingExercise) -> Unit
+    trainingExercise: Exercise,
+    removeTrainingExercise: (Exercise) -> Unit
 ) {
     ListCardItem() {
         Row(
@@ -288,7 +288,7 @@ private fun TrainingExerciseInfo(
 }
 
 @Composable
-private fun ExerciseSetsRepsTimeInfo(trainingExercise: TrainingExercise) {
+private fun ExerciseSetsRepsTimeInfo(trainingExercise: Exercise) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
@@ -316,7 +316,7 @@ private fun ExerciseSetsRepsTimeInfo(trainingExercise: TrainingExercise) {
 @Composable
 fun TrainingExerciseListItemPreview() {
     TrainingExerciseListItem(
-        trainingExercise = TrainingExercise(
+        trainingExercise = Exercise(
             name = "New exercise",
             description = "",
             category = "None",
@@ -334,7 +334,7 @@ fun TrainingExerciseListItemPreview() {
 @Composable
 fun RestTimeDialogPreview() {
     SetTrainingExerciseRestTimeDialog(
-        trainingExercise = TrainingExercise(),
+        trainingExercise = Exercise(category = "None", name = "Preview exercise"),
         closeDialog = {},
         setRestTimeToExercise = { trainingExercise, i, i2 ->  }
     )

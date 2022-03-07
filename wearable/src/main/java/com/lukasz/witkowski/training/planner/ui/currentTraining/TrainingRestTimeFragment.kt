@@ -52,15 +52,15 @@ class TrainingRestTimeFragment : Fragment() {
     }
 
     private fun observeState() {
-        trainingService.trainingProgressController.currentTrainingState.observe(
-            viewLifecycleOwner
-        ) {
-            if (it is CurrentTrainingState.RestTimeState) {
-                if (!timer.isRunning && !timer.isPaused) {
-                    timer.startTimer(trainingService.trainingProgressController.restTime)
-                }
-            }
-        }
+//        trainingService.trainingProgressController.currentTrainingState.observe(
+//            viewLifecycleOwner
+//        ) {
+//            if (it is CurrentTrainingState.RestTimeState) {
+//                if (!timer.isRunning && !timer.isPaused) {
+//                    timer.startTimer(trainingService.trainingProgressController.restTime)
+//                }
+//            }
+//        }
     }
 
     private fun observeRestTimer() {
@@ -77,6 +77,6 @@ class TrainingRestTimeFragment : Fragment() {
 
     private fun exitRestTimeFragment() {
         timer.cancelTimer()
-        trainingService.trainingProgressController.navigateToTrainingExercise()
+//        trainingService.trainingProgressController.navigateToTrainingExercise()
     }
 }

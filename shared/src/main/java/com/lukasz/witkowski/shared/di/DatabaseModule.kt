@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.lukasz.witkowski.shared.db.AppDatabase
 import com.lukasz.witkowski.shared.db.StatisticsDao
-import com.lukasz.witkowski.shared.db.TrainingDao
+import com.lukasz.witkowski.shared.repository.SyncDataRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,13 +30,15 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideTrainingDao(appDatabase: AppDatabase): TrainingDao {
-        return appDatabase.trainingDao()
+    fun provideStatisticsDao(appDatabase: AppDatabase): StatisticsDao {
+        return appDatabase.statisticsDao()
     }
 
     @Singleton
     @Provides
-    fun provideStatisticsDao(appDatabase: AppDatabase): StatisticsDao {
-        return appDatabase.statisticsDao()
+    fun provideSyncDataRepository(
+        statisticsDao: StatisticsDao
+    ): SyncDataRepository {
+        return SyncDataRepository(statisticsDao = statisticsDao)
     }
 }
