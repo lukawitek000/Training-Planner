@@ -83,6 +83,7 @@ class WearableChannelClientTrainingPlanSender(private val context: Context): Tra
     ): String = withContext(Dispatchers.IO) {
         try {
             val byteArray = gson.toJson(data).toByteArray()
+            outputStream.writeIntSuspending(byteArray.size)
             val job = exchangeDataAsync(outputStream, byteArray, inputStream)
             val id = getDataId(data)
             handleSyncResponse(id, job.await())
