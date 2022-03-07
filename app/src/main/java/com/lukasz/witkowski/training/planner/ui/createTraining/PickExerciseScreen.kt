@@ -96,7 +96,7 @@ fun PickExerciseScreen(
                 closeDialog = { openDialog = false },
                 saveTrainingExercise = { reps, sets, minutes, seconds ->
                     createTrainingViewModel.createTrainingExercise(
-                        com.lukasz.witkowski.training.planner.training.domain.Exercise(exercise.id, exercise.name, exercise.description, exercise.category.name), // TODO transformation of exercise and training exercise
+                        exercise,
                         reps,
                         sets,
                         minutes,

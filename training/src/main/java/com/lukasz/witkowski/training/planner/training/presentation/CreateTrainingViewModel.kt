@@ -57,22 +57,22 @@ class CreateTrainingViewModel @Inject constructor(
     }
 
     fun createTrainingExercise(
-        exercise: Exercise,
+        exercise: com.lukasz.witkowski.training.planner.exercise.domain.Exercise,
         reps: String,
         sets: String,
         minutes: Int,
         seconds: Int
     ) {
         val timeInMillis = TimeFormatter.timeToMillis(minutes = minutes, seconds = seconds)
-        val exercise = Exercise(
+        val trainingExercise = Exercise(
             name = exercise.name,
             description = exercise.description,
-            category = exercise.category,
+            category = exercise.category.name,
             repetitions = reps.toIntOrNull() ?: 1,
             sets = sets.toIntOrNull() ?: 1,
             time = timeInMillis
         )
-        addTrainingExercise(exercise)
+        addTrainingExercise(trainingExercise)
     }
 
     fun removeTrainingExercise(trainingExercise: Exercise) {
