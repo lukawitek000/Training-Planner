@@ -3,12 +3,14 @@ package com.lukasz.witkowski.training.planner.training.di
 import android.content.Context
 import androidx.room.Room
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanReceiver
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
-import com.lukasz.witkowski.training.planner.training.infrastructure.WearableChannelClientTrainingPlanSender
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.DbTrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.TrainingPlanDao
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.TrainingPlanDatabase
+import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.WearableChannelClientTrainingPlanReceiver
+import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.WearableChannelClientTrainingPlanSender
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,8 +24,12 @@ internal object TrainingPlanModule {
 
     @Singleton
     @Provides
-    fun provideTrainingPlanService(trainingPlanRepository: TrainingPlanRepository, sendTrainingPlanRepository: TrainingPlanSender): TrainingPlanService {
-        return TrainingPlanService(trainingPlanRepository, sendTrainingPlanRepository)
+    fun provideTrainingPlanService(
+        trainingPlanRepository: TrainingPlanRepository,
+        trainingPlanSender: TrainingPlanSender,
+        trainingPlanReceiver: TrainingPlanReceiver
+    ): TrainingPlanService {
+        return TrainingPlanService(trainingPlanRepository, trainingPlanSender, trainingPlanReceiver)
     }
 
     @Singleton
@@ -34,8 +40,14 @@ internal object TrainingPlanModule {
 
     @Singleton
     @Provides
-    fun provideSendTrainingPlanRepository(@ApplicationContext context: Context): TrainingPlanSender {
+    fun provideTrainingPlanSender(@ApplicationContext context: Context): TrainingPlanSender {
         return WearableChannelClientTrainingPlanSender(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideTrainingPlanReceiver(): TrainingPlanReceiver {
+        return WearableChannelClientTrainingPlanReceiver()
     }
 
     @Singleton

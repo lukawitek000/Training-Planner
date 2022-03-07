@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure
+package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi
 
 import android.content.Context
 import com.google.android.gms.wearable.ChannelClient
