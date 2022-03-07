@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure.mappers
+package com.lukasz.witkowski.training.planner.training.infrastructure.db.mappers
 
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingPlan

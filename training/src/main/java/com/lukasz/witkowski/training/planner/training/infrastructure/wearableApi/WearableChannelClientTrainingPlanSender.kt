@@ -14,6 +14,7 @@ import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import com.lukasz.witkowski.shared.utils.writeSuspending
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers.TrainingPlanMapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +41,8 @@ class WearableChannelClientTrainingPlanSender(private val context: Context): Tra
 
     override fun send(trainingPlans: List<TrainingPlan>): Flow<String> {
         Timber.d("Send data")
-        return sendData(trainingPlans, TRAINING_PATH)
+        val trainingPlansJson = trainingPlans.map { TrainingPlanMapper.toTrainingPlanJsonModel(it) }
+        return sendData(trainingPlansJson, TRAINING_PATH)
     }
 
     // TODO there can be separate class for methods (The same functionality will be shared between statistics module)
@@ -101,7 +103,7 @@ class WearableChannelClientTrainingPlanSender(private val context: Context): Tra
     }
 
     private fun <T> getDataId(data: T): Long = when (data) {
-        is TrainingPlan -> data.id.toLong()
+        is TrainingPlanJsonModel -> data.id.toLong()
         is TrainingCompleteStatistics -> data.trainingStatistics.id
         else -> -1
     }

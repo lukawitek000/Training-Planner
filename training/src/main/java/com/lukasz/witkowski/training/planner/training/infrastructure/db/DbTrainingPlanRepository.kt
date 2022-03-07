@@ -2,7 +2,7 @@ package com.lukasz.witkowski.training.planner.training.infrastructure.db
 
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
-import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.TrainingPlanMapper
+import com.lukasz.witkowski.training.planner.training.infrastructure.db.mappers.TrainingPlanMapper
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 

@@ -15,6 +15,8 @@ import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
+// TODO set this service to wearable application and test data transferring
+// Set sending service to mobile app
 @AndroidEntryPoint
 class TrainingPlanReceiverService : WearableListenerService() {
 
