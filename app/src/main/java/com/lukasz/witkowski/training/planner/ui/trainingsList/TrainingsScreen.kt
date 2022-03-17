@@ -25,7 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.domain.Category
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.categoriesWithoutNone
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingsListViewModel
@@ -99,7 +99,7 @@ fun TrainingListItemContent(
     trainingWithExercises: TrainingPlan
 ) {
     val categories =
-        trainingWithExercises.exercises.map { it.category }.filter { it != Category.None.name }
+        trainingWithExercises.exercises.map { it.category }.filter { it != ExerciseCategory.None.name }
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween,

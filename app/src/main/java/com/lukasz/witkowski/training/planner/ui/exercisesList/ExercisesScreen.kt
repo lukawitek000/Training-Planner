@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.domain.Category
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.categoriesWithoutNone
 import com.lukasz.witkowski.training.planner.exercise.presentation.ExercisesListViewModel
@@ -114,9 +114,9 @@ fun ExercisesScreenContent(
 @Composable
 fun CategoryFilters(
     modifier: Modifier = Modifier,
-    categories: List<Category>,
-    selectedCategories: List<Category>,
-    selectCategory: (Category) -> Unit
+    categories: List<ExerciseCategory>,
+    selectedCategories: List<ExerciseCategory>,
+    selectCategory: (ExerciseCategory) -> Unit
 ) {
     LazyRow(
         modifier = modifier.padding(4.dp),
@@ -189,7 +189,7 @@ fun ExerciseListItemContent(
                 fontSize = 28.sp
             )
 
-            if (category != Category.None) {
+            if (category != ExerciseCategory.None) {
                 Spacer(modifier = Modifier.height(16.dp))
                 CategoryChip(
                     modifier = Modifier,
@@ -266,7 +266,7 @@ fun ExerciseInfoAlertDialog(
                     modifier = Modifier
                 )
             }
-            if (exercise.category != Category.None) {
+            if (exercise.category != ExerciseCategory.None) {
                 Spacer(modifier = Modifier.height(16.dp))
                 CategoryChip(
                     modifier = Modifier.padding(top = 4.dp),

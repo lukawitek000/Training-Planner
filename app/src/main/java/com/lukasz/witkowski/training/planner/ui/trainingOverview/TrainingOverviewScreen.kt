@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.domain.Category
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.training.domain.Exercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
@@ -193,7 +193,7 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: Exercise) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = exercise.description, fontSize = 18.sp)
             Spacer(modifier = Modifier.height(16.dp))
-            if (exercise.category != Category.None.name) {
+            if (exercise.category != ExerciseCategory.None.name) {
                 CategoryChip(
                     modifier = Modifier.fillMaxWidth(),
                     text = exercise.category
@@ -376,7 +376,7 @@ fun SingleExercisePrev() {
         Exercise(
             name = "Super exercise",
             description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
-            category = Category.Back.name,
+            category = ExerciseCategory.Back.name,
             sets = 10,
             repetitions = 100,
             time = 141000,

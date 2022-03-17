@@ -5,7 +5,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class DbExerciseRepository(private val exerciseDao: ExerciseDao) : ExerciseRepository {
+internal class DbExerciseRepository(private val exerciseDao: ExerciseDao) : ExerciseRepository {
     override fun getById(id: String): Flow<Exercise> {
         return exerciseDao.getById(id).map { ExerciseMapper.toExercise(it)  }
     }

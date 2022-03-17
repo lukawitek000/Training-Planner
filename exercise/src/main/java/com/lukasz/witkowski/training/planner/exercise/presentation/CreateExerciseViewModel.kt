@@ -1,12 +1,13 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation
 
 import android.graphics.Bitmap
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
-import com.lukasz.witkowski.training.planner.exercise.domain.Category
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
-import com.lukasz.witkowski.training.planner.exercise.domain.allCategories
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,58 +15,58 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CreateExerciseViewModel @Inject constructor(
+class CreateExerciseViewModel @Inject internal constructor(
     private val exerciseService: ExerciseService,
     private val savedStateHandle: SavedStateHandle
-): ViewModel() {
+) : ViewModel() {
 
     private val _savingState = MutableStateFlow<ResultHandler<Long>>(ResultHandler.Idle)
     val savingState: StateFlow<ResultHandler<Long>> = _savingState
 
-    private val _title = MutableLiveData("")
-    val title: LiveData<String> = _title
+    private val _title = MutableStateFlow("")
+    val title: StateFlow<String> = _title
 
-    fun onExerciseNameChange(newName: String){
+    fun onExerciseNameChange(newName: String) {
         _title.value = newName
     }
 
-    private val _description = MutableLiveData("")
-    val description: LiveData<String> = _description
+    private val _description = MutableStateFlow("")
+    val description: StateFlow<String> = _description
 
-    fun onExerciseDescriptionChange(newDescription: String){
+    fun onExerciseDescriptionChange(newDescription: String) {
         _description.value = newDescription
     }
 
-    private val _category = MutableLiveData<Category>(Category.None)
-    val category: LiveData<Category> = _category
+    private val _category = MutableStateFlow(Category())
+    val category: StateFlow<Category> = _category
 
-    fun onCategorySelected(newCategory: String) {
-        // TODO Exercise model for presentation layer should have category as String
-        _category.value = allCategories.firstOrNull {
-            it.name == newCategory
-        } ?: Category.None
+    fun onCategorySelected(newCategoryRes: Int) {
+        _category.value = Category(newCategoryRes)
     }
 
-    private val _image = MutableLiveData<Bitmap?>(null)
-    val image: LiveData<Bitmap?> = _image
+    private val _image = MutableStateFlow<Bitmap?>(null)
+    val image: StateFlow<Bitmap?> = _image
 
-    fun onImageChange(bitmap: Bitmap){
+    fun onImageChange(bitmap: Bitmap) {
         _image.value = bitmap
     }
 
-    fun createExercise(){
+    val allCategories = CategoryMapper.allCategories
+
+    fun createExercise() {
         viewModelScope.launch {
             _savingState.value = ResultHandler.Loading
             val exercise = Exercise(
                 name = title.value ?: "",
                 description = description.value ?: "",
-                category = category.value ?: Category.None,
+                category = category.value,
                 image = image.value
             )
             try {
-
-                val exerciseId = exerciseService.createExercise(exercise) // Long is not an id!!!
-                _savingState.value = ResultHandler.Success(0L) // TODO result handler requires long but exercise id was changed to String (UUID)
+                val exerciseId =
+                    exerciseService.createExercise(ExerciseMapper.toDomainExercise(exercise)) // Long is not an id!!!
+                _savingState.value =
+                    ResultHandler.Success(0L) // TODO result handler requires long but exercise id was changed to String (UUID)
             } catch (e: Exception) {
                 _savingState.value = ResultHandler.Error(message = "Saving exercise failed")
             }

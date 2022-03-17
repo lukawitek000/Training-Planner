@@ -45,14 +45,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.lukasz.witkowski.shared.utils.ResultHandler
-import com.lukasz.witkowski.training.planner.exercise.domain.Category
-import com.lukasz.witkowski.training.planner.exercise.domain.allCategories
+import com.lukasz.witkowski.training.planner.exercise.presentation.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
@@ -67,10 +67,10 @@ fun CreateExerciseScreen(
     viewModel: CreateExerciseViewModel,
     navigateBack: (String) -> Unit
 ) {
-    val image by viewModel.image.observeAsState()
-    val title: String by viewModel.title.observeAsState("")
-    val description by viewModel.description.observeAsState(initial = "")
-    val selectedCategory by viewModel.category.observeAsState(initial = Category.None)
+    val image by viewModel.image.collectAsState()
+    val title: String by viewModel.title.collectAsState()
+    val description by viewModel.description.collectAsState()
+    val selectedCategory by viewModel.category.collectAsState()
     val savingState by viewModel.savingState.collectAsState()
 
     var showToast by remember { mutableStateOf(false) }
@@ -104,6 +104,7 @@ fun CreateExerciseScreen(
                     image = image,
                     title = title,
                     description = description,
+                    allCategories = viewModel.allCategories,
                     selectedCategory = selectedCategory,
                     onImageChange = { viewModel.onImageChange(it) },
                     onExerciseNameChanged = { viewModel.onExerciseNameChange(it) },
@@ -135,12 +136,12 @@ private fun CreateExerciseForm(
     image: Bitmap?,
     title: String,
     description: String,
+    allCategories: List<Category>,
     selectedCategory: Category,
     onImageChange: (Bitmap) -> Unit,
     onExerciseNameChanged: (String) -> Unit,
     onExerciseDescriptionChanged: (String) -> Unit,
-    onCategorySelected: (String) -> Unit
-
+    onCategorySelected: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -169,8 +170,8 @@ private fun CreateExerciseForm(
         )
         Spacer(modifier = Modifier.height(16.dp))
         DropDownInput(
-            selectedText = selectedCategory.name,
-            suggestions = allCategories.map { it.name },
+            selectedText = stringResource(id = selectedCategory.res),
+            suggestions = allCategories.map { it.res },
             label = "Category",
             onSuggestionSelected = onCategorySelected
         )
@@ -180,9 +181,9 @@ private fun CreateExerciseForm(
 @Composable
 fun DropDownInput(
     selectedText: String,
-    suggestions: List<String>,
+    suggestions: List<Int>,
     label: String,
-    onSuggestionSelected: (String) -> Unit
+    onSuggestionSelected: (Int) -> Unit
 ) {
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
     var expanded by remember { mutableStateOf(false) }
@@ -193,7 +194,7 @@ fun DropDownInput(
     Column() {
         TextField(
             value = selectedText,
-            onValueChange = { onSuggestionSelected(it) },
+            onValueChange = { /*onSuggestionSelected(it)*/ },
             modifier = Modifier
                 .fillMaxWidth()
                 .onGloballyPositioned { coordinates ->
@@ -221,7 +222,7 @@ fun DropDownInput(
                     onSuggestionSelected(it)
                     expanded = !expanded
                 }) {
-                    Text(text = it, color = MaterialTheme.colors.primary)
+                    Text(text = stringResource(id = it), color = MaterialTheme.colors.primary)
                 }
             }
         }
