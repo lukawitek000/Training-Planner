@@ -25,7 +25,7 @@ class TrainingPlanService(
         sendData(listOf(trainingPlan))
     }
 
-    fun getAllTrainingPlans(categories: List<ExerciseCategory>): Flow<List<TrainingPlan>> {
+    fun getAllTrainingPlans(categories: List<ExerciseCategory> = emptyList()): Flow<List<TrainingPlan>> {
         return trainingPlanRepository.getAll().map {
             it.filter { trainingPlan -> categories.isEmpty() || hasTrainingPlanCategories(trainingPlan, categories) }
         }

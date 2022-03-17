@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.exercise.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lukasz.witkowski.training.planner.exercise.R
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +18,7 @@ class ExercisesListViewModel @Inject internal constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    val allCategories = CategoryMapper.allCategories.filter { !it.isNone() }
     private val _selectedCategories = MutableStateFlow<List<Category>>(emptyList())
     val selectedCategories: StateFlow<List<Category>> = _selectedCategories
 

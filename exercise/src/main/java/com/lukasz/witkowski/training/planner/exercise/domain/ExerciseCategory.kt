@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.domain
 
-internal enum class ExerciseCategory {
+enum class ExerciseCategory {
     NONE,
     LEGS,
     SHOULDERS,
