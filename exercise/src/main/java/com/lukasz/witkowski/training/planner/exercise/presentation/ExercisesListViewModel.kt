@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,14 +31,21 @@ class ExercisesListViewModel @Inject internal constructor(
 
     // TODO Is it good place for filtering?? (Service) ViewModel trzymać w małym rozmiarze
     private fun fetchExercises() {
-        val fetchedExercises = if(selectedCategories.value.isEmpty()) {
+        val fetchedExercises = if (selectedCategories.value.isEmpty()) {
             exerciseService.getAllExercises()
         } else {
-            val exerciseCategories = selectedCategories.value.map { CategoryMapper.toDomainCategory(it) }
+            val exerciseCategories =
+                selectedCategories.value.map { CategoryMapper.toDomainCategory(it) }
             exerciseService.getExercisesFromCategories(exerciseCategories)
         }
         fetchedExercises
-            .onEach { _exercises.emit(it.map { exercise -> ExerciseMapper.toPresentationExercise(exercise) }) }
+            .onEach {
+                _exercises.emit(it.map { exercise ->
+                    ExerciseMapper.toPresentationExercise(
+                        exercise
+                    )
+                })
+            }
             .launchIn(viewModelScope)
     }
 

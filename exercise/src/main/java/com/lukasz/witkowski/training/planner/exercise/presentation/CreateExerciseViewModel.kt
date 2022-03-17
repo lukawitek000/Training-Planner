@@ -1,8 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation
 
 import android.graphics.Bitmap
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -57,8 +55,8 @@ class CreateExerciseViewModel @Inject internal constructor(
         viewModelScope.launch {
             _savingState.value = ResultHandler.Loading
             val exercise = Exercise(
-                name = title.value ?: "",
-                description = description.value ?: "",
+                name = title.value,
+                description = description.value,
                 category = category.value,
                 image = image.value
             )
@@ -66,7 +64,7 @@ class CreateExerciseViewModel @Inject internal constructor(
                 val exerciseId =
                     exerciseService.createExercise(ExerciseMapper.toDomainExercise(exercise)) // Long is not an id!!!
                 _savingState.value =
-                    ResultHandler.Success(0L) // TODO result handler requires long but exercise id was changed to String (UUID)
+                    ResultHandler.Success(exerciseId) // TODO result handler requires long but exercise id was changed to String (UUID)
             } catch (e: Exception) {
                 _savingState.value = ResultHandler.Error(message = "Saving exercise failed")
             }

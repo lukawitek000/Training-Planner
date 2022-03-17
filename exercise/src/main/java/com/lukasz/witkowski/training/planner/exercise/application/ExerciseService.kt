@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.exercise.application
 
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -13,17 +13,17 @@ internal class ExerciseService(
     private val exerciseRepository: ExerciseRepository
 ) {
 
-    suspend fun createExercise(exercise: Exercise) : Long {
+    suspend fun createExercise(exercise: Exercise): Long {
         return exerciseRepository.insert(exercise)
     }
 
-    fun getAllExercises() : Flow<List<Exercise>> {
+    fun getAllExercises(): Flow<List<Exercise>> {
         return exerciseRepository.getAll()
     }
 
-    fun getExercisesFromCategories(categories: List<ExerciseCategory>) : Flow<List<Exercise>> {
+    fun getExercisesFromCategories(categories: List<ExerciseCategory>): Flow<List<Exercise>> {
         return exerciseRepository.getAll().map {
-            it.filter { exercise ->  categories.contains(exercise.category)}
+            it.filter { exercise -> categories.contains(exercise.category) }
         }
     }
 
@@ -31,7 +31,7 @@ internal class ExerciseService(
         exerciseRepository.delete(exercise)
     }
 
-    fun getExerciseById(id: String) : Flow<Exercise> {
+    fun getExerciseById(id: String): Flow<Exercise> {
         return exerciseRepository.getById(id)
     }
 }
