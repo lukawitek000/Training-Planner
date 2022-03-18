@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.TimeFormatter
+import com.lukasz.witkowski.training.planner.exercise.presentation.Exercise
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
@@ -56,6 +57,9 @@ class CreateTrainingViewModel @Inject constructor(
         _trainingExercises.value = mutableExercises.toList()
     }
 
+    private val _pickedExercise = MutableStateFlow(TrainingExercise())
+    val pickedExercise: StateFlow<TrainingExercise> = _pickedExercise
+
     fun createTrainingExercise(
         exercise: com.lukasz.witkowski.training.planner.exercise.domain.Exercise,
         reps: String,
@@ -94,5 +98,13 @@ class CreateTrainingViewModel @Inject constructor(
             exercises[index] =
                 exercises[index].copy(restTime = timeInMillis) // TODO setting rest time does not work
         }
+    }
+
+    fun pickExercise(exercise: Exercise) {
+        _pickedExercise.value = TrainingExercise(
+            name = exercise.name,
+            description = exercise.description,
+            category = "exercise.category.res",
+        )
     }
 }

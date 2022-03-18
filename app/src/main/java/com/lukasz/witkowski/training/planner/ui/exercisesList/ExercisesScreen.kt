@@ -71,7 +71,7 @@ fun ExercisesScreenContent(
     viewModel: ExercisesListViewModel,
     pickingExerciseMode: Boolean = false,
     pickExercise: (Exercise) -> Unit = {},
-    pickedExercises: List<Exercise> = emptyList()
+    pickedExercisesId: List<String> = emptyList()
 ) {
     val exercisesList by viewModel.exercises.collectAsState(emptyList())
     val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
@@ -100,7 +100,7 @@ fun ExercisesScreenContent(
                 },
                 pickingExerciseMode = pickingExerciseMode,
                 pickExercise = pickExercise,
-                pickedExercises = pickedExercises
+                pickedExercisesId = pickedExercisesId
             )
         } else {
             NoDataMessage(
@@ -141,7 +141,7 @@ private fun ExercisesList(
     openDialog: (Exercise) -> Unit,
     pickingExerciseMode: Boolean = false,
     pickExercise: (Exercise) -> Unit = {},
-    pickedExercises: List<Exercise> = emptyList()
+    pickedExercisesId: List<String> = emptyList()
 ) {
     LazyColumn(modifier = modifier) {
         items(exercisesList) { exercise ->
@@ -154,7 +154,7 @@ private fun ExercisesList(
                         openDialog(exercise)
                     }
                 },
-                markedSelected = pickedExercises.contains(exercise)
+                markedSelected = pickedExercisesId.contains(exercise.id)
             ) {
                 ExerciseListItemContent(
                     exercise = exercise

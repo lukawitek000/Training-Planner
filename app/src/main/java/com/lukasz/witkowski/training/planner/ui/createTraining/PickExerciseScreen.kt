@@ -54,8 +54,8 @@ fun PickExerciseScreen(
     var openDialog by remember { mutableStateOf(false) }
     var showInfoDialog by remember { mutableStateOf(false) }
     val trainingTitle by createTrainingViewModel.title.collectAsState()
+    val pickedTrainingExercise by createTrainingViewModel.pickedExercise.collectAsState()
 
-    var exercise = Exercise()
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
@@ -70,7 +70,7 @@ fun PickExerciseScreen(
             viewModel = viewModel,
             pickingExerciseMode = true,
             pickExercise = { pickedExercise ->
-                exercise = pickedExercise
+                createTrainingViewModel.pickExercise(pickedExercise)
                 // TODO picking was made by choosing id it.exercise.id == pickedExercise.id
                 // Maybe the presentation layer should keep the exercise with id??
                 if(pickedTrainingExercises.any { it.name == pickedExercise.name }) {
@@ -79,18 +79,18 @@ fun PickExerciseScreen(
                     openDialog = true
                 }
             },
-            pickedExercises = pickedTrainingExercises.map { Exercise(name = it.name, description = it.description) } // TODO check this mapping
+            pickedExercisesId = pickedTrainingExercises.map { it.id }
         )
         if(showInfoDialog) {
             InfoDialog(
-                exercise = exercise,
+                exercise = pickedTrainingExercise,
                 closeInfoDialog = { showInfoDialog = false },
                 openSettingExerciseDialog = { openDialog = true }
             )
         }
         if (openDialog) {
             SetTrainingExercisePropertiesDialog(
-                exercise = exercise,
+                exercise = pickedTrainingExercise,
                 trainingTitle = trainingTitle,
                 closeDialog = { openDialog = false },
                 saveTrainingExercise = { reps, sets, minutes, seconds ->

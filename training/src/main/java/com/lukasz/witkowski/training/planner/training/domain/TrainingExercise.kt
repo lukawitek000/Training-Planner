@@ -5,9 +5,9 @@ import java.util.*
 
 data class TrainingExercise(
     val id: String = UUID.randomUUID().toString(),
-    val name: String,
+    val name: String = "",
     val description: String = "",
-    val category: String,
+    val category: String = "",
     val image: Bitmap? = null,
     val repetitions: Int = 1,
     val sets: Int = 1,
