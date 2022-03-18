@@ -1,11 +1,11 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers
 
-import com.lukasz.witkowski.training.planner.training.domain.Exercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.ExerciseJsonModel
 
 object ExerciseMapper {
 
-    fun toExerciseJsonModel(exercise: Exercise): ExerciseJsonModel {
+    fun toExerciseJsonModel(exercise: TrainingExercise): ExerciseJsonModel {
         return ExerciseJsonModel(
             id = exercise.id,
             name = exercise.name,
@@ -18,8 +18,8 @@ object ExerciseMapper {
         )
     }
 
-    fun toExercise(exerciseJsonModel: ExerciseJsonModel): Exercise {
-        return Exercise(
+    fun toExercise(exerciseJsonModel: ExerciseJsonModel): TrainingExercise {
+        return TrainingExercise(
             id = exerciseJsonModel.id,
             name = exerciseJsonModel.name,
             description = exerciseJsonModel.description,

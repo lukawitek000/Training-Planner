@@ -40,7 +40,7 @@ import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
-import com.lukasz.witkowski.training.planner.training.domain.Exercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
@@ -138,7 +138,7 @@ fun TrainingOverviewContent(
 
 
 @Composable
-fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<Exercise>) {
+fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<TrainingExercise>) {
 
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -178,7 +178,7 @@ fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<Exercise
 }
 
 @Composable
-fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: Exercise) {
+fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExercise) {
     ListCardItem(
         modifier = modifier,
         backgroundColor = LightDark12
@@ -373,7 +373,7 @@ fun SingleTrainingStatisticsItemPrev() {
 fun SingleExercisePrev() {
     SingleTrainingExerciseInformation(
         Modifier,
-        Exercise(
+        TrainingExercise(
             name = "Super exercise",
             description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
             category = ExerciseCategory.Back.name,

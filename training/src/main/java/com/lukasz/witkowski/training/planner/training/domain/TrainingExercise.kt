@@ -3,7 +3,7 @@ package com.lukasz.witkowski.training.planner.training.domain
 import android.graphics.Bitmap
 import java.util.*
 
-data class Exercise(
+data class TrainingExercise(
     val id: String = UUID.randomUUID().toString(),
     val name: String,
     val description: String = "",

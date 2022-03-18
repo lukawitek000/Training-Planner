@@ -1,11 +1,11 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.db.mappers
 
-import com.lukasz.witkowski.training.planner.training.domain.Exercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbExercise
 
 internal object ExerciseMapper {
 
-    fun toDbExercise(exercise: Exercise, trainingId: String) : DbExercise {
+    fun toDbExercise(exercise: TrainingExercise, trainingId: String) : DbExercise {
         return DbExercise(
             id = exercise.id,
             trainingId = trainingId,
@@ -20,8 +20,8 @@ internal object ExerciseMapper {
         )
     }
 
-    fun toExercise(dbExercise: DbExercise) : Exercise {
-        return Exercise(
+    fun toExercise(dbExercise: DbExercise) : TrainingExercise {
+        return TrainingExercise(
             id = dbExercise.id,
             name = dbExercise.name,
             description = dbExercise.description,
