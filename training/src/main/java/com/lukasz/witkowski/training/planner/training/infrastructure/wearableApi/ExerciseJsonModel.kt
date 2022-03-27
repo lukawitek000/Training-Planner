@@ -4,7 +4,7 @@ data class ExerciseJsonModel(
     val id: String,
     val name: String,
     val description: String,
-    val category: String,
+    val category: Int,
     val repetitions: Int,
     val sets: Int,
     val time: Long,

@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.application
 
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.presentation.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanReceiver
@@ -25,15 +25,10 @@ class TrainingPlanService(
         sendData(listOf(trainingPlan))
     }
 
-    fun getAllTrainingPlans(categories: List<ExerciseCategory> = emptyList()): Flow<List<TrainingPlan>> {
+    fun getAllTrainingPlans(categories: List<Category> = emptyList()): Flow<List<TrainingPlan>> {
         return trainingPlanRepository.getAll().map {
-            it.filter { trainingPlan -> categories.isEmpty() || hasTrainingPlanCategories(trainingPlan, categories) }
+            it.filter { trainingPlan -> categories.isEmpty() || trainingPlan.hasCategories(categories) }
         }
-    }
-
-    // TODO it can applied in domain data class (getter for list of categories)
-    private fun hasTrainingPlanCategories(trainingPlan: TrainingPlan, categories: List<ExerciseCategory>): Boolean {
-        return trainingPlan.exercises.map{ exercise -> exercise.category }.containsAll(categories.map { it.name })
     }
 
     suspend fun sendNotSynchronizedTrainingPlans() {

@@ -11,7 +11,7 @@ internal data class DbExercise(
     val trainingId: String,
     val name: String,
     val description: String,
-    val category: String,
+    val category: Int,
     val image: Bitmap?,
     val repetitions: Int,
     val sets: Int,

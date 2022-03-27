@@ -61,7 +61,7 @@ class CreateTrainingViewModel @Inject constructor(
     val pickedExercise: StateFlow<TrainingExercise> = _pickedExercise
 
     fun createTrainingExercise(
-        exercise: com.lukasz.witkowski.training.planner.exercise.domain.Exercise,
+        exercise: Exercise,
         reps: String,
         sets: String,
         minutes: Int,
@@ -71,7 +71,7 @@ class CreateTrainingViewModel @Inject constructor(
         val trainingExercise = TrainingExercise(
             name = exercise.name,
             description = exercise.description,
-            category = exercise.category.name,
+            category = exercise.category,
             repetitions = reps.toIntOrNull() ?: 1,
             sets = sets.toIntOrNull() ?: 1,
             time = timeInMillis
@@ -104,7 +104,7 @@ class CreateTrainingViewModel @Inject constructor(
         _pickedExercise.value = TrainingExercise(
             name = exercise.name,
             description = exercise.description,
-            category = "exercise.category.res",
+            category = exercise.category,
         )
     }
 }

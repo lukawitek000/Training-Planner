@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.domain
 
+import com.lukasz.witkowski.training.planner.exercise.presentation.Category
 import java.util.*
 
 data class TrainingPlan(
@@ -8,4 +9,11 @@ data class TrainingPlan(
     val description: String = "",
     val exercises: List<TrainingExercise>,
     val isSynchronized: Boolean = false // TODO how to handle synchronization flags
-)
+) {
+
+    fun hasCategories(categories: List<Category>): Boolean {
+        val trainingPlanCategories = exercises
+            .map { exercise -> exercise.category }
+        return trainingPlanCategories.containsAll(categories)
+    }
+}
