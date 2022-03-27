@@ -12,8 +12,10 @@ data class TrainingPlan(
 ) {
 
     fun hasCategories(categories: List<Category>): Boolean {
-        val trainingPlanCategories = exercises
-            .map { exercise -> exercise.category }
-        return trainingPlanCategories.containsAll(categories)
+        return getAllCategories().containsAll(categories)
+    }
+
+    fun getAllCategories(): List<Category> {
+        return exercises.map { exercise -> exercise.category }
     }
 }

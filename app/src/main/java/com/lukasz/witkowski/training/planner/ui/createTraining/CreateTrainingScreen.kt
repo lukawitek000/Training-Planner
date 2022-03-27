@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.presentation.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.presentation.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
@@ -319,7 +320,7 @@ fun TrainingExerciseListItemPreview() {
         trainingExercise = TrainingExercise(
             name = "New exercise",
             description = "",
-            category = "None",
+            category = Category(),
             repetitions = 10,
             sets = 5,
             time = 1000,
@@ -334,7 +335,7 @@ fun TrainingExerciseListItemPreview() {
 @Composable
 fun RestTimeDialogPreview() {
     SetTrainingExerciseRestTimeDialog(
-        trainingExercise = TrainingExercise(category = "None", name = "Preview exercise"),
+        trainingExercise = TrainingExercise(category = Category(), name = "Preview exercise"),
         closeDialog = {},
         setRestTimeToExercise = { trainingExercise, i, i2 ->  }
     )

@@ -35,6 +35,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.presentation.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.training.presentation.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
@@ -83,19 +84,19 @@ fun PickExerciseScreen(
         )
         if(showInfoDialog) {
             InfoDialog(
-                exercise = pickedTrainingExercise,
+                exercise = pickedTrainingExercise!!,
                 closeInfoDialog = { showInfoDialog = false },
                 openSettingExerciseDialog = { openDialog = true }
             )
         }
         if (openDialog) {
             SetTrainingExercisePropertiesDialog(
-                exercise = pickedTrainingExercise,
+                exercise = pickedTrainingExercise!!,
                 trainingTitle = trainingTitle,
                 closeDialog = { openDialog = false },
                 saveTrainingExercise = { reps, sets, minutes, seconds ->
                     createTrainingViewModel.createTrainingExercise(
-                        exercise,
+                        pickedTrainingExercise!!,
                         reps,
                         sets,
                         minutes,
