@@ -26,7 +26,7 @@ internal object ExerciseMapper {
             id = dbExercise.id,
             name = dbExercise.name,
             description = dbExercise.description,
-            category = Category(), // TODO Mapping Category??
+            category = Category(), // TODO Mapping Category?? (In Exercise I use its domain ExerciseCategory enum)
             image = dbExercise.image,
             repetitions = dbExercise.repetitions,
             sets = dbExercise.sets,
