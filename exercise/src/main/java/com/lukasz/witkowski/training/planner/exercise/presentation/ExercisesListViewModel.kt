@@ -3,7 +3,6 @@ package com.lukasz.witkowski.training.planner.exercise.presentation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.training.planner.exercise.R
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -53,21 +53,25 @@ class CreateExerciseViewModel @Inject internal constructor(
 
     fun createExercise() {
         viewModelScope.launch {
-            _savingState.value = ResultHandler.Loading
             val exercise = Exercise(
                 name = title.value,
                 description = description.value,
                 category = category.value,
                 image = image.value
             )
-            try {
-                val exerciseId =
-                    exerciseService.createExercise(ExerciseMapper.toDomainExercise(exercise)) // Long is not an id!!!
-                _savingState.value =
-                    ResultHandler.Success(exerciseId) // TODO result handler requires long but exercise id was changed to String (UUID)
-            } catch (e: Exception) {
-                _savingState.value = ResultHandler.Error(message = "Saving exercise failed")
-            }
+            saveExercise(exercise)
+        }
+    }
+
+    private suspend fun saveExercise(exercise: Exercise) {
+        try {
+            _savingState.value = ResultHandler.Loading
+            val exerciseId =
+                exerciseService.createExercise(ExerciseMapper.toDomainExercise(exercise)) // Long is not an id!!!
+            _savingState.value =
+                ResultHandler.Success(exerciseId)
+        } catch (e: Exception) {
+            _savingState.value = ResultHandler.Error(message = "Saving exercise failed")
         }
     }
 }
