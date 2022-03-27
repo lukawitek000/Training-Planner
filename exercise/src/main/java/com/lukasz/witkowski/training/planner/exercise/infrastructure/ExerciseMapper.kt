@@ -34,7 +34,7 @@ internal object ExerciseMapper {
 
     private fun ExerciseCategory.toText() = name
 
-    private fun String.toCategory() = ExerciseCategory.valueOf(this)
+    private fun String.toCategory() = ExerciseCategory.valueOf(this.uppercase())
 
     private fun Bitmap.compressToByteArray(): ByteArray {
         val outputStream = ByteArrayOutputStream()
