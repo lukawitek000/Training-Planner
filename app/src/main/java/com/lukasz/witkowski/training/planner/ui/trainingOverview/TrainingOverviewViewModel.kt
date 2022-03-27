@@ -20,12 +20,12 @@ class TrainingOverviewViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val trainingId = savedStateHandle.get<Long>("trainingId") ?: -1
+    private val trainingId = savedStateHandle.get<String>("trainingId") ?: ""
 
     private val _training = trainingPlanService.getAllTrainingPlans(emptyList()).map { it.first { it.id == trainingId.toString() } } // TODO temporary fix
     val training: Flow<TrainingPlan> = _training
 
-    private val _statistics =
-        statisticsRepository.getTrainingCompleteStatisticsByTrainingId(trainingId)
-    val statistics: Flow<List<GeneralStatistics>> = _statistics
+//    private val _statistics =
+//        statisticsRepository.getTrainingCompleteStatisticsByTrainingId(trainingId)
+//    val statistics: Flow<List<GeneralStatistics>> = _statistics
 }

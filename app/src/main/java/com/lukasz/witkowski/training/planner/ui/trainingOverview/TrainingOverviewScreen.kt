@@ -61,7 +61,7 @@ fun TrainingOverviewScreen(
     val trainingWithExercises by viewModel.training.collectAsState(
         TrainingPlan(title = "", exercises = emptyList())
     )
-    val generalStatistics by viewModel.statistics.collectAsState(emptyList())
+//    val generalStatistics by viewModel.statistics.collectAsState(emptyList())
     Scaffold(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
@@ -83,22 +83,22 @@ fun TrainingOverviewScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
-                if (generalStatistics.isNotEmpty()) {
-                    TrainingStatisticsList(
-                        modifier = Modifier,
-                        generalStatistics = generalStatistics
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.no_statistics),
-                            fontSize = 18.sp,
-                        )
-                    }
-                }
+//                if (generalStatistics.isNotEmpty()) {
+//                    TrainingStatisticsList(
+//                        modifier = Modifier,
+//                        generalStatistics = generalStatistics
+//                    )
+//                } else {
+//                    Box(
+//                        modifier = Modifier.fillMaxSize(),
+//                        contentAlignment = Alignment.Center
+//                    ) {
+//                        Text(
+//                            text = stringResource(id = R.string.no_statistics),
+//                            fontSize = 18.sp,
+//                        )
+//                    }
+//                }
             }
         }
     }
