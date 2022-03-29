@@ -15,8 +15,8 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.lukasz.witkowski.training.planner.exercise.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.ExercisesListViewModel
-import com.lukasz.witkowski.training.planner.training.presentation.CreateTrainingViewModel
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingsListViewModel
+import com.lukasz.witkowski.training.planner.training.CreateTrainingViewModel
+import com.lukasz.witkowski.training.planner.training.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.*
 import com.lukasz.witkowski.training.planner.ui.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.ui.createTraining.CreateTrainingScreen

@@ -43,7 +43,7 @@ import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.presentation.CreateTrainingViewModel
+import com.lukasz.witkowski.training.planner.training.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.TextField

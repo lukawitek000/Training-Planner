@@ -28,7 +28,7 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.Category
 import com.lukasz.witkowski.training.planner.exercise.allCategories
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingsListViewModel
+import com.lukasz.witkowski.training.planner.training.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
