@@ -14,3 +14,5 @@ enum class ExerciseCategory {
     STRETCHING,
     CHEST
 }
+
+fun isCategoryNone(category: ExerciseCategory) = category == ExerciseCategory.NONE

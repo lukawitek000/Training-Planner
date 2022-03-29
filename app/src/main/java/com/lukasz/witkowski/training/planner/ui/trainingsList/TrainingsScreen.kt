@@ -26,7 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.Category
+import com.lukasz.witkowski.training.planner.exercise.CategoryMapper
 import com.lukasz.witkowski.training.planner.exercise.allCategories
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
@@ -117,10 +119,10 @@ fun TrainingListItemContent(
             if (categories.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 LazyRow {
-                    items(categories) { item: Category ->
+                    items(categories) { item: ExerciseCategory ->
                         CategoryChip(
                             modifier = Modifier.padding(end = 8.dp),
-                            text = stringResource(id = item.res),
+                            text = stringResource(id = CategoryMapper.toPresentationCategory(item).res),
                             fontSize = 14.sp
                         )
                     }

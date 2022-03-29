@@ -3,6 +3,8 @@ package com.lukasz.witkowski.training.planner.training
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lukasz.witkowski.training.planner.exercise.Category
+import com.lukasz.witkowski.training.planner.exercise.CategoryMapper
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,8 +21,8 @@ class TrainingsListViewModel @Inject constructor(
 ) : ViewModel() {
 
     // TODO the same filtering as in the exercises
-    private val _selectedCategories = MutableStateFlow<List<com.lukasz.witkowski.training.planner.exercise.Category>>(emptyList())
-    val selectedCategories: StateFlow<List<com.lukasz.witkowski.training.planner.exercise.Category>>
+    private val _selectedCategories = MutableStateFlow<List<Category>>(emptyList())
+    val selectedCategories: StateFlow<List<Category>>
         get() = _selectedCategories
 
     private val _trainingPlans = MutableStateFlow<List<TrainingPlan>>(emptyList())
@@ -32,7 +34,8 @@ class TrainingsListViewModel @Inject constructor(
     }
 
     private fun fetchTrainingPlans() {
-        trainingPlanService.getAllTrainingPlans(selectedCategories.value)
+        val categories = selectedCategories.value.map { CategoryMapper.toDomainCategory(it) }
+        trainingPlanService.getAllTrainingPlans(categories = categories)
             .onEach { _trainingPlans.emit(it) }
             .launchIn(viewModelScope)
     }

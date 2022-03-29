@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers
 
-import com.lukasz.witkowski.training.planner.exercise.Category
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.ExerciseJsonModel
 
@@ -11,7 +11,7 @@ object ExerciseMapper {
             id = exercise.id,
             name = exercise.name,
             description = exercise.description,
-            category = exercise.category.id,
+            category = exercise.category.ordinal,
             repetitions = exercise.repetitions,
             sets = exercise.sets,
             time = exercise.time,
@@ -24,7 +24,7 @@ object ExerciseMapper {
             id = exerciseJsonModel.id,
             name = exerciseJsonModel.name,
             description = exerciseJsonModel.description,
-            category = com.lukasz.witkowski.training.planner.exercise.Category(), // TODO Mapping category ??
+            category = ExerciseCategory.values()[exerciseJsonModel.category], // TODO Mapping category ??
             image = null,
             repetitions = exerciseJsonModel.repetitions,
             sets = exerciseJsonModel.sets,

@@ -70,7 +70,7 @@ class CreateTrainingViewModel @Inject constructor(
         val trainingExercise = TrainingExercise(
             name = exercise.name,
             description = exercise.description,
-            category = exercise.category,
+//            category = exercise.category,
             repetitions = reps.toIntOrNull() ?: 1,
             sets = sets.toIntOrNull() ?: 1,
             time = timeInMillis
