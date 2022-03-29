@@ -101,6 +101,7 @@ class CreateTrainingViewModel @Inject constructor(
         if (index >= 0) {
             exercises[index] =
                 exercises[index].copy(restTime = timeInMillis) // TODO setting rest time does not work
+            _trainingExercises.value = exercises.toList()
         }
     }
 
