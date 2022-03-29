@@ -58,8 +58,10 @@ class CreateTrainingViewModel @Inject constructor(
         _trainingExercises.value = mutableExercises.toList()
     }
 
-    private val _pickedExercise = MutableStateFlow<com.lukasz.witkowski.training.planner.exercise.Exercise?>(null)
-    val pickedExercise: StateFlow<com.lukasz.witkowski.training.planner.exercise.Exercise?> = _pickedExercise
+    private val _pickedExercise =
+        MutableStateFlow<Exercise?>(null)
+    val pickedExercise: StateFlow<Exercise?> =
+        _pickedExercise
 
     fun createTrainingExercise(
         exercise: Exercise,
@@ -70,6 +72,7 @@ class CreateTrainingViewModel @Inject constructor(
     ) {
         val timeInMillis = TimeFormatter.timeToMillis(minutes = minutes, seconds = seconds)
         val trainingExercise = TrainingExercise(
+            id = exercise.id,
             name = exercise.name,
             description = exercise.description,
             category = CategoryMapper.toDomainCategory(exercise.category),
@@ -101,7 +104,7 @@ class CreateTrainingViewModel @Inject constructor(
         }
     }
 
-    fun pickExercise(exercise: com.lukasz.witkowski.training.planner.exercise.Exercise) {
+    fun pickExercise(exercise: Exercise) {
         _pickedExercise.value = exercise
     }
 }

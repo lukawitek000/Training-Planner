@@ -26,5 +26,5 @@ internal object CategoryMapper {
     }
 
     fun toDomainCategory(category: Category): ExerciseCategory =
-        ExerciseCategory.values().first { it.ordinal == category.id }
+        ExerciseCategory.values()[category.id]
 }
