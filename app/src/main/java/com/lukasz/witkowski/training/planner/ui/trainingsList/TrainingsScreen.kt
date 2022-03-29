@@ -25,8 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.presentation.Category
-import com.lukasz.witkowski.training.planner.exercise.presentation.allCategories
+import com.lukasz.witkowski.training.planner.exercise.Category
+import com.lukasz.witkowski.training.planner.exercise.allCategories
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip

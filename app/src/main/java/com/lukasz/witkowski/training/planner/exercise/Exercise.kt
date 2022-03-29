@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.exercise.presentation
+package com.lukasz.witkowski.training.planner.exercise
 
 import android.graphics.Bitmap
 import java.util.UUID

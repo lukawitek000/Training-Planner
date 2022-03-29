@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.exercise.presentation
+package com.lukasz.witkowski.training.planner.exercise
 
 internal object ExerciseMapper {
 

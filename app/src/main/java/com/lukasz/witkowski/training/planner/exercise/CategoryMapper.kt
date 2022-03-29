@@ -1,6 +1,5 @@
-package com.lukasz.witkowski.training.planner.exercise.presentation
+package com.lukasz.witkowski.training.planner.exercise
 
-import com.lukasz.witkowski.training.planner.exercise.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 
 internal object CategoryMapper {

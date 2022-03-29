@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.map
 // TODO What application layer is doing except connecting to the domain
 //  how to handle presentation models, conversion in application or presentation layer??
 // how should be category handled in presentation layer as String?? enum or sealed class ??
-internal class ExerciseService(
+class ExerciseService(
     private val exerciseRepository: ExerciseRepository
 ) {
 

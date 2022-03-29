@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.application
 
-import com.lukasz.witkowski.training.planner.exercise.presentation.Category
+import com.lukasz.witkowski.training.planner.exercise.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanReceiver
@@ -25,7 +25,7 @@ class TrainingPlanService(
         sendData(listOf(trainingPlan))
     }
 
-    fun getAllTrainingPlans(categories: List<Category> = emptyList()): Flow<List<TrainingPlan>> {
+    fun getAllTrainingPlans(categories: List<com.lukasz.witkowski.training.planner.exercise.Category> = emptyList()): Flow<List<TrainingPlan>> {
         return trainingPlanRepository.getAll().map {
             it.filter { trainingPlan -> categories.isEmpty() || trainingPlan.hasCategories(categories) }
         }

@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.db.mappers
 
-import com.lukasz.witkowski.training.planner.exercise.presentation.Category
+import com.lukasz.witkowski.training.planner.exercise.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbExercise
 
@@ -26,7 +26,7 @@ internal object ExerciseMapper {
             id = dbExercise.id,
             name = dbExercise.name,
             description = dbExercise.description,
-            category = Category(), // TODO Mapping Category?? (In Exercise I use its domain ExerciseCategory enum)
+            category = com.lukasz.witkowski.training.planner.exercise.Category(), // TODO Mapping Category?? (In Exercise I use its domain ExerciseCategory enum)
             image = dbExercise.image,
             repetitions = dbExercise.repetitions,
             sets = dbExercise.sets,
