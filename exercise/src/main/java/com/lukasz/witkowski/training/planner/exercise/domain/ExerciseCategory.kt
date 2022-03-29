@@ -2,7 +2,7 @@ package com.lukasz.witkowski.training.planner.exercise.domain
 
 // Publiczny obiekt
 // Presentation layer in app module
-internal enum class ExerciseCategory {
+enum class ExerciseCategory {
     NONE,
     LEGS,
     SHOULDERS,
@@ -14,3 +14,5 @@ internal enum class ExerciseCategory {
     STRETCHING,
     CHEST
 }
+
+fun isCategoryNone(category: ExerciseCategory) = category == ExerciseCategory.NONE
