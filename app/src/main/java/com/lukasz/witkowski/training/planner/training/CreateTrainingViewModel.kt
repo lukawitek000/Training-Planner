@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.TimeFormatter
+import com.lukasz.witkowski.training.planner.exercise.CategoryMapper
+import com.lukasz.witkowski.training.planner.exercise.Exercise
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
@@ -60,7 +62,7 @@ class CreateTrainingViewModel @Inject constructor(
     val pickedExercise: StateFlow<com.lukasz.witkowski.training.planner.exercise.Exercise?> = _pickedExercise
 
     fun createTrainingExercise(
-        exercise: com.lukasz.witkowski.training.planner.exercise.Exercise,
+        exercise: Exercise,
         reps: String,
         sets: String,
         minutes: Int,
@@ -70,7 +72,7 @@ class CreateTrainingViewModel @Inject constructor(
         val trainingExercise = TrainingExercise(
             name = exercise.name,
             description = exercise.description,
-//            category = exercise.category,
+            category = CategoryMapper.toDomainCategory(exercise.category),
             repetitions = reps.toIntOrNull() ?: 1,
             sets = sets.toIntOrNull() ?: 1,
             time = timeInMillis
