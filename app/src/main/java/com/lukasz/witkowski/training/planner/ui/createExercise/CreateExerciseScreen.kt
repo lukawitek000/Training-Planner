@@ -67,7 +67,7 @@ fun CreateExerciseScreen(
     navigateBack: (String) -> Unit
 ) {
     val image by viewModel.image.collectAsState()
-    val title: String by viewModel.title.collectAsState()
+    val title: String by viewModel.name.collectAsState()
     val description by viewModel.description.collectAsState()
     val selectedCategory by viewModel.category.collectAsState()
     val savingState by viewModel.savingState.collectAsState()

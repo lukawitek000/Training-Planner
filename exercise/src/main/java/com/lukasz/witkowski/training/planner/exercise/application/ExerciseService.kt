@@ -6,14 +6,10 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-// TODO What application layer is doing except connecting to the domain
-//  how to handle presentation models, conversion in application or presentation layer??
-// how should be category handled in presentation layer as String?? enum or sealed class ??
 class ExerciseService(
     private val exerciseRepository: ExerciseRepository
 ) {
-
-    suspend fun createExercise(exercise: Exercise): Long {
+    suspend fun saveExercise(exercise: Exercise): Boolean {
         return exerciseRepository.insert(exercise)
     }
 

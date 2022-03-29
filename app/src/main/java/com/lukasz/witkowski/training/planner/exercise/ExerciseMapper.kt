@@ -1,5 +1,7 @@
 package com.lukasz.witkowski.training.planner.exercise
 
+import com.lukasz.witkowski.training.planner.exercise.domain.Image
+
 internal object ExerciseMapper {
 
 
@@ -9,7 +11,7 @@ internal object ExerciseMapper {
             name = exercise.name,
             description = exercise.description,
             category = CategoryMapper.toDomainCategory(exercise.category),
-            image = exercise.image
+            image = ImageConverter.toByteArray(exercise.image)?.let { Image(it) }
         )
     }
 
@@ -19,7 +21,7 @@ internal object ExerciseMapper {
             name = exercise.name,
             description = exercise.description,
             category = CategoryMapper.toPresentationCategory(exercise.category),
-            image = exercise.image
+            image = ImageConverter.toBitmap(exercise.image)
         )
     }
 }

@@ -12,49 +12,54 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/** StateFlow with SavedStateHandle, do I need it?
+ * https://medium.com/mobile-app-development-publication/saving-stateflow-state-in-viewmodel-2ee9ed9b1a83
+ */
+
 @HiltViewModel
 class CreateExerciseViewModel @Inject internal constructor(
     private val exerciseService: ExerciseService,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _savingState = MutableStateFlow<ResultHandler<Long>>(ResultHandler.Idle)
-    val savingState: StateFlow<ResultHandler<Long>> = _savingState
-
-    private val _title = MutableStateFlow("")
-    val title: StateFlow<String> = _title
-
-    fun onExerciseNameChange(newName: String) {
-        _title.value = newName
-    }
+    private val _name = MutableStateFlow("")
+    val name: StateFlow<String> = _name
 
     private val _description = MutableStateFlow("")
     val description: StateFlow<String> = _description
+
+    private val _category = MutableStateFlow(Category())
+    val category: StateFlow<Category> = _category
+
+    private val _image = MutableStateFlow<Bitmap?>(null)
+    val image: StateFlow<Bitmap?> = _image
+
+    private val _savingState = MutableStateFlow<ResultHandler<Boolean>>(ResultHandler.Idle)
+    val savingState: StateFlow<ResultHandler<Boolean>> = _savingState
+
+    fun onExerciseNameChange(newName: String) {
+        _name.value = newName
+    }
 
     fun onExerciseDescriptionChange(newDescription: String) {
         _description.value = newDescription
     }
 
-    private val _category = MutableStateFlow(Category())
-    val category: StateFlow<Category> = _category
-
     fun onCategorySelected(newCategoryRes: Int) {
         _category.value = Category(newCategoryRes)
     }
-
-    private val _image = MutableStateFlow<Bitmap?>(null)
-    val image: StateFlow<Bitmap?> = _image
 
     fun onImageChange(bitmap: Bitmap) {
         _image.value = bitmap
     }
 
+    // TODO all categories how and were to get them??
     val allCategories = CategoryMapper.allCategories
 
     fun createExercise() {
         viewModelScope.launch {
             val exercise = Exercise(
-                name = title.value,
+                name = name.value,
                 description = description.value,
                 category = category.value,
                 image = image.value
@@ -66,10 +71,10 @@ class CreateExerciseViewModel @Inject internal constructor(
     private suspend fun saveExercise(exercise: Exercise) {
         try {
             _savingState.value = ResultHandler.Loading
-            val exerciseId =
-                exerciseService.createExercise(ExerciseMapper.toDomainExercise(exercise)) // Long is not an id!!!
+            val isSavingFinished =
+                exerciseService.saveExercise(ExerciseMapper.toDomainExercise(exercise))
             _savingState.value =
-                ResultHandler.Success(exerciseId)
+                ResultHandler.Success(isSavingFinished)
         } catch (e: Exception) {
             _savingState.value = ResultHandler.Error(message = "Saving exercise failed")
         }

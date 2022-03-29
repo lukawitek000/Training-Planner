@@ -1,7 +1,5 @@
 package com.lukasz.witkowski.training.planner.exercise.domain
 
-// Publiczny obiekt
-// Presentation layer in app module
 enum class ExerciseCategory {
     NONE,
     LEGS,
@@ -14,5 +12,5 @@ enum class ExerciseCategory {
     STRETCHING,
     CHEST
 }
-
+// TODO How to check category None?
 fun isCategoryNone(category: ExerciseCategory) = category == ExerciseCategory.NONE

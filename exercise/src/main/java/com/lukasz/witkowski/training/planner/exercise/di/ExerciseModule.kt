@@ -46,6 +46,4 @@ internal object ExerciseModule {
     @Singleton
     @Provides
     fun provideExerciseDao(exerciseDatabase: ExerciseDatabase) = exerciseDatabase.exerciseDao()
-
-
 }
