@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import java.util.*
 
 internal data class Exercise(
-    val id: String = UUID.randomUUID().toString(),
+    val id: String = UUID.randomUUID().toString(), // ExerciseId
     val name: String = "",
     val description: String = "",
     val category: ExerciseCategory = ExerciseCategory.NONE,
