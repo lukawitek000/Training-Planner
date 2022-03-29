@@ -4,8 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.TimeFormatter
+import com.lukasz.witkowski.training.planner.exercise.presentation.Exercise
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
-import com.lukasz.witkowski.training.planner.training.domain.Exercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,28 +47,31 @@ class CreateTrainingViewModel @Inject constructor(
         }
     }
 
-    private val _trainingExercises = MutableStateFlow<List<Exercise>>(emptyList())
-    val trainingExercises: StateFlow<List<Exercise>>
+    private val _trainingExercises = MutableStateFlow<List<TrainingExercise>>(emptyList())
+    val trainingExercises: StateFlow<List<TrainingExercise>>
         get() = _trainingExercises
 
-    private fun addTrainingExercise(exercise: Exercise) {
+    private fun addTrainingExercise(exercise: TrainingExercise) {
         val mutableExercises = _trainingExercises.value.toMutableList()
         mutableExercises.add(exercise)
         _trainingExercises.value = mutableExercises.toList()
     }
 
+    private val _pickedExercise = MutableStateFlow<Exercise?>(null)
+    val pickedExercise: StateFlow<Exercise?> = _pickedExercise
+
     fun createTrainingExercise(
-        exercise: com.lukasz.witkowski.training.planner.exercise.domain.Exercise,
+        exercise: Exercise,
         reps: String,
         sets: String,
         minutes: Int,
         seconds: Int
     ) {
         val timeInMillis = TimeFormatter.timeToMillis(minutes = minutes, seconds = seconds)
-        val trainingExercise = Exercise(
+        val trainingExercise = TrainingExercise(
             name = exercise.name,
             description = exercise.description,
-            category = exercise.category.name,
+            category = exercise.category,
             repetitions = reps.toIntOrNull() ?: 1,
             sets = sets.toIntOrNull() ?: 1,
             time = timeInMillis
@@ -75,18 +79,28 @@ class CreateTrainingViewModel @Inject constructor(
         addTrainingExercise(trainingExercise)
     }
 
-    fun removeTrainingExercise(trainingExercise: Exercise) {
+    fun removeTrainingExercise(trainingExercise: TrainingExercise) {
         val mutableExercises = trainingExercises.value.toMutableList()
         mutableExercises.remove(trainingExercise)
         _trainingExercises.value = mutableExercises
     }
 
-    fun setRestTimeToExercise(exercise: Exercise, restTimeMinutes: Int, restTimeSeconds: Int) {
-        val timeInMillis = TimeFormatter.timeToMillis(minutes = restTimeMinutes, seconds = restTimeSeconds)
+    fun setRestTimeToExercise(
+        exercise: TrainingExercise,
+        restTimeMinutes: Int,
+        restTimeSeconds: Int
+    ) {
+        val timeInMillis =
+            TimeFormatter.timeToMillis(minutes = restTimeMinutes, seconds = restTimeSeconds)
         val exercises = trainingExercises.value.toMutableList()
         val index = exercises.indexOf(exercise)
-        if(index >= 0) {
-            exercises[index] = exercises[index].copy(restTime = timeInMillis) // TODO setting rest time does not work
+        if (index >= 0) {
+            exercises[index] =
+                exercises[index].copy(restTime = timeInMillis) // TODO setting rest time does not work
         }
+    }
+
+    fun pickExercise(exercise: Exercise) {
+        _pickedExercise.value = exercise
     }
 }

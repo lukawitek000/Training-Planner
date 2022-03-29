@@ -34,13 +34,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.domain.Category
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
-import com.lukasz.witkowski.training.planner.exercise.domain.categoriesWithoutNone
+import com.lukasz.witkowski.training.planner.exercise.presentation.Category
+import com.lukasz.witkowski.training.planner.exercise.presentation.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
@@ -71,7 +71,7 @@ fun ExercisesScreenContent(
     viewModel: ExercisesListViewModel,
     pickingExerciseMode: Boolean = false,
     pickExercise: (Exercise) -> Unit = {},
-    pickedExercises: List<Exercise> = emptyList()
+    pickedExercisesId: List<String> = emptyList()
 ) {
     val exercisesList by viewModel.exercises.collectAsState(emptyList())
     val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
@@ -87,7 +87,7 @@ fun ExercisesScreenContent(
     }
     Column() {
         CategoryFilters(
-            categories = categoriesWithoutNone,
+            categories = viewModel.allCategories,
             selectedCategories = selectedCategoriesList,
             selectCategory = { viewModel.selectCategory(it) }
         )
@@ -100,7 +100,7 @@ fun ExercisesScreenContent(
                 },
                 pickingExerciseMode = pickingExerciseMode,
                 pickExercise = pickExercise,
-                pickedExercises = pickedExercises
+                pickedExercisesId = pickedExercisesId
             )
         } else {
             NoDataMessage(
@@ -126,7 +126,7 @@ fun CategoryFilters(
             CategoryChip(
                 modifier = Modifier.padding(4.dp),
                 isSelected = selectedCategories.any { it == category },
-                text = category.name,
+                text = stringResource(id = category.res),
                 selectionChanged = { selectCategory(category) },
                 isClickable = true
             )
@@ -141,9 +141,9 @@ private fun ExercisesList(
     openDialog: (Exercise) -> Unit,
     pickingExerciseMode: Boolean = false,
     pickExercise: (Exercise) -> Unit = {},
-    pickedExercises: List<Exercise> = emptyList()
+    pickedExercisesId: List<String> = emptyList()
 ) {
-    LazyColumn() {
+    LazyColumn(modifier = modifier) {
         items(exercisesList) { exercise ->
             ListCardItem(
                 modifier = Modifier,
@@ -154,7 +154,7 @@ private fun ExercisesList(
                         openDialog(exercise)
                     }
                 },
-                markedSelected = pickedExercises.contains(exercise)
+                markedSelected = pickedExercisesId.contains(exercise.id)
             ) {
                 ExerciseListItemContent(
                     exercise = exercise
@@ -189,11 +189,11 @@ fun ExerciseListItemContent(
                 fontSize = 28.sp
             )
 
-            if (category != Category.None) {
+            if (!category.isNone()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 CategoryChip(
                     modifier = Modifier,
-                    text = category.name,
+                    text = stringResource(id = category.res),
                     fontSize = 14.sp
                 )
             }
@@ -266,11 +266,12 @@ fun ExerciseInfoAlertDialog(
                     modifier = Modifier
                 )
             }
-            if (exercise.category != Category.None) {
+            val category = exercise.category
+            if (!category.isNone()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 CategoryChip(
                     modifier = Modifier.padding(top = 4.dp),
-                    text = exercise.category.name
+                    text = stringResource(id = category.res)
                 )
             }
         }

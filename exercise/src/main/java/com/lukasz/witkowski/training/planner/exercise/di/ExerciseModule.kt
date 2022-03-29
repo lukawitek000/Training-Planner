@@ -16,7 +16,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ExerciseModule {
+internal object ExerciseModule {
 
     @Singleton
     @Provides

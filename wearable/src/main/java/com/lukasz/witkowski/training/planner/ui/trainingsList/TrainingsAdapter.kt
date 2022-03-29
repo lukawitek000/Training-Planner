@@ -28,9 +28,9 @@ class TrainingsAdapter(private val onTrainingClicked: (String, String) -> Unit) 
         fun bind(item: TrainingPlan) {
             binding.trainingNameTv.text = item.title
             val categories = item.exercises.filter {
-                it.category != "None"
+                !it.category.isNone()
             }.map { it.category }
-            setUpCategoriesRecyclerView(categories)
+            setUpCategoriesRecyclerView(emptyList())
             binding.root.setOnClickListener {
                 onTrainingClicked(item.id, item.title)
             }

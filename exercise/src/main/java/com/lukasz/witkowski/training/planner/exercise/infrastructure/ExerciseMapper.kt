@@ -2,16 +2,15 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.lukasz.witkowski.training.planner.exercise.domain.Category
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
-import com.lukasz.witkowski.training.planner.exercise.domain.allCategories
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import java.io.ByteArrayOutputStream
 import kotlin.math.roundToInt
 
 // TODO The conversion can be made using TypeConverter from Room??
 // The mapper is better if the external library would change, mapper has to be adjusted only
 // On the other hand external library may not need converting
-object ExerciseMapper {
+internal object ExerciseMapper {
 
     fun toDbExercise(exercise: Exercise): DbExercise {
         return DbExercise(
@@ -33,11 +32,9 @@ object ExerciseMapper {
         )
     }
 
-    private fun Category.toText() = name
+    private fun ExerciseCategory.toText() = name
 
-    private fun String.toCategory() = allCategories.firstOrNull {
-        it.name == this
-    } ?: Category.None
+    private fun String.toCategory() = ExerciseCategory.valueOf(this.uppercase())
 
     private fun Bitmap.compressToByteArray(): ByteArray {
         val outputStream = ByteArrayOutputStream()

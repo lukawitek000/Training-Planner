@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "Exercise")
-class DbExercise(
+internal class DbExercise(
     @PrimaryKey
     val id: String,
     val name: String,

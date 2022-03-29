@@ -25,8 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.domain.Category
-import com.lukasz.witkowski.training.planner.exercise.domain.categoriesWithoutNone
+import com.lukasz.witkowski.training.planner.exercise.presentation.Category
+import com.lukasz.witkowski.training.planner.exercise.presentation.allCategories
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
@@ -57,10 +57,10 @@ fun TrainingsScreen(
     ) {
         Column {
             CategoryFilters(
-                categories = categoriesWithoutNone,
+                categories = allCategories, // TODO how to get list of categories??
                 selectedCategories = selectedCategoriesList,
                 selectCategory = { viewModel.selectCategory(it) }
-            ) // TODO same categories filter as in exercises screen
+            )
             if (trainings.isNotEmpty()) {
                 TrainingsList(innerPadding, trainings, navigateToTrainingOverview)
             } else {
@@ -99,7 +99,7 @@ fun TrainingListItemContent(
     trainingWithExercises: TrainingPlan
 ) {
     val categories =
-        trainingWithExercises.exercises.map { it.category }.filter { it != Category.None.name }
+        trainingWithExercises.getAllCategories()
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -117,10 +117,10 @@ fun TrainingListItemContent(
             if (categories.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 LazyRow {
-                    items(categories) { item: String ->
+                    items(categories) { item: Category ->
                         CategoryChip(
                             modifier = Modifier.padding(end = 8.dp),
-                            text = item,
+                            text = stringResource(id = item.res),
                             fontSize = 14.sp
                         )
                     }

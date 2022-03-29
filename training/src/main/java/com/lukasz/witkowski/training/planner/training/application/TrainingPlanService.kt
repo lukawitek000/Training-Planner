@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.application
 
-import com.lukasz.witkowski.training.planner.exercise.domain.Category
+import com.lukasz.witkowski.training.planner.exercise.presentation.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanReceiver
@@ -8,7 +8,6 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanReposit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -26,15 +25,10 @@ class TrainingPlanService(
         sendData(listOf(trainingPlan))
     }
 
-    fun getAllTrainingPlans(categories: List<Category>): Flow<List<TrainingPlan>> {
+    fun getAllTrainingPlans(categories: List<Category> = emptyList()): Flow<List<TrainingPlan>> {
         return trainingPlanRepository.getAll().map {
-            it.filter { trainingPlan -> categories.isEmpty() || hasTrainingPlanCategories(trainingPlan, categories) }
+            it.filter { trainingPlan -> categories.isEmpty() || trainingPlan.hasCategories(categories) }
         }
-    }
-
-    // TODO it can applied in domain data class (getter for list of categories)
-    private fun hasTrainingPlanCategories(trainingPlan: TrainingPlan, categories: List<Category>): Boolean {
-        return trainingPlan.exercises.map{ exercise -> exercise.category }.containsAll(categories.map { it.name })
     }
 
     suspend fun sendNotSynchronizedTrainingPlans() {

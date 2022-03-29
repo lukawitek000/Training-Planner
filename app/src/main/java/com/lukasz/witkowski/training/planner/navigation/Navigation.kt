@@ -69,7 +69,7 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues, sh
 
         composable(
             "${NavItem.TrainingOverview.route}/{trainingId}",
-            arguments = listOf(navArgument("trainingId") { type = NavType.LongType })
+            arguments = listOf(navArgument("trainingId") { type = NavType.StringType })
         ) {
             val viewModel: TrainingOverviewViewModel = hiltViewModel()
             TrainingOverviewScreen(

@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.domain.Category
-import com.lukasz.witkowski.training.planner.training.domain.Exercise
+import com.lukasz.witkowski.training.planner.exercise.presentation.Category
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
@@ -61,7 +61,7 @@ fun TrainingOverviewScreen(
     val trainingWithExercises by viewModel.training.collectAsState(
         TrainingPlan(title = "", exercises = emptyList())
     )
-    val generalStatistics by viewModel.statistics.collectAsState(emptyList())
+//    val generalStatistics by viewModel.statistics.collectAsState(emptyList())
     Scaffold(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
@@ -83,22 +83,22 @@ fun TrainingOverviewScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
-                if (generalStatistics.isNotEmpty()) {
-                    TrainingStatisticsList(
-                        modifier = Modifier,
-                        generalStatistics = generalStatistics
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.no_statistics),
-                            fontSize = 18.sp,
-                        )
-                    }
-                }
+//                if (generalStatistics.isNotEmpty()) {
+//                    TrainingStatisticsList(
+//                        modifier = Modifier,
+//                        generalStatistics = generalStatistics
+//                    )
+//                } else {
+//                    Box(
+//                        modifier = Modifier.fillMaxSize(),
+//                        contentAlignment = Alignment.Center
+//                    ) {
+//                        Text(
+//                            text = stringResource(id = R.string.no_statistics),
+//                            fontSize = 18.sp,
+//                        )
+//                    }
+//                }
             }
         }
     }
@@ -138,7 +138,7 @@ fun TrainingOverviewContent(
 
 
 @Composable
-fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<Exercise>) {
+fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<TrainingExercise>) {
 
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -178,7 +178,7 @@ fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<Exercise
 }
 
 @Composable
-fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: Exercise) {
+fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExercise) {
     ListCardItem(
         modifier = modifier,
         backgroundColor = LightDark12
@@ -193,10 +193,10 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: Exercise) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = exercise.description, fontSize = 18.sp)
             Spacer(modifier = Modifier.height(16.dp))
-            if (exercise.category != Category.None.name) {
+            if (!exercise.category.isNone()) {
                 CategoryChip(
                     modifier = Modifier.fillMaxWidth(),
-                    text = exercise.category
+                    text = stringResource(id = exercise.category.res)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -373,10 +373,10 @@ fun SingleTrainingStatisticsItemPrev() {
 fun SingleExercisePrev() {
     SingleTrainingExerciseInformation(
         Modifier,
-        Exercise(
+        TrainingExercise(
             name = "Super exercise",
             description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
-            category = Category.Back.name,
+            category = Category(),
             sets = 10,
             repetitions = 100,
             time = 141000,

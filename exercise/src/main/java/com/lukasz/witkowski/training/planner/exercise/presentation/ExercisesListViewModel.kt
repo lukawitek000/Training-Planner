@@ -4,8 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
-import com.lukasz.witkowski.training.planner.exercise.domain.Category
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,11 +12,12 @@ import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
-class ExercisesListViewModel @Inject constructor(
+class ExercisesListViewModel @Inject internal constructor(
     private val exerciseService: ExerciseService,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    val allCategories = CategoryMapper.allCategories.filter { !it.isNone() }
     private val _selectedCategories = MutableStateFlow<List<Category>>(emptyList())
     val selectedCategories: StateFlow<List<Category>> = _selectedCategories
 
@@ -33,13 +32,21 @@ class ExercisesListViewModel @Inject constructor(
 
     // TODO Is it good place for filtering?? (Service) ViewModel trzymać w małym rozmiarze
     private fun fetchExercises() {
-        val fetchedExercises = if(selectedCategories.value.isEmpty()) {
+        val fetchedExercises = if (selectedCategories.value.isEmpty()) {
             exerciseService.getAllExercises()
         } else {
-            exerciseService.getExercisesFromCategories(selectedCategories.value)
+            val exerciseCategories =
+                selectedCategories.value.map { CategoryMapper.toDomainCategory(it) }
+            exerciseService.getExercisesFromCategories(exerciseCategories)
         }
         fetchedExercises
-            .onEach { _exercises.emit(it) }
+            .onEach {
+                _exercises.emit(it.map { exercise ->
+                    ExerciseMapper.toPresentationExercise(
+                        exercise
+                    )
+                })
+            }
             .launchIn(viewModelScope)
     }
 
