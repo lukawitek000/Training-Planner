@@ -16,6 +16,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 /** StateFlow with SavedStateHandle, do I need it?
@@ -52,8 +53,9 @@ class CreateExerciseViewModel @Inject internal constructor(
         _description.value = newDescription
     }
 
-    fun onCategorySelected(newCategoryRes: Int) {
-        _category.value = Category(newCategoryRes)
+    fun onCategorySelected(newCategoryIndex: Int) {
+        Timber.d("Category selected index $newCategoryIndex")
+        _category.value = getAllCategories()[newCategoryIndex]
     }
 
     fun onImageChange(bitmap: Bitmap) {

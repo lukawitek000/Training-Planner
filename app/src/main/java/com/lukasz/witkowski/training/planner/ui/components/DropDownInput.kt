@@ -1,11 +1,15 @@
 package com.lukasz.witkowski.training.planner.ui.components
 
+import androidx.appcompat.widget.MenuPopupWindow
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ExposedDropdownMenuBox
+import androidx.compose.material.ExposedDropdownMenuDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -22,15 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.toSize
+import timber.log.Timber
 
 
 @Composable
 fun DropDownInput(
     selectedText: String,
-    suggestions: List<Int>,
+    suggestions: List<String>,
     label: String,
     onSuggestionSelected: (Int) -> Unit
 ) {
@@ -40,7 +44,7 @@ fun DropDownInput(
     Column() {
         TextField(
             value = selectedText,
-            onValueChange = { /*onSuggestionSelected(it)*/ },
+            onValueChange = { onSuggestionSelected(suggestions.indexOf(it)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .onGloballyPositioned { coordinates ->
@@ -65,10 +69,11 @@ fun DropDownInput(
         ) {
             suggestions.forEach {
                 DropdownMenuItem(onClick = {
-                    onSuggestionSelected(it)
+                    Timber.d("Item clicked")
+                    onSuggestionSelected(suggestions.indexOf(it))
                     expanded = !expanded
                 }) {
-                    Text(text = stringResource(id = it), color = MaterialTheme.colors.primary)
+                    Text(text = it, color = MaterialTheme.colors.primary)
                 }
             }
         }

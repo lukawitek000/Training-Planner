@@ -188,7 +188,7 @@ private fun CreateExerciseForm(
         Spacer(modifier = Modifier.height(16.dp))
         DropDownInput(
             selectedText = stringResource(id = selectedCategory.res),
-            suggestions = allCategories.map { it.res },
+            suggestions = allCategories.map { stringResource(id = it.res) },
             label = stringResource(id = R.string.category),
             onSuggestionSelected = onCategorySelected
         )
@@ -204,7 +204,10 @@ fun UploadImageLayout(
     val launcher = imageActivityResultLauncher(onImageChange = onImageChange)
     val placeholder =
         Uri.parse("android.resource://com.lukasz.witkowski.training.planner/drawable/exercise_default")
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         ImageContainer {
             GlideImage(
                 imageModel = image ?: placeholder,
