@@ -2,7 +2,7 @@ package com.lukasz.witkowski.training.planner.exercise.application
 
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 
-// TODO is it a good way to take categories
+// TODO is it a good way to take categories, in which layer should it belong
 // Probably it should have different name??
 class CategoryService {
 

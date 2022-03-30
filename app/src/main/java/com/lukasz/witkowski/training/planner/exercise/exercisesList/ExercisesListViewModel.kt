@@ -12,11 +12,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+// TODO What do you think about using CategoryController to handle category filtering?
+// It will be reused in Training List
 @HiltViewModel
 class ExercisesListViewModel @Inject internal constructor(
     private val exerciseService: ExerciseService,
@@ -30,10 +30,10 @@ class ExercisesListViewModel @Inject internal constructor(
 
     init {
         fetchExercises()
-        observeCategories()
+        observeSelectedCategories()
     }
 
-    private fun observeCategories() {
+    private fun observeSelectedCategories() {
         viewModelScope.launch {
             selectedCategories.collectLatest {
                 fetchExercises()

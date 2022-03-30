@@ -10,6 +10,11 @@ object ImageFactory {
     fun fromBitmap(bitmap: Bitmap): Image {
         val outputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        val compressedByteArray = compressImage(outputStream)
+        return Image(compressedByteArray)
+    }
+
+    private fun compressImage(outputStream: ByteArrayOutputStream): ByteArray {
         var imageByteArray = outputStream.toByteArray()
         while (imageByteArray.size > 500000) {
             val img = BitmapFactory.decodeByteArray(imageByteArray, 0, imageByteArray.size)
@@ -21,6 +26,6 @@ object ImageFactory {
             resized.compress(Bitmap.CompressFormat.PNG, 70, stream)
             imageByteArray = stream.toByteArray()
         }
-        return Image(imageByteArray)
+        return imageByteArray
     }
 }

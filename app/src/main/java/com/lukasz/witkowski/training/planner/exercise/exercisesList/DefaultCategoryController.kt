@@ -6,6 +6,7 @@ import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+// TODO I would move it to the Exercise module in presentation layer
 class DefaultCategoryController(private val categoryService: CategoryService) : CategoryController {
     private val _selectedCategories = MutableStateFlow<List<Category>>(emptyList())
     override val selectedCategories: StateFlow<List<Category>>
