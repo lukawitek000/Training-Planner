@@ -72,7 +72,7 @@ class CreateTrainingViewModel @Inject constructor(
     ) {
         val timeInMillis = TimeFormatter.timeToMillis(minutes = minutes, seconds = seconds)
         val trainingExercise = TrainingExercise(
-            id = exercise.id,
+            id = exercise.id.value,
             name = exercise.name,
             description = exercise.description,
             category = CategoryMapper.toDomainCategory(exercise.category),

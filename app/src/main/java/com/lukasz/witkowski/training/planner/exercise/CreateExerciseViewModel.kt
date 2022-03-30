@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -59,6 +60,7 @@ class CreateExerciseViewModel @Inject internal constructor(
     fun createExercise() {
         viewModelScope.launch {
             val exercise = Exercise(
+                id = ExerciseId.create(),
                 name = name.value,
                 description = description.value,
                 category = category.value,

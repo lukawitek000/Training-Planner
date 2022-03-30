@@ -154,7 +154,7 @@ private fun ExercisesList(
                         openDialog(exercise)
                     }
                 },
-                markedSelected = pickedExercisesId.contains(exercise.id)
+                markedSelected = pickedExercisesId.contains(exercise.id.value)
             ) {
                 ExerciseListItemContent(
                     exercise = exercise

@@ -2,13 +2,14 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.Image
 
 internal object ExerciseMapper {
 
     fun toDbExercise(exercise: Exercise): DbExercise {
         return DbExercise(
-            id = exercise.id,
+            id = exercise.id.value,
             name = exercise.name,
             description = exercise.description,
             categoryId = exercise.category.ordinal,
@@ -18,7 +19,7 @@ internal object ExerciseMapper {
 
     fun toExercise(dbExercise: DbExercise): Exercise {
         return Exercise(
-            id = dbExercise.id,
+            id = ExerciseId(dbExercise.id),
             name = dbExercise.name,
             description = dbExercise.description,
             category = ExerciseCategory.values()[dbExercise.categoryId],
