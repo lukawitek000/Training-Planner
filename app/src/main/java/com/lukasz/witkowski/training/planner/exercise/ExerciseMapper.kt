@@ -1,5 +1,7 @@
 package com.lukasz.witkowski.training.planner.exercise
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.lukasz.witkowski.training.planner.exercise.domain.Image
 
 internal object ExerciseMapper {
@@ -11,7 +13,7 @@ internal object ExerciseMapper {
             name = exercise.name,
             description = exercise.description,
             category = CategoryMapper.toDomainCategory(exercise.category),
-            image = ImageConverter.toByteArray(exercise.image)?.let { Image(it) }
+            image = exercise.image?.toImage()
         )
     }
 
@@ -21,7 +23,12 @@ internal object ExerciseMapper {
             name = exercise.name,
             description = exercise.description,
             category = CategoryMapper.toPresentationCategory(exercise.category),
-            image = ImageConverter.toBitmap(exercise.image)
+            image = exercise.image?.toBitmap()
         )
     }
+
+    private fun Image.toBitmap() = BitmapFactory.decodeByteArray(data, 0, data.size)
+
+    private fun Bitmap.toImage() = ImageFactory.fromBitmap(bitmap = this)
+
 }
