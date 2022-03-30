@@ -3,9 +3,8 @@ package com.lukasz.witkowski.shared.di
 import android.content.Context
 import androidx.room.Room
 import com.lukasz.witkowski.shared.db.AppDatabase
-import com.lukasz.witkowski.shared.db.ExerciseDao
 import com.lukasz.witkowski.shared.db.StatisticsDao
-import com.lukasz.witkowski.shared.db.TrainingDao
+import com.lukasz.witkowski.shared.repository.SyncDataRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,19 +30,15 @@ object DatabaseModule {
 
     @Singleton
     @Provides
-    fun provideExerciseDao(appDatabase: AppDatabase): ExerciseDao {
-        return appDatabase.exerciseDao()
-    }
-
-    @Singleton
-    @Provides
-    fun provideTrainingDao(appDatabase: AppDatabase): TrainingDao {
-        return appDatabase.trainingDao()
-    }
-
-    @Singleton
-    @Provides
     fun provideStatisticsDao(appDatabase: AppDatabase): StatisticsDao {
         return appDatabase.statisticsDao()
+    }
+
+    @Singleton
+    @Provides
+    fun provideSyncDataRepository(
+        statisticsDao: StatisticsDao
+    ): SyncDataRepository {
+        return SyncDataRepository(statisticsDao = statisticsDao)
     }
 }

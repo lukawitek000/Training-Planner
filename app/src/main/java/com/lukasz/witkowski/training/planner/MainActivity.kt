@@ -1,27 +1,18 @@
 package com.lukasz.witkowski.training.planner
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.expandIn
-import androidx.compose.animation.shrinkOut
-import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberDrawerState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -32,16 +23,13 @@ import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
 import com.lukasz.witkowski.training.planner.navigation.NavItem
 import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
-import com.lukasz.witkowski.training.planner.service.SendingTrainingsService
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private var isServiceStarted = false
 
-    @ExperimentalAnimationApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -78,18 +66,17 @@ class MainActivity : ComponentActivity() {
 
     private fun startSendingTrainingService() {
         if (!isServiceStarted) {
-            isServiceStarted = startSendingDataService(SendingTrainingsService::class.java)
+//            isServiceStarted = startSendingDataService(SendingTrainingsService::class.java)
         }
     }
 
     private fun stopSendingTrainingService() {
         if (isServiceStarted) {
-            isServiceStarted = stopSendingDataService(SendingTrainingsService::class.java)
+//            isServiceStarted = stopSendingDataService(SendingTrainingsService::class.java)
         }
     }
 }
 
-@ExperimentalAnimationApi
 @Composable
 fun TrainingPlannerApp(showToast: (String) -> Unit) {
     val navController = rememberNavController()

@@ -1,17 +1,13 @@
 package com.lukasz.witkowski.training.planner.ui.trainingOverview
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -33,20 +29,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.models.Category
-import com.lukasz.witkowski.shared.models.Exercise
-import com.lukasz.witkowski.shared.models.Training
-import com.lukasz.witkowski.shared.models.TrainingExercise
-import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.isCategoryNone
+import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
@@ -56,9 +51,7 @@ import me.bytebeats.views.charts.line.render.line.SolidLineDrawer
 import me.bytebeats.views.charts.line.render.point.EmptyPointDrawer
 import me.bytebeats.views.charts.line.render.xaxis.SimpleXAxisDrawer
 import me.bytebeats.views.charts.line.render.yaxis.SimpleYAxisDrawer
-import timber.log.Timber
 
-@ExperimentalAnimationApi
 @Composable
 fun TrainingOverviewScreen(
     modifier: Modifier,
@@ -66,13 +59,9 @@ fun TrainingOverviewScreen(
     navigateBack: () -> Unit
 ) {
     val trainingWithExercises by viewModel.training.collectAsState(
-        TrainingWithExercises(
-            Training(
-                title = ""
-            ), emptyList()
-        )
+        TrainingPlan(title = "", exercises = emptyList())
     )
-    val generalStatistics by viewModel.statistics.collectAsState(emptyList())
+//    val generalStatistics by viewModel.statistics.collectAsState(emptyList())
     Scaffold(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
@@ -81,7 +70,7 @@ fun TrainingOverviewScreen(
             item {
                 TrainingOverviewContent(
                     modifier = Modifier,
-                    trainingWithExercises = trainingWithExercises
+                    trainingPlan = trainingWithExercises
                 )
             }
             item {
@@ -94,34 +83,32 @@ fun TrainingOverviewScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
-                if (generalStatistics.isNotEmpty()) {
-                    TrainingStatisticsList(
-                        modifier = Modifier,
-                        generalStatistics = generalStatistics
-                    )
-                } else {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.no_statistics),
-                            fontSize = 18.sp,
-                        )
-                    }
-                }
+//                if (generalStatistics.isNotEmpty()) {
+//                    TrainingStatisticsList(
+//                        modifier = Modifier,
+//                        generalStatistics = generalStatistics
+//                    )
+//                } else {
+//                    Box(
+//                        modifier = Modifier.fillMaxSize(),
+//                        contentAlignment = Alignment.Center
+//                    ) {
+//                        Text(
+//                            text = stringResource(id = R.string.no_statistics),
+//                            fontSize = 18.sp,
+//                        )
+//                    }
+//                }
             }
         }
     }
 }
 
-@ExperimentalAnimationApi
 @Composable
 fun TrainingOverviewContent(
     modifier: Modifier = Modifier,
-    trainingWithExercises: TrainingWithExercises
+    trainingPlan: TrainingPlan
 ) {
-    val training = trainingWithExercises.training
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -129,20 +116,20 @@ fun TrainingOverviewContent(
     ) {
         Text(
             modifier = Modifier.fillMaxWidth(),
-            text = training.title,
+            text = trainingPlan.title,
             fontSize = 32.sp,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colors.primary
         )
         Spacer(modifier = Modifier.height(16.dp))
-        if (training.description.isNotEmpty()) {
-            Text(text = training.description, fontSize = 18.sp)
+        if (trainingPlan.description.isNotEmpty()) {
+            Text(text = trainingPlan.description, fontSize = 18.sp)
             Spacer(modifier = Modifier.height(16.dp))
         }
-        if (trainingWithExercises.exercises.isNotEmpty()) {
+        if (trainingPlan.exercises.isNotEmpty()) {
             TrainingExercisesExpandableList(
                 modifier = Modifier,
-                exercises = trainingWithExercises.exercises
+                exercises = trainingPlan.exercises
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -150,7 +137,6 @@ fun TrainingOverviewContent(
 }
 
 
-@ExperimentalAnimationApi
 @Composable
 fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<TrainingExercise>) {
 
@@ -199,19 +185,19 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExer
     ) {
         Column() {
             Text(
-                text = exercise.exercise.name,
+                text = exercise.name,
                 fontSize = 24.sp,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = exercise.exercise.description, fontSize = 18.sp)
+            Text(text = exercise.description, fontSize = 18.sp)
             Spacer(modifier = Modifier.height(16.dp))
-            if (exercise.exercise.category != Category.None) {
-                CategoryChip(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = exercise.exercise.category.name
-                )
+            CategoryChip(
+                modifier = Modifier.fillMaxWidth(),
+                category = CategoryMapper.toCategory(exercise.category)
+            )
+            if (!isCategoryNone(exercise.category)) {
                 Spacer(modifier = Modifier.height(16.dp))
             }
             Row(
@@ -304,7 +290,7 @@ fun SingleTrainingStatisticsItem(
                 text = stringResource(id = R.string.max_heart_rate_text, maxHeartRateStatistics),
                 fontSize = fontSize
             )
-            if(areHeartRateStatisticsAvailable(generalStatistics.heartRateDuringTraining)) {
+            if (areHeartRateStatisticsAvailable(generalStatistics.heartRateDuringTraining)) {
                 Spacer(modifier = Modifier.height(8.dp))
                 ListCardItem(
                     backgroundColor = LightDark12
@@ -339,11 +325,16 @@ fun HeartRateLineChart(
     data: List<Double>
 ) {
     val lineChartData = LineChartData(
-        points = data.mapIndexed { index, heartRate -> LineChartData.Point(heartRate.toFloat(), label = "") },
+        points = data.mapIndexed { index, heartRate ->
+            LineChartData.Point(
+                heartRate.toFloat(),
+                label = ""
+            )
+        },
         padBy = 50.0f,
         startAtZero = false
     )
-    if(areHeartRateStatisticsAvailable(data)) {
+    if (areHeartRateStatisticsAvailable(data)) {
         LineChart(
             modifier = modifier
                 .heightIn(max = 200.dp)
@@ -388,11 +379,9 @@ fun SingleExercisePrev() {
     SingleTrainingExerciseInformation(
         Modifier,
         TrainingExercise(
-            exercise = Exercise(
-                name = "Super exercise",
-                description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
-                category = Category.Back
-            ),
+            name = "Super exercise",
+            description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
+            category = ExerciseCategory.CARDIO,
             sets = 10,
             repetitions = 100,
             time = 141000,

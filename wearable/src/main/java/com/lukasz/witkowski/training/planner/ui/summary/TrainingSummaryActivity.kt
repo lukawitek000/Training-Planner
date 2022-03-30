@@ -36,8 +36,8 @@ class TrainingSummaryActivity : ComponentActivity() {
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             trainingService = (service as WearableTrainingService.LocalBinder).getService()
-            observeEndedTraining()
-            viewModel.trainingId = trainingService.trainingProgressController.trainingId
+//            observeEndedTraining()
+//            viewModel.trainingId = trainingService.trainingProgressController.trainingId
         }
 
         override fun onServiceDisconnected(name: ComponentName?) = Unit

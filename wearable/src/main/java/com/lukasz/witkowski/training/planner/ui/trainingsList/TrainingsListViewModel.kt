@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.utils.ResultHandler
-import com.lukasz.witkowski.training.planner.repository.TrainingRepository
+import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,17 +16,17 @@ import javax.inject.Inject
 class TrainingsListViewModel
 @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val trainingRepository: TrainingRepository
+    private val trainingPlanService: TrainingPlanService
 ) : ViewModel() {
 
 
-    private val _trainings = MutableLiveData<ResultHandler<List<TrainingWithExercises>>>()
-    val trainings: LiveData<ResultHandler<List<TrainingWithExercises>>> = _trainings
+    private val _trainings = MutableLiveData<ResultHandler<List<TrainingPlan>>>()
+    val trainings: LiveData<ResultHandler<List<TrainingPlan>>> = _trainings
 
     fun getTrainingsWithExercises() {
         viewModelScope.launch {
             _trainings.value = ResultHandler.Loading
-            trainingRepository.getAllTrainingsWithExercises().collect {
+            trainingPlanService.getAllTrainingPlans().collect {
                 _trainings.value = ResultHandler.Success(it)
 //                _trainings.value = ResultHandler.Success(trainingRepository.getDummyTrainings())
             }

@@ -15,7 +15,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.lukasz.witkowski.shared.trainingControllers.CurrentTrainingState
 import com.lukasz.witkowski.shared.trainingControllers.TimerHelper
-import com.lukasz.witkowski.shared.models.TrainingExercise
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingExerciseBinding
@@ -62,9 +61,9 @@ class TrainingExerciseFragment : Fragment() {
 
     private fun observeExerciseTimer() {
         timer.timeLeft.observe(viewLifecycleOwner) {
-            if (trainingService.trainingProgressController.isExerciseState && timer.isRunning) {
-                binding.timerTv.text = TimeFormatter.millisToTimer(it)
-            }
+//            if (trainingService.trainingProgressController.isExerciseState && timer.isRunning) {
+//                binding.timerTv.text = TimeFormatter.millisToTimer(it)
+//            }
         }
         timer.timerFinished.observe(viewLifecycleOwner) {
             if (it) {
@@ -81,11 +80,11 @@ class TrainingExerciseFragment : Fragment() {
     }
 
     private fun navigateFurther() {
-        if(trainingService.trainingProgressController.isRestTimeNext() || trainingService.trainingProgressController.isLastExercise()){
-            trainingService.trainingProgressController.navigateToTrainingRestTime()
-        } else {
-            animateView()
-        }
+//        if(trainingService.trainingProgressController.isRestTimeNext() || trainingService.trainingProgressController.isLastExercise()){
+//            trainingService.trainingProgressController.navigateToTrainingRestTime()
+//        } else {
+//            animateView()
+//        }
     }
 
     private fun animateView() {
@@ -95,7 +94,7 @@ class TrainingExerciseFragment : Fragment() {
                 override fun onAnimationEnd(animation: Animator?) {
                     super.onAnimationEnd(animation)
                     Timber.d("Animation enddddd")
-                    trainingService.trainingProgressController.navigateToTrainingRestTime()
+//                    trainingService.trainingProgressController.navigateToTrainingRestTime()
                     animateBack(v)
                 }
             }
@@ -116,7 +115,7 @@ class TrainingExerciseFragment : Fragment() {
     private fun setPlayButtonListener() {
         binding.startPauseTimerBtn.setOnClickListener {
             if (!timer.isRunning && !timer.isPaused) {
-                timer.startTimer(trainingService.trainingProgressController.exerciseTime)
+//                timer.startTimer(trainingService.trainingProgressController.exerciseTime)
             } else if (timer.isPaused) {
                 timer.resumeTimer()
             } else if (timer.isRunning) {
@@ -128,35 +127,35 @@ class TrainingExerciseFragment : Fragment() {
 
     private fun observeCurrentExercise() {
         Timber.d("Observe current exercise")
-        trainingService.trainingProgressController.currentTrainingState.observe(
-            viewLifecycleOwner
-        ) {
-            Timber.d("Observe current exercise state $it")
-            if (it is CurrentTrainingState.ExerciseState) {
-                setExerciseDataToUi(
-                    it.exercise,
-                    trainingService.trainingProgressController.exerciseTime
-                )
-            }
-        }
+//        trainingService.trainingProgressController.currentTrainingState.observe(
+//            viewLifecycleOwner
+//        ) {
+//            Timber.d("Observe current exercise state $it")
+//            if (it is CurrentTrainingState.ExerciseState) {
+//                setExerciseDataToUi(
+//                    it.exercise,
+//                    trainingService.trainingProgressController.exerciseTime
+//                )
+//            }
+//        }
     }
 
-    private fun setExerciseDataToUi(trainingExercise: TrainingExercise, exerciseTime: Long) {
-        binding.exerciseNameTv.text = trainingExercise.exercise.name
-        binding.repetitionsTv.text = getString(R.string.reps_text, trainingExercise.repetitions)
-        binding.setsTv.text = getString(R.string.sets_text, trainingExercise.sets)
-        binding.apply {
-            if (exerciseTime == 0L) {
-                timerTv.visibility = View.GONE
-                startPauseTimerBtn.visibility = View.GONE
-            } else {
-                timerTv.visibility = View.VISIBLE
-                startPauseTimerBtn.visibility = View.VISIBLE
-                timerTv.text = TimeFormatter.millisToTimer(exerciseTime)
-            }
-        }
-        setTimerButtonIcon(timer.isRunning)
-    }
+//    private fun setExerciseDataToUi(trainingExercise: TrainingExercise, exerciseTime: Long) {
+//        binding.exerciseNameTv.text = trainingExercise.name
+//        binding.repetitionsTv.text = getString(R.string.reps_text, trainingExercise.repetitions)
+//        binding.setsTv.text = getString(R.string.sets_text, trainingExercise.sets)
+//        binding.apply {
+//            if (exerciseTime == 0L) {
+//                timerTv.visibility = View.GONE
+//                startPauseTimerBtn.visibility = View.GONE
+//            } else {
+//                timerTv.visibility = View.VISIBLE
+//                startPauseTimerBtn.visibility = View.VISIBLE
+//                timerTv.text = TimeFormatter.millisToTimer(exerciseTime)
+//            }
+//        }
+//        setTimerButtonIcon(timer.isRunning)
+//    }
 
     private fun setTimerButtonIcon(isTimerRunning: Boolean = false) {
         val icon = if (isTimerRunning) R.drawable.ic_pause else R.drawable.ic_play_arrow
