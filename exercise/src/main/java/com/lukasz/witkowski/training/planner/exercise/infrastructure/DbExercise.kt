@@ -9,6 +9,6 @@ internal class DbExercise(
     val id: String,
     val name: String,
     val description: String,
-    val category: String,
+    val categoryId: Int,
     val image: ByteArray?
 )

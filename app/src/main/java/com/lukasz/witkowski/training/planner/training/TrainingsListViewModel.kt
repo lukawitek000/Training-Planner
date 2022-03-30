@@ -3,8 +3,8 @@ package com.lukasz.witkowski.training.planner.training
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.training.planner.exercise.Category
-import com.lukasz.witkowski.training.planner.exercise.CategoryMapper
+import com.lukasz.witkowski.training.planner.exercise.models.Category
+import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,13 +34,13 @@ class TrainingsListViewModel @Inject constructor(
     }
 
     private fun fetchTrainingPlans() {
-        val categories = selectedCategories.value.map { CategoryMapper.toDomainCategory(it) }
+        val categories = selectedCategories.value.map { CategoryMapper.toExerciseCategory(it) }
         trainingPlanService.getAllTrainingPlans(categories = categories)
             .onEach { _trainingPlans.emit(it) }
             .launchIn(viewModelScope)
     }
 
-    fun selectCategory(category: com.lukasz.witkowski.training.planner.exercise.Category) {
+    fun selectCategory(category: Category) {
         val list = _selectedCategories.value.toMutableList()
         if (!list.remove(category)) {
             list.add(category)

@@ -14,9 +14,10 @@ internal class DbExerciseRepository(private val exerciseDao: ExerciseDao) : Exer
         return exerciseDao.getAll().map { it.map { dbExercise -> ExerciseMapper.toExercise(dbExercise) } }
     }
 
-    override suspend fun insert(exercise: Exercise) : Long {
+    override suspend fun insert(exercise: Exercise): Boolean {
         val dbExercise = ExerciseMapper.toDbExercise(exercise)
-        return exerciseDao.insert(dbExercise)
+        exerciseDao.insert(dbExercise)
+        return true
     }
 
     override suspend fun delete(exercise: Exercise) {

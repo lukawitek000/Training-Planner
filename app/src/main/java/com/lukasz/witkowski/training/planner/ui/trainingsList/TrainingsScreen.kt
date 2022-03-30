@@ -25,16 +25,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.Category
-import com.lukasz.witkowski.training.planner.exercise.CategoryMapper
-import com.lukasz.witkowski.training.planner.exercise.allCategories
+import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
-import com.lukasz.witkowski.training.planner.ui.exercisesList.CategoryFilters
 
 @Composable
 fun TrainingsScreen(
@@ -58,11 +55,11 @@ fun TrainingsScreen(
         }
     ) {
         Column {
-            CategoryFilters(
-                categories = allCategories, // TODO how to get list of categories??
-                selectedCategories = selectedCategoriesList,
-                selectCategory = { viewModel.selectCategory(it) }
-            )
+//            CategoryFilters(
+//                categories = allCategories, // TODO how to get list of categories??
+//                selectedCategories = selectedCategoriesList,
+//                selectCategory = { viewModel.selectCategory(it) }
+//            )
             if (trainings.isNotEmpty()) {
                 TrainingsList(innerPadding, trainings, navigateToTrainingOverview)
             } else {
@@ -122,7 +119,7 @@ fun TrainingListItemContent(
                     items(categories) { item: ExerciseCategory ->
                         CategoryChip(
                             modifier = Modifier.padding(end = 8.dp),
-                            text = stringResource(id = CategoryMapper.toPresentationCategory(item).res),
+                            category = CategoryMapper.toCategory(item),
                             fontSize = 14.sp
                         )
                     }

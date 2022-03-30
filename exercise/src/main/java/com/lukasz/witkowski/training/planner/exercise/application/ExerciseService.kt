@@ -6,14 +6,10 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-// TODO What application layer is doing except connecting to the domain
-//  how to handle presentation models, conversion in application or presentation layer??
-// how should be category handled in presentation layer as String?? enum or sealed class ??
 class ExerciseService(
     private val exerciseRepository: ExerciseRepository
 ) {
-
-    suspend fun createExercise(exercise: Exercise): Long {
+    suspend fun saveExercise(exercise: Exercise): Boolean {
         return exerciseRepository.insert(exercise)
     }
 
@@ -21,9 +17,11 @@ class ExerciseService(
         return exerciseRepository.getAll()
     }
 
+    // TODO Should be all exercises taken from domain and then filter here, or the filtration should be made in infra? (less data transmission)
+    // Maybe it would be good to have separate methods in domain for getting exercises from all categories and for selected categories (Seems to me like business requirement)
     fun getExercisesFromCategories(categories: List<ExerciseCategory>): Flow<List<Exercise>> {
         return exerciseRepository.getAll().map {
-            it.filter { exercise -> categories.contains(exercise.category) }
+            it.filter { exercise -> categories.contains(exercise.category) || categories.isEmpty() }
         }
     }
 
