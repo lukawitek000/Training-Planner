@@ -11,5 +11,3 @@ data class Category internal constructor(
 
     constructor(): this(id = ExerciseCategory.NONE.ordinal)
 }
-
-val allCategories = CategoryMapper.allCategories.filter { !it.isNone() }

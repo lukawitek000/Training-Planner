@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.widget.Toast
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.ExposedDropdownMenuBox
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -51,13 +53,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.lukasz.witkowski.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.models.Category
+import com.lukasz.witkowski.training.planner.ui.components.DropDownInput
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import com.skydoves.landscapist.glide.GlideImage
-
 
 @Composable
 fun CreateExerciseScreen(
@@ -66,33 +69,25 @@ fun CreateExerciseScreen(
     navigateBack: (String) -> Unit
 ) {
     val image by viewModel.image.collectAsState()
-    val title: String by viewModel.name.collectAsState()
+    val name: String by viewModel.name.collectAsState()
     val description by viewModel.description.collectAsState()
     val selectedCategory by viewModel.category.collectAsState()
     val savingState by viewModel.savingState.collectAsState()
-
     var showToast by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
-            if (savingState is ResultHandler.Idle) {
-                FloatingActionButton(
-                    onClick = {
-                        if (title.isNotEmpty()) {
-                            viewModel.createExercise()
-                        } else {
-                            showToast = true
-                        }
-                    },
-                ) {
-                    Icon(imageVector = Icons.Default.Create, contentDescription = "Create exercise")
-                }
-            }
+            CreateExerciseFloatingActionButton(
+                savingState = savingState,
+                name = name,
+                createExercise = { viewModel.createExercise() },
+                showToast = { showToast = true }
+            )
         }
     ) {
         if (showToast) {
-            Toast.makeText(LocalContext.current, "Exercise title is required", Toast.LENGTH_SHORT)
+            Toast.makeText(LocalContext.current, stringResource(id = R.string.exercise_name_is_required), Toast.LENGTH_SHORT)
                 .show()
             showToast = false
         }
@@ -100,9 +95,9 @@ fun CreateExerciseScreen(
             is ResultHandler.Idle -> {
                 CreateExerciseForm(
                     image = image,
-                    title = title,
+                    name = name,
                     description = description,
-                    allCategories = viewModel.allCategories,
+                    allCategories = viewModel.getAllCategories(),
                     selectedCategory = selectedCategory,
                     onImageChange = { viewModel.onImageChange(it) },
                     onExerciseNameChanged = { viewModel.onExerciseNameChange(it) },
@@ -130,9 +125,33 @@ fun CreateExerciseScreen(
 }
 
 @Composable
+private fun CreateExerciseFloatingActionButton(
+    modifier: Modifier = Modifier,
+    savingState: ResultHandler<Boolean>,
+    name: String,
+    createExercise: () -> Unit,
+    showToast: () -> Unit
+) {
+    if (savingState is ResultHandler.Idle) {
+        FloatingActionButton(
+            modifier = modifier,
+            onClick = {
+                if (name.isNotEmpty()) {
+                    createExercise()
+                } else {
+                    showToast()
+                }
+            },
+        ) {
+            Icon(imageVector = Icons.Default.Create, contentDescription = "Create exercise")
+        }
+    }
+}
+
+@Composable
 private fun CreateExerciseForm(
     image: Bitmap?,
-    title: String,
+    name: String,
     description: String,
     allCategories: List<Category>,
     selectedCategory: Category,
@@ -147,22 +166,22 @@ private fun CreateExerciseForm(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        UploadImageButton(
+        UploadImageLayout(
             image = image,
             onImageChange = onImageChange
         )
         Spacer(modifier = Modifier.height(16.dp))
         TextField(
-            text = title,
+            text = name,
             onTextChange = onExerciseNameChanged,
-            label = "Title",
+            label = stringResource(id = R.string.name),
             imeAction = ImeAction.Next
         )
         Spacer(modifier = Modifier.height(16.dp))
         TextField(
             text = description,
             onTextChange = onExerciseDescriptionChanged,
-            label = "Description",
+            label = stringResource(id = R.string.description),
             imeAction = ImeAction.Done,
             maxLines = 5
         )
@@ -170,82 +189,52 @@ private fun CreateExerciseForm(
         DropDownInput(
             selectedText = stringResource(id = selectedCategory.res),
             suggestions = allCategories.map { it.res },
-            label = "Category",
+            label = stringResource(id = R.string.category),
             onSuggestionSelected = onCategorySelected
         )
     }
 }
 
 @Composable
-fun DropDownInput(
-    selectedText: String,
-    suggestions: List<Int>,
-    label: String,
-    onSuggestionSelected: (Int) -> Unit
-) {
-    var textFieldSize by remember { mutableStateOf(Size.Zero) }
-    var expanded by remember { mutableStateOf(false) }
-    val icon = if (expanded)
-        Icons.Filled.ArrowDropUp
-    else
-        Icons.Filled.ArrowDropDown
-    Column() {
-        TextField(
-            value = selectedText,
-            onValueChange = { /*onSuggestionSelected(it)*/ },
-            modifier = Modifier
-                .fillMaxWidth()
-                .onGloballyPositioned { coordinates ->
-                    textFieldSize = coordinates.size.toSize()
-                },
-            label = { Text(text = label, color = MaterialTheme.colors.primaryVariant) },
-            textStyle = TextStyle(color = MaterialTheme.colors.primary),
-            trailingIcon = {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = "Drop down arrow",
-                    tint = MaterialTheme.colors.primary,
-                    modifier = Modifier.clickable { expanded = !expanded }
-                )
-            },
-            readOnly = true
-        )
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            modifier = Modifier.width(with(LocalDensity.current) { textFieldSize.width.toDp() })
-        ) {
-            suggestions.forEach {
-                DropdownMenuItem(onClick = {
-                    onSuggestionSelected(it)
-                    expanded = !expanded
-                }) {
-                    Text(text = stringResource(id = it), color = MaterialTheme.colors.primary)
-                }
-            }
-        }
-    }
-
-}
-
-
-@Composable
-fun UploadImageButton(
+fun UploadImageLayout(
     modifier: Modifier = Modifier,
     image: Bitmap?,
     onImageChange: (Bitmap) -> Unit
 ) {
+    val launcher = imageActivityResultLauncher(onImageChange = onImageChange)
+    val placeholder =
+        Uri.parse("android.resource://com.lukasz.witkowski.training.planner/drawable/exercise_default")
+    Column(modifier = modifier) {
+        ImageContainer {
+            GlideImage(
+                imageModel = image ?: placeholder,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(200.dp)
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Button(
+            onClick = { launcher.launch("image/*") }
+        ) {
+            Text(text = stringResource(id = R.string.upload_image), color = Color.Black)
+        }
+    }
+}
+
+@Composable
+private fun imageActivityResultLauncher(
+    onImageChange: (Bitmap) -> Unit
+):  ManagedActivityResultLauncher<String, Uri?> {
     val context = LocalContext.current
-    val launcher = rememberLauncherForActivityResult(
+    return rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
-            if (uri == null) {
-                return@rememberLauncherForActivityResult
-            }
+            if (uri == null) return@rememberLauncherForActivityResult
             val bitmap = if (Build.VERSION.SDK_INT < 28) {
                 MediaStore.Images
                     .Media.getBitmap(context.contentResolver, uri)
-
             } else {
                 val source = ImageDecoder
                     .createSource(context.contentResolver, uri)
@@ -254,25 +243,7 @@ fun UploadImageButton(
             onImageChange(bitmap)
         }
     )
-    val placeholder =
-        Uri.parse("android.resource://com.lukasz.witkowski.training.planner/drawable/exercise_default")
-    ImageContainer {
-        GlideImage(
-            imageModel = image ?: placeholder,
-            contentScale = ContentScale.Fit,
-            modifier = Modifier
-                .width(200.dp)
-                .height(200.dp)
-        )
-    }
-    Spacer(modifier = Modifier.height(16.dp))
-    Button(
-        onClick = { launcher.launch("image/*") }
-    ) {
-        Text(text = "Upload image", color = Color.Black)
-    }
 }
-
 
 @Preview
 @Composable

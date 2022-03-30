@@ -34,7 +34,7 @@ class TrainingsListViewModel @Inject constructor(
     }
 
     private fun fetchTrainingPlans() {
-        val categories = selectedCategories.value.map { CategoryMapper.toDomainCategory(it) }
+        val categories = selectedCategories.value.map { CategoryMapper.toExerciseCategory(it) }
         trainingPlanService.getAllTrainingPlans(categories = categories)
             .onEach { _trainingPlans.emit(it) }
             .launchIn(viewModelScope)

@@ -5,9 +5,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 
 internal object CategoryMapper {
 
-    val allCategories = ExerciseCategory.values().map { toPresentationCategory(it) }
-
-    fun toPresentationCategory(exerciseCategory: ExerciseCategory) = when (exerciseCategory) {
+    fun toCategory(exerciseCategory: ExerciseCategory) = when (exerciseCategory) {
         ExerciseCategory.NONE -> Category(exerciseCategory.ordinal, R.string.category_none)
         ExerciseCategory.LEGS -> Category(exerciseCategory.ordinal, R.string.category_legs)
         ExerciseCategory.SHOULDERS -> Category(
@@ -26,6 +24,6 @@ internal object CategoryMapper {
         ExerciseCategory.CHEST -> Category(exerciseCategory.ordinal, R.string.category_chest)
     }
 
-    fun toDomainCategory(category: Category): ExerciseCategory =
+    fun toExerciseCategory(category: Category): ExerciseCategory =
         ExerciseCategory.values()[category.id]
 }

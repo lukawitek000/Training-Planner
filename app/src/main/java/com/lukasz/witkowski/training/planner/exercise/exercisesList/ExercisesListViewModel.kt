@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.exercise.exercisesList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lukasz.witkowski.training.planner.exercise.application.CategoryService
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.models.Category
 import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
@@ -18,10 +19,11 @@ import javax.inject.Inject
 @HiltViewModel
 class ExercisesListViewModel @Inject internal constructor(
     private val exerciseService: ExerciseService,
+    private val categoryService: CategoryService,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val allCategories = CategoryMapper.allCategories.filter { !it.isNone() }
+    val allCategories = categoryService.getAllCategoriesWithoutNone().map { CategoryMapper.toCategory(it) }
     private val _selectedCategories = MutableStateFlow<List<Category>>(emptyList())
     val selectedCategories: StateFlow<List<Category>> = _selectedCategories
 
@@ -40,7 +42,7 @@ class ExercisesListViewModel @Inject internal constructor(
             exerciseService.getAllExercises()
         } else {
             val exerciseCategories =
-                selectedCategories.value.map { CategoryMapper.toDomainCategory(it) }
+                selectedCategories.value.map { CategoryMapper.toExerciseCategory(it) }
             exerciseService.getExercisesFromCategories(exerciseCategories)
         }
         fetchedExercises

@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.exercise.application.CategoryService
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.models.Category
@@ -24,6 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateExerciseViewModel @Inject internal constructor(
     private val exerciseService: ExerciseService,
+    private val categoryService: CategoryService,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -58,8 +60,9 @@ class CreateExerciseViewModel @Inject internal constructor(
         _image.value = bitmap
     }
 
-    // TODO all categories how and were to get them??
-    val allCategories = CategoryMapper.allCategories
+    fun getAllCategories(): List<Category> {
+        return categoryService.getAllCategories().map { CategoryMapper.toCategory(it) }
+    }
 
     fun createExercise() {
         viewModelScope.launch {

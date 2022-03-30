@@ -15,4 +15,9 @@
     <string name="heart_rate_plot">Heart rate (BPM)</string>
     <string name="no_trainings_info">No trainings. Create your first training</string>
     <string name="create_training">Create training</string>
+    <string name="exercise_name_is_required">Exercise name is required</string>
+    <string name="upload_image">Upload image</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
+    <string name="category">Category</string>
 </resources>

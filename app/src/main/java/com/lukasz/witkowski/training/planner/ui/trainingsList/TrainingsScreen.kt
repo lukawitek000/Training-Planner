@@ -33,7 +33,6 @@ import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.CategoryFilters
-import com.lukasz.witkowski.training.planner.exercise.models.allCategories
 
 @Composable
 fun TrainingsScreen(
@@ -57,11 +56,11 @@ fun TrainingsScreen(
         }
     ) {
         Column {
-            CategoryFilters(
-                categories = allCategories, // TODO how to get list of categories??
-                selectedCategories = selectedCategoriesList,
-                selectCategory = { viewModel.selectCategory(it) }
-            )
+//            CategoryFilters(
+//                categories = allCategories, // TODO how to get list of categories??
+//                selectedCategories = selectedCategoriesList,
+//                selectCategory = { viewModel.selectCategory(it) }
+//            )
             if (trainings.isNotEmpty()) {
                 TrainingsList(innerPadding, trainings, navigateToTrainingOverview)
             } else {
@@ -121,7 +120,7 @@ fun TrainingListItemContent(
                     items(categories) { item: ExerciseCategory ->
                         CategoryChip(
                             modifier = Modifier.padding(end = 8.dp),
-                            text = stringResource(id = CategoryMapper.toPresentationCategory(item).res),
+                            text = stringResource(id = CategoryMapper.toCategory(item).res),
                             fontSize = 14.sp
                         )
                     }

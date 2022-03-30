@@ -194,11 +194,11 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExer
             Text(text = exercise.description, fontSize = 18.sp)
             Spacer(modifier = Modifier.height(16.dp))
             if (!isCategoryNone(exercise.category)) {
-                CategoryMapper.toPresentationCategory(exercise.category).res
+                CategoryMapper.toCategory(exercise.category).res
                 CategoryChip(
                     modifier = Modifier.fillMaxWidth(),
                     text = stringResource(id =
-                    CategoryMapper.toPresentationCategory(exercise.category).res)
+                    CategoryMapper.toCategory(exercise.category).res)
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }

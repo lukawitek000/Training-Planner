@@ -75,7 +75,7 @@ class CreateTrainingViewModel @Inject constructor(
             id = exercise.id.value,
             name = exercise.name,
             description = exercise.description,
-            category = CategoryMapper.toDomainCategory(exercise.category),
+            category = CategoryMapper.toExerciseCategory(exercise.category),
             repetitions = reps.toIntOrNull() ?: 1,
             sets = sets.toIntOrNull() ?: 1,
             time = timeInMillis

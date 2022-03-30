@@ -12,7 +12,7 @@ internal object ExerciseMapper {
             id = exercise.id,
             name = exercise.name,
             description = exercise.description,
-            category = CategoryMapper.toDomainCategory(exercise.category),
+            category = CategoryMapper.toExerciseCategory(exercise.category),
             image = exercise.image?.toImage()
         )
     }
@@ -22,7 +22,7 @@ internal object ExerciseMapper {
             id = exercise.id,
             name = exercise.name,
             description = exercise.description,
-            category = CategoryMapper.toPresentationCategory(exercise.category),
+            category = CategoryMapper.toCategory(exercise.category),
             image = exercise.image?.toBitmap()
         )
     }
