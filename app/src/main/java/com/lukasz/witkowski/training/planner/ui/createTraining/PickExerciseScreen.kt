@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.ui.createTraining
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,37 +12,45 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxColors
 import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
+import androidx.compose.material.Snackbar
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import com.lukasz.witkowski.shared.models.Exercise
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.models.Exercise
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
-import com.lukasz.witkowski.training.planner.training.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreenContent
+import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesListViewModel
+import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesScreenContent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @Composable
@@ -55,8 +64,8 @@ fun PickExerciseScreen(
     var openDialog by remember { mutableStateOf(false) }
     var showInfoDialog by remember { mutableStateOf(false) }
     val trainingTitle by createTrainingViewModel.title.collectAsState()
-    val pickedTrainingExercise by createTrainingViewModel.pickedExercise.collectAsState()
 
+    var exercise = Exercise()
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
@@ -69,32 +78,32 @@ fun PickExerciseScreen(
     ) {
         ExercisesScreenContent(
             viewModel = viewModel,
-            isPickingExerciseMode = true,
-            onExerciseClicked = { pickedExercise ->
-                createTrainingViewModel.pickExercise(pickedExercise)
-                if(pickedTrainingExercises.any { it.id == pickedExercise.id.value }) {
+            pickingExerciseMode = true,
+            pickExercise = { pickedExercise ->
+                exercise = pickedExercise
+                if(pickedTrainingExercises.any { it.exercise.id == pickedExercise.id }) {
                     showInfoDialog = true
                 } else {
                     openDialog = true
                 }
             },
-            pickedExercisesId = pickedTrainingExercises.map { it.id }
+            pickedExercises = pickedTrainingExercises.map { it.exercise }
         )
         if(showInfoDialog) {
             InfoDialog(
-                exercise = pickedTrainingExercise!!,
+                exercise = exercise,
                 closeInfoDialog = { showInfoDialog = false },
                 openSettingExerciseDialog = { openDialog = true }
             )
         }
         if (openDialog) {
             SetTrainingExercisePropertiesDialog(
-                exercise = pickedTrainingExercise!!,
+                exercise = exercise,
                 trainingTitle = trainingTitle,
                 closeDialog = { openDialog = false },
                 saveTrainingExercise = { reps, sets, minutes, seconds ->
                     createTrainingViewModel.createTrainingExercise(
-                        pickedTrainingExercise!!,
+                        exercise,
                         reps,
                         sets,
                         minutes,

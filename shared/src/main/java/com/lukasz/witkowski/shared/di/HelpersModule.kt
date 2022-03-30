@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.shared.di
 
 import com.lukasz.witkowski.shared.trainingControllers.TimerHelper
+import com.lukasz.witkowski.shared.trainingControllers.TrainingProgressController
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,9 +18,9 @@ object HelpersModule {
         return TimerHelper()
     }
 
-//    @ServiceScoped
-//    @Provides
-//    fun provideTrainingProgressController(): TrainingProgressController {
-//        return TrainingProgressController()
-//    }
+    @ServiceScoped
+    @Provides
+    fun provideTrainingProgressController(): TrainingProgressController {
+        return TrainingProgressController()
+    }
 }

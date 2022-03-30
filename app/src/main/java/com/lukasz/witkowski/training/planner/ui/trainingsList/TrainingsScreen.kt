@@ -24,23 +24,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lukasz.witkowski.shared.models.Category
+import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.utils.categoriesWithoutNone
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
+import com.lukasz.witkowski.training.planner.ui.exercisesList.CategoryFilters
 
 @Composable
 fun TrainingsScreen(
     innerPadding: PaddingValues = PaddingValues(),
     viewModel: TrainingsListViewModel,
     onCreateTrainingFabClicked: () -> Unit = {},
-    navigateToTrainingOverview: (String) -> Unit
+    navigateToTrainingOverview: (Long) -> Unit
 ) {
-    val trainings by viewModel.trainingPlans.collectAsState(emptyList())
+    val trainings by viewModel.trainings.collectAsState(emptyList())
     val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
 
     Scaffold(
@@ -55,11 +55,11 @@ fun TrainingsScreen(
         }
     ) {
         Column {
-//            CategoryFilters(
-//                categories = allCategories, // TODO how to get list of categories??
-//                selectedCategories = selectedCategoriesList,
-//                selectCategory = { viewModel.selectCategory(it) }
-//            )
+            CategoryFilters(
+                categories = categoriesWithoutNone,
+                selectedCategories = selectedCategoriesList,
+                selectCategory = { viewModel.selectCategory(it) }
+            )
             if (trainings.isNotEmpty()) {
                 TrainingsList(innerPadding, trainings, navigateToTrainingOverview)
             } else {
@@ -75,15 +75,15 @@ fun TrainingsScreen(
 @Composable
 fun TrainingsList(
     innerPadding: PaddingValues,
-    trainings: List<TrainingPlan>,
-    navigateToTrainingOverview: (String) -> Unit
+    trainings: List<TrainingWithExercises>,
+    navigateToTrainingOverview: (Long) -> Unit
 ) {
     LazyColumn(
         contentPadding = innerPadding
     ) {
         items(trainings) { trainingWithExercises ->
             ListCardItem(modifier = Modifier,
-                onCardClicked = { navigateToTrainingOverview(trainingWithExercises.id) }) {
+                onCardClicked = { navigateToTrainingOverview(trainingWithExercises.training.id) }) {
                 TrainingListItemContent(
                     trainingWithExercises = trainingWithExercises
                 )
@@ -95,10 +95,10 @@ fun TrainingsList(
 @Composable
 fun TrainingListItemContent(
     modifier: Modifier = Modifier,
-    trainingWithExercises: TrainingPlan
+    trainingWithExercises: TrainingWithExercises
 ) {
     val categories =
-        trainingWithExercises.getAllCategories()
+        trainingWithExercises.exercises.map { it.exercise.category }.filter { it != Category.None }
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -110,16 +110,16 @@ fun TrainingListItemContent(
                 .weight(1f)
         ) {
             Text(
-                text = trainingWithExercises.title,
+                text = trainingWithExercises.training.title,
                 fontSize = 28.sp
             )
             if (categories.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 LazyRow {
-                    items(categories) { item: ExerciseCategory ->
+                    items(categories) { item: Category ->
                         CategoryChip(
                             modifier = Modifier.padding(end = 8.dp),
-                            category = CategoryMapper.toCategory(item),
+                            text = item.name,
                             fontSize = 14.sp
                         )
                     }

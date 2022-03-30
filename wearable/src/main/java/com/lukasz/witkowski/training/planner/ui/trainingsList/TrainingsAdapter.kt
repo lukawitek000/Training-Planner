@@ -6,12 +6,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.lukasz.witkowski.shared.models.Category
+import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.training.planner.databinding.TrainingListItemBinding
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 
-class TrainingsAdapter(private val onTrainingClicked: (String, String) -> Unit) :
-    ListAdapter<TrainingPlan, TrainingsAdapter.TrainingsViewHolder>(DiffCallback()) {
+class TrainingsAdapter(private val onTrainingClicked: (Long, String) -> Unit) :
+    ListAdapter<TrainingWithExercises, TrainingsAdapter.TrainingsViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrainingsViewHolder {
         val binding = TrainingListItemBinding.inflate(
@@ -26,35 +26,35 @@ class TrainingsAdapter(private val onTrainingClicked: (String, String) -> Unit) 
 
     inner class TrainingsViewHolder(private val binding: TrainingListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: TrainingPlan) {
-            binding.trainingNameTv.text = item.title
+        fun bind(item: TrainingWithExercises) {
+            binding.trainingNameTv.text = item.training.title
             val categories = item.exercises.filter {
-                it.category != ExerciseCategory.NONE
-            }.map { it.category }
-            setUpCategoriesRecyclerView(emptyList())
+                it.exercise.category != Category.None
+            }.map { it.exercise.category }
+            setUpCategoriesRecyclerView(categories)
             binding.root.setOnClickListener {
-                onTrainingClicked(item.id, item.title)
+                onTrainingClicked(item.training.id, item.training.title)
             }
         }
 
-        private fun setUpCategoriesRecyclerView(categories: List<String>) {
+        private fun setUpCategoriesRecyclerView(categories: List<Category>) {
             binding.categoriesRv.adapter = CategoriesAdapter(categories)
             binding.categoriesRv.layoutManager =
                 LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
         }
     }
 
-    private class DiffCallback : DiffUtil.ItemCallback<TrainingPlan>() {
+    private class DiffCallback : DiffUtil.ItemCallback<TrainingWithExercises>() {
         override fun areItemsTheSame(
-            oldItem: TrainingPlan,
-            newItem: TrainingPlan
+            oldItem: TrainingWithExercises,
+            newItem: TrainingWithExercises
         ): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem.training.id == newItem.training.id
         }
 
         override fun areContentsTheSame(
-            oldItem: TrainingPlan,
-            newItem: TrainingPlan
+            oldItem: TrainingWithExercises,
+            newItem: TrainingWithExercises
         ): Boolean {
             return oldItem == newItem
         }
