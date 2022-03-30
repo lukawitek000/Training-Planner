@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.exercise
+package com.lukasz.witkowski.training.planner.exercise.models
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory

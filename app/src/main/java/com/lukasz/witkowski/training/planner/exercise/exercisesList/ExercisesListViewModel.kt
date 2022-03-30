@@ -1,9 +1,13 @@
-package com.lukasz.witkowski.training.planner.exercise
+package com.lukasz.witkowski.training.planner.exercise.exercisesList
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
+import com.lukasz.witkowski.training.planner.exercise.models.Category
+import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
+import com.lukasz.witkowski.training.planner.exercise.models.Exercise
+import com.lukasz.witkowski.training.planner.exercise.models.ExerciseMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

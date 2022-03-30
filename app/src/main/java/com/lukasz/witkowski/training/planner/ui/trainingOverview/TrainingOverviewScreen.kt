@@ -37,8 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.Category
-import com.lukasz.witkowski.training.planner.exercise.CategoryMapper
+import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.isCategoryNone
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise

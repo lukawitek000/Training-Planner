@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.ui.exercisesList
+package com.lukasz.witkowski.training.planner.exercise.exercisesList
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
@@ -39,9 +39,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.Category
-import com.lukasz.witkowski.training.planner.exercise.Exercise
-import com.lukasz.witkowski.training.planner.exercise.ExercisesListViewModel
+import com.lukasz.witkowski.training.planner.exercise.models.Category
+import com.lukasz.witkowski.training.planner.exercise.models.Exercise
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer

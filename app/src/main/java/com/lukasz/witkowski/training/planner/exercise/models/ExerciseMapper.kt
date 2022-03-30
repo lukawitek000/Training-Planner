@@ -1,8 +1,7 @@
-package com.lukasz.witkowski.training.planner.exercise
+package com.lukasz.witkowski.training.planner.exercise.models
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.Image
 
 internal object ExerciseMapper {

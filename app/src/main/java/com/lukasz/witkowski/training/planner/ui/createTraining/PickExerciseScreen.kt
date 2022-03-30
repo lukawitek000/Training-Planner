@@ -35,13 +35,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.Exercise
-import com.lukasz.witkowski.training.planner.exercise.ExercisesListViewModel
+import com.lukasz.witkowski.training.planner.exercise.models.Exercise
+import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.training.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
-import com.lukasz.witkowski.training.planner.ui.exercisesList.ExercisesScreenContent
+import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreenContent
 import timber.log.Timber
 
 @Composable

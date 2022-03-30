@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.ui.createExercise
+package com.lukasz.witkowski.training.planner.exercise.createExercise
 
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -51,8 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.lukasz.witkowski.shared.utils.ResultHandler
-import com.lukasz.witkowski.training.planner.exercise.Category
-import com.lukasz.witkowski.training.planner.exercise.CreateExerciseViewModel
+import com.lukasz.witkowski.training.planner.exercise.models.Category
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 import com.lukasz.witkowski.training.planner.ui.components.TextField

@@ -1,5 +1,6 @@
-package com.lukasz.witkowski.training.planner.exercise
+package com.lukasz.witkowski.training.planner.exercise.models
 
+import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 
 data class Category internal constructor(
