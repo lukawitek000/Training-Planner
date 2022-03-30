@@ -69,8 +69,8 @@ fun PickExerciseScreen(
     ) {
         ExercisesScreenContent(
             viewModel = viewModel,
-            pickingExerciseMode = true,
-            pickExercise = { pickedExercise ->
+            isPickingExerciseMode = true,
+            onExerciseClicked = { pickedExercise ->
                 createTrainingViewModel.pickExercise(pickedExercise)
                 if(pickedTrainingExercises.any { it.id == pickedExercise.id.value }) {
                     showInfoDialog = true

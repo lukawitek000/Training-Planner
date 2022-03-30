@@ -157,7 +157,7 @@ fun TimerTimePicker(
 }
 
 @Composable
-fun NoDataMessage(modifier: Modifier, text: String) {
+fun NoDataMessage(modifier: Modifier = Modifier, text: String) {
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center

@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
@@ -42,6 +41,7 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.models.Category
 import com.lukasz.witkowski.training.planner.exercise.models.Exercise
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
+import com.lukasz.witkowski.training.planner.ui.components.CategoryFilters
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
@@ -68,8 +68,8 @@ fun ExercisesScreen(
 @Composable
 fun ExercisesScreenContent(
     viewModel: ExercisesListViewModel,
-    pickingExerciseMode: Boolean = false,
-    pickExercise: (Exercise) -> Unit = {},
+    isPickingExerciseMode: Boolean = false,
+    onExerciseClicked: (Exercise) -> Unit = {},
     pickedExercisesId: List<String> = emptyList()
 ) {
     val exercisesList by viewModel.exercises.collectAsState(emptyList())
@@ -93,53 +93,34 @@ fun ExercisesScreenContent(
         if (exercisesList.isNotEmpty()) {
             ExercisesList(
                 exercisesList = exercisesList,
-                openDialog = {
-                    isExerciseDialogOpen = true
-                    exercise = it
+                onExerciseClicked = {
+                    if (isPickingExerciseMode) {
+                        onExerciseClicked(it)
+                    } else {
+                        isExerciseDialogOpen = true
+                        exercise = it
+                    }
                 },
-                pickingExerciseMode = pickingExerciseMode,
-                pickExercise = pickExercise,
                 pickedExercisesId = pickedExercisesId
             )
         } else {
             NoDataMessage(
-                modifier = Modifier,
-                text = if (selectedCategoriesList.isEmpty()) "No exercises. Create your first exercise." else "No exercises for selected categories."
+                text = if (selectedCategoriesList.isEmpty()) {
+                    stringResource(id = R.string.no_exercises)
+                } else {
+                    stringResource(id = R.string.no_exercises_for_categories)
+                }
             )
         }
     }
 }
 
-@Composable
-fun CategoryFilters(
-    modifier: Modifier = Modifier,
-    categories: List<Category>,
-    selectedCategories: List<Category>,
-    selectCategory: (Category) -> Unit
-) {
-    LazyRow(
-        modifier = modifier.padding(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        items(categories) { category ->
-            CategoryChip(
-                modifier = Modifier.padding(4.dp),
-                isSelected = selectedCategories.any { it == category },
-                text = stringResource(id = category.res),
-                selectionChanged = { selectCategory(category) },
-                isClickable = true
-            )
-        }
-    }
-}
 
 @Composable
 private fun ExercisesList(
     modifier: Modifier = Modifier,
     exercisesList: List<Exercise>,
-    openDialog: (Exercise) -> Unit,
-    pickingExerciseMode: Boolean = false,
-    pickExercise: (Exercise) -> Unit = {},
+    onExerciseClicked: (Exercise) -> Unit,
     pickedExercisesId: List<String> = emptyList()
 ) {
     LazyColumn(modifier = modifier) {
@@ -147,11 +128,7 @@ private fun ExercisesList(
             ListCardItem(
                 modifier = Modifier,
                 onCardClicked = {
-                    if (pickingExerciseMode) {
-                        pickExercise(exercise)
-                    } else {
-                        openDialog(exercise)
-                    }
+                    onExerciseClicked(exercise)
                 },
                 markedSelected = pickedExercisesId.contains(exercise.id.value)
             ) {
@@ -169,7 +146,7 @@ fun ExerciseListItemContent(
     exercise: Exercise
 ) {
     val image = exercise.image
-    val imageDescription = "${exercise.name} image"
+    val imageDescription = stringResource(id = R.string.image_description, exercise.name)
     val category = exercise.category
 
     Row(
@@ -177,27 +154,37 @@ fun ExerciseListItemContent(
         verticalAlignment = Alignment.CenterVertically
     ) {
         ImageWithDefaultPlaceholder(imageDescription = imageDescription, image = image)
-
         Spacer(modifier = Modifier.width(16.dp))
-        Column(
+        ExerciseInformation(
             modifier = Modifier,
-            verticalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Text(
-                text = exercise.name,
-                fontSize = 28.sp
-            )
+            exercise = exercise,
+            category = category
+        )
+    }
+}
 
-            if (!category.isNone()) {
-                Spacer(modifier = Modifier.height(16.dp))
-                CategoryChip(
-                    modifier = Modifier,
-                    text = stringResource(id = category.res),
-                    fontSize = 14.sp
-                )
-            }
-
+@Composable
+private fun ExerciseInformation(
+    modifier: Modifier = Modifier,
+    exercise: Exercise,
+    category: Category
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Text(
+            text = exercise.name,
+            fontSize = 28.sp
+        )
+        if (!category.isNone()) {
+            Spacer(modifier = Modifier.height(16.dp))
         }
+        CategoryChip(
+            modifier = Modifier,
+            category = category,
+            fontSize = 14.sp
+        )
     }
 }
 
@@ -266,13 +253,14 @@ fun ExerciseInfoAlertDialog(
                 )
             }
             val category = exercise.category
+            // TODO how to get rid of this check for spacer??
             if (!category.isNone()) {
                 Spacer(modifier = Modifier.height(16.dp))
-                CategoryChip(
-                    modifier = Modifier.padding(top = 4.dp),
-                    text = stringResource(id = category.res)
-                )
             }
+            CategoryChip(
+                modifier = Modifier.padding(top = 4.dp),
+                category = category
+            )
         }
     }
 }

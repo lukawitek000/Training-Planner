@@ -32,7 +32,6 @@ import com.lukasz.witkowski.training.planner.training.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.CategoryFilters
 
 @Composable
 fun TrainingsScreen(
