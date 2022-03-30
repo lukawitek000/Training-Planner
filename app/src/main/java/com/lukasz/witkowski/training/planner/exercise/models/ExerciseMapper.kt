@@ -27,6 +27,10 @@ internal object ExerciseMapper {
         )
     }
 
+    fun toPresentationExercises(exercises: List<com.lukasz.witkowski.training.planner.exercise.domain.Exercise>): List<Exercise> {
+        return exercises.map { exercise -> ExerciseMapper.toPresentationExercise(exercise) }
+    }
+
     private fun Image.toBitmap() = BitmapFactory.decodeByteArray(data, 0, data.size)
 
     private fun Bitmap.toImage() = ImageFactory.fromBitmap(bitmap = this)

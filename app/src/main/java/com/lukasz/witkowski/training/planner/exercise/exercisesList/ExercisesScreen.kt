@@ -86,7 +86,7 @@ fun ExercisesScreenContent(
     }
     Column() {
         CategoryFilters(
-            categories = viewModel.allCategories,
+            categories = viewModel.filterCategories,
             selectedCategories = selectedCategoriesList,
             selectCategory = { viewModel.selectCategory(it) }
         )

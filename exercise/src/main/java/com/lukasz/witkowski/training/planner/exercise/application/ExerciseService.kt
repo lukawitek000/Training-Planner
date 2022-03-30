@@ -17,9 +17,10 @@ class ExerciseService(
         return exerciseRepository.getAll()
     }
 
+    // TODO Should be all exercises taken from domain and then filter here, or the filtration should be made in infra? (less data trans)
     fun getExercisesFromCategories(categories: List<ExerciseCategory>): Flow<List<Exercise>> {
         return exerciseRepository.getAll().map {
-            it.filter { exercise -> categories.contains(exercise.category) }
+            it.filter { exercise -> categories.contains(exercise.category) || categories.isEmpty() }
         }
     }
 
