@@ -119,7 +119,7 @@ fun TrainingListItemContent(
                     items(categories) { item: ExerciseCategory ->
                         CategoryChip(
                             modifier = Modifier.padding(end = 8.dp),
-                            text = stringResource(id = CategoryMapper.toCategory(item).res),
+                            category = CategoryMapper.toCategory(item),
                             fontSize = 14.sp
                         )
                     }

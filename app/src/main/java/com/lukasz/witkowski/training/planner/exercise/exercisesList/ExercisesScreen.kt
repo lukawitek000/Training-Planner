@@ -2,10 +2,12 @@ package com.lukasz.witkowski.training.planner.exercise.exercisesList
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -31,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -153,7 +156,10 @@ fun ExerciseListItemContent(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        ImageWithDefaultPlaceholder(imageDescription = imageDescription, image = image)
+        ImageWithDefaultPlaceholder(
+            imageDescription = imageDescription,
+            image = image
+        )
         Spacer(modifier = Modifier.width(16.dp))
         ExerciseInformation(
             modifier = Modifier,
@@ -189,7 +195,7 @@ private fun ExerciseInformation(
 }
 
 @Composable
-private fun ImageWithDefaultPlaceholder(
+fun ImageWithDefaultPlaceholder(
     modifier: Modifier = Modifier,
     imageDescription: String,
     image: Bitmap?,
@@ -217,51 +223,4 @@ private fun ImageWithDefaultPlaceholder(
     }
 }
 
-@Composable
-fun ExerciseInfoAlertDialog(
-    modifier: Modifier = Modifier,
-    exercise: Exercise,
-    closeDialog: () -> Unit
-) {
-
-    DialogContainer(modifier = modifier,
-        closeDialog = closeDialog,
-        saveData = {}
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = exercise.name,
-                fontSize = 32.sp,
-                color = MaterialTheme.colors.primary
-            )
-            Divider(Modifier.padding(8.dp), color = MaterialTheme.colors.primary)
-            ImageWithDefaultPlaceholder(
-                modifier = Modifier,
-                imageDescription = "${exercise.name} image", image = exercise.image,
-                heightMax = 350.dp
-            )
-            if (exercise.description.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(
-                    text = exercise.description,
-                    modifier = Modifier
-                )
-            }
-            val category = exercise.category
-            // TODO how to get rid of this check for spacer??
-            if (!category.isNone()) {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-            CategoryChip(
-                modifier = Modifier.padding(top = 4.dp),
-                category = category
-            )
-        }
-    }
-}
 

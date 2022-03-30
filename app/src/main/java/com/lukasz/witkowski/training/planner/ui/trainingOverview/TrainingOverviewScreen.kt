@@ -37,9 +37,9 @@ import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.isCategoryNone
+import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
@@ -193,13 +193,11 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExer
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = exercise.description, fontSize = 18.sp)
             Spacer(modifier = Modifier.height(16.dp))
+            CategoryChip(
+                modifier = Modifier.fillMaxWidth(),
+                category = CategoryMapper.toCategory(exercise.category)
+            )
             if (!isCategoryNone(exercise.category)) {
-                CategoryMapper.toCategory(exercise.category).res
-                CategoryChip(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(id =
-                    CategoryMapper.toCategory(exercise.category).res)
-                )
                 Spacer(modifier = Modifier.height(16.dp))
             }
             Row(
@@ -292,7 +290,7 @@ fun SingleTrainingStatisticsItem(
                 text = stringResource(id = R.string.max_heart_rate_text, maxHeartRateStatistics),
                 fontSize = fontSize
             )
-            if(areHeartRateStatisticsAvailable(generalStatistics.heartRateDuringTraining)) {
+            if (areHeartRateStatisticsAvailable(generalStatistics.heartRateDuringTraining)) {
                 Spacer(modifier = Modifier.height(8.dp))
                 ListCardItem(
                     backgroundColor = LightDark12
@@ -327,11 +325,16 @@ fun HeartRateLineChart(
     data: List<Double>
 ) {
     val lineChartData = LineChartData(
-        points = data.mapIndexed { index, heartRate -> LineChartData.Point(heartRate.toFloat(), label = "") },
+        points = data.mapIndexed { index, heartRate ->
+            LineChartData.Point(
+                heartRate.toFloat(),
+                label = ""
+            )
+        },
         padBy = 50.0f,
         startAtZero = false
     )
-    if(areHeartRateStatisticsAvailable(data)) {
+    if (areHeartRateStatisticsAvailable(data)) {
         LineChart(
             modifier = modifier
                 .heightIn(max = 200.dp)
