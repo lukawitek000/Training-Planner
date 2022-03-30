@@ -4,6 +4,7 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.wearable.ChannelClient
 import com.google.android.gms.wearable.Wearable
+import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
 import com.lukasz.witkowski.shared.repository.SyncDataRepository
 import com.lukasz.witkowski.shared.utils.SYNC_FAILURE
@@ -86,7 +87,7 @@ abstract class SendingDataService : LifecycleService() {
     }
 
     private fun <T> getDataId(data: T): Long = when (data) {
-//        is TrainingWithExercises -> data.training.id
+        is TrainingWithExercises -> data.training.id
         is TrainingCompleteStatistics -> data.trainingStatistics.id
         else -> -1
     }

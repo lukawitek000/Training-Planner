@@ -29,9 +29,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-<!--        <service-->
-<!--            android:name=".service.SendingTrainingsService"-->
-<!--            android:exported="false" />-->
+        <service
+            android:name=".service.SendingTrainingsService"
+            android:exported="false" />
         <service
             android:name=".service.StatisticsDataReceiverService"
             android:exported="true">

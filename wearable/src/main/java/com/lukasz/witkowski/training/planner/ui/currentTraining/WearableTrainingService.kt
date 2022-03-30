@@ -8,6 +8,7 @@ import android.os.IBinder
 import androidx.wear.ongoing.OngoingActivity
 import com.lukasz.witkowski.shared.trainingControllers.CurrentTrainingState
 import com.lukasz.witkowski.shared.trainingControllers.TrainingService
+import com.lukasz.witkowski.shared.models.TrainingWithExercises
 import com.lukasz.witkowski.training.planner.R
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -30,28 +31,28 @@ class WearableTrainingService: TrainingService() {
         fun getService() = this@WearableTrainingService
     }
 
-//    override fun startTraining(trainingWithExercises: TrainingWithExercises) {
-//        super.startTraining(trainingWithExercises)
-//        trainingStatisticsRecorder.initTrainingStatistics(trainingWithExercises.training.id)
-//    }
-//
-//    override fun handleSummaryState() {
-//        super.handleSummaryState()
-//        trainingStatisticsRecorder.finishExercise()
-//    }
-//
-//    override fun handleExerciseState(exerciseState: CurrentTrainingState.ExerciseState) {
-//        super.handleExerciseState(exerciseState)
-//        val exerciseId = exerciseState.exercise.id
-//        val currentSet = trainingProgressController.currentSet
-//        trainingStatisticsRecorder.setLastExercise(trainingProgressController.isLastExercise())
-//        trainingStatisticsRecorder.startRecordingExerciseStatistics(exerciseId, currentSet)
-//    }
-//
-//    override fun handleRestTimeState() {
-//        super.handleRestTimeState()
-//        trainingStatisticsRecorder.finishExercise()
-//    }
+    override fun startTraining(trainingWithExercises: TrainingWithExercises) {
+        super.startTraining(trainingWithExercises)
+        trainingStatisticsRecorder.initTrainingStatistics(trainingWithExercises.training.id)
+    }
+
+    override fun handleSummaryState() {
+        super.handleSummaryState()
+        trainingStatisticsRecorder.finishExercise()
+    }
+
+    override fun handleExerciseState(exerciseState: CurrentTrainingState.ExerciseState) {
+        super.handleExerciseState(exerciseState)
+        val exerciseId = exerciseState.exercise.id
+        val currentSet = trainingProgressController.currentSet
+        trainingStatisticsRecorder.setLastExercise(trainingProgressController.isLastExercise())
+        trainingStatisticsRecorder.startRecordingExerciseStatistics(exerciseId, currentSet)
+    }
+
+    override fun handleRestTimeState() {
+        super.handleRestTimeState()
+        trainingStatisticsRecorder.finishExercise()
+    }
 
     override fun onBind(intent: Intent): IBinder {
         super.onBind(intent)

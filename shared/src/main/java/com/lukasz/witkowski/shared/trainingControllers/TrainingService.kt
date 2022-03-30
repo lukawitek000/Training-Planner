@@ -13,6 +13,8 @@ import android.os.VibratorManager
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
+import com.lukasz.witkowski.shared.models.TrainingWithExercises
+import com.lukasz.witkowski.shared.repository.TrainingRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -35,11 +37,11 @@ abstract class TrainingService : LifecycleService() {
     @Inject
     lateinit var timerHelper: TimerHelper
 
-//    @Inject
-//    lateinit var trainingRepository: TrainingRepository
+    @Inject
+    lateinit var trainingRepository: TrainingRepository
 
-//    @Inject
-//    lateinit var trainingProgressController: TrainingProgressController
+    @Inject
+    lateinit var trainingProgressController: TrainingProgressController
 
     protected var isStarted = false
 
@@ -48,7 +50,7 @@ abstract class TrainingService : LifecycleService() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         val trainingId = intent?.extras?.getLong(TRAINING_ID_KEY)!!
-//        fetchTrainingWithExercises(trainingId)
+        fetchTrainingWithExercises(trainingId)
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, buildNotification(trainingId))
         return Service.START_STICKY
@@ -83,57 +85,57 @@ abstract class TrainingService : LifecycleService() {
             .setCategory(NotificationCompat.CATEGORY_WORKOUT)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
-//    private fun fetchTrainingWithExercises(trainingId: Long) {
-//        lifecycleScope.launch {
-//            val trainingWithExercises = trainingRepository.fetchTrainingById(trainingId)
-//            startTraining(trainingWithExercises)
-//        }
-//    }
-//
-//    open fun startTraining(trainingWithExercises: TrainingWithExercises) {
-//        Timber.d("Start training")
-//        trainingProgressController.startTraining(trainingWithExercises)
-//        onTimerFinishedListener()
-//        observeTrainingState()
-//    }
-//
-//    private fun observeTrainingState() {
-////        trainingProgressController.currentTrainingState.observe(this) {
-////            when (it) {
-////                is CurrentTrainingState.SummaryState -> {
-////                    handleSummaryState()
-////                }
-////                is CurrentTrainingState.ExerciseState -> {
-////                    handleExerciseState(it)
-////                }
-////                is CurrentTrainingState.RestTimeState -> {
-////                    handleRestTimeState()
-////                }
-////            }
-////        }
-//    }
-//
-//    open fun handleSummaryState() {
-//        timerHelper.cancelTimer()
-//    }
-//
-//    open fun handleExerciseState(exerciseState: CurrentTrainingState.ExerciseState) {
-//        timerHelper.cancelTimer()
-//    }
-//
-//    open fun handleRestTimeState() {
-//        timerHelper.cancelTimer()
-//        timerHelper.startTimer(trainingProgressController.restTime)
-//    }
-//
-//    private fun onTimerFinishedListener() {
-//        timerHelper.timerFinished.observe(this) {
-//            if (it) {
-//                vibrate()
-//                trainingProgressController.navigateToTheNextScreen()
-//            }
-//        }
-//    }
+    private fun fetchTrainingWithExercises(trainingId: Long) {
+        lifecycleScope.launch {
+            val trainingWithExercises = trainingRepository.fetchTrainingById(trainingId)
+            startTraining(trainingWithExercises)
+        }
+    }
+
+    open fun startTraining(trainingWithExercises: TrainingWithExercises) {
+        Timber.d("Start training")
+        trainingProgressController.startTraining(trainingWithExercises)
+        onTimerFinishedListener()
+        observeTrainingState()
+    }
+
+    private fun observeTrainingState() {
+        trainingProgressController.currentTrainingState.observe(this) {
+            when (it) {
+                is CurrentTrainingState.SummaryState -> {
+                    handleSummaryState()
+                }
+                is CurrentTrainingState.ExerciseState -> {
+                    handleExerciseState(it)
+                }
+                is CurrentTrainingState.RestTimeState -> {
+                    handleRestTimeState()
+                }
+            }
+        }
+    }
+
+    open fun handleSummaryState() {
+        timerHelper.cancelTimer()
+    }
+
+    open fun handleExerciseState(exerciseState: CurrentTrainingState.ExerciseState) {
+        timerHelper.cancelTimer()
+    }
+
+    open fun handleRestTimeState() {
+        timerHelper.cancelTimer()
+        timerHelper.startTimer(trainingProgressController.restTime)
+    }
+
+    private fun onTimerFinishedListener() {
+        timerHelper.timerFinished.observe(this) {
+            if (it) {
+                vibrate()
+                trainingProgressController.navigateToTheNextScreen()
+            }
+        }
+    }
 
     private fun vibrate() {
         val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

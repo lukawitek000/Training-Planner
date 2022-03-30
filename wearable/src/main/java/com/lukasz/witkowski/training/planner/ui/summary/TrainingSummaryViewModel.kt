@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.shared.utils.TimeFormatter
+import com.lukasz.witkowski.training.planner.repository.TrainingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TrainingSummaryViewModel
 @Inject constructor(
-//    private val repository: TrainingRepository,
+    private val repository: TrainingRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -32,9 +33,9 @@ class TrainingSummaryViewModel
             trainingCompleteStatistics.trainingStatistics.trainingId = trainingId
             this@TrainingSummaryViewModel.trainingCompleteStatistics = trainingCompleteStatistics
             try {
-//                val statisticsId =
-//                    repository.insertTrainingCompleteStatistics(trainingCompleteStatistics)
-//                _insertStatisticsState.value = ResultHandler.Success(statisticsId)
+                val statisticsId =
+                    repository.insertTrainingCompleteStatistics(trainingCompleteStatistics)
+                _insertStatisticsState.value = ResultHandler.Success(statisticsId)
             } catch (e: Exception) {
                 _insertStatisticsState.value = ResultHandler.Error(message = "Inserting to database failed")
             }
