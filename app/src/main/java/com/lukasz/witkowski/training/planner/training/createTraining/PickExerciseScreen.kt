@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.ui.createTraining
+package com.lukasz.witkowski.training.planner.training.createTraining
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
-import com.lukasz.witkowski.training.planner.training.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
@@ -51,9 +50,8 @@ fun PickExerciseScreen(
     createTrainingViewModel: CreateTrainingViewModel,
     navigateBack: () -> Unit
 ) {
-    val pickedTrainingExercises by createTrainingViewModel.trainingExercises.collectAsState()
-    var openDialog by remember { mutableStateOf(false) }
-    var showInfoDialog by remember { mutableStateOf(false) }
+    var openTrainingExerciseConfigurationDialog by remember { mutableStateOf(false) }
+    var openInfoDialog by remember { mutableStateOf(false) }
     val trainingTitle by createTrainingViewModel.title.collectAsState()
     val pickedTrainingExercise by createTrainingViewModel.pickedExercise.collectAsState()
 
@@ -71,27 +69,27 @@ fun PickExerciseScreen(
             viewModel = viewModel,
             isPickingExerciseMode = true,
             onExerciseClicked = { pickedExercise ->
-                createTrainingViewModel.pickExercise(pickedExercise)
-                if(pickedTrainingExercises.any { it.id.value == pickedExercise.id.value }) {
-                    showInfoDialog = true
+                val isExerciseInTrainingPlan = createTrainingViewModel.pickExercise(pickedExercise)
+                if(isExerciseInTrainingPlan) {
+                    openInfoDialog = true
                 } else {
-                    openDialog = true
+                    openTrainingExerciseConfigurationDialog = true
                 }
             },
-            pickedExercisesId = pickedTrainingExercises.map { it.id.value }
+            pickedExercisesId = createTrainingViewModel.pickedExercisesIds
         )
-        if(showInfoDialog) {
+        if(openInfoDialog) {
             InfoDialog(
                 exercise = pickedTrainingExercise!!,
-                closeInfoDialog = { showInfoDialog = false },
-                openSettingExerciseDialog = { openDialog = true }
+                closeInfoDialog = { openInfoDialog = false },
+                openSettingExerciseDialog = { openTrainingExerciseConfigurationDialog = true }
             )
         }
-        if (openDialog) {
+        if (openTrainingExerciseConfigurationDialog) {
             SetTrainingExercisePropertiesDialog(
                 exercise = pickedTrainingExercise!!,
                 trainingTitle = trainingTitle,
-                closeDialog = { openDialog = false },
+                closeDialog = { openTrainingExerciseConfigurationDialog = false },
                 saveTrainingExercise = { reps, sets, minutes, seconds ->
                     createTrainingViewModel.createTrainingExercise(
                         pickedTrainingExercise!!,

@@ -1,10 +1,10 @@
-package com.lukasz.witkowski.training.planner.training
+package com.lukasz.witkowski.training.planner.training.createTraining
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.TimeFormatter
-import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.models.Exercise
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
@@ -15,7 +15,9 @@ import com.lukasz.witkowski.training.planner.training.models.TrainingPlanMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,45 +30,34 @@ class CreateTrainingViewModel @Inject constructor(
     val title: StateFlow<String>
         get() = _title
 
-    fun onTrainingTitleChanged(newTitle: String) {
-        _title.value = newTitle
-    }
-
     private val _description = MutableStateFlow("")
     val description: StateFlow<String>
         get() = _description
+
+    private val _trainingExercises = MutableStateFlow<List<TrainingExercise>>(mutableListOf())
+    val trainingExercises: StateFlow<List<TrainingExercise>>
+        get() = _trainingExercises
+
+    private val _pickedExercise = MutableStateFlow<Exercise?>(null)
+    val pickedExercise: StateFlow<Exercise?> = _pickedExercise
+
+    val pickedExercisesIds = mutableListOf<ExerciseId>() // TODO how to handle marking exercises that are already in the training plan
+
+    fun onTrainingTitleChanged(newTitle: String) {
+        _title.value = newTitle
+    }
 
     fun onTrainingDescriptionChanged(newDescription: String) {
         _description.value = newDescription
     }
 
-    fun createTraining() {
-        viewModelScope.launch {
-            val trainingPlan = TrainingPlan(
-                id = TrainingPlanId.create(),
-                title = title.value,
-                description = description.value,
-                exercises = trainingExercises.value
-            )
-
-            trainingPlanService.saveTrainingPlan(TrainingPlanMapper.toDomainTrainingPlan(trainingPlan))
-        }
-    }
-
-    private val _trainingExercises = MutableStateFlow<List<TrainingExercise>>(emptyList())
-    val trainingExercises: StateFlow<List<TrainingExercise>>
-        get() = _trainingExercises
-
     private fun addTrainingExercise(exercise: TrainingExercise) {
-        val mutableExercises = _trainingExercises.value.toMutableList()
-        mutableExercises.add(exercise)
-        _trainingExercises.value = mutableExercises.toList()
+        _trainingExercises.value += exercise
     }
 
-    private val _pickedExercise =
-        MutableStateFlow<Exercise?>(null)
-    val pickedExercise: StateFlow<Exercise?> =
-        _pickedExercise
+    fun removeTrainingExercise(trainingExercise: TrainingExercise) {
+        _trainingExercises.value -= trainingExercise
+    }
 
     fun createTrainingExercise(
         exercise: Exercise,
@@ -86,12 +77,7 @@ class CreateTrainingViewModel @Inject constructor(
             time = timeInMillis
         )
         addTrainingExercise(trainingExercise)
-    }
-
-    fun removeTrainingExercise(trainingExercise: TrainingExercise) {
-        val mutableExercises = trainingExercises.value.toMutableList()
-        mutableExercises.remove(trainingExercise)
-        _trainingExercises.value = mutableExercises
+        pickedExercisesIds.add(exercise.id)
     }
 
     fun setRestTimeToExercise(
@@ -99,18 +85,29 @@ class CreateTrainingViewModel @Inject constructor(
         restTimeMinutes: Int,
         restTimeSeconds: Int
     ) {
-        val timeInMillis =
-            TimeFormatter.timeToMillis(minutes = restTimeMinutes, seconds = restTimeSeconds)
-        val exercises = trainingExercises.value.toMutableList()
-        val index = exercises.indexOf(exercise)
-        if (index >= 0) {
-            exercises[index] =
-                exercises[index].copy(restTime = timeInMillis) // TODO setting rest time does not work
-            _trainingExercises.value = exercises.toList()
-        }
+        val timeInMillis = TimeFormatter.timeToMillis(minutes = restTimeMinutes, seconds = restTimeSeconds)
+        val updatedExercise = exercise.copy(restTime = timeInMillis)
+        _trainingExercises.value -= exercise
+        _trainingExercises.value += updatedExercise
     }
 
-    fun pickExercise(exercise: Exercise) {
+    /**
+     * Returns true if the exercise is already used in the training plan
+     */
+    fun pickExercise(exercise: Exercise): Boolean {
         _pickedExercise.value = exercise
+        return pickedExercisesIds.contains(exercise.id)
+    }
+
+    fun createTrainingPlan() {
+        viewModelScope.launch {
+            val trainingPlan = TrainingPlan(
+                id = TrainingPlanId.create(),
+                title = title.value,
+                description = description.value,
+                exercises = trainingExercises.value
+            )
+            trainingPlanService.saveTrainingPlan(TrainingPlanMapper.toDomainTrainingPlan(trainingPlan))
+        }
     }
 }

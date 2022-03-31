@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.models.Category
 import com.lukasz.witkowski.training.planner.exercise.models.Exercise
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
@@ -73,7 +74,7 @@ fun ExercisesScreenContent(
     viewModel: ExercisesListViewModel,
     isPickingExerciseMode: Boolean = false,
     onExerciseClicked: (Exercise) -> Unit = {},
-    pickedExercisesId: List<String> = emptyList()
+    pickedExercisesId: List<ExerciseId> = emptyList()
 ) {
     val exercisesList by viewModel.exercises.collectAsState(emptyList())
     val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
@@ -124,7 +125,7 @@ private fun ExercisesList(
     modifier: Modifier = Modifier,
     exercisesList: List<Exercise>,
     onExerciseClicked: (Exercise) -> Unit,
-    pickedExercisesId: List<String> = emptyList()
+    pickedExercisesId: List<ExerciseId> = emptyList()
 ) {
     LazyColumn(modifier = modifier) {
         items(exercisesList) { exercise ->
@@ -133,7 +134,7 @@ private fun ExercisesList(
                 onCardClicked = {
                     onExerciseClicked(exercise)
                 },
-                markedSelected = pickedExercisesId.contains(exercise.id.value)
+                markedSelected = pickedExercisesId.contains(exercise.id)
             ) {
                 ExerciseListItemContent(
                     exercise = exercise
