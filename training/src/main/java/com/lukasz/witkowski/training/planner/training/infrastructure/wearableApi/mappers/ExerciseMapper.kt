@@ -2,7 +2,7 @@ package com.lukasz.witkowski.training.planner.training.infrastructure.wearableAp
 
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.ExerciseJsonModel
+import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.ExerciseJsonModel
 
 object ExerciseMapper {
 

@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi
+package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models
 
 data class ExerciseJsonModel(
     val id: String,

@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.db.mappers
 
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.Image
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbExercise
 
@@ -13,7 +14,7 @@ internal object ExerciseMapper {
             name = exercise.name,
             description = exercise.description,
             categoryId = exercise.category.ordinal,
-            image = exercise.image,
+            image = exercise.image?.data,
             repetitions = exercise.repetitions,
             sets = exercise.sets,
             time = exercise.time,
@@ -27,7 +28,7 @@ internal object ExerciseMapper {
             name = dbExercise.name,
             description = dbExercise.description,
             category = ExerciseCategory.values()[dbExercise.categoryId], 
-            image = dbExercise.image,
+            image = dbExercise.image?.let { Image(it) },
             repetitions = dbExercise.repetitions,
             sets = dbExercise.sets,
             time = dbExercise.time,

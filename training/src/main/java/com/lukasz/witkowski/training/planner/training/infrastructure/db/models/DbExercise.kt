@@ -12,7 +12,7 @@ internal data class DbExercise(
     val name: String,
     val description: String,
     val categoryId: Int,
-    val image: Bitmap?,
+    val image: ByteArray?,
     val repetitions: Int,
     val sets: Int,
     val time: Long,

@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers
 
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.TrainingPlanJsonModel
+import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.TrainingPlanJsonModel
 
 object TrainingPlanMapper {
 

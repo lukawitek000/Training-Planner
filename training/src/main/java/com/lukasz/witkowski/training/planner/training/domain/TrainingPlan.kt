@@ -5,7 +5,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.isCategoryNone
 import java.util.*
 
 data class TrainingPlan(
-    val id: String = UUID.randomUUID().toString(),
+    val id: TrainingPlanId,
     val title: String,
     val description: String = "",
     val exercises: List<TrainingExercise>,

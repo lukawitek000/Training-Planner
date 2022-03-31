@@ -7,9 +7,8 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.D
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingPlan
 
 @Database(
-    entities = [DbTrainingPlan::class, DbExercise::class], version = 4, exportSchema = false
+    entities = [DbTrainingPlan::class, DbExercise::class], version = 5, exportSchema = false
 )
-@TypeConverters(Converters::class)
 internal abstract class TrainingPlanDatabase : RoomDatabase() {
     abstract fun trainingPlanDao(): TrainingPlanDao
 }
