@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.ui.trainingsList
+package com.lukasz.witkowski.training.planner.training.trainingsList
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -26,7 +26,7 @@ class TrainingsListViewModel
     fun getTrainingsWithExercises() {
         viewModelScope.launch {
             _trainings.value = ResultHandler.Loading
-            trainingPlanService.getAllTrainingPlans().collect {
+            trainingPlanService.getTrainingPlansFromCategories(emptyList()).collect {
                 _trainings.value = ResultHandler.Success(it)
 //                _trainings.value = ResultHandler.Success(trainingRepository.getDummyTrainings())
             }

@@ -20,7 +20,7 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.currentTraining.WearableTrainingService
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSummaryBinding
 import com.lukasz.witkowski.training.planner.service.SendingStatisticsService
-import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsListActivity
+import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber

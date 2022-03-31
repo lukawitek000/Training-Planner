@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.ui.trainingsList
+package com.lukasz.witkowski.training.planner.training.trainingsList
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,10 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.TrainingsListViewModel
+import com.lukasz.witkowski.training.planner.exercise.models.Category
+import com.lukasz.witkowski.training.planner.training.models.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
@@ -85,7 +83,7 @@ fun TrainingsList(
             ListCardItem(modifier = Modifier,
                 onCardClicked = { navigateToTrainingOverview(trainingWithExercises.id.value) }) {
                 TrainingListItemContent(
-                    trainingWithExercises = trainingWithExercises
+                    trainingPlan = trainingWithExercises
                 )
             }
         }
@@ -95,10 +93,9 @@ fun TrainingsList(
 @Composable
 fun TrainingListItemContent(
     modifier: Modifier = Modifier,
-    trainingWithExercises: TrainingPlan
+    trainingPlan: TrainingPlan
 ) {
-    val categories =
-        trainingWithExercises.getAllCategories()
+    val categories = trainingPlan.getAllCategories() // TODO how to do it better?
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -110,16 +107,16 @@ fun TrainingListItemContent(
                 .weight(1f)
         ) {
             Text(
-                text = trainingWithExercises.title,
+                text = trainingPlan.title,
                 fontSize = 28.sp
             )
             if (categories.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 LazyRow {
-                    items(categories) { item: ExerciseCategory ->
+                    items(categories) { item: Category ->
                         CategoryChip(
                             modifier = Modifier.padding(end = 8.dp),
-                            category = CategoryMapper.toCategory(item),
+                            category = item,
                             fontSize = 14.sp
                         )
                     }

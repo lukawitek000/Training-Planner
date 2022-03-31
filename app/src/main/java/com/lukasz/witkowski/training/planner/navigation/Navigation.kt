@@ -16,7 +16,7 @@ import androidx.navigation.navigation
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.training.CreateTrainingViewModel
-import com.lukasz.witkowski.training.planner.training.TrainingsListViewModel
+import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.*
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.ui.createTraining.CreateTrainingScreen
@@ -24,7 +24,7 @@ import com.lukasz.witkowski.training.planner.ui.createTraining.PickExerciseScree
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewScreen
 import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewViewModel
-import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsScreen
+import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsScreen
 
 @Composable
 fun Navigation(navController: NavHostController, innerPadding: PaddingValues, showToast: (String) -> Unit) {

@@ -25,7 +25,7 @@ class TrainingPlanService(
         sendData(listOf(trainingPlan))
     }
 
-    fun getAllTrainingPlans(categories: List<ExerciseCategory> = emptyList()): Flow<List<TrainingPlan>> {
+    fun getTrainingPlansFromCategories(categories: List<ExerciseCategory> = emptyList()): Flow<List<TrainingPlan>> {
         return trainingPlanRepository.getAll().map {
             it.filter { trainingPlan -> categories.isEmpty() || trainingPlan.hasCategories(categories) }
         }
@@ -33,7 +33,7 @@ class TrainingPlanService(
 
     suspend fun sendNotSynchronizedTrainingPlans() {
         trainingPlanRepository.getAll().map { it.filter { trainingPlan -> !trainingPlan.isSynchronized } }.collect {
-            sendData(it)
+//            sendData(it)
         }
     }
 

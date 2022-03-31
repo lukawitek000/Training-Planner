@@ -29,4 +29,8 @@ object TrainingPlanMapper {
             isSynchronized = trainingPlan.isSynchronized
         )
     }
+
+    fun toPresentationTrainingPlans(trainingPlans: List<com.lukasz.witkowski.training.planner.training.domain.TrainingPlan>): List<TrainingPlan> {
+        return trainingPlans.map { toPresentationTrainingPlan(it) }
+    }
 }
