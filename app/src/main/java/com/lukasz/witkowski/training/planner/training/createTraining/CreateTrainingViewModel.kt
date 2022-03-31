@@ -51,12 +51,15 @@ class CreateTrainingViewModel @Inject constructor(
         _description.value = newDescription
     }
 
-    private fun addTrainingExercise(exercise: TrainingExercise) {
-        _trainingExercises.value += exercise
+    private fun addTrainingExercise(trainingExercise: TrainingExercise, exerciseId: ExerciseId) {
+        _trainingExercises.value += trainingExercise
+        pickedExercisesIds.add(exerciseId)
     }
 
     fun removeTrainingExercise(trainingExercise: TrainingExercise) {
+        val index = _trainingExercises.value.indexOf(trainingExercise)
         _trainingExercises.value -= trainingExercise
+        pickedExercisesIds.removeAt(index)
     }
 
     fun createTrainingExercise(
@@ -76,8 +79,7 @@ class CreateTrainingViewModel @Inject constructor(
             sets = sets.toIntOrNull() ?: 1,
             time = timeInMillis
         )
-        addTrainingExercise(trainingExercise)
-        pickedExercisesIds.add(exercise.id)
+        addTrainingExercise(trainingExercise, exercise.id)
     }
 
     fun setRestTimeToExercise(
