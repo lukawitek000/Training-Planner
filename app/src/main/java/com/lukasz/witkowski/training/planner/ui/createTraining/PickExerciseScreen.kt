@@ -72,13 +72,13 @@ fun PickExerciseScreen(
             isPickingExerciseMode = true,
             onExerciseClicked = { pickedExercise ->
                 createTrainingViewModel.pickExercise(pickedExercise)
-                if(pickedTrainingExercises.any { it.id == pickedExercise.id.value }) {
+                if(pickedTrainingExercises.any { it.id.value == pickedExercise.id.value }) {
                     showInfoDialog = true
                 } else {
                     openDialog = true
                 }
             },
-            pickedExercisesId = pickedTrainingExercises.map { it.id }
+            pickedExercisesId = pickedTrainingExercises.map { it.id.value }
         )
         if(showInfoDialog) {
             InfoDialog(

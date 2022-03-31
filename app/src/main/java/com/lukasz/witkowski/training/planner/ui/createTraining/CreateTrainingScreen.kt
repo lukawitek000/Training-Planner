@@ -41,9 +41,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
+import com.lukasz.witkowski.training.planner.exercise.models.Category
 import com.lukasz.witkowski.training.planner.training.CreateTrainingViewModel
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+import com.lukasz.witkowski.training.planner.training.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.TextField
@@ -318,6 +319,7 @@ private fun ExerciseSetsRepsTimeInfo(trainingExercise: TrainingExercise) {
 fun TrainingExerciseListItemPreview() {
     TrainingExerciseListItem(
         trainingExercise = TrainingExercise(
+            id = TrainingExerciseId(""),
             name = "New exercise",
             description = "",
             repetitions = 10,
@@ -334,7 +336,7 @@ fun TrainingExerciseListItemPreview() {
 @Composable
 fun RestTimeDialogPreview() {
     SetTrainingExerciseRestTimeDialog(
-        trainingExercise = TrainingExercise(category = ExerciseCategory.BACK, name = "Preview exercise"),
+        trainingExercise = TrainingExercise(category = Category(), name = "Preview exercise", id = TrainingExerciseId("")),
         closeDialog = {},
         setRestTimeToExercise = { trainingExercise, i, i2 ->  }
     )

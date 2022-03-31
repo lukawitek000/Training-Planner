@@ -2,13 +2,14 @@ package com.lukasz.witkowski.training.planner.training.infrastructure.wearableAp
 
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.ExerciseJsonModel
 
 object ExerciseMapper {
 
     fun toExerciseJsonModel(exercise: TrainingExercise): ExerciseJsonModel {
         return ExerciseJsonModel(
-            id = exercise.id,
+            id = exercise.id.value,
             name = exercise.name,
             description = exercise.description,
             category = exercise.category.ordinal,
@@ -21,7 +22,7 @@ object ExerciseMapper {
 
     fun toExercise(exerciseJsonModel: ExerciseJsonModel): TrainingExercise {
         return TrainingExercise(
-            id = exerciseJsonModel.id,
+            id = TrainingExerciseId(exerciseJsonModel.id),
             name = exerciseJsonModel.name,
             description = exerciseJsonModel.description,
             category = ExerciseCategory.values()[exerciseJsonModel.category], // TODO Mapping category ??

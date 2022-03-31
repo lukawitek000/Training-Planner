@@ -22,7 +22,7 @@ class TrainingOverviewViewModel @Inject constructor(
 
     private val trainingId = savedStateHandle.get<String>("trainingId") ?: ""
 
-    private val _training = trainingPlanService.getAllTrainingPlans(emptyList()).map { it.first { it.id == trainingId.toString() } } // TODO temporary fix
+    private val _training = trainingPlanService.getAllTrainingPlans(emptyList()).map { it.first { it.id.value == trainingId } } // TODO temporary fix
     val training: Flow<TrainingPlan> = _training
 
 //    private val _statistics =

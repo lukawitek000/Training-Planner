@@ -33,7 +33,7 @@ class TrainingsAdapter(private val onTrainingClicked: (String, String) -> Unit) 
             }.map { it.category }
             setUpCategoriesRecyclerView(emptyList())
             binding.root.setOnClickListener {
-                onTrainingClicked(item.id, item.title)
+                onTrainingClicked(item.id.value, item.title)
             }
         }
 

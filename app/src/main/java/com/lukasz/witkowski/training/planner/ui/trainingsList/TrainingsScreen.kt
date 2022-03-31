@@ -83,7 +83,7 @@ fun TrainingsList(
     ) {
         items(trainings) { trainingWithExercises ->
             ListCardItem(modifier = Modifier,
-                onCardClicked = { navigateToTrainingOverview(trainingWithExercises.id) }) {
+                onCardClicked = { navigateToTrainingOverview(trainingWithExercises.id.value) }) {
                 TrainingListItemContent(
                     trainingWithExercises = trainingWithExercises
                 )

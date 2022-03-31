@@ -7,8 +7,11 @@ import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.exercise.models.Exercise
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import com.lukasz.witkowski.training.planner.training.models.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.models.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.models.TrainingPlanMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,11 +43,13 @@ class CreateTrainingViewModel @Inject constructor(
     fun createTraining() {
         viewModelScope.launch {
             val trainingPlan = TrainingPlan(
+                id = TrainingPlanId.create(),
                 title = title.value,
                 description = description.value,
                 exercises = trainingExercises.value
             )
-            trainingPlanService.saveTrainingPlan(trainingPlan)
+
+            trainingPlanService.saveTrainingPlan(TrainingPlanMapper.toDomainTrainingPlan(trainingPlan))
         }
     }
 
@@ -72,10 +77,10 @@ class CreateTrainingViewModel @Inject constructor(
     ) {
         val timeInMillis = TimeFormatter.timeToMillis(minutes = minutes, seconds = seconds)
         val trainingExercise = TrainingExercise(
-            id = exercise.id.value,
+            id = TrainingExerciseId.create(),
             name = exercise.name,
             description = exercise.description,
-            category = CategoryMapper.toExerciseCategory(exercise.category),
+            category = exercise.category,
             repetitions = reps.toIntOrNull() ?: 1,
             sets = sets.toIntOrNull() ?: 1,
             time = timeInMillis
