@@ -22,7 +22,7 @@ class TrainingPlanService(
 
     suspend fun saveTrainingPlan(trainingPlan: TrainingPlan) {
         trainingPlanRepository.save(trainingPlan)
-        sendData(listOf(trainingPlan))
+//        sendData(listOf(trainingPlan))
     }
 
     fun getTrainingPlansFromCategories(categories: List<ExerciseCategory> = emptyList()): Flow<List<TrainingPlan>> {

@@ -16,7 +16,7 @@ object TrainingPlanMapper {
         )
     }
 
-    fun toPresentationTrainingPlan(trainingPlan: com.lukasz.witkowski.training.planner.training.domain.TrainingPlan): TrainingPlan {
+    private fun toPresentationTrainingPlan(trainingPlan: com.lukasz.witkowski.training.planner.training.domain.TrainingPlan): TrainingPlan {
         return TrainingPlan(
             id = trainingPlan.id,
             title = trainingPlan.title,

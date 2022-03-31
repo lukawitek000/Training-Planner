@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -28,6 +26,7 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.models.Category
 import com.lukasz.witkowski.training.planner.training.models.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
+import com.lukasz.witkowski.training.planner.ui.components.CategoryFilters
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
 
@@ -44,25 +43,22 @@ fun TrainingsScreen(
     Scaffold(
         modifier = Modifier.padding(innerPadding),
         floatingActionButton = {
-            FloatingActionButton(onClick = { onCreateTrainingFabClicked() }) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(id = R.string.create_training)
-                )
-            }
+            CreateTrainingFab(onClicked = onCreateTrainingFabClicked)
         }
     ) {
         Column {
-//            CategoryFilters(
-//                categories = allCategories, // TODO how to get list of categories??
-//                selectedCategories = selectedCategoriesList,
-//                selectCategory = { viewModel.selectCategory(it) }
-//            )
+            CategoryFilters(
+                categories = viewModel.filterCategories,
+                selectedCategories = selectedCategoriesList,
+                selectCategory = { viewModel.selectCategory(it) }
+            )
             if (trainings.isNotEmpty()) {
-                TrainingsList(innerPadding, trainings, navigateToTrainingOverview)
+                TrainingsList(
+                    trainings = trainings,
+                    navigateToTrainingOverview = navigateToTrainingOverview
+                )
             } else {
                 NoDataMessage(
-                    modifier = Modifier,
                     text = stringResource(id = R.string.no_trainings_info)
                 )
             }
@@ -71,13 +67,29 @@ fun TrainingsScreen(
 }
 
 @Composable
+private fun CreateTrainingFab(
+    modifier: Modifier = Modifier,
+    onClicked: () -> Unit
+) {
+    FloatingActionButton(
+        modifier = modifier,
+        onClick = { onClicked() }
+    ) {
+        Icon(
+            imageVector = Icons.Default.Add,
+            contentDescription = stringResource(id = R.string.create_training)
+        )
+    }
+}
+
+@Composable
 fun TrainingsList(
-    innerPadding: PaddingValues,
+    modifier: Modifier = Modifier,
     trainings: List<TrainingPlan>,
     navigateToTrainingOverview: (String) -> Unit
 ) {
     LazyColumn(
-        contentPadding = innerPadding
+        modifier = modifier
     ) {
         items(trainings) { trainingWithExercises ->
             ListCardItem(modifier = Modifier,
@@ -110,18 +122,10 @@ fun TrainingListItemContent(
                 text = trainingPlan.title,
                 fontSize = 28.sp
             )
-            if (categories.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(16.dp))
-                LazyRow {
-                    items(categories) { item: Category ->
-                        CategoryChip(
-                            modifier = Modifier.padding(end = 8.dp),
-                            category = item,
-                            fontSize = 14.sp
-                        )
-                    }
-                }
-            }
+            CategoriesRow(
+                modifier = modifier.padding(top = 16.dp),
+                categories = categories
+            )
         }
 //        Icon(
 //            modifier = Modifier.size(40.dp),
@@ -129,5 +133,21 @@ fun TrainingListItemContent(
 //            contentDescription = "Start training",
 //            tint = MaterialTheme.colors.primary,
 //        )
+    }
+}
+
+@Composable
+private fun CategoriesRow(
+    modifier: Modifier = Modifier,
+    categories: List<Category>
+) {
+    LazyRow(modifier = modifier) {
+        items(categories) { item: Category ->
+            CategoryChip(
+                modifier = Modifier.padding(end = 8.dp),
+                category = item,
+                fontSize = 14.sp
+            )
+        }
     }
 }
