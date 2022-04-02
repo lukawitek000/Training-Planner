@@ -1,8 +1,7 @@
-package com.lukasz.witkowski.training.planner.exercise.models
+package com.lukasz.witkowski.training.planner.exercise.presentation.models
 
 import android.graphics.Bitmap
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import java.util.UUID
 
 data class Exercise(
     val id: ExerciseId,
