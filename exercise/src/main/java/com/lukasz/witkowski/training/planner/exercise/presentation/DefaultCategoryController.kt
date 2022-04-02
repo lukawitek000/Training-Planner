@@ -1,12 +1,12 @@
-package com.lukasz.witkowski.training.planner.exercise.exercisesList
+package com.lukasz.witkowski.training.planner.exercise.presentation
 
 import com.lukasz.witkowski.training.planner.exercise.application.CategoryService
-import com.lukasz.witkowski.training.planner.exercise.models.Category
-import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-// TODO I would move it to the Exercise module in presentation layer
+// TODO I would move it to the Exercise module in presentation layer, even separate module for category??
 class DefaultCategoryController(private val categoryService: CategoryService) : CategoryController {
     private val _selectedCategories = MutableStateFlow<List<Category>>(emptyList())
     override val selectedCategories: StateFlow<List<Category>>

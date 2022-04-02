@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.exercise.models
+package com.lukasz.witkowski.training.planner.exercise.presentation.models
 
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory

@@ -3,8 +3,8 @@ package com.lukasz.witkowski.training.planner.training.trainingsList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.CategoryController
-import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
+import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.models.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.models.TrainingPlanMapper

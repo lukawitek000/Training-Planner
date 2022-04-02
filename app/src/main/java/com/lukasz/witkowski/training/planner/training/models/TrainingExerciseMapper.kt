@@ -3,8 +3,8 @@ package com.lukasz.witkowski.training.planner.training.models
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.lukasz.witkowski.training.planner.exercise.domain.Image
-import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
-import com.lukasz.witkowski.training.planner.exercise.models.ImageFactory
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ImageFactory
 
 object TrainingExerciseMapper {
 

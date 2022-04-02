@@ -39,7 +39,7 @@ import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.isCategoryNone
-import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan

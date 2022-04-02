@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.ui
 
 import androidx.lifecycle.ViewModel
-import com.lukasz.witkowski.training.planner.exercise.models.Category
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
