@@ -82,7 +82,6 @@ class CreateTrainingViewModel @Inject constructor(
         addTrainingExercise(trainingExercise, exercise.id)
     }
 
-    // TODO setting rest time changes order of exercises
     fun setRestTimeToExercise(
         exercise: TrainingExercise,
         restTimeMinutes: Int,
@@ -91,8 +90,10 @@ class CreateTrainingViewModel @Inject constructor(
         val timeInMillis =
             TimeFormatter.timeToMillis(minutes = restTimeMinutes, seconds = restTimeSeconds)
         val updatedExercise = exercise.copy(restTime = timeInMillis)
-        _trainingExercises.value -= exercise
-        _trainingExercises.value += updatedExercise
+        val exercisesList = _trainingExercises.value.toMutableList()
+        val index = exercisesList.indexOf(exercise)
+        exercisesList[index] = updatedExercise
+        _trainingExercises.value = exercisesList.toList()
     }
 
     /**
