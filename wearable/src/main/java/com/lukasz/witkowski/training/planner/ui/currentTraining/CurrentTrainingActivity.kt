@@ -18,6 +18,7 @@ import com.lukasz.witkowski.shared.trainingControllers.TrainingService.Companion
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.ActivityCurrentTrainingBinding
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.ui.summary.TrainingSummaryActivity
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
@@ -54,6 +55,7 @@ class CurrentTrainingActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityCurrentTrainingBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        receiveTrainingId()
         fetchTrainingInformation()
         setOnSwipeListener()
     }
@@ -76,29 +78,32 @@ class CurrentTrainingActivity : FragmentActivity() {
         } catch (e: Exception) {
             Timber.d("Unbinding service failed ${e.localizedMessage}")
         }
-
     }
 
-    private fun fetchTrainingInformation() {
-        val trainingId = intent.extras?.getLong(WearableTrainingService.TRAINING_ID_KEY)
+    private fun receiveTrainingId() {
+        val trainingId = intent.extras?.getString(WearableTrainingService.TRAINING_ID_KEY)
         Timber.d("Received training id $trainingId")
         if (trainingId == null) {
             finish()
             return
         }
-        viewModel.trainingWithExercises.observe(this) {
+        viewModel.setTrainingId(trainingId)
+    }
+
+    private fun fetchTrainingInformation() {
+        viewModel.trainingPlan.observe(this) {
             when(it){
                 is ResultHandler.Loading -> showProgressBar()
-                is ResultHandler.Success -> startTraining(0L)
+                is ResultHandler.Success -> startTraining(it.value.id)
                 is ResultHandler.Error -> handleError()
-                is ResultHandler.Idle -> {}
+                is ResultHandler.Idle -> Unit
             }
         }
-        viewModel.fetchTraining(trainingId)
+        viewModel.fetchTrainingPlan()
     }
 
     private fun handleError() {
-        Toast.makeText(this, "No training in database", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, resources.getString(R.string.training_plan_does_not_exist), Toast.LENGTH_SHORT).show()
         finish()
     }
 
@@ -107,15 +112,15 @@ class CurrentTrainingActivity : FragmentActivity() {
         binding.loadingView.loadingLayout.visibility = View.VISIBLE
     }
 
-    private fun startTraining(trainingId: Long) {
+    private fun startTraining(id: TrainingPlanId) {
         binding.swipeDismissLayout.visibility = View.VISIBLE
         binding.loadingView.loadingLayout.visibility = View.GONE
-        startTrainingService(trainingId)
+        startTrainingService(id)
     }
 
-    private fun startTrainingService(trainingId: Long) {
+    private fun startTrainingService(trainingId: TrainingPlanId) {
         val serviceIntent = Intent(this, WearableTrainingService::class.java)
-        serviceIntent.putExtra(TRAINING_ID_KEY, trainingId)
+        serviceIntent.putExtra(TRAINING_ID_KEY, trainingId.value)
         bindService(serviceIntent, connection, Context.BIND_AUTO_CREATE)
     }
 
