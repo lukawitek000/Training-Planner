@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.ui.createTraining
+package com.lukasz.witkowski.training.planner.training.createTraining
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -35,14 +35,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
-import com.lukasz.witkowski.training.planner.training.CreateTrainingViewModel
+import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreenContent
+import com.lukasz.witkowski.training.planner.exercise.models.Exercise
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreenContent
-import timber.log.Timber
 
 @Composable
 fun PickExerciseScreen(
@@ -51,47 +49,40 @@ fun PickExerciseScreen(
     createTrainingViewModel: CreateTrainingViewModel,
     navigateBack: () -> Unit
 ) {
-    val pickedTrainingExercises by createTrainingViewModel.trainingExercises.collectAsState()
-    var openDialog by remember { mutableStateOf(false) }
-    var showInfoDialog by remember { mutableStateOf(false) }
-    val trainingTitle by createTrainingViewModel.title.collectAsState()
+    var openTrainingExerciseConfigurationDialog by remember { mutableStateOf(false) }
+    var openExerciseAlreadyAddedDialog by remember { mutableStateOf(false) }
     val pickedTrainingExercise by createTrainingViewModel.pickedExercise.collectAsState()
 
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                navigateBack()
-            }) {
-                Icon(imageVector = Icons.Default.Done, contentDescription = "Pick Exercises")
-            }
+            AddSelectedExercisesToTrainingPlanFab(navigateBack = navigateBack)
         }
     ) {
         ExercisesScreenContent(
             viewModel = viewModel,
             isPickingExerciseMode = true,
             onExerciseClicked = { pickedExercise ->
-                createTrainingViewModel.pickExercise(pickedExercise)
-                if(pickedTrainingExercises.any { it.id == pickedExercise.id.value }) {
-                    showInfoDialog = true
+                val isExerciseInTrainingPlan = createTrainingViewModel.pickExercise(pickedExercise)
+                if (isExerciseInTrainingPlan) {
+                    openExerciseAlreadyAddedDialog = true
                 } else {
-                    openDialog = true
+                    openTrainingExerciseConfigurationDialog = true
                 }
             },
-            pickedExercisesId = pickedTrainingExercises.map { it.id }
+            pickedExercisesId = createTrainingViewModel.pickedExercisesIds
         )
-        if(showInfoDialog) {
-            InfoDialog(
+        if (openExerciseAlreadyAddedDialog) {
+            ExerciseAlreadyAddedDialog(
                 exercise = pickedTrainingExercise!!,
-                closeInfoDialog = { showInfoDialog = false },
-                openSettingExerciseDialog = { openDialog = true }
+                closeInfoDialog = { openExerciseAlreadyAddedDialog = false },
+                openSettingExerciseDialog = { openTrainingExerciseConfigurationDialog = true }
             )
         }
-        if (openDialog) {
+        if (openTrainingExerciseConfigurationDialog) {
             SetTrainingExercisePropertiesDialog(
                 exercise = pickedTrainingExercise!!,
-                trainingTitle = trainingTitle,
-                closeDialog = { openDialog = false },
+                closeDialog = { openTrainingExerciseConfigurationDialog = false },
                 saveTrainingExercise = { reps, sets, minutes, seconds ->
                     createTrainingViewModel.createTrainingExercise(
                         pickedTrainingExercise!!,
@@ -108,7 +99,24 @@ fun PickExerciseScreen(
 }
 
 @Composable
-private fun InfoDialog(
+private fun AddSelectedExercisesToTrainingPlanFab(
+    modifier: Modifier = Modifier,
+    navigateBack: () -> Unit
+) {
+    FloatingActionButton(
+        modifier = modifier,
+        onClick = {
+            navigateBack()
+        }) {
+        Icon(
+            imageVector = Icons.Default.Done,
+            contentDescription = stringResource(id = R.string.add_exercises_to_training)
+        )
+    }
+}
+
+@Composable
+private fun ExerciseAlreadyAddedDialog(
     exercise: Exercise,
     closeInfoDialog: () -> Unit,
     openSettingExerciseDialog: () -> Unit
@@ -132,13 +140,13 @@ private fun InfoDialog(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 Button(onClick = closeInfoDialog) {
-                    Text(text = "No")
+                    Text(text = stringResource(id = R.string.yes))
                 }
                 Button(onClick = {
                     closeInfoDialog()
                     openSettingExerciseDialog()
                 }) {
-                    Text(text = "Yes")
+                    Text(text = stringResource(id = R.string.no))
                 }
             }
         }
@@ -150,96 +158,105 @@ private fun InfoDialog(
 fun SetTrainingExercisePropertiesDialog(
     modifier: Modifier = Modifier,
     exercise: Exercise,
-    trainingTitle: String,
     closeDialog: () -> Unit,
     saveTrainingExercise: (reps: String, sets: String, minutes: Int, seconds: Int) -> Unit
 ) {
-    var reps by remember { mutableStateOf("") }
-    var sets by remember { mutableStateOf("") }
+    var reps by remember { mutableStateOf("1") }
+    var sets by remember { mutableStateOf("1") }
     var minutes by remember { mutableStateOf(0) }
     var seconds by remember { mutableStateOf(0) }
     var isTimerSetEnable by remember { mutableStateOf(true) }
 
     DialogContainer(
         closeDialog = closeDialog,
-        saveData = { saveTrainingExercise(reps, sets, minutes, seconds) }) {
+        saveData = {
+            saveTrainingExercise(reps, sets, minutes, seconds)
+        }) {
 
         Column(
             modifier = modifier.padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Configure the ${exercise.name} exercise for the $trainingTitle training",
+                text = exercise.name,
                 fontSize = 32.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(16.dp),
                 color = MaterialTheme.colors.primary
             )
-
-            TextField(
-                text = reps,
-                onTextChange = { reps = it },
-                label = "Reps",
-                imeAction = ImeAction.Next,
-                keyboardType = KeyboardType.Number
+            SetsAndRepsInput(
+                modifier = Modifier,
+                reps = reps,
+                setReps = { reps = it },
+                sets = sets,
+                setSets = { sets = it }
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            TextField(
-                text = sets,
-                onTextChange = { sets = it },
-                label = "Sets",
-                imeAction = ImeAction.Done,
-                keyboardType = KeyboardType.Number
+            TimerTimePicker(
+                modifier = Modifier.padding(top = 16.dp),
+                minutes = minutes,
+                seconds = seconds,
+                onMinutesChange = { minutes = it },
+                onSecondsChange = { seconds = it },
+                isTimePickerEnabled = isTimerSetEnable,
             )
-            Spacer(modifier = Modifier.height(16.dp))
-            if (isTimerSetEnable) {
-                TimerTimePicker(
-                    minutes = minutes,
-                    seconds = seconds,
-                    onMinutesChange = {
-                        Timber.d("New value minutes $it")
-                        minutes = it
-                    },
-                    onSecondsChange = {
-                        Timber.d("New value seconds $it")
-                        seconds = it
-                    },
-                    isTimePickerEnabled = isTimerSetEnable
-                )
-            } else {
-                TimerTimePicker(
-                    minutes = 0,
-                    seconds = 0,
-                    onMinutesChange = {},
-                    onSecondsChange = {},
-                    isTimePickerEnabled = isTimerSetEnable
-                )
-            }
-
-            Row(
-                modifier = Modifier
-                    .align(Alignment.Start)
-                    .clip(MaterialTheme.shapes.medium)
-                    .clickable {
-                        isTimerSetEnable = !isTimerSetEnable
-                    }
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Checkbox(
-                    checked = !isTimerSetEnable,
-                    onCheckedChange = { isTimerSetEnable = !isTimerSetEnable },
-                    colors = CheckboxDefaults.colors(uncheckedColor = MaterialTheme.colors.primary)
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = "Do not set timer",
-                    color = MaterialTheme.colors.primary
-                )
-            }
+            TimerSetCheckbox(
+                modifier = Modifier.align(Alignment.Start),
+                isTimerSetEnable = isTimerSetEnable,
+                toggleCheckbox = { isTimerSetEnable = !isTimerSetEnable }
+            )
         }
-
     }
 }
 
+@Composable
+private fun SetsAndRepsInput(
+    modifier: Modifier = Modifier,
+    reps: String,
+    setReps: (String) -> Unit,
+    sets: String,
+    setSets: (String) -> Unit
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        TextField(
+            text = reps,
+            onTextChange = setReps,
+            label = stringResource(id = R.string.reps),
+            imeAction = ImeAction.Next,
+            keyboardType = KeyboardType.Number
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+        TextField(
+            text = sets,
+            onTextChange = setSets,
+            label = stringResource(id = R.string.sets),
+            imeAction = ImeAction.Done,
+            keyboardType = KeyboardType.Number
+        )
+    }
+}
 
+@Composable
+private fun TimerSetCheckbox(
+    modifier: Modifier = Modifier,
+    isTimerSetEnable: Boolean,
+    toggleCheckbox: () -> Unit
+) {
+    Row(
+        modifier = modifier
+            .clip(MaterialTheme.shapes.medium)
+            .clickable { toggleCheckbox() }
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            checked = !isTimerSetEnable,
+            onCheckedChange = { toggleCheckbox() },
+            colors = CheckboxDefaults.colors(uncheckedColor = MaterialTheme.colors.primary)
+        )
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(
+            text = stringResource(id = R.string.do_not_set_timer),
+            color = MaterialTheme.colors.primary
+        )
+    }
+}

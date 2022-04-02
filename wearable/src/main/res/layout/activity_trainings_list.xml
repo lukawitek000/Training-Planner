@@ -7,7 +7,7 @@
     android:background="@color/background_gray"
     android:padding="@dimen/box_inset_layout_padding"
     app:layout_boxedEdges="all"
-    tools:context=".ui.trainingsList.TrainingsListActivity"
+    tools:context=".training.trainingsList.TrainingsListActivity"
     tools:deviceIds="wear">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_height="match_parent"

@@ -41,7 +41,9 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.isCategoryNone
 import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
@@ -59,7 +61,7 @@ fun TrainingOverviewScreen(
     navigateBack: () -> Unit
 ) {
     val trainingWithExercises by viewModel.training.collectAsState(
-        TrainingPlan(title = "", exercises = emptyList())
+        TrainingPlan(title = "", exercises = emptyList(), id = TrainingPlanId("")) // TODO Temporary solution
     )
 //    val generalStatistics by viewModel.statistics.collectAsState(emptyList())
     Scaffold(modifier = modifier) {
@@ -379,6 +381,7 @@ fun SingleExercisePrev() {
     SingleTrainingExerciseInformation(
         Modifier,
         TrainingExercise(
+            id = TrainingExerciseId(""),
             name = "Super exercise",
             description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
             category = ExerciseCategory.CARDIO,

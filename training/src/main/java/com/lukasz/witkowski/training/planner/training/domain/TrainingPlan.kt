@@ -5,7 +5,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.isCategoryNone
 import java.util.*
 
 data class TrainingPlan(
-    val id: String = UUID.randomUUID().toString(),
+    val id: TrainingPlanId,
     val title: String,
     val description: String = "",
     val exercises: List<TrainingExercise>,
@@ -16,7 +16,7 @@ data class TrainingPlan(
         return getAllCategories().containsAll(categories)
     }
 
-    fun getAllCategories(): List<ExerciseCategory> {
+    private fun getAllCategories(): List<ExerciseCategory> {
         return exercises.map { exercise -> exercise.category }.filter { category -> !isCategoryNone(category) }
     }
 }

@@ -23,4 +23,19 @@
     <string name="no_exercises">No exercises. Create your first exercise.</string>
     <string name="no_exercises_for_categories">No exercises for selected categories.</string>
     <string name="image_description">%1$s image</string>
+    <string name="training_plan_no_enough_data_message">Title and exercises are required</string>
+    <string name="title">Title</string>
+    <string name="add_exercises">Add Exercises</string>
+    <string name="change_rest_time">Change rest time</string>
+    <string name="add_rest_time">Add rest time</string>
+    <string name="remove_training_exercise">Remove training exercise</string>
+    <string name="reps_with_value">Reps: %1$s</string>
+    <string name="sets_with_value">Sets: %1$s</string>
+    <string name="time">Time: %1$s</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="add_exercises_to_training">Add selected exercises to the training plan</string>
+    <string name="do_not_set_timer">Do not set timer</string>
+    <string name="reps">Reps</string>
+    <string name="sets">Sets</string>
 </resources>

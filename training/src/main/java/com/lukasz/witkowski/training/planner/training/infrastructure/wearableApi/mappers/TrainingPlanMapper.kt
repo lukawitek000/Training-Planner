@@ -1,13 +1,14 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers
 
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.TrainingPlanJsonModel
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.TrainingPlanJsonModel
 
 object TrainingPlanMapper {
 
     fun toTrainingPlan(trainingPlanJsonModel: TrainingPlanJsonModel): TrainingPlan {
         return TrainingPlan(
-            id = trainingPlanJsonModel.id,
+            id = TrainingPlanId(trainingPlanJsonModel.id),
             title = trainingPlanJsonModel.title,
             description = trainingPlanJsonModel.description,
             exercises = trainingPlanJsonModel.exercises.map { ExerciseMapper.toExercise(it) }
@@ -16,7 +17,7 @@ object TrainingPlanMapper {
 
     fun toTrainingPlanJsonModel(trainingPlan: TrainingPlan): TrainingPlanJsonModel {
         return TrainingPlanJsonModel(
-            id = trainingPlan.id,
+            id = trainingPlan.id.value,
             title = trainingPlan.title,
             description = trainingPlan.description,
             exercises = trainingPlan.exercises.map { ExerciseMapper.toExerciseJsonModel(it) }
