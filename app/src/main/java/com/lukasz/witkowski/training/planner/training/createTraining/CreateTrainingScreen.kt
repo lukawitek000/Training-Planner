@@ -399,12 +399,12 @@ private fun ExerciseSetsRepsTimeInfo(trainingExercise: TrainingExercise) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = stringResource(id = R.string.reps, trainingExercise.repetitions),
+            text = stringResource(id = R.string.reps_with_value, trainingExercise.repetitions),
             modifier = Modifier.weight(1f),
             color = MaterialTheme.colors.primaryVariant
         )
         Text(
-            text = stringResource(id = R.string.sets, trainingExercise.sets),
+            text = stringResource(id = R.string.sets_with_value, trainingExercise.sets),
             modifier = Modifier.weight(1f),
             color = MaterialTheme.colors.primaryVariant
         )
