@@ -1,11 +1,13 @@
-package com.lukasz.witkowski.training.planner.training.trainingsList
+package com.lukasz.witkowski.training.planner.ui.trainingsList
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lukasz.witkowski.training.planner.databinding.CategoryListItemBinding
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 
-class CategoriesAdapter(private val categories: List<String>) :
+class CategoriesAdapter(private val categories: List<Category>, private val context: Context) :
     RecyclerView.Adapter<CategoriesAdapter.CategoriesViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoriesViewHolder {
@@ -25,8 +27,8 @@ class CategoriesAdapter(private val categories: List<String>) :
 
     inner class CategoriesViewHolder(private val binding: CategoryListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(category: String) {
-            binding.categoryNameTv.text = category
+        fun bind(category: Category) {
+            binding.categoryNameTv.text = context.resources.getString(category.res)
         }
 
     }

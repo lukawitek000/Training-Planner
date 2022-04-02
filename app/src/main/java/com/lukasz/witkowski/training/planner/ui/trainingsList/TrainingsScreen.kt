@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.trainingsList
+package com.lukasz.witkowski.training.planner.ui.trainingsList
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

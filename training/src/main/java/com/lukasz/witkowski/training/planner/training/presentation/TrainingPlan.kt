@@ -13,5 +13,6 @@ data class TrainingPlan(
     fun getAllCategories(): List<Category> {
         return exercises.map { exercise -> exercise.category }
             .filter { category -> !category.isNone() }
+            .distinct()
     }
 }
