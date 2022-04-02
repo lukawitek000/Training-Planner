@@ -8,6 +8,6 @@ import javax.inject.Inject
 @HiltViewModel
 class StartTrainingViewModel
 @Inject constructor(private val savedStateHandle: SavedStateHandle) : ViewModel() {
-    var trainingId = 0L
+    var trainingId = ""
     var trainingTitle = ""
 }

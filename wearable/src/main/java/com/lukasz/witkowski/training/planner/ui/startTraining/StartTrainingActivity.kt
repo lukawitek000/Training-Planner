@@ -5,9 +5,10 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.ui.currentTraining.CurrentTrainingActivity
 import com.lukasz.witkowski.training.planner.databinding.ActivityStartTrainingBinding
+import com.lukasz.witkowski.training.planner.ui.currentTraining.CurrentTrainingActivity
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class StartTrainingActivity : ComponentActivity() {
@@ -31,7 +32,7 @@ class StartTrainingActivity : ComponentActivity() {
     }
 
     private fun retrieveTrainingProperties() {
-        val trainingId = intent.extras?.getLong(TRAINING_ID_KEY)
+        val trainingId = intent.extras?.getString(TRAINING_ID_KEY)
         val trainingTitle = intent.extras?.getString(TRAINING_TITLE_KEY)
         if (trainingId == null || trainingTitle == null) {
             finish()
