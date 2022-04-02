@@ -3,7 +3,7 @@ package com.lukasz.witkowski.training.planner.exercise.presentation.models
 import com.lukasz.witkowski.training.planner.exercise.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 
-internal object CategoryMapper {
+object CategoryMapper {
 
     fun toCategory(exerciseCategory: ExerciseCategory) = when (exerciseCategory) {
         ExerciseCategory.NONE -> Category(exerciseCategory.ordinal, R.string.category_none)

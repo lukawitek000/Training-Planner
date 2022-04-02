@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.lukasz.witkowski.training.planner.exercise.domain.Image
 
-internal object ExerciseMapper {
+object ExerciseMapper {
 
 
     fun toDomainExercise(exercise: Exercise): com.lukasz.witkowski.training.planner.exercise.domain.Exercise {
