@@ -15,9 +15,7 @@ import com.lukasz.witkowski.training.planner.training.models.TrainingPlanMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -41,7 +39,9 @@ class CreateTrainingViewModel @Inject constructor(
     private val _pickedExercise = MutableStateFlow<Exercise?>(null)
     val pickedExercise: StateFlow<Exercise?> = _pickedExercise
 
-    val pickedExercisesIds = mutableListOf<ExerciseId>() // TODO how to handle marking exercises that are already in the training plan
+    val pickedExercisesIds =
+        mutableListOf<ExerciseId>() // TODO how to handle marking exercises that are already in the training plan
+    // Maybe TrainingTraining class should have Exercise property plus required properties for training plan such as sets reps etc.
 
     fun onTrainingTitleChanged(newTitle: String) {
         _title.value = newTitle
@@ -82,12 +82,14 @@ class CreateTrainingViewModel @Inject constructor(
         addTrainingExercise(trainingExercise, exercise.id)
     }
 
+    // TODO setting rest time changes order of exercises
     fun setRestTimeToExercise(
         exercise: TrainingExercise,
         restTimeMinutes: Int,
         restTimeSeconds: Int
     ) {
-        val timeInMillis = TimeFormatter.timeToMillis(minutes = restTimeMinutes, seconds = restTimeSeconds)
+        val timeInMillis =
+            TimeFormatter.timeToMillis(minutes = restTimeMinutes, seconds = restTimeSeconds)
         val updatedExercise = exercise.copy(restTime = timeInMillis)
         _trainingExercises.value -= exercise
         _trainingExercises.value += updatedExercise
@@ -109,7 +111,11 @@ class CreateTrainingViewModel @Inject constructor(
                 description = description.value,
                 exercises = trainingExercises.value
             )
-            trainingPlanService.saveTrainingPlan(TrainingPlanMapper.toDomainTrainingPlan(trainingPlan))
+            trainingPlanService.saveTrainingPlan(
+                TrainingPlanMapper.toDomainTrainingPlan(
+                    trainingPlan
+                )
+            )
         }
     }
 }
