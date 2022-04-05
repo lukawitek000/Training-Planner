@@ -38,4 +38,5 @@
     <string name="do_not_set_timer">Do not set timer</string>
     <string name="reps">Reps</string>
     <string name="sets">Sets</string>
+    <string name="start_training_session">Start training session</string>
 </resources>

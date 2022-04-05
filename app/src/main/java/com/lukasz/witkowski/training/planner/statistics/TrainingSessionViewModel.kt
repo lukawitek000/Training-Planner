@@ -41,6 +41,10 @@ class TrainingSessionViewModel @Inject constructor(
             _trainingSessionState.value = TrainingSessionState.TrainingPlanLoadedState(trainingPlan)
         }
     }
+
+    fun startTraining() {
+
+    }
 }
 
 sealed interface TrainingSessionState {

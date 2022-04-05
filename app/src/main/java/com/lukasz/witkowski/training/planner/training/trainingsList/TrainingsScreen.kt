@@ -140,7 +140,7 @@ fun TrainingListItemContent(
         Icon(
             modifier = Modifier.size(40.dp).clickable { startTrainingSession(trainingPlan) },
             imageVector = Icons.Filled.PlayArrow,
-            contentDescription = "Start training",
+            contentDescription = stringResource(id = R.string.start_training_session),
             tint = MaterialTheme.colors.primary,
         )
     }
