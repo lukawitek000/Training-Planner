@@ -24,7 +24,6 @@ import com.lukasz.witkowski.training.planner.training.createTraining.PickExercis
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.statistics.TrainingSessionScreen
 import com.lukasz.witkowski.training.planner.statistics.TrainingSessionViewModel
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewScreen
 import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsScreen

@@ -1,6 +1,6 @@
-package com.lukasz.witkowski.training.planner.exercise.exercisesList
+package com.lukasz.witkowski.training.planner.exercise.presentation
 
-import com.lukasz.witkowski.training.planner.exercise.models.Category
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import kotlinx.coroutines.flow.StateFlow
 
 // TODO I would move it to the Exercise module in presentation layer

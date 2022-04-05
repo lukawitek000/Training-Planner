@@ -5,13 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.models.Exercise
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.models.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.models.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.models.TrainingPlanMapper
+import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlanMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

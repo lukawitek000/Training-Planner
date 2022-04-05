@@ -1,9 +1,9 @@
-package com.lukasz.witkowski.training.planner.exercise.models
+package com.lukasz.witkowski.training.planner.exercise.presentation.models
 
-import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 
-data class Category internal constructor(
+data class Category constructor(
     val id: Int,
     val res: Int = R.string.category_none
 ) {

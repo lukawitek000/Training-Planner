@@ -1,7 +1,6 @@
-package com.lukasz.witkowski.training.planner.training.models
+package com.lukasz.witkowski.training.planner.training.presentation
 
-import com.lukasz.witkowski.training.planner.exercise.domain.isCategoryNone
-import com.lukasz.witkowski.training.planner.exercise.models.Category
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 
 data class TrainingPlan(
@@ -14,5 +13,6 @@ data class TrainingPlan(
     fun getAllCategories(): List<Category> {
         return exercises.map { exercise -> exercise.category }
             .filter { category -> !category.isNone() }
+            .distinct()
     }
 }

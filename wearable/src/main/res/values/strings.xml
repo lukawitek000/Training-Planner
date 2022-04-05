@@ -18,4 +18,5 @@
     <string name="maximum_heart_rate_during_training">Maximum heart rate during training</string>
     <string name="total_burned_calories_description">Total burned calories</string>
     <string name="training_time">Training time</string>
+    <string name="training_plan_does_not_exist">Training plan does not exist</string>
 </resources>

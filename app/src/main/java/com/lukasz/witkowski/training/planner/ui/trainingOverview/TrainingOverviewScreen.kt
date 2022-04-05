@@ -37,11 +37,11 @@ import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.models.Category
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.models.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.models.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
@@ -60,11 +60,9 @@ fun TrainingOverviewScreen(
 ) {
     val trainingWithExercises by viewModel.training.collectAsState(
         TrainingPlan(
-            title = "",
-            exercises = emptyList(),
-            id = TrainingPlanId("")
-        ) // TODO Temporary solution
+        TrainingPlanId(""), "", exercises = emptyList()
     )
+    ) // TODO Temporary solution
 //    val generalStatistics by viewModel.statistics.collectAsState(emptyList())
     Scaffold(modifier = modifier) {
         LazyColumn(

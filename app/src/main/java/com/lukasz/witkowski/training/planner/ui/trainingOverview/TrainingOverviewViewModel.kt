@@ -4,8 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.lukasz.witkowski.training.planner.repository.StatisticsRepository
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
-import com.lukasz.witkowski.training.planner.training.models.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.models.TrainingPlanMapper
+import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlanMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
