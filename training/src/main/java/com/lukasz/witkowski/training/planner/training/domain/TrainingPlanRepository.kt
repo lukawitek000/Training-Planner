@@ -9,5 +9,5 @@ interface TrainingPlanRepository {
     suspend fun setTrainingPlanAsSynchronized(id: String)
     fun getAll(): Flow<List<TrainingPlan>>
     suspend fun delete(trainingPlan: TrainingPlan)
-    fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan>
+    suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): TrainingPlan
 }

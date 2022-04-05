@@ -34,10 +34,9 @@ internal class DbTrainingPlanRepository(
         trainingPlanDao.deleteTrainingPlanWithExercises(dbTrainingPlanWithExercises)
     }
 
-    override fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan> {
+    override suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): TrainingPlan {
         val id = trainingPlanId.value
-        return trainingPlanDao.getTrainingPlanById(id).map {
-            TrainingPlanMapper.toTrainingPlan(it)
-        }
+        val dbTrainingPlanWithExercises = trainingPlanDao.getTrainingPlanById(id)
+        return TrainingPlanMapper.toTrainingPlan(dbTrainingPlanWithExercises)
     }
 }

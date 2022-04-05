@@ -38,7 +38,7 @@ class TrainingPlanService(
         }
     }
 
-    fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan> {
+    suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): TrainingPlan {
         return trainingPlanRepository.getTrainingPlanById(trainingPlanId)
     }
 

@@ -49,5 +49,5 @@ internal interface TrainingPlanDao {
     suspend fun deleteExerciseById(id: String)
 
     @Query("SELECT * FROM TrainingPlan WHERE id=:id")
-    fun getTrainingPlanById(id: String): Flow<DbTrainingPlanWithExercises>
+    suspend fun getTrainingPlanById(id: String): DbTrainingPlanWithExercises
 }
