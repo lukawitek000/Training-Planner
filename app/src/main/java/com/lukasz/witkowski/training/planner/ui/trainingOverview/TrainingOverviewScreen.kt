@@ -37,13 +37,11 @@ import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.shared.utils.TimeFormatter
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
-import com.lukasz.witkowski.training.planner.exercise.domain.isCategoryNone
-import com.lukasz.witkowski.training.planner.exercise.models.CategoryMapper
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
+import com.lukasz.witkowski.training.planner.exercise.models.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import com.lukasz.witkowski.training.planner.training.models.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.models.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
@@ -61,7 +59,11 @@ fun TrainingOverviewScreen(
     navigateBack: () -> Unit
 ) {
     val trainingWithExercises by viewModel.training.collectAsState(
-        TrainingPlan(title = "", exercises = emptyList(), id = TrainingPlanId("")) // TODO Temporary solution
+        TrainingPlan(
+            title = "",
+            exercises = emptyList(),
+            id = TrainingPlanId("")
+        ) // TODO Temporary solution
     )
 //    val generalStatistics by viewModel.statistics.collectAsState(emptyList())
     Scaffold(modifier = modifier) {
@@ -109,7 +111,8 @@ fun TrainingOverviewScreen(
 @Composable
 fun TrainingOverviewContent(
     modifier: Modifier = Modifier,
-    trainingPlan: TrainingPlan
+    trainingPlan: TrainingPlan,
+    isTrainingExercisesExpandable: Boolean = true
 ) {
     Column(
         modifier = modifier
@@ -131,7 +134,8 @@ fun TrainingOverviewContent(
         if (trainingPlan.exercises.isNotEmpty()) {
             TrainingExercisesExpandableList(
                 modifier = Modifier,
-                exercises = trainingPlan.exercises
+                exercises = trainingPlan.exercises,
+                isExpandable = isTrainingExercisesExpandable
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -140,16 +144,20 @@ fun TrainingOverviewContent(
 
 
 @Composable
-fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<TrainingExercise>) {
+fun TrainingExercisesExpandableList(
+    modifier: Modifier,
+    exercises: List<TrainingExercise>,
+    isExpandable: Boolean = true
+) {
 
-    var isExpanded by remember { mutableStateOf(false) }
+    var isExpanded by remember { mutableStateOf(!isExpandable) }
 
     val angle: Float by animateFloatAsState(
         targetValue = if (!isExpanded) 0f else 180f,
         animationSpec = tween(durationMillis = 200, easing = LinearEasing)
     )
 
-    ListCardItem(modifier = modifier, onCardClicked = { isExpanded = !isExpanded }) {
+    ListCardItem(modifier = modifier, onCardClicked = { if(isExpandable) isExpanded = !isExpanded }) {
         Column(Modifier.fillMaxWidth()) {
             Row(
                 Modifier
@@ -159,11 +167,13 @@ fun TrainingExercisesExpandableList(modifier: Modifier, exercises: List<Training
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(text = "Exercises", fontSize = 18.sp)
-                Icon(
-                    Icons.Default.ArrowDropDown,
-                    modifier = Modifier.rotate(angle),
-                    contentDescription = "Expand exercises list arrow"
-                )
+                if(isExpandable) {
+                    Icon(
+                        Icons.Default.ArrowDropDown,
+                        modifier = Modifier.rotate(angle),
+                        contentDescription = "Expand exercises list arrow"
+                    )
+                }
             }
             AnimatedVisibility(visible = isExpanded) {
                 LazyColumn(modifier = Modifier.heightIn(max = 500.dp)) {
@@ -197,9 +207,9 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExer
             Spacer(modifier = Modifier.height(16.dp))
             CategoryChip(
                 modifier = Modifier.fillMaxWidth(),
-                category = CategoryMapper.toCategory(exercise.category)
+                category = exercise.category
             )
-            if (!isCategoryNone(exercise.category)) {
+            if (!exercise.category.isNone()) {
                 Spacer(modifier = Modifier.height(16.dp))
             }
             Row(
@@ -384,7 +394,7 @@ fun SingleExercisePrev() {
             id = TrainingExerciseId(""),
             name = "Super exercise",
             description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
-            category = ExerciseCategory.CARDIO,
+            category = Category(),
             sets = 10,
             repetitions = 100,
             time = 141000,

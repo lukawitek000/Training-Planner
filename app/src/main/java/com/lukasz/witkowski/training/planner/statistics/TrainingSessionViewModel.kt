@@ -38,7 +38,7 @@ class TrainingSessionViewModel @Inject constructor(
         viewModelScope.launch {
             val trainingPlanDomain = trainingPlanService.getTrainingPlanById(trainingId)
             val trainingPlan = TrainingPlanMapper.toPresentationTrainingPlan(trainingPlanDomain)
-//            _trainingSessionState.value = TrainingSessionState.TrainingPlanLoadedState(trainingPlan)
+            _trainingSessionState.value = TrainingSessionState.TrainingPlanLoadedState(trainingPlan)
         }
     }
 }
