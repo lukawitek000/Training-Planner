@@ -1,19 +1,23 @@
 package com.lukasz.witkowski.training.planner.training.trainingsList
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.models.Category
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.models.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.CategoryFilters
@@ -35,7 +40,8 @@ fun TrainingsScreen(
     innerPadding: PaddingValues = PaddingValues(),
     viewModel: TrainingsListViewModel,
     onCreateTrainingFabClicked: () -> Unit = {},
-    navigateToTrainingOverview: (String) -> Unit
+    navigateToTrainingOverview: (String) -> Unit,
+    navigateToTrainingSession: (TrainingPlanId) -> Unit
 ) {
     val trainings by viewModel.trainingPlans.collectAsState(emptyList())
     val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
@@ -55,7 +61,8 @@ fun TrainingsScreen(
             if (trainings.isNotEmpty()) {
                 TrainingsList(
                     trainings = trainings,
-                    navigateToTrainingOverview = navigateToTrainingOverview
+                    navigateToTrainingOverview = navigateToTrainingOverview,
+                    startTrainingSession = { navigateToTrainingSession(it.id) }
                 )
             } else {
                 NoDataMessage(
@@ -86,7 +93,8 @@ private fun CreateTrainingFab(
 fun TrainingsList(
     modifier: Modifier = Modifier,
     trainings: List<TrainingPlan>,
-    navigateToTrainingOverview: (String) -> Unit
+    navigateToTrainingOverview: (String) -> Unit,
+    startTrainingSession: (TrainingPlan) -> Unit
 ) {
     LazyColumn(
         modifier = modifier
@@ -95,7 +103,8 @@ fun TrainingsList(
             ListCardItem(modifier = Modifier,
                 onCardClicked = { navigateToTrainingOverview(trainingWithExercises.id.value) }) {
                 TrainingListItemContent(
-                    trainingPlan = trainingWithExercises
+                    trainingPlan = trainingWithExercises,
+                    startTrainingSession = startTrainingSession
                 )
             }
         }
@@ -105,7 +114,8 @@ fun TrainingsList(
 @Composable
 fun TrainingListItemContent(
     modifier: Modifier = Modifier,
-    trainingPlan: TrainingPlan
+    trainingPlan: TrainingPlan,
+    startTrainingSession: (TrainingPlan) -> Unit
 ) {
     val categories = trainingPlan.getAllCategories() // TODO how to do it better?
     Row(
@@ -127,12 +137,12 @@ fun TrainingListItemContent(
                 categories = categories
             )
         }
-//        Icon(
-//            modifier = Modifier.size(40.dp),
-//            imageVector = Icons.Filled.PlayArrow,
-//            contentDescription = "Start training",
-//            tint = MaterialTheme.colors.primary,
-//        )
+        Icon(
+            modifier = Modifier.size(40.dp).clickable { startTrainingSession(trainingPlan) },
+            imageVector = Icons.Filled.PlayArrow,
+            contentDescription = "Start training",
+            tint = MaterialTheme.colors.primary,
+        )
     }
 }
 

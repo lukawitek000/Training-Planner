@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import androidx.room.Transaction
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbExercise
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingPlanWithExercises
@@ -46,4 +47,7 @@ internal interface TrainingPlanDao {
 
     @Query("DELETE FROM Exercise WHERE id=:id")
     suspend fun deleteExerciseById(id: String)
+
+    @Query("SELECT * FROM TrainingPlan WHERE id=:id")
+    fun getTrainingPlanById(id: String): Flow<DbTrainingPlanWithExercises>
 }

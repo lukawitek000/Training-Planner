@@ -22,6 +22,9 @@ import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerc
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingScreen
 import com.lukasz.witkowski.training.planner.training.createTraining.PickExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
+import com.lukasz.witkowski.training.planner.statistics.TrainingSessionScreen
+import com.lukasz.witkowski.training.planner.statistics.TrainingSessionViewModel
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewScreen
 import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsScreen
@@ -36,7 +39,8 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues, sh
                 innerPadding = innerPadding,
                 viewModel = trainingsListViewModel,
                 onCreateTrainingFabClicked = { navController.navigate(route = NavItem.CreateTraining.route) },
-                navigateToTrainingOverview = { navController.navigate(route = "${NavItem.TrainingOverview.route}/$it") }
+                navigateToTrainingOverview = { navController.navigate(route = "${NavItem.TrainingOverview.route}/$it") },
+                navigateToTrainingSession = { navController.navigate(route = "${NavItem.TrainingSession.route}/${it.value}") }
             )
         }
 
@@ -73,6 +77,18 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues, sh
         ) {
             val viewModel: TrainingOverviewViewModel = hiltViewModel()
             TrainingOverviewScreen(
+                modifier = Modifier.padding(innerPadding),
+                viewModel = viewModel,
+                navigateBack = { navController.navigateUp() }
+            )
+        }
+
+        composable(
+            "${NavItem.TrainingSession.route}/{trainingId}",
+            arguments = listOf(navArgument("trainingId") { type = NavType.StringType })
+        ) {
+            val viewModel: TrainingSessionViewModel = hiltViewModel()
+            TrainingSessionScreen(
                 modifier = Modifier.padding(innerPadding),
                 viewModel = viewModel,
                 navigateBack = { navController.navigateUp() }
