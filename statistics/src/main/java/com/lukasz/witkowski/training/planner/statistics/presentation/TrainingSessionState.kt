@@ -2,14 +2,14 @@ package com.lukasz.witkowski.training.planner.statistics.presentation
 
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
 
-sealed class TrainingSessionState(val time: Long) {
+sealed class TrainingSessionState(val exercise: TrainingExercise? = null) {
 
-    object IdleState : TrainingSessionState(0L)
+    object IdleState : TrainingSessionState()
 
-    data class ExerciseState(val exercise: TrainingExercise) : TrainingSessionState(exercise.time)
+    class ExerciseState(currentExercise: TrainingExercise) : TrainingSessionState(currentExercise)
 
-    data class RestTimeState(val restTime: Long) : TrainingSessionState(restTime)
+    class RestTimeState(nextExercise: TrainingExercise, val restTime: Long) : TrainingSessionState(nextExercise)
 
     // TODO summary objects (Statistics, TrainingPlan??)
-    data class SummaryState(val summary: String) : TrainingSessionState(0L)
+    data class SummaryState(val summary: String) : TrainingSessionState()
 }

@@ -393,7 +393,7 @@ private fun TrainingExerciseInfo(
 }
 
 @Composable
-private fun ExerciseSetsRepsTimeInfo(trainingExercise: TrainingExercise) {
+fun ExerciseSetsRepsTimeInfo(trainingExercise: TrainingExercise) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween

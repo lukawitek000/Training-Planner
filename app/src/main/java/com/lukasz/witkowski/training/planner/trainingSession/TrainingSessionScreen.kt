@@ -1,10 +1,7 @@
 package com.lukasz.witkowski.training.planner.trainingSession
 
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -23,23 +20,16 @@ fun TrainingSessionScreen(
     val time by viewModel.timer.collectAsState()
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        floatingActionButton = {
-            Row() {
-                FloatingActionButton(onClick = { viewModel.skip() }) {
-                    Text(text = "Skip")
-                }
-                FloatingActionButton(onClick = { viewModel.completed() }) {
-                    Text(text = "Complete")
-                }
-            }
-        }
     ) {
         when (trainingSessionState) {
             is TrainingSessionState.ExerciseState -> TrainingExerciseScreen(
-                exercise = (trainingSessionState as TrainingSessionState.ExerciseState).exercise
+                exercise = trainingSessionState.exercise!!
             )
             is TrainingSessionState.RestTimeState -> RestTimeScreen(
-                restTime = time
+                timeLeft = time,
+                totalTime = (trainingSessionState as TrainingSessionState.RestTimeState).restTime,
+                nextExercise = trainingSessionState.exercise!!,
+                skip = {}
             )
             is TrainingSessionState.SummaryState -> TrainingSessionSummaryScreen()
             else -> LoadingScreen(Modifier.fillMaxSize())

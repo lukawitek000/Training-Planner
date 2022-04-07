@@ -13,7 +13,7 @@ class DefaultTrainingSessionController(
 ) : TrainingSessionController {
 
     private val _trainingSessionState =
-        MutableStateFlow<TrainingSessionState>(TrainingSessionState.RestTimeState(16000L))
+        MutableStateFlow<TrainingSessionState>(TrainingSessionState.IdleState)
     override val trainingSessionState: StateFlow<TrainingSessionState>
         get() = _trainingSessionState
 

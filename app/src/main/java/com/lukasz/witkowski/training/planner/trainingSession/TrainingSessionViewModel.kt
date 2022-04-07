@@ -54,7 +54,7 @@ class TrainingSessionViewModel @Inject constructor(
     // Statistics controllers: one for healthy measurements (used by watch), second for general statistics (time etc)
     private fun setTimer(state: TrainingSessionState) {
         when (state) {
-            is TrainingSessionState.ExerciseState -> setTime(state.time)
+            is TrainingSessionState.ExerciseState -> setTime(state.exercise!!.time)
             is TrainingSessionState.RestTimeState -> {
                 setTime(state.restTime)
                 start()
