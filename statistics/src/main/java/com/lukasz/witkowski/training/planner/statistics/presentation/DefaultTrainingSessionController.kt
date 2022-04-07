@@ -8,6 +8,8 @@ import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlanM
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+// TODO where to do controlling training progress??
+// Calculating which training exercises is now or if it is rest time or summary
 class DefaultTrainingSessionController(
     private val trainingSessionService: TrainingSessionService
 ) : TrainingSessionController {

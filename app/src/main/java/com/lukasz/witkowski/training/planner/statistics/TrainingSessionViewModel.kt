@@ -35,27 +35,34 @@ class TrainingSessionViewModel @Inject constructor(
         observeTrainingState()
     }
 
-    private fun observeTrainingState() {
-        viewModelScope.launch {
-            trainingSessionState.collectLatest { state ->
-                when(state) {
-                    is TrainingSessionState.ExerciseState -> setTime(state.time)
-                    is TrainingSessionState.RestTimeState -> {
-                        setTime(state.restTime)
-                        start()
-                    }
-                    else -> Unit
-                }
-            }
-        }
-
-    }
-
     private fun fetchTrainingPlan() {
         viewModelScope.launch {
             val trainingPlanDomain = trainingPlanService.getTrainingPlanById(trainingId)
             val trainingPlan = TrainingPlanMapper.toPresentationTrainingPlan(trainingPlanDomain)
-//            startTrainingSession(trainingPlan)
+            startTrainingSession(trainingPlan)
         }
     }
+
+    private fun observeTrainingState() {
+        viewModelScope.launch {
+            trainingSessionState.collectLatest { state ->
+                setTimer(state)
+            }
+        }
+    }
+    // TODO is it good approach to handle setting time
+    // Separation of controllers is Interface Segregation principle (Another controller will be for calculating statistics )
+    // Statistics controllers: one for healthy measurements (used by watch), second for general statistics (time etc)
+    private fun setTimer(state: TrainingSessionState) {
+        when (state) {
+            is TrainingSessionState.ExerciseState -> setTime(state.time)
+            is TrainingSessionState.RestTimeState -> {
+                setTime(state.restTime)
+                start()
+            }
+            else -> Unit
+        }
+    }
+
+
 }

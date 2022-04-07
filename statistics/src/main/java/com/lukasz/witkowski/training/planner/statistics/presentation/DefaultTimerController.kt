@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+// TODO WHere to put timer implementation in which layer
 class DefaultTimerController: TimerController {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
