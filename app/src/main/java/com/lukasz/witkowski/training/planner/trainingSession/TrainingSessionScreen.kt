@@ -23,7 +23,14 @@ fun TrainingSessionScreen(
     ) {
         when (trainingSessionState) {
             is TrainingSessionState.ExerciseState -> TrainingExerciseScreen(
-                exercise = trainingSessionState.exercise!!
+                exercise = trainingSessionState.exercise!!,
+                remainingTime = time,
+                start = {},
+                pause = {},
+                reset = {},
+                isTimerRunning = false,
+                skip = {},
+                completed = {}
             )
             is TrainingSessionState.RestTimeState -> RestTimeScreen(
                 timeLeft = time,

@@ -375,7 +375,7 @@ private fun TrainingExerciseInfo(
                     color = MaterialTheme.colors.primary
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                ExerciseSetsRepsTimeInfo(trainingExercise)
+                ExerciseSetsRepsTimeInfo(trainingExercise = trainingExercise)
             }
             Spacer(modifier = Modifier.width(16.dp))
             Icon(
@@ -393,9 +393,12 @@ private fun TrainingExerciseInfo(
 }
 
 @Composable
-fun ExerciseSetsRepsTimeInfo(trainingExercise: TrainingExercise) {
+fun ExerciseSetsRepsTimeInfo(
+    modifier: Modifier = Modifier,
+    trainingExercise: TrainingExercise
+) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(

@@ -41,4 +41,9 @@
     <string name="start_training_session">Start training session</string>
     <string name="skip">Skip</string>
     <string name="next_exercise">Next exercise:</string>
+    <string name="completed">Completed</string>
+    <string name="pause">Pause</string>
+    <string name="start">Start</string>
+    <string name="reset">Reset</string>
+    <string name="exercise_image">Exercise image</string>
 </resources>

@@ -77,7 +77,7 @@ fun NextExerciseOverview(
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                ExerciseSetsRepsTimeInfo(exercise)
+                ExerciseSetsRepsTimeInfo(trainingExercise = exercise)
             }
         }
     }
