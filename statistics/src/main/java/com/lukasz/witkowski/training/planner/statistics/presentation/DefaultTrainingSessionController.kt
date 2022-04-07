@@ -13,12 +13,13 @@ class DefaultTrainingSessionController(
 ) : TrainingSessionController {
 
     private val _trainingSessionState =
-        MutableStateFlow<TrainingSessionState>(TrainingSessionState.IdleState)
+        MutableStateFlow<TrainingSessionState>(TrainingSessionState.RestTimeState(16000L))
     override val trainingSessionState: StateFlow<TrainingSessionState>
         get() = _trainingSessionState
 
     override fun startTrainingSession(trainingPlan: TrainingPlan) {
-        TODO("Not yet implemented")
+        val domainTrainingPlan = TrainingPlanMapper.toDomainTrainingPlan(trainingPlan)
+        trainingSessionService.startTraining(domainTrainingPlan)
     }
 
     override fun skip() {

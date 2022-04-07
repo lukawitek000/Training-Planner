@@ -24,6 +24,7 @@ fun TrainingSessionScreen(
 ) {
 
     val trainingSessionState by viewModel.trainingSessionState.collectAsState()
+    val time by viewModel.timer.collectAsState()
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
@@ -42,7 +43,7 @@ fun TrainingSessionScreen(
                 exercise = (trainingSessionState as TrainingSessionState.ExerciseState).exercise
             )
             is TrainingSessionState.RestTimeState -> RestTimeScreen(
-                restTime = trainingSessionState.time
+                restTime = time
             )
             is TrainingSessionState.SummaryState -> TrainingSessionSummaryScreen()
             else -> LoadingScreen(Modifier.fillMaxSize())

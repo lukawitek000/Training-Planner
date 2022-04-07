@@ -5,10 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionController
+import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlanMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,13 +32,30 @@ class TrainingSessionViewModel @Inject constructor(
 
     init {
         fetchTrainingPlan()
+        observeTrainingState()
+    }
+
+    private fun observeTrainingState() {
+        viewModelScope.launch {
+            trainingSessionState.collectLatest { state ->
+                when(state) {
+                    is TrainingSessionState.ExerciseState -> setTime(state.time)
+                    is TrainingSessionState.RestTimeState -> {
+                        setTime(state.restTime)
+                        start()
+                    }
+                    else -> Unit
+                }
+            }
+        }
+
     }
 
     private fun fetchTrainingPlan() {
         viewModelScope.launch {
             val trainingPlanDomain = trainingPlanService.getTrainingPlanById(trainingId)
             val trainingPlan = TrainingPlanMapper.toPresentationTrainingPlan(trainingPlanDomain)
-            startTrainingSession(trainingPlan)
+//            startTrainingSession(trainingPlan)
         }
     }
 }
