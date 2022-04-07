@@ -1,19 +1,15 @@
-package com.lukasz.witkowski.training.planner.statistics
+package com.lukasz.witkowski.training.planner.trainingSession
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 
 @Composable
@@ -51,27 +47,3 @@ fun TrainingSessionScreen(
     }
 }
 
-@Composable
-fun TrainingSessionSummaryScreen() {
-    Text(text = "Summary")
-}
-
-@Composable
-fun RestTimeScreen(
-    modifier: Modifier = Modifier,
-    restTime: Long
-) {
-    Column {
-        Text(text = "Rest time")
-        Text(text = restTime.toString())
-    }
-
-}
-
-@Composable
-fun TrainingExerciseScreen(
-    modifier: Modifier = Modifier,
-    exercise: TrainingExercise
-) {
-    Text(text = exercise.toString())
-}

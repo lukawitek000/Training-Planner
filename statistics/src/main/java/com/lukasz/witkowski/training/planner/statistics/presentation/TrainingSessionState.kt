@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.statistics.presentation
 
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
 
 sealed class TrainingSessionState(val time: Long) {
 
