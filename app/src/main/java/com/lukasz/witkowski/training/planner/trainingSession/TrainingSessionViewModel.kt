@@ -45,8 +45,12 @@ class TrainingSessionViewModel @Inject constructor(
         observeTrainingState()
     }
 
-    fun next() {
-        trainingSessionService.next()
+    fun completed() {
+        trainingSessionService.next(true)
+    }
+
+    fun skip() {
+        trainingSessionService.next(false)
     }
 
     private fun fetchTrainingPlan() {
@@ -77,7 +81,7 @@ class TrainingSessionViewModel @Inject constructor(
             is TrainingSessionState.ExerciseState -> setTime(state.exercise!!.time)
             is TrainingSessionState.RestTimeState -> {
                 setTime(state.restTime)
-                start()
+//                start()
             }
             else -> Unit
         }

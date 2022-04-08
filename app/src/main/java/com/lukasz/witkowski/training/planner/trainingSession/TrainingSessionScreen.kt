@@ -29,14 +29,14 @@ fun TrainingSessionScreen(
                 pause = {},
                 reset = {},
                 isTimerRunning = false,
-                skip = { viewModel.next() },
-                completed = { viewModel.next() }
+                skip = { viewModel.skip() },
+                completed = { viewModel.completed() }
             )
             is TrainingSessionState.RestTimeState -> RestTimeScreen(
                 timeLeft = time,
                 totalTime = (trainingSessionState as TrainingSessionState.RestTimeState).restTime,
                 nextExercise = trainingSessionState.exercise!!,
-                skip = { viewModel.next() }
+                skip = { viewModel.skip() }
             )
             is TrainingSessionState.SummaryState -> TrainingSessionSummaryScreen()
             else -> LoadingScreen(Modifier.fillMaxSize())

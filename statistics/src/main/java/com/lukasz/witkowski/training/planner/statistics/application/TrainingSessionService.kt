@@ -23,6 +23,19 @@ class TrainingSessionService {
         loadExercise()
     }
 
+    fun next(isCompleted: Boolean = true) {
+        if (isCurrentStateExercise()) {
+            val nextExercise = getNextExercise()
+            if (nextExercise != null) {
+                setRestTimeState(nextExercise)
+            } else {
+                setSummaryState()
+            }
+        } else if (isCurrentStateRestTime()) {
+            loadExercise()
+        }
+    }
+
     private fun loadSet(setNumber: Int) {
         currentSetExercises.clear()
         exercises.forEachIndexed { index, exercise ->
@@ -45,22 +58,9 @@ class TrainingSessionService {
         }
     }
 
-    fun next() {
-        if (isCurrentStateExercise()) {
-            val nextExercise = getNextExercise()
-            if (nextExercise != null) {
-                setRestTimeState(nextExercise)
-            } else {
-                setSummaryState()
-            }
-        } else if (isCurrentStateRestTime()) {
-            loadExercise()
-        }
-    }
-
     private fun setSummaryState() {
         trainingSessionState.value =
-            TrainingSessionState.SummaryState("Training ${trainingPlan.id} finished")
+            TrainingSessionState.SummaryState("Training finished")
     }
 
     private fun getNextExercise(): TrainingExercise? {
