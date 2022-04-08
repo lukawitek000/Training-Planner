@@ -8,7 +8,7 @@ class TrainingSessionService {
 
     private lateinit var trainingPlan: TrainingPlan
 
-    private val trainingSessionState =
+    val trainingSessionState =
         MutableStateFlow<TrainingSessionState>(TrainingSessionState.IdleState)
 
     private var currentSet = 1
