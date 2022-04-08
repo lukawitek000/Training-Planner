@@ -7,7 +7,8 @@ interface TimerController {
     // For presentation I use TimeFormatter so separate classes or Duration should have methods that returns formatted Strings??
     val timer: StateFlow<Long>
     fun setTime(time: Long)
-    fun start()
-    fun pause()
-    fun resume()
+    fun startTimer()
+    fun pauseTimer()
+    fun resumeTimer()
+    fun stopTimer()
 }

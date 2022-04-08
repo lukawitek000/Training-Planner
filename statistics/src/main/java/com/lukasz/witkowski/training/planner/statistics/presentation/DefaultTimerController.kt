@@ -1,12 +1,13 @@
 package com.lukasz.witkowski.training.planner.statistics.presentation
 
-import com.lukasz.witkowski.training.planner.statistics.domain.CountdownTimer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
 
 // TODO WHere to put timer implementation in which layer
 class DefaultTimerController: TimerController {
@@ -16,29 +17,37 @@ class DefaultTimerController: TimerController {
     override val timer: StateFlow<Long>
         get() = _timer
 
-    private val timerHelper = CountdownTimer()
+    private var isRunning = false
+    private var isPaused = false
 
     override fun setTime(time: Long) {
         _timer.value = time
     }
 
-    override fun start() {
+    override fun startTimer() {
         coroutineScope.launch {
-            timerHelper.start(timer.value, SECOND_IN_MILLIS).collectLatest {
-                _timer.value = it
+            isRunning = true
+            while (isRunning && _timer.value >= DELAY_IN_MILLIS) {
+                delay(DELAY_IN_MILLIS)
+                _timer.value -= DELAY_IN_MILLIS
             }
         }
     }
 
-    override fun pause() {
+    override fun stopTimer() {
+//        coroutineScope.cancel()
+        isRunning = false
+    }
+
+    override fun pauseTimer() {
 //        TODO("Not yet implemented")
     }
 
-    override fun resume() {
+    override fun resumeTimer() {
 //        TODO("Not yet implemented")
     }
 
     private companion object {
-        const val SECOND_IN_MILLIS = 1000L
+        const val DELAY_IN_MILLIS = 10L
     }
 }
