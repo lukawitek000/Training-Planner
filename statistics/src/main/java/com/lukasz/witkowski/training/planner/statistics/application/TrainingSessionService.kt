@@ -16,7 +16,7 @@ class TrainingSessionService {
     private val exercises: List<TrainingExercise>
         get() = trainingPlan.exercises
 
-    private val currentSetExercises = mutableMapOf<Int, TrainingExercise>()
+    private val currentSetExercises = mutableListOf<TrainingExercise>()
 
     fun startTraining(trainingPlan: TrainingPlan) {
         this.trainingPlan = trainingPlan
@@ -39,18 +39,16 @@ class TrainingSessionService {
 
     private fun loadSet(setNumber: Int) {
         currentSetExercises.clear()
-        exercises.forEachIndexed { index, exercise ->
+        exercises.forEach { exercise ->
             if (exercise.sets >= setNumber) {
-                currentSetExercises[index] = exercise
+                currentSetExercises.add(exercise)
             }
         }
     }
 
     private fun loadExercise() {
         if (currentSetExercises.isNotEmpty()) {
-            val key = currentSetExercises.keys.first()
-            val loadedExercise = currentSetExercises[key]!!
-            currentSetExercises.remove(key)
+            val loadedExercise = currentSetExercises.removeFirst()
             trainingSessionState.value = TrainingSessionState.ExerciseState(loadedExercise)
         } else {
             currentSet++
@@ -68,8 +66,7 @@ class TrainingSessionService {
         if (currentSetExercises.isEmpty()) {
             return exercises.firstOrNull { it.sets >= currentSet + 1 }
         }
-        val key = currentSetExercises.keys.first()
-        return currentSetExercises[key]
+        return currentSetExercises.first()
     }
 
 
