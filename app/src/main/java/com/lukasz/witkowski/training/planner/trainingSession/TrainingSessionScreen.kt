@@ -18,6 +18,8 @@ fun TrainingSessionScreen(
 
     val trainingSessionState by viewModel.trainingSessionState.collectAsState()
     val time by viewModel.timer.collectAsState()
+    val isTimerRunning by viewModel.isRunning.collectAsState()
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
     ) {
@@ -25,10 +27,10 @@ fun TrainingSessionScreen(
             is TrainingSessionState.ExerciseState -> TrainingExerciseScreen(
                 exercise = trainingSessionState.exercise!!,
                 remainingTime = time,
-                start = {},
-                pause = {},
-                reset = {},
-                isTimerRunning = false,
+                start = { viewModel.startTimer() },
+                pause = { viewModel.pauseTimer() },
+                reset = { viewModel.resetTimer() },
+                isTimerRunning = isTimerRunning,
                 skip = { viewModel.skip() },
                 completed = { viewModel.completed() }
             )

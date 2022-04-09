@@ -47,10 +47,12 @@ class TrainingSessionViewModel @Inject constructor(
     }
 
     fun completed() {
+        stopTimer()
         trainingSessionService.next(true)
     }
 
     fun skip() {
+        stopTimer()
         trainingSessionService.next(false)
     }
 
@@ -71,7 +73,7 @@ class TrainingSessionViewModel @Inject constructor(
         viewModelScope.launch {
             trainingSessionState.collectLatest { state ->
                 stopTimer()
-                setTimer(state)
+                setTimer(state.time)
                 startRestTimer(state)
             }
         }
@@ -85,20 +87,9 @@ class TrainingSessionViewModel @Inject constructor(
 
     private fun observeTimer() {
         viewModelScope.launch {
-            timer.collectLatest {
-                if(it == 0L) trainingSessionService.next()
+            hasFinished.collectLatest {
+                if (it) trainingSessionService.next()
             }
-        }
-    }
-
-    // TODO is it good approach to handle setting time
-    // Separation of controllers is Interface Segregation principle (Another controller will be for calculating statistics )
-    // Statistics controllers: one for healthy measurements (used by watch), second for general statistics (time etc)
-    private fun setTimer(state: TrainingSessionState) {
-        when (state) {
-            is TrainingSessionState.ExerciseState -> setTime(state.exercise!!.time)
-            is TrainingSessionState.RestTimeState -> setTime(state.restTime)
-            else -> Unit
         }
     }
 
