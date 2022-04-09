@@ -44,6 +44,7 @@ import com.lukasz.witkowski.training.planner.training.presentation.TrainingExerc
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
+import com.lukasz.witkowski.training.planner.ui.components.TrainingExerciseRepsSetsTimeOverviewRow
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
 import me.bytebeats.views.charts.line.LineChart
 import me.bytebeats.views.charts.line.LineChartData
@@ -210,32 +211,7 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExer
             if (!exercise.category.isNone()) {
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = "Reps:")
-                    Text(text = exercise.repetitions.toString())
-                }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = "Sets:")
-                    Text(text = exercise.sets.toString())
-                }
-                if (exercise.time > 0L) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(text = "Time:")
-                        Text(text = TimeFormatter.millisToTime(exercise.time))
-                    }
-                }
-            }
+            TrainingExerciseRepsSetsTimeOverviewRow(exercise = exercise)
             Spacer(modifier = Modifier.height(16.dp))
             if (exercise.restTime > 0L) {
                 Row(
@@ -250,6 +226,8 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExer
         }
     }
 }
+
+
 
 @Composable
 fun TrainingStatisticsList(

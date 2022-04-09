@@ -43,6 +43,7 @@ class TrainingSessionViewModel @Inject constructor(
             stopTimer()
             setTimer(value.time)
             startRestTimer()
+            Timber.d("Exercise: ${value.exercise.toString()}")
         }
 
     val trainingSessionState: StateFlow<TrainingSessionState>

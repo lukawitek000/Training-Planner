@@ -1,32 +1,33 @@
 package com.lukasz.witkowski.training.planner.trainingSession
 
-import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PauseCircle
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material.icons.filled.Replay
-import androidx.compose.material.icons.filled.ReplayCircleFilled
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,7 +38,9 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
 import com.lukasz.witkowski.training.planner.trainingSession.components.FabTextWithIcon
 import com.lukasz.witkowski.training.planner.trainingSession.components.TimerWithCircularProgressBar
+import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
+import com.lukasz.witkowski.training.planner.ui.components.TrainingExerciseRepsSetsTimeOverviewRow
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 
 @Composable
@@ -63,7 +66,7 @@ fun TrainingExerciseScreen(
             CurrentExerciseInformation(
                 exercise = exercise
             )
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(24.dp))
             CurrentExerciseTimer(
                 totalTime = exercise.time,
                 remainingTime = remainingTime,
@@ -89,9 +92,10 @@ fun CurrentExerciseInformation(
     Column(modifier = modifier) {
         GeneralExerciseInformation(exercise = exercise)
         Spacer(Modifier.height(8.dp))
-        ExerciseSetsRepsTimeInfo(
+        TrainingExerciseRepsSetsTimeOverviewRow(
             modifier = Modifier.padding(horizontal = 16.dp),
-            trainingExercise = exercise
+            exercise = exercise,
+            fontSize = 20.sp
         )
     }
 }
@@ -101,15 +105,30 @@ private fun GeneralExerciseInformation(
     modifier: Modifier = Modifier,
     exercise: TrainingExercise
 ) {
-    Row(modifier = modifier) {
+    Row(
+        modifier = modifier.padding(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         exercise.image?.let { image ->
-            Image(
-                bitmap = image.asImageBitmap(),
-                contentDescription = stringResource(id = R.string.exercise_image)
-            )
+            ImageContainer(
+                modifier = Modifier
+                    .fillMaxWidth(0.3f)
+                    .aspectRatio(1.0f),
+            ) {
+                Image(
+                    bitmap = image.asImageBitmap(),
+                    contentDescription = stringResource(id = R.string.exercise_image)
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
         }
         Column {
-            Text(text = exercise.name, fontSize = 32.sp)
+            Text(
+                text = exercise.name,
+                fontSize = 32.sp,
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center
+            )
             Spacer(Modifier.height(8.dp))
             Text(text = exercise.description)
         }
@@ -126,19 +145,25 @@ fun CurrentExerciseTimer(
     reset: () -> Unit,
     isTimerRunning: Boolean
 ) {
-    ListCardItem() {
-        Column(
-            modifier = modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            TimerWithCircularProgressBar(totalTime = totalTime, timeLeft = remainingTime)
-            Spacer(modifier = Modifier.height(16.dp))
-            TimerControlButtons(
-                start = start,
-                pause = pause,
-                reset = reset,
-                isTimerRunning = isTimerRunning
-            )
+    if (totalTime > 0L) {
+        ListCardItem(modifier = modifier) {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                TimerWithCircularProgressBar(
+                    modifier = Modifier.fillMaxHeight(0.7f).aspectRatio(1.0f),
+                    totalTime = totalTime,
+                    timeLeft = remainingTime
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                TimerControlButtons(
+                    start = start,
+                    pause = pause,
+                    reset = reset,
+                    isTimerRunning = isTimerRunning
+                )
+            }
         }
     }
 }

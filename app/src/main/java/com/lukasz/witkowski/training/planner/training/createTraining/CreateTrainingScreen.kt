@@ -414,7 +414,7 @@ fun ExerciseSetsRepsTimeInfo(
         if (trainingExercise.time > 0L) {
             Text(
                 text = stringResource(
-                    id = R.string.time,
+                    id = R.string.time_with_value,
                     TimeFormatter.millisToMinutesSeconds(trainingExercise.time)
                 ),
                 color = MaterialTheme.colors.primaryVariant
