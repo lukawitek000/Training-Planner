@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -31,6 +32,7 @@ import com.lukasz.witkowski.training.planner.training.presentation.TrainingExerc
 import com.lukasz.witkowski.training.planner.trainingSession.components.FabTextWithIcon
 import com.lukasz.witkowski.training.planner.trainingSession.components.TimerWithCircularProgressBar
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
+import com.lukasz.witkowski.training.planner.ui.components.TrainingExerciseRepsSetsTimeOverviewRow
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 
 @Composable
@@ -77,7 +79,11 @@ fun NextExerciseOverview(
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                ExerciseSetsRepsTimeInfo(trainingExercise = exercise)
+                TrainingExerciseRepsSetsTimeOverviewRow(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    exercise = exercise,
+                    textColor = MaterialTheme.colors.primaryVariant
+                )
             }
         }
     }
