@@ -75,6 +75,5 @@ class Time(val timeInMillis: Long) {
         private const val MINUTES_IN_HOUR = 60L
         private const val MILLIS_IN_HOUR = MINUTES_IN_HOUR * SECONDS_IN_MINUTE * MILLIS_IN_SECOND
         val NONE = Time(0L)
-        val currentTime: Time = Time(System.currentTimeMillis())
     }
 }

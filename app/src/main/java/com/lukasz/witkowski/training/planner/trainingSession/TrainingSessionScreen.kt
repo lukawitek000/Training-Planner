@@ -40,7 +40,9 @@ fun TrainingSessionScreen(
                 nextExercise = trainingSessionState.exercise!!,
                 skip = { viewModel.skip() }
             )
-            is TrainingSessionState.SummaryState -> TrainingSessionSummaryScreen()
+            is TrainingSessionState.SummaryState -> TrainingSessionSummaryScreen(
+                statistics = (trainingSessionState as TrainingSessionState.SummaryState).statistics
+            )
             else -> LoadingScreen(Modifier.fillMaxSize())
         }
     }

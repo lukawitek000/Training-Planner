@@ -13,4 +13,11 @@ data class ExerciseStatistics(
             val timeInMillis = attemptsStatistics.sumOf { it.time.timeInMillis }
             return Time(timeInMillis)
         }
+
+    val completenessRate: Double
+        get() {
+            val numberOfAttempts = attemptsStatistics.size
+            val completedAttempts = attemptsStatistics.count { it.completed }
+            return completedAttempts / numberOfAttempts.toDouble()
+        }
 }

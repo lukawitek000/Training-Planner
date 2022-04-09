@@ -68,7 +68,7 @@ class TrainingSessionService {
     private fun setSummaryState() {
         val statistics = gatherTrainingStatistics()
         trainingSessionState.value =
-            TrainingSessionState.SummaryState("Training finished")
+            TrainingSessionState.SummaryState(statistics)
     }
 
     private fun getNextExercise(): TrainingExercise? {
@@ -103,11 +103,12 @@ class TrainingSessionService {
     private var currentExerciseSet: Int = 0
 
     private fun startRecordingTrainingStatistics(trainingPlanId: TrainingPlanId) {
-        startTrainingTime = Time.currentTime
+        startTrainingTime = getCurrentTime()
+        this.trainingPlanId = trainingPlanId
     }
 
     private fun startRecordingExerciseStatistics(trainingExercise: TrainingExercise, set: Int) {
-        currentExerciseStartTime = Time.currentTime
+        currentExerciseStartTime = getCurrentTime()
         currentExerciseId = trainingExercise.id
         currentExerciseSet = set
     }
@@ -115,7 +116,7 @@ class TrainingSessionService {
     private fun saveExerciseAttemptStatistics(completed: Boolean) {
         val exerciseAttemptStatistics = ExerciseAttemptStatistics(
             trainingExerciseId = currentExerciseId!!,
-            time = Time.currentTime.minus(currentExerciseStartTime),
+            time = getCurrentTime().minus(currentExerciseStartTime),
             set = currentExerciseSet,
             completed = completed
         )
@@ -131,9 +132,14 @@ class TrainingSessionService {
         }
         return TrainingStatistics(
             trainingPlanId = trainingPlanId!!,
-            totalTime = Time.currentTime.minus(startTrainingTime),
+            totalTime = getCurrentTime().minus(startTrainingTime),
             exercisesStatistics = exercisesStatistics
         )
+    }
+
+    private fun getCurrentTime(): Time{
+        val currentTimeInMillis = System.currentTimeMillis()
+        return Time(currentTimeInMillis)
     }
 
 }
