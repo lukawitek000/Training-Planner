@@ -15,8 +15,11 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PauseCircle
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.Replay
 import androidx.compose.material.icons.filled.ReplayCircleFilled
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.runtime.Composable
@@ -34,6 +37,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
 import com.lukasz.witkowski.training.planner.trainingSession.components.FabTextWithIcon
 import com.lukasz.witkowski.training.planner.trainingSession.components.TimerWithCircularProgressBar
+import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 
 @Composable
@@ -122,17 +126,20 @@ fun CurrentExerciseTimer(
     reset: () -> Unit,
     isTimerRunning: Boolean
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        TimerWithCircularProgressBar(totalTime = totalTime, timeLeft = remainingTime)
-        TimerControlButtons(
-            start = start,
-            pause = pause,
-            reset = reset,
-            isTimerRunning = isTimerRunning
-        )
+    ListCardItem() {
+        Column(
+            modifier = modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TimerWithCircularProgressBar(totalTime = totalTime, timeLeft = remainingTime)
+            Spacer(modifier = Modifier.height(16.dp))
+            TimerControlButtons(
+                start = start,
+                pause = pause,
+                reset = reset,
+                isTimerRunning = isTimerRunning
+            )
+        }
     }
 }
 
@@ -150,13 +157,13 @@ fun TimerControlButtons(
     ) {
         Button(onClick = if (isTimerRunning) pause else start) {
             Icon(
-                imageVector = if (isTimerRunning) Icons.Filled.PauseCircle else Icons.Filled.PlayCircle,
+                imageVector = if (isTimerRunning) Icons.Filled.Pause else Icons.Filled.PlayArrow,
                 contentDescription = stringResource(id = if (isTimerRunning) R.string.pause else R.string.start)
             )
         }
         Button(onClick = reset) {
             Icon(
-                imageVector = Icons.Filled.ReplayCircleFilled,
+                imageVector = Icons.Filled.Replay,
                 contentDescription = stringResource(id = R.string.reset)
             )
         }

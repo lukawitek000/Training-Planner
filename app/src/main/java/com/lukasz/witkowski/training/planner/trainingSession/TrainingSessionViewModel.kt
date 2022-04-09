@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.trainingSession
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionController
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,14 +37,22 @@ class TrainingSessionViewModel @Inject constructor(
         ?: throw Exception("Training plan id was not provided")
     private val trainingId = TrainingPlanId(_trainingId)
 
+    private var currentState: TrainingSessionState = TrainingSessionState.IdleState
+        set(value) {
+            field = value
+            stopTimer()
+            setTimer(value.time)
+            startRestTimer()
+        }
+
     val trainingSessionState: StateFlow<TrainingSessionState>
         get() = trainingSessionService.trainingSessionState.map {
-            TrainingSessionStateConverter.toPresentation(it)
+            currentState = TrainingSessionStateConverter.toPresentation(it)
+            currentState
         }.stateIn(viewModelScope, SharingStarted.Lazily, TrainingSessionState.IdleState)
 
     init {
         fetchTrainingPlan()
-        observeTrainingState()
         observeTimer()
     }
 
@@ -69,18 +79,8 @@ class TrainingSessionViewModel @Inject constructor(
         trainingSessionService.startTraining(domainTrainingPlan)
     }
 
-    private fun observeTrainingState() {
-        viewModelScope.launch {
-            trainingSessionState.collectLatest { state ->
-                stopTimer()
-                setTimer(state.time)
-                startRestTimer(state)
-            }
-        }
-    }
-
-    private fun startRestTimer(state: TrainingSessionState) {
-        if(state is TrainingSessionState.RestTimeState) {
+    private fun startRestTimer() {
+        if(currentState is TrainingSessionState.RestTimeState) {
             startTimer()
         }
     }
@@ -88,8 +88,23 @@ class TrainingSessionViewModel @Inject constructor(
     private fun observeTimer() {
         viewModelScope.launch {
             hasFinished.collectLatest {
-                if (it) trainingSessionService.next()
+                if (it) {
+                    navigateNextIfRestTimeElapsed()
+                    resetTimerIfExerciseTimeElapsed()
+                }
             }
+        }
+    }
+
+    private fun resetTimerIfExerciseTimeElapsed() {
+        if(currentState is TrainingSessionState.ExerciseState) {
+            resetTimer()
+        }
+    }
+
+    private fun navigateNextIfRestTimeElapsed() {
+        if(currentState is TrainingSessionState.RestTimeState) {
+            trainingSessionService.next()
         }
     }
 
