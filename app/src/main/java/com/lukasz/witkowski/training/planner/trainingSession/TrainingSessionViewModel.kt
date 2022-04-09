@@ -3,10 +3,8 @@ package com.lukasz.witkowski.training.planner.trainingSession
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
-import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionController
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateConverter
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
@@ -30,8 +28,7 @@ class TrainingSessionViewModel @Inject constructor(
     private val trainingSessionService: TrainingSessionService,
     timerController: TimerController
 ) : ViewModel(),
-    TimerController by timerController
-{
+    TimerController by timerController {
 
     private val _trainingId = savedStateHandle.get<String>("trainingId")
         ?: throw Exception("Training plan id was not provided")
@@ -81,7 +78,7 @@ class TrainingSessionViewModel @Inject constructor(
     }
 
     private fun startRestTimer() {
-        if(currentState is TrainingSessionState.RestTimeState) {
+        if (currentState is TrainingSessionState.RestTimeState) {
             startTimer()
         }
     }
@@ -98,13 +95,13 @@ class TrainingSessionViewModel @Inject constructor(
     }
 
     private fun resetTimerIfExerciseTimeElapsed() {
-        if(currentState is TrainingSessionState.ExerciseState) {
+        if (currentState is TrainingSessionState.ExerciseState) {
             resetTimer()
         }
     }
 
     private fun navigateNextIfRestTimeElapsed() {
-        if(currentState is TrainingSessionState.RestTimeState) {
+        if (currentState is TrainingSessionState.RestTimeState) {
             trainingSessionService.next()
         }
     }

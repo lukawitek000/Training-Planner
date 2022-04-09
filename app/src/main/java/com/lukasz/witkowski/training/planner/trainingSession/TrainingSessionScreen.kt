@@ -1,12 +1,10 @@
 package com.lukasz.witkowski.training.planner.trainingSession
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lukasz.witkowski.training.planner.R
@@ -44,9 +41,11 @@ fun TrainingSessionScreen(
             modifier.fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Box(modifier = Modifier
-                .fillMaxWidth()
-                .weight(0.9f)) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.9f)
+            ) {
                 when (trainingSessionState) {
                     is TrainingSessionState.ExerciseState -> TrainingExerciseScreen(
                         exercise = trainingSessionState.exercise!!,
@@ -68,7 +67,7 @@ fun TrainingSessionScreen(
                 }
             }
 
-            AnimatedVisibility(visible = !(trainingSessionState is TrainingSessionState.SummaryState)) {
+            AnimatedVisibility(visible = trainingSessionState !is TrainingSessionState.SummaryState) {
                 CompletedAndSkipFabs(
                     modifier = Modifier.weight(0.1f),
                     completed = { viewModel.completed() },
@@ -88,7 +87,9 @@ fun CompletedAndSkipFabs(
     isCompletedFabVisible: Boolean
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(8.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(8.dp),
         horizontalArrangement = Arrangement.Center
     ) {
         FabTextWithIcon(
