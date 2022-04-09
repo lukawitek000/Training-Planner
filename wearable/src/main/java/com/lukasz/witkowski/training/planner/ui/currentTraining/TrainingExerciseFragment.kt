@@ -58,21 +58,21 @@ class TrainingExerciseFragment : Fragment() {
     }
 
     private fun observeExerciseTimer() {
-        timer.timeLeft.observe(viewLifecycleOwner) {
-//            if (trainingService.trainingProgressController.isExerciseState && timer.isRunning) {
-//                binding.timerTv.text = TimeFormatter.millisToTimer(it)
+//        timer.timeLeft.observe(viewLifecycleOwner) {
+////            if (trainingService.trainingProgressController.isExerciseState && timer.isRunning) {
+////                binding.timerTv.text = TimeFormatter.millisToTimer(it)
+////            }
+//        }
+//        timer.timerFinished.observe(viewLifecycleOwner) {
+//            if (it) {
+//                setTimerButtonIcon(isTimerRunning = false)
 //            }
-        }
-        timer.timerFinished.observe(viewLifecycleOwner) {
-            if (it) {
-                setTimerButtonIcon(isTimerRunning = false)
-            }
-        }
+//        }
     }
 
     private fun setNextExerciseButtonListener() {
         binding.nextBtn.setOnClickListener {
-            timer.cancelTimer()
+//            timer.cancelTimer()
             navigateFurther()
         }
     }
@@ -112,14 +112,14 @@ class TrainingExerciseFragment : Fragment() {
 
     private fun setPlayButtonListener() {
         binding.startPauseTimerBtn.setOnClickListener {
-            if (!timer.isRunning && !timer.isPaused) {
-//                timer.startTimer(trainingService.trainingProgressController.exerciseTime)
-            } else if (timer.isPaused) {
-                timer.resumeTimer()
-            } else if (timer.isRunning) {
-                timer.pauseTimer()
-            }
-            setTimerButtonIcon(timer.isRunning)
+//            if (!timer.isRunning && !timer.isPaused) {
+////                timer.startTimer(trainingService.trainingProgressController.exerciseTime)
+//            } else if (timer.isPaused) {
+//                timer.resumeTimer()
+//            } else if (timer.isRunning) {
+//                timer.pauseTimer()
+//            }
+//            setTimerButtonIcon(timer.isRunning)
         }
     }
 

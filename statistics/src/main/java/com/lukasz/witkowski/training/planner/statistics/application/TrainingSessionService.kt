@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.statistics.application
 
+import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -73,8 +74,8 @@ class TrainingSessionService {
 
 
     private fun setRestTimeState(nextExercise: TrainingExercise) {
-        val restTime = trainingSessionState.value.exercise?.restTime ?: 0L
-        if (restTime > 0L) {
+        val restTime = trainingSessionState.value.exercise?.restTime ?: Time.NONE
+        if (restTime.isNotZero()) {
             trainingSessionState.value = TrainingSessionState.RestTimeState(nextExercise, restTime)
         } else {
             loadExercise()

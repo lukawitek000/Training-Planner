@@ -4,6 +4,7 @@ import com.lukasz.witkowski.shared.db.StatisticsDao
 import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
 import com.lukasz.witkowski.shared.models.statistics.TrainingStatistics
+import com.lukasz.witkowski.shared.time.Time
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -32,8 +33,8 @@ class StatisticsRepository constructor(private val statisticsDao: StatisticsDao)
         val maxHeartRate = calculateMaxHeartRate(this)
         return GeneralStatistics(
             statisticsId = trainingStatistics.id,
-            time = trainingStatistics.totalTime,
-            date = trainingStatistics.date,
+            time = Time(trainingStatistics.totalTime),
+            date = Time(trainingStatistics.date),
             burnedCalories = totalBurnedCalories,
             maxHeartRate = maxHeartRate,
             heartRateDuringTraining = trainingStatistics.heartRateHistory

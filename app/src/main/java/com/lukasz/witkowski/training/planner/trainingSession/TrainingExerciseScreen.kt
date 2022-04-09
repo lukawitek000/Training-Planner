@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.training.createTraining.ExerciseSetsRepsTimeInfo
@@ -48,7 +49,7 @@ import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 fun TrainingExerciseScreen(
     modifier: Modifier = Modifier,
     exercise: TrainingExercise,
-    remainingTime: Long,
+    remainingTime: Time,
     start: () -> Unit,
     pause: () -> Unit,
     reset: () -> Unit,
@@ -140,14 +141,14 @@ private fun GeneralExerciseInformation(
 @Composable
 fun CurrentExerciseTimer(
     modifier: Modifier = Modifier,
-    totalTime: Long,
-    remainingTime: Long,
+    totalTime: Time,
+    remainingTime: Time,
     start: () -> Unit,
     pause: () -> Unit,
     reset: () -> Unit,
     isTimerRunning: Boolean
 ) {
-    if (totalTime > 0L) {
+    if (totalTime.isNotZero()) {
         ListCardItem(modifier = modifier) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -232,10 +233,10 @@ private fun TrainingExerciseScreenPreview() {
                 category = Category(0, R.string.category_back),
                 repetitions = 15,
                 sets = 3,
-                time = 30000,
-                restTime = 60000
+                time = Time(30000),
+                restTime = Time(60000)
             ),
-            remainingTime = 1000L,
+            remainingTime = Time(1000L),
             completed = {},
             skip = {},
             start = {},

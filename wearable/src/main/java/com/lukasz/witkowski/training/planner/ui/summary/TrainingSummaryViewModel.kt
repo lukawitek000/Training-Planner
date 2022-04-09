@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.models.statistics.TrainingCompleteStatistics
 import com.lukasz.witkowski.shared.utils.ResultHandler
-import com.lukasz.witkowski.shared.time.TimeFormatter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -58,8 +57,9 @@ class TrainingSummaryViewModel
     }
 
     fun getTrainingTotalTime(): String {
-        return TimeFormatter.millisToTime(
-            trainingCompleteStatistics?.trainingStatistics?.totalTime ?: 0
-        )
+//        return TimeFormatter.millisToTime(
+//            trainingCompleteStatistics?.trainingStatistics?.totalTime ?: 0
+//        )
+        return ""
     }
 }

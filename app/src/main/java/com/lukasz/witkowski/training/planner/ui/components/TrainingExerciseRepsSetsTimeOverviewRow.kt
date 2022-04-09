@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.TextUnit
-import com.lukasz.witkowski.shared.time.TimeFormatter
+import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
 
@@ -39,12 +39,12 @@ fun TrainingExerciseRepsSetsTimeOverviewRow(
             Text(text = stringResource(id = R.string.sets), fontSize = fontSize, color = textColor)
             Text(text = exercise.sets.toString(), fontSize = fontSize, color = textColor)
         }
-        if (exercise.time > 0L) {
+        if (exercise.time.isNotZero()) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = stringResource(id = R.string.time), fontSize = fontSize, color = textColor)
-                Text(text = TimeFormatter.millisToTime(exercise.time), fontSize = fontSize, color = textColor)
+                Text(text = exercise.time.toString(), fontSize = fontSize, color = textColor)
             }
         }
     }

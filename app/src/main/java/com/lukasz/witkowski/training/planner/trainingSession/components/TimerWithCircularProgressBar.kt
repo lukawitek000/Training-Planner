@@ -11,14 +11,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.time.TimeFormatter
+import com.lukasz.witkowski.shared.time.Time
 
 
 @Composable
 fun TimerWithCircularProgressBar(
     modifier: Modifier = Modifier,
-    totalTime: Long,
-    timeLeft: Long
+    totalTime: Time,
+    timeLeft: Time
 ) {
     Box(
         modifier = modifier
@@ -28,9 +28,9 @@ fun TimerWithCircularProgressBar(
     ) {
         CircularProgressIndicator(
             modifier = Modifier.fillMaxSize(),
-            progress = timeLeft / totalTime.toFloat(),
+            progress = timeLeft.timeInMillis / totalTime.timeInMillis.toFloat(),
             strokeWidth = 24.dp
         )
-        Text(text = TimeFormatter.millisToTimer(timeLeft), fontSize = 42.sp)
+        Text(text = timeLeft.toTimerString(), fontSize = 42.sp)
     }
 }

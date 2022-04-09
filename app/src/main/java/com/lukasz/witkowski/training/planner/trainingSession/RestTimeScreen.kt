@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
@@ -33,8 +34,8 @@ import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 @Composable
 fun RestTimeScreen(
     modifier: Modifier = Modifier,
-    timeLeft: Long,
-    totalTime: Long,
+    timeLeft: Time,
+    totalTime: Time,
     nextExercise: TrainingExercise,
     skip: () -> Unit
 ) {
@@ -89,8 +90,8 @@ fun NextExerciseOverview(
 private fun RestTimeScreenPreview() {
     TrainingPlannerTheme {
         RestTimeScreen(
-            timeLeft = 9000,
-            totalTime = 10000,
+            timeLeft = Time(9000),
+            totalTime = Time(10000),
             skip = {},
             nextExercise = TrainingExercise(
                 id = TrainingExerciseId(""),
@@ -99,8 +100,8 @@ private fun RestTimeScreenPreview() {
                 category = Category(0, R.string.category_back),
                 repetitions = 15,
                 sets = 3,
-                time = 30000,
-                restTime = 60000
+                time = Time(30000),
+                restTime = Time(60000)
             )
         )
     }

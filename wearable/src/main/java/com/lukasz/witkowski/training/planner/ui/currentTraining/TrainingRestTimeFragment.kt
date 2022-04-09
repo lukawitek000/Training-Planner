@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.lukasz.witkowski.shared.trainingControllers.TimerHelper
-import com.lukasz.witkowski.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingRestTimeBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -63,9 +62,9 @@ class TrainingRestTimeFragment : Fragment() {
     }
 
     private fun observeRestTimer() {
-        timer.timeLeft.observe(viewLifecycleOwner) {
-            binding.restTimeTimerTv.text = TimeFormatter.millisToTimer(it)
-        }
+//        timer.timeLeft.observe(viewLifecycleOwner) {
+//            binding.restTimeTimerTv.text = TimeFormatter.millisToTimer(it)
+//        }
     }
 
     private fun observeSkipRestTimeButton() {
@@ -75,7 +74,7 @@ class TrainingRestTimeFragment : Fragment() {
     }
 
     private fun exitRestTimeFragment() {
-        timer.cancelTimer()
+//        timer.cancelTimer()
 //        trainingService.trainingProgressController.navigateToTrainingExercise()
     }
 }

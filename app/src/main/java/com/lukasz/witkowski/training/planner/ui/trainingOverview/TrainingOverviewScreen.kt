@@ -35,7 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
-import com.lukasz.witkowski.shared.time.TimeFormatter
+import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
@@ -213,14 +213,14 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExer
             }
             TrainingExerciseRepsSetsTimeOverviewRow(exercise = exercise)
             Spacer(modifier = Modifier.height(16.dp))
-            if (exercise.restTime > 0L) {
+            if (exercise.restTime.isNotZero()) {
                 Row(
                     Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(text = "Rest time: ")
-                    Text(text = TimeFormatter.millisToTime(exercise.restTime))
+                    Text(text = exercise.restTime.toString())
                 }
             }
         }
@@ -249,7 +249,6 @@ fun SingleTrainingStatisticsItem(
     modifier: Modifier = Modifier,
     generalStatistics: GeneralStatistics
 ) {
-    val time = TimeFormatter.millisToTime(generalStatistics.time)
     val burnedCalories =
         if (generalStatistics.burnedCalories == 0.0) stringResource(R.string.no_data) else stringResource(
             id = R.string.total_burned_calories, generalStatistics.burnedCalories
@@ -263,11 +262,11 @@ fun SingleTrainingStatisticsItem(
         Column(modifier = Modifier.padding(8.dp)) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = TimeFormatter.convertMillisToDate(generalStatistics.date),
+                text = generalStatistics.date.toDateString(),
                 fontSize = fontSize,
                 textAlign = TextAlign.End
             )
-            Text(text = stringResource(id = R.string.time_text, time), fontSize = fontSize)
+            Text(text = stringResource(id = R.string.time_text, generalStatistics.time.toString()), fontSize = fontSize)
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = stringResource(id = R.string.burned_calories_text, burnedCalories),
@@ -355,7 +354,7 @@ fun HeartRateLineChartPreview() {
 fun SingleTrainingStatisticsItemPrev() {
     SingleTrainingStatisticsItem(
         generalStatistics = GeneralStatistics(
-            0L, 60000L, System.currentTimeMillis(), 12.1, 123.0, heartRateDuringTraining = listOf()
+            0L, Time(60000), Time(System.currentTimeMillis()), 12.1, 123.0, heartRateDuringTraining = listOf()
         )
     )
 }
@@ -373,8 +372,8 @@ fun SingleExercisePrev() {
             category = Category(),
             sets = 10,
             repetitions = 100,
-            time = 141000,
-            restTime = 53988
+            time = Time(141000),
+            restTime = Time(53988)
         )
     )
 }

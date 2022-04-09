@@ -1,14 +1,15 @@
 package com.lukasz.witkowski.training.planner.statistics.presentation
 
+import com.lukasz.witkowski.shared.time.Time
 import kotlinx.coroutines.flow.StateFlow
 
 interface TimerController {
     // TODO wrap Long in some Duration??
     // For presentation I use TimeFormatter so separate classes or Duration should have methods that returns formatted Strings??
-    val timer: StateFlow<Long>
+    val timer: StateFlow<Time>
     val hasFinished: StateFlow<Boolean>
     val isRunning: StateFlow<Boolean>
-    fun setTimer(startTime: Long)
+    fun setTimer(startTime: Time)
     fun startTimer()
     fun pauseTimer()
     fun resumeTimer()

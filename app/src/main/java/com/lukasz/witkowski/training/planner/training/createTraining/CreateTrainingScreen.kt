@@ -40,7 +40,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.time.TimeFormatter
+import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
@@ -287,7 +287,7 @@ private fun TrainingExerciseRestTime(
     trainingExercise: TrainingExercise
 ) {
     val restTime = trainingExercise.restTime
-    val buttonText = if (restTime > 0L) {
+    val buttonText = if (restTime.isNotZero()) {
         stringResource(id = R.string.change_rest_time)
     } else {
         stringResource(id = R.string.add_rest_time)
@@ -302,9 +302,9 @@ private fun TrainingExerciseRestTime(
         }) {
             Text(text = buttonText)
         }
-        if (restTime > 0L) {
+        if (restTime.isNotZero()) {
             Text(
-                text = TimeFormatter.millisToTime(restTime),
+                text = restTime.toString(),
                 color = MaterialTheme.colors.primary,
                 fontSize = 18.sp
             )
@@ -319,7 +319,7 @@ fun SetTrainingExerciseRestTimeDialog(
     setRestTimeToExercise: (TrainingExercise, Int, Int) -> Unit,
     closeDialog: () -> Unit
 ) {
-    val (currentMinutes, currentSeconds) = TimeFormatter.calculateMinutesAndSeconds(trainingExercise.restTime)
+    val (currentMinutes, currentSeconds) = trainingExercise.restTime.calculateMinutesAndSeconds()
     var minutes by remember { mutableStateOf(currentMinutes) }
     var seconds by remember { mutableStateOf(currentSeconds) }
 
@@ -411,11 +411,11 @@ fun ExerciseSetsRepsTimeInfo(
             modifier = Modifier.weight(1f),
             color = MaterialTheme.colors.primaryVariant
         )
-        if (trainingExercise.time > 0L) {
+        if (trainingExercise.time.isNotZero()) {
             Text(
                 text = stringResource(
                     id = R.string.time_with_value,
-                    TimeFormatter.millisToMinutesSeconds(trainingExercise.time)
+                    trainingExercise.time.toString()
                 ),
                 color = MaterialTheme.colors.primaryVariant
             )
@@ -435,8 +435,8 @@ fun TrainingExerciseListItemPreview() {
             description = "",
             repetitions = 10,
             sets = 5,
-            time = 1000,
-            restTime = 3000
+            time = Time(1000L),
+            restTime = Time(3000)
         ),
         removeTrainingExercise = {},
         setRestTimeToTrainingExercise = {}
