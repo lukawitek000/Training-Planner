@@ -10,9 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.lukasz.witkowski.shared.trainingControllers.CurrentTrainingState
 import com.lukasz.witkowski.shared.trainingControllers.TimerHelper
-import com.lukasz.witkowski.shared.utils.TimeFormatter
+import com.lukasz.witkowski.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingRestTimeBinding
 import dagger.hilt.android.AndroidEntryPoint
 

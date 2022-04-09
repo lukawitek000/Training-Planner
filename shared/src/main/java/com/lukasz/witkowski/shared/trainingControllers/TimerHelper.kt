@@ -3,7 +3,7 @@ package com.lukasz.witkowski.shared.trainingControllers
 import android.os.CountDownTimer
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.lukasz.witkowski.shared.utils.TimeFormatter
+import com.lukasz.witkowski.shared.time.TimeFormatter
 
 class TimerHelper {
 

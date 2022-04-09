@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.lukasz.witkowski.shared.utils.TimeFormatter
+import com.lukasz.witkowski.shared.time.TimeFormatter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 // TODO do not navigate to the next screen after exercise timer has finished it can have more reps

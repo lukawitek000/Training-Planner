@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.shared.utils
+package com.lukasz.witkowski.shared.time
 
 import java.text.SimpleDateFormat
 import java.util.*
