@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.trainingSession
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Button
@@ -18,14 +18,13 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Replay
-import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -35,10 +34,8 @@ import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
-import com.lukasz.witkowski.training.planner.training.createTraining.ExerciseSetsRepsTimeInfo
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
-import com.lukasz.witkowski.training.planner.trainingSession.components.FabTextWithIcon
 import com.lukasz.witkowski.training.planner.trainingSession.components.TimerWithCircularProgressBar
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
@@ -53,35 +50,23 @@ fun TrainingExerciseScreen(
     start: () -> Unit,
     pause: () -> Unit,
     reset: () -> Unit,
-    isTimerRunning: Boolean,
-    skip: () -> Unit,
-    completed: () -> Unit
+    isTimerRunning: Boolean
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.SpaceBetween
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            CurrentExerciseInformation(
-                exercise = exercise
-            )
-            Spacer(Modifier.height(24.dp))
-            CurrentExerciseTimer(
-                totalTime = exercise.time,
-                remainingTime = remainingTime,
-                start = start,
-                pause = pause,
-                reset = reset,
-                isTimerRunning = isTimerRunning
-            )
-        }
-        CompletedAndSkipFabs(
-            modifier = Modifier.padding(top = 8.dp),
-            completed = completed,
-            skip = skip
+        CurrentExerciseInformation(
+            exercise = exercise
+        )
+        Spacer(Modifier.height(24.dp))
+        CurrentExerciseTimer(
+            totalTime = exercise.time,
+            remainingTime = remainingTime,
+            start = start,
+            pause = pause,
+            reset = reset,
+            isTimerRunning = isTimerRunning
         )
     }
 }
@@ -155,7 +140,9 @@ fun CurrentExerciseTimer(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TimerWithCircularProgressBar(
-                    modifier = Modifier.fillMaxHeight(0.7f).aspectRatio(1.0f),
+                    modifier = Modifier
+                        .fillMaxHeight(0.8f)
+                        .aspectRatio(1.0f),
                     totalTime = totalTime,
                     timeLeft = remainingTime
                 )
@@ -198,28 +185,6 @@ fun TimerControlButtons(
     }
 }
 
-@Composable
-fun CompletedAndSkipFabs(
-    modifier: Modifier = Modifier,
-    completed: () -> Unit,
-    skip: () -> Unit
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        FabTextWithIcon(
-            text = stringResource(id = R.string.skip),
-            imageVector = Icons.Filled.SkipNext,
-            onClick = skip
-        )
-        FabTextWithIcon(
-            text = stringResource(id = R.string.completed),
-            imageVector = Icons.Filled.Check,
-            onClick = completed
-        )
-    }
-}
 
 @Preview
 @Composable
@@ -237,8 +202,6 @@ private fun TrainingExerciseScreenPreview() {
                 restTime = Time(60000)
             ),
             remainingTime = Time(1000L),
-            completed = {},
-            skip = {},
             start = {},
             pause = {},
             reset = {},

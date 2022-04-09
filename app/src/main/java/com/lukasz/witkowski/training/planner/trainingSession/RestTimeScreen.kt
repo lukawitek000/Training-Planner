@@ -1,20 +1,20 @@
 package com.lukasz.witkowski.training.planner.trainingSession
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,7 +25,6 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
-import com.lukasz.witkowski.training.planner.trainingSession.components.FabTextWithIcon
 import com.lukasz.witkowski.training.planner.trainingSession.components.TimerWithCircularProgressBar
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.TrainingExerciseRepsSetsTimeOverviewRow
@@ -36,26 +35,15 @@ fun RestTimeScreen(
     modifier: Modifier = Modifier,
     timeLeft: Time,
     totalTime: Time,
-    nextExercise: TrainingExercise,
-    skip: () -> Unit
+    nextExercise: TrainingExercise
 ) {
-    Scaffold(
-        modifier = modifier,
-        floatingActionButton = {
-            FabTextWithIcon(
-                text = stringResource(id = R.string.skip),
-                imageVector = Icons.Filled.SkipNext,
-                onClick = skip
-            )
-        }) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
-        ) {
-            TimerWithCircularProgressBar(totalTime = totalTime, timeLeft = timeLeft)
-            NextExerciseOverview(exercise = nextExercise)
-        }
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly
+    ) {
+        TimerWithCircularProgressBar(totalTime = totalTime, timeLeft = timeLeft)
+        NextExerciseOverview(exercise = nextExercise)
     }
 }
 
@@ -92,7 +80,6 @@ private fun RestTimeScreenPreview() {
         RestTimeScreen(
             timeLeft = Time(9000),
             totalTime = Time(10000),
-            skip = {},
             nextExercise = TrainingExercise(
                 id = TrainingExerciseId(""),
                 name = "Next exercise name",
