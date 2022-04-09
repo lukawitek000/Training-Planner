@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.statistics.presentation
 
 import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.statistics.domain.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
 
 sealed class TrainingSessionState(val exercise: TrainingExercise? = null, val time: Time = Time.NONE) {
@@ -12,5 +13,5 @@ sealed class TrainingSessionState(val exercise: TrainingExercise? = null, val ti
     class RestTimeState(nextExercise: TrainingExercise, private val restTime: Time) : TrainingSessionState(nextExercise, restTime)
 
     // TODO summary objects (Statistics, TrainingPlan??)
-    data class SummaryState(val summary: String) : TrainingSessionState()
+    data class SummaryState(val statistics: TrainingStatistics) : TrainingSessionState(time = statistics.totalTime)
 }

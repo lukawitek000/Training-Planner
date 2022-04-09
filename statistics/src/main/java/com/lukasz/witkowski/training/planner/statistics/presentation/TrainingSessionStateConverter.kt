@@ -17,7 +17,7 @@ object TrainingSessionStateConverter {
                 state.restTime
             )
             is TrainingSessionState.SummaryState -> com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState.SummaryState(
-                state.summary
+                state.statistics
             )
             is TrainingSessionState.IdleState -> com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState.IdleState
         }

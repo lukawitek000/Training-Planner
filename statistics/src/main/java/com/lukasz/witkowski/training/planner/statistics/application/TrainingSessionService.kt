@@ -1,8 +1,13 @@
 package com.lukasz.witkowski.training.planner.statistics.application
 
 import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.statistics.domain.ExerciseAttemptStatistics
+import com.lukasz.witkowski.training.planner.statistics.domain.ExerciseStatistics
+import com.lukasz.witkowski.training.planner.statistics.domain.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.coroutines.flow.MutableStateFlow
 
 class TrainingSessionService {
@@ -20,12 +25,14 @@ class TrainingSessionService {
 
     fun startTraining(trainingPlan: TrainingPlan) {
         this.trainingPlan = trainingPlan
+        startRecordingTrainingStatistics(trainingPlan.id)
         loadSet(currentSet)
         loadExercise()
     }
 
     fun next(isCompleted: Boolean = true) {
         if (isCurrentStateExercise()) {
+            saveExerciseAttemptStatistics(isCompleted)
             val nextExercise = getNextExercise()
             if (nextExercise != null) {
                 setRestTimeState(nextExercise)
@@ -50,6 +57,7 @@ class TrainingSessionService {
         if (currentSetExercises.isNotEmpty()) {
             val loadedExercise = currentSetExercises.removeFirst()
             trainingSessionState.value = TrainingSessionState.ExerciseState(loadedExercise)
+            startRecordingExerciseStatistics(loadedExercise, currentSet)
         } else {
             currentSet++
             loadSet(currentSet)
@@ -58,6 +66,7 @@ class TrainingSessionService {
     }
 
     private fun setSummaryState() {
+        val statistics = gatherTrainingStatistics()
         trainingSessionState.value =
             TrainingSessionState.SummaryState("Training finished")
     }
@@ -69,7 +78,6 @@ class TrainingSessionService {
         return currentSetExercises.first()
     }
 
-
     private fun setRestTimeState(nextExercise: TrainingExercise) {
         val restTime = trainingSessionState.value.exercise?.restTime ?: Time.NONE
         if (restTime.isNotZero()) {
@@ -79,10 +87,53 @@ class TrainingSessionService {
         }
     }
 
-
     private fun isCurrentStateExercise() =
         trainingSessionState.value is TrainingSessionState.ExerciseState
 
     private fun isCurrentStateRestTime() =
         trainingSessionState.value is TrainingSessionState.RestTimeState
+
+    // TODO separate recording statistics
+
+    private var trainingPlanId: TrainingPlanId? = null
+    private var startTrainingTime = Time.NONE
+    private var exercisesAttemptsStatistics = mutableListOf<ExerciseAttemptStatistics>()
+    private var currentExerciseStartTime = Time.NONE
+    private var currentExerciseId: TrainingExerciseId? = null
+    private var currentExerciseSet: Int = 0
+
+    private fun startRecordingTrainingStatistics(trainingPlanId: TrainingPlanId) {
+        startTrainingTime = Time.currentTime
+    }
+
+    private fun startRecordingExerciseStatistics(trainingExercise: TrainingExercise, set: Int) {
+        currentExerciseStartTime = Time.currentTime
+        currentExerciseId = trainingExercise.id
+        currentExerciseSet = set
+    }
+
+    private fun saveExerciseAttemptStatistics(completed: Boolean) {
+        val exerciseAttemptStatistics = ExerciseAttemptStatistics(
+            trainingExerciseId = currentExerciseId!!,
+            time = Time.currentTime.minus(currentExerciseStartTime),
+            set = currentExerciseSet,
+            completed = completed
+        )
+        exercisesAttemptsStatistics.add(exerciseAttemptStatistics)
+    }
+
+    private fun gatherTrainingStatistics(): TrainingStatistics {
+        val exercisesStatistics = exercises.map { exercise ->
+            ExerciseStatistics(
+                exerciseId = exercise.id,
+                attemptsStatistics = exercisesAttemptsStatistics.filter { exerciseAttemptStatistics -> exerciseAttemptStatistics.trainingExerciseId == exercise.id }
+            )
+        }
+        return TrainingStatistics(
+            trainingPlanId = trainingPlanId!!,
+            totalTime = Time.currentTime.minus(startTrainingTime),
+            exercisesStatistics = exercisesStatistics
+        )
+    }
+
 }
