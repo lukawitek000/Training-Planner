@@ -5,7 +5,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 
 data class ExerciseStatistics(
     val id: ExerciseStatisticsId = ExerciseStatisticsId.create(),
-    val exerciseId: TrainingExerciseId,
+    val trainingExerciseId: TrainingExerciseId,
     val attemptsStatistics: List<ExerciseAttemptStatistics>
 ) {
     val totalTime: Time

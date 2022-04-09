@@ -1,0 +1,31 @@
+package com.lukasz.witkowski.training.planner.statistics.infrastructure
+
+import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.statistics.domain.ExerciseAttemptStatistics
+import com.lukasz.witkowski.training.planner.statistics.domain.ExerciseAttemptStatisticsId
+import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.DbExerciseAttemptStatistics
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+
+object ExerciseAttemptStatisticsMapper {
+
+    fun toDbExerciseAttemptStatistics(exerciseAttemptStatistics: ExerciseAttemptStatistics): DbExerciseAttemptStatistics {
+        return DbExerciseAttemptStatistics(
+            id = exerciseAttemptStatistics.id.value,
+            exerciseStatisticsId = exerciseAttemptStatistics,
+            trainingExerciseId = exerciseAttemptStatistics.trainingExerciseId.value,
+            time = exerciseAttemptStatistics.time.timeInMillis,
+            set = exerciseAttemptStatistics.set,
+            completed = exerciseAttemptStatistics.completed
+        )
+    }
+
+    fun toExerciseAttemptStatistics(dbExerciseAttemptStatistics: DbExerciseAttemptStatistics): ExerciseAttemptStatistics {
+        return ExerciseAttemptStatistics(
+            id = ExerciseAttemptStatisticsId(dbExerciseAttemptStatistics.id),
+            trainingExerciseId = TrainingExerciseId(dbExerciseAttemptStatistics.id),
+            time = Time(dbExerciseAttemptStatistics.time),
+            set = dbExerciseAttemptStatistics.set,
+            completed = dbExerciseAttemptStatistics.completed
+        )
+    }
+}

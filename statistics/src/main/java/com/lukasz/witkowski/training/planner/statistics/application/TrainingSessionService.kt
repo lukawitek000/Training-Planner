@@ -126,7 +126,7 @@ class TrainingSessionService {
     private fun gatherTrainingStatistics(): TrainingStatistics {
         val exercisesStatistics = exercises.map { exercise ->
             ExerciseStatistics(
-                exerciseId = exercise.id,
+                trainingExerciseId = exercise.id,
                 attemptsStatistics = exercisesAttemptsStatistics.filter { exerciseAttemptStatistics -> exerciseAttemptStatistics.trainingExerciseId == exercise.id }
             )
         }

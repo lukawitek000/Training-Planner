@@ -47,7 +47,7 @@ fun ExercisesStatistics(
                     .border(3.dp, Color.Red, RoundedCornerShape(8.dp))
                     .padding(8.dp)
             ) {
-                Text(text = "Exercise Id ${exerciseStatistics.exerciseId}")
+                Text(text = "Exercise Id ${exerciseStatistics.trainingExerciseId}")
                 Text(text = "Total time ${exerciseStatistics.totalTime}")
                 Text(text = "Completeness rate ${exerciseStatistics.completenessRate}")
             }
