@@ -5,9 +5,11 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -34,16 +36,18 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.models.statistics.GeneralStatistics
 import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.shared.time.formatToString
+import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
+import com.lukasz.witkowski.training.planner.statistics.domain.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
+import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 import com.lukasz.witkowski.training.planner.ui.components.TrainingExerciseRepsSetsTimeOverviewRow
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
 import me.bytebeats.views.charts.line.LineChart
@@ -59,22 +63,22 @@ fun TrainingOverviewScreen(
     viewModel: TrainingOverviewViewModel,
     navigateBack: () -> Unit
 ) {
-    val trainingWithExercises by viewModel.training.collectAsState(
-        TrainingPlan(
-        TrainingPlanId(""), "", exercises = emptyList()
-    )
-    ) // TODO Temporary solution
-//    val generalStatistics by viewModel.statistics.collectAsState(emptyList())
+    val trainingPlan by viewModel.trainingPlan.collectAsState()
+    val trainingStatistics by viewModel.trainingStatistics.collectAsState()
     Scaffold(modifier = modifier) {
         LazyColumn(
             modifier = Modifier
                 .padding(8.dp),
         ) {
             item {
-                TrainingOverviewContent(
-                    modifier = Modifier,
-                    trainingPlan = trainingWithExercises
-                )
+                if(trainingPlan is ResultHandler.Loading) {
+                    LoadingScreen()
+                } else if (trainingPlan is ResultHandler.Success){
+                    TrainingOverviewContent(
+                        modifier = Modifier,
+                        trainingPlan = (trainingPlan as ResultHandler.Success<TrainingPlan>).value
+                    )
+                }
             }
             item {
                 Text(
@@ -86,22 +90,22 @@ fun TrainingOverviewScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
             item {
-//                if (generalStatistics.isNotEmpty()) {
-//                    TrainingStatisticsList(
-//                        modifier = Modifier,
-//                        generalStatistics = generalStatistics
-//                    )
-//                } else {
-//                    Box(
-//                        modifier = Modifier.fillMaxSize(),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        Text(
-//                            text = stringResource(id = R.string.no_statistics),
-//                            fontSize = 18.sp,
-//                        )
-//                    }
-//                }
+                if (trainingStatistics.isNotEmpty()) {
+                    TrainingStatisticsList(
+                        modifier = Modifier,
+                        trainingStatistics = trainingStatistics
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.no_statistics),
+                            fontSize = 18.sp,
+                        )
+                    }
+                }
             }
         }
     }
@@ -232,13 +236,13 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExer
 @Composable
 fun TrainingStatisticsList(
     modifier: Modifier,
-    generalStatistics: List<GeneralStatistics>
+    trainingStatistics: List<TrainingStatistics>
 ) {
     LazyColumn(modifier = modifier.heightIn(max = 500.dp)) {
-        items(generalStatistics) {
+        items(trainingStatistics) {
             SingleTrainingStatisticsItem(
                 modifier = Modifier,
-                generalStatistics = it
+                trainingStatistics = it
             )
         }
     }
@@ -247,58 +251,19 @@ fun TrainingStatisticsList(
 @Composable
 fun SingleTrainingStatisticsItem(
     modifier: Modifier = Modifier,
-    generalStatistics: GeneralStatistics
+    trainingStatistics: TrainingStatistics
 ) {
-    val burnedCalories =
-        if (generalStatistics.burnedCalories == 0.0) stringResource(R.string.no_data) else stringResource(
-            id = R.string.total_burned_calories, generalStatistics.burnedCalories
-        )
-    val maxHeartRateStatistics =
-        if (generalStatistics.maxHeartRate == 0.0) stringResource(R.string.no_data) else stringResource(
-            id = R.string.max_heart_rate, generalStatistics.maxHeartRate
-        )
     val fontSize = 16.sp
     ListCardItem(modifier = modifier) {
         Column(modifier = Modifier.padding(8.dp)) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = generalStatistics.date.toDateString(),
+                text = trainingStatistics.date.formatToString(),
                 fontSize = fontSize,
                 textAlign = TextAlign.End
             )
-            Text(text = stringResource(id = R.string.time_text, generalStatistics.time.toString()), fontSize = fontSize)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(id = R.string.burned_calories_text, burnedCalories),
-                fontSize = fontSize
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(id = R.string.max_heart_rate_text, maxHeartRateStatistics),
-                fontSize = fontSize
-            )
-            if (areHeartRateStatisticsAvailable(generalStatistics.heartRateDuringTraining)) {
-                Spacer(modifier = Modifier.height(8.dp))
-                ListCardItem(
-                    backgroundColor = LightDark12
-                ) {
-                    Column() {
-                        Text(
-                            modifier = Modifier.fillMaxWidth(),
-                            text = stringResource(id = R.string.heart_rate_plot),
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colors.primary
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        HeartRateLineChart(
-                            modifier = Modifier,
-                            data = generalStatistics.heartRateDuringTraining
-                        )
-
-                    }
-                }
-            }
+            Text(text = stringResource(id = R.string.time_text, trainingStatistics.totalTime.toString()), fontSize = fontSize)
+            Text(text = "Effective time: ${trainingStatistics.effectiveTime}", fontSize = fontSize)
         }
     }
 }
@@ -346,17 +311,6 @@ fun HeartRateLineChart(
 @Composable
 fun HeartRateLineChartPreview() {
     HeartRateLineChart(data = listOf(13.0, 13.0, 13.0))
-}
-
-
-@Preview
-@Composable
-fun SingleTrainingStatisticsItemPrev() {
-    SingleTrainingStatisticsItem(
-        generalStatistics = GeneralStatistics(
-            0L, Time(60000), Time(System.currentTimeMillis()), 12.1, 123.0, heartRateDuringTraining = listOf()
-        )
-    )
 }
 
 

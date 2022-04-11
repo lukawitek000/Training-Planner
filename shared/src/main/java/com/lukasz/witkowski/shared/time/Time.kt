@@ -41,13 +41,6 @@ class Time(val timeInMillis: Long) {
         return timeStringBuilder.toString()
     }
 
-
-    fun toDateString(): String {
-        val date = Date(timeInMillis)
-        val format = SimpleDateFormat("HH:mm dd.MM.yyyy", Locale.getDefault())
-        return format.format(date)
-    }
-
     fun calculateMinutesAndSeconds(millis: Long = timeInMillis): Pair<Int, Int> {
         val millisToSeconds = millis / MILLIS_IN_SECOND
         val minutes = millisToSeconds / SECONDS_IN_MINUTE

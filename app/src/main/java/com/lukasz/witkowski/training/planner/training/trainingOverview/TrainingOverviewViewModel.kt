@@ -2,29 +2,53 @@ package com.lukasz.witkowski.training.planner.training.trainingOverview
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.lukasz.witkowski.training.planner.repository.StatisticsRepository
+import androidx.lifecycle.viewModelScope
+import com.lukasz.witkowski.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
+import com.lukasz.witkowski.training.planner.statistics.domain.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlanMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 @HiltViewModel
 class TrainingOverviewViewModel @Inject constructor(
     private val trainingPlanService: TrainingPlanService,
-    private val statisticsRepository: StatisticsRepository,
+    private val trainingStatisticsService: TrainingStatisticsService,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val trainingId = savedStateHandle.get<String>("trainingId") ?: ""
+    private val _trainingId = savedStateHandle.get<String>("trainingId") ?: ""
+    private val trainingPlanId: TrainingPlanId
+        get() = TrainingPlanId(_trainingId)
 
-    private val _training = trainingPlanService.getTrainingPlansFromCategories(emptyList()).map { it.first { it.id.value == trainingId } } // TODO temporary fix
-    val training: Flow<TrainingPlan> = _training.map { TrainingPlanMapper.toPresentationTrainingPlan(it) }
+    private val _trainingPlan = MutableStateFlow<ResultHandler<TrainingPlan>>(ResultHandler.Idle)
+    val trainingPlan: StateFlow<ResultHandler<TrainingPlan>>
+        get() = _trainingPlan
 
-//    private val _statistics =
-//        statisticsRepository.getTrainingCompleteStatisticsByTrainingId(trainingId)
-//    val statistics: Flow<List<GeneralStatistics>> = _statistics
+    val trainingStatistics: StateFlow<List<TrainingStatistics>> =
+        trainingStatisticsService.getStatistics(trainingPlanId).stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+
+    init {
+        fetchTrainingPlan()
+    }
+
+    private fun fetchTrainingPlan() {
+        viewModelScope.launch {
+            _trainingPlan.value = ResultHandler.Loading
+            val domainTrainingPlan =
+                trainingPlanService.getTrainingPlanById(trainingPlanId = trainingPlanId)
+            val trainingPlan =
+                TrainingPlanMapper.toPresentationTrainingPlan(trainingPlan = domainTrainingPlan)
+            _trainingPlan.value = ResultHandler.Success(trainingPlan)
+        }
+    }
 }
