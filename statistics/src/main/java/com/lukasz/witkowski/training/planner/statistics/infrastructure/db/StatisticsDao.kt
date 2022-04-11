@@ -11,10 +11,11 @@ import kotlinx.coroutines.flow.Flow
 interface StatisticsDao {
 
     @Transaction
-    suspend fun insertAllStatistics(dbTrainingStatistics: DbTrainingStatistics) {
+    suspend fun insertAllStatistics(dbTrainingWithExercisesStatistics: DbTrainingWithExercisesStatistics) {
+        val dbTrainingStatistics = dbTrainingWithExercisesStatistics.trainingStatistics
         insert(dbTrainingStatistics)
-        for (exercisesStatistics in dbTrainingStatistics.exercisesStatistics) {
-            insert(exercisesStatistics)
+        for (exercisesStatistics in dbTrainingWithExercisesStatistics.exercisesStatistics) {
+            insert(exercisesStatistics.exerciseStatistics)
             for (attemptStatistics in exercisesStatistics.exerciseAttemptsStatistics) {
                 insert(attemptStatistics)
             }

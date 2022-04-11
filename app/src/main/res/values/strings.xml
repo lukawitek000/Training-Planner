@@ -47,4 +47,5 @@
     <string name="start">Start</string>
     <string name="reset">Reset</string>
     <string name="exercise_image">Exercise image</string>
+    <string name="save">Save</string>
 </resources>

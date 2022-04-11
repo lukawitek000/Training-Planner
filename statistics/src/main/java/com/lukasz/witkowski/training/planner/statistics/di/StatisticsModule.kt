@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.statistics.di
 import android.content.Context
 import androidx.room.Room
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
+import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.DbStatisticsRepository
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.StatisticsDao
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.StatisticsDatabase
@@ -54,5 +55,10 @@ object StatisticsModule {
     @Provides
     fun provideStatisticsRepository(statisticsDao: StatisticsDao): DbStatisticsRepository {
         return DbStatisticsRepository(statisticsDao)
+    }
+
+    @Provides
+    fun provideTrainingStatisticsService(statisticsRepository: DbStatisticsRepository): TrainingStatisticsService {
+        return TrainingStatisticsService(statisticsRepository)
     }
 }

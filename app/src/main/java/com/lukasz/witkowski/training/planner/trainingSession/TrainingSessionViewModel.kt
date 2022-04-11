@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
+import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateConverter
@@ -26,6 +27,7 @@ class TrainingSessionViewModel @Inject constructor(
     private val trainingPlanService: TrainingPlanService,
     private val savedStateHandle: SavedStateHandle,
     private val trainingSessionService: TrainingSessionService,
+    private val trainingStatisticsService: TrainingStatisticsService,
     timerController: TimerController
 ) : ViewModel(),
     TimerController by timerController {
@@ -62,6 +64,14 @@ class TrainingSessionViewModel @Inject constructor(
     fun skip() {
         stopTimer()
         trainingSessionService.next(false)
+    }
+
+    fun saveStatistics() {
+        viewModelScope.launch {
+            if(currentState is TrainingSessionState.SummaryState) {
+                trainingStatisticsService.save((currentState as TrainingSessionState.SummaryState).statistics)
+            }
+        }
     }
 
     private fun fetchTrainingPlan() {

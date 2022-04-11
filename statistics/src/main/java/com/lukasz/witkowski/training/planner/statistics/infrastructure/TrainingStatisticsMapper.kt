@@ -10,12 +10,14 @@ import java.util.Date
 
 object TrainingStatisticsMapper {
 
-    fun toDbTrainingStatistics(trainingStatistics: TrainingStatistics): DbTrainingStatistics {
-        return DbTrainingStatistics(
-            id = trainingStatistics.id.value,
-            trainingPlanId = trainingStatistics.trainingPlanId.value,
-            totalTime = trainingStatistics.totalTime.timeInMillis,
-            date = trainingStatistics.date.time,
+    fun toDbTrainingStatistics(trainingStatistics: TrainingStatistics): DbTrainingWithExercisesStatistics {
+        return DbTrainingWithExercisesStatistics(
+            trainingStatistics = DbTrainingStatistics(
+                id = trainingStatistics.id.value,
+                trainingPlanId = trainingStatistics.trainingPlanId.value,
+                totalTime = trainingStatistics.totalTime.timeInMillis,
+                date = trainingStatistics.date.time
+            ),
             exercisesStatistics = trainingStatistics.exercisesStatistics.map {
                 ExerciseStatisticsMapper.toDbExerciseStatistics(it, trainingStatistics.id)
             }

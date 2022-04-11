@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -66,25 +67,29 @@ fun TrainingSessionScreen(
                     else -> LoadingScreen(Modifier.fillMaxSize())
                 }
             }
-
-            AnimatedVisibility(visible = trainingSessionState !is TrainingSessionState.SummaryState) {
-                CompletedAndSkipFabs(
-                    modifier = Modifier.weight(0.1f),
-                    completed = { viewModel.completed() },
-                    skip = { viewModel.skip() },
-                    isCompletedFabVisible = trainingSessionState is TrainingSessionState.ExerciseState
-                )
-            }
+            ControlButtons(
+                modifier = Modifier.weight(0.1f),
+                completed = { viewModel.completed() },
+                skip = { viewModel.skip() },
+                save = {
+                    viewModel.saveStatistics()
+                    navigateBack()
+                },
+                isCompletedFabVisible = trainingSessionState is TrainingSessionState.ExerciseState,
+                isTrainingSessionFinished = trainingSessionState is TrainingSessionState.SummaryState
+            )
         }
     }
 }
 
 @Composable
-fun CompletedAndSkipFabs(
+fun ControlButtons(
     modifier: Modifier = Modifier,
     completed: () -> Unit,
     skip: () -> Unit,
-    isCompletedFabVisible: Boolean
+    save: () -> Unit,
+    isCompletedFabVisible: Boolean,
+    isTrainingSessionFinished: Boolean
 ) {
     Row(
         modifier = modifier
@@ -92,17 +97,26 @@ fun CompletedAndSkipFabs(
             .padding(8.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        FabTextWithIcon(
-            text = stringResource(id = R.string.skip),
-            imageVector = Icons.Filled.SkipNext,
-            onClick = skip
-        )
-        AnimatedVisibility(visible = isCompletedFabVisible) {
+        AnimatedVisibility(visible = !isTrainingSessionFinished) {
+            FabTextWithIcon(
+                text = stringResource(id = R.string.skip),
+                imageVector = Icons.Filled.SkipNext,
+                onClick = skip
+            )
+        }
+        AnimatedVisibility(visible = isCompletedFabVisible && !isTrainingSessionFinished) {
             FabTextWithIcon(
                 modifier = Modifier.padding(start = 32.dp),
                 text = stringResource(id = R.string.completed),
                 imageVector = Icons.Filled.Check,
                 onClick = completed
+            )
+        }
+        AnimatedVisibility(visible = isTrainingSessionFinished) {
+            FabTextWithIcon(
+                text = stringResource(id = R.string.save),
+                imageVector = Icons.Filled.Save,
+                onClick = save
             )
         }
     }

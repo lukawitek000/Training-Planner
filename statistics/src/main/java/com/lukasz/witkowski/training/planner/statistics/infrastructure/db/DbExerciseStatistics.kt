@@ -9,7 +9,5 @@ data class DbExerciseStatistics(
     @PrimaryKey
     val id: String,
     val trainingStatisticsId: String,
-    val trainingExerciseId: String,
-    @Ignore
-    val exerciseAttemptsStatistics: List<DbExerciseAttemptStatistics>
+    val trainingExerciseId: String
 )
