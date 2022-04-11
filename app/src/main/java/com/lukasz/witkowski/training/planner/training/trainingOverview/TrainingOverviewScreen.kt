@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.ui.trainingOverview
+package com.lukasz.witkowski.training.planner.training.trainingOverview
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing

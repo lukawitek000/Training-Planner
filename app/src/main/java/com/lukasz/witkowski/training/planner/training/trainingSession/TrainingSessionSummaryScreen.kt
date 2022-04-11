@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.trainingSession
+package com.lukasz.witkowski.training.planner.training.trainingSession
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column

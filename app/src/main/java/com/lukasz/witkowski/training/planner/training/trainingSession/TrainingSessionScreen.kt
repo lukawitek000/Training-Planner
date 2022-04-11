@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.trainingSession
+package com.lukasz.witkowski.training.planner.training.trainingSession
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
-import com.lukasz.witkowski.training.planner.trainingSession.components.FabTextWithIcon
+import com.lukasz.witkowski.training.planner.training.trainingSession.components.FabTextWithIcon
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 
 @Composable

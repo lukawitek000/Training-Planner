@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.trainingSession.components
+package com.lukasz.witkowski.training.planner.training.trainingSession.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio

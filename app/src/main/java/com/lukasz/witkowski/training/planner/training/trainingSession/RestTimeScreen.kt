@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.trainingSession
+package com.lukasz.witkowski.training.planner.training.trainingSession
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,7 +22,7 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
-import com.lukasz.witkowski.training.planner.trainingSession.components.TimerWithCircularProgressBar
+import com.lukasz.witkowski.training.planner.training.trainingSession.components.TimerWithCircularProgressBar
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.TrainingExerciseRepsSetsTimeOverviewRow
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
