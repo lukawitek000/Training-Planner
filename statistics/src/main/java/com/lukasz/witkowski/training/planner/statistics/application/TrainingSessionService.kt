@@ -9,6 +9,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.coroutines.flow.MutableStateFlow
+import java.util.Date
 
 class TrainingSessionService {
 
@@ -133,6 +134,7 @@ class TrainingSessionService {
         return TrainingStatistics(
             trainingPlanId = trainingPlanId!!,
             totalTime = getCurrentTime().minus(startTrainingTime),
+            date = Date(),
             exercisesStatistics = exercisesStatistics
         )
     }

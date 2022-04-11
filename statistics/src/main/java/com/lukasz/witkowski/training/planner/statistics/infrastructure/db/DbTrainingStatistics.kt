@@ -11,6 +11,7 @@ data class DbTrainingStatistics(
     val id: String,
     val trainingPlanId: String,
     val totalTime: Long,
+    val date: Long,
     @Ignore
     val exercisesStatistics: List<DbExerciseStatistics>
 )

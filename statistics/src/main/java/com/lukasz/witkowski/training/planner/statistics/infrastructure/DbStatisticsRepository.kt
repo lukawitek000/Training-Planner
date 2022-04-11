@@ -7,9 +7,10 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class DbStatisticsRepository(private val statisticsDao: StatisticsDao): StatisticsRepository {
+class DbStatisticsRepository(private val statisticsDao: StatisticsDao) : StatisticsRepository {
     override suspend fun save(trainingStatistics: TrainingStatistics) {
-        val dbTrainingStatistics = TrainingStatisticsMapper.toDbTrainingStatistics(trainingStatistics)
+        val dbTrainingStatistics =
+            TrainingStatisticsMapper.toDbTrainingStatistics(trainingStatistics)
         statisticsDao.insertAllStatistics(dbTrainingStatistics)
     }
 
@@ -18,8 +19,8 @@ class DbStatisticsRepository(private val statisticsDao: StatisticsDao): Statisti
     }
 
     override fun getByTrainingPlanId(trainingPlanId: TrainingPlanId): Flow<List<TrainingStatistics>> {
-//        return statisticsDao.getTrainingStatistics(trainingPlanId.value).map { statisticsList ->
-//            statisticsList.map { TrainingStatisticsMapper.toTrainingStatistics(it) }
-//        }
+        return statisticsDao.getTrainingStatistics(trainingPlanId.value).map { statisticsList ->
+            statisticsList.map { TrainingStatisticsMapper.toTrainingStatistics(it) }
+        }
     }
 }
