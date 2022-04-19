@@ -11,6 +11,8 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.coroutines.flow.MutableStateFlow
 import java.util.Date
 
+// Move logic to domain
+
 class TrainingSessionService {
 
     private lateinit var trainingPlan: TrainingPlan
@@ -25,13 +27,13 @@ class TrainingSessionService {
     private val currentSetExercises = mutableListOf<TrainingExercise>()
 
     fun startTraining(trainingPlan: TrainingPlan) {
-        this.trainingPlan = trainingPlan
+        this.trainingPlan = trainingPlan // Create TrainingSession, move state to it
         startRecordingTrainingStatistics(trainingPlan.id)
         loadSet(currentSet)
         loadExercise()
     }
 
-    fun next(isCompleted: Boolean = true) {
+    fun next(isCompleted: Boolean = true) { // zwracać obiekt
         if (isCurrentStateExercise()) {
             saveExerciseAttemptStatistics(isCompleted)
             val nextExercise = getNextExercise()
@@ -47,6 +49,7 @@ class TrainingSessionService {
 
     private fun loadSet(setNumber: Int) {
         currentSetExercises.clear()
+        // Filter -> add all
         exercises.forEach { exercise ->
             if (exercise.sets >= setNumber) {
                 currentSetExercises.add(exercise)
