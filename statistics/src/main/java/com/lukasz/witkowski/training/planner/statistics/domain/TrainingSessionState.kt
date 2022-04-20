@@ -1,7 +1,6 @@
-package com.lukasz.witkowski.training.planner.statistics.application
+package com.lukasz.witkowski.training.planner.statistics.domain
 
 import com.lukasz.witkowski.shared.time.Time
-import com.lukasz.witkowski.training.planner.statistics.domain.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 
 

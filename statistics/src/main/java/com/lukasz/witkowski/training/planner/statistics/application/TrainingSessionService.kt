@@ -3,6 +3,8 @@ package com.lukasz.witkowski.training.planner.statistics.application
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.statistics.domain.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.ExerciseStatistics
+import com.lukasz.witkowski.training.planner.statistics.domain.TrainingSession
+import com.lukasz.witkowski.training.planner.statistics.domain.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.domain.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
@@ -16,6 +18,7 @@ import java.util.Date
 class TrainingSessionService {
 
     private lateinit var trainingPlan: TrainingPlan
+    private lateinit var trainingSession: TrainingSession
 
     val trainingSessionState =
         MutableStateFlow<TrainingSessionState>(TrainingSessionState.IdleState)
@@ -27,6 +30,7 @@ class TrainingSessionService {
     private val currentSetExercises = mutableListOf<TrainingExercise>()
 
     fun startTraining(trainingPlan: TrainingPlan) {
+        trainingSession = TrainingSession(trainingPlan)
         this.trainingPlan = trainingPlan // Create TrainingSession, move state to it
         startRecordingTrainingStatistics(trainingPlan.id)
         loadSet(currentSet)

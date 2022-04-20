@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.statistics.presentation
 
-import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionState
+import com.lukasz.witkowski.training.planner.statistics.domain.TrainingSessionState
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingExerciseMapper
 
 object TrainingSessionStateConverter {

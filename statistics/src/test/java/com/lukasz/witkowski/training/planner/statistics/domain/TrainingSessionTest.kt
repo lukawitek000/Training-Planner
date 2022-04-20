@@ -1,11 +1,9 @@
-package com.lukasz.witkowski.training.planner.statistics.application
-
-import org.junit.Assert.*
+package com.lukasz.witkowski.training.planner.statistics.domain
 
 import org.junit.Before
 import org.junit.Test
 
-class TrainingSessionServiceTest {
+class TrainingSessionTest {
 
     @Before
     fun setUp() {
