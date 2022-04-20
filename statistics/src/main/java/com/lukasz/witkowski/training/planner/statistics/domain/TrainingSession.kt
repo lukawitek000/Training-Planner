@@ -8,7 +8,8 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
  * Requires [TrainingPlan] with at least one [TrainingExercise].
  */
 internal class TrainingSession(
-    private val trainingPlan: TrainingPlan
+    private val trainingPlan: TrainingPlan,
+    private val statisticsRecorder: StatisticsRecorder
 ) {
 
     //    private var currentSet = 1 // For statistics purposes
@@ -19,19 +20,21 @@ internal class TrainingSession(
 
     init {
         require(trainingPlan.exercises.isNotEmpty()) { "Cannot start training session without exercises" }
-        loadExercisesFromTrainingPlan() // thanks to that I can inject later different strategies for getting exercises order
+        loadExercisesFromTrainingPlan() // thanks to that I can inject later different strategies for exercises order
     }
 
     fun start(): TrainingSessionState {
-        val firstExercise =
-            loadExercise() ?: throw Exception("Training Plan started without exercises")
+        statisticsRecorder.start()
+        val firstExercise = loadExercise()
+        statisticsRecorder.startRecordingExercise(firstExercise.id, 1)
         state = TrainingSessionState.ExerciseState(firstExercise)
         return state
     }
 
     fun next(): TrainingSessionState {
+        statisticsRecorder.stopRecordingExercise()
         state = when {
-            isTrainingSessionFinished() -> TrainingSessionState.SummaryState(null)
+            isTrainingSessionFinished() -> TrainingSessionState.SummaryState(statisticsRecorder.trainingStatistics)
             isExerciseState() && hasCurrentExerciseRestTime() -> {
                 val nextExercise = getNextExerciseOverview()
                 TrainingSessionState.RestTimeState(nextExercise, currentExercise.restTime)

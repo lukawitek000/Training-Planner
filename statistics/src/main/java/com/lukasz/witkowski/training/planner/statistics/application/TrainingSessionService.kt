@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.statistics.application
 
 import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.statistics.domain.BasicStatisticsRecorder
 import com.lukasz.witkowski.training.planner.statistics.domain.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.ExerciseStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.TrainingSession
@@ -30,7 +31,8 @@ class TrainingSessionService {
     private val currentSetExercises = mutableListOf<TrainingExercise>()
 
     fun startTraining(trainingPlan: TrainingPlan) {
-        trainingSession = TrainingSession(trainingPlan)
+        val statisticsRecorder = BasicStatisticsRecorder(trainingPlan.id)
+        trainingSession = TrainingSession(trainingPlan, statisticsRecorder)
         this.trainingPlan = trainingPlan // Create TrainingSession, move state to it
         startRecordingTrainingStatistics(trainingPlan.id)
         loadSet(currentSet)
