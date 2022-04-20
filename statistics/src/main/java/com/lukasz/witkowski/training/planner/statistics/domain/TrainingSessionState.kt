@@ -14,5 +14,5 @@ sealed class TrainingSessionState(val exercise: TrainingExercise? = null) {
     class RestTimeState(nextExercise: TrainingExercise, val restTime: Time) : TrainingSessionState(nextExercise)
 
     // TODO summary objects (Statistics, TrainingPlan??)
-    data class SummaryState(val statistics: TrainingStatistics) : TrainingSessionState()
+    data class SummaryState(val statistics: TrainingStatistics?) : TrainingSessionState()
 }
