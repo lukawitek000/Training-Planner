@@ -13,7 +13,6 @@ internal class TrainingSession(
     private val trainingSetsStrategy: TrainingSetsStrategy
 ) {
 
-    //    private var currentSet = 1 // For statistics purposes
     private val exercises = mutableListOf<TrainingExercise>()
     private var state: TrainingSessionState = TrainingSessionState.IdleState
     private val currentExercise: TrainingExercise
@@ -48,6 +47,11 @@ internal class TrainingSession(
             else -> throw Exception("Unknown training session state")
         }
         return state
+    }
+
+    fun stop() {
+        exercises.clear()
+        state = TrainingSessionState.IdleState
     }
 
     private fun getNextExerciseOverview() = exercises.first()

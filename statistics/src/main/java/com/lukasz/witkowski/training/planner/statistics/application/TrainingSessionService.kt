@@ -28,4 +28,8 @@ class TrainingSessionService {
     fun completed() {
         trainingSessionState.value = trainingSession.next(true)
     }
+
+    fun stopTraining() {
+        trainingSession.stop()
+    }
 }

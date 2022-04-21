@@ -56,6 +56,14 @@ class TrainingSessionViewModel @Inject constructor(
         observeTimer()
     }
 
+    private fun fetchTrainingPlan() {
+        viewModelScope.launch {
+            val trainingPlanDomain = trainingPlanService.getTrainingPlanById(trainingId)
+            val trainingPlan = TrainingPlanMapper.toPresentationTrainingPlan(trainingPlanDomain)
+            startTrainingSession(trainingPlan)
+        }
+    }
+
     fun completed() {
         stopTimer()
         trainingSessionService.completed()
@@ -74,13 +82,7 @@ class TrainingSessionViewModel @Inject constructor(
         }
     }
 
-    private fun fetchTrainingPlan() {
-        viewModelScope.launch {
-            val trainingPlanDomain = trainingPlanService.getTrainingPlanById(trainingId)
-            val trainingPlan = TrainingPlanMapper.toPresentationTrainingPlan(trainingPlanDomain)
-            startTrainingSession(trainingPlan)
-        }
-    }
+
 
     private fun startTrainingSession(trainingPlan: TrainingPlan) {
         val domainTrainingPlan = TrainingPlanMapper.toDomainTrainingPlan(trainingPlan)
@@ -119,5 +121,6 @@ class TrainingSessionViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         stopTimer()
+        trainingSessionService.stopTraining()
     }
 }
