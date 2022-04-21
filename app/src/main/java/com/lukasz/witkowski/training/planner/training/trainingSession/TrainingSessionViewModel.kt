@@ -10,16 +10,11 @@ import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSes
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateConverter
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlanMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,62 +31,45 @@ class TrainingSessionViewModel @Inject constructor(
         ?: throw Exception("Training plan id was not provided")
     private val trainingId = TrainingPlanId(_trainingId)
 
-    private var currentState: TrainingSessionState = TrainingSessionState.IdleState
-        set(value) {
-            field = value
-            stopTimer()
-            setTimer(value.time)
-            startRestTimer()
-            Timber.d("Exercise: ${value.exercise.toString()}")
-        }
-
+    private val _trainingSessionState =
+        MutableStateFlow<TrainingSessionState>(TrainingSessionState.IdleState)
     val trainingSessionState: StateFlow<TrainingSessionState>
-        get() = trainingSessionService.trainingSessionState.map {
-            currentState = TrainingSessionStateConverter.toPresentation(it)
-            currentState
-        }.stateIn(viewModelScope, SharingStarted.Lazily, TrainingSessionState.IdleState)
+        get() = _trainingSessionState
+    private val currentState: TrainingSessionState
+        get() = trainingSessionState.value
 
     init {
         fetchTrainingPlan()
         observeTimer()
-    }
-
-    private fun fetchTrainingPlan() {
-        viewModelScope.launch {
-            val trainingPlanDomain = trainingPlanService.getTrainingPlanById(trainingId)
-            val trainingPlan = TrainingPlanMapper.toPresentationTrainingPlan(trainingPlanDomain)
-            startTrainingSession(trainingPlan)
-        }
+        observeTrainingSessionState()
     }
 
     fun completed() {
         stopTimer()
-        trainingSessionService.completed()
+        val state = trainingSessionService.completed()
+        _trainingSessionState.value = TrainingSessionStateConverter.toPresentation(state)
     }
 
     fun skip() {
         stopTimer()
-        trainingSessionService.skip()
+        val state = trainingSessionService.skip()
+        _trainingSessionState.value = TrainingSessionStateConverter.toPresentation(state)
     }
 
     fun saveStatistics() {
         viewModelScope.launch {
-            if(currentState is TrainingSessionState.SummaryState) {
-                trainingStatisticsService.save((currentState as TrainingSessionState.SummaryState).statistics)
+            (currentState as? TrainingSessionState.SummaryState)?.statistics?.let {
+                trainingStatisticsService.save(it)
             }
         }
     }
 
-
-
-    private fun startTrainingSession(trainingPlan: TrainingPlan) {
-        val domainTrainingPlan = TrainingPlanMapper.toDomainTrainingPlan(trainingPlan)
-        trainingSessionService.startTraining(domainTrainingPlan)
-    }
-
-    private fun startRestTimer() {
-        if (currentState is TrainingSessionState.RestTimeState) {
-            startTimer()
+    private fun fetchTrainingPlan() {
+        viewModelScope.launch {
+            // TODO maybe it should be moved to the service??
+            val trainingPlan = trainingPlanService.getTrainingPlanById(trainingId)
+            val state = trainingSessionService.startTraining(trainingPlan)
+            _trainingSessionState.value = TrainingSessionStateConverter.toPresentation(state)
         }
     }
 
@@ -106,6 +84,27 @@ class TrainingSessionViewModel @Inject constructor(
         }
     }
 
+    private fun observeTrainingSessionState() {
+        viewModelScope.launch {
+            trainingSessionState.collect {
+                setTimerForRestTimeAndExercise(it)
+                startRestTimeTimer(it)
+            }
+        }
+    }
+
+    private fun startRestTimeTimer(state: TrainingSessionState) {
+        if (state is TrainingSessionState.RestTimeState) {
+            startTimer()
+        }
+    }
+
+    private fun setTimerForRestTimeAndExercise(state: TrainingSessionState) {
+        if (state is TrainingSessionState.RestTimeState || state is TrainingSessionState.ExerciseState) {
+            setTimer(state.time)
+        }
+    }
+
     private fun resetTimerIfExerciseTimeElapsed() {
         if (currentState is TrainingSessionState.ExerciseState) {
             resetTimer()
@@ -114,7 +113,7 @@ class TrainingSessionViewModel @Inject constructor(
 
     private fun navigateNextIfRestTimeElapsed() {
         if (currentState is TrainingSessionState.RestTimeState) {
-            trainingSessionService.skip()
+            skip()
         }
     }
 

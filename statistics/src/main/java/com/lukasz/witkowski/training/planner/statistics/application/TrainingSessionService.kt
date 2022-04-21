@@ -11,22 +11,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 class TrainingSessionService {
 
     private lateinit var trainingSession: TrainingSession
-    val trainingSessionState =
-        MutableStateFlow<TrainingSessionState>(TrainingSessionState.IdleState)
 
-    fun startTraining(trainingPlan: TrainingPlan) {
+    fun startTraining(trainingPlan: TrainingPlan): TrainingSessionState {
         val statisticsRecorder = BasicStatisticsRecorder(trainingPlan.id)
         val trainingSetsStrategy = CircuitSetsStrategy()
         trainingSession = TrainingSession(trainingPlan, statisticsRecorder, trainingSetsStrategy)
-        trainingSessionState.value = trainingSession.start()
+        return trainingSession.start()
     }
 
-    fun skip() {
-        trainingSessionState.value = trainingSession.next(false)
+    fun skip(): TrainingSessionState {
+        return trainingSession.next(false)
     }
 
-    fun completed() {
-        trainingSessionState.value = trainingSession.next(true)
+    fun completed(): TrainingSessionState {
+        return trainingSession.next(true)
     }
 
     fun stopTraining() {
