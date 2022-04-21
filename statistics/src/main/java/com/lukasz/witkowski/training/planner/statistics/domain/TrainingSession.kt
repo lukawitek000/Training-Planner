@@ -9,7 +9,8 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
  */
 internal class TrainingSession(
     private val trainingPlan: TrainingPlan,
-    private val statisticsRecorder: StatisticsRecorder
+    private val statisticsRecorder: StatisticsRecorder,
+    private val trainingSetsStrategy: TrainingSetsStrategy
 ) {
 
     //    private var currentSet = 1 // For statistics purposes
@@ -20,7 +21,7 @@ internal class TrainingSession(
 
     init {
         require(trainingPlan.exercises.isNotEmpty()) { "Cannot start training session without exercises" }
-        loadExercisesFromTrainingPlan() // thanks to that I can inject later different strategies for exercises order
+        exercises.addAll(trainingSetsStrategy.loadExercises(trainingPlan)) // thanks to that I can inject later different strategies for exercises order
     }
 
     fun start(): TrainingSessionState {
@@ -32,7 +33,7 @@ internal class TrainingSession(
     }
 
     fun next(): TrainingSessionState {
-        statisticsRecorder.stopRecordingExercise()
+        statisticsRecorder.stopRecordingExercise(false)
         state = when {
             isTrainingSessionFinished() -> TrainingSessionState.SummaryState(statisticsRecorder.trainingStatistics)
             isExerciseState() && hasCurrentExerciseRestTime() -> {
@@ -41,6 +42,7 @@ internal class TrainingSession(
             }
             isRestTimeState() || (isExerciseState() && !hasCurrentExerciseRestTime()) -> {
                 val currentExercise = loadExercise()
+                statisticsRecorder.startRecordingExercise(currentExercise.id, getCurrentSet(currentExercise))
                 TrainingSessionState.ExerciseState(currentExercise)
             }
             else -> throw Exception("Unknown training session state")
@@ -48,17 +50,14 @@ internal class TrainingSession(
         return state
     }
 
-    private fun loadExercisesFromTrainingPlan() {
-        val maxSets = trainingPlan.exercises.maxOf { it.sets }
-        for (set in 1..maxSets) {
-            val setExercises = trainingPlan.exercises.filter { it.sets >= set }
-            exercises.addAll(setExercises)
-        }
-    }
-
     private fun getNextExerciseOverview() = exercises.first()
 
     private fun loadExercise(): TrainingExercise = exercises.removeFirst()
+
+    private fun getCurrentSet(currentExercise: TrainingExercise): Int {
+        val numberOfLeftAttempts = exercises.count { it.id == currentExercise.id }
+        return currentExercise.sets - numberOfLeftAttempts
+    }
 
     private fun isTrainingSessionFinished(): Boolean = exercises.isEmpty()
 
