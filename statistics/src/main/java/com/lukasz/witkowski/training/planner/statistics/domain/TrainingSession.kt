@@ -32,8 +32,8 @@ internal class TrainingSession(
         return state
     }
 
-    fun next(): TrainingSessionState {
-        statisticsRecorder.stopRecordingExercise(false)
+    fun next(isCompleted: Boolean = false): TrainingSessionState {
+        statisticsRecorder.stopRecordingExercise(isCompleted)
         state = when {
             isTrainingSessionFinished() -> TrainingSessionState.SummaryState(statisticsRecorder.trainingStatistics)
             isExerciseState() && hasCurrentExerciseRestTime() -> {

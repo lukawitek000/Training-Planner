@@ -58,12 +58,12 @@ class TrainingSessionViewModel @Inject constructor(
 
     fun completed() {
         stopTimer()
-        trainingSessionService.next(true)
+        trainingSessionService.completed()
     }
 
     fun skip() {
         stopTimer()
-        trainingSessionService.next(false)
+        trainingSessionService.skip()
     }
 
     fun saveStatistics() {
@@ -112,7 +112,7 @@ class TrainingSessionViewModel @Inject constructor(
 
     private fun navigateNextIfRestTimeElapsed() {
         if (currentState is TrainingSessionState.RestTimeState) {
-            trainingSessionService.next()
+            trainingSessionService.skip()
         }
     }
 
