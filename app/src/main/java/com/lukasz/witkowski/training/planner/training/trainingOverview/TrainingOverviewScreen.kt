@@ -1,9 +1,5 @@
 package com.lukasz.witkowski.training.planner.training.trainingOverview
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,21 +12,14 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +35,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
+import com.lukasz.witkowski.training.planner.ui.components.ExpandableListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 import com.lukasz.witkowski.training.planner.ui.components.TrainingExerciseRepsSetsTimeOverviewRow
@@ -71,9 +61,9 @@ fun TrainingOverviewScreen(
                 .padding(8.dp),
         ) {
             item {
-                if(trainingPlan is ResultHandler.Loading) {
+                if (trainingPlan is ResultHandler.Loading) {
                     LoadingScreen()
-                } else if (trainingPlan is ResultHandler.Success){
+                } else if (trainingPlan is ResultHandler.Success) {
                     TrainingOverviewContent(
                         modifier = Modifier,
                         trainingPlan = (trainingPlan as ResultHandler.Success<TrainingPlan>).value
@@ -114,8 +104,7 @@ fun TrainingOverviewScreen(
 @Composable
 fun TrainingOverviewContent(
     modifier: Modifier = Modifier,
-    trainingPlan: TrainingPlan,
-    isTrainingExercisesExpandable: Boolean = true
+    trainingPlan: TrainingPlan
 ) {
     Column(
         modifier = modifier
@@ -137,8 +126,7 @@ fun TrainingOverviewContent(
         if (trainingPlan.exercises.isNotEmpty()) {
             TrainingExercisesExpandableList(
                 modifier = Modifier,
-                exercises = trainingPlan.exercises,
-                isExpandable = isTrainingExercisesExpandable
+                exercises = trainingPlan.exercises
             )
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -149,47 +137,21 @@ fun TrainingOverviewContent(
 @Composable
 fun TrainingExercisesExpandableList(
     modifier: Modifier,
-    exercises: List<TrainingExercise>,
-    isExpandable: Boolean = true
+    exercises: List<TrainingExercise>
 ) {
-
-    var isExpanded by remember { mutableStateOf(!isExpandable) }
-
-    val angle: Float by animateFloatAsState(
-        targetValue = if (!isExpanded) 0f else 180f,
-        animationSpec = tween(durationMillis = 200, easing = LinearEasing)
-    )
-
-    ListCardItem(modifier = modifier, onCardClicked = { if(isExpandable) isExpanded = !isExpanded }) {
-        Column(Modifier.fillMaxWidth()) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "Exercises", fontSize = 18.sp)
-                if(isExpandable) {
-                    Icon(
-                        Icons.Default.ArrowDropDown,
-                        modifier = Modifier.rotate(angle),
-                        contentDescription = "Expand exercises list arrow"
+    ExpandableListCardItem(
+        modifier = modifier,
+        shrinkedContent = { Text(text = "Exercises", fontSize = 18.sp) },
+        expandedContent = {
+            LazyColumn(modifier = Modifier.heightIn(max = 500.dp)) {
+                items(exercises) {
+                    SingleTrainingExerciseInformation(
+                        modifier = Modifier,
+                        exercise = it
                     )
                 }
             }
-            AnimatedVisibility(visible = isExpanded) {
-                LazyColumn(modifier = Modifier.heightIn(max = 500.dp)) {
-                    items(exercises) {
-                        SingleTrainingExerciseInformation(
-                            modifier = Modifier,
-                            exercise = it
-                        )
-                    }
-                }
-            }
-        }
-    }
+        })
 }
 
 @Composable
@@ -232,7 +194,6 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExer
 }
 
 
-
 @Composable
 fun TrainingStatisticsList(
     modifier: Modifier,
@@ -262,7 +223,12 @@ fun SingleTrainingStatisticsItem(
                 fontSize = fontSize,
                 textAlign = TextAlign.End
             )
-            Text(text = stringResource(id = R.string.time_text, trainingStatistics.totalTime.toString()), fontSize = fontSize)
+            Text(
+                text = stringResource(
+                    id = R.string.time_text,
+                    trainingStatistics.totalTime.toString()
+                ), fontSize = fontSize
+            )
             Text(text = "Effective time: ${trainingStatistics.effectiveTime}", fontSize = fontSize)
         }
     }

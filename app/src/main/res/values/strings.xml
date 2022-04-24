@@ -48,4 +48,6 @@
     <string name="reset">Reset</string>
     <string name="exercise_image">Exercise image</string>
     <string name="save">Save</string>
+    <string name="expand_arrow">Expand arrow</string>
+    <string name="training_statistics">Training statistics</string>
 </resources>

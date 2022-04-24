@@ -12,18 +12,30 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+import java.util.Date
 
 @Composable
 fun TrainingSessionSummaryScreen(
     modifier: Modifier = Modifier,
     statistics: TrainingStatistics
 ) {
-
     Column(modifier.fillMaxSize()) {
-        Text(text = "Training statistics")
+        Text(
+            text = stringResource(id = R.string.training_statistics),
+            fontSize = 32.sp,
+            textAlign = TextAlign.Center
+        )
         Text(text = "Total time ${statistics.totalTime.toString()}")
         Text(text = "Effective time ${statistics.effectiveTime.toString()}")
         Divider()
@@ -52,5 +64,20 @@ fun ExercisesStatistics(
                 Text(text = "Completeness rate ${exerciseStatistics.completenessRate}")
             }
         }
+    }
+}
+
+@Preview
+@Composable
+private fun TrainingSessionSummaryScreenPreview() {
+    TrainingPlannerTheme {
+        TrainingSessionSummaryScreen(
+            statistics = TrainingStatistics(
+                trainingPlanId = TrainingPlanId(""),
+                totalTime = Time(360000L),
+                date = Date(),
+                exercisesStatistics = emptyList()
+            )
+        )
     }
 }
