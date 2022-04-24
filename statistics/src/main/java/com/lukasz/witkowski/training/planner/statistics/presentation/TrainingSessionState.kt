@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.statistics.presentation
 
 import com.lukasz.witkowski.shared.time.Time
-import com.lukasz.witkowski.training.planner.statistics.domain.TrainingStatistics
+import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
 
 sealed class TrainingSessionState(val exercise: TrainingExercise? = null, val time: Time = Time.NONE) {

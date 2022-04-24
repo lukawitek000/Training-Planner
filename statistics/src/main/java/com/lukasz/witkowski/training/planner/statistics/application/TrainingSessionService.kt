@@ -1,12 +1,11 @@
 package com.lukasz.witkowski.training.planner.statistics.application
 
-import com.lukasz.witkowski.training.planner.statistics.domain.BasicStatisticsRecorder
+import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder.BasicStatisticsRecorder
 import com.lukasz.witkowski.training.planner.statistics.domain.CircuitSetsStrategy
-import com.lukasz.witkowski.training.planner.statistics.domain.SystemTimeProvider
+import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder.SystemTimeProvider
 import com.lukasz.witkowski.training.planner.statistics.domain.TrainingSession
 import com.lukasz.witkowski.training.planner.statistics.domain.TrainingSessionState
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import kotlinx.coroutines.flow.MutableStateFlow
 
 
 class TrainingSessionService {

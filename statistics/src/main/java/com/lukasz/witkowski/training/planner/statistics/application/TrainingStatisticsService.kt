@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.statistics.application
 
 import com.lukasz.witkowski.training.planner.statistics.domain.StatisticsRepository
-import com.lukasz.witkowski.training.planner.statistics.domain.TrainingStatistics
+import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.coroutines.flow.Flow
 

@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.statistics.domain
+package com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder
 
 import com.lukasz.witkowski.shared.time.Time
 

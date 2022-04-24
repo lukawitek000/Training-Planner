@@ -13,8 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.lukasz.witkowski.training.planner.statistics.domain.ExerciseStatistics
-import com.lukasz.witkowski.training.planner.statistics.domain.TrainingStatistics
+import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseStatistics
+import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 
 @Composable
 fun TrainingSessionSummaryScreen(

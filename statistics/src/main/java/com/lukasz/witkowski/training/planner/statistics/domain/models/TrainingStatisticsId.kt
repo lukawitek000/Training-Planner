@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.statistics.domain
+package com.lukasz.witkowski.training.planner.statistics.domain.models
 
 import java.util.UUID
 

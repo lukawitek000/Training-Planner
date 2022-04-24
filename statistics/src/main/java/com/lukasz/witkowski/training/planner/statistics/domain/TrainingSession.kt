@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.statistics.domain
 
+import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder.StatisticsRecorder
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 

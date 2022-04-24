@@ -1,9 +1,9 @@
 package com.lukasz.witkowski.training.planner.statistics.infrastructure
 
 import com.lukasz.witkowski.shared.time.Time
-import com.lukasz.witkowski.training.planner.statistics.domain.ExerciseAttemptStatistics
-import com.lukasz.witkowski.training.planner.statistics.domain.ExerciseAttemptStatisticsId
-import com.lukasz.witkowski.training.planner.statistics.domain.ExerciseStatisticsId
+import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseAttemptStatistics
+import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseAttemptStatisticsId
+import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.DbExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 
