@@ -20,11 +20,14 @@ class BasicStatisticsRecorder(
     private var currentExerciseSet: Int = 0
 
     override fun start() {
-        exercisesAttemptsStatistics.clear()
         startTrainingTime = timeProvider.currentTime()
     }
 
-    override fun stop(): TrainingStatistics = gatherTrainingStatistics()
+    override fun stop(): TrainingStatistics {
+        val trainingStatistics = gatherTrainingStatistics()
+        exercisesAttemptsStatistics.clear()
+        return trainingStatistics
+    }
 
     override fun startRecordingExercise(trainingExerciseId: TrainingExerciseId, set: Int) {
         currentExerciseStartTime = timeProvider.currentTime()

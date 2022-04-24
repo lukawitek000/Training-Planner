@@ -11,7 +11,6 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import org.junit.Before
 import org.junit.Test
 import java.util.Date
-import kotlin.math.exp
 import kotlin.test.assertEquals
 
 class BasicStatisticsRecorderTest {
@@ -32,14 +31,71 @@ class BasicStatisticsRecorderTest {
 
         // when
         basicStatisticsRecorder.start()
-        val mockedElapsedTime = Time(1000L)
-        timeProvider.time = mockedElapsedTime
+        timeHasPassedBy(TIME_10_SECONDS)
         val trainingStatistics = basicStatisticsRecorder.stop()
 
         // then
-        val expectedStatistics = TrainingStatistics(trainingPlanId = trainingPlan.id, totalTime = mockedElapsedTime, date = Date(), exercisesStatistics = emptyList())
+        val expectedStatistics = TrainingStatistics(
+            trainingPlanId = trainingPlan.id,
+            totalTime = TIME_10_SECONDS,
+            date = Date(),
+            exercisesStatistics = emptyList()
+        )
         assertTrainingStatistics(expectedStatistics, trainingStatistics)
+    }
 
+    @Test
+    fun `record single exercise attempt with completed status`() {
+        // given
+        val exerciseToRecordAttempt = trainingExercises.first()
+
+        // when
+        basicStatisticsRecorder.start()
+        basicStatisticsRecorder.startRecordingExercise(exerciseToRecordAttempt.id, 1)
+        timeHasPassedBy(TIME_10_SECONDS)
+        basicStatisticsRecorder.stopRecordingExercise(true)
+        val trainingStatistics = basicStatisticsRecorder.stop()
+        val attemptStatistics =
+            trainingStatistics.exercisesStatistics.first().attemptsStatistics.first()
+
+        // then
+        val expectedStatistics = ExerciseAttemptStatistics(
+            trainingExerciseId = exerciseToRecordAttempt.id,
+            time = TIME_10_SECONDS,
+            set = 1,
+            completed = true
+        )
+        assertAttemptStatistics(expectedStatistics, attemptStatistics)
+    }
+
+    @Test
+    fun `record statistics for exercise from 3 attempts`() {
+        // given
+        val exerciseToRecordStatistics = trainingExercises.first()
+
+        // when
+        basicStatisticsRecorder.start()
+        for (set in 1..exerciseToRecordStatistics.sets) {
+            timeHasPassedBy(Time.NONE)
+            basicStatisticsRecorder.startRecordingExercise(exerciseToRecordStatistics.id, set)
+            timeHasPassedBy(TIME_10_SECONDS)
+            basicStatisticsRecorder.stopRecordingExercise(set % 2 == 0)
+        }
+        val trainingStatistics = basicStatisticsRecorder.stop()
+        val exerciseStatistics = trainingStatistics.exercisesStatistics.first()
+
+        // then
+        val expectedAttemptsStatistics = listOf(
+            ExerciseAttemptStatistics(trainingExerciseId = exerciseToRecordStatistics.id, time = TIME_10_SECONDS, set = 1, completed = false),
+            ExerciseAttemptStatistics(trainingExerciseId = exerciseToRecordStatistics.id, time = TIME_10_SECONDS, set = 2, completed = true),
+            ExerciseAttemptStatistics(trainingExerciseId = exerciseToRecordStatistics.id, time = TIME_10_SECONDS, set = 3, completed = false),
+        )
+        val expectedStatistics = ExerciseStatistics(trainingExerciseId = exerciseToRecordStatistics.id, attemptsStatistics = expectedAttemptsStatistics)
+        assertExerciseStatistics(expectedStatistics, exerciseStatistics)
+    }
+
+    private fun timeHasPassedBy(mockedElapsedTime: Time) {
+        timeProvider.time = mockedElapsedTime
     }
 
     private fun assertTrainingStatistics(
@@ -48,7 +104,10 @@ class BasicStatisticsRecorderTest {
     ) {
         assertEquals(expectedStatistics.trainingPlanId, trainingStatistics.trainingPlanId)
         assertEquals(expectedStatistics.totalTime, trainingStatistics.totalTime)
-        assertExercisesStatistics(expectedStatistics.exercisesStatistics, trainingStatistics.exercisesStatistics)
+        assertExercisesStatistics(
+            expectedStatistics.exercisesStatistics,
+            trainingStatistics.exercisesStatistics
+        )
     }
 
     private fun assertExercisesStatistics(
@@ -65,10 +124,19 @@ class BasicStatisticsRecorderTest {
         expectedExerciseStatistics: ExerciseStatistics,
         exerciseStatistics: ExerciseStatistics
     ) {
-        assertEquals(expectedExerciseStatistics.trainingExerciseId, exerciseStatistics.trainingExerciseId)
+        assertEquals(
+            expectedExerciseStatistics.trainingExerciseId,
+            exerciseStatistics.trainingExerciseId
+        )
         assertEquals(expectedExerciseStatistics.totalTime, exerciseStatistics.totalTime)
-        assertEquals(expectedExerciseStatistics.completenessRate, exerciseStatistics.completenessRate)
-        assertAttemptsStatistics(expectedExerciseStatistics.attemptsStatistics, exerciseStatistics.attemptsStatistics)
+        assertEquals(
+            expectedExerciseStatistics.completenessRate,
+            exerciseStatistics.completenessRate
+        )
+        assertAttemptsStatistics(
+            expectedExerciseStatistics.attemptsStatistics,
+            exerciseStatistics.attemptsStatistics
+        )
     }
 
     private fun assertAttemptsStatistics(
@@ -81,8 +149,14 @@ class BasicStatisticsRecorderTest {
         }
     }
 
-    private fun assertAttemptStatistics(expectedAttemptStatistics: ExerciseAttemptStatistics, attemptStatistics: ExerciseAttemptStatistics) {
-        assertEquals(expectedAttemptStatistics.trainingExerciseId, attemptStatistics.trainingExerciseId)
+    private fun assertAttemptStatistics(
+        expectedAttemptStatistics: ExerciseAttemptStatistics,
+        attemptStatistics: ExerciseAttemptStatistics
+    ) {
+        assertEquals(
+            expectedAttemptStatistics.trainingExerciseId,
+            attemptStatistics.trainingExerciseId
+        )
         assertEquals(expectedAttemptStatistics.completed, attemptStatistics.completed)
         assertEquals(expectedAttemptStatistics.time, attemptStatistics.time)
         assertEquals(expectedAttemptStatistics.set, attemptStatistics.set)
@@ -99,7 +173,7 @@ class BasicStatisticsRecorderTest {
     private fun createTrainingExercises(): List<TrainingExercise> {
         val exercise1 = TrainingExercise(
             id = TrainingExerciseId.create(),
-            sets = 2
+            sets = 3
         )
         val exercise2 = TrainingExercise(
             id = TrainingExerciseId.create(),
@@ -114,5 +188,9 @@ class BasicStatisticsRecorderTest {
             sets = 5
         )
         return listOf(exercise1, exercise2, exercise3, exercise4)
+    }
+
+    private companion object {
+        val TIME_10_SECONDS = Time(10000L)
     }
 }
