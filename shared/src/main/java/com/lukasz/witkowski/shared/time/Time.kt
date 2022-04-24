@@ -31,11 +31,18 @@ class Time(val timeInMillis: Long) {
             timeStringBuilder.append("${hours}h")
         }
         if (minutes > 0) {
-            timeStringBuilder.append(" ")
+            if(timeStringBuilder.isNotEmpty()) {
+                timeStringBuilder.append(" ")
+            }
             timeStringBuilder.append("${minutes}min")
         }
         if (seconds > 0 && hours <= 0) {
-            timeStringBuilder.append(" ")
+            if(timeStringBuilder.isNotEmpty()) {
+                timeStringBuilder.append(" ")
+            }
+            timeStringBuilder.append("${seconds}s")
+        }
+        if (timeStringBuilder.isEmpty()) {
             timeStringBuilder.append("${seconds}s")
         }
         return timeStringBuilder.toString()
