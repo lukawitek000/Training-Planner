@@ -54,7 +54,7 @@ class Time(val timeInMillis: Long) {
 
     fun isNotZero() = timeInMillis > 0L
 
-    fun minus(time: Time) = Time(this.timeInMillis - time.timeInMillis)
+    operator fun minus(time: Time) = Time(this.timeInMillis - time.timeInMillis)
 
     private fun StringBuilder.appendWithZeroBeforeNumberIfLessThan10(number: Int) {
         if (number < 10) {

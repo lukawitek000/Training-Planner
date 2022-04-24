@@ -35,7 +35,7 @@ class BasicStatisticsRecorder(
     override fun stopRecordingExercise(isCompleted: Boolean) {
         val exerciseAttemptStatistics = ExerciseAttemptStatistics(
             trainingExerciseId = currentExerciseId!!,
-            time = timeProvider.currentTime().minus(currentExerciseStartTime),
+            time = timeProvider.currentTime() - currentExerciseStartTime,
             set = currentExerciseSet,
             completed = isCompleted
         )
@@ -52,7 +52,7 @@ class BasicStatisticsRecorder(
         }
         return TrainingStatistics(
             trainingPlanId = trainingPlanId,
-            totalTime = timeProvider.currentTime().minus(startTrainingTime),
+            totalTime = timeProvider.currentTime() - startTrainingTime,
             date = Date(),
             exercisesStatistics = exercisesStatistics
         )
