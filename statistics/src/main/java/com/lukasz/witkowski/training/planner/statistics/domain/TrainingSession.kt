@@ -37,7 +37,7 @@ internal class TrainingSession(
         state = when {
             isTrainingSessionFinished() -> {
                 val trainingStatistics = statisticsRecorder.stop()
-                TrainingSessionState.SummaryState(trainingStatistics)
+                TrainingSessionState.SummaryState(trainingStatistics, trainingPlan)
             }
             isExerciseState() && hasCurrentExerciseRestTime() -> {
                 val nextExercise = getNextExerciseOverview()

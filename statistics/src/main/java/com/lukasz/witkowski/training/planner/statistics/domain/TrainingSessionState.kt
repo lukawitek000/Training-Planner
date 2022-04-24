@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.statistics.domain
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 
 
 // TODO domain object needed for service
@@ -15,5 +16,5 @@ sealed class TrainingSessionState(val exercise: TrainingExercise? = null) {
     class RestTimeState(nextExercise: TrainingExercise, val restTime: Time) : TrainingSessionState(nextExercise)
 
     // TODO summary objects (Statistics, TrainingPlan??)
-    data class SummaryState(val statistics: TrainingStatistics?) : TrainingSessionState()
+    data class SummaryState(val statistics: TrainingStatistics, val trainingPlan: TrainingPlan) : TrainingSessionState()
 }

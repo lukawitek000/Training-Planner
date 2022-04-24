@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.training.trainingSession.components.FabTextWithIcon
@@ -30,7 +31,6 @@ fun TrainingSessionScreen(
     viewModel: TrainingSessionViewModel,
     navigateBack: () -> Unit
 ) {
-
     val trainingSessionState by viewModel.trainingSessionState.collectAsState()
     val time by viewModel.timer.collectAsState()
     val isTimerRunning by viewModel.isRunning.collectAsState()
@@ -62,7 +62,8 @@ fun TrainingSessionScreen(
                         nextExercise = trainingSessionState.exercise!!
                     )
                     is TrainingSessionState.SummaryState -> TrainingSessionSummaryScreen(
-                        statistics = (trainingSessionState as TrainingSessionState.SummaryState).statistics
+                        statistics = (trainingSessionState as TrainingSessionState.SummaryState).statistics,
+                        trainingPlan = (trainingSessionState as TrainingSessionState.SummaryState).trainingPlan
                     )
                     else -> LoadingScreen(Modifier.fillMaxSize())
                 }

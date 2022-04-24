@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.statistics.presentation
 
 import com.lukasz.witkowski.training.planner.statistics.domain.TrainingSessionState
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingExerciseMapper
+import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlanMapper
 
 object TrainingSessionStateConverter {
 
@@ -17,7 +18,7 @@ object TrainingSessionStateConverter {
                 state.restTime
             )
             is TrainingSessionState.SummaryState -> com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState.SummaryState(
-                state.statistics!!
+                state.statistics, TrainingPlanMapper.toPresentationTrainingPlan(state.trainingPlan)
             )
             is TrainingSessionState.IdleState -> com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState.IdleState
         }

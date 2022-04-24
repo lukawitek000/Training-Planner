@@ -50,4 +50,11 @@
     <string name="save">Save</string>
     <string name="expand_arrow">Expand arrow</string>
     <string name="training_statistics">Training statistics</string>
+    <string name="total_time">Total time: %1$s</string>
+    <string name="effective_time">Effective training time: %1$s</string>
+    <string name="attempt_set">Set: %1$s</string>
+    <string name="attempt_time">Attempt time: %1$s</string>
+    <string name="skipped">Skipped</string>
+    <string name="completeness_rate">Completeness rate: %1$s</string>
+    <string name="date">Date: %1$s</string>
 </resources>
