@@ -32,7 +32,7 @@ internal class TrainingSession(
     }
 
     fun next(isCompleted: Boolean = false): TrainingSessionState {
-        statisticsRecorder.stopRecordingExercise(isCompleted)
+        stopRecordingExerciseStatistics(isCompleted)
         state = when {
             isTrainingSessionFinished() -> TrainingSessionState.SummaryState(statisticsRecorder.trainingStatistics)
             isExerciseState() && hasCurrentExerciseRestTime() -> {
@@ -47,6 +47,12 @@ internal class TrainingSession(
             else -> throw Exception("Unknown training session state")
         }
         return state
+    }
+
+    private fun stopRecordingExerciseStatistics(isCompleted: Boolean) {
+        if(isExerciseState()) {
+            statisticsRecorder.stopRecordingExercise(isCompleted)
+        }
     }
 
     fun stop() {
