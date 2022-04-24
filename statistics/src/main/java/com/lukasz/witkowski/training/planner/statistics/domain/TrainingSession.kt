@@ -21,7 +21,7 @@ internal class TrainingSession(
 
     init {
         require(trainingPlan.exercises.isNotEmpty()) { "Cannot start training session without exercises" }
-        exercises.addAll(trainingSetsStrategy.loadExercises(trainingPlan)) // thanks to that I can inject later different strategies for exercises order
+        exercises.addAll(trainingSetsStrategy.loadExercises(trainingPlan))
     }
 
     fun start(): TrainingSessionState {
@@ -45,10 +45,7 @@ internal class TrainingSession(
             }
             isRestTimeState() || (isExerciseState() && !hasCurrentExerciseRestTime()) -> {
                 val currentExercise = loadExercise()
-                statisticsRecorder.startRecordingExercise(
-                    currentExercise.id,
-                    getCurrentSet(currentExercise)
-                )
+                startRecordingExerciseStatistics(currentExercise)
                 TrainingSessionState.ExerciseState(currentExercise)
             }
             else -> throw Exception("Unknown training session state")
@@ -56,15 +53,22 @@ internal class TrainingSession(
         return state
     }
 
+    fun stop() {
+        exercises.clear()
+        state = TrainingSessionState.IdleState
+    }
+
+    private fun startRecordingExerciseStatistics(currentExercise: TrainingExercise) {
+        statisticsRecorder.startRecordingExercise(
+            currentExercise.id,
+            getCurrentSet(currentExercise)
+        )
+    }
+
     private fun stopRecordingExerciseStatistics(isCompleted: Boolean) {
         if (isExerciseState()) {
             statisticsRecorder.stopRecordingExercise(isCompleted)
         }
-    }
-
-    fun stop() {
-        exercises.clear()
-        state = TrainingSessionState.IdleState
     }
 
     private fun getNextExerciseOverview() = exercises.first()
