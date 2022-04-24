@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.training.application
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanReceiver
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
 import kotlinx.coroutines.CoroutineScope
@@ -35,6 +36,10 @@ class TrainingPlanService(
         trainingPlanRepository.getAll().map { it.filter { trainingPlan -> !trainingPlan.isSynchronized } }.collect {
 //            sendData(it)
         }
+    }
+
+    suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): TrainingPlan {
+        return trainingPlanRepository.getTrainingPlanById(trainingPlanId)
     }
 
     private suspend fun sendData(trainingPlans: List<TrainingPlan>) {

@@ -39,6 +39,8 @@ sealed class NavItem(
 
     object TrainingOverview : NavItem("training-overview", null, "Training overview", true)
 
+    object TrainingSession: NavItem("training-session", null, "Training session", true)
+
     object Items {
         val list = listOf<NavItem>(
             Trainings,
@@ -49,7 +51,8 @@ sealed class NavItem(
             CreateTraining,
             PickExercise,
             CreateTrainingGraph,
-            TrainingOverview
+            TrainingOverview,
+            TrainingSession
         )
     }
 }

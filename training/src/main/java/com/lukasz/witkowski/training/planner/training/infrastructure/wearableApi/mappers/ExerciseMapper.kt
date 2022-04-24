@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers
 
+import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
@@ -15,8 +16,8 @@ object ExerciseMapper {
             category = exercise.category.ordinal,
             repetitions = exercise.repetitions,
             sets = exercise.sets,
-            time = exercise.time,
-            restTime = exercise.restTime
+            time = exercise.time.timeInMillis,
+            restTime = exercise.restTime.timeInMillis
         )
     }
 
@@ -29,8 +30,8 @@ object ExerciseMapper {
             image = null,
             repetitions = exerciseJsonModel.repetitions,
             sets = exerciseJsonModel.sets,
-            time = exerciseJsonModel.time,
-            restTime = exerciseJsonModel.restTime
+            time = Time(exerciseJsonModel.time),
+            restTime = Time(exerciseJsonModel.restTime)
         )
     }
 

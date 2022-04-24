@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.db.mappers
 
+import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.Image
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -18,8 +19,8 @@ internal object ExerciseMapper {
             image = exercise.image?.data,
             repetitions = exercise.repetitions,
             sets = exercise.sets,
-            time = exercise.time,
-            restTime = exercise.restTime
+            time = exercise.time.timeInMillis,
+            restTime = exercise.restTime.timeInMillis
         )
     }
 
@@ -32,8 +33,8 @@ internal object ExerciseMapper {
             image = dbExercise.image?.let { Image(it) },
             repetitions = dbExercise.repetitions,
             sets = dbExercise.sets,
-            time = dbExercise.time,
-            restTime = dbExercise.restTime
+            time = Time(dbExercise.time),
+            restTime = Time(dbExercise.restTime)
         )
     }
 }

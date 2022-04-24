@@ -16,15 +16,17 @@ import androidx.navigation.navigation
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingViewModel
-import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsListViewModel
+import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.ui.*
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingScreen
 import com.lukasz.witkowski.training.planner.training.createTraining.PickExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
-import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewScreen
-import com.lukasz.witkowski.training.planner.ui.trainingOverview.TrainingOverviewViewModel
-import com.lukasz.witkowski.training.planner.ui.trainingsList.TrainingsScreen
+import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionScreen
+import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionViewModel
+import com.lukasz.witkowski.training.planner.training.trainingOverview.TrainingOverviewScreen
+import com.lukasz.witkowski.training.planner.training.trainingOverview.TrainingOverviewViewModel
+import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsScreen
 
 @Composable
 fun Navigation(navController: NavHostController, innerPadding: PaddingValues, showToast: (String) -> Unit) {
@@ -36,7 +38,8 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues, sh
                 innerPadding = innerPadding,
                 viewModel = trainingsListViewModel,
                 onCreateTrainingFabClicked = { navController.navigate(route = NavItem.CreateTraining.route) },
-                navigateToTrainingOverview = { navController.navigate(route = "${NavItem.TrainingOverview.route}/$it") }
+                navigateToTrainingOverview = { navController.navigate(route = "${NavItem.TrainingOverview.route}/$it") },
+                navigateToTrainingSession = { navController.navigate(route = "${NavItem.TrainingSession.route}/${it.value}") }
             )
         }
 
@@ -73,6 +76,18 @@ fun Navigation(navController: NavHostController, innerPadding: PaddingValues, sh
         ) {
             val viewModel: TrainingOverviewViewModel = hiltViewModel()
             TrainingOverviewScreen(
+                modifier = Modifier.padding(innerPadding),
+                viewModel = viewModel,
+                navigateBack = { navController.navigateUp() }
+            )
+        }
+
+        composable(
+            "${NavItem.TrainingSession.route}/{trainingId}",
+            arguments = listOf(navArgument("trainingId") { type = NavType.StringType })
+        ) {
+            val viewModel: TrainingSessionViewModel = hiltViewModel()
+            TrainingSessionScreen(
                 modifier = Modifier.padding(innerPadding),
                 viewModel = viewModel,
                 navigateBack = { navController.navigateUp() }

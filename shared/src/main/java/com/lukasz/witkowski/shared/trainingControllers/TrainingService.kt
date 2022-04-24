@@ -55,7 +55,7 @@ abstract class TrainingService : LifecycleService() {
     }
 
     fun stopCurrentService() {
-        timerHelper.cancelTimer()
+//        timerHelper.cancelTimer()
         stopForeground(true)
         stopSelf()
         isStarted = false

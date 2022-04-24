@@ -3,7 +3,7 @@ package com.lukasz.witkowski.training.planner.training.createTraining
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.shared.utils.TimeFormatter
+import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
@@ -69,15 +69,15 @@ class CreateTrainingViewModel @Inject constructor(
         minutes: Int,
         seconds: Int
     ) {
-        val timeInMillis = TimeFormatter.timeToMillis(minutes = minutes, seconds = seconds)
         val trainingExercise = TrainingExercise(
             id = TrainingExerciseId.create(),
             name = exercise.name,
             description = exercise.description,
             category = exercise.category,
+            image = exercise.image,
             repetitions = reps.toIntOrNull() ?: 1,
             sets = sets.toIntOrNull() ?: 1,
-            time = timeInMillis
+            time = Time(minutes = minutes, seconds = seconds)
         )
         addTrainingExercise(trainingExercise, exercise.id)
     }
@@ -87,9 +87,8 @@ class CreateTrainingViewModel @Inject constructor(
         restTimeMinutes: Int,
         restTimeSeconds: Int
     ) {
-        val timeInMillis =
-            TimeFormatter.timeToMillis(minutes = restTimeMinutes, seconds = restTimeSeconds)
-        val updatedExercise = exercise.copy(restTime = timeInMillis)
+        val newRestTime = Time(minutes = restTimeMinutes, seconds = restTimeSeconds)
+        val updatedExercise = exercise.copy(restTime = newRestTime)
         val exercisesList = _trainingExercises.value.toMutableList()
         val index = exercisesList.indexOf(exercise)
         exercisesList[index] = updatedExercise
