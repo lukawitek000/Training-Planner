@@ -6,7 +6,6 @@ import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseSt
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import java.util.Date
 
 class BasicStatisticsRecorder(
     override val trainingPlanId: TrainingPlanId,
@@ -56,7 +55,7 @@ class BasicStatisticsRecorder(
         return TrainingStatistics(
             trainingPlanId = trainingPlanId,
             totalTime = timeProvider.currentTime() - startTrainingTime,
-            date = Date(),
+            date = timeProvider.currentDate(),
             exercisesStatistics = exercisesStatistics
         )
     }

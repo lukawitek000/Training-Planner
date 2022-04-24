@@ -10,7 +10,6 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import org.junit.Before
 import org.junit.Test
-import java.util.Date
 import kotlin.test.assertEquals
 
 class BasicStatisticsRecorderTest {
@@ -38,7 +37,7 @@ class BasicStatisticsRecorderTest {
         val expectedStatistics = TrainingStatistics(
             trainingPlanId = trainingPlan.id,
             totalTime = TIME_10_SECONDS,
-            date = Date(),
+            date = timeProvider.date,
             exercisesStatistics = emptyList()
         )
         assertTrainingStatistics(expectedStatistics, trainingStatistics)
@@ -86,11 +85,29 @@ class BasicStatisticsRecorderTest {
 
         // then
         val expectedAttemptsStatistics = listOf(
-            ExerciseAttemptStatistics(trainingExerciseId = exerciseToRecordStatistics.id, time = TIME_10_SECONDS, set = 1, completed = false),
-            ExerciseAttemptStatistics(trainingExerciseId = exerciseToRecordStatistics.id, time = TIME_10_SECONDS, set = 2, completed = true),
-            ExerciseAttemptStatistics(trainingExerciseId = exerciseToRecordStatistics.id, time = TIME_10_SECONDS, set = 3, completed = false),
+            ExerciseAttemptStatistics(
+                trainingExerciseId = exerciseToRecordStatistics.id,
+                time = TIME_10_SECONDS,
+                set = 1,
+                completed = false
+            ),
+            ExerciseAttemptStatistics(
+                trainingExerciseId = exerciseToRecordStatistics.id,
+                time = TIME_10_SECONDS,
+                set = 2,
+                completed = true
+            ),
+            ExerciseAttemptStatistics(
+                trainingExerciseId = exerciseToRecordStatistics.id,
+                time = TIME_10_SECONDS,
+                set = 3,
+                completed = false
+            ),
         )
-        val expectedStatistics = ExerciseStatistics(trainingExerciseId = exerciseToRecordStatistics.id, attemptsStatistics = expectedAttemptsStatistics)
+        val expectedStatistics = ExerciseStatistics(
+            trainingExerciseId = exerciseToRecordStatistics.id,
+            attemptsStatistics = expectedAttemptsStatistics
+        )
         assertExerciseStatistics(expectedStatistics, exerciseStatistics)
     }
 
