@@ -44,19 +44,24 @@ fun TrainingSessionSummaryScreen(
     statistics: TrainingStatistics,
     trainingPlan: TrainingPlan
 ) {
-    Column(modifier.fillMaxSize()) {
-        Text(
-            modifier = Modifier.fillMaxWidth(),
-            text = trainingPlan.title,
-            fontSize = 32.sp,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colors.secondary
-        )
-        TrainingStatisticsSummary(trainingStatistics = statistics)
-        ExercisesStatistics(
-            exercisesStatistics = statistics.exercisesStatistics,
-            trainingExercises = trainingPlan.exercises
-        )
+    LazyColumn(modifier.fillMaxSize()) {
+        item {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = trainingPlan.title,
+                fontSize = 32.sp,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colors.secondary
+            )
+
+            TrainingStatisticsSummary(trainingStatistics = statistics)
+        }
+        items(statistics.exercisesStatistics) {
+            ExerciseStatisticsCard(
+                exerciseStatistics = it,
+                trainingExercise = trainingPlan.exercises.first { exercise -> exercise.id == it.trainingExerciseId }
+            )
+        }
     }
 
 }
@@ -81,31 +86,29 @@ fun TrainingStatisticsSummary(
             ), fontSize = 18.sp
         )
         Spacer(modifier = Modifier.height(4.dp))
-        Text(text = stringResource(id = R.string.date, trainingStatistics.date.formatToString()), fontSize = 18.sp)
+        Text(
+            text = stringResource(id = R.string.date, trainingStatistics.date.formatToString()),
+            fontSize = 18.sp
+        )
     }
 }
 
 @Composable
-fun ExercisesStatistics(
+fun ExerciseStatisticsCard(
     modifier: Modifier = Modifier,
-    exercisesStatistics: List<ExerciseStatistics>,
-    trainingExercises: List<TrainingExercise>
+    exerciseStatistics: ExerciseStatistics,
+    trainingExercise: TrainingExercise
 ) {
-    LazyColumn(modifier = modifier) {
-        items(exercisesStatistics) {
-            val exercise =
-                trainingExercises.first { exercise -> exercise.id == it.trainingExerciseId }
-            ExpandableListCardItem(
-                shrinkedContent = {
-                    ExerciseStatisticsSummary(
-                        exerciseStatistics = it,
-                        exercise = exercise
-                    )
-                },
-                expandedContent = { ExerciseDetailStatistics(exerciseStatistics = it) }
+    ExpandableListCardItem(
+        modifier = modifier,
+        shrinkedContent = {
+            ExerciseStatisticsSummary(
+                exerciseStatistics = exerciseStatistics,
+                exercise = trainingExercise
             )
-        }
-    }
+        },
+        expandedContent = { ExerciseDetailStatistics(exerciseStatistics = exerciseStatistics) }
+    )
 }
 
 @Composable
