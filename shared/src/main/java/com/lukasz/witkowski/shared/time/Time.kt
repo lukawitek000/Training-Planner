@@ -41,6 +41,10 @@ class Time(val timeInMillis: Long) {
         return timeStringBuilder.toString()
     }
 
+    override fun equals(other: Any?): Boolean {
+        return timeInMillis == (other as? Time)?.timeInMillis
+    }
+
     fun calculateMinutesAndSeconds(millis: Long = timeInMillis): Pair<Int, Int> {
         val millisToSeconds = millis / MILLIS_IN_SECOND
         val minutes = millisToSeconds / SECONDS_IN_MINUTE
