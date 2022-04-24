@@ -5,7 +5,10 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
 
-class BasicStatisticsRecorder(override val trainingPlanId: TrainingPlanId) : StatisticsRecorder {
+class BasicStatisticsRecorder(
+    override val trainingPlanId: TrainingPlanId,
+    private val timeProvider: TimeProvider
+    ) : StatisticsRecorder {
 
     override val trainingStatistics: TrainingStatistics
         get() = gatherTrainingStatistics()
@@ -18,11 +21,11 @@ class BasicStatisticsRecorder(override val trainingPlanId: TrainingPlanId) : Sta
     private var currentExerciseSet: Int = 0
 
     override fun start() {
-        startTrainingTime = getCurrentTime()
+        startTrainingTime = timeProvider.currentTime()
     }
 
     override fun startRecordingExercise(trainingExerciseId: TrainingExerciseId, set: Int) {
-        currentExerciseStartTime = getCurrentTime()
+        currentExerciseStartTime = timeProvider.currentTime()
         currentExerciseId = trainingExerciseId
         currentExerciseSet = set
     }
@@ -30,7 +33,7 @@ class BasicStatisticsRecorder(override val trainingPlanId: TrainingPlanId) : Sta
     override fun stopRecordingExercise(isCompleted: Boolean) {
         val exerciseAttemptStatistics = ExerciseAttemptStatistics(
             trainingExerciseId = currentExerciseId!!,
-            time = getCurrentTime().minus(currentExerciseStartTime),
+            time = timeProvider.currentTime().minus(currentExerciseStartTime),
             set = currentExerciseSet,
             completed = isCompleted
         )
@@ -47,14 +50,9 @@ class BasicStatisticsRecorder(override val trainingPlanId: TrainingPlanId) : Sta
         }
         return TrainingStatistics(
             trainingPlanId = trainingPlanId,
-            totalTime = getCurrentTime().minus(startTrainingTime),
+            totalTime = timeProvider.currentTime().minus(startTrainingTime),
             date = Date(),
             exercisesStatistics = exercisesStatistics
         )
-    }
-
-    private fun getCurrentTime(): Time {
-        val currentTimeInMillis = System.currentTimeMillis()
-        return Time(currentTimeInMillis)
     }
 }
