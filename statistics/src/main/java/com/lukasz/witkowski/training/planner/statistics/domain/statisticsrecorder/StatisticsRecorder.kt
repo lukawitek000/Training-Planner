@@ -6,9 +6,8 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 
 interface StatisticsRecorder {
     val trainingPlanId: TrainingPlanId
-    val trainingStatistics: TrainingStatistics
     fun start()
+    fun stop(): TrainingStatistics
     fun startRecordingExercise(trainingExerciseId: TrainingExerciseId, set: Int)
     fun stopRecordingExercise(isCompleted: Boolean)
-
 }

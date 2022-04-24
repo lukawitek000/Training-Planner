@@ -35,14 +35,20 @@ internal class TrainingSession(
     fun next(isCompleted: Boolean = false): TrainingSessionState {
         stopRecordingExerciseStatistics(isCompleted)
         state = when {
-            isTrainingSessionFinished() -> TrainingSessionState.SummaryState(statisticsRecorder.trainingStatistics)
+            isTrainingSessionFinished() -> {
+                val trainingStatistics = statisticsRecorder.stop()
+                TrainingSessionState.SummaryState(trainingStatistics)
+            }
             isExerciseState() && hasCurrentExerciseRestTime() -> {
                 val nextExercise = getNextExerciseOverview()
                 TrainingSessionState.RestTimeState(nextExercise, currentExercise.restTime)
             }
             isRestTimeState() || (isExerciseState() && !hasCurrentExerciseRestTime()) -> {
                 val currentExercise = loadExercise()
-                statisticsRecorder.startRecordingExercise(currentExercise.id, getCurrentSet(currentExercise))
+                statisticsRecorder.startRecordingExercise(
+                    currentExercise.id,
+                    getCurrentSet(currentExercise)
+                )
                 TrainingSessionState.ExerciseState(currentExercise)
             }
             else -> throw Exception("Unknown training session state")
@@ -51,7 +57,7 @@ internal class TrainingSession(
     }
 
     private fun stopRecordingExerciseStatistics(isCompleted: Boolean) {
-        if(isExerciseState()) {
+        if (isExerciseState()) {
             statisticsRecorder.stopRecordingExercise(isCompleted)
         }
     }

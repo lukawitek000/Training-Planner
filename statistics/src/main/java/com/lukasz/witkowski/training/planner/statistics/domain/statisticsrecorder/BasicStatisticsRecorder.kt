@@ -11,11 +11,7 @@ import java.util.Date
 class BasicStatisticsRecorder(
     override val trainingPlanId: TrainingPlanId,
     private val timeProvider: TimeProvider
-    ) : StatisticsRecorder {
-
-    override val trainingStatistics: TrainingStatistics
-        get() = gatherTrainingStatistics()
-
+) : StatisticsRecorder {
 
     private var startTrainingTime = Time.NONE
     private var exercisesAttemptsStatistics = mutableListOf<ExerciseAttemptStatistics>()
@@ -24,8 +20,11 @@ class BasicStatisticsRecorder(
     private var currentExerciseSet: Int = 0
 
     override fun start() {
+        exercisesAttemptsStatistics.clear()
         startTrainingTime = timeProvider.currentTime()
     }
+
+    override fun stop(): TrainingStatistics = gatherTrainingStatistics()
 
     override fun startRecordingExercise(trainingExerciseId: TrainingExerciseId, set: Int) {
         currentExerciseStartTime = timeProvider.currentTime()
