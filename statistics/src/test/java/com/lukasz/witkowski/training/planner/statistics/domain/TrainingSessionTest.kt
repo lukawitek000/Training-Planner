@@ -9,9 +9,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.mock
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.stub
 
 class TrainingSessionTest {
 
@@ -24,7 +22,8 @@ class TrainingSessionTest {
     @Before
     fun setUp() {
         val trainingPlan = createTrainingPlan(trainingExercises)
-        trainingSession = TrainingSession(trainingPlan, mockStatisticsRecorder, trainingSetsStrategy)
+        trainingSession =
+            TrainingSession(trainingPlan, mockStatisticsRecorder, trainingSetsStrategy)
     }
 
     @Test
@@ -72,7 +71,10 @@ class TrainingSessionTest {
         val trainingSessionState = trainingSession.next()
 
         // then
-        val expectedState = TrainingSessionState.RestTimeState(trainingExercises.first(), trainingExercises.last().restTime)
+        val expectedState = TrainingSessionState.RestTimeState(
+            trainingExercises.first(),
+            trainingExercises.last().restTime
+        )
         assertRestTimeState(expectedState, trainingSessionState)
     }
 
