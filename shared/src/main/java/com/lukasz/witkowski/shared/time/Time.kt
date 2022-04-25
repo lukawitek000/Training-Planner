@@ -23,22 +23,13 @@ class Time(val timeInMillis: Long) {
         val remainingTime = timeInMillis - hours * MILLIS_IN_HOUR
         val (minutes, seconds) = calculateMinutesAndSeconds(remainingTime)
         val timeStringBuilder = StringBuilder()
-        if (hours > 0) {
-            timeStringBuilder.append("${hours}h")
-        }
+        if (hours > 0) timeStringBuilder.append("${hours}h")
         if (minutes > 0) {
-            if(timeStringBuilder.isNotEmpty()) {
-                timeStringBuilder.append(" ")
-            }
+            timeStringBuilder.appendSpaceIfNotEmpty()
             timeStringBuilder.append("${minutes}min")
         }
-        if (seconds > 0 && hours <= 0) {
-            if(timeStringBuilder.isNotEmpty()) {
-                timeStringBuilder.append(" ")
-            }
-            timeStringBuilder.append("${seconds}s")
-        }
-        if (timeStringBuilder.isEmpty()) {
+        if ((seconds > 0 && hours <= 0) || timeStringBuilder.isEmpty()) {
+            timeStringBuilder.appendSpaceIfNotEmpty()
             timeStringBuilder.append("${seconds}s")
         }
         return timeStringBuilder.toString()
@@ -73,6 +64,10 @@ class Time(val timeInMillis: Long) {
         val millis = timeInMillis - minutes * MILLIS_IN_MINUTE - seconds * MILLIS_IN_SECOND
         val tenthSecond = millis / MILLIS_IN_CENTISECOND
         timeStringBuilder.append(".$tenthSecond")
+    }
+
+    private fun StringBuilder.appendSpaceIfNotEmpty() {
+        if (isNotEmpty()) append(" ")
     }
 
     companion object {
