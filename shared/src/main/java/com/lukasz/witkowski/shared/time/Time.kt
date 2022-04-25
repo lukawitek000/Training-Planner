@@ -1,9 +1,5 @@
 package com.lukasz.witkowski.shared.time
 
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-
 class Time(val timeInMillis: Long) {
 
     constructor(
@@ -15,9 +11,9 @@ class Time(val timeInMillis: Long) {
     fun toTimerString(): String {
         val (minutes, seconds) = calculateMinutesAndSeconds()
         val timeStringBuilder = StringBuilder()
-        timeStringBuilder.appendWithZeroBeforeNumberIfLessThan10(minutes)
-        timeStringBuilder.append(":")
-        timeStringBuilder.appendWithZeroBeforeNumberIfLessThan10(seconds)
+        if(minutes > 0) timeStringBuilder.append(minutes).append(":")
+        appendZeroBeforeSecondDigitIfNeeded(seconds, timeStringBuilder)
+        timeStringBuilder.append(seconds)
         appendTenthSecond(minutes, seconds, timeStringBuilder)
         return timeStringBuilder.toString()
     }
@@ -63,11 +59,9 @@ class Time(val timeInMillis: Long) {
 
     operator fun minus(time: Time) = Time(this.timeInMillis - time.timeInMillis)
 
-    private fun StringBuilder.appendWithZeroBeforeNumberIfLessThan10(number: Int) {
-        if (number < 10) {
-            append("0$number")
-        } else {
-            append(number)
+    private fun appendZeroBeforeSecondDigitIfNeeded(seconds: Int, timeStringBuilder: StringBuilder) {
+        if(timeStringBuilder.isNotEmpty() && seconds in 0..9) {
+            timeStringBuilder.append(0)
         }
     }
 
