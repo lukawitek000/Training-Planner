@@ -1,10 +1,13 @@
 package com.lukasz.witkowski.training.planner.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -101,6 +104,7 @@ private fun NavGraphBuilder.createTrainingNavGraph(
     innerPadding: PaddingValues,
     navController: NavHostController
 ) {
+    val padding = PaddingValues.Absolute(top = innerPadding.calculateTopPadding(), left = innerPadding.calculateStartPadding(LayoutDirection.Ltr), right = innerPadding.calculateEndPadding(LayoutDirection.Ltr))
     navigation(
         startDestination = NavItem.CreateTraining.route,
         route = NavItem.CreateTrainingGraph.route
@@ -111,7 +115,7 @@ private fun NavGraphBuilder.createTrainingNavGraph(
             val createTrainingViewModel: CreateTrainingViewModel =
                 hiltViewModel(createTrainingBackStackEntry)
             CreateTrainingScreen(
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier.padding(padding),
                 viewModel = createTrainingViewModel,
                 navigateBack = { navController.navigateUp() },
                 onAddExerciseClicked = { navController.navigate(route = NavItem.PickExercise.route) }
@@ -124,7 +128,7 @@ private fun NavGraphBuilder.createTrainingNavGraph(
             val createTrainingViewModel: CreateTrainingViewModel =
                 hiltViewModel(createTrainingBackStackEntry)
             PickExerciseScreen(
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier.padding(padding),
                 viewModel = viewModel,
                 createTrainingViewModel = createTrainingViewModel,
                 navigateBack = { navController.navigateUp() }
