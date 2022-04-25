@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -164,25 +165,45 @@ private fun CreateTrainingScreenContent(
     setRestTimeToTrainingExercise: (TrainingExercise) -> Unit,
     removeTrainingExercise: (TrainingExercise) -> Unit
 ) {
-    Column(
+    LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TrainingAndDescriptionInputs(
+        item { TrainingAndDescriptionInputs(
             modifier = Modifier.padding(bottom = 16.dp),
             title = title,
             description = description,
             onTitleChanged = onTitleChanged,
             onDescriptionChanged = onDescriptionChanged
+        ) }
+        item {
+            AddExercisesButton(
+                modifier = Modifier.padding(bottom = 16.dp),
+                onAddExerciseClicked = onAddExerciseClicked
+            )
+        }
+        trainingExercisesList(
+            trainingExercises,
+            removeTrainingExercise,
+            setRestTimeToTrainingExercise
         )
-        AddExercisesButton(
-            modifier = Modifier.padding(bottom = 16.dp),
-            onAddExerciseClicked = onAddExerciseClicked
-        )
-        TrainingExercisesList(
-            exercises = trainingExercises,
+    }
+}
+
+private fun LazyListScope.trainingExercisesList(
+    trainingExercises: List<TrainingExercise>,
+    removeTrainingExercise: (TrainingExercise) -> Unit,
+    setRestTimeToTrainingExercise: (TrainingExercise) -> Unit
+) {
+    itemsIndexed(trainingExercises) { index, exercise ->
+        TrainingExerciseListItem(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            trainingExercise = exercise,
+            index = index,
             removeTrainingExercise = removeTrainingExercise,
             setRestTimeToTrainingExercise = setRestTimeToTrainingExercise
         )
@@ -229,28 +250,6 @@ private fun AddExercisesButton(
         onClick = { onAddExerciseClicked() }
     ) {
         Text(text = stringResource(id = R.string.add_exercises))
-    }
-}
-
-@Composable
-fun TrainingExercisesList(
-    modifier: Modifier = Modifier,
-    exercises: List<TrainingExercise>,
-    removeTrainingExercise: (TrainingExercise) -> Unit,
-    setRestTimeToTrainingExercise: (TrainingExercise) -> Unit
-) {
-    LazyColumn(modifier = modifier) {
-        itemsIndexed(exercises) { index, exercise ->
-            TrainingExerciseListItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp),
-                trainingExercise = exercise,
-                index = index,
-                removeTrainingExercise = removeTrainingExercise,
-                setRestTimeToTrainingExercise = setRestTimeToTrainingExercise
-            )
-        }
     }
 }
 
