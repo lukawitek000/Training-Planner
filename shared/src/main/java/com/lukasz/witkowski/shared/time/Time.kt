@@ -1,9 +1,5 @@
 package com.lukasz.witkowski.shared.time
 
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
-
 class Time(val timeInMillis: Long) {
 
     constructor(
@@ -15,9 +11,9 @@ class Time(val timeInMillis: Long) {
     fun toTimerString(): String {
         val (minutes, seconds) = calculateMinutesAndSeconds()
         val timeStringBuilder = StringBuilder()
-        timeStringBuilder.appendWithZeroBeforeNumberIfLessThan10(minutes)
-        timeStringBuilder.append(":")
-        timeStringBuilder.appendWithZeroBeforeNumberIfLessThan10(seconds)
+        if(minutes > 0) timeStringBuilder.append(minutes).append(":")
+        appendZeroBeforeSecondDigitIfNeeded(seconds, timeStringBuilder)
+        timeStringBuilder.append(seconds)
         appendTenthSecond(minutes, seconds, timeStringBuilder)
         return timeStringBuilder.toString()
     }
@@ -27,29 +23,16 @@ class Time(val timeInMillis: Long) {
         val remainingTime = timeInMillis - hours * MILLIS_IN_HOUR
         val (minutes, seconds) = calculateMinutesAndSeconds(remainingTime)
         val timeStringBuilder = StringBuilder()
-        if (hours > 0) {
-            timeStringBuilder.append("${hours}h")
-        }
+        if (hours > 0) timeStringBuilder.append("${hours}h")
         if (minutes > 0) {
-            if(timeStringBuilder.isNotEmpty()) {
-                timeStringBuilder.append(" ")
-            }
+            timeStringBuilder.appendSpaceIfNotEmpty()
             timeStringBuilder.append("${minutes}min")
         }
-        if (seconds > 0 && hours <= 0) {
-            if(timeStringBuilder.isNotEmpty()) {
-                timeStringBuilder.append(" ")
-            }
-            timeStringBuilder.append("${seconds}s")
-        }
-        if (timeStringBuilder.isEmpty()) {
+        if ((seconds > 0 && hours <= 0) || timeStringBuilder.isEmpty()) {
+            timeStringBuilder.appendSpaceIfNotEmpty()
             timeStringBuilder.append("${seconds}s")
         }
         return timeStringBuilder.toString()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        return timeInMillis == (other as? Time)?.timeInMillis
     }
 
     fun calculateMinutesAndSeconds(millis: Long = timeInMillis): Pair<Int, Int> {
@@ -63,11 +46,9 @@ class Time(val timeInMillis: Long) {
 
     operator fun minus(time: Time) = Time(this.timeInMillis - time.timeInMillis)
 
-    private fun StringBuilder.appendWithZeroBeforeNumberIfLessThan10(number: Int) {
-        if (number < 10) {
-            append("0$number")
-        } else {
-            append(number)
+    private fun appendZeroBeforeSecondDigitIfNeeded(seconds: Int, timeStringBuilder: StringBuilder) {
+        if(timeStringBuilder.isNotEmpty() && seconds in 0..9) {
+            timeStringBuilder.append(0)
         }
     }
 
@@ -79,6 +60,10 @@ class Time(val timeInMillis: Long) {
         val millis = timeInMillis - minutes * MILLIS_IN_MINUTE - seconds * MILLIS_IN_SECOND
         val tenthSecond = millis / MILLIS_IN_CENTISECOND
         timeStringBuilder.append(".$tenthSecond")
+    }
+
+    private fun StringBuilder.appendSpaceIfNotEmpty() {
+        if (isNotEmpty()) append(" ")
     }
 
     companion object {
