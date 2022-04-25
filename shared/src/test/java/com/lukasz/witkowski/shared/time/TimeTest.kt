@@ -1,8 +1,6 @@
 package com.lukasz.witkowski.shared.time
 
-import org.junit.Assert.*
-
-import org.junit.Before
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class TimeTest {
@@ -12,7 +10,7 @@ class TimeTest {
         // given
         val timeValues = timerStrings.keys
 
-        timeValues.forEach{ time ->
+        timeValues.forEach { time ->
             // when
             val timerString = time.toTimerString()
 
@@ -35,6 +33,20 @@ class TimeTest {
         }
     }
 
+    @Test
+    fun `calculate minutes and seconds from millis`() {
+        // given
+        val timeValues = minutesAndSeconds.keys
+
+        timeValues.forEach { time ->
+            // when
+            val minutesSecondsPair = time.calculateMinutesAndSeconds()
+
+            // then
+            assertEquals(minutesAndSeconds[time], minutesSecondsPair)
+        }
+    }
+
     private val timerStrings = mapOf(
         Time(minutes = 3, seconds = 10) to "3:10.0",
         Time(timeInMillis = 365300) to "6:05.3",
@@ -54,5 +66,13 @@ class TimeTest {
         Time(minutes = 3, seconds = 0) to "3min",
         Time(hour = 2, minutes = 9, seconds = 3) to "2h 9min",
         Time(hour = 5, seconds = 0) to "5h"
+    )
+
+    private val minutesAndSeconds = mapOf(
+        Time(623_000) to Pair(10, 23),
+        Time(480_000) to Pair(8, 0),
+        Time(10_000) to Pair(0, 10),
+        Time(0) to Pair(0, 0),
+        Time(60_000) to Pair(1, 0)
     )
 }
