@@ -189,6 +189,7 @@ private fun CreateTrainingScreenContent(
             removeTrainingExercise,
             setRestTimeToTrainingExercise
         )
+        item { Spacer(modifier = Modifier.height(56.dp)) }
     }
 }
 
