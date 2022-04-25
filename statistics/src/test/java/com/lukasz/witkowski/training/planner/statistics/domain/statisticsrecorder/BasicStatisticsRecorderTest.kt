@@ -120,7 +120,7 @@ class BasicStatisticsRecorderTest {
         trainingStatistics: TrainingStatistics
     ) {
         assertEquals(expectedStatistics.trainingPlanId, trainingStatistics.trainingPlanId)
-        assertEquals(expectedStatistics.totalTime, trainingStatistics.totalTime)
+        assertEqualsTime(expectedStatistics.totalTime, trainingStatistics.totalTime)
         assertExercisesStatistics(
             expectedStatistics.exercisesStatistics,
             trainingStatistics.exercisesStatistics
@@ -145,7 +145,7 @@ class BasicStatisticsRecorderTest {
             expectedExerciseStatistics.trainingExerciseId,
             exerciseStatistics.trainingExerciseId
         )
-        assertEquals(expectedExerciseStatistics.totalTime, exerciseStatistics.totalTime)
+        assertEqualsTime(expectedExerciseStatistics.totalTime, exerciseStatistics.totalTime)
         assertEquals(
             expectedExerciseStatistics.completenessRate,
             exerciseStatistics.completenessRate
@@ -175,8 +175,12 @@ class BasicStatisticsRecorderTest {
             attemptStatistics.trainingExerciseId
         )
         assertEquals(expectedAttemptStatistics.completed, attemptStatistics.completed)
-        assertEquals(expectedAttemptStatistics.time, attemptStatistics.time)
+        assertEqualsTime(expectedAttemptStatistics.time, attemptStatistics.time)
         assertEquals(expectedAttemptStatistics.set, attemptStatistics.set)
+    }
+
+    private fun assertEqualsTime(expected: Time, actual: Time) {
+        assertEquals(expected.timeInMillis, actual.timeInMillis)
     }
 
     private fun createTrainingPlan(exercises: List<TrainingExercise>): TrainingPlan {
