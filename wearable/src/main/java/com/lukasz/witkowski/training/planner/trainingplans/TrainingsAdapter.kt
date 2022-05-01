@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.trainingsList
+package com.lukasz.witkowski.training.planner.trainingplans
 
 import android.content.Context
 import android.view.LayoutInflater

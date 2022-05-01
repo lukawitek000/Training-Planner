@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.trainingsList
+package com.lukasz.witkowski.training.planner.trainingplans
 
 import android.Manifest
 import android.content.Intent
