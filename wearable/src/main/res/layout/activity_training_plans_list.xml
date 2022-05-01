@@ -31,7 +31,7 @@
             layout="@layout/loading_view" />
 
         <androidx.wear.widget.WearableRecyclerView
-            android:id="@+id/trainings_watch_rv"
+            android:id="@+id/training_plans_watch_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"

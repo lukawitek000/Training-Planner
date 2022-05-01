@@ -27,9 +27,9 @@ class CategoriesAdapter(private val categories: List<Category>, private val cont
 
     inner class CategoriesViewHolder(private val binding: CategoryListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind(category: Category) {
             binding.categoryNameTv.text = context.resources.getString(category.res)
         }
-
     }
 }

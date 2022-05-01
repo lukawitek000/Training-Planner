@@ -29,6 +29,7 @@ class TrainingsAdapter(
 
     inner class TrainingsViewHolder(private val binding: TrainingListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
         fun bind(trainingPlan: TrainingPlan) {
             binding.trainingNameTv.text = trainingPlan.title
             setUpCategoriesRecyclerView(trainingPlan)
