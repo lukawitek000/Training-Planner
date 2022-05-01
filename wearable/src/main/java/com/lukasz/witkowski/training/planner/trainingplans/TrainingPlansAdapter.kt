@@ -11,10 +11,10 @@ import com.lukasz.witkowski.training.planner.databinding.TrainingListItemBinding
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
 
-class TrainingsAdapter(
+class TrainingPlansAdapter(
     private val context: Context,
     private val onTrainingClicked: (TrainingPlanId, String) -> Unit
-) : ListAdapter<TrainingPlan, TrainingsAdapter.TrainingsViewHolder>(DiffCallback()) {
+) : ListAdapter<TrainingPlan, TrainingPlansAdapter.TrainingsViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrainingsViewHolder {
         val binding = TrainingListItemBinding.inflate(

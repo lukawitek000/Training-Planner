@@ -27,8 +27,8 @@ import timber.log.Timber
 class TrainingsListActivity : ComponentActivity() {
 
     private lateinit var binding: ActivityTrainingPlansListBinding
-    private lateinit var adapter: TrainingsAdapter
-    private val viewModel: TrainingsListViewModel by viewModels()
+    private lateinit var adapter: TrainingPlansAdapter
+    private val viewModel: TrainingPlansListViewModel by viewModels()
     private var isServiceStarted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,7 +56,7 @@ class TrainingsListActivity : ComponentActivity() {
     }
 
     private fun setUpTrainingAdapter() {
-        adapter = TrainingsAdapter(context = this) { id, title ->
+        adapter = TrainingPlansAdapter(context = this) { id, title ->
             navigateToStartTrainingActivity(id, title)
         }
 

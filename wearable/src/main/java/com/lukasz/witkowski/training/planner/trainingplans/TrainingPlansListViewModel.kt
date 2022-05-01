@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TrainingsListViewModel
+class TrainingPlansListViewModel
 @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val trainingPlanService: TrainingPlanService
