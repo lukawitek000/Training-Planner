@@ -19,4 +19,5 @@
     <string name="total_burned_calories_description">Total burned calories</string>
     <string name="training_time">Training time</string>
     <string name="training_plan_does_not_exist">Training plan does not exist</string>
+    <string name="fetching_training_plans_failed">Fetching training plans failed</string>
 </resources>

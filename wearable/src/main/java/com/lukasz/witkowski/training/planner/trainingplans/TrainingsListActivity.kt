@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.trainingsList
+package com.lukasz.witkowski.training.planner.trainingplans
 
 import android.Manifest
 import android.content.Intent
@@ -13,7 +13,7 @@ import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.shared.utils.startSendingDataService
 import com.lukasz.witkowski.shared.utils.stopSendingDataService
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingsListBinding
+import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingPlansListBinding
 import com.lukasz.witkowski.training.planner.service.SendingStatisticsService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
@@ -26,18 +26,18 @@ import timber.log.Timber
 @AndroidEntryPoint
 class TrainingsListActivity : ComponentActivity() {
 
-    private lateinit var binding: ActivityTrainingsListBinding
-    private lateinit var adapter: TrainingsAdapter
-    private val viewModel: TrainingsListViewModel by viewModels()
+    private lateinit var binding: ActivityTrainingPlansListBinding
+    private lateinit var adapter: TrainingPlansAdapter
+    private val viewModel: TrainingPlansListViewModel by viewModels()
     private var isServiceStarted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.TrainingPlannerTheme)
         super.onCreate(savedInstanceState)
-        binding = ActivityTrainingsListBinding.inflate(layoutInflater)
+        binding = ActivityTrainingPlansListBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUpTrainingAdapter()
-        getTrainings()
+        fetchTrainingPlans()
         permissionLauncher.launch(REQUIRED_PERMISSIONS)
     }
 
@@ -56,11 +56,11 @@ class TrainingsListActivity : ComponentActivity() {
     }
 
     private fun setUpTrainingAdapter() {
-        adapter = TrainingsAdapter(context = this) { id, title ->
+        adapter = TrainingPlansAdapter(context = this) { id, title ->
             navigateToStartTrainingActivity(id, title)
         }
 
-        binding.trainingsWatchRv.apply {
+        binding.trainingPlansWatchRv.apply {
             isEdgeItemsCenteringEnabled = true
             layoutManager = WearableLinearLayoutManager(this@TrainingsListActivity)
             adapter = this@TrainingsListActivity.adapter
@@ -74,38 +74,51 @@ class TrainingsListActivity : ComponentActivity() {
         startActivity(intent)
     }
 
-    private fun getTrainings() {
-        observeFetchedTrainings()
-        viewModel.getTrainingsWithExercises()
+    private fun fetchTrainingPlans() {
+        observeFetchedTrainingPlans()
+        viewModel.getTrainingPlans()
     }
 
-    private fun observeFetchedTrainings() {
-        viewModel.trainings.observe(this) {
+    private fun observeFetchedTrainingPlans() {
+        viewModel.trainingPlans.observe(this) {
             when (it) {
                 is ResultHandler.Success -> setTrainingsListToAdapter(it.value)
                 is ResultHandler.Loading -> setLoadingState()
                 is ResultHandler.Error -> handleFetchingDataError(it.cause)
-                else -> {}
+                is ResultHandler.Idle -> Unit
             }
         }
     }
 
     private fun handleFetchingDataError(cause: Exception?) {
-        Timber.w("Fetching data from DB failed ${cause?.localizedMessage}")
-        Toast.makeText(this, "Fetching data from database failed", Toast.LENGTH_SHORT).show()
+        Timber.w("Fetching training plans failed: ${cause?.localizedMessage}")
+        Toast.makeText(this, getString(R.string.fetching_training_plans_failed), Toast.LENGTH_SHORT)
+            .show()
+        setTrainingsListToAdapter(emptyList())
     }
 
     private fun setLoadingState() {
-        binding.loadingView.loadingLayout.visibility = View.VISIBLE
-        binding.noTrainingsMessage.visibility = View.GONE
+        binding.run {
+            loadingView.loadingLayout.visibility = View.VISIBLE
+            noTrainingsMessage.visibility = View.GONE
+            trainingPlansWatchRv.visibility = View.GONE
+        }
     }
 
     private fun setTrainingsListToAdapter(data: List<TrainingPlan>) {
-        binding.loadingView.loadingLayout.visibility = View.GONE
-        binding.noTrainingsMessage.visibility  = if (data.isEmpty()) View.VISIBLE else View.GONE
+        binding.run {
+            loadingView.loadingLayout.visibility = View.GONE
+            noTrainingsMessage.visibility = if (data.isEmpty()) {
+                View.VISIBLE
+            } else {
+                trainingPlansWatchRv.visibility = View.VISIBLE
+                View.GONE
+            }
+        }
         adapter.submitList(data)
     }
 
+    // TODO handle in ui denied permissions, and do not allow later to use this sensors if they are denied
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { result ->

@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.trainingsList
+package com.lukasz.witkowski.training.planner.trainingplans
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,26 +10,27 @@ import com.lukasz.witkowski.training.planner.dummyTrainingsList
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class TrainingsListViewModel
+class TrainingPlansListViewModel
 @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val trainingPlanService: TrainingPlanService
 ) : ViewModel() {
 
 
-    private val _trainings = MutableLiveData<ResultHandler<List<TrainingPlan>>>()
-    val trainings: LiveData<ResultHandler<List<TrainingPlan>>> = _trainings
+    private val _trainingPlans = MutableLiveData<ResultHandler<List<TrainingPlan>>>()
+    val trainingPlans: LiveData<ResultHandler<List<TrainingPlan>>> = _trainingPlans
 
-    fun getTrainingsWithExercises() {
+    fun getTrainingPlans() {
         viewModelScope.launch {
-            _trainings.value = ResultHandler.Loading
-            trainingPlanService.getTrainingPlansFromCategories(emptyList()).collect {
+            _trainingPlans.value = ResultHandler.Loading
+            trainingPlanService.getTrainingPlansFromCategories().collectLatest {
 //                _trainings.value = ResultHandler.Success(it)
-                _trainings.value = ResultHandler.Success(dummyTrainingsList)
+                _trainingPlans.value = ResultHandler.Success(dummyTrainingsList)
             }
         }
     }

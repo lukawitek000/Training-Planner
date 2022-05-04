@@ -7,7 +7,7 @@
     android:background="@color/background_gray"
     android:padding="@dimen/box_inset_layout_padding"
     app:layout_boxedEdges="all"
-    tools:context=".training.trainingsList.TrainingsListActivity"
+    tools:context=".trainingplans.TrainingsListActivity"
     tools:deviceIds="wear">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_height="match_parent"
@@ -31,7 +31,7 @@
             layout="@layout/loading_view" />
 
         <androidx.wear.widget.WearableRecyclerView
-            android:id="@+id/trainings_watch_rv"
+            android:id="@+id/training_plans_watch_rv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"
