@@ -3,5 +3,8 @@ package com.lukasz.witkowski.training.planner.training.domain
 import kotlinx.coroutines.flow.Flow
 
 interface TrainingPlanSender {
-    fun send(trainingPlans: List<TrainingPlan>): Flow<String>
+    /**
+     * Returns ids of successfully sent Training Plans
+     */
+    fun send(trainingPlans: List<TrainingPlan>): Flow<TrainingPlanId>
 }

@@ -14,6 +14,7 @@ import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import com.lukasz.witkowski.shared.utils.writeSuspending
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers.TrainingPlanMapper
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.TrainingPlanJsonModel
 import kotlinx.coroutines.CoroutineScope
@@ -40,7 +41,7 @@ class WearableChannelClientTrainingPlanSender(private val context: Context): Tra
     private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
     private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(context) }
 
-    override fun send(trainingPlans: List<TrainingPlan>): Flow<String> {
+    override fun send(trainingPlans: List<TrainingPlan>): Flow<TrainingPlanId> {
         Timber.d("Send data")
         val trainingPlansJson = trainingPlans.map { TrainingPlanMapper.toTrainingPlanJsonModel(it) }
         return sendData(trainingPlansJson, TRAINING_PATH)
@@ -48,13 +49,9 @@ class WearableChannelClientTrainingPlanSender(private val context: Context): Tra
 
     // TODO there can be separate class for methods (The same functionality will be shared between statistics module)
 
-    private suspend fun getConnectedNodes(): List<String> {
-        val nodeClient = Wearable.getNodeClient(context)
-        val nodes = nodeClient.connectedNodes.await()
-        return nodes.map { it.id }
-    }
 
-    private fun <T> sendData(data: List<T>, path: String): Flow<String> = flow {
+
+    private fun <T> sendData(data: List<T>, path: String): Flow<TrainingPlanId> = flow {
         coroutineScope.launch {
             val nodesIds = getConnectedNodes()
             for (nodeId in nodesIds) {
@@ -75,6 +72,12 @@ class WearableChannelClientTrainingPlanSender(private val context: Context): Tra
                 channelClient.close(channel)
             }
         }
+    }
+
+    private suspend fun getConnectedNodes(): List<String> {
+        val nodeClient = Wearable.getNodeClient(context)
+        val nodes = nodeClient.connectedNodes.await()
+        return nodes.map { it.id }
     }
 
     private suspend fun <T> sendSingleData(
