@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi
 
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanReceiver
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers.TrainingPlanMapper
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.TrainingPlanJsonModel
@@ -20,6 +21,10 @@ class WearableTrainingPlanReceiver : TrainingPlanReceiver {
         receiver = WearableChannelClientReceiver(inputStream, outputStream)
         return receiver.receiveData(TrainingPlanJsonModel::class.java)
             .map { TrainingPlanMapper.toTrainingPlan(it) }
+    }
+
+    override suspend fun confirmReceivingTrainingPlan(id: TrainingPlanId) {
+        receiver.sendReceivingConfirmation()
     }
 }
 

@@ -60,6 +60,7 @@ class TrainingPlanService(
         coroutineScope.launch {
             trainingPlanReceiver.receiveTrainingPlan(inputStream, outputStream).collect {
                 trainingPlanRepository.save(it)
+                trainingPlanReceiver.confirmReceivingTrainingPlan(it.id)
             }
         }
     }

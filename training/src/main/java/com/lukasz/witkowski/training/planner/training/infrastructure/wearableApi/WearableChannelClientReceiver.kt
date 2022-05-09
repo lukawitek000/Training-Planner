@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.training.infrastructure.wearableAp
 
 import com.lukasz.witkowski.shared.utils.gson
 import com.lukasz.witkowski.shared.utils.readSuspending
+import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.InputStream
@@ -17,6 +18,10 @@ class WearableChannelClientReceiver(
         for (i in 0 until numberOfItems) {
             emit(receiveSingleTrainingPlan(type))
         }
+    }
+
+    suspend fun sendReceivingConfirmation() {
+        outputStream.writeIntSuspending(1)
     }
 
     private suspend fun <T> receiveSingleTrainingPlan(type: Class<T>): T {

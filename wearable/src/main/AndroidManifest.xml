@@ -71,7 +71,7 @@
             android:exported="false" />
 
         <service
-            android:name=".service.TrainingDataReceiverService"
+            android:name=".service.TrainingPlanReceiverService"
             android:exported="true">
             <intent-filter>
                 <!-- listeners receive events that match the action and data filters -->
