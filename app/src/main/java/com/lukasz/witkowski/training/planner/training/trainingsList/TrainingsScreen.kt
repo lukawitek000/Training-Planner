@@ -63,7 +63,10 @@ fun TrainingsScreen(
             if (trainings.isNotEmpty()) {
                 TrainingsList(
                     trainings = trainings,
-                    navigateToTrainingOverview = navigateToTrainingOverview,
+                    navigateToTrainingOverview =  {
+                        //navigateToTrainingOverview // TODO revert this changes
+                          viewModel.sendTrainingPlan(it)
+                                                  },
                     startTrainingSession = { navigateToTrainingSession(it.id) }
                 )
             } else {

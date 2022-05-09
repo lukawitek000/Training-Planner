@@ -9,6 +9,7 @@ import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.dummyTrainingsList
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlanMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -29,8 +30,8 @@ class TrainingPlansListViewModel
         viewModelScope.launch {
             _trainingPlans.value = ResultHandler.Loading
             trainingPlanService.getTrainingPlansFromCategories().collectLatest {
-//                _trainings.value = ResultHandler.Success(it)
-                _trainingPlans.value = ResultHandler.Success(dummyTrainingsList)
+                _trainingPlans.value = ResultHandler.Success(TrainingPlanMapper.toPresentationTrainingPlans(it))
+//                _trainingPlans.value = ResultHandler.Success(dummyTrainingsList)
             }
         }
     }
