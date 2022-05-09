@@ -27,8 +27,8 @@ class WearableChannelClientSender(private val context: Context, private val path
     private lateinit var outputStream: OutputStream
 
     /**
-     * If sending data has failed the [SynchronizationStatus.FailureSynchronization] is emitted,
-     * otherwise the [SynchronizationStatus.SuccessfulSynchronization] with id of the successfully synchronized object
+     * If sending data has failed the [SynchronizationStatus.Failure] is emitted,
+     * otherwise the [SynchronizationStatus.Successful] with id of the successfully synchronized object
      */
     fun <T> sendData(data: List<T>): Flow<SynchronizationStatus> = flow {
         val nodesIds = getConnectedNodesIds()
@@ -63,12 +63,10 @@ class WearableChannelClientSender(private val context: Context, private val path
 
     private suspend fun <T> FlowCollector<SynchronizationStatus>.sendObjectsList(
         dataList: List<T>
-    )  {
+    ) {
         for (data in dataList) {
             val json = gson.toJson(data)
-            Timber.d("Json $json")
             val byteArray = json.toByteArray()
-            Timber.d("Byte array size ${byteArray.size} $byteArray")
             sendBufferSize(byteArray)
             val synchronizationStatus = sendObjectAndWaitForAcknowledge(byteArray, data.getId())
             emit(synchronizationStatus)
@@ -88,17 +86,17 @@ class WearableChannelClientSender(private val context: Context, private val path
             receiveAcknowledge(id)
         } catch (exception: IOException) {
             Timber.w("Sending error: ${exception.localizedMessage}")
-            SynchronizationStatus.FailureSynchronization(exception.toSynchronizationSendingException())
+            SynchronizationStatus.Failure(exception.toSynchronizationSendingException())
         } catch (exception: SynchronizationSavingException) {
             Timber.w("Sending error: ${exception.message}")
-            SynchronizationStatus.FailureSynchronization(exception)
+            SynchronizationStatus.Failure(exception)
         }
     }
 
-    private suspend fun receiveAcknowledge(id: String): SynchronizationStatus.SuccessfulSynchronization<String> {
+    private suspend fun receiveAcknowledge(id: String): SynchronizationStatus.Successful<String> {
         val response = inputStream.readSuspending()
         return if (response == ACKNOWLEDGE_FLAG) {
-            SynchronizationStatus.SuccessfulSynchronization(id)
+            SynchronizationStatus.Successful(id)
         } else {
             throw SynchronizationSavingException(message = "Peer has failed to save data")
         }
@@ -121,6 +119,7 @@ class WearableChannelClientSender(private val context: Context, private val path
         channelClient.close(channel)
     }
 
+    // TODO move getting Id from this class
     private fun <T> T.getId(): String {
         return when (this) {
             is TrainingPlanJsonModel -> id
