@@ -10,7 +10,7 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.db.DbTraini
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.TrainingPlanDao
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.TrainingPlanDatabase
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.WearableChannelClientTrainingPlanReceiver
-import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.WearableChannelClientTrainingPlanSender
+import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.WearableTrainingPlanSender
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,7 +41,7 @@ internal object TrainingPlanModule {
     @Singleton
     @Provides
     fun provideTrainingPlanSender(@ApplicationContext context: Context): TrainingPlanSender {
-        return WearableChannelClientTrainingPlanSender(context)
+        return WearableTrainingPlanSender(context)
     }
 
     @Singleton

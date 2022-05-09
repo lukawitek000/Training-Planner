@@ -6,6 +6,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanReceiver
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
+import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.SynchronizationStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -43,9 +44,13 @@ class TrainingPlanService(
     }
 
     private suspend fun sendData(trainingPlans: List<TrainingPlan>) {
-        trainingPlanSender.send(trainingPlans).collect {id ->
-            trainingPlanRepository.setTrainingPlanAsSynchronized(id)
-            Timber.d("Sent data id $id")
+        trainingPlanSender.send(trainingPlans).collect {
+            Timber.d("Send Training Plans $it")
+            if (it is SynchronizationStatus.SuccessfulSynchronization<*>) {
+                trainingPlanRepository.setTrainingPlanAsSynchronized(it.id as TrainingPlanId)
+            } else {
+                // TODO handle failed synchronization
+            }
         }
     }
 

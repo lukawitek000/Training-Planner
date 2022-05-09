@@ -15,22 +15,22 @@ internal class DataSender<T>(private val responseHandler: ResponseHandler<T>) {
         data: T,
         outputStream: OutputStream,
         inputStream: InputStream
-    ): SynchronizationResponse = withContext(Dispatchers.IO) {
+    ): SynchronizationStatus = withContext(Dispatchers.IO) {
         try {
             val byteArray = gson.toJson(data).toByteArray()
             outputStream.writeIntSuspending(byteArray.size)
             outputStream.writeSuspending(byteArray)
             val synchronizationResponse = readSynchronizationResponse(inputStream)
             responseHandler.handleSynchronizationResponse(data)
-            SynchronizationResponse.SUCCESSFUL
+            SynchronizationStatus.SUCCESSFUL
         } catch (e: Exception) {
             e.printStackTrace()
-            SynchronizationResponse.FAILURE
+            SynchronizationStatus.FAILURE
         }
     }
 
-    private suspend fun readSynchronizationResponse(inputStream: InputStream): SynchronizationResponse {
+    private suspend fun readSynchronizationResponse(inputStream: InputStream): SynchronizationStatus {
         val response = inputStream.readSuspending()
-        return SynchronizationResponse.values()[response]
+        return SynchronizationStatus.values()[response]
     }
 }

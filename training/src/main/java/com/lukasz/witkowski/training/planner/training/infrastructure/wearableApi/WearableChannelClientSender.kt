@@ -34,7 +34,11 @@ class WearableChannelClientSender(private val context: Context, private val path
     private lateinit var inputStream: InputStream
     private lateinit var outputStream: OutputStream
 
-    fun <T> sendData(data: List<T>): Flow<SynchronizationResponse> = flow {
+    /**
+     * If sending data has failed the [SynchronizationStatus.FailureSynchronization] is emitted,
+     * otherwise the [SynchronizationStatus.SuccessfulSynchronization] with id of the successfully synchronized object
+     */
+    fun <T> sendData(data: List<T>): Flow<SynchronizationStatus> = flow {
         coroutineScope.launch {
             val nodesIds = getConnectedNodesIds()
             sendDataToEachNode(nodesIds, data)
@@ -47,7 +51,7 @@ class WearableChannelClientSender(private val context: Context, private val path
         return nodes.map { it.id }
     }
 
-    private suspend fun <T> FlowCollector<SynchronizationResponse>.sendDataToEachNode(
+    private suspend fun <T> FlowCollector<SynchronizationStatus>.sendDataToEachNode(
         nodesIds: List<String>,
         data: List<T>
     ) {
@@ -67,7 +71,7 @@ class WearableChannelClientSender(private val context: Context, private val path
         outputStream.writeIntSuspending(data.size)
     }
 
-    private suspend fun <T> FlowCollector<SynchronizationResponse>.sendObjectsList(
+    private suspend fun <T> FlowCollector<SynchronizationStatus>.sendObjectsList(
         dataList: List<T>
     ) = withContext(Dispatchers.IO) {
         for (data in dataList) {
@@ -80,14 +84,14 @@ class WearableChannelClientSender(private val context: Context, private val path
 
     private fun CoroutineScope.exchangeDataAsync(
         byteArray: ByteArray, id: String
-    ): Deferred<SynchronizationResponse> = async {
+    ): Deferred<SynchronizationStatus> = async {
         try {
             outputStream.writeSuspending(byteArray)
             inputStream.readSuspending()
-            SynchronizationResponse.SuccessfulSynchronization(id)
+            SynchronizationStatus.SuccessfulSynchronization(id)
         } catch (exception: IOException) {
             Timber.w("Sending error: ${exception.localizedMessage}")
-            SynchronizationResponse.FailureSynchronization(exception.toSynchronizationSendingException())
+            SynchronizationStatus.FailureSynchronization(exception.toSynchronizationSendingException())
         }
     }
 
