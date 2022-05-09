@@ -6,6 +6,7 @@ import com.google.android.gms.wearable.Wearable
 import com.lukasz.witkowski.shared.utils.closeSuspending
 import com.lukasz.witkowski.shared.utils.gson
 import com.lukasz.witkowski.shared.utils.readSuspending
+import com.lukasz.witkowski.shared.utils.toByteArray
 import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import com.lukasz.witkowski.shared.utils.writeSuspending
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
@@ -69,11 +70,19 @@ class WearableChannelClientSender(private val context: Context, private val path
         dataList: List<T>
     )  {
         for (data in dataList) {
-            val byteArray = gson.toJson(data).toByteArray()
-            outputStream.writeIntSuspending(byteArray.size)
+            val json = gson.toJson(data)
+            Timber.d("Json $json")
+            val byteArray = json.toByteArray()
+            Timber.d("Byte array size ${byteArray.size} $byteArray")
+            sendBufferSize(byteArray)
             val synchronizationStatus = exchangeDataAsync(byteArray, data.getId())
             emit(synchronizationStatus)
         }
+    }
+
+    private suspend fun sendBufferSize(byteArray: ByteArray) {
+        val bufferSize = byteArray.size.toByteArray()
+        outputStream.writeSuspending(bufferSize)
     }
 
     private suspend fun exchangeDataAsync(

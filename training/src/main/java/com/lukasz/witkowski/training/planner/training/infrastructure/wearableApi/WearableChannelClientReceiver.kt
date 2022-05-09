@@ -1,7 +1,9 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi
 
+import com.lukasz.witkowski.shared.utils.INTEGER_VALUE_BUFFER_SIZE
 import com.lukasz.witkowski.shared.utils.gson
 import com.lukasz.witkowski.shared.utils.readSuspending
+import com.lukasz.witkowski.shared.utils.toInt
 import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -26,11 +28,17 @@ class WearableChannelClientReceiver(
     }
 
     private suspend fun <T> receiveSingleTrainingPlan(type: Class<T>): T {
-        val sizeOfByteArray = inputStream.readSuspending()
+        val sizeOfByteArray = getBufferSize()
         val buffer = ByteArray(sizeOfByteArray)
         inputStream.readSuspending(buffer)
         val stringBuffer = String(buffer)
-        Timber.d("Received data $stringBuffer")
+        Timber.d("Received data ${buffer.size} expected $sizeOfByteArray $buffer, $stringBuffer")
         return gson.fromJson(String(buffer), type)
+    }
+
+    private suspend fun getBufferSize(): Int {
+        val buffer = ByteArray(INTEGER_VALUE_BUFFER_SIZE)
+        inputStream.readSuspending(buffer)
+        return buffer.toInt()
     }
 }
