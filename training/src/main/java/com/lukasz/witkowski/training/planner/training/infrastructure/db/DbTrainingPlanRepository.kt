@@ -17,7 +17,7 @@ internal class DbTrainingPlanRepository(
         trainingPlanDao.insertTrainingWithTrainingExercises(trainingPlanWithExercise)
     }
 
-    override suspend fun setTrainingPlanAsSynchronized(id: String) {
+    override suspend fun setTrainingPlanAsSynchronized(id: TrainingPlanId) {
         // TODO Set training plan as synchronized
     }
 

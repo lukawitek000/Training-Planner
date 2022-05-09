@@ -5,6 +5,7 @@ import com.lukasz.witkowski.shared.utils.readSuspending
 import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import timber.log.Timber
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -28,6 +29,8 @@ class WearableChannelClientReceiver(
         val sizeOfByteArray = inputStream.readSuspending()
         val buffer = ByteArray(sizeOfByteArray)
         inputStream.readSuspending(buffer)
+        val stringBuffer = String(buffer)
+        Timber.d("Received data $stringBuffer")
         return gson.fromJson(String(buffer), type)
     }
 }

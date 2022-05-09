@@ -9,6 +9,7 @@ import com.lukasz.witkowski.shared.utils.readSuspending
 import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import com.lukasz.witkowski.shared.utils.writeSuspending
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.TrainingPlanJsonModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -66,19 +67,19 @@ class WearableChannelClientSender(private val context: Context, private val path
 
     private suspend fun <T> FlowCollector<SynchronizationStatus>.sendObjectsList(
         dataList: List<T>
-    ) = withContext(Dispatchers.IO) {
+    )  {
         for (data in dataList) {
             val byteArray = gson.toJson(data).toByteArray()
             outputStream.writeIntSuspending(byteArray.size)
-            val job = exchangeDataAsync(byteArray, data.getId())
-            emit(job.await())
+            val synchronizationStatus = exchangeDataAsync(byteArray, data.getId())
+            emit(synchronizationStatus)
         }
     }
 
-    private fun CoroutineScope.exchangeDataAsync(
+    private suspend fun exchangeDataAsync(
         byteArray: ByteArray, id: String
-    ): Deferred<SynchronizationStatus> = async {
-        try {
+    ): SynchronizationStatus {
+        return try {
             outputStream.writeSuspending(byteArray)
             inputStream.readSuspending()
             SynchronizationStatus.SuccessfulSynchronization(id)
@@ -107,7 +108,7 @@ class WearableChannelClientSender(private val context: Context, private val path
 
     private fun <T> T.getId(): String {
         return when (this) {
-            is TrainingPlan -> id.value
+            is TrainingPlanJsonModel -> id
 //        is TrainingStatistics ->
             else -> throw Exception("Unknown type")
         }

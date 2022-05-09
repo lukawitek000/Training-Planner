@@ -43,11 +43,16 @@ class TrainingPlanService(
         return trainingPlanRepository.getTrainingPlanById(trainingPlanId)
     }
 
+    suspend fun sendTrainingPlan(trainingPlan: TrainingPlan) {
+        sendData(listOf(trainingPlan))
+    }
+
     private suspend fun sendData(trainingPlans: List<TrainingPlan>) {
         trainingPlanSender.send(trainingPlans).collect {
             Timber.d("Send Training Plans $it")
             if (it is SynchronizationStatus.SuccessfulSynchronization<*>) {
-                trainingPlanRepository.setTrainingPlanAsSynchronized(it.id as TrainingPlanId)
+                Timber.d("Successfully synchronized")
+//                trainingPlanRepository.setTrainingPlanAsSynchronized(it.id as TrainingPlanId) // TODO cannot cast string to TrainingPlanId
             } else {
                 // TODO handle failed synchronization
             }
