@@ -9,18 +9,12 @@ import com.lukasz.witkowski.shared.utils.readSuspending
 import com.lukasz.witkowski.shared.utils.toByteArray
 import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import com.lukasz.witkowski.shared.utils.writeSuspending
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.WearableChannelClientReceiver.Companion.ACKNOWLEDGE_FLAG
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.TrainingPlanJsonModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
@@ -76,7 +70,7 @@ class WearableChannelClientSender(private val context: Context, private val path
             val byteArray = json.toByteArray()
             Timber.d("Byte array size ${byteArray.size} $byteArray")
             sendBufferSize(byteArray)
-            val synchronizationStatus = exchangeDataAsync(byteArray, data.getId())
+            val synchronizationStatus = sendObjectAndWaitForAcknowledge(byteArray, data.getId())
             emit(synchronizationStatus)
         }
     }
@@ -86,7 +80,7 @@ class WearableChannelClientSender(private val context: Context, private val path
         outputStream.writeSuspending(bufferSize)
     }
 
-    private suspend fun exchangeDataAsync(
+    private suspend fun sendObjectAndWaitForAcknowledge(
         byteArray: ByteArray, id: String
     ): SynchronizationStatus {
         return try {
