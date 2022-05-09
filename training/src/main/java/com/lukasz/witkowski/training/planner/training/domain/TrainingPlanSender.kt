@@ -7,5 +7,5 @@ interface TrainingPlanSender {
     /**
      * Returns ids of successfully sent Training Plans
      */
-    fun send(trainingPlans: List<TrainingPlan>): Flow<SynchronizationStatus>
+    fun send(trainingPlans: List<TrainingPlan>): Flow<SynchronizationStatus<TrainingPlanId>>
 }
