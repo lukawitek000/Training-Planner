@@ -5,10 +5,15 @@ import com.google.android.gms.wearable.ChannelClient
 import com.google.android.gms.wearable.Wearable
 import com.lukasz.witkowski.shared.utils.closeSuspending
 import com.lukasz.witkowski.shared.utils.gson
+import com.lukasz.witkowski.shared.utils.readSuspending
 import com.lukasz.witkowski.shared.utils.writeIntSuspending
+import com.lukasz.witkowski.shared.utils.writeSuspending
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
@@ -16,20 +21,20 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
+import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
 
-class WearableChannelClientSender(
-    private val context: Context,
-    private val path: String
-    ) {
-
+class WearableChannelClientSender(private val context: Context, private val path: String) {
 
     private val job = Job()
     private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
     private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(context) }
 
-    fun <T, K> sendData(data: List<T>): Flow<K> = flow {
+    private lateinit var inputStream: InputStream
+    private lateinit var outputStream: OutputStream
+
+    fun <T> sendData(data: List<T>): Flow<SynchronizationResponse> = flow {
         coroutineScope.launch {
             val nodesIds = getConnectedNodesIds()
             sendDataToEachNode(nodesIds, data)
@@ -42,35 +47,59 @@ class WearableChannelClientSender(
         return nodes.map { it.id }
     }
 
-    private suspend fun <T, K> FlowCollector<K>.sendDataToEachNode(
+    private suspend fun <T> FlowCollector<SynchronizationResponse>.sendDataToEachNode(
         nodesIds: List<String>,
         data: List<T>
     ) {
         for (nodeId in nodesIds) {
             val channel = openChannel(nodeId)
-            val (outputStream, inputStream) = openStreams(channel)
+            openStreams(channel)
 
-            sendNumberOfObjects(outputStream, data)
-            sendObjectsList(data, outputStream, inputStream)
+            sendNumberOfObjects(data)
+            sendObjectsList(data)
 
-            closeStreams(outputStream, inputStream)
+            closeStreams()
             closeChannel(channel)
+        }
+    }
+
+    private suspend fun <T> sendNumberOfObjects(data: List<T>) {
+        outputStream.writeIntSuspending(data.size)
+    }
+
+    private suspend fun <T> FlowCollector<SynchronizationResponse>.sendObjectsList(
+        dataList: List<T>
+    ) = withContext(Dispatchers.IO) {
+        for (data in dataList) {
+            val byteArray = gson.toJson(data).toByteArray()
+            outputStream.writeIntSuspending(byteArray.size)
+            val job = exchangeDataAsync(byteArray, data.getId())
+            emit(job.await())
+        }
+    }
+
+    private fun CoroutineScope.exchangeDataAsync(
+        byteArray: ByteArray, id: String
+    ): Deferred<SynchronizationResponse> = async {
+        try {
+            outputStream.writeSuspending(byteArray)
+            inputStream.readSuspending()
+            SynchronizationResponse.SuccessfulSynchronization(id)
+        } catch (exception: IOException) {
+            Timber.w("Sending error: ${exception.localizedMessage}")
+            SynchronizationResponse.FailureSynchronization(exception.toSynchronizationSendingException())
         }
     }
 
     private suspend fun openChannel(nodeId: String): ChannelClient.Channel =
         channelClient.openChannel(nodeId, path).await()
 
-    private suspend fun openStreams(channel: ChannelClient.Channel): Pair<OutputStream, InputStream> {
-        val outputStream = channelClient.getOutputStream(channel).await()
-        val inputStream = channelClient.getInputStream(channel).await()
-        return Pair(outputStream, inputStream)
+    private suspend fun openStreams(channel: ChannelClient.Channel) {
+        outputStream = channelClient.getOutputStream(channel).await()
+        inputStream = channelClient.getInputStream(channel).await()
     }
 
-    private suspend fun closeStreams(
-        outputStream: OutputStream,
-        inputStream: InputStream
-    ) {
+    private suspend fun closeStreams() {
         outputStream.closeSuspending()
         inputStream.closeSuspending()
     }
@@ -79,40 +108,14 @@ class WearableChannelClientSender(
         channelClient.close(channel)
     }
 
-    private suspend fun <T> sendNumberOfObjects(
-        outputStream: OutputStream,
-        data: List<T>
-    ) {
-        outputStream.writeIntSuspending(data.size)
-    }
-
-    private suspend fun <K, T> FlowCollector<K>.sendObjectsList(
-        data: List<T>,
-        outputStream: OutputStream?,
-        inputStream: InputStream?
-    ) {
-        for (item in data) {
-            val synchronizedId = sendSingleData(item)
-            emit(synchronizedId)
+    private fun <T> T.getId(): String {
+        return when (this) {
+            is TrainingPlan -> id.value
+//        is TrainingStatistics ->
+            else -> throw Exception("Unknown type")
         }
     }
 
-    private suspend fun <K, T> sendSingleData(
-        data: T
-    ): K = withContext(Dispatchers.IO) {
-        try {
-            val byteArray = gson.toJson(data).toByteArray()
-            outputStream.writeIntSuspending(byteArray.size)
-            val job = exchangeDataAsync(outputStream, byteArray, inputStream)
-            val id = getDataId(data)
-            "" as K
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Timber.d("Saving item failed ${e.localizedMessage}")
-            WearableChannelClientTrainingPlanSender.SYNCHRONIZATION_FAILED
-            "" as K
-        }
-    }
-
-
+    private fun IOException.toSynchronizationSendingException() =
+        SynchronizationSendingException(message, cause)
 }
