@@ -12,12 +12,10 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -27,10 +25,7 @@ import java.io.OutputStream
 
 class WearableChannelClientSender(private val context: Context, private val path: String) {
 
-    private val job = Job()
-    private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
     private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(context) }
-
     private lateinit var inputStream: InputStream
     private lateinit var outputStream: OutputStream
 
@@ -39,10 +34,8 @@ class WearableChannelClientSender(private val context: Context, private val path
      * otherwise the [SynchronizationStatus.SuccessfulSynchronization] with id of the successfully synchronized object
      */
     fun <T> sendData(data: List<T>): Flow<SynchronizationStatus> = flow {
-        coroutineScope.launch {
-            val nodesIds = getConnectedNodesIds()
-            sendDataToEachNode(nodesIds, data)
-        }
+        val nodesIds = getConnectedNodesIds()
+        sendDataToEachNode(nodesIds, data)
     }
 
     private suspend fun getConnectedNodesIds(): List<String> {
