@@ -10,6 +10,7 @@ import com.lukasz.witkowski.shared.utils.toByteArray
 import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import com.lukasz.witkowski.shared.utils.writeSuspending
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.WearableChannelClientReceiver.Companion.ACKNOWLEDGE_FLAG
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.TrainingPlanJsonModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -90,11 +91,22 @@ class WearableChannelClientSender(private val context: Context, private val path
     ): SynchronizationStatus {
         return try {
             outputStream.writeSuspending(byteArray)
-            inputStream.readSuspending()
-            SynchronizationStatus.SuccessfulSynchronization(id)
+            receiveAcknowledge(id)
         } catch (exception: IOException) {
             Timber.w("Sending error: ${exception.localizedMessage}")
             SynchronizationStatus.FailureSynchronization(exception.toSynchronizationSendingException())
+        } catch (exception: SynchronizationSavingException) {
+            Timber.w("Sending error: ${exception.message}")
+            SynchronizationStatus.FailureSynchronization(exception)
+        }
+    }
+
+    private suspend fun receiveAcknowledge(id: String): SynchronizationStatus.SuccessfulSynchronization<String> {
+        val response = inputStream.readSuspending()
+        return if (response == ACKNOWLEDGE_FLAG) {
+            SynchronizationStatus.SuccessfulSynchronization(id)
+        } else {
+            throw SynchronizationSavingException(message = "Peer has failed to save data")
         }
     }
 

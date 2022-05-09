@@ -24,7 +24,7 @@ class WearableChannelClientReceiver(
     }
 
     suspend fun sendReceivingConfirmation() {
-        outputStream.writeIntSuspending(1)
+        outputStream.writeIntSuspending(ACKNOWLEDGE_FLAG)
     }
 
     private suspend fun <T> receiveSingleTrainingPlan(type: Class<T>): T {
@@ -40,5 +40,9 @@ class WearableChannelClientReceiver(
         val buffer = ByteArray(INTEGER_VALUE_BUFFER_SIZE)
         inputStream.readSuspending(buffer)
         return buffer.toInt()
+    }
+
+    companion object {
+        const val ACKNOWLEDGE_FLAG = 1
     }
 }
