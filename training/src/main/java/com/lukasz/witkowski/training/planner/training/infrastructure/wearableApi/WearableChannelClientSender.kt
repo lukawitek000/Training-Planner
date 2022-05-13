@@ -9,7 +9,7 @@ import com.lukasz.witkowski.shared.utils.readSuspending
 import com.lukasz.witkowski.shared.utils.toByteArray
 import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import com.lukasz.witkowski.shared.utils.writeSuspending
-import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.WearableChannelClientReceiver.Companion.ACKNOWLEDGE_FLAG
+import com.lukasz.witkowski.training.planner.training.presentation.WearableChannelClientReceiver.Companion.ACKNOWLEDGE_FLAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow

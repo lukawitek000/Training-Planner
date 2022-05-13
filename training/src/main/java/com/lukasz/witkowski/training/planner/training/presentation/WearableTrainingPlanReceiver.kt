@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi
+package com.lukasz.witkowski.training.planner.training.presentation
 
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
