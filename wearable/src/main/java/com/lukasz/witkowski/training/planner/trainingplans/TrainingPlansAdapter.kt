@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lukasz.witkowski.training.planner.databinding.TrainingListItemBinding
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 
 class TrainingPlansAdapter(
     private val context: Context,

@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.statistics.presentation
 
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import kotlinx.coroutines.flow.StateFlow
 
 interface TrainingSessionController {

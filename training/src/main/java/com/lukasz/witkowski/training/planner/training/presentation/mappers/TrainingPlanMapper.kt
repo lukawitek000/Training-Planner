@@ -1,4 +1,6 @@
-package com.lukasz.witkowski.training.planner.training.presentation
+package com.lukasz.witkowski.training.planner.training.presentation.mappers
+
+import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 
 object TrainingPlanMapper {
 
