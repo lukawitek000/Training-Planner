@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi
+package com.lukasz.witkowski.training.planner.training.presentation
 
 import com.lukasz.witkowski.shared.utils.INTEGER_VALUE_BUFFER_SIZE
 import com.lukasz.witkowski.shared.utils.gson

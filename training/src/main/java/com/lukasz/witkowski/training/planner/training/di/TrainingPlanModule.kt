@@ -3,13 +3,12 @@ package com.lukasz.witkowski.training.planner.training.di
 import android.content.Context
 import androidx.room.Room
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanReceiver
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.DbTrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.TrainingPlanDao
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.TrainingPlanDatabase
-import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.WearableTrainingPlanReceiver
+import com.lukasz.witkowski.training.planner.training.presentation.WearableTrainingPlanReceiver
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.WearableTrainingPlanSender
 import dagger.Module
 import dagger.Provides
@@ -26,10 +25,9 @@ internal object TrainingPlanModule {
     @Provides
     fun provideTrainingPlanService(
         trainingPlanRepository: TrainingPlanRepository,
-        trainingPlanSender: TrainingPlanSender,
-        trainingPlanReceiver: TrainingPlanReceiver
+        trainingPlanSender: TrainingPlanSender
     ): TrainingPlanService {
-        return TrainingPlanService(trainingPlanRepository, trainingPlanSender, trainingPlanReceiver)
+        return TrainingPlanService(trainingPlanRepository, trainingPlanSender)
     }
 
     @Singleton
@@ -42,12 +40,6 @@ internal object TrainingPlanModule {
     @Provides
     fun provideTrainingPlanSender(@ApplicationContext context: Context): TrainingPlanSender {
         return WearableTrainingPlanSender(context)
-    }
-
-    @Singleton
-    @Provides
-    fun provideTrainingPlanReceiver(): TrainingPlanReceiver {
-        return WearableTrainingPlanReceiver()
     }
 
     @Singleton

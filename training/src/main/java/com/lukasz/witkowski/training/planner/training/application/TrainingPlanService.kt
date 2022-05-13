@@ -4,7 +4,6 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanReceiver
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.SynchronizationStatus
 import kotlinx.coroutines.CoroutineScope
@@ -18,8 +17,7 @@ import java.io.OutputStream
 
 class TrainingPlanService(
     private val trainingPlanRepository: TrainingPlanRepository,
-    private val trainingPlanSender: TrainingPlanSender,
-    private val trainingPlanReceiver: TrainingPlanReceiver
+    private val trainingPlanSender: TrainingPlanSender
 ){
 
     suspend fun saveTrainingPlan(trainingPlan: TrainingPlan) {
@@ -55,17 +53,6 @@ class TrainingPlanService(
 //                trainingPlanRepository.setTrainingPlanAsSynchronized(it.id) // TODO uncomment to set synchronized to database
             } else {
                 // TODO handle failed synchronization
-            }
-        }
-    }
-
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
-
-    fun receiveTrainingPlan(inputStream: InputStream, outputStream: OutputStream) {
-        coroutineScope.launch {
-            trainingPlanReceiver.receiveTrainingPlan(inputStream, outputStream).collect {
-                trainingPlanRepository.save(it)
-                trainingPlanReceiver.confirmReceivingTrainingPlan(it.id)
             }
         }
     }

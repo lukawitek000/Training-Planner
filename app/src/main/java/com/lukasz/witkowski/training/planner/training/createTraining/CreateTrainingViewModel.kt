@@ -9,9 +9,9 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exerci
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlanMapper
+import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

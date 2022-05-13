@@ -11,9 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.TextUnit
-import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 
 @Composable
 fun TrainingExerciseRepsSetsTimeOverviewRow(

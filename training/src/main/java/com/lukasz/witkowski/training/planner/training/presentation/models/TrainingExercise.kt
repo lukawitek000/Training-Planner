@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.presentation
+package com.lukasz.witkowski.training.planner.training.presentation.models
 
 import android.graphics.Bitmap
 import com.lukasz.witkowski.shared.time.Time

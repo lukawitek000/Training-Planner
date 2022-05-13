@@ -6,10 +6,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
-import com.lukasz.witkowski.training.planner.dummyTrainingsList
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlanMapper
+import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

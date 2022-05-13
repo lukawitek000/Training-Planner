@@ -3,8 +3,8 @@ package com.lukasz.witkowski.training.planner
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.presentation.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 
 val dummyTrainingsList = listOf<TrainingPlan>(
     TrainingPlan(
@@ -17,7 +17,8 @@ val dummyTrainingsList = listOf<TrainingPlan>(
             ),
             TrainingExercise(
                 TrainingExerciseId.create(), "Exercise 1.2", "Description 1.2", Category(2, R.string.category_abs)
-            ),TrainingExercise(
+            ),
+            TrainingExercise(
                 TrainingExerciseId.create(), "Exercise 1.3", "Description 1.3", Category(2, R.string.category_biceps)
             ),
             TrainingExercise(
@@ -35,14 +36,15 @@ val dummyTrainingsList = listOf<TrainingPlan>(
             ),
             TrainingExercise(
                 TrainingExerciseId.create(), "Exercise 2.2", "Description 2.2"
-            ),TrainingExercise(
+            ),
+            TrainingExercise(
                 TrainingExerciseId.create(), "Exercise 2.3", "Description 2.3"
             ),
             TrainingExercise(
                 TrainingExerciseId.create(), "Exercise 2.4", "Description 2.4"
             ),
         )
-    ),TrainingPlan(
+    ), TrainingPlan(
         id = TrainingPlanId.create(),
         title = "Training 3",
         description = "Some descritpion of the training 3",
@@ -52,14 +54,15 @@ val dummyTrainingsList = listOf<TrainingPlan>(
             ),
             TrainingExercise(
                 TrainingExerciseId.create(), "Exercise 3.2", "Description 3.2"
-            ),TrainingExercise(
+            ),
+            TrainingExercise(
                 TrainingExerciseId.create(), "Exercise 3.3", "Description 3.3"
             ),
             TrainingExercise(
                 TrainingExerciseId.create(), "Exercise 3.4", "Description 3.4"
             ),
         )
-    ),TrainingPlan(
+    ), TrainingPlan(
         id = TrainingPlanId.create(),
         title = "Training 4",
         description = "Some descritpion of the training 4",
@@ -69,7 +72,8 @@ val dummyTrainingsList = listOf<TrainingPlan>(
             ),
             TrainingExercise(
                 TrainingExerciseId.create(), "Exercise 4.2", "Description 4.2"
-            ),TrainingExercise(
+            ),
+            TrainingExercise(
                 TrainingExerciseId.create(), "Exercise 4.3", "Description 4.3"
             ),
             TrainingExercise(

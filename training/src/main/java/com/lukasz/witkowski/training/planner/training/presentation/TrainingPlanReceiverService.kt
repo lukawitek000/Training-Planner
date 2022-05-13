@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.service
+package com.lukasz.witkowski.training.planner.training.presentation
 
 import com.google.android.gms.wearable.ChannelClient
 import com.google.android.gms.wearable.Wearable
@@ -9,6 +9,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -24,7 +25,7 @@ class TrainingPlanReceiverService : WearableListenerService() {
     private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(this) }
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
-
+    private val wearableTrainingPlanReceiver = WearableTrainingPlanReceiver()
 
     override fun onChannelOpened(channel: ChannelClient.Channel) {
         super.onChannelOpened(channel)
@@ -32,7 +33,10 @@ class TrainingPlanReceiverService : WearableListenerService() {
         coroutineScope.launch {
             val inputStream = channelClient.getInputStream(channel).await()
             val outputStream = channelClient.getOutputStream(channel).await()
-            trainingPlanService.receiveTrainingPlan(inputStream, outputStream)
+            wearableTrainingPlanReceiver.receiveTrainingPlan(inputStream, outputStream).collect {
+                trainingPlanService.saveTrainingPlan(it)
+                wearableTrainingPlanReceiver.confirmReceivingTrainingPlan(it.id)
+            }
         }
     }
 
@@ -41,5 +45,4 @@ class TrainingPlanReceiverService : WearableListenerService() {
         super.onDestroy()
         coroutineScope.cancel("TrainingPlanReceiverService destroyed")
     }
-
 }

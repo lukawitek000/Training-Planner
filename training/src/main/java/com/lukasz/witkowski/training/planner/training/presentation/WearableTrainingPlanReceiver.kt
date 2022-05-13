@@ -1,8 +1,7 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi
+package com.lukasz.witkowski.training.planner.training.presentation
 
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanReceiver
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers.TrainingPlanMapper
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.TrainingPlanJsonModel
 import kotlinx.coroutines.flow.Flow
@@ -10,11 +9,11 @@ import kotlinx.coroutines.flow.map
 import java.io.InputStream
 import java.io.OutputStream
 
-class WearableTrainingPlanReceiver : TrainingPlanReceiver {
+class WearableTrainingPlanReceiver {
 
     private lateinit var receiver: WearableChannelClientReceiver
 
-    override suspend fun receiveTrainingPlan(
+    fun receiveTrainingPlan(
         inputStream: InputStream,
         outputStream: OutputStream
     ): Flow<TrainingPlan> {
@@ -23,8 +22,7 @@ class WearableTrainingPlanReceiver : TrainingPlanReceiver {
             .map { TrainingPlanMapper.toTrainingPlan(it) }
     }
 
-    override suspend fun confirmReceivingTrainingPlan(id: TrainingPlanId) {
+    suspend fun confirmReceivingTrainingPlan(id: TrainingPlanId) {
         receiver.sendReceivingConfirmation()
     }
 }
-

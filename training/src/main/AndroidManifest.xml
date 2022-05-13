@@ -1,2 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.lukasz.witkowski.training.planner.training" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.lukasz.witkowski.training.planner.training">
+
+    <application>
+        <service
+            android:name=".presentation.TrainingPlanReceiverService"
+            android:exported="true">
+            <intent-filter>
+                <!-- listeners receive events that match the action and data filters -->
+                <action android:name="com.google.android.gms.wearable.CHANNEL_EVENT" />
+                <data
+                    android:host="*"
+                    android:pathPrefix="/training"
+                    android:scheme="wear" />
+            </intent-filter>
+        </service>
+    </application>
+</manifest>
