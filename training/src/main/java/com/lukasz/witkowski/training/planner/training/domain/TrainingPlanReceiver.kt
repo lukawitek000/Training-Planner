@@ -6,4 +6,5 @@ import java.io.OutputStream
 
 interface TrainingPlanReceiver {
     suspend fun receiveTrainingPlan(inputStream: InputStream, outputStream: OutputStream): Flow<TrainingPlan>
+    suspend fun confirmReceivingTrainingPlan(id: TrainingPlanId)
 }

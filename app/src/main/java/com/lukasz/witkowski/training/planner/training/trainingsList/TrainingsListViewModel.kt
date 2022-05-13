@@ -48,4 +48,12 @@ class TrainingsListViewModel @Inject constructor(
             }
         }
     }
+
+    fun sendTrainingPlan(id: String) {
+        viewModelScope.launch {
+            _trainingPlans.value.firstOrNull { it.id.value == id }?.let {
+                trainingPlanService.sendTrainingPlan(TrainingPlanMapper.toDomainTrainingPlan(it))
+            }
+        }
+    }
 }

@@ -6,6 +6,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanReceiver
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
+import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.SynchronizationStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -42,10 +43,19 @@ class TrainingPlanService(
         return trainingPlanRepository.getTrainingPlanById(trainingPlanId)
     }
 
+    suspend fun sendTrainingPlan(trainingPlan: TrainingPlan) {
+        sendData(listOf(trainingPlan))
+    }
+
     private suspend fun sendData(trainingPlans: List<TrainingPlan>) {
-        trainingPlanSender.send(trainingPlans).collect {id ->
-            trainingPlanRepository.setTrainingPlanAsSynchronized(id)
-            Timber.d("Sent data id $id")
+        trainingPlanSender.send(trainingPlans).collect {
+            Timber.d("Send Training Plans $it")
+            if (it is SynchronizationStatus.Successful) {
+                Timber.d("Successfully synchronized")
+//                trainingPlanRepository.setTrainingPlanAsSynchronized(it.id) // TODO uncomment to set synchronized to database
+            } else {
+                // TODO handle failed synchronization
+            }
         }
     }
 
@@ -55,6 +65,7 @@ class TrainingPlanService(
         coroutineScope.launch {
             trainingPlanReceiver.receiveTrainingPlan(inputStream, outputStream).collect {
                 trainingPlanRepository.save(it)
+                trainingPlanReceiver.confirmReceivingTrainingPlan(it.id)
             }
         }
     }
