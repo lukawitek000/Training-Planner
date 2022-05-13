@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.service
+package com.lukasz.witkowski.training.planner.training.presentation
 
 import com.google.android.gms.wearable.ChannelClient
 import com.google.android.gms.wearable.Wearable
