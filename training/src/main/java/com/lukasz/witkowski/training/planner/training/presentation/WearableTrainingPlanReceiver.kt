@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.presentation
 
+import com.lukasz.witkowski.training.planner.synchronization.WearableChannelClientReceiver
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers.TrainingPlanMapper

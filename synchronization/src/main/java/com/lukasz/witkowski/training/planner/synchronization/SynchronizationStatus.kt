@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi
+package com.lukasz.witkowski.training.planner.synchronization
 
 sealed class SynchronizationStatus<T>(val id: T) {
     data class Successful<T>(val value: T) : SynchronizationStatus<T>(value)

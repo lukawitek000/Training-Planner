@@ -53,9 +53,6 @@ dependencies {
 
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
 
-    // Gson for json serialization
-    implementation 'com.google.code.gson:gson:2.8.9'
-
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
     implementation "androidx.lifecycle:lifecycle-service:2.4.0"

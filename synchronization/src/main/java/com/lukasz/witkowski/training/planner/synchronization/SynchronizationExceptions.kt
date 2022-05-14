@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi
+package com.lukasz.witkowski.training.planner.synchronization
 
 open class SynchronizationException(message: String? = null, throwable: Throwable? = null) :
     Exception(message, throwable)

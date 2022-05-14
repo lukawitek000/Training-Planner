@@ -2,6 +2,8 @@ package com.lukasz.witkowski.training.planner.training.infrastructure.wearableAp
 
 import android.content.Context
 import com.lukasz.witkowski.shared.utils.TRAINING_PATH
+import com.lukasz.witkowski.training.planner.synchronization.SynchronizationStatus
+import com.lukasz.witkowski.training.planner.synchronization.WearableChannelClientSender
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
