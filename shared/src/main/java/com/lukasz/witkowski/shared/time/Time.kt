@@ -11,7 +11,7 @@ class Time(val timeInMillis: Long) {
     fun toTimerString(): String {
         val (minutes, seconds) = calculateMinutesAndSeconds()
         val timeStringBuilder = StringBuilder()
-        if(minutes > 0) timeStringBuilder.append(minutes).append(":")
+        if (minutes > 0) timeStringBuilder.append(minutes).append(":")
         appendZeroBeforeSecondDigitIfNeeded(seconds, timeStringBuilder)
         timeStringBuilder.append(seconds)
         appendTenthSecond(minutes, seconds, timeStringBuilder)
@@ -46,8 +46,11 @@ class Time(val timeInMillis: Long) {
 
     operator fun minus(time: Time) = Time(this.timeInMillis - time.timeInMillis)
 
-    private fun appendZeroBeforeSecondDigitIfNeeded(seconds: Int, timeStringBuilder: StringBuilder) {
-        if(timeStringBuilder.isNotEmpty() && seconds in 0..9) {
+    private fun appendZeroBeforeSecondDigitIfNeeded(
+        seconds: Int,
+        timeStringBuilder: StringBuilder
+    ) {
+        if (timeStringBuilder.isNotEmpty() && seconds in 0..9) {
             timeStringBuilder.append(0)
         }
     }

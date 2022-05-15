@@ -18,7 +18,7 @@ internal class DbTrainingPlanRepository(
     }
 
     override suspend fun setTrainingPlanAsSynchronized(id: TrainingPlanId) {
-        // TODO Set training plan as synchronized
+        // TODO Not implemented
     }
 
     override fun getAll(): Flow<List<TrainingPlan>> {
@@ -30,7 +30,8 @@ internal class DbTrainingPlanRepository(
     }
 
     override suspend fun delete(trainingPlan: TrainingPlan) {
-        val dbTrainingPlanWithExercises = TrainingPlanMapper.toDbTrainingPlanWithExercises(trainingPlan)
+        val dbTrainingPlanWithExercises =
+            TrainingPlanMapper.toDbTrainingPlanWithExercises(trainingPlan)
         trainingPlanDao.deleteTrainingPlanWithExercises(dbTrainingPlanWithExercises)
     }
 

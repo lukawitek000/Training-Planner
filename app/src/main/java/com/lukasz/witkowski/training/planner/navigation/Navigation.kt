@@ -29,8 +29,6 @@ import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSe
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsScreen
-import com.lukasz.witkowski.training.planner.ui.CalendarScreen
-import com.lukasz.witkowski.training.planner.ui.StatisticsScreen
 
 @Composable
 fun Navigation(
@@ -56,14 +54,6 @@ fun Navigation(
             ExercisesScreen(Modifier.padding(innerPadding), viewModel = viewModel) {
                 navController.navigate(route = NavItem.CreateExercise.route)
             }
-        }
-
-        composable(NavItem.Calendar.route) {
-            CalendarScreen()
-        }
-
-        composable(NavItem.Statistics.route) {
-            StatisticsScreen()
         }
 
         composable(NavItem.CreateExercise.route) {

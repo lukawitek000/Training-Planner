@@ -2,7 +2,6 @@ package com.lukasz.witkowski.training.planner.training.domain
 
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.isCategoryNone
-import java.util.*
 
 data class TrainingPlan(
     val id: TrainingPlanId,
@@ -17,6 +16,7 @@ data class TrainingPlan(
     }
 
     private fun getAllCategories(): List<ExerciseCategory> {
-        return exercises.map { exercise -> exercise.category }.filter { category -> !isCategoryNone(category) }
+        return exercises.map { exercise -> exercise.category }
+            .filter { category -> !isCategoryNone(category) }
     }
 }

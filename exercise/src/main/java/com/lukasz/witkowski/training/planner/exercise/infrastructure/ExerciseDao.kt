@@ -19,6 +19,6 @@ internal interface ExerciseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(exercise: DbExercise): Long
 
-    @Delete
-    suspend fun delete(exercise: DbExercise)
+    @Query("DELETE FROM Exercise WHERE :id == id")
+    suspend fun delete(id: String)
 }

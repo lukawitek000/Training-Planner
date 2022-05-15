@@ -3,13 +3,6 @@ package com.lukasz.witkowski.training.planner.synchronization
 import android.content.Context
 import com.google.android.gms.wearable.ChannelClient
 import com.google.android.gms.wearable.Wearable
-import com.lukasz.witkowski.shared.utils.closeSuspending
-import com.lukasz.witkowski.shared.utils.gson
-import com.lukasz.witkowski.shared.utils.readSuspending
-import com.lukasz.witkowski.shared.utils.toByteArray
-import com.lukasz.witkowski.shared.utils.writeIntSuspending
-import com.lukasz.witkowski.shared.utils.writeSuspending
-import com.lukasz.witkowski.training.planner.synchronization.WearableChannelClientReceiver.Companion.ACKNOWLEDGE_FLAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
@@ -65,15 +58,14 @@ class WearableChannelClientSender<T, K>(
     }
 
     private suspend fun sendNumberOfObjects(data: List<T>) {
-        outputStream.writeIntSuspending(data.size)
+        outputStream.writeByteSuspending(data.size)
     }
 
     private suspend fun FlowCollector<SynchronizationStatus<K>>.sendObjectsList(
         dataList: List<T>
     ) {
         for (data in dataList) {
-            val json = gson.toJson(data)
-            val byteArray = json.toByteArray()
+            val byteArray = serializeData(data)
             sendBufferSize(byteArray)
             val synchronizationStatus =
                 sendObjectAndWaitForAcknowledge(byteArray, getId.invoke(data))
@@ -81,9 +73,10 @@ class WearableChannelClientSender<T, K>(
         }
     }
 
+    private fun serializeData(data: T) = gson.toJson(data).toByteArray()
+
     private suspend fun sendBufferSize(byteArray: ByteArray) {
-        val bufferSize = byteArray.size.toByteArray()
-        outputStream.writeSuspending(bufferSize)
+        outputStream.writeIntSuspending(byteArray.size)
     }
 
     private suspend fun sendObjectAndWaitForAcknowledge(
@@ -102,12 +95,12 @@ class WearableChannelClientSender<T, K>(
     }
 
     private suspend fun receiveAcknowledge(id: K): SynchronizationStatus.Successful<K> {
-        val response = inputStream.readSuspending()
+        val response = inputStream.readByteSuspending()
         return if (response == ACKNOWLEDGE_FLAG) {
             SynchronizationStatus.Successful(id)
         } else {
             throw SynchronizationSavingException(
-                message = "Peer has failed to save data"
+                message = "Client has failed to save data"
             )
         }
     }

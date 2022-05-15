@@ -16,8 +16,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-// TODO What do you think about using CategoryController to handle category filtering?
-// It will be reused in Training List
 @HiltViewModel
 class ExercisesListViewModel @Inject internal constructor(
     private val exerciseService: ExerciseService,

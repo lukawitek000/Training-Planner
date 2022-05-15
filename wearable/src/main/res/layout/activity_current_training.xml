@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/background_gray"
     android:padding="@dimen/box_inset_layout_padding"
-    tools:context=".ui.currentTraining.CurrentTrainingActivity"
+    tools:context=".trainingSession.CurrentTrainingActivity"
     tools:deviceIds="wear">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

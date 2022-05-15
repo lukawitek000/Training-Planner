@@ -8,9 +8,7 @@ import com.lukasz.witkowski.training.planner.statistics.infrastructure.DbStatist
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.StatisticsDao
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.StatisticsDatabase
 import com.lukasz.witkowski.training.planner.statistics.presentation.DefaultTimerController
-import com.lukasz.witkowski.training.planner.statistics.presentation.DefaultTrainingSessionController
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
-import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionController
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,11 +22,6 @@ object StatisticsModule {
     @Provides
     fun provideTrainingSessionService(): TrainingSessionService {
         return TrainingSessionService()
-    }
-
-    @Provides
-    fun provideTrainingSessionController(trainingSessionService: TrainingSessionService): TrainingSessionController {
-        return DefaultTrainingSessionController(trainingSessionService)
     }
 
     @Provides

@@ -6,7 +6,6 @@ import com.lukasz.witkowski.training.planner.exercise.domain.Image
 
 object ExerciseMapper {
 
-
     fun toDomainExercise(exercise: Exercise): com.lukasz.witkowski.training.planner.exercise.domain.Exercise {
         return com.lukasz.witkowski.training.planner.exercise.domain.Exercise(
             id = exercise.id,
@@ -34,5 +33,4 @@ object ExerciseMapper {
     private fun Image.toBitmap() = BitmapFactory.decodeByteArray(data, 0, data.size)
 
     private fun Bitmap.toImage() = ImageFactory.fromBitmap(bitmap = this)
-
 }

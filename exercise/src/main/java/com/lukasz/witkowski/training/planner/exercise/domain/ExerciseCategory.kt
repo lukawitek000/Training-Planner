@@ -12,5 +12,5 @@ enum class ExerciseCategory {
     STRETCHING,
     CHEST
 }
-// TODO How to check category None?
+
 fun isCategoryNone(category: ExerciseCategory) = category == ExerciseCategory.NONE

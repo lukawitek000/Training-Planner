@@ -39,9 +39,7 @@ class CreateTrainingViewModel @Inject constructor(
     private val _pickedExercise = MutableStateFlow<Exercise?>(null)
     val pickedExercise: StateFlow<Exercise?> = _pickedExercise
 
-    val pickedExercisesIds =
-        mutableListOf<ExerciseId>() // TODO how to handle marking exercises that are already in the training plan
-    // Maybe TrainingTraining class should have Exercise property plus required properties for training plan such as sets reps etc.
+    val pickedExercisesIds = mutableListOf<ExerciseId>()
 
     fun onTrainingTitleChanged(newTitle: String) {
         _title.value = newTitle

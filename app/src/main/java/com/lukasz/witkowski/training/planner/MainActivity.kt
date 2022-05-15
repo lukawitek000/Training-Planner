@@ -17,8 +17,6 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.lukasz.witkowski.shared.utils.startSendingDataService
-import com.lukasz.witkowski.shared.utils.stopSendingDataService
 import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
 import com.lukasz.witkowski.training.planner.navigation.NavItem
 import com.lukasz.witkowski.training.planner.navigation.Navigation
@@ -28,7 +26,6 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    private var isServiceStarted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,40 +37,8 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun showToast(message: String) {
-        if(message.isEmpty()) return
+        if (message.isEmpty()) return
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        startSendingTrainingService()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        stopSendingTrainingService()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        startSendingTrainingService()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        stopSendingTrainingService()
-    }
-
-    private fun startSendingTrainingService() {
-        if (!isServiceStarted) {
-//            isServiceStarted = startSendingDataService(SendingTrainingsService::class.java)
-        }
-    }
-
-    private fun stopSendingTrainingService() {
-        if (isServiceStarted) {
-//            isServiceStarted = stopSendingDataService(SendingTrainingsService::class.java)
-        }
     }
 }
 

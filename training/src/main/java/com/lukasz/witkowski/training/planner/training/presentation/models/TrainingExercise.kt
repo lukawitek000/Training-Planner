@@ -4,9 +4,8 @@ import android.graphics.Bitmap
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
-//  Osobne miejsce na obrazki, pomocnicze
-// Zajmuja dużo miejsca, ładowanie na demand
-// Osobny service
+
+// TODO separate service for images, loading on demand
 data class TrainingExercise(
     val id: TrainingExerciseId,
     val name: String = "",
