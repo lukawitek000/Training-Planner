@@ -1,24 +1,23 @@
-package com.lukasz.witkowski.training.planner.ui.currentTraining
+package com.lukasz.witkowski.training.planner.trainingSession
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingExerciseBinding
+import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingRestTimeBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class TrainingExerciseFragment : Fragment() {
+class TrainingRestTimeFragment : Fragment() {
 
-    private lateinit var binding: FragmentTrainingExerciseBinding
-
+    private lateinit var binding: FragmentTrainingRestTimeBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentTrainingExerciseBinding.inflate(inflater, container, false)
+        binding = FragmentTrainingRestTimeBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
 }

@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.trainingplans
+package com.lukasz.witkowski.training.planner.traininglist
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
+import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -29,7 +29,8 @@ class TrainingPlansListViewModel
         viewModelScope.launch {
             _trainingPlans.value = ResultHandler.Loading
             trainingPlanService.getTrainingPlansFromCategories().collectLatest {
-                _trainingPlans.value = ResultHandler.Success(TrainingPlanMapper.toPresentationTrainingPlans(it))
+                _trainingPlans.value =
+                    ResultHandler.Success(TrainingPlanMapper.toPresentationTrainingPlans(it))
 //                _trainingPlans.value = ResultHandler.Success(dummyTrainingsList)
             }
         }

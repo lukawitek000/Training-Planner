@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.ui.startTraining
+package com.lukasz.witkowski.training.planner.startTraining
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,9 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.ActivityStartTrainingBinding
-import com.lukasz.witkowski.training.planner.ui.currentTraining.CurrentTrainingActivity
+import com.lukasz.witkowski.training.planner.trainingSession.CurrentTrainingActivity
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class StartTrainingActivity : ComponentActivity() {

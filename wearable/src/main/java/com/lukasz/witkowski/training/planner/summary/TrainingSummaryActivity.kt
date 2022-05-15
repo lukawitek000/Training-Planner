@@ -1,12 +1,12 @@
-package com.lukasz.witkowski.training.planner.ui.currentTraining
+package com.lukasz.witkowski.training.planner.summary
 
 import android.os.Bundle
-import androidx.fragment.app.FragmentActivity
+import androidx.activity.ComponentActivity
 import com.lukasz.witkowski.training.planner.R
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class CurrentTrainingActivity : FragmentActivity() {
+class TrainingSummaryActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.TrainingPlannerTheme)

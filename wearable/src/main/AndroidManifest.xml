@@ -25,7 +25,7 @@
         android:theme="@style/SplashTheme">
 
         <activity
-            android:name="com.lukasz.witkowski.training.planner.trainingplans.TrainingsListActivity"
+            android:name="com.lukasz.witkowski.training.planner.traininglist.TrainingsListActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,14 +35,14 @@
         </activity>
 
         <activity
-            android:name="com.lukasz.witkowski.training.planner.ui.summary.TrainingSummaryActivity"
+            android:name="com.lukasz.witkowski.training.planner.summary.TrainingSummaryActivity"
             android:exported="false" />
         <activity
-            android:name="com.lukasz.witkowski.training.planner.ui.currentTraining.CurrentTrainingActivity"
+            android:name="com.lukasz.witkowski.training.planner.trainingSession.CurrentTrainingActivity"
             android:noHistory="true"
             android:exported="false" />
         <activity
-            android:name="com.lukasz.witkowski.training.planner.ui.startTraining.StartTrainingActivity"
+            android:name="com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity"
             android:exported="false"
             android:noHistory="true" />
 

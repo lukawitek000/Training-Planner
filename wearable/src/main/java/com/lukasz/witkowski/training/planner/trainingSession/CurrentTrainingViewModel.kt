@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.ui.currentTraining
+package com.lukasz.witkowski.training.planner.trainingSession
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -29,7 +29,8 @@ class CurrentTrainingViewModel
     fun fetchTrainingPlan() {
         viewModelScope.launch {
             _trainingPlan.value = ResultHandler.Loading
-            _trainingPlan.value = ResultHandler.Success(dummyTrainingsList.first { it.id == trainingPlanId })
+            _trainingPlan.value =
+                ResultHandler.Success(dummyTrainingsList.first { it.id == trainingPlanId })
 //            _trainingWithExercises.value = ResultHandler.Success(trainingRepository.fetchDummyTrainingById(trainingId))
 //            _trainingWithExercises.value = ResultHandler.Success(trainingPlanService.fetchTrainingById(trainingId))
         }

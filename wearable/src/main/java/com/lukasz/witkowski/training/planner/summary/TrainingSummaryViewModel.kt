@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.ui.summary
+package com.lukasz.witkowski.training.planner.summary
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

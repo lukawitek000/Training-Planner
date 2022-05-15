@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.trainingplans
+package com.lukasz.witkowski.training.planner.traininglist
 
 import android.Manifest
 import android.content.Intent
@@ -12,11 +12,11 @@ import androidx.wear.widget.WearableLinearLayoutManager
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingPlansListBinding
+import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
+import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_ID_KEY
+import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_TITLE_KEY
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
-import com.lukasz.witkowski.training.planner.ui.startTraining.StartTrainingActivity
-import com.lukasz.witkowski.training.planner.ui.startTraining.StartTrainingActivity.Companion.TRAINING_ID_KEY
-import com.lukasz.witkowski.training.planner.ui.startTraining.StartTrainingActivity.Companion.TRAINING_TITLE_KEY
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -36,20 +36,6 @@ class TrainingsListActivity : ComponentActivity() {
         setUpTrainingAdapter()
         fetchTrainingPlans()
         permissionLauncher.launch(REQUIRED_PERMISSIONS)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (!isServiceStarted) {
-//            isServiceStarted = startSendingDataService(SendingStatisticsService::class.java)
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (isServiceStarted) {
-//            isServiceStarted = stopSendingDataService(SendingStatisticsService::class.java)
-        }
     }
 
     private fun setUpTrainingAdapter() {
