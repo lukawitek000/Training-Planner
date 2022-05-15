@@ -1,10 +1,7 @@
 package com.lukasz.witkowski.training.planner.synchronization
 
-import com.lukasz.witkowski.shared.utils.INTEGER_VALUE_BUFFER_SIZE
-import com.lukasz.witkowski.shared.utils.gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import timber.log.Timber
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -14,32 +11,24 @@ class WearableChannelClientReceiver(
 ) {
 
     fun <T> receiveData(type: Class<T>): Flow<T> = flow {
-        val numberOfItems = inputStream.readSuspending()
+        val numberOfItems = inputStream.readByteSuspending()
         for (i in 0 until numberOfItems) {
             emit(receiveSingleTrainingPlan(type))
         }
     }
 
     suspend fun sendReceivingConfirmation() {
-        outputStream.writeIntSuspending(ACKNOWLEDGE_FLAG)
+        outputStream.writeByteSuspending(ACKNOWLEDGE_FLAG)
     }
 
     private suspend fun <T> receiveSingleTrainingPlan(type: Class<T>): T {
         val sizeOfByteArray = getBufferSize()
         val buffer = ByteArray(sizeOfByteArray)
-        inputStream.readSuspending(buffer)
-        val stringBuffer = String(buffer)
-        Timber.d("Received data ${buffer.size} expected $sizeOfByteArray $buffer, $stringBuffer")
+        inputStream.readByteSuspending(buffer)
         return gson.fromJson(String(buffer), type)
     }
 
     private suspend fun getBufferSize(): Int {
-        val buffer = ByteArray(INTEGER_VALUE_BUFFER_SIZE)
-        inputStream.readSuspending(buffer)
-        return buffer.toInt()
-    }
-
-    companion object {
-        const val ACKNOWLEDGE_FLAG = 1
+        return inputStream.readIntSuspending()
     }
 }
