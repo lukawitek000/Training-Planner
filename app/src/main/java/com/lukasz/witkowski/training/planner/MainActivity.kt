@@ -17,8 +17,6 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.lukasz.witkowski.shared.utils.startSendingDataService
-import com.lukasz.witkowski.shared.utils.stopSendingDataService
 import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
 import com.lukasz.witkowski.training.planner.navigation.NavItem
 import com.lukasz.witkowski.training.planner.navigation.Navigation
@@ -39,7 +37,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun showToast(message: String) {
-        if(message.isEmpty()) return
+        if (message.isEmpty()) return
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

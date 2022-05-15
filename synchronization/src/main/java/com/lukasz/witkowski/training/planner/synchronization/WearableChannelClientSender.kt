@@ -3,12 +3,7 @@ package com.lukasz.witkowski.training.planner.synchronization
 import android.content.Context
 import com.google.android.gms.wearable.ChannelClient
 import com.google.android.gms.wearable.Wearable
-import com.lukasz.witkowski.shared.utils.closeSuspending
 import com.lukasz.witkowski.shared.utils.gson
-import com.lukasz.witkowski.shared.utils.readSuspending
-import com.lukasz.witkowski.shared.utils.toByteArray
-import com.lukasz.witkowski.shared.utils.writeIntSuspending
-import com.lukasz.witkowski.shared.utils.writeSuspending
 import com.lukasz.witkowski.training.planner.synchronization.WearableChannelClientReceiver.Companion.ACKNOWLEDGE_FLAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector

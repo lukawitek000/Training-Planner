@@ -3,8 +3,12 @@ package com.lukasz.witkowski.training.planner.statistics.domain
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
+import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsStrategy
+import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSession
+import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
+import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSetsStrategy
 import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder.FixedTimeProvider
-import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder.StatisticsRecorder
+import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.StatisticsRecorder
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
@@ -14,7 +18,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import java.util.Date
 import kotlin.test.assertFailsWith
 
 class TrainingSessionTest {

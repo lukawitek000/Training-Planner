@@ -7,7 +7,7 @@ import com.lukasz.witkowski.training.planner.statistics.application.TrainingSess
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
-import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateConverter
+import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,13 +47,13 @@ class TrainingSessionViewModel @Inject constructor(
     fun completed() {
         stopTimer()
         val state = trainingSessionService.completed()
-        _trainingSessionState.value = TrainingSessionStateConverter.toPresentation(state)
+        _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(state)
     }
 
     fun skip() {
         stopTimer()
         val state = trainingSessionService.skip()
-        _trainingSessionState.value = TrainingSessionStateConverter.toPresentation(state)
+        _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(state)
     }
 
     fun saveStatistics() {
@@ -69,7 +69,7 @@ class TrainingSessionViewModel @Inject constructor(
             // TODO maybe it should be moved to the service??
             val trainingPlan = trainingPlanService.getTrainingPlanById(trainingId)
             val state = trainingSessionService.startTraining(trainingPlan)
-            _trainingSessionState.value = TrainingSessionStateConverter.toPresentation(state)
+            _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(state)
         }
     }
 

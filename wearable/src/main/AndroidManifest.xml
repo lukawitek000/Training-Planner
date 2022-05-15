@@ -34,9 +34,6 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name="com.lukasz.witkowski.training.planner.ui.currentTraining.WearableTrainingService"
-            android:exported="false" />
         <activity
             android:name="com.lukasz.witkowski.training.planner.ui.summary.TrainingSummaryActivity"
             android:exported="false" />

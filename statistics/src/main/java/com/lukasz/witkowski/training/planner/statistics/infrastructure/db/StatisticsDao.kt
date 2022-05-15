@@ -5,6 +5,10 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models.DbExerciseAttemptStatistics
+import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models.DbExerciseStatistics
+import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models.DbTrainingStatistics
+import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models.DbTrainingWithExercisesStatistics
 import kotlinx.coroutines.flow.Flow
 
 @Dao

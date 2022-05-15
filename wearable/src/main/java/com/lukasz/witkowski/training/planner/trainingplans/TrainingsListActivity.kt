@@ -10,8 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.wear.widget.WearableLinearLayoutManager
 import com.lukasz.witkowski.shared.utils.ResultHandler
-import com.lukasz.witkowski.shared.utils.startSendingDataService
-import com.lukasz.witkowski.shared.utils.stopSendingDataService
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingPlansListBinding
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
