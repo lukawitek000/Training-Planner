@@ -9,7 +9,7 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.D
 
 internal object ExerciseMapper {
 
-    fun toDbExercise(exercise: TrainingExercise, trainingId: String) : DbExercise {
+    fun toDbExercise(exercise: TrainingExercise, trainingId: String): DbExercise {
         return DbExercise(
             id = exercise.id.value,
             trainingId = trainingId,
@@ -24,12 +24,12 @@ internal object ExerciseMapper {
         )
     }
 
-    fun toExercise(dbExercise: DbExercise) : TrainingExercise {
+    fun toExercise(dbExercise: DbExercise): TrainingExercise {
         return TrainingExercise(
             id = TrainingExerciseId(dbExercise.id),
             name = dbExercise.name,
             description = dbExercise.description,
-            category = ExerciseCategory.values()[dbExercise.categoryId], 
+            category = ExerciseCategory.values()[dbExercise.categoryId],
             image = dbExercise.image?.let { Image(it) },
             repetitions = dbExercise.repetitions,
             sets = dbExercise.sets,

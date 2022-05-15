@@ -4,8 +4,5 @@ import com.lukasz.witkowski.training.planner.synchronization.SynchronizationStat
 import kotlinx.coroutines.flow.Flow
 
 interface TrainingPlanSender {
-    /**
-     * Returns ids of successfully sent Training Plans
-     */
-    fun send(trainingPlans: List<TrainingPlan>): Flow<com.lukasz.witkowski.training.planner.synchronization.SynchronizationStatus<TrainingPlanId>>
+    fun send(trainingPlans: List<TrainingPlan>): Flow<SynchronizationStatus<TrainingPlanId>>
 }

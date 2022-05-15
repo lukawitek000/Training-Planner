@@ -14,7 +14,12 @@ internal object TrainingPlanMapper {
                 description = trainingPlan.description,
                 isSynchronized = trainingPlan.isSynchronized
             ),
-            exercises = trainingPlan.exercises.map { ExerciseMapper.toDbExercise(exercise = it, trainingId = trainingPlan.id.value) },
+            exercises = trainingPlan.exercises.map {
+                ExerciseMapper.toDbExercise(
+                    exercise = it,
+                    trainingId = trainingPlan.id.value
+                )
+            },
         )
     }
 

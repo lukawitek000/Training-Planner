@@ -10,7 +10,6 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers.TrainingPlanMapper
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.TrainingPlanJsonModel
 import kotlinx.coroutines.flow.Flow
-import timber.log.Timber
 
 class WearableTrainingPlanSender(private val context: Context) : TrainingPlanSender {
 
@@ -21,7 +20,6 @@ class WearableTrainingPlanSender(private val context: Context) : TrainingPlanSen
     )
 
     override fun send(trainingPlans: List<TrainingPlan>): Flow<SynchronizationStatus<TrainingPlanId>> {
-        Timber.d("Send data")
         val trainingPlansJson = trainingPlans.map { TrainingPlanMapper.toTrainingPlanJsonModel(it) }
         return sender.sendData(trainingPlansJson)
     }

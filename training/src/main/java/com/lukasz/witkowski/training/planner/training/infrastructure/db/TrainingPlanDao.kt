@@ -5,7 +5,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import androidx.room.Transaction
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbExercise
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingPlanWithExercises
@@ -37,7 +36,7 @@ internal interface TrainingPlanDao {
     @Transaction
     suspend fun deleteTrainingPlanWithExercises(dbTrainingPlanWithExercises: DbTrainingPlanWithExercises) {
         deleteTrainingPlanById(dbTrainingPlanWithExercises.trainingPlan.id)
-        for(dbExercise in dbTrainingPlanWithExercises.exercises) {
+        for (dbExercise in dbTrainingPlanWithExercises.exercises) {
             deleteExerciseById(dbExercise.id)
         }
     }

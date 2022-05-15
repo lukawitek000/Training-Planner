@@ -8,7 +8,7 @@ data class TrainingPlan(
     val title: String,
     val description: String = "",
     val exercises: List<TrainingExercise>,
-    val isSynchronized: Boolean = false // TODO check if it is needed in presentation layer
+    val isSynchronized: Boolean = false
 ) {
     fun getCategories(): List<Category> {
         return exercises.map { exercise -> exercise.category }

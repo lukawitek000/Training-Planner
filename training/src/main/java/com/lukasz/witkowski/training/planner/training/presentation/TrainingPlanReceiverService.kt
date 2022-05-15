@@ -36,13 +36,18 @@ class TrainingPlanReceiverService : WearableListenerService() {
         super.onChannelOpened(channel)
         Timber.d("Channel open $channel")
         coroutineScope.launch {
-            val inputStream = channelClient.getInputStream(channel).await()
-            val outputStream = channelClient.getOutputStream(channel).await()
+            val (inputStream, outputStream) = openStreams(channel)
             receiveTrainingPlan(inputStream, outputStream).collect {
                 trainingPlanService.saveTrainingPlan(it)
                 confirmReceivingTrainingPlan(it.id)
             }
         }
+    }
+
+    private suspend fun openStreams(channel: ChannelClient.Channel): Pair<InputStream, OutputStream> {
+        val inputStream = channelClient.getInputStream(channel).await()
+        val outputStream = channelClient.getOutputStream(channel).await()
+        return Pair(inputStream, outputStream)
     }
 
     private fun receiveTrainingPlan(

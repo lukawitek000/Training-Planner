@@ -2,7 +2,6 @@ package com.lukasz.witkowski.training.planner.training.domain
 
 import kotlinx.coroutines.flow.Flow
 
-// Repository = read update delete - keeping state, saving data
 interface TrainingPlanRepository {
 
     suspend fun save(trainingPlan: TrainingPlan)

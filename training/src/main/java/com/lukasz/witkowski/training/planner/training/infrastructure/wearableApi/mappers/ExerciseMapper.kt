@@ -34,5 +34,4 @@ object ExerciseMapper {
             restTime = Time(exerciseJsonModel.restTime)
         )
     }
-
 }
