@@ -4,7 +4,6 @@ import com.lukasz.witkowski.shared.time.Time
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -12,18 +11,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
 
-class DefaultTimerController: TimerController {
+class DefaultTimerController : TimerController {
 
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Default)
     private var timerJob: Job? = null
+
     private val _timer = MutableStateFlow(Time.NONE)
     override val timer: StateFlow<Time>
         get() = _timer
 
     override val hasFinished: StateFlow<Boolean>
-        get() = _timer.map { it.timeInMillis < DELAY_IN_MILLIS }.stateIn(coroutineScope, SharingStarted.Lazily, false)
+        get() = _timer.map { it.timeInMillis < DELAY_IN_MILLIS }
+            .stateIn(coroutineScope, SharingStarted.Lazily, false)
 
 
     private val _isRunning = MutableStateFlow(false)

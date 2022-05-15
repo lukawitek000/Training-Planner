@@ -3,7 +3,7 @@ package com.lukasz.witkowski.training.planner.statistics.domain.session.statisti
 import com.lukasz.witkowski.shared.time.Time
 import java.util.Date
 
-class SystemTimeProvider: TimeProvider {
+class SystemTimeProvider : TimeProvider {
     override fun currentTime(): Time {
         val timeInMillis = System.currentTimeMillis()
         return Time(timeInMillis)

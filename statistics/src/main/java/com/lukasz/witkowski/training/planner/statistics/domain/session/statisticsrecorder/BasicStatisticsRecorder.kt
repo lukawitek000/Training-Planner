@@ -7,6 +7,13 @@ import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingSt
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 
+/**
+ * [BasicStatisticsRecorder] can be used on the device without any sensors, it records:
+ *  * Total training time
+ *  * Exercise time
+ *  * Training session date
+ *  * Completeness rate of exercises
+ */
 class BasicStatisticsRecorder(
     override val trainingPlanId: TrainingPlanId,
     private val timeProvider: TimeProvider

@@ -4,7 +4,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 
 /**
- * All exercises are performed in succession
+ * Exercises are performed in succession.
  */
 class CircuitSetsStrategy : TrainingSetsStrategy {
 

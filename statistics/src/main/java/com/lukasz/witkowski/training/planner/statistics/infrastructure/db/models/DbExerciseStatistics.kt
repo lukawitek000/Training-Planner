@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models
 
 import androidx.room.Entity
-import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "ExerciseStatistics")

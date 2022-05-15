@@ -15,10 +15,10 @@ object ExerciseStatisticsMapper {
     ): DbExerciseWithAttemptsStatistics {
         return DbExerciseWithAttemptsStatistics(
             exerciseStatistics = DbExerciseStatistics(
-            id = exerciseStatistics.id.value,
-            trainingStatisticsId = trainingStatisticsId.value,
-            trainingExerciseId = exerciseStatistics.trainingExerciseId.value
-        ),
+                id = exerciseStatistics.id.value,
+                trainingStatisticsId = trainingStatisticsId.value,
+                trainingExerciseId = exerciseStatistics.trainingExerciseId.value
+            ),
             exerciseAttemptsStatistics = exerciseStatistics.attemptsStatistics.map {
                 ExerciseAttemptStatisticsMapper.toDbExerciseAttemptStatistics(
                     it,
@@ -37,5 +37,4 @@ object ExerciseStatisticsMapper {
             }
         )
     }
-
 }

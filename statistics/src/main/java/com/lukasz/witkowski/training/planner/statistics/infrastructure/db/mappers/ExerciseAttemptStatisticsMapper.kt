@@ -9,7 +9,10 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 
 object ExerciseAttemptStatisticsMapper {
 
-    fun toDbExerciseAttemptStatistics(exerciseAttemptStatistics: ExerciseAttemptStatistics, exerciseStatisticsId: ExerciseStatisticsId): DbExerciseAttemptStatistics {
+    fun toDbExerciseAttemptStatistics(
+        exerciseAttemptStatistics: ExerciseAttemptStatistics,
+        exerciseStatisticsId: ExerciseStatisticsId
+    ): DbExerciseAttemptStatistics {
         return DbExerciseAttemptStatistics(
             id = exerciseAttemptStatistics.id.value,
             exerciseStatisticsId = exerciseStatisticsId.value,

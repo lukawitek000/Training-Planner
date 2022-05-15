@@ -36,5 +36,4 @@ object TrainingStatisticsMapper {
             }
         )
     }
-
 }

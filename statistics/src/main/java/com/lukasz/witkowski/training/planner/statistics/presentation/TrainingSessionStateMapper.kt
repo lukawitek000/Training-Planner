@@ -23,5 +23,4 @@ object TrainingSessionStateMapper {
             is TrainingSessionState.IdleState -> com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState.IdleState
         }
     }
-
 }
