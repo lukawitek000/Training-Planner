@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 
 class DefaultCategoryController(private val categoriesCollection: CategoriesCollection) :
     CategoryController {
+
     private val _selectedCategories = MutableStateFlow<List<Category>>(emptyList())
     override val selectedCategories: StateFlow<List<Category>>
         get() = _selectedCategories

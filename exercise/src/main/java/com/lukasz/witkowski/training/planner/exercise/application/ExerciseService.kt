@@ -12,23 +12,10 @@ class ExerciseService(
     suspend fun saveExercise(exercise: Exercise): Boolean {
         return exerciseRepository.insert(exercise)
     }
-
-    fun getAllExercises(): Flow<List<Exercise>> {
-        return exerciseRepository.getAll()
-    }
-
     // TODO Should be all exercises taken from domain and then filter here, or the filtration should be made in infra (SQL query)? (less data transmission)
     fun getExercisesFromCategories(categories: List<ExerciseCategory>): Flow<List<Exercise>> {
         return exerciseRepository.getAll().map {
             it.filter { exercise -> categories.contains(exercise.category) || categories.isEmpty() }
         }
-    }
-
-    suspend fun deleteExercise(exercise: Exercise) {
-        exerciseRepository.delete(exercise.id)
-    }
-
-    fun getExerciseById(id: String): Flow<Exercise> {
-        return exerciseRepository.getById(id)
     }
 }
