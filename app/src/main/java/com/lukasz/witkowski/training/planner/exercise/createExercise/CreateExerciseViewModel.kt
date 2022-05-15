@@ -5,11 +5,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
-import com.lukasz.witkowski.training.planner.exercise.application.CategoryService
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,9 +25,9 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateExerciseViewModel @Inject internal constructor(
     private val exerciseService: ExerciseService,
-    private val categoryService: CategoryService,
+    private val categoriesCollection: CategoriesCollection,
     private val savedStateHandle: SavedStateHandle
-) : ViewModel() {
+) : ViewModel(), CategoriesCollection by categoriesCollection {
 
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
@@ -55,15 +54,11 @@ class CreateExerciseViewModel @Inject internal constructor(
 
     fun onCategorySelected(newCategoryIndex: Int) {
         Timber.d("Category selected index $newCategoryIndex")
-        _category.value = getAllCategories()[newCategoryIndex]
+        _category.value = allCategories[newCategoryIndex]
     }
 
     fun onImageChange(bitmap: Bitmap) {
         _image.value = bitmap
-    }
-
-    fun getAllCategories(): List<Category> {
-        return categoryService.getAllCategories().map { CategoryMapper.toCategory(it) }
     }
 
     fun createExercise() {

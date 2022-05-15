@@ -2,13 +2,14 @@ package com.lukasz.witkowski.training.planner.exercise.di
 
 import android.content.Context
 import androidx.room.Room
-import com.lukasz.witkowski.training.planner.exercise.application.CategoryService
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDatabase
+import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
+import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoryController
 import dagger.Module
 import dagger.Provides
@@ -27,15 +28,14 @@ internal object ExerciseModule {
         return ExerciseService(exerciseRepository)
     }
 
-    @Singleton
     @Provides
-    fun provideCategoryService(): CategoryService {
-        return CategoryService()
+    fun provideCategoryController(categoriesCollection: CategoriesCollection): CategoryController {
+        return DefaultCategoryController(categoriesCollection)
     }
 
     @Provides
-    fun provideCategoryController(categoryService: CategoryService): CategoryController {
-        return DefaultCategoryController(categoryService)
+    fun provideCategoriesCollection(): CategoriesCollection {
+        return DefaultCategoriesCollection()
     }
 
     @Singleton
