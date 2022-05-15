@@ -7,8 +7,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-// TODO do not navigate to the next screen after exercise timer has finished it can have more reps
-// TODO is this TimerViewModel used anywhere???
 
 @HiltViewModel
 class TimerViewModel

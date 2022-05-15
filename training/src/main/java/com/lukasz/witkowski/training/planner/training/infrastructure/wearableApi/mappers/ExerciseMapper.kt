@@ -26,7 +26,7 @@ object ExerciseMapper {
             id = TrainingExerciseId(exerciseJsonModel.id),
             name = exerciseJsonModel.name,
             description = exerciseJsonModel.description,
-            category = ExerciseCategory.values()[exerciseJsonModel.category], // TODO Mapping category ??
+            category = ExerciseCategory.values()[exerciseJsonModel.category],
             image = null,
             repetitions = exerciseJsonModel.repetitions,
             sets = exerciseJsonModel.sets,

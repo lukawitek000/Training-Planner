@@ -18,7 +18,7 @@ internal class DbTrainingPlanRepository(
     }
 
     override suspend fun setTrainingPlanAsSynchronized(id: TrainingPlanId) {
-        // TODO Set training plan as synchronized
+        // TODO Not implemented
     }
 
     override fun getAll(): Flow<List<TrainingPlan>> {

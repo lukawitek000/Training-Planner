@@ -123,7 +123,6 @@ fun TrainingListItemContent(
     trainingPlan: TrainingPlan,
     startTrainingSession: (TrainingPlan) -> Unit
 ) {
-    val categories = trainingPlan.getAllCategories() // TODO how to do it better?
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -140,7 +139,7 @@ fun TrainingListItemContent(
             )
             CategoriesRow(
                 modifier = modifier.padding(top = 16.dp),
-                categories = categories
+                categories = trainingPlan.getCategories()
             )
         }
         Icon(

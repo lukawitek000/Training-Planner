@@ -39,7 +39,7 @@ dependencies {
     implementation "androidx.wear:wear-input:1.1.0"
     implementation project(path: ':shared')
     implementation project(path: ':training')
-    implementation project(path: ':exercise') // TODO Check if it is only for category
+    implementation project(path: ':exercise')
 
     implementation "androidx.cardview:cardview:1.0.0"
     implementation 'com.google.android.material:material:1.4.0'

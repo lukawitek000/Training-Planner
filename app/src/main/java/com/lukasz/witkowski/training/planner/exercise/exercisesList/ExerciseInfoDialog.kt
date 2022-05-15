@@ -53,14 +53,9 @@ fun ExerciseInfoAlertDialog(
                     modifier = Modifier
                 )
             }
-            val category = exercise.category
-            // TODO how to get rid of this check for spacer??
-            if (!category.isNone()) {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
             CategoryChip(
-                modifier = Modifier.padding(top = 4.dp),
-                category = category
+                modifier = Modifier.padding(top = 16.dp),
+                category = exercise.category
             )
         }
     }

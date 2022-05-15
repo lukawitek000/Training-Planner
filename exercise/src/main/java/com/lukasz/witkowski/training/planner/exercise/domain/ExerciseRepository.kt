@@ -10,6 +10,5 @@ interface ExerciseRepository {
      */
     suspend fun insert(exercise: Exercise): Boolean
 
-    // TODO is it better to delete by Id or object??
-    suspend fun delete(exercise: Exercise)
+    suspend fun delete(exerciseId: ExerciseId)
 }

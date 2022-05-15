@@ -43,7 +43,7 @@ class TrainingPlansAdapter(
         }
 
         private fun setUpCategoriesRecyclerView(trainingPlan: TrainingPlan) {
-            val categories = trainingPlan.getAllCategories()
+            val categories = trainingPlan.getCategories()
             binding.categoriesRv.adapter = CategoriesAdapter(categories, context)
             binding.categoriesRv.layoutManager =
                 LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)

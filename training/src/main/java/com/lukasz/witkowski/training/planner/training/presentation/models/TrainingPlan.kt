@@ -10,7 +10,7 @@ data class TrainingPlan(
     val exercises: List<TrainingExercise>,
     val isSynchronized: Boolean = false // TODO check if it is needed in presentation layer
 ) {
-    fun getAllCategories(): List<Category> {
+    fun getCategories(): List<Category> {
         return exercises.map { exercise -> exercise.category }
             .filter { category -> !category.isNone() }
             .distinct()
