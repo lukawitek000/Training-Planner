@@ -19,8 +19,6 @@ sealed class NavItem(
 
     object Trainings : NavItem("trainings", R.drawable.trainings_icon, "Trainings")
     object Exercises : NavItem("exercises", R.drawable.exercises_icon, "Exercises")
-    object Calendar : NavItem("calendar", R.drawable.exercises_icon, "Calendar")
-    object Statistics : NavItem("statistics", R.drawable.exercises_icon, "Statistics")
 
     object BottomNavItems {
         val list = listOf(
@@ -45,8 +43,6 @@ sealed class NavItem(
         val list = listOf<NavItem>(
             Trainings,
             Exercises,
-            Calendar,
-            Statistics,
             CreateExercise,
             CreateTraining,
             PickExercise,
