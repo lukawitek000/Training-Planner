@@ -83,7 +83,7 @@ fun CreateExerciseScreen(
                     image = image,
                     name = name,
                     description = description,
-                    allCategories = viewModel.getAllCategories(),
+                    allCategories = viewModel.allCategories,
                     selectedCategory = selectedCategory,
                     onImageChange = { viewModel.onImageChange(it) },
                     onExerciseNameChanged = { viewModel.onExerciseNameChange(it) },

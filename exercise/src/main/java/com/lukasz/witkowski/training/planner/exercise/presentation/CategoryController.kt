@@ -10,5 +10,7 @@ interface CategoryController {
 
     val filterCategories: List<Category>
 
+    val allCategories: List<Category>
+
     fun selectCategory(category: Category)
 }

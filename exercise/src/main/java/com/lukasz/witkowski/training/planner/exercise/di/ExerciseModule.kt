@@ -2,7 +2,6 @@ package com.lukasz.witkowski.training.planner.exercise.di
 
 import android.content.Context
 import androidx.room.Room
-import com.lukasz.witkowski.training.planner.exercise.application.CategoryService
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseRepository
@@ -27,15 +26,9 @@ internal object ExerciseModule {
         return ExerciseService(exerciseRepository)
     }
 
-    @Singleton
     @Provides
-    fun provideCategoryService(): CategoryService {
-        return CategoryService()
-    }
-
-    @Provides
-    fun provideCategoryController(categoryService: CategoryService): CategoryController {
-        return DefaultCategoryController(categoryService)
+    fun provideCategoryController(): CategoryController {
+        return DefaultCategoryController()
     }
 
     @Singleton

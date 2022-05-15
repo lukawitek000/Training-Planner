@@ -3,7 +3,6 @@ package com.lukasz.witkowski.training.planner.exercise.exercisesList
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.training.planner.exercise.application.CategoryService
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
@@ -21,7 +20,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ExercisesListViewModel @Inject internal constructor(
     private val exerciseService: ExerciseService,
-    private val categoryService: CategoryService,
     categoryController: CategoryController,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(), CategoryController by categoryController {
