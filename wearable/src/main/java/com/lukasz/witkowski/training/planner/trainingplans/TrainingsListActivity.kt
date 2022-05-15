@@ -14,7 +14,6 @@ import com.lukasz.witkowski.shared.utils.startSendingDataService
 import com.lukasz.witkowski.shared.utils.stopSendingDataService
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingPlansListBinding
-import com.lukasz.witkowski.training.planner.service.SendingStatisticsService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.startTraining.StartTrainingActivity
@@ -44,14 +43,14 @@ class TrainingsListActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         if (!isServiceStarted) {
-            isServiceStarted = startSendingDataService(SendingStatisticsService::class.java)
+//            isServiceStarted = startSendingDataService(SendingStatisticsService::class.java)
         }
     }
 
     override fun onStop() {
         super.onStop()
         if (isServiceStarted) {
-            isServiceStarted = stopSendingDataService(SendingStatisticsService::class.java)
+//            isServiceStarted = stopSendingDataService(SendingStatisticsService::class.java)
         }
     }
 

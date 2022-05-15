@@ -19,7 +19,6 @@ import com.lukasz.witkowski.shared.utils.stopSendingDataService
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.currentTraining.WearableTrainingService
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSummaryBinding
-import com.lukasz.witkowski.training.planner.service.SendingStatisticsService
 import com.lukasz.witkowski.training.planner.trainingplans.TrainingsListActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -139,14 +138,14 @@ class TrainingSummaryActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         if(!isServiceStarted) {
-            isServiceStarted = startSendingDataService(SendingStatisticsService::class.java)
+//            isServiceStarted = startSendingDataService(SendingStatisticsService::class.java)
         }
     }
 
     override fun onStop() {
         super.onStop()
         if(isServiceStarted) {
-            isServiceStarted = stopSendingDataService(SendingStatisticsService::class.java)
+//            isServiceStarted = stopSendingDataService(SendingStatisticsService::class.java)
         }
     }
 
