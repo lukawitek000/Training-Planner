@@ -7,7 +7,9 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDatabase
+import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
+import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoryController
 import dagger.Module
 import dagger.Provides
@@ -27,8 +29,13 @@ internal object ExerciseModule {
     }
 
     @Provides
-    fun provideCategoryController(): CategoryController {
-        return DefaultCategoryController()
+    fun provideCategoryController(categoriesCollection: CategoriesCollection): CategoryController {
+        return DefaultCategoryController(categoriesCollection)
+    }
+
+    @Provides
+    fun provideCategoriesCollection(): CategoriesCollection {
+        return DefaultCategoriesCollection()
     }
 
     @Singleton

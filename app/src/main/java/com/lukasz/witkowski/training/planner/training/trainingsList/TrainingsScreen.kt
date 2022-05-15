@@ -56,7 +56,7 @@ fun TrainingsScreen(
     ) {
         Column {
             CategoryFilters(
-                categories = viewModel.filterCategories,
+                categories = viewModel.categoriesWithoutNone,
                 selectedCategories = selectedCategoriesList,
                 selectCategory = { viewModel.selectCategory(it) }
             )

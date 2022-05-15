@@ -4,13 +4,9 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Catego
 import kotlinx.coroutines.flow.StateFlow
 
 // TODO I would move it to the Exercise module in presentation layer
-interface CategoryController {
+interface CategoryController: CategoriesCollection {
 
     val selectedCategories: StateFlow<List<Category>>
-
-    val filterCategories: List<Category>
-
-    val allCategories: List<Category>
 
     fun selectCategory(category: Category)
 }

@@ -7,9 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
+import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,9 +25,9 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateExerciseViewModel @Inject internal constructor(
     private val exerciseService: ExerciseService,
-    private val categoryController: CategoryController, // TODO Might be
+    private val categoriesCollection: CategoriesCollection,
     private val savedStateHandle: SavedStateHandle
-) : ViewModel(), CategoryController by categoryController {
+) : ViewModel(), CategoriesCollection by categoriesCollection {
 
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
