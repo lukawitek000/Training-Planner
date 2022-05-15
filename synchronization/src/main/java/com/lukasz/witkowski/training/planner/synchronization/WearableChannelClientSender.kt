@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi
+package com.lukasz.witkowski.training.planner.synchronization
 
 import android.content.Context
 import com.google.android.gms.wearable.ChannelClient
@@ -9,7 +9,7 @@ import com.lukasz.witkowski.shared.utils.readSuspending
 import com.lukasz.witkowski.shared.utils.toByteArray
 import com.lukasz.witkowski.shared.utils.writeIntSuspending
 import com.lukasz.witkowski.shared.utils.writeSuspending
-import com.lukasz.witkowski.training.planner.training.presentation.WearableChannelClientReceiver.Companion.ACKNOWLEDGE_FLAG
+import com.lukasz.witkowski.training.planner.synchronization.WearableChannelClientReceiver.Companion.ACKNOWLEDGE_FLAG
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.flow
@@ -106,7 +106,9 @@ class WearableChannelClientSender<T, K>(
         return if (response == ACKNOWLEDGE_FLAG) {
             SynchronizationStatus.Successful(id)
         } else {
-            throw SynchronizationSavingException(message = "Peer has failed to save data")
+            throw SynchronizationSavingException(
+                message = "Peer has failed to save data"
+            )
         }
     }
 
@@ -128,5 +130,8 @@ class WearableChannelClientSender<T, K>(
     }
 
     private fun IOException.toSynchronizationSendingException() =
-        SynchronizationSendingException(message, cause)
+        SynchronizationSendingException(
+            message,
+            cause
+        )
 }

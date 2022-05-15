@@ -8,7 +8,6 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.DbTrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.TrainingPlanDao
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.TrainingPlanDatabase
-import com.lukasz.witkowski.training.planner.training.presentation.WearableTrainingPlanReceiver
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.WearableTrainingPlanSender
 import dagger.Module
 import dagger.Provides

@@ -5,15 +5,10 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
-import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.SynchronizationStatus
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.lukasz.witkowski.training.planner.synchronization.SynchronizationStatus
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.InputStream
-import java.io.OutputStream
 
 class TrainingPlanService(
     private val trainingPlanRepository: TrainingPlanRepository,
