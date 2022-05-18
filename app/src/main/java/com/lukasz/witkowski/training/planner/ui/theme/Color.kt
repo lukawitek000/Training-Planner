@@ -8,5 +8,6 @@ val LightBlack = Color(0xFF121212)
 val LightDark12 = Color(0xFF2E2E2E)
 val LightDark5 = Color(0xFF1E1E1E)
 val Black = Color(0xFF000000)
+val LightGrey = Color(0xFFC4C4C4)
 
 val OrangeTransparent = Color(0x44FF9800)
