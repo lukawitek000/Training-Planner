@@ -55,7 +55,7 @@ private fun PopUpButton(
     Box(
         modifier = modifier
             .background(color = LightGrey)
-            .padding(horizontal = 32.dp, vertical = 4.dp)
+            .padding(horizontal = 74.dp, vertical = 32.dp)
             .clickable { action() }
     ) {
         Text(

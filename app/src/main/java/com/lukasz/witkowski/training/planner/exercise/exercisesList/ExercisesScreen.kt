@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.exercise.exercisesList
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,9 +41,11 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Catego
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.CategoryFilters
+import com.lukasz.witkowski.training.planner.ui.components.EditDeletePopUp
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
+import timber.log.Timber
 
 @Composable
 fun ExercisesScreen(
@@ -98,6 +101,12 @@ fun ExercisesScreenContent(
                         exercise = it
                     }
                 },
+                deleteExercise = {
+                                 Timber.d("Delete exercise id $it")
+                },
+                editExercise = {
+                               Timber.d("Edit exercise id $it")
+                },
                 pickedExercisesId = pickedExercisesId
             )
         } else {
@@ -112,29 +121,55 @@ fun ExercisesScreenContent(
     }
 }
 
+data class PopUpState<T>(
+    val isOpen: Boolean = false,
+    val id: T
+)
 
 @Composable
 private fun ExercisesList(
     modifier: Modifier = Modifier,
     exercisesList: List<Exercise>,
     onExerciseClicked: (Exercise) -> Unit,
+    deleteExercise: (ExerciseId) -> Unit,
+    editExercise: (ExerciseId) -> Unit,
     pickedExercisesId: List<ExerciseId> = emptyList()
 ) {
-    LazyColumn(modifier = modifier) {
-        items(exercisesList) { exercise ->
-            ListCardItem(
-                modifier = Modifier,
-                onCardClicked = {
-                    onExerciseClicked(exercise)
-                },
-                markedSelected = pickedExercisesId.contains(exercise.id)
-            ) {
-                ExerciseListItemContent(
-                    exercise = exercise
-                )
+    val defaultValue = PopUpState(id = ExerciseId(""))
+    var popUpState by remember {
+        mutableStateOf(defaultValue)
+    }
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        LazyColumn {
+            items(exercisesList) { exercise ->
+                ListCardItem(
+                    onCardClicked = {
+                        onExerciseClicked(exercise)
+                    },
+                    onCardLongClicked = {
+                        popUpState = PopUpState(true, exercise.id)
+                    },
+                    markedSelected = pickedExercisesId.contains(exercise.id)
+                ) {
+                    ExerciseListItemContent(
+                        exercise = exercise
+                    )
+                }
             }
+            item { Spacer(modifier = Modifier.height(74.dp)) }
         }
-        item { Spacer(modifier = Modifier.height(74.dp)) }
+        if (popUpState.isOpen) {
+            EditDeletePopUp(
+                onEditClicked = {
+                    editExercise(popUpState.id)
+                    popUpState = defaultValue
+                },
+                onDeleteClicked = {
+                    deleteExercise(popUpState.id)
+                    popUpState = defaultValue
+                }
+            )
+        }
     }
 }
 

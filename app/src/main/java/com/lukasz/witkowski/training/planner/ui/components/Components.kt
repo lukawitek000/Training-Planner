@@ -1,27 +1,18 @@
 package com.lukasz.witkowski.training.planner.ui.components
 
-import android.view.LayoutInflater
-import android.widget.NumberPicker
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Snackbar
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,16 +20,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.material.TextField
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
-import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark5
 import com.lukasz.witkowski.training.planner.ui.theme.OrangeTransparent
@@ -47,12 +34,17 @@ import com.lukasz.witkowski.training.planner.ui.theme.OrangeTransparent
 fun ListCardItem(
     modifier: Modifier = Modifier,
     onCardClicked: () -> Unit = {},
+    onCardLongClicked: () -> Unit = {},
     markedSelected: Boolean = false,
     backgroundColor: Color = LightDark5,
     content: @Composable () -> Unit
 ) {
-    val bgdColor = if(markedSelected) OrangeTransparent else backgroundColor
-    val borderModifier = if(markedSelected) Modifier.border(2.dp, MaterialTheme.colors.primary, MaterialTheme.shapes.medium) else Modifier
+    val bgdColor = if (markedSelected) OrangeTransparent else backgroundColor
+    val borderModifier = if (markedSelected) Modifier.border(
+        2.dp,
+        MaterialTheme.colors.primary,
+        MaterialTheme.shapes.medium
+    ) else Modifier
     Card(
         modifier = modifier
             .padding(4.dp)
@@ -61,8 +53,11 @@ fun ListCardItem(
         backgroundColor = bgdColor
     ) {
         Box(modifier = Modifier
-            .clickable {
-                onCardClicked()
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = { onCardClicked() },
+                    onLongPress = { onCardLongClicked() }
+                )
             }
             .padding(8.dp)) {
             content()
@@ -76,10 +71,10 @@ fun ImageContainer(
     content: @Composable () -> Unit
 ) {
     Box(
-    modifier = modifier
-        .clip(MaterialTheme.shapes.medium)
-        .background(LightDark12)
-        .padding(4.dp)
+        modifier = modifier
+            .clip(MaterialTheme.shapes.medium)
+            .background(LightDark12)
+            .padding(4.dp)
     ) {
         content()
     }
