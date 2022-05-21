@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.DialogState
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.SnackbarState
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
@@ -58,12 +59,10 @@ import kotlinx.coroutines.launch
 fun ExercisesScreen(
     modifier: Modifier = Modifier,
     viewModel: ExercisesListViewModel,
+    snackbarState: SnackbarState,
     navigateToExerciseCreateScreen: () -> Unit = {},
     navigateToExerciseEditScreen: (ExerciseId) -> Unit = {}
 ) {
-    val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
-
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
@@ -71,20 +70,13 @@ fun ExercisesScreen(
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Create Exercise")
             }
         },
-        isFloatingActionButtonDocked = true,
-        bottomBar = {
-            // TODO if user lefts the screen the exercise is not deleted
-            SnackbarHost(hostState = snackbarHostState) {
-                CustomSnackbar(snackbarData = it)
-            }
-        },
     ) {
         ExercisesScreenContent(
             viewModel = viewModel,
             onExerciseDeleted = {
-                scope.launch {
+                snackbarState.scope.launch {
                 viewModel.removeExerciseFromView(it)
-                    when(snackbarHostState.showSnackbar("Exercise ${it.name} deleted", actionLabel = "Undo")) {
+                    when(snackbarState.show("Exercise ${it.name} deleted", "Undo")) {
                         SnackbarResult.Dismissed -> viewModel.deleteExercise(it)
                         SnackbarResult.ActionPerformed -> viewModel.undoDeleting(it)
                     }

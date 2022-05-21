@@ -9,11 +9,13 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -24,6 +26,7 @@ import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
 import com.lukasz.witkowski.training.planner.navigation.NavItem
 import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
+import com.lukasz.witkowski.training.planner.ui.components.CustomSnackbar
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -52,6 +55,14 @@ fun TrainingPlannerApp() {
     } ?: NavItem.Trainings
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
+    val snackbarState = remember(scope) {
+        SnackbarState(
+            scope = scope,
+            show = { message, actionLabel ->
+                scaffoldState.snackbarHostState.showSnackbar(message, actionLabel = actionLabel)
+            }
+        )
+    }
 
     Scaffold(
         bottomBar = {
@@ -72,13 +83,14 @@ fun TrainingPlannerApp() {
                 navController.navigateUp()
             }
         },
-        scaffoldState = scaffoldState
-    ) {
-        Navigation(navController = navController, innerPadding = it, showSnackbar = { message ->
-            scope.launch {
-                scaffoldState.snackbarHostState.showSnackbar(message)
+        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = it) { data ->
+                CustomSnackbar(snackbarData = data)
             }
-        })
+        }
+    ) {
+        Navigation(navController = navController, innerPadding = it, snackbarState = snackbarState)
     }
 }
 

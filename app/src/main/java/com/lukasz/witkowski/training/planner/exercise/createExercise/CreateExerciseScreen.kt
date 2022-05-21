@@ -19,6 +19,7 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
@@ -39,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.SnackbarState
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.ui.components.DropDownInput
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
@@ -53,7 +55,7 @@ import kotlinx.coroutines.launch
 fun CreateExerciseScreen(
     modifier: Modifier = Modifier,
     viewModel: CreateExerciseViewModel,
-    showSnackbar: (String) -> Unit,
+    snackbarState: SnackbarState,
     navigateUp: () -> Unit,
     successMessage: String = stringResource(id = R.string.exercise_saved),
     failMessage: String = stringResource(id = R.string.exercise_saving_failed)
@@ -64,6 +66,7 @@ fun CreateExerciseScreen(
     val selectedCategory by viewModel.category.collectAsState()
     val savingState by viewModel.savingState.collectAsState()
 
+
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
@@ -72,7 +75,9 @@ fun CreateExerciseScreen(
                 name = name,
                 createExercise = { viewModel.createExercise() },
                 showSnackbar = {
-                    showSnackbar(it)
+                    snackbarState.scope.launch {
+                        snackbarState.show(it)
+                    }
                 }
             )
         }
@@ -80,7 +85,11 @@ fun CreateExerciseScreen(
 
         when (savingState) {
             is ResultHandler.Idle, is ResultHandler.Error -> {
-                if(savingState is ResultHandler.Error) showSnackbar(failMessage)
+                LaunchedEffect(Unit) {
+                    snackbarState.scope.launch {
+                        if (savingState is ResultHandler.Error) snackbarState.show(failMessage)
+                    }
+                }
                 CreateExerciseForm(
                     image = image,
                     name = name,
@@ -95,7 +104,9 @@ fun CreateExerciseScreen(
             }
             is ResultHandler.Success -> {
                 LaunchedEffect(Unit) {
-                    showSnackbar(successMessage)
+                    snackbarState.scope.launch {
+                        snackbarState.show(successMessage)
+                    }
                     navigateUp()
                 }
             }

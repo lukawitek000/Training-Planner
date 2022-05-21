@@ -16,6 +16,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.lukasz.witkowski.training.planner.SnackbarState
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
@@ -36,7 +37,7 @@ import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsScr
 fun Navigation(
     navController: NavHostController,
     innerPadding: PaddingValues,
-    showSnackbar: (String) -> Unit
+    snackbarState: SnackbarState
 ) {
     NavHost(navController = navController, startDestination = NavItem.Trainings.route) {
 
@@ -56,6 +57,7 @@ fun Navigation(
             ExercisesScreen(
                 modifier = Modifier.padding(innerPadding),
                 viewModel = viewModel,
+                snackbarState = snackbarState,
                 navigateToExerciseCreateScreen = {
                     navController.navigate(NavItem.CreateExercise.route)
                 },
@@ -69,7 +71,7 @@ fun Navigation(
             CreateExerciseScreen(
                 Modifier.padding(innerPadding),
                 viewModel = viewModel,
-                showSnackbar = showSnackbar,
+                snackbarState = snackbarState,
                 navigateUp = { navController.navigateUp() }
             )
         }
@@ -86,7 +88,7 @@ fun Navigation(
             EditExerciseScreen(
                 Modifier.padding(innerPadding),
                 viewModel = viewModel,
-                showSnackbar = showSnackbar,
+                snackbarState = snackbarState,
                 navigateUp = { navController.navigateUp() }
             )
         }
