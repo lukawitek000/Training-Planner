@@ -25,7 +25,9 @@ import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleEventObserver
 import com.lukasz.witkowski.training.planner.DialogState
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
@@ -64,6 +67,7 @@ fun ExercisesScreen(
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
@@ -73,18 +77,20 @@ fun ExercisesScreen(
         },
         isFloatingActionButtonDocked = true,
         bottomBar = {
+            // TODO if user lefts the screen the exercise is not deleted
             SnackbarHost(hostState = snackbarHostState) {
                 CustomSnackbar(snackbarData = it)
             }
-        }
+        },
     ) {
         ExercisesScreenContent(
             viewModel = viewModel,
             onExerciseDeleted = {
                 scope.launch {
+                viewModel.removeExerciseFromView(it)
                     when(snackbarHostState.showSnackbar("Exercise ${it.name} deleted", actionLabel = "Undo")) {
                         SnackbarResult.Dismissed -> viewModel.deleteExercise(it)
-                        SnackbarResult.ActionPerformed -> Timber.d("Exercise $it not deleted")
+                        SnackbarResult.ActionPerformed -> viewModel.undoDeleting(it)
                     }
                 }
             }

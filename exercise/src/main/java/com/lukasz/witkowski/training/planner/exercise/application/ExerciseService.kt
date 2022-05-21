@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.map
 class ExerciseService(
     private val exerciseRepository: ExerciseRepository
 ) {
+
     suspend fun saveExercise(exercise: Exercise): Boolean {
         return exerciseRepository.insert(exercise)
     }
