@@ -47,4 +47,11 @@ class ExercisesListViewModel @Inject internal constructor(
             }
         }
     }
+
+    fun deleteExercise(exercise: Exercise) {
+        viewModelScope.launch {
+            val domainExercise = ExerciseMapper.toDomainExercise(exercise)
+            exerciseService.deleteExercise(domainExercise)
+        }
+    }
 }

@@ -10,5 +10,5 @@ interface ExerciseRepository {
      */
     suspend fun insert(exercise: Exercise): Boolean
 
-    suspend fun delete(exerciseId: ExerciseId)
+    suspend fun delete(exercise: Exercise)
 }

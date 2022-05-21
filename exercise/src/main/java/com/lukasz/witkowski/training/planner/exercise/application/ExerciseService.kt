@@ -18,4 +18,8 @@ class ExerciseService(
             it.filter { exercise -> categories.contains(exercise.category) || categories.isEmpty() }
         }
     }
+
+    suspend fun deleteExercise(exercise: Exercise) {
+        exerciseRepository.delete(exercise)
+    }
 }

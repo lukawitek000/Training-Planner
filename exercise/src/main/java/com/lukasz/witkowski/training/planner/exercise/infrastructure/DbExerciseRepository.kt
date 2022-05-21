@@ -21,7 +21,7 @@ internal class DbExerciseRepository(private val exerciseDao: ExerciseDao) : Exer
         return true
     }
 
-    override suspend fun delete(exerciseId: ExerciseId) {
-        exerciseDao.delete(exerciseId.value)
+    override suspend fun delete(exercise: Exercise) {
+        exerciseDao.delete(exercise.id.value)
     }
 }
