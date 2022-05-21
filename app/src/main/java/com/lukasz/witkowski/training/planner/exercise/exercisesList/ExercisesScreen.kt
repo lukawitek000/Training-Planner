@@ -58,7 +58,8 @@ import kotlinx.coroutines.launch
 fun ExercisesScreen(
     modifier: Modifier = Modifier,
     viewModel: ExercisesListViewModel,
-    navigateToExerciseCreateScreen: (ExerciseId?) -> Unit = {}
+    navigateToExerciseCreateScreen: () -> Unit = {},
+    navigateToExerciseEditScreen: (ExerciseId) -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -66,7 +67,7 @@ fun ExercisesScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(onClick = { navigateToExerciseCreateScreen(null) }) {
+            FloatingActionButton(onClick = { navigateToExerciseCreateScreen() }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Create Exercise")
             }
         },
@@ -90,7 +91,7 @@ fun ExercisesScreen(
                 }
             },
             onExerciseEditedClicked = {
-                navigateToExerciseCreateScreen(it.id)
+                navigateToExerciseEditScreen(it.id)
             }
         )
     }

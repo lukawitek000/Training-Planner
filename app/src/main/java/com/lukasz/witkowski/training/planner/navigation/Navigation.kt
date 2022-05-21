@@ -18,6 +18,8 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseViewModel
+import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
+import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingScreen
@@ -51,26 +53,41 @@ fun Navigation(
 
         composable(NavItem.Exercises.route) {
             val viewModel: ExercisesListViewModel = hiltViewModel()
-            ExercisesScreen(Modifier.padding(innerPadding), viewModel = viewModel) { exerciseId ->
-                exerciseId?.let {
-                    navController.navigate("${NavItem.CreateExercise.route}?exerciseId=${it.value}")
-                } ?: navController.navigate(NavItem.CreateExercise.route)
-            }
+            ExercisesScreen(
+                modifier = Modifier.padding(innerPadding),
+                viewModel = viewModel,
+                navigateToExerciseCreateScreen = {
+                    navController.navigate(NavItem.CreateExercise.route)
+                },
+                navigateToExerciseEditScreen = {
+                    navController.navigate("${NavItem.EditExercise.route}/${it.value}")
+                })
+        }
+
+        composable(NavItem.CreateExercise.route) {
+            val viewModel: CreateExerciseViewModel = hiltViewModel()
+            CreateExerciseScreen(
+                Modifier.padding(innerPadding),
+                viewModel = viewModel,
+                navigateBack = {
+                    showToast(it)
+                    navController.navigateUp()
+                })
         }
 
         composable(
-            "${NavItem.CreateExercise.route}?exerciseId={exerciseId}",
+            "${NavItem.EditExercise.route}/{exerciseId}",
             arguments = listOf(
                 navArgument("exerciseId") {
                     nullable = true
                     type = NavType.StringType
                 })
         ) {
-            val viewModel: CreateExerciseViewModel = hiltViewModel()
-            CreateExerciseScreen(
+            val viewModel: EditExerciseViewModel = hiltViewModel()
+            EditExerciseScreen(
                 Modifier.padding(innerPadding),
                 viewModel = viewModel,
-                navigateBack = {
+                onExerciseUpdated = {
                     showToast(it)
                     navController.navigateUp()
                 })

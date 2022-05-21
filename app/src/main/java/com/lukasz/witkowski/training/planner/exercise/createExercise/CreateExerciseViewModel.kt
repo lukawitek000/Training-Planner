@@ -25,13 +25,11 @@ import javax.inject.Inject
  */
 
 @HiltViewModel
-class CreateExerciseViewModel @Inject internal constructor(
+open class CreateExerciseViewModel @Inject constructor(
     private val exerciseService: ExerciseService,
     private val categoriesCollection: CategoriesCollection,
-    private val savedStateHandle: SavedStateHandle
+    protected val savedStateHandle: SavedStateHandle
 ) : ViewModel(), CategoriesCollection by categoriesCollection {
-
-    private val exerciseId = savedStateHandle.get<String>("exerciseId")
 
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
@@ -48,20 +46,7 @@ class CreateExerciseViewModel @Inject internal constructor(
     private val _savingState = MutableStateFlow<ResultHandler<Boolean>>(ResultHandler.Idle)
     val savingState: StateFlow<ResultHandler<Boolean>> = _savingState
 
-    init {
-        viewModelScope.launch {
-            exerciseId?.let {
-                val id = ExerciseId(it)
-                exerciseService.getExerciseById(id).collect { domainExercise ->
-                    val exercise = ExerciseMapper.toPresentationExercise(domainExercise)
-                    _name.value = exercise.name
-                    _description.value = exercise.description
-                    _category.value = exercise.category
-                    _image.value = exercise.image
-                }
-            }
-        }
-    }
+
 
     fun onExerciseNameChange(newName: String) {
         _name.value = newName
@@ -72,7 +57,6 @@ class CreateExerciseViewModel @Inject internal constructor(
     }
 
     fun onCategorySelected(newCategoryIndex: Int) {
-        Timber.d("Category selected index $newCategoryIndex")
         _category.value = allCategories[newCategoryIndex]
     }
 
@@ -80,7 +64,7 @@ class CreateExerciseViewModel @Inject internal constructor(
         _image.value = bitmap
     }
 
-    fun createExercise() {
+    open fun createExercise() {
         viewModelScope.launch {
             val exercise = Exercise(
                 id = ExerciseId.create(),
