@@ -69,10 +69,11 @@ fun Navigation(
             CreateExerciseScreen(
                 Modifier.padding(innerPadding),
                 viewModel = viewModel,
-                navigateBack = {
+                exerciseSaved = {
                     showToast(it)
                     navController.navigateUp()
-                })
+                },
+                showToast = { showToast(it) })
         }
 
         composable(
@@ -90,7 +91,9 @@ fun Navigation(
                 onExerciseUpdated = {
                     showToast(it)
                     navController.navigateUp()
-                })
+                },
+                showToast = showToast
+            )
         }
         createTrainingNavGraph(innerPadding, navController)
 

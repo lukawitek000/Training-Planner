@@ -5,7 +5,6 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,12 +22,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -52,33 +47,30 @@ import com.skydoves.landscapist.glide.GlideImage
 fun CreateExerciseScreen(
     modifier: Modifier = Modifier,
     viewModel: CreateExerciseViewModel,
-    navigateBack: (String) -> Unit
+    exerciseSaved: (String) -> Unit,
+    showToast: (String) -> Unit
 ) {
     val image by viewModel.image.collectAsState()
     val name: String by viewModel.name.collectAsState()
     val description by viewModel.description.collectAsState()
     val selectedCategory by viewModel.category.collectAsState()
     val savingState by viewModel.savingState.collectAsState()
-    var showToast by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
             CreateExerciseFloatingActionButton(
-                savingState = savingState,
+                isVisible = savingState is ResultHandler.Idle || savingState is ResultHandler.Error,
                 name = name,
                 createExercise = { viewModel.createExercise() },
-                showToast = { showToast = true }
+                showToast = showToast
             )
         }
     ) {
-        if (showToast) {
-            Toast.makeText(LocalContext.current, stringResource(id = R.string.exercise_name_is_required), Toast.LENGTH_SHORT)
-                .show()
-            showToast = false
-        }
+
         when (savingState) {
-            is ResultHandler.Idle -> {
+            is ResultHandler.Idle, is ResultHandler.Error -> {
+                if(savingState is ResultHandler.Error) showToast("Saving exercise failed")
                 CreateExerciseForm(
                     image = image,
                     name = name,
@@ -91,20 +83,14 @@ fun CreateExerciseScreen(
                     onCategorySelected = { viewModel.onCategorySelected(it) }
                 )
             }
+            is ResultHandler.Success -> {
+                exerciseSaved("Exercise saved")
+            }
             else -> {
                 LoadingScreen(
                     modifier = Modifier.fillMaxSize(),
                     message = "Exercise is saving to the database"
                 )
-                if (savingState is ResultHandler.Loading) return@Scaffold
-                val message = if (savingState is ResultHandler.Error) {
-                    "Saving exercise failed"
-                } else {
-                    "Exercise saved"
-                }
-                LaunchedEffect(Unit) {
-                    navigateBack(message)
-                }
             }
         }
     }
@@ -113,19 +99,20 @@ fun CreateExerciseScreen(
 @Composable
 private fun CreateExerciseFloatingActionButton(
     modifier: Modifier = Modifier,
-    savingState: ResultHandler<Boolean>,
+    isVisible:Boolean,
     name: String,
     createExercise: () -> Unit,
-    showToast: () -> Unit
+    showToast: (String) -> Unit
 ) {
-    if (savingState is ResultHandler.Idle) {
+    if (isVisible) {
+        val text = stringResource(id = R.string.exercise_name_is_required)
         FloatingActionButton(
             modifier = modifier,
             onClick = {
                 if (name.isNotEmpty()) {
                     createExercise()
                 } else {
-                    showToast()
+                    showToast(text)
                 }
             },
         ) {

@@ -7,11 +7,13 @@ import androidx.compose.ui.Modifier
 fun EditExerciseScreen(
     modifier: Modifier,
     viewModel: EditExerciseViewModel,
-    onExerciseUpdated: (String) -> Unit
+    onExerciseUpdated: (String) -> Unit,
+    showToast: (String) -> Unit
 ) {
     CreateExerciseScreen(
         modifier = modifier,
         viewModel = viewModel,
-        navigateBack = onExerciseUpdated
+        exerciseSaved = onExerciseUpdated,
+        showToast = showToast
     )
 }

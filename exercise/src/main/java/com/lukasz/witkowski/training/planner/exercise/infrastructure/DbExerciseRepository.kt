@@ -24,4 +24,13 @@ internal class DbExerciseRepository(private val exerciseDao: ExerciseDao) : Exer
     override suspend fun delete(exercise: Exercise) {
         exerciseDao.delete(exercise.id.value)
     }
+
+    override suspend fun updateExercise(updatedExercise: Exercise): Boolean {
+        val dbExercise = ExerciseMapper.toDbExercise(updatedExercise)
+        return exerciseDao.update(dbExercise) == SINGLE_ENTRY_UPDATE
+    }
+
+    companion object {
+        private const val SINGLE_ENTRY_UPDATE = 1
+    }
 }

@@ -28,4 +28,8 @@ class ExerciseService(
     fun getExerciseById(id: ExerciseId): Flow<Exercise> {
         return exerciseRepository.getById(id)
     }
+
+    suspend fun updateExercise(exercise: Exercise): Boolean {
+        return exerciseRepository.updateExercise(exercise)
+    }
 }

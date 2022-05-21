@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.exercise.createExercise
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
@@ -13,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditExerciseViewModel @Inject constructor(
-    exerciseService: ExerciseService,
+    private val exerciseService: ExerciseService,
     categoriesCollection: CategoriesCollection,
     savedStateHandle: SavedStateHandle
 ) : CreateExerciseViewModel(exerciseService, categoriesCollection, savedStateHandle) {
@@ -54,14 +55,15 @@ class EditExerciseViewModel @Inject constructor(
     }
 
     private suspend fun updateExercise(exercise: Exercise) {
-//        try {
-//            _savingState.value = ResultHandler.Loading
-//            val isSavingFinished =
-//                exerciseService.saveExercise(ExerciseMapper.toDomainExercise(exercise))
-//            _savingState.value =
-//                ResultHandler.Success(isSavingFinished)
-//        } catch (e: Exception) {
-//            _savingState.value = ResultHandler.Error(message = "Saving exercise failed")
-//        }
+        try {
+            _savingState.value = ResultHandler.Loading
+            val isUpdateSuccessful =
+                exerciseService.updateExercise(ExerciseMapper.toDomainExercise(exercise))
+            if(!isUpdateSuccessful) throw Exception("Updating exercise has failed")
+            _savingState.value =
+                ResultHandler.Success(isUpdateSuccessful)
+        } catch (e: Exception) {
+            _savingState.value = ResultHandler.Error(message = "Updating exercise has failed")
+        }
     }
 }
