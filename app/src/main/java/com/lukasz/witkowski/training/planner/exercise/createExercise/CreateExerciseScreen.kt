@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -93,8 +94,10 @@ fun CreateExerciseScreen(
                 )
             }
             is ResultHandler.Success -> {
-                showSnackbar(successMessage)
-                navigateUp()
+                LaunchedEffect(Unit) {
+                    showSnackbar(successMessage)
+                    navigateUp()
+                }
             }
             else -> {
                 LoadingScreen(
