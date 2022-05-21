@@ -5,7 +5,6 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,9 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.SnackbarState
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.ui.components.DropDownInput
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
@@ -47,38 +44,46 @@ import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import com.skydoves.landscapist.glide.GlideImage
+import kotlinx.coroutines.launch
 
 @Composable
 fun CreateExerciseScreen(
     modifier: Modifier = Modifier,
     viewModel: CreateExerciseViewModel,
-    navigateBack: (String) -> Unit
+    snackbarState: SnackbarState,
+    navigateUp: () -> Unit,
+    successMessage: String = stringResource(id = R.string.exercise_saved),
+    failMessage: String = stringResource(id = R.string.exercise_saving_failed)
 ) {
     val image by viewModel.image.collectAsState()
     val name: String by viewModel.name.collectAsState()
     val description by viewModel.description.collectAsState()
     val selectedCategory by viewModel.category.collectAsState()
     val savingState by viewModel.savingState.collectAsState()
-    var showToast by remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
             CreateExerciseFloatingActionButton(
-                savingState = savingState,
+                isVisible = savingState is ResultHandler.Idle || savingState is ResultHandler.Error,
                 name = name,
                 createExercise = { viewModel.createExercise() },
-                showToast = { showToast = true }
+                showSnackbar = {
+                    snackbarState.scope.launch {
+                        snackbarState.show(it)
+                    }
+                }
             )
         }
     ) {
-        if (showToast) {
-            Toast.makeText(LocalContext.current, stringResource(id = R.string.exercise_name_is_required), Toast.LENGTH_SHORT)
-                .show()
-            showToast = false
-        }
+
         when (savingState) {
-            is ResultHandler.Idle -> {
+            is ResultHandler.Idle, is ResultHandler.Error -> {
+                LaunchedEffect(Unit) {
+                    snackbarState.scope.launch {
+                        if (savingState is ResultHandler.Error) snackbarState.show(failMessage)
+                    }
+                }
                 CreateExerciseForm(
                     image = image,
                     name = name,
@@ -91,20 +96,19 @@ fun CreateExerciseScreen(
                     onCategorySelected = { viewModel.onCategorySelected(it) }
                 )
             }
+            is ResultHandler.Success -> {
+                LaunchedEffect(Unit) {
+                    snackbarState.scope.launch {
+                        snackbarState.show(successMessage)
+                    }
+                    navigateUp()
+                }
+            }
             else -> {
                 LoadingScreen(
                     modifier = Modifier.fillMaxSize(),
-                    message = "Exercise is saving to the database"
+                    message = stringResource(id = R.string.saving_exercise, name)
                 )
-                if (savingState is ResultHandler.Loading) return@Scaffold
-                val message = if (savingState is ResultHandler.Error) {
-                    "Saving exercise failed"
-                } else {
-                    "Exercise saved"
-                }
-                LaunchedEffect(Unit) {
-                    navigateBack(message)
-                }
             }
         }
     }
@@ -113,19 +117,20 @@ fun CreateExerciseScreen(
 @Composable
 private fun CreateExerciseFloatingActionButton(
     modifier: Modifier = Modifier,
-    savingState: ResultHandler<Boolean>,
+    isVisible: Boolean,
     name: String,
     createExercise: () -> Unit,
-    showToast: () -> Unit
+    showSnackbar: (String) -> Unit
 ) {
-    if (savingState is ResultHandler.Idle) {
+    val text = stringResource(id = R.string.exercise_name_is_required)
+    if (isVisible) {
         FloatingActionButton(
             modifier = modifier,
             onClick = {
                 if (name.isNotEmpty()) {
                     createExercise()
                 } else {
-                    showToast()
+                    showSnackbar(text)
                 }
             },
         ) {
@@ -215,7 +220,7 @@ fun UploadImageLayout(
 @Composable
 private fun imageActivityResultLauncher(
     onImageChange: (Bitmap) -> Unit
-):  ManagedActivityResultLauncher<String, Uri?> {
+): ManagedActivityResultLauncher<String, Uri?> {
     val context = LocalContext.current
     return rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),

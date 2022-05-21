@@ -57,4 +57,12 @@
     <string name="skipped">Skipped</string>
     <string name="completeness_rate">Completeness rate: %1$s</string>
     <string name="date">Date: %1$s</string>
+    <string name="exercise_updated">Exercise updated</string>
+    <string name="exercise_update_failed">Exercise update failed</string>
+    <string name="exercise_saved">Exercise saved</string>
+    <string name="exercise_saving_failed">Exercise saving failed</string>
+    <string name="undo">Undo</string>
+    <string name="exercise">Exercise</string>
+    <string name="deleted">deleted</string>
+    <string name="saving_exercise">Saving exercise - %1$s</string>
 </resources>

@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 internal class DbExerciseRepository(private val exerciseDao: ExerciseDao) : ExerciseRepository {
-    override fun getById(id: String): Flow<Exercise> {
-        return exerciseDao.getById(id).map { ExerciseMapper.toExercise(it)  }
+    override fun getById(id: ExerciseId): Flow<Exercise> {
+        return exerciseDao.getById(id.value).map { ExerciseMapper.toExercise(it)  }
     }
 
     override fun getAll(): Flow<List<Exercise>> {
@@ -21,7 +21,16 @@ internal class DbExerciseRepository(private val exerciseDao: ExerciseDao) : Exer
         return true
     }
 
-    override suspend fun delete(exerciseId: ExerciseId) {
-        exerciseDao.delete(exerciseId.value)
+    override suspend fun delete(exercise: Exercise) {
+        exerciseDao.delete(exercise.id.value)
+    }
+
+    override suspend fun updateExercise(updatedExercise: Exercise): Boolean {
+        val dbExercise = ExerciseMapper.toDbExercise(updatedExercise)
+        return exerciseDao.update(dbExercise) == SINGLE_ENTRY_UPDATE
+    }
+
+    companion object {
+        private const val SINGLE_ENTRY_UPDATE = 1
     }
 }

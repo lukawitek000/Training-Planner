@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.exercise.application
 
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.map
 class ExerciseService(
     private val exerciseRepository: ExerciseRepository
 ) {
+
     suspend fun saveExercise(exercise: Exercise): Boolean {
         return exerciseRepository.insert(exercise)
     }
@@ -17,5 +19,17 @@ class ExerciseService(
         return exerciseRepository.getAll().map {
             it.filter { exercise -> categories.contains(exercise.category) || categories.isEmpty() }
         }
+    }
+
+    suspend fun deleteExercise(exercise: Exercise) {
+        exerciseRepository.delete(exercise)
+    }
+
+    fun getExerciseById(id: ExerciseId): Flow<Exercise> {
+        return exerciseRepository.getById(id)
+    }
+
+    suspend fun updateExercise(exercise: Exercise): Boolean {
+        return exerciseRepository.updateExercise(exercise)
     }
 }

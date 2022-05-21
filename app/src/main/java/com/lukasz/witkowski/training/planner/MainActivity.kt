@@ -9,9 +9,14 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.Scaffold
+import androidx.compose.material.SnackbarHost
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -21,8 +26,11 @@ import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
 import com.lukasz.witkowski.training.planner.navigation.NavItem
 import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
+import com.lukasz.witkowski.training.planner.ui.components.CustomSnackbar
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -31,25 +39,30 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             TrainingPlannerTheme {
-                TrainingPlannerApp(showToast = { showToast(it) })
+                TrainingPlannerApp()
             }
         }
-    }
-
-    private fun showToast(message: String) {
-        if (message.isEmpty()) return
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
 
 @Composable
-fun TrainingPlannerApp(showToast: (String) -> Unit) {
+fun TrainingPlannerApp() {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = NavItem.Items.list.find {
-        it.route.substringBefore('/') == backStackEntry?.destination?.route?.substringBefore('/')
+        val destinationRoute = backStackEntry?.destination?.route
+        it.route == destinationRoute?.substringBefore('/')
     } ?: NavItem.Trainings
     val scaffoldState = rememberScaffoldState()
+    val scope = rememberCoroutineScope()
+    val snackbarState = remember(scope) {
+        SnackbarState(
+            scope = scope,
+            show = { message, actionLabel ->
+                scaffoldState.snackbarHostState.showSnackbar(message, actionLabel = actionLabel)
+            }
+        )
+    }
 
     Scaffold(
         bottomBar = {
@@ -70,9 +83,14 @@ fun TrainingPlannerApp(showToast: (String) -> Unit) {
                 navController.navigateUp()
             }
         },
-        scaffoldState = scaffoldState
+        scaffoldState = scaffoldState,
+        snackbarHost = {
+            SnackbarHost(hostState = it) { data ->
+                CustomSnackbar(snackbarData = data)
+            }
+        }
     ) {
-        Navigation(navController = navController, innerPadding = it, showToast = showToast)
+        Navigation(navController = navController, innerPadding = it, snackbarState = snackbarState)
     }
 }
 
@@ -101,6 +119,6 @@ private fun handleBottomMenuItemClicked(
 @Composable
 fun TrainingPlannerPreview() {
     TrainingPlannerTheme {
-        TrainingPlannerApp({})
+        TrainingPlannerApp()
     }
 }

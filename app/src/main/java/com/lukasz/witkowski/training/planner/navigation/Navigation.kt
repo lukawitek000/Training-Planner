@@ -16,8 +16,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
+import com.lukasz.witkowski.training.planner.SnackbarState
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseViewModel
+import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
+import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingScreen
@@ -34,7 +37,7 @@ import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsScr
 fun Navigation(
     navController: NavHostController,
     innerPadding: PaddingValues,
-    showToast: (String) -> Unit
+    snackbarState: SnackbarState
 ) {
     NavHost(navController = navController, startDestination = NavItem.Trainings.route) {
 
@@ -51,9 +54,16 @@ fun Navigation(
 
         composable(NavItem.Exercises.route) {
             val viewModel: ExercisesListViewModel = hiltViewModel()
-            ExercisesScreen(Modifier.padding(innerPadding), viewModel = viewModel) {
-                navController.navigate(route = NavItem.CreateExercise.route)
-            }
+            ExercisesScreen(
+                modifier = Modifier.padding(innerPadding),
+                viewModel = viewModel,
+                snackbarState = snackbarState,
+                navigateToExerciseCreateScreen = {
+                    navController.navigate(NavItem.CreateExercise.route)
+                },
+                navigateToExerciseEditScreen = {
+                    navController.navigate("${NavItem.EditExercise.route}/${it.value}")
+                })
         }
 
         composable(NavItem.CreateExercise.route) {
@@ -61,10 +71,26 @@ fun Navigation(
             CreateExerciseScreen(
                 Modifier.padding(innerPadding),
                 viewModel = viewModel,
-                navigateBack = {
-                    showToast(it)
-                    navController.navigateUp()
+                snackbarState = snackbarState,
+                navigateUp = { navController.navigateUp() }
+            )
+        }
+
+        composable(
+            "${NavItem.EditExercise.route}/{exerciseId}",
+            arguments = listOf(
+                navArgument("exerciseId") {
+                    nullable = true
+                    type = NavType.StringType
                 })
+        ) {
+            val viewModel: EditExerciseViewModel = hiltViewModel()
+            EditExerciseScreen(
+                Modifier.padding(innerPadding),
+                viewModel = viewModel,
+                snackbarState = snackbarState,
+                navigateUp = { navController.navigateUp() }
+            )
         }
         createTrainingNavGraph(innerPadding, navController)
 

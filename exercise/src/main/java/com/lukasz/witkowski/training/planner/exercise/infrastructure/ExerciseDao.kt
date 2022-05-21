@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -21,4 +22,7 @@ internal interface ExerciseDao {
 
     @Query("DELETE FROM Exercise WHERE :id == id")
     suspend fun delete(id: String)
+
+    @Update
+    suspend fun update(dbExercise: DbExercise): Int // returns number of updated rows
 }

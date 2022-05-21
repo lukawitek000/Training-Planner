@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,6 +45,30 @@ class ExercisesListViewModel @Inject internal constructor(
             val categories = selectedCategories.value.map { CategoryMapper.toExerciseCategory(it) }
             exerciseService.getExercisesFromCategories(categories).collectLatest {
                 _exercises.emit(ExerciseMapper.toPresentationExercises(it))
+            }
+        }
+    }
+
+    fun deleteExercise(exercise: Exercise) {
+        viewModelScope.launch {
+            val domainExercise = ExerciseMapper.toDomainExercise(exercise)
+            exerciseService.deleteExercise(domainExercise)
+        }
+    }
+
+    fun removeExerciseFromView(exercise: Exercise) {
+        viewModelScope.launch {
+            val allExercises = _exercises.value.toMutableList()
+            allExercises.remove(exercise)
+            _exercises.emit(allExercises)
+        }
+    }
+
+    fun undoDeleting(exercise: Exercise) {
+        viewModelScope.launch {
+            val allExercises = _exercises.value.toMutableSet()
+            if(allExercises.add(exercise)) {
+                _exercises.emit(allExercises.toList())
             }
         }
     }

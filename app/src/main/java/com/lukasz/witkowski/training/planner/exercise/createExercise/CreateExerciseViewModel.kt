@@ -11,11 +11,16 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCol
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 import javax.inject.Inject
 
 /** StateFlow with SavedStateHandle, do I need it?
@@ -23,10 +28,10 @@ import javax.inject.Inject
  */
 
 @HiltViewModel
-class CreateExerciseViewModel @Inject internal constructor(
+open class CreateExerciseViewModel @Inject constructor(
     private val exerciseService: ExerciseService,
     private val categoriesCollection: CategoriesCollection,
-    private val savedStateHandle: SavedStateHandle
+    protected val savedStateHandle: SavedStateHandle
 ) : ViewModel(), CategoriesCollection by categoriesCollection {
 
     private val _name = MutableStateFlow("")
@@ -41,8 +46,10 @@ class CreateExerciseViewModel @Inject internal constructor(
     private val _image = MutableStateFlow<Bitmap?>(null)
     val image: StateFlow<Bitmap?> = _image
 
-    private val _savingState = MutableStateFlow<ResultHandler<Boolean>>(ResultHandler.Idle)
+    protected val _savingState = MutableStateFlow<ResultHandler<Boolean>>(ResultHandler.Idle)
     val savingState: StateFlow<ResultHandler<Boolean>> = _savingState
+
+
 
     fun onExerciseNameChange(newName: String) {
         _name.value = newName
@@ -53,7 +60,6 @@ class CreateExerciseViewModel @Inject internal constructor(
     }
 
     fun onCategorySelected(newCategoryIndex: Int) {
-        Timber.d("Category selected index $newCategoryIndex")
         _category.value = allCategories[newCategoryIndex]
     }
 
@@ -61,7 +67,7 @@ class CreateExerciseViewModel @Inject internal constructor(
         _image.value = bitmap
     }
 
-    fun createExercise() {
+    open fun createExercise() {
         viewModelScope.launch {
             val exercise = Exercise(
                 id = ExerciseId.create(),
@@ -77,12 +83,18 @@ class CreateExerciseViewModel @Inject internal constructor(
     private suspend fun saveExercise(exercise: Exercise) {
         try {
             _savingState.value = ResultHandler.Loading
+            val domainExercise = mapExercise(exercise)
             val isSavingFinished =
-                exerciseService.saveExercise(ExerciseMapper.toDomainExercise(exercise))
+                exerciseService.saveExercise(domainExercise)
             _savingState.value =
                 ResultHandler.Success(isSavingFinished)
         } catch (e: Exception) {
             _savingState.value = ResultHandler.Error(message = "Saving exercise failed")
+            _savingState.value = ResultHandler.Idle
         }
+    }
+
+    private suspend fun mapExercise(exercise: Exercise): DomainExercise = withContext(Dispatchers.Default) {
+        ExerciseMapper.toDomainExercise(exercise)
     }
 }

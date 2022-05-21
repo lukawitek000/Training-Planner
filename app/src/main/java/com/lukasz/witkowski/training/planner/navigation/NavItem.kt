@@ -1,13 +1,5 @@
 package com.lukasz.witkowski.training.planner.navigation
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.Send
-import androidx.compose.material.icons.outlined.ShoppingCart
-import androidx.compose.material.icons.outlined.Star
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
 import com.lukasz.witkowski.training.planner.R
 
 sealed class NavItem(
@@ -27,23 +19,23 @@ sealed class NavItem(
     }
 
     object CreateExercise : NavItem("create-exercise", null, "Create Exercise", true)
+    object EditExercise : NavItem("edit-exercise", null, "Edit Exercise", true)
 
     object CreateTrainingGraph :
         NavItem("create-training-graph", null, "Create Training Graph", true)
-
     object CreateTraining : NavItem("create-training", null, "Create Training", true)
-
     object PickExercise : NavItem("pick-exercise", null, "Pick Exercise", true)
 
     object TrainingOverview : NavItem("training-overview", null, "Training overview", true)
 
-    object TrainingSession: NavItem("training-session", null, "Training session", true)
+    object TrainingSession : NavItem("training-session", null, "Training session", true)
 
     object Items {
         val list = listOf<NavItem>(
             Trainings,
             Exercises,
             CreateExercise,
+            EditExercise,
             CreateTraining,
             PickExercise,
             CreateTrainingGraph,
