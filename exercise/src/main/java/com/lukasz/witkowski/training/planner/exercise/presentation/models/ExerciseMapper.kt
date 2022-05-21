@@ -16,7 +16,7 @@ object ExerciseMapper {
         )
     }
 
-    private fun toPresentationExercise(exercise: com.lukasz.witkowski.training.planner.exercise.domain.Exercise): Exercise {
+    fun toPresentationExercise(exercise: com.lukasz.witkowski.training.planner.exercise.domain.Exercise): Exercise {
         return Exercise(
             id = exercise.id,
             name = exercise.name,

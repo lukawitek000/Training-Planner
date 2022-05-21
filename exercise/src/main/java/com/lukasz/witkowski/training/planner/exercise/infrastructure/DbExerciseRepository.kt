@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 internal class DbExerciseRepository(private val exerciseDao: ExerciseDao) : ExerciseRepository {
-    override fun getById(id: String): Flow<Exercise> {
-        return exerciseDao.getById(id).map { ExerciseMapper.toExercise(it)  }
+    override fun getById(id: ExerciseId): Flow<Exercise> {
+        return exerciseDao.getById(id.value).map { ExerciseMapper.toExercise(it)  }
     }
 
     override fun getAll(): Flow<List<Exercise>> {

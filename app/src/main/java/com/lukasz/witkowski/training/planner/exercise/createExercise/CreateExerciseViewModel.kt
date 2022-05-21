@@ -11,9 +11,11 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCol
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -29,6 +31,8 @@ class CreateExerciseViewModel @Inject internal constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(), CategoriesCollection by categoriesCollection {
 
+    private val exerciseId = savedStateHandle.get<String>("exerciseId")
+
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
 
@@ -43,6 +47,21 @@ class CreateExerciseViewModel @Inject internal constructor(
 
     private val _savingState = MutableStateFlow<ResultHandler<Boolean>>(ResultHandler.Idle)
     val savingState: StateFlow<ResultHandler<Boolean>> = _savingState
+
+    init {
+        viewModelScope.launch {
+            exerciseId?.let {
+                val id = ExerciseId(it)
+                exerciseService.getExerciseById(id).collect { domainExercise ->
+                    val exercise = ExerciseMapper.toPresentationExercise(domainExercise)
+                    _name.value = exercise.name
+                    _description.value = exercise.description
+                    _category.value = exercise.category
+                    _image.value = exercise.image
+                }
+            }
+        }
+    }
 
     fun onExerciseNameChange(newName: String) {
         _name.value = newName

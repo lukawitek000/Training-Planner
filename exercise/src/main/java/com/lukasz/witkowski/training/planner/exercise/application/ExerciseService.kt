@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.exercise.application
 
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -22,5 +23,9 @@ class ExerciseService(
 
     suspend fun deleteExercise(exercise: Exercise) {
         exerciseRepository.delete(exercise)
+    }
+
+    fun getExerciseById(id: ExerciseId): Flow<Exercise> {
+        return exerciseRepository.getById(id)
     }
 }

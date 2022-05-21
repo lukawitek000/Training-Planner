@@ -18,16 +18,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Snackbar
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,7 +40,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.LifecycleEventObserver
 import com.lukasz.witkowski.training.planner.DialogState
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
@@ -57,13 +53,12 @@ import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 @Composable
 fun ExercisesScreen(
     modifier: Modifier = Modifier,
     viewModel: ExercisesListViewModel,
-    onCreateExerciseFabClicked: () -> Unit = {}
+    navigateToExerciseCreateScreen: (ExerciseId?) -> Unit = {}
 ) {
     val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -71,7 +66,7 @@ fun ExercisesScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(onClick = { onCreateExerciseFabClicked() }) {
+            FloatingActionButton(onClick = { navigateToExerciseCreateScreen(null) }) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Create Exercise")
             }
         },
@@ -93,6 +88,9 @@ fun ExercisesScreen(
                         SnackbarResult.ActionPerformed -> viewModel.undoDeleting(it)
                     }
                 }
+            },
+            onExerciseEditedClicked = {
+                navigateToExerciseCreateScreen(it.id)
             }
         )
     }
@@ -104,6 +102,7 @@ fun ExercisesScreenContent(
     isPickingExerciseMode: Boolean = false,
     onExerciseClicked: (Exercise) -> Unit = {},
     onExerciseDeleted: (Exercise) -> Unit = {},
+    onExerciseEditedClicked: (Exercise) -> Unit = {},
     pickedExercisesId: List<ExerciseId> = emptyList()
 ) {
     val exercisesList by viewModel.exercises.collectAsState(emptyList())
@@ -124,7 +123,10 @@ fun ExercisesScreenContent(
     editDeleteDialogState.IsOpen {
         EditDeleteDialog(
             text = it.name,
-            onEditClicked = { /*TODO*/ },
+            onEditClicked = {
+                editDeleteDialogState = DialogState.Closed()
+                onExerciseEditedClicked(it)
+                            },
             onDeleteClicked = {
                 editDeleteDialogState = DialogState.Closed()
                 onExerciseDeleted(it)

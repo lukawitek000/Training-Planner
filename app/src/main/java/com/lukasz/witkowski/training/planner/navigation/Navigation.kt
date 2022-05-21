@@ -51,12 +51,21 @@ fun Navigation(
 
         composable(NavItem.Exercises.route) {
             val viewModel: ExercisesListViewModel = hiltViewModel()
-            ExercisesScreen(Modifier.padding(innerPadding), viewModel = viewModel) {
-                navController.navigate(route = NavItem.CreateExercise.route)
+            ExercisesScreen(Modifier.padding(innerPadding), viewModel = viewModel) { exerciseId ->
+                exerciseId?.let {
+                    navController.navigate("${NavItem.CreateExercise.route}?exerciseId=${it.value}")
+                } ?: navController.navigate(NavItem.CreateExercise.route)
             }
         }
 
-        composable(NavItem.CreateExercise.route) {
+        composable(
+            "${NavItem.CreateExercise.route}?exerciseId={exerciseId}",
+            arguments = listOf(
+                navArgument("exerciseId") {
+                    nullable = true
+                    type = NavType.StringType
+                })
+        ) {
             val viewModel: CreateExerciseViewModel = hiltViewModel()
             CreateExerciseScreen(
                 Modifier.padding(innerPadding),
