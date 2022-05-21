@@ -41,7 +41,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Catego
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.CategoryFilters
-import com.lukasz.witkowski.training.planner.ui.components.EditDeletePopUp
+import com.lukasz.witkowski.training.planner.ui.components.EditDeleteDialog
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
@@ -159,7 +159,8 @@ private fun ExercisesList(
             item { Spacer(modifier = Modifier.height(74.dp)) }
         }
         if (popUpState.isOpen) {
-            EditDeletePopUp(
+            EditDeleteDialog(
+                text = "Edti afa ",
                 onEditClicked = {
                     editExercise(popUpState.id)
                     popUpState = defaultValue
@@ -167,7 +168,8 @@ private fun ExercisesList(
                 onDeleteClicked = {
                     deleteExercise(popUpState.id)
                     popUpState = defaultValue
-                }
+                },
+                onDismissRequest = {}
             )
         }
     }
