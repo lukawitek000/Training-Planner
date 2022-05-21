@@ -35,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lukasz.witkowski.training.planner.DialogState
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
@@ -75,14 +76,28 @@ fun ExercisesScreenContent(
     val exercisesList by viewModel.exercises.collectAsState(emptyList())
     val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
 
-    var isExerciseDialogOpen by remember { mutableStateOf(false) }
-    var exercise by remember {
-        mutableStateOf(exercisesList.firstOrNull())
+
+    var exerciseDetailsDialogState by remember {
+        mutableStateOf<DialogState<Exercise>>(DialogState.Closed())
     }
-    if (isExerciseDialogOpen && exercise != null) {
+
+    var editDeleteDialogState by remember {
+        mutableStateOf<DialogState<Exercise>>(DialogState.Closed())
+    }
+
+    exerciseDetailsDialogState.IsOpen {
         ExerciseInfoAlertDialog(
-            exercise = exercise!!,
-            closeDialog = { isExerciseDialogOpen = false })
+            exercise = it,
+            closeDialog = { exerciseDetailsDialogState = DialogState.Closed() })
+    }
+
+    editDeleteDialogState.IsOpen {
+        EditDeleteDialog(
+            text = it.name,
+            onEditClicked = { /*TODO*/ },
+            onDeleteClicked = { /*TODO*/ },
+            onDismissRequest = { editDeleteDialogState = DialogState.Closed() }
+        )
     }
     Column() {
         CategoryFilters(
@@ -97,15 +112,13 @@ fun ExercisesScreenContent(
                     if (isPickingExerciseMode) {
                         onExerciseClicked(it)
                     } else {
-                        isExerciseDialogOpen = true
-                        exercise = it
+                        exerciseDetailsDialogState = DialogState.Open(it)
                     }
                 },
-                deleteExercise = {
-                                 Timber.d("Delete exercise id $it")
-                },
-                editExercise = {
-                               Timber.d("Edit exercise id $it")
+                onExerciseLongClicked = {
+                    if(!isPickingExerciseMode) {
+                        editDeleteDialogState = DialogState.Open(it)
+                    }
                 },
                 pickedExercisesId = pickedExercisesId
             )
@@ -121,24 +134,14 @@ fun ExercisesScreenContent(
     }
 }
 
-data class PopUpState<T>(
-    val isOpen: Boolean = false,
-    val id: T
-)
-
 @Composable
 private fun ExercisesList(
     modifier: Modifier = Modifier,
     exercisesList: List<Exercise>,
     onExerciseClicked: (Exercise) -> Unit,
-    deleteExercise: (ExerciseId) -> Unit,
-    editExercise: (ExerciseId) -> Unit,
+    onExerciseLongClicked: (Exercise) -> Unit,
     pickedExercisesId: List<ExerciseId> = emptyList()
 ) {
-    val defaultValue = PopUpState(id = ExerciseId(""))
-    var popUpState by remember {
-        mutableStateOf(defaultValue)
-    }
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         LazyColumn {
             items(exercisesList) { exercise ->
@@ -147,7 +150,7 @@ private fun ExercisesList(
                         onExerciseClicked(exercise)
                     },
                     onCardLongClicked = {
-                        popUpState = PopUpState(true, exercise.id)
+                        onExerciseLongClicked(exercise)
                     },
                     markedSelected = pickedExercisesId.contains(exercise.id)
                 ) {
@@ -157,20 +160,6 @@ private fun ExercisesList(
                 }
             }
             item { Spacer(modifier = Modifier.height(74.dp)) }
-        }
-        if (popUpState.isOpen) {
-            EditDeleteDialog(
-                text = "Edti afa ",
-                onEditClicked = {
-                    editExercise(popUpState.id)
-                    popUpState = defaultValue
-                },
-                onDeleteClicked = {
-                    deleteExercise(popUpState.id)
-                    popUpState = defaultValue
-                },
-                onDismissRequest = {}
-            )
         }
     }
 }
