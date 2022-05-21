@@ -13,14 +13,14 @@ fun EditExerciseScreen(
     snackbarState: SnackbarState,
     navigateUp: () -> Unit
 ) {
-    val text = stringResource(id = R.string.exercise_updated)
+    val successMessage = stringResource(id = R.string.exercise_updated)
     val failMessage = stringResource(id = R.string.exercise_update_failed)
     CreateExerciseScreen(
         modifier = modifier,
         viewModel = viewModel,
         snackbarState = snackbarState,
         navigateUp = navigateUp,
-        successMessage = text,
+        successMessage = successMessage,
         failMessage = failMessage
     )
 }

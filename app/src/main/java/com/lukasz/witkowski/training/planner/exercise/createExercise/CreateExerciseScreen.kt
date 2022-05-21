@@ -18,17 +18,13 @@ import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -48,7 +44,6 @@ import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import com.skydoves.landscapist.glide.GlideImage
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -65,7 +60,6 @@ fun CreateExerciseScreen(
     val description by viewModel.description.collectAsState()
     val selectedCategory by viewModel.category.collectAsState()
     val savingState by viewModel.savingState.collectAsState()
-
 
     Scaffold(
         modifier = modifier,
@@ -113,7 +107,7 @@ fun CreateExerciseScreen(
             else -> {
                 LoadingScreen(
                     modifier = Modifier.fillMaxSize(),
-                    message = "Exercise is saving to the database"
+                    message = stringResource(id = R.string.saving_exercise, name)
                 )
             }
         }
@@ -123,7 +117,7 @@ fun CreateExerciseScreen(
 @Composable
 private fun CreateExerciseFloatingActionButton(
     modifier: Modifier = Modifier,
-    isVisible:Boolean,
+    isVisible: Boolean,
     name: String,
     createExercise: () -> Unit,
     showSnackbar: (String) -> Unit
@@ -226,7 +220,7 @@ fun UploadImageLayout(
 @Composable
 private fun imageActivityResultLauncher(
     onImageChange: (Bitmap) -> Unit
-):  ManagedActivityResultLauncher<String, Uri?> {
+): ManagedActivityResultLauncher<String, Uri?> {
     val context = LocalContext.current
     return rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent(),

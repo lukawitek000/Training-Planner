@@ -18,8 +18,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -29,7 +27,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,7 +45,6 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Catego
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.CategoryFilters
-import com.lukasz.witkowski.training.planner.ui.components.CustomSnackbar
 import com.lukasz.witkowski.training.planner.ui.components.EditDeleteDialog
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
@@ -63,6 +59,9 @@ fun ExercisesScreen(
     navigateToExerciseCreateScreen: () -> Unit = {},
     navigateToExerciseEditScreen: (ExerciseId) -> Unit = {}
 ) {
+    val exerciseString = stringResource(id = R.string.exercise)
+    val deletedString = stringResource(id = R.string.deleted)
+    val exerciseDeletedActionLabel = stringResource(id = R.string.undo)
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
@@ -74,9 +73,11 @@ fun ExercisesScreen(
         ExercisesScreenContent(
             viewModel = viewModel,
             onExerciseDeleted = {
+                // TODO If this screen is popped up from backstack the snack bar results are not handled (https://developer.android.com/jetpack/compose/state#viewmodels-source-of-truth)
                 snackbarState.scope.launch {
-                viewModel.removeExerciseFromView(it)
-                    when(snackbarState.show("Exercise ${it.name} deleted", "Undo")) {
+                    viewModel.removeExerciseFromView(it)
+                    val message = "$exerciseString \"${it.name}\" $deletedString"
+                    when (snackbarState.show(message, exerciseDeletedActionLabel)) {
                         SnackbarResult.Dismissed -> viewModel.deleteExercise(it)
                         SnackbarResult.ActionPerformed -> viewModel.undoDeleting(it)
                     }
@@ -119,7 +120,7 @@ fun ExercisesScreenContent(
             onEditClicked = {
                 editDeleteDialogState = DialogState.Closed()
                 onExerciseEditedClicked(it)
-                            },
+            },
             onDeleteClicked = {
                 editDeleteDialogState = DialogState.Closed()
                 onExerciseDeleted(it)
