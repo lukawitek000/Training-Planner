@@ -36,7 +36,7 @@ import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsScr
 fun Navigation(
     navController: NavHostController,
     innerPadding: PaddingValues,
-    showToast: (String) -> Unit
+    showSnackbar: (String) -> Unit
 ) {
     NavHost(navController = navController, startDestination = NavItem.Trainings.route) {
 
@@ -69,11 +69,9 @@ fun Navigation(
             CreateExerciseScreen(
                 Modifier.padding(innerPadding),
                 viewModel = viewModel,
-                exerciseSaved = {
-                    showToast(it)
-                    navController.navigateUp()
-                },
-                showToast = { showToast(it) })
+                showSnackbar = showSnackbar,
+                navigateUp = { navController.navigateUp() }
+            )
         }
 
         composable(
@@ -88,11 +86,8 @@ fun Navigation(
             EditExerciseScreen(
                 Modifier.padding(innerPadding),
                 viewModel = viewModel,
-                onExerciseUpdated = {
-                    showToast(it)
-                    navController.navigateUp()
-                },
-                showToast = showToast
+                showSnackbar = showSnackbar,
+                navigateUp = { navController.navigateUp() }
             )
         }
         createTrainingNavGraph(innerPadding, navController)

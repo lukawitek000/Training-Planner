@@ -18,12 +18,15 @@ import androidx.compose.material.Button
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,13 +45,17 @@ import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import com.skydoves.landscapist.glide.GlideImage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun CreateExerciseScreen(
     modifier: Modifier = Modifier,
     viewModel: CreateExerciseViewModel,
-    exerciseSaved: (String) -> Unit,
-    showToast: (String) -> Unit
+    showSnackbar: (String) -> Unit,
+    navigateUp: () -> Unit,
+    successMessage: String = stringResource(id = R.string.exercise_saved),
+    failMessage: String = stringResource(id = R.string.exercise_saving_failed)
 ) {
     val image by viewModel.image.collectAsState()
     val name: String by viewModel.name.collectAsState()
@@ -63,14 +70,16 @@ fun CreateExerciseScreen(
                 isVisible = savingState is ResultHandler.Idle || savingState is ResultHandler.Error,
                 name = name,
                 createExercise = { viewModel.createExercise() },
-                showToast = showToast
+                showSnackbar = {
+                    showSnackbar(it)
+                }
             )
         }
     ) {
 
         when (savingState) {
             is ResultHandler.Idle, is ResultHandler.Error -> {
-                if(savingState is ResultHandler.Error) showToast("Saving exercise failed")
+                if(savingState is ResultHandler.Error) showSnackbar(failMessage)
                 CreateExerciseForm(
                     image = image,
                     name = name,
@@ -84,7 +93,8 @@ fun CreateExerciseScreen(
                 )
             }
             is ResultHandler.Success -> {
-                exerciseSaved("Exercise saved")
+                showSnackbar(successMessage)
+                navigateUp()
             }
             else -> {
                 LoadingScreen(
@@ -102,17 +112,17 @@ private fun CreateExerciseFloatingActionButton(
     isVisible:Boolean,
     name: String,
     createExercise: () -> Unit,
-    showToast: (String) -> Unit
+    showSnackbar: (String) -> Unit
 ) {
+    val text = stringResource(id = R.string.exercise_name_is_required)
     if (isVisible) {
-        val text = stringResource(id = R.string.exercise_name_is_required)
         FloatingActionButton(
             modifier = modifier,
             onClick = {
                 if (name.isNotEmpty()) {
                     createExercise()
                 } else {
-                    showToast(text)
+                    showSnackbar(text)
                 }
             },
         ) {
