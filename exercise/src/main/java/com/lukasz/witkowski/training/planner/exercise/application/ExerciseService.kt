@@ -4,6 +4,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -31,5 +32,9 @@ class ExerciseService(
 
     suspend fun updateExercise(exercise: Exercise): Boolean {
         return exerciseRepository.updateExercise(exercise)
+    }
+
+    suspend fun getExerciseId(name: String, description: String, category: ExerciseCategory): ExerciseId? {
+        return exerciseRepository.getExerciseId(name, description, category)
     }
 }

@@ -4,32 +4,35 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateTrainingViewModel @Inject constructor(
     private val trainingPlanService: TrainingPlanService,
+    private val exerciseService: ExerciseService,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val id = savedStateHandle.get<String>("trainingPlanId")
 
-    init {
-        Timber.d("Training plan id $id")
-    }
+    private val trainingPlanId: TrainingPlanId?
+        get() {
+            val id = savedStateHandle.get<String>("trainingPlanId")
+            return id?.let { TrainingPlanId(it) }
+        }
 
     private val _title = MutableStateFlow("")
     val title: StateFlow<String>
@@ -47,6 +50,24 @@ class CreateTrainingViewModel @Inject constructor(
     val pickedExercise: StateFlow<Exercise?> = _pickedExercise
 
     val pickedExercisesIds = mutableListOf<ExerciseId>()
+
+    init {
+        viewModelScope.launch {
+            val domainTrainingPlan = trainingPlanId?.let {
+                trainingPlanService.getTrainingPlanById(it)
+            }
+            val trainingPlan = domainTrainingPlan?.let { TrainingPlanMapper.toPresentationTrainingPlan(domainTrainingPlan) }
+            trainingPlan?.let {
+                onTrainingTitleChanged(trainingPlan.title)
+                onTrainingDescriptionChanged(trainingPlan.description)
+                _trainingExercises.value = trainingPlan.exercises
+                val exercisesIds = trainingPlan.exercises.map {
+                    exerciseService.getExerciseId(it.name, it.description, CategoryMapper.toExerciseCategory(it.category))
+                }.filterNotNull()
+                pickedExercisesIds.addAll(exercisesIds)
+            }
+        }
+    }
 
     fun onTrainingTitleChanged(newTitle: String) {
         _title.value = newTitle
@@ -111,7 +132,7 @@ class CreateTrainingViewModel @Inject constructor(
     fun createTrainingPlan() {
         viewModelScope.launch {
             val trainingPlan = TrainingPlan(
-                id = TrainingPlanId.create(),
+                id = trainingPlanId ?: TrainingPlanId.create(),
                 title = title.value,
                 description = description.value,
                 exercises = trainingExercises.value

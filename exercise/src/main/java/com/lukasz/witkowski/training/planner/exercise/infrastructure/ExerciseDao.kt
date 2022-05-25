@@ -25,4 +25,7 @@ internal interface ExerciseDao {
 
     @Update
     suspend fun update(dbExercise: DbExercise): Int // returns number of updated rows
+
+    @Query("SELECT id FROM Exercise WHERE (name = :name AND description = :description AND categoryId = :category)")
+    suspend fun getExerciseId(name: String, description: String, category: Int): String?
 }

@@ -16,4 +16,5 @@ interface ExerciseRepository {
      * Returns _true_ if the update was successful
      */
     suspend fun updateExercise(updatedExercise: Exercise): Boolean
+    suspend fun getExerciseId(name: String, description: String, category: ExerciseCategory): ExerciseId?
 }
