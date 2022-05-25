@@ -23,17 +23,22 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lukasz.witkowski.training.planner.DialogState
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.CategoryFilters
+import com.lukasz.witkowski.training.planner.ui.components.EditDeleteDialog
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
 
@@ -48,6 +53,18 @@ fun TrainingsScreen(
     val trainings by viewModel.trainingPlans.collectAsState(emptyList())
     val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
 
+    var editDeleteDialogState by remember {
+        mutableStateOf<DialogState<TrainingPlan>>(DialogState.Closed())
+    }
+
+    editDeleteDialogState.IsOpen {
+        EditDeleteDialog(
+            text = it.title,
+            onEditClicked = { },
+            onDeleteClicked = { viewModel.deleteTrainingPlan(it) },
+            onDismissRequest = { editDeleteDialogState = DialogState.Closed() }
+        )
+    }
     Scaffold(
         modifier = Modifier.padding(innerPadding),
         floatingActionButton = {
@@ -63,10 +80,13 @@ fun TrainingsScreen(
             if (trainings.isNotEmpty()) {
                 TrainingsList(
                     trainings = trainings,
-                    navigateToTrainingOverview =  {
+                    navigateToTrainingOverview = {
                         //navigateToTrainingOverview // TODO revert this changes
-                          viewModel.sendTrainingPlan(it)
-                                                  },
+                        viewModel.sendTrainingPlan(it)
+                    },
+                    onTrainingPlanLongClicked = {
+                        editDeleteDialogState = DialogState.Open(it)
+                    },
                     startTrainingSession = { navigateToTrainingSession(it.id) }
                 )
             } else {
@@ -99,16 +119,20 @@ fun TrainingsList(
     modifier: Modifier = Modifier,
     trainings: List<TrainingPlan>,
     navigateToTrainingOverview: (String) -> Unit,
-    startTrainingSession: (TrainingPlan) -> Unit
+    startTrainingSession: (TrainingPlan) -> Unit,
+    onTrainingPlanLongClicked: (TrainingPlan) -> Unit
 ) {
     LazyColumn(
         modifier = modifier
     ) {
-        items(trainings) { trainingWithExercises ->
-            ListCardItem(modifier = Modifier,
-                onCardClicked = { navigateToTrainingOverview(trainingWithExercises.id.value) }) {
+        items(trainings) { trainingPlan ->
+            ListCardItem(
+                modifier = Modifier,
+                onCardClicked = { navigateToTrainingOverview(trainingPlan.id.value) },
+                onCardLongClicked = { onTrainingPlanLongClicked(trainingPlan) }
+            ) {
                 TrainingListItemContent(
-                    trainingPlan = trainingWithExercises,
+                    trainingPlan = trainingPlan,
                     startTrainingSession = startTrainingSession
                 )
             }

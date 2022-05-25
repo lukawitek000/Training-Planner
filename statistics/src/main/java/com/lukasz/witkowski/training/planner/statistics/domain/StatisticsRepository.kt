@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface StatisticsRepository {
     suspend fun save(trainingStatistics: TrainingStatistics)
-    fun delete(trainingStatistics: TrainingStatistics)
     fun getByTrainingPlanId(trainingPlanId: TrainingPlanId): Flow<List<TrainingStatistics>>
+    suspend fun deleteStatisticsFromTrainingPlan(trainingPlanId: TrainingPlanId)
 }

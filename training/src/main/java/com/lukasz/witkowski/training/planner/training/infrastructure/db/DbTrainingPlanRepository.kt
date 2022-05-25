@@ -4,8 +4,10 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.mappers.TrainingPlanMapper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 internal class DbTrainingPlanRepository(
     private val trainingPlanDao: TrainingPlanDao
@@ -29,7 +31,7 @@ internal class DbTrainingPlanRepository(
         }
     }
 
-    override suspend fun delete(trainingPlan: TrainingPlan) {
+    override suspend fun delete(trainingPlan: TrainingPlan) = withContext(Dispatchers.IO) {
         val dbTrainingPlanWithExercises =
             TrainingPlanMapper.toDbTrainingPlanWithExercises(trainingPlan)
         trainingPlanDao.deleteTrainingPlanWithExercises(dbTrainingPlanWithExercises)

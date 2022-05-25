@@ -118,11 +118,9 @@ fun ExercisesScreenContent(
         EditDeleteDialog(
             text = it.name,
             onEditClicked = {
-                editDeleteDialogState = DialogState.Closed()
                 onExerciseEditedClicked(it)
             },
             onDeleteClicked = {
-                editDeleteDialogState = DialogState.Closed()
                 onExerciseDeleted(it)
             },
             onDismissRequest = { editDeleteDialogState = DialogState.Closed() }

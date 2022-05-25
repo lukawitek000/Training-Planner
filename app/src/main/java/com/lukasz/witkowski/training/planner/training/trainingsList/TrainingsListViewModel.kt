@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
+import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
@@ -13,11 +14,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class TrainingsListViewModel @Inject constructor(
     private val trainingPlanService: TrainingPlanService,
+    private val statisticsService: TrainingStatisticsService,
     categoryController: CategoryController,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel(), CategoryController by categoryController {
@@ -54,6 +57,14 @@ class TrainingsListViewModel @Inject constructor(
             _trainingPlans.value.firstOrNull { it.id.value == id }?.let {
                 trainingPlanService.sendTrainingPlan(TrainingPlanMapper.toDomainTrainingPlan(it))
             }
+        }
+    }
+
+    fun deleteTrainingPlan(trainingPlan: TrainingPlan) {
+        viewModelScope.launch {
+            val domainTrainingPlan = TrainingPlanMapper.toDomainTrainingPlan(trainingPlan)
+            trainingPlanService.deleteTrainingPlan(domainTrainingPlan)
+            statisticsService.deleteStatistics(domainTrainingPlan.id)
         }
     }
 }

@@ -15,8 +15,8 @@ class DbStatisticsRepository(private val statisticsDao: StatisticsDao) : Statist
         statisticsDao.insertAllStatistics(dbTrainingStatistics)
     }
 
-    override fun delete(trainingStatistics: TrainingStatistics) {
-//        TODO("Not yet implemented")
+    override suspend fun deleteStatisticsFromTrainingPlan(trainingPlanId: TrainingPlanId) {
+        statisticsDao.deleteTrainingPlanStatistics(trainingPlanId.value)
     }
 
     override fun getByTrainingPlanId(trainingPlanId: TrainingPlanId): Flow<List<TrainingStatistics>> {

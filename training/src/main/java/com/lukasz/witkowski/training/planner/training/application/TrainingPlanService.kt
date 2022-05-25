@@ -47,4 +47,8 @@ class TrainingPlanService(
             }
         }
     }
+
+    suspend fun deleteTrainingPlan(trainingPlan: TrainingPlan) {
+        trainingPlanRepository.delete(trainingPlan)
+    }
 }

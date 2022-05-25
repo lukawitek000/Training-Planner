@@ -48,10 +48,16 @@ fun EditDeleteDialog(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                PopUpButton(text = "Edit", action = onEditClicked)
+                PopUpButton(text = "Edit", action = {
+                    onEditClicked()
+                    onDismissRequest()
+                })
                 PopUpButton(
                     text = "Delete",
-                    action = onDeleteClicked,
+                    action = {
+                        onDeleteClicked()
+                        onDismissRequest()
+                    },
                     textColor = Color.Red
                 )
             }
