@@ -48,7 +48,8 @@ fun Navigation(
                 viewModel = trainingsListViewModel,
                 onCreateTrainingFabClicked = { navController.navigate(route = NavItem.CreateTraining.route) },
                 navigateToTrainingOverview = { navController.navigate(route = "${NavItem.TrainingOverview.route}/$it") },
-                navigateToTrainingSession = { navController.navigate(route = "${NavItem.TrainingSession.route}/${it.value}") }
+                navigateToTrainingSession = { navController.navigate(route = "${NavItem.TrainingSession.route}/${it.value}") },
+                navigateToTrainingPlanEditScreen = { navController.navigate(route = "${NavItem.CreateTraining.route}?trainingPlanId=${it.value}") }
             )
         }
 
@@ -80,7 +81,6 @@ fun Navigation(
             "${NavItem.EditExercise.route}/{exerciseId}",
             arguments = listOf(
                 navArgument("exerciseId") {
-                    nullable = true
                     type = NavType.StringType
                 })
         ) {
@@ -135,7 +135,10 @@ private fun NavGraphBuilder.createTrainingNavGraph(
         route = NavItem.CreateTrainingGraph.route
     ) {
 
-        composable(NavItem.CreateTraining.route) {
+        composable(
+            route = "${NavItem.CreateTraining.route}?trainingPlanId={trainingPlanId}",
+            arguments = listOf(navArgument("trainingPlanId") { nullable = true })
+        ) {
             val createTrainingBackStackEntry =
                 remember { navController.getBackStackEntry(NavItem.CreateTrainingGraph.route) }
             val createTrainingViewModel: CreateTrainingViewModel =

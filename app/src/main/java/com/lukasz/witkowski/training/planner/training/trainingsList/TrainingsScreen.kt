@@ -48,7 +48,8 @@ fun TrainingsScreen(
     viewModel: TrainingsListViewModel,
     onCreateTrainingFabClicked: () -> Unit = {},
     navigateToTrainingOverview: (String) -> Unit,
-    navigateToTrainingSession: (TrainingPlanId) -> Unit
+    navigateToTrainingSession: (TrainingPlanId) -> Unit,
+    navigateToTrainingPlanEditScreen: (TrainingPlanId) -> Unit = {}
 ) {
     val trainings by viewModel.trainingPlans.collectAsState(emptyList())
     val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
@@ -60,7 +61,7 @@ fun TrainingsScreen(
     editDeleteDialogState.IsOpen {
         EditDeleteDialog(
             text = it.title,
-            onEditClicked = { },
+            onEditClicked = { navigateToTrainingPlanEditScreen(it.id) },
             onDeleteClicked = { viewModel.deleteTrainingPlan(it) },
             onDismissRequest = { editDeleteDialogState = DialogState.Closed() }
         )

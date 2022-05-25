@@ -51,7 +51,7 @@ fun TrainingPlannerApp() {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentScreen = NavItem.Items.list.find {
         val destinationRoute = backStackEntry?.destination?.route
-        it.route == destinationRoute?.substringBefore('/')
+        it.route == destinationRoute?.substringBefore('/') || it.route == destinationRoute?.substringBefore('?')
     } ?: NavItem.Trainings
     val scaffoldState = rememberScaffoldState()
     val scope = rememberCoroutineScope()
