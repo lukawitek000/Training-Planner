@@ -18,6 +18,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+//Adrian: As discussed, it is fine to have DI framework and it is even nicer to start without it ;)
 @Module
 @InstallIn(SingletonComponent::class)
 internal object ExerciseModule {
