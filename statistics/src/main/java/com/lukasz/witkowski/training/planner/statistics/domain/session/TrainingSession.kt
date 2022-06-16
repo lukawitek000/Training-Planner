@@ -36,7 +36,15 @@ internal class TrainingSession(
         return state
     }
 
-    fun next(isCompleted: Boolean = false, time: Time): TrainingSessionState {
+    fun skip(time: Time): TrainingSessionState {
+        return next(false, time)
+    }
+
+    fun completed(time: Time): TrainingSessionState {
+        return next(true, time)
+    }
+
+    private fun next(isCompleted: Boolean, time: Time): TrainingSessionState {
         stopRecordingExerciseStatistics(isCompleted, time)
         state = when {
             isTrainingSessionFinished() -> {

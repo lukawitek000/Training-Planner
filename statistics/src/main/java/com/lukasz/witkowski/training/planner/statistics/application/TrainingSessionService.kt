@@ -20,11 +20,11 @@ class TrainingSessionService(
     }
 
     fun skip(): TrainingSessionState {
-        return trainingSession.next(false, timeProvider.currentTime())
+        return trainingSession.skip(timeProvider.currentTime())
     }
 
     fun completed(): TrainingSessionState {
-        return trainingSession.next(true, timeProvider.currentTime())
+        return trainingSession.completed(timeProvider.currentTime())
     }
 
     fun stopTraining() {
