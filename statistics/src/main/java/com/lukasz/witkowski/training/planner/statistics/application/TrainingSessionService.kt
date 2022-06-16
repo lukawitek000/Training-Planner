@@ -3,11 +3,12 @@ package com.lukasz.witkowski.training.planner.statistics.application
 import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsStrategy
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSession
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
-import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.BasicStatisticsRecorder
-import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.SystemTimeProvider
+import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.TimeProvider
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 
-class TrainingSessionService {
+class TrainingSessionService(
+    private val timeProvider: TimeProvider
+) {
 
     private lateinit var trainingSession: TrainingSession
 
@@ -15,15 +16,15 @@ class TrainingSessionService {
         // TODO inject training strategy
         val trainingSetsStrategy = CircuitSetsStrategy()
         trainingSession = TrainingSession(trainingPlan, trainingSetsStrategy)
-        return trainingSession.start()
+        return trainingSession.start(timeProvider.currentTime())
     }
 
     fun skip(): TrainingSessionState {
-        return trainingSession.next(false)
+        return trainingSession.next(false, timeProvider.currentTime())
     }
 
     fun completed(): TrainingSessionState {
-        return trainingSession.next(true)
+        return trainingSession.next(true, timeProvider.currentTime())
     }
 
     fun stopTraining() {

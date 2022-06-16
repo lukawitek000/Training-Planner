@@ -6,6 +6,7 @@ import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseSt
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import java.util.Date
 
 /**
  * [BasicStatisticsRecorder] can be used on the device without any sensors, it records:
@@ -15,8 +16,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
  *  * Completeness rate of exercises
  */
 class BasicStatisticsRecorder(
-    private val trainingPlanId: TrainingPlanId,
-    private val timeProvider: TimeProvider
+    private val trainingPlanId: TrainingPlanId
 ) {
 
     private var startTrainingTime = Time.NONE
@@ -25,33 +25,33 @@ class BasicStatisticsRecorder(
     private var currentExerciseId: TrainingExerciseId? = null
     private var currentExerciseSet: Int = 0
 
-    fun start() {
-        startTrainingTime = timeProvider.currentTime()
+    fun start(startTime: Time) {
+        startTrainingTime = startTime
     }
 
-    fun stop(): TrainingStatistics {
-        val trainingStatistics = gatherTrainingStatistics()
+    fun stop(stopTime: Time): TrainingStatistics {
+        val trainingStatistics = gatherTrainingStatistics(stopTime)
         exercisesAttemptsStatistics.clear()
         return trainingStatistics
     }
 
-    fun startRecordingExercise(trainingExerciseId: TrainingExerciseId, set: Int) {
-        currentExerciseStartTime = timeProvider.currentTime()
+    fun startRecordingExercise(trainingExerciseId: TrainingExerciseId, set: Int, startTime: Time) {
+        currentExerciseStartTime = startTime
         currentExerciseId = trainingExerciseId
         currentExerciseSet = set
     }
 
-    fun stopRecordingExercise(isCompleted: Boolean) {
+    fun stopRecordingExercise(isCompleted: Boolean, stopTime: Time) {
         val exerciseAttemptStatistics = ExerciseAttemptStatistics(
             trainingExerciseId = currentExerciseId!!,
-            time = timeProvider.currentTime() - currentExerciseStartTime,
+            time = stopTime - currentExerciseStartTime,
             set = currentExerciseSet,
             completed = isCompleted
         )
         exercisesAttemptsStatistics.add(exerciseAttemptStatistics)
     }
 
-    private fun gatherTrainingStatistics(): TrainingStatistics {
+    private fun gatherTrainingStatistics(time: Time): TrainingStatistics {
         val exercisesStatisticsMap = exercisesAttemptsStatistics.groupBy { it.trainingExerciseId }
         val exercisesStatistics = exercisesStatisticsMap.map { (exerciseId, attemptsStatistics) ->
             ExerciseStatistics(
@@ -61,8 +61,8 @@ class BasicStatisticsRecorder(
         }
         return TrainingStatistics(
             trainingPlanId = trainingPlanId,
-            totalTime = timeProvider.currentTime() - startTrainingTime,
-            date = timeProvider.currentDate(),
+            totalTime = time - startTrainingTime,
+            date = Date(), // TODO how to provide a date
             exercisesStatistics = exercisesStatistics
         )
     }
