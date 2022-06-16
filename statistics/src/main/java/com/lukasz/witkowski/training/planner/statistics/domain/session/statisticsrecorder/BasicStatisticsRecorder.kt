@@ -15,9 +15,9 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
  *  * Completeness rate of exercises
  */
 class BasicStatisticsRecorder(
-    override val trainingPlanId: TrainingPlanId,
+    private val trainingPlanId: TrainingPlanId,
     private val timeProvider: TimeProvider
-) : StatisticsRecorder {
+) {
 
     private var startTrainingTime = Time.NONE
     private var exercisesAttemptsStatistics = mutableListOf<ExerciseAttemptStatistics>()
@@ -25,23 +25,23 @@ class BasicStatisticsRecorder(
     private var currentExerciseId: TrainingExerciseId? = null
     private var currentExerciseSet: Int = 0
 
-    override fun start() {
+    fun start() {
         startTrainingTime = timeProvider.currentTime()
     }
 
-    override fun stop(): TrainingStatistics {
+    fun stop(): TrainingStatistics {
         val trainingStatistics = gatherTrainingStatistics()
         exercisesAttemptsStatistics.clear()
         return trainingStatistics
     }
 
-    override fun startRecordingExercise(trainingExerciseId: TrainingExerciseId, set: Int) {
+    fun startRecordingExercise(trainingExerciseId: TrainingExerciseId, set: Int) {
         currentExerciseStartTime = timeProvider.currentTime()
         currentExerciseId = trainingExerciseId
         currentExerciseSet = set
     }
 
-    override fun stopRecordingExercise(isCompleted: Boolean) {
+    fun stopRecordingExercise(isCompleted: Boolean) {
         val exerciseAttemptStatistics = ExerciseAttemptStatistics(
             trainingExerciseId = currentExerciseId!!,
             time = timeProvider.currentTime() - currentExerciseStartTime,

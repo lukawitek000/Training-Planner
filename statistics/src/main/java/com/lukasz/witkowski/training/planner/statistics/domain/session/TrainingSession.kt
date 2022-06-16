@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.statistics.domain.session
 
-import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.StatisticsRecorder
+import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.BasicStatisticsRecorder
+import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.SystemTimeProvider
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 
@@ -10,7 +12,6 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
  */
 internal class TrainingSession(
     private val trainingPlan: TrainingPlan,
-    private val statisticsRecorder: StatisticsRecorder,
     private val trainingSetsStrategy: TrainingSetsStrategy
 ) {
 
@@ -19,12 +20,15 @@ internal class TrainingSession(
     private val currentExercise: TrainingExercise
         get() = state.exercise!!
 
+    private val exerciseSession = ExerciseSession()
+    private val statisticsRecorder = BasicStatisticsRecorder(trainingPlan.id, SystemTimeProvider())
+
     init {
         require(trainingPlan.exercises.isNotEmpty()) { "Cannot start training session without exercises" }
         exercises.addAll(trainingSetsStrategy.loadExercises(trainingPlan))
     }
 
-    fun start(): TrainingSessionState {
+    fun start(startTime: Time): TrainingSessionState {
         statisticsRecorder.start()
         val firstExercise = loadExercise()
         statisticsRecorder.startRecordingExercise(firstExercise.id, 1)

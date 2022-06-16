@@ -12,11 +12,9 @@ class TrainingSessionService {
     private lateinit var trainingSession: TrainingSession
 
     fun startTraining(trainingPlan: TrainingPlan): TrainingSessionState {
-        // TODO inject these properties (SettingsProvider is needed for recorder and strategy)
-        val timeProvider = SystemTimeProvider()
-        val statisticsRecorder = BasicStatisticsRecorder(trainingPlan.id, timeProvider)
+        // TODO inject training strategy
         val trainingSetsStrategy = CircuitSetsStrategy()
-        trainingSession = TrainingSession(trainingPlan, statisticsRecorder, trainingSetsStrategy)
+        trainingSession = TrainingSession(trainingPlan, trainingSetsStrategy)
         return trainingSession.start()
     }
 
