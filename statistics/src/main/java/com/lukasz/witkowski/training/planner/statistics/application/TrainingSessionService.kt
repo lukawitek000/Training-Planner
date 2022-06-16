@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.statistics.application
 
-import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsStrategy
+import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsPolicy
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSession
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.TimeProvider
@@ -14,7 +14,7 @@ class TrainingSessionService(
 
     fun startTraining(trainingPlan: TrainingPlan): TrainingSessionState {
         // TODO inject training strategy
-        val trainingSetsStrategy = CircuitSetsStrategy()
+        val trainingSetsStrategy = CircuitSetsPolicy()
         trainingSession = TrainingSession(trainingPlan, trainingSetsStrategy)
         return trainingSession.start(timeProvider.currentTime())
     }

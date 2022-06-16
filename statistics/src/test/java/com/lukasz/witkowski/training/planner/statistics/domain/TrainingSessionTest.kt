@@ -3,10 +3,10 @@ package com.lukasz.witkowski.training.planner.statistics.domain
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
-import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsStrategy
+import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsPolicy
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSession
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
-import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSetsStrategy
+import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSetsPolicy
 import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder.FixedTimeProvider
 import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.StatisticsRecorder
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -23,7 +23,7 @@ import kotlin.test.assertFailsWith
 class TrainingSessionTest {
 
     private val mockStatisticsRecorder: StatisticsRecorder = mock()
-    private val trainingSetsStrategy: TrainingSetsStrategy = CircuitSetsStrategy()
+    private val trainingSetsStrategy: TrainingSetsPolicy = CircuitSetsPolicy()
 
     @Test
     fun `load first exercise when training session starts`() {

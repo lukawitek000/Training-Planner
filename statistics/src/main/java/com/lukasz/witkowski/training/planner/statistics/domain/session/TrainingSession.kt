@@ -11,7 +11,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
  */
 internal class TrainingSession(
     private val trainingPlan: TrainingPlan,
-    private val trainingSetsStrategy: TrainingSetsStrategy
+    private val trainingSetsPolicy: TrainingSetsPolicy
 ) {
 
     private val exercises = mutableListOf<TrainingExercise>()
@@ -25,7 +25,7 @@ internal class TrainingSession(
 
     init {
         require(trainingPlan.exercises.isNotEmpty()) { "Cannot start training session without exercises" }
-        exercises.addAll(trainingSetsStrategy.loadExercises(trainingPlan))
+        exercises.addAll(trainingSetsPolicy.loadExercises(trainingPlan))
     }
 
     fun start(startTime: Time): TrainingSessionState {

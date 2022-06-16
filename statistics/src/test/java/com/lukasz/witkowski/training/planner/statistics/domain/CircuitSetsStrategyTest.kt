@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.statistics.domain
 
-import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsStrategy
+import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsPolicy
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
@@ -11,11 +11,11 @@ import kotlin.test.assertContentEquals
 
 class CircuitSetsStrategyTest {
 
-    private lateinit var circuitSetsStrategy: CircuitSetsStrategy
+    private lateinit var circuitSetsStrategy: CircuitSetsPolicy
 
     @Before
     fun setUp() {
-        circuitSetsStrategy = CircuitSetsStrategy()
+        circuitSetsStrategy = CircuitSetsPolicy()
     }
 
     @Test
