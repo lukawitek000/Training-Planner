@@ -1,39 +1,38 @@
 package com.lukasz.witkowski.training.planner.statistics.domain
 
 import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.statistics.TRAINING_EXERCISES
+import com.lukasz.witkowski.training.planner.statistics.TRAINING_PLAN
+import com.lukasz.witkowski.training.planner.statistics.createTrainingPlan
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder.FixedTimeProvider
 import org.junit.Assert
 import org.junit.Test
 import kotlin.test.assertFailsWith
 
-internal class TrainingSessionControlTest: TrainingSessionTest() {
+internal class TrainingSessionControlTest : TrainingSessionTest() {
 
     private val time = Time(100)
 
     @Test
     fun `load first exercise when training session starts`() {
         // given
-        val trainingExercises = createTrainingExercisesWithDifferentSets()
-        val trainingPlan = createTrainingPlan(trainingExercises)
         val trainingSession =
-            createTrainingSession(trainingPlan)
+            createTrainingSession(TRAINING_PLAN)
 
         // when
         val trainingSessionState = trainingSession.start(time)
 
         // then
-        val expectedState = TrainingSessionState.ExerciseState(trainingExercises.first())
+        val expectedState = TrainingSessionState.ExerciseState(TRAINING_EXERCISES.first())
         assertExerciseState(expectedState, trainingSessionState)
     }
 
     @Test
     fun `load rest time after first exercise`() {
         // given
-        val trainingExercises = createTrainingExercisesWithDifferentSets()
-        val trainingPlan = createTrainingPlan(trainingExercises)
         val trainingSession =
-            createTrainingSession(trainingPlan)
+            createTrainingSession(TRAINING_PLAN)
 
         // when
         trainingSession.start(time)
@@ -41,8 +40,8 @@ internal class TrainingSessionControlTest: TrainingSessionTest() {
 
         // then
         val expectedState = TrainingSessionState.RestTimeState(
-            trainingExercises[1],
-            trainingExercises.first().restTime
+            TRAINING_EXERCISES[1],
+            TRAINING_EXERCISES.first().restTime
         )
         assertRestTimeState(expectedState, trainingSessionState)
     }
@@ -50,10 +49,8 @@ internal class TrainingSessionControlTest: TrainingSessionTest() {
     @Test
     fun `load next exercise after exercise without rest time`() {
         // given
-        val trainingExercises = createTrainingExercisesWithDifferentSets()
-        val trainingPlan = createTrainingPlan(trainingExercises)
         val trainingSession =
-            createTrainingSession(trainingPlan)
+            createTrainingSession(TRAINING_PLAN)
 
         // when
         trainingSession.start(time)
@@ -62,17 +59,15 @@ internal class TrainingSessionControlTest: TrainingSessionTest() {
         val trainingSessionState = trainingSession.completed(time)
 
         // then
-        val expectedState = TrainingSessionState.ExerciseState(trainingExercises[2])
+        val expectedState = TrainingSessionState.ExerciseState(TRAINING_EXERCISES[2])
         assertExerciseState(expectedState, trainingSessionState)
     }
 
     @Test
     fun `load rest time after last exercise in set`() {
         // given
-        val trainingExercises = createTrainingExercisesWithDifferentSets()
-        val trainingPlan = createTrainingPlan(trainingExercises)
         val trainingSession =
-            createTrainingSession(trainingPlan)
+            createTrainingSession(TRAINING_PLAN)
 
         // when
         trainingSession.start(time)
@@ -81,8 +76,8 @@ internal class TrainingSessionControlTest: TrainingSessionTest() {
 
         // then
         val expectedState = TrainingSessionState.RestTimeState(
-            trainingExercises.first(),
-            trainingExercises.last().restTime
+            TRAINING_EXERCISES.first(),
+            TRAINING_EXERCISES.last().restTime
         )
         assertRestTimeState(expectedState, trainingSessionState)
     }
@@ -90,10 +85,8 @@ internal class TrainingSessionControlTest: TrainingSessionTest() {
     @Test
     fun `load first exercise in new set`() {
         // given
-        val trainingExercises = createTrainingExercisesWithDifferentSets()
-        val trainingPlan = createTrainingPlan(trainingExercises)
         val trainingSession =
-            createTrainingSession(trainingPlan)
+            createTrainingSession(TRAINING_PLAN)
 
         // when
         trainingSession.start(time)
@@ -101,17 +94,15 @@ internal class TrainingSessionControlTest: TrainingSessionTest() {
         val trainingSessionState = trainingSession.completed(time)
 
         // then
-        val expectedState = TrainingSessionState.ExerciseState(trainingExercises.first())
+        val expectedState = TrainingSessionState.ExerciseState(TRAINING_EXERCISES.first())
         assertExerciseState(expectedState, trainingSessionState)
     }
 
     @Test
     fun `skip exercise if all attempts were done`() {
         // given
-        val trainingExercises = createTrainingExercisesWithDifferentSets()
-        val trainingPlan = createTrainingPlan(trainingExercises)
         val trainingSession =
-            createTrainingSession(trainingPlan)
+            createTrainingSession(TRAINING_PLAN)
 
         // when
         trainingSession.start(time)
@@ -119,17 +110,15 @@ internal class TrainingSessionControlTest: TrainingSessionTest() {
         val trainingSessionState = trainingSession.completed(time)
 
         // then
-        val expectedState = TrainingSessionState.ExerciseState(trainingExercises.last())
+        val expectedState = TrainingSessionState.ExerciseState(TRAINING_EXERCISES.last())
         assertExerciseState(expectedState, trainingSessionState)
     }
 
     @Test
     fun `load the same exercise if only one has left sets`() {
         // given
-        val trainingExercises = createTrainingExercisesWithDifferentSets()
-        val trainingPlan = createTrainingPlan(trainingExercises)
         val trainingSession =
-            createTrainingSession(trainingPlan)
+            createTrainingSession(TRAINING_PLAN)
 
         // when
         trainingSession.start(time)
@@ -137,7 +126,7 @@ internal class TrainingSessionControlTest: TrainingSessionTest() {
         val trainingSessionState = trainingSession.completed(time)
 
         // then
-        val expectedState = TrainingSessionState.ExerciseState(trainingExercises.last())
+        val expectedState = TrainingSessionState.ExerciseState(TRAINING_EXERCISES.last())
         assertExerciseState(expectedState, trainingSessionState)
     }
 

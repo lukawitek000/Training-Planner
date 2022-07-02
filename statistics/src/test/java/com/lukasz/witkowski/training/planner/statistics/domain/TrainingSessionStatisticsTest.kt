@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.statistics.domain
 
 import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.statistics.TRAINING_EXERCISES
+import com.lukasz.witkowski.training.planner.statistics.TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
@@ -8,22 +10,17 @@ import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSe
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSession
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSetsPolicy
-import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.BasicStatisticsRecorder
-import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.SystemTimeProvider
-import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder.FixedTimeProvider
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import org.junit.Before
 import org.junit.Test
 import java.util.Date
 import kotlin.test.assertEquals
 
-internal class TrainingSessionStatisticsTest: TrainingSessionTest() {
+internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
 
-    private val trainingExercises: List<TrainingExercise> = createTrainingExercisesWithDifferentSets()
-    private val trainingPlan: TrainingPlan = createTrainingPlan(trainingExercises)
+    private val trainingExercises: List<TrainingExercise> = TRAINING_EXERCISES
+    private val trainingPlan: TrainingPlan = TRAINING_PLAN
     private val trainingSetsPolicy: TrainingSetsPolicy = CircuitSetsPolicy()
     private lateinit var trainingSession: TrainingSession
 
@@ -201,7 +198,10 @@ internal class TrainingSessionStatisticsTest: TrainingSessionTest() {
         )
     )
 
-    private fun completeRestOfTheTraining(trainingSession: TrainingSession, startTime: Time = Time.NONE): TrainingSessionState.SummaryState {
+    private fun completeRestOfTheTraining(
+        trainingSession: TrainingSession,
+        startTime: Time = Time.NONE
+    ): TrainingSessionState.SummaryState {
         var time = startTime
         var state: TrainingSessionState? = null
         do {
