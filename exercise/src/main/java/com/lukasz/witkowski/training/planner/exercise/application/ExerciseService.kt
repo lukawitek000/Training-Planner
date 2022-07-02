@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.application
 
+import android.util.Log
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
@@ -54,6 +55,7 @@ class ExerciseService(
     suspend fun updateExercise(exercise: Exercise): Boolean {
         val isUpdated = exerciseRepository.updateExercise(exercise)
         imageRepository.update(exercise.image, exercise.getImageName())
+        Log.i("ExerciseService", "updateExercise: $isUpdated")
         return isUpdated
     }
 

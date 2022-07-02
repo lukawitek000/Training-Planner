@@ -7,6 +7,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ImageRepository
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ImageFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import java.io.Closeable
 import java.io.File
 import java.io.FileInputStream
@@ -40,7 +41,7 @@ class InternalStorageImageRepository(
             val bitmap = BitmapFactory.decodeStream(inputStream)
             ImageFactory.fromBitmap(bitmap)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.d("Image file '$fileName' not found")
             null
         } finally {
             closeStream(inputStream)
@@ -52,16 +53,16 @@ class InternalStorageImageRepository(
             val file = File(directoryName, fileName)
             file.delete()
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.d("Image file '$fileName' not could not be deleted.")
             false
         }
     }
 
     override suspend fun update(image: Image?, fileName: String) = withContext(Dispatchers.IO) {
-        val isDeleted = delete(fileName)
-        if(isDeleted) {
+        try {
+            delete(fileName)
             image?.let { save(image, fileName) } ?: Unit
-        } else {
+        } catch (e: Exception) {
             throw Exception("Couldn't update the image. Deleted failed.")
         }
     }
