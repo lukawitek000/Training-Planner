@@ -5,6 +5,8 @@ import android.graphics.BitmapFactory
 import com.lukasz.witkowski.training.planner.exercise.domain.Image
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageRepository
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ImageFactory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.Closeable
 import java.io.File
 import java.io.FileInputStream
@@ -15,7 +17,7 @@ import java.io.IOException
 class InternalStorageImageRepository(private val context: Context, private val directoryName: String) :
     ImageRepository {
 
-    override fun save(image: Image, fileName: String) {
+    override suspend fun save(image: Image, fileName: String) = withContext(Dispatchers.IO) {
         var outputStream: FileOutputStream? = null
         try {
             val file = createFile(fileName)
@@ -29,13 +31,13 @@ class InternalStorageImageRepository(private val context: Context, private val d
         }
     }
 
-    override fun read(fileName: String): Image {
+    override suspend fun read(fileName: String): Image = withContext(Dispatchers.IO){
         var inputStream: FileInputStream? = null
         try {
             val file = createFile(fileName)
             inputStream = FileInputStream(file)
             val bitmap = BitmapFactory.decodeStream(inputStream)
-            return ImageFactory.fromBitmap(bitmap)
+            ImageFactory.fromBitmap(bitmap)
         } catch (e: Exception) {
             e.printStackTrace()
             throw FileNotFoundException("$fileName image has not been found in the internal storage in the $directoryName directory.")
