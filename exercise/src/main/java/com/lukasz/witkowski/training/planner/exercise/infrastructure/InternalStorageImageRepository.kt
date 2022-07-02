@@ -10,12 +10,13 @@ import kotlinx.coroutines.withContext
 import java.io.Closeable
 import java.io.File
 import java.io.FileInputStream
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 
-class InternalStorageImageRepository(private val context: Context, private val directoryName: String) :
-    ImageRepository {
+class InternalStorageImageRepository(
+    private val context: Context,
+    private val directoryName: String
+) : ImageRepository {
 
     override suspend fun save(image: Image, fileName: String) = withContext(Dispatchers.IO) {
         var outputStream: FileOutputStream? = null
@@ -31,7 +32,7 @@ class InternalStorageImageRepository(private val context: Context, private val d
         }
     }
 
-    override suspend fun read(fileName: String): Image = withContext(Dispatchers.IO){
+    override suspend fun read(fileName: String): Image? = withContext(Dispatchers.IO) {
         var inputStream: FileInputStream? = null
         try {
             val file = createFile(fileName)
@@ -40,9 +41,28 @@ class InternalStorageImageRepository(private val context: Context, private val d
             ImageFactory.fromBitmap(bitmap)
         } catch (e: Exception) {
             e.printStackTrace()
-            throw FileNotFoundException("$fileName image has not been found in the internal storage in the $directoryName directory.")
+            null
         } finally {
             closeStream(inputStream)
+        }
+    }
+
+    override suspend fun delete(fileName: String): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val file = File(directoryName, fileName)
+            file.delete()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            false
+        }
+    }
+
+    override suspend fun update(image: Image?, fileName: String) = withContext(Dispatchers.IO) {
+        val isDeleted = delete(fileName)
+        if(isDeleted) {
+            image?.let { save(image, fileName) } ?: Unit
+        } else {
+            throw Exception("Couldn't update the image. Deleted failed.")
         }
     }
 
