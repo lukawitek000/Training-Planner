@@ -21,7 +21,6 @@ internal class TrainingSession(
 
     private lateinit var exerciseSession: ExerciseSession
     private lateinit var trainingStatistics: TrainingStatistics
-//    private val statisticsRecorder = BasicStatisticsRecorder(trainingPlan.id)
 
     init {
         require(trainingPlan.exercises.isNotEmpty()) { "Cannot start training session without exercises" }
@@ -30,10 +29,8 @@ internal class TrainingSession(
 
     fun start(startTime: Time): TrainingSessionState {
         trainingStatistics = TrainingStatistics(trainingPlan, startTime)
-//        statisticsRecorder.start(startTime)
         val firstExercise = loadExercise()
         exerciseSession = ExerciseSession(firstExercise, startTime, 1)
-//        statisticsRecorder.startRecordingExercise(firstExercise.id, 1, startTime)
         state = TrainingSessionState.ExerciseState(firstExercise)
         return state
     }
@@ -76,18 +73,12 @@ internal class TrainingSession(
 
     private fun startRecordingExerciseStatistics(currentExercise: TrainingExercise, time: Time) {
         exerciseSession = ExerciseSession(currentExercise, time, getCurrentSet(currentExercise))
-//        statisticsRecorder.startRecordingExercise(
-//            currentExercise.id,
-//            getCurrentSet(currentExercise),
-//            time
-//        )
     }
 
     private fun stopRecordingExerciseStatistics(isCompleted: Boolean, time: Time) {
         if (isExerciseState()) {
             val exerciseAttemptStatistics = exerciseSession.stop(isCompleted, time)
             trainingStatistics.addExerciseAttemptStatistics(exerciseAttemptStatistics)
-//            statisticsRecorder.stopRecordingExercise(isCompleted, time)
         }
     }
 
@@ -105,7 +96,4 @@ internal class TrainingSession(
     private fun isRestTimeState() = state is TrainingSessionState.RestTimeState
 
     private fun isExerciseState() = state is TrainingSessionState.ExerciseState
-
-//    private fun hasCurrentExerciseRestTime() =
-//        (state as? TrainingSessionState.ExerciseState)?.exercise?.restTime?.isNotZero() == true
 }
