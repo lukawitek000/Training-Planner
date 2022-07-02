@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.statistics.domain
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.statistics.TRAINING_EXERCISES
 import com.lukasz.witkowski.training.planner.statistics.TRAINING_PLAN
+import com.lukasz.witkowski.training.planner.statistics.TrainingSessionTest
 import com.lukasz.witkowski.training.planner.statistics.createTrainingPlan
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder.FixedTimeProvider

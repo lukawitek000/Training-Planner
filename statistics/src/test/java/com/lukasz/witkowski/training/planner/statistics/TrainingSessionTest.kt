@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.statistics.domain
+package com.lukasz.witkowski.training.planner.statistics
 
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsPolicy
