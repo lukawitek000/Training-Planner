@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
+import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.SystemTimeProvider
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.DbStatisticsRepository
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.StatisticsDao
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.StatisticsDatabase
@@ -21,7 +22,7 @@ object StatisticsModule {
 
     @Provides
     fun provideTrainingSessionService(): TrainingSessionService {
-        return TrainingSessionService()
+        return TrainingSessionService(SystemTimeProvider())
     }
 
     @Provides
