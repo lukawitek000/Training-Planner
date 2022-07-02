@@ -2,7 +2,7 @@ package com.lukasz.witkowski.training.planner.exercise.domain
 
 import java.io.FileNotFoundException
 
-interface ImageSaver {
+interface ImageRepository {
     /**
      * Save [Image] with the provided file name.
      * @throws [Exception] if saving the [Image] fails.

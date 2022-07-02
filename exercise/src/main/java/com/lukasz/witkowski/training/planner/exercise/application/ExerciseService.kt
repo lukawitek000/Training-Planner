@@ -4,13 +4,14 @@ import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
+import com.lukasz.witkowski.training.planner.exercise.domain.ImageRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class ExerciseService(
-    private val exerciseRepository: ExerciseRepository
+    private val exerciseRepository: ExerciseRepository,
+    private val imageRepository: ImageRepository
 ) {
-
     suspend fun saveExercise(exercise: Exercise): Boolean {
         return exerciseRepository.insert(exercise)
     }
