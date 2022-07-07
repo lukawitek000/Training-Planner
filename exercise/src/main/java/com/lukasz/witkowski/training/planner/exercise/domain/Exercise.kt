@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.domain
 
+// TODO Image -> ImageId
 data class Exercise(
     val id: ExerciseId,
     val name: String,

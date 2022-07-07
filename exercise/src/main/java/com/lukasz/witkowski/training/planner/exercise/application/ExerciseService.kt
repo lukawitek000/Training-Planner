@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
+// TODO separate service for images, load async
 class ExerciseService(
     private val exerciseRepository: ExerciseRepository,
     private val imageRepository: ImageRepository

@@ -33,6 +33,7 @@ class ExercisesListViewModel @Inject internal constructor(
     }
 
     private fun observeSelectedCategories() {
+        // TODO launch in dispatchers IO (look at navigation-ui)
         viewModelScope.launch {
             selectedCategories.collectLatest {
                 fetchExercises()
