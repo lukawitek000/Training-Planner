@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.statistics.domain.session
 
-import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.StatisticsRecorder
+import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.BasicStatisticsRecorder
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 
@@ -10,8 +12,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
  */
 internal class TrainingSession(
     private val trainingPlan: TrainingPlan,
-    private val statisticsRecorder: StatisticsRecorder,
-    private val trainingSetsStrategy: TrainingSetsStrategy
+    private val trainingSetsPolicy: TrainingSetsPolicy
 ) {
 
     private val exercises = mutableListOf<TrainingExercise>()
@@ -19,38 +20,30 @@ internal class TrainingSession(
     private val currentExercise: TrainingExercise
         get() = state.exercise!!
 
+    private lateinit var exerciseSession: ExerciseSession
+    private lateinit var trainingStatistics: TrainingStatistics
+
     init {
         require(trainingPlan.exercises.isNotEmpty()) { "Cannot start training session without exercises" }
-        exercises.addAll(trainingSetsStrategy.loadExercises(trainingPlan))
+        exercises.addAll(trainingSetsPolicy.loadExercises(trainingPlan))
     }
 
-    fun start(): TrainingSessionState {
-        statisticsRecorder.start()
+    fun start(startTime: Time): TrainingSessionState {
+        trainingStatistics = TrainingStatistics(trainingPlan, startTime)
         val firstExercise = loadExercise()
-        statisticsRecorder.startRecordingExercise(firstExercise.id, 1)
+        exerciseSession = ExerciseSession(firstExercise, startTime, 1)
         state = TrainingSessionState.ExerciseState(firstExercise)
         return state
     }
 
-    fun next(isCompleted: Boolean = false): TrainingSessionState {
-        stopRecordingExerciseStatistics(isCompleted)
-        state = when {
-            isTrainingSessionFinished() -> {
-                val trainingStatistics = statisticsRecorder.stop()
-                TrainingSessionState.SummaryState(trainingStatistics, trainingPlan)
-            }
-            isExerciseState() && hasCurrentExerciseRestTime() -> {
-                val nextExercise = getNextExerciseOverview()
-                TrainingSessionState.RestTimeState(nextExercise, currentExercise.restTime)
-            }
-            isRestTimeState() || (isExerciseState() && !hasCurrentExerciseRestTime()) -> {
-                val currentExercise = loadExercise()
-                startRecordingExerciseStatistics(currentExercise)
-                TrainingSessionState.ExerciseState(currentExercise)
-            }
-            else -> throw Exception("Unknown training session state")
-        }
-        return state
+    fun skip(time: Time): TrainingSessionState {
+        stopRecordingExerciseStatistics(false, time)
+        return next(time)
+    }
+
+    fun completed(time: Time): TrainingSessionState {
+        stopRecordingExerciseStatistics(true, time)
+        return next(time)
     }
 
     fun stop() {
@@ -58,16 +51,35 @@ internal class TrainingSession(
         state = TrainingSessionState.IdleState
     }
 
-    private fun startRecordingExerciseStatistics(currentExercise: TrainingExercise) {
-        statisticsRecorder.startRecordingExercise(
-            currentExercise.id,
-            getCurrentSet(currentExercise)
-        )
+    private fun next(time: Time): TrainingSessionState {
+        return when {
+            isTrainingSessionFinished() && !isTrainingSessionStopped() -> {
+                val trainingStatistics = this.trainingStatistics.gatherTrainingStatistics(time)
+                TrainingSessionState.SummaryState(trainingStatistics, trainingPlan)
+            }
+            isExerciseState() && exerciseSession.hasRestTime() -> {
+                val nextExercise = getNextExerciseOverview()
+                TrainingSessionState.RestTimeState(nextExercise, currentExercise.restTime)
+            }
+            isRestTimeState() || (isExerciseState() && !exerciseSession.hasRestTime()) -> {
+                val currentExercise = loadExercise()
+                startRecordingExerciseStatistics(currentExercise, time)
+                TrainingSessionState.ExerciseState(currentExercise)
+            }
+            else -> throw Exception("Unknown training session state")
+        }.also {
+            state = it
+        }
     }
 
-    private fun stopRecordingExerciseStatistics(isCompleted: Boolean) {
+    private fun startRecordingExerciseStatistics(currentExercise: TrainingExercise, time: Time) {
+        exerciseSession = ExerciseSession(currentExercise, time, getCurrentSet(currentExercise))
+    }
+
+    private fun stopRecordingExerciseStatistics(isCompleted: Boolean, time: Time) {
         if (isExerciseState()) {
-            statisticsRecorder.stopRecordingExercise(isCompleted)
+            val exerciseAttemptStatistics = exerciseSession.stop(isCompleted, time)
+            trainingStatistics.addExerciseAttemptStatistics(exerciseAttemptStatistics)
         }
     }
 
@@ -86,6 +98,6 @@ internal class TrainingSession(
 
     private fun isExerciseState() = state is TrainingSessionState.ExerciseState
 
-    private fun hasCurrentExerciseRestTime() =
-        (state as? TrainingSessionState.ExerciseState)?.exercise?.restTime?.isNotZero() == true
+    private fun isTrainingSessionStopped() = state is TrainingSessionState.IdleState
+
 }

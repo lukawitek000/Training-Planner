@@ -1,31 +1,30 @@
 package com.lukasz.witkowski.training.planner.statistics.application
 
-import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsStrategy
+import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsPolicy
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSession
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
-import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.BasicStatisticsRecorder
-import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.SystemTimeProvider
+import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSetsPolicy
+import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.TimeProvider
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 
-class TrainingSessionService {
+class TrainingSessionService(
+    private val timeProvider: TimeProvider,
+    private val trainingSetsStrategy: TrainingSetsPolicy = CircuitSetsPolicy()
+) {
 
     private lateinit var trainingSession: TrainingSession
 
     fun startTraining(trainingPlan: TrainingPlan): TrainingSessionState {
-        // TODO inject these properties (SettingsProvider is needed for recorder and strategy)
-        val timeProvider = SystemTimeProvider()
-        val statisticsRecorder = BasicStatisticsRecorder(trainingPlan.id, timeProvider)
-        val trainingSetsStrategy = CircuitSetsStrategy()
-        trainingSession = TrainingSession(trainingPlan, statisticsRecorder, trainingSetsStrategy)
-        return trainingSession.start()
+        trainingSession = TrainingSession(trainingPlan, trainingSetsStrategy)
+        return trainingSession.start(timeProvider.currentTime())
     }
 
     fun skip(): TrainingSessionState {
-        return trainingSession.next(false)
+        return trainingSession.skip(timeProvider.currentTime())
     }
 
     fun completed(): TrainingSessionState {
-        return trainingSession.next(true)
+        return trainingSession.completed(timeProvider.currentTime())
     }
 
     fun stopTraining() {

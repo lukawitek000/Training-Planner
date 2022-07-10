@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.statistics.domain
 
-import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsStrategy
+import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsPolicy
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
@@ -9,13 +9,13 @@ import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertContentEquals
 
-class CircuitSetsStrategyTest {
+class CircuitSetsPolicyTest {
 
-    private lateinit var circuitSetsStrategy: CircuitSetsStrategy
+    private lateinit var circuitSetsPolicy: CircuitSetsPolicy
 
     @Before
     fun setUp() {
-        circuitSetsStrategy = CircuitSetsStrategy()
+        circuitSetsPolicy = CircuitSetsPolicy()
     }
 
     @Test
@@ -25,7 +25,7 @@ class CircuitSetsStrategyTest {
         val trainingPlan = createTrainingPlan(exercises)
 
         // when
-        val loadedExercises = circuitSetsStrategy.loadExercises(trainingPlan)
+        val loadedExercises = circuitSetsPolicy.loadExercises(trainingPlan)
 
         // then
         val expectedExercisesOrder = listOf(
@@ -46,7 +46,7 @@ class CircuitSetsStrategyTest {
         val trainingPlan = createTrainingPlan(exercises)
 
         // when
-        val loadedExercises = circuitSetsStrategy.loadExercises(trainingPlan)
+        val loadedExercises = circuitSetsPolicy.loadExercises(trainingPlan)
 
         // then
         val expectedExercisesOrder = listOf(exercises.first(), exercises.first(), exercises.first())
@@ -60,7 +60,7 @@ class CircuitSetsStrategyTest {
         val trainingPlan = createTrainingPlan(exercises)
 
         // when
-        val loadedExercises = circuitSetsStrategy.loadExercises(trainingPlan)
+        val loadedExercises = circuitSetsPolicy.loadExercises(trainingPlan)
 
         // then
         assertContentEquals(emptyList(), loadedExercises)
@@ -73,7 +73,7 @@ class CircuitSetsStrategyTest {
         val trainingPlan = createTrainingPlan(exercises)
 
         // when
-        val loadedExercises = circuitSetsStrategy.loadExercises(trainingPlan)
+        val loadedExercises = circuitSetsPolicy.loadExercises(trainingPlan)
 
         // then
         val expectedExercisesOrder = listOf(

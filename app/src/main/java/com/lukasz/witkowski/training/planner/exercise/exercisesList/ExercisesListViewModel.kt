@@ -72,4 +72,10 @@ class ExercisesListViewModel @Inject internal constructor(
             }
         }
     }
+
+    // TODO event sourcing
+
+    override fun onCleared() {
+        super.onCleared()
+    }
 }
