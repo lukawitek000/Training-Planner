@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.training.presentation.mappers
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.lukasz.witkowski.training.planner.exercise.domain.Image
+import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ImageFactory
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
@@ -39,5 +40,5 @@ object TrainingExerciseMapper {
 
     private fun Image.toBitmap() = BitmapFactory.decodeByteArray(data, 0, data.size)
 
-    private fun Bitmap.toImage() = ImageFactory.fromBitmap(bitmap = this)
+    private fun Bitmap.toImage() = ImageFactory.fromBitmap(bitmap = this, ImageId.create())
 }

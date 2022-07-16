@@ -198,7 +198,8 @@ fun ExerciseListItemContent(
     modifier: Modifier = Modifier,
     exercise: Exercise
 ) {
-    val image = exercise.image
+//    val image = exercise.image // TODO how to get the image in the list, I can use coil to load from file
+    // https://stackoverflow.com/questions/69159724/how-to-load-image-files-into-jetpack-compose-image-using-coil
     val imageDescription = stringResource(id = R.string.image_description, exercise.name)
     val category = exercise.category
 
@@ -208,7 +209,7 @@ fun ExerciseListItemContent(
     ) {
         ImageWithDefaultPlaceholder(
             imageDescription = imageDescription,
-            image = image
+            image = null
         )
         Spacer(modifier = Modifier.width(16.dp))
         ExerciseInformation(

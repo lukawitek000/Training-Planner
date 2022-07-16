@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure
 import android.content.Context
 import android.graphics.BitmapFactory
 import com.lukasz.witkowski.training.planner.exercise.domain.Image
+import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageRepository
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ImageFactory
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +40,7 @@ class InternalStorageImageRepository(
             val file = createFile(fileName)
             inputStream = FileInputStream(file)
             val bitmap = BitmapFactory.decodeStream(inputStream)
-            ImageFactory.fromBitmap(bitmap)
+            ImageFactory.fromBitmap(bitmap, ImageId(fileName))
         } catch (e: Exception) {
             Timber.d("Image file '$fileName' not found")
             null

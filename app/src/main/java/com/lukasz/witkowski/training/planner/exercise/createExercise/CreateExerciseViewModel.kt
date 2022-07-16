@@ -7,10 +7,13 @@ import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.domain.Image
+import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ImageFactory
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -49,8 +52,6 @@ open class CreateExerciseViewModel @Inject constructor(
     protected val _savingState = MutableStateFlow<ResultHandler<Boolean>>(ResultHandler.Idle)
     val savingState: StateFlow<ResultHandler<Boolean>> = _savingState
 
-
-
     fun onExerciseNameChange(newName: String) {
         _name.value = newName
     }
@@ -74,7 +75,7 @@ open class CreateExerciseViewModel @Inject constructor(
                 name = name.value,
                 description = description.value,
                 category = category.value,
-                image = image.value
+                imageId = image.value?.let { ImageId.create() }
             )
             saveExercise(exercise)
         }
@@ -83,18 +84,19 @@ open class CreateExerciseViewModel @Inject constructor(
     private suspend fun saveExercise(exercise: Exercise) {
         try {
             _savingState.value = ResultHandler.Loading
-            val domainExercise = mapExercise(exercise)
-            val isSavingFinished =
-                exerciseService.saveExercise(domainExercise)
-            _savingState.value =
-                ResultHandler.Success(isSavingFinished)
+            val domainExercise = ExerciseMapper.toDomainExercise(exercise)
+            exerciseService.saveExercise(domainExercise)
+            domainExercise.imageId?.let {
+                exerciseService.saveImage(ImageFactory.fromBitmap(image.value!!, it))
+            }
+            _savingState.value = ResultHandler.Success(true)
         } catch (e: Exception) {
             _savingState.value = ResultHandler.Error(message = "Saving exercise failed")
             _savingState.value = ResultHandler.Idle
         }
     }
 
-    private suspend fun mapExercise(exercise: Exercise): DomainExercise = withContext(Dispatchers.Default) {
-        ExerciseMapper.toDomainExercise(exercise)
-    }
+//    private suspend fun mapExercise(exercise: Exercise): DomainExercise = withContext(Dispatchers.Default) {
+//        ExerciseMapper.toDomainExercise(exercise)
+//    }
 }

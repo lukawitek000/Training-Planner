@@ -5,6 +5,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
+import com.lukasz.witkowski.training.planner.exercise.domain.Image
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -17,12 +18,12 @@ class ExerciseService(
     private val exerciseRepository: ExerciseRepository,
     private val imageRepository: ImageRepository
 ) {
-    suspend fun saveExercise(exercise: Exercise): Boolean {
-        val isSaved = exerciseRepository.insert(exercise)
-        exercise.image?.let {
-            imageRepository.save(it, exercise.getImageName())
-        }
-        return isSaved
+    suspend fun saveExercise(exercise: Exercise) {
+        exerciseRepository.insert(exercise)
+    }
+
+    suspend fun saveImage(image: Image) {
+        imageRepository.save(image, image.fileName)
     }
 
     // TODO Should be all exercises taken from domain and then filter here, or the filtration should be made in infra (SQL query)? (less data transmission)
@@ -30,8 +31,6 @@ class ExerciseService(
         return exerciseRepository.getAll().map {
             it.filter { exercise ->
                 categories.contains(exercise.category) || categories.isEmpty()
-            }.map { exercise ->
-                fetchImageForExercise(exercise)
             }
         }
     }
@@ -48,24 +47,22 @@ class ExerciseService(
     }
 
     fun getExerciseById(id: ExerciseId): Flow<Exercise> {
-        return exerciseRepository.getById(id).map {
-            fetchImageForExercise(it)
-        }
+        return exerciseRepository.getById(id)
     }
 
     suspend fun updateExercise(exercise: Exercise): Boolean {
         val isUpdated = exerciseRepository.updateExercise(exercise)
-        imageRepository.update(exercise.image, exercise.getImageName())
+//        imageRepository.update(exercise.image, exercise.getImageName())
         Log.i("ExerciseService", "updateExercise: $isUpdated")
         return isUpdated
     }
 
-    private suspend fun fetchImageForExercise(exercise: Exercise): Exercise {
-        val imageName = exercise.getImageName()
-        return imageRepository.read(imageName)?.let { image ->
-            exercise.copy(image = image)
-        } ?: exercise
-    }
+//    private suspend fun fetchImageForExercise(exercise: Exercise): Exercise {
+//        val imageName = exercise.getImageName()
+//        return imageRepository.read(imageName)?.let { image ->
+//            exercise.copy(image = image)
+//        } ?: exercise
+//    }
 
     private fun Exercise.getImageName(): String = "${id.value}_image"
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
@@ -34,9 +35,9 @@ class EditExerciseViewModel @Inject constructor(
                 if (index >= 0) {
                     onCategorySelected(index)
                 }
-                exercise.image?.let {
-                    onImageChange(it)
-                }
+//                exercise.image?.let {
+//                    onImageChange(it)
+//                }
             }
         }
     }
@@ -48,7 +49,7 @@ class EditExerciseViewModel @Inject constructor(
                 name = name.value,
                 description = description.value,
                 category = category.value,
-                image = image.value
+                imageId = image.value?.let { ImageId.create() }
             )
             updateExercise(exercise)
         }

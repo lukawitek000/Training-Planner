@@ -72,7 +72,8 @@ class CreateTrainingViewModel @Inject constructor(
             name = exercise.name,
             description = exercise.description,
             category = exercise.category,
-            image = exercise.image,
+//            image = exercise.image,
+            image = null,
             repetitions = reps.toIntOrNull() ?: 1,
             sets = sets.toIntOrNull() ?: 1,
             time = Time(minutes = minutes, seconds = seconds)

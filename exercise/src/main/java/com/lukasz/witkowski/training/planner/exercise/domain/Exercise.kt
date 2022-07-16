@@ -6,5 +6,5 @@ data class Exercise(
     val name: String,
     val description: String = "",
     val category: ExerciseCategory = ExerciseCategory.NONE,
-    var image: Image? = null
+    val imageId: ImageId? = null
 )
