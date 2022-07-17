@@ -38,13 +38,19 @@ class TrainingPlanService(
     }
 
     private suspend fun sendData(trainingPlans: List<TrainingPlan>) {
-        trainingPlanSender.send(trainingPlans).collect {
-            Timber.d("Send Training Plans $it")
-            if (it is SynchronizationStatus.Successful) {
-                // TODO handle successful synchronization
-            } else {
-                // TODO handle failed synchronization
+        try {
+            trainingPlanSender.send(trainingPlans).collect {
+                Timber.d("Send Training Plans $it")
+                if (it is SynchronizationStatus.Successful) {
+                    // TODO handle successful synchronization
+                } else {
+                    // TODO handle failed synchronization
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Timber.d("Sending failed ${e.message}")
         }
+
     }
 }
