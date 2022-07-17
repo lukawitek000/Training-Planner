@@ -9,5 +9,5 @@ internal data class DbTrainingPlanWithExercises(
         parentColumn = "id",
         entityColumn = "trainingId"
     )
-    val exercises: List<DbExercise>
+    val exercises: List<DbTrainingExercise>
 )

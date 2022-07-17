@@ -104,7 +104,7 @@ fun ExerciseStatisticsCard(
         shrinkedContent = {
             ExerciseStatisticsSummary(
                 exerciseStatistics = exerciseStatistics,
-                exercise = trainingExercise
+                trainingExercise = trainingExercise
             )
         },
         expandedContent = { ExerciseDetailStatistics(exerciseStatistics = exerciseStatistics) }
@@ -115,10 +115,10 @@ fun ExerciseStatisticsCard(
 fun ExerciseStatisticsSummary(
     modifier: Modifier = Modifier,
     exerciseStatistics: ExerciseStatistics,
-    exercise: TrainingExercise
+    trainingExercise: TrainingExercise
 ) {
     Column(modifier) {
-        Text(text = exercise.name, fontSize = 28.sp, color = MaterialTheme.colors.secondary)
+        Text(text = trainingExercise.exercise.name, fontSize = 28.sp, color = MaterialTheme.colors.secondary)
         Spacer(modifier = Modifier.height(4.dp))
         Text(stringResource(id = R.string.total_time, exerciseStatistics.totalTime.toString()))
         Text(

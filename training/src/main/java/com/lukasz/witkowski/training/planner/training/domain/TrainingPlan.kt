@@ -16,7 +16,7 @@ data class TrainingPlan(
     }
 
     private fun getAllCategories(): List<ExerciseCategory> {
-        return exercises.map { exercise -> exercise.category }
+        return exercises.map { trainingExercise -> trainingExercise.exercise.category }
             .filter { category -> !isCategoryNone(category) }
     }
 }

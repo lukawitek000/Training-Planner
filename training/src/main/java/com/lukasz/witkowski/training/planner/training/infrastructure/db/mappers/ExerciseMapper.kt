@@ -1,41 +1,60 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.db.mappers
 
 import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
-import com.lukasz.witkowski.training.planner.exercise.domain.Image
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbExercise
+import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingExercise
 
 internal object ExerciseMapper {
 
-    fun toDbExercise(exercise: TrainingExercise, trainingId: String): DbExercise {
-        return DbExercise(
-            id = exercise.id.value,
+    fun toDbTrainingExercise(
+        trainingExercise: TrainingExercise,
+        trainingId: String
+    ): DbTrainingExercise {
+        return DbTrainingExercise(
+            id = trainingExercise.id.value,
             trainingId = trainingId,
-            name = exercise.name,
-            description = exercise.description,
-            categoryId = exercise.category.ordinal,
-            image = exercise.image?.data,
-            repetitions = exercise.repetitions,
-            sets = exercise.sets,
-            time = exercise.time.timeInMillis,
-            restTime = exercise.restTime.timeInMillis
+            exercise = toDbExercise(trainingExercise.exercise),
+            repetitions = trainingExercise.repetitions,
+            sets = trainingExercise.sets,
+            time = trainingExercise.time.timeInMillis,
+            restTime = trainingExercise.restTime.timeInMillis
         )
     }
 
-    fun toExercise(dbExercise: DbExercise): TrainingExercise {
+    fun toTrainingExercise(dbTrainingExercise: DbTrainingExercise): TrainingExercise {
         return TrainingExercise(
-            id = TrainingExerciseId(dbExercise.id),
-            name = dbExercise.name,
-            description = dbExercise.description,
-            category = ExerciseCategory.values()[dbExercise.categoryId],
-            image = dbExercise.image?.let { Image(ImageId.create(), it) },
-            repetitions = dbExercise.repetitions,
-            sets = dbExercise.sets,
-            time = Time(dbExercise.time),
-            restTime = Time(dbExercise.restTime)
+            id = TrainingExerciseId(dbTrainingExercise.id),
+            exercise = toExercise(dbTrainingExercise.exercise),
+            repetitions = dbTrainingExercise.repetitions,
+            sets = dbTrainingExercise.sets,
+            time = Time(dbTrainingExercise.time),
+            restTime = Time(dbTrainingExercise.restTime)
+        )
+    }
+
+    private fun toDbExercise(exercise: Exercise): DbExercise {
+        return DbExercise(
+            exercise.id.value,
+            exercise.name,
+            exercise.description,
+            exercise.category.ordinal,
+            exercise.imageId?.value
+        )
+    }
+
+    private fun toExercise(dbExercise: DbExercise): Exercise {
+        return Exercise(
+            ExerciseId(dbExercise.exerciseId),
+            dbExercise.name,
+            dbExercise.description,
+            ExerciseCategory.values()[dbExercise.category],
+            dbExercise.imageId?.let { ImageId(it) }
         )
     }
 }

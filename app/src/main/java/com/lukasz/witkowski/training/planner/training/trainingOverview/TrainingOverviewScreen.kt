@@ -29,7 +29,9 @@ import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.shared.time.formatToString
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
@@ -147,7 +149,7 @@ fun TrainingExercisesExpandableList(
                 items(exercises) {
                     SingleTrainingExerciseInformation(
                         modifier = Modifier,
-                        exercise = it
+                        trainingExercise = it
                     )
                 }
             }
@@ -155,38 +157,38 @@ fun TrainingExercisesExpandableList(
 }
 
 @Composable
-fun SingleTrainingExerciseInformation(modifier: Modifier, exercise: TrainingExercise) {
+fun SingleTrainingExerciseInformation(modifier: Modifier, trainingExercise: TrainingExercise) {
     ListCardItem(
         modifier = modifier,
         backgroundColor = LightDark12
     ) {
         Column() {
             Text(
-                text = exercise.name,
+                text = trainingExercise.exercise.name,
                 fontSize = 24.sp,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
             Spacer(modifier = Modifier.height(16.dp))
-            Text(text = exercise.description, fontSize = 18.sp)
+            Text(text = trainingExercise.exercise.description, fontSize = 18.sp)
             Spacer(modifier = Modifier.height(16.dp))
             CategoryChip(
                 modifier = Modifier.fillMaxWidth(),
-                category = exercise.category
+                category = trainingExercise.exercise.category
             )
-            if (!exercise.category.isNone()) {
+            if (!trainingExercise.exercise.category.isNone()) {
                 Spacer(modifier = Modifier.height(16.dp))
             }
-            TrainingExerciseRepsSetsTimeOverviewRow(exercise = exercise)
+            TrainingExerciseRepsSetsTimeOverviewRow(exercise = trainingExercise)
             Spacer(modifier = Modifier.height(16.dp))
-            if (exercise.restTime.isNotZero()) {
+            if (trainingExercise.restTime.isNotZero()) {
                 Row(
                     Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(text = "Rest time: ")
-                    Text(text = exercise.restTime.toString())
+                    Text(text = trainingExercise.restTime.toString())
                 }
             }
         }
@@ -287,9 +289,11 @@ fun SingleExercisePrev() {
         Modifier,
         TrainingExercise(
             id = TrainingExerciseId(""),
-            name = "Super exercise",
-            description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
-            category = Category(),
+            Exercise(
+                ExerciseId.create(), name = "Super exercise",
+                description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
+                category = Category(), null
+            ),
             sets = 10,
             repetitions = 100,
             time = Time(141000),

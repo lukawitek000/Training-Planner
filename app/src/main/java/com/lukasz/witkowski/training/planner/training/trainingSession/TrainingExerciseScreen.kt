@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.training.trainingSession
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,7 +22,6 @@ import androidx.compose.material.icons.filled.Replay
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,7 +29,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.trainingSession.components.TimerWithCircularProgressBar
@@ -75,7 +75,7 @@ fun CurrentExerciseInformation(
     exercise: TrainingExercise
 ) {
     Column(modifier = modifier) {
-        GeneralExerciseInformation(exercise = exercise)
+        GeneralExerciseInformation(trainingExercise = exercise)
         Spacer(Modifier.height(8.dp))
         TrainingExerciseRepsSetsTimeOverviewRow(
             modifier = Modifier.padding(horizontal = 16.dp),
@@ -89,34 +89,34 @@ fun CurrentExerciseInformation(
 @Composable
 private fun GeneralExerciseInformation(
     modifier: Modifier = Modifier,
-    exercise: TrainingExercise
+    trainingExercise: TrainingExercise
 ) {
     Row(
         modifier = modifier.padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        exercise.image?.let { image ->
+        trainingExercise.exercise.imageId?.let { image ->
             ImageContainer(
                 modifier = Modifier
                     .fillMaxWidth(0.3f)
                     .aspectRatio(1.0f),
             ) {
-                Image(
-                    bitmap = image.asImageBitmap(),
-                    contentDescription = stringResource(id = R.string.exercise_image)
-                )
+//                Image(
+//                    bitmap = image.asImageBitmap(),
+//                    contentDescription = stringResource(id = R.string.exercise_image)
+//                )
             }
             Spacer(modifier = Modifier.width(8.dp))
         }
         Column {
             Text(
-                text = exercise.name,
+                text = trainingExercise.exercise.name,
                 fontSize = 32.sp,
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
             Spacer(Modifier.height(8.dp))
-            Text(text = exercise.description)
+            Text(text = trainingExercise.exercise.description)
         }
     }
 }
@@ -191,9 +191,13 @@ private fun TrainingExerciseScreenPreview() {
         TrainingExerciseScreen(
             exercise = TrainingExercise(
                 id = TrainingExerciseId(""),
-                name = "Test exercise",
-                description = "Test exercise description",
-                category = Category(0, R.string.category_back),
+                exercise = Exercise(
+                    ExerciseId.create(),
+                    name = "Test exercise",
+                    description = "Test exercise description",
+                    category = Category(0, R.string.category_back),
+                    null
+                ),
                 repetitions = 15,
                 sets = 3,
                 time = Time(30000),
