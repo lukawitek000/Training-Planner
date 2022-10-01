@@ -5,7 +5,8 @@ package com.lukasz.witkowski.training.planner.exercise.domain
  */
 class Image(
     val id: ImageId,
-    val data: ByteArray
+    val data: ByteArray? = null,
+    val path: String? = null
 ) {
     val fileName: String
         get() = id.value

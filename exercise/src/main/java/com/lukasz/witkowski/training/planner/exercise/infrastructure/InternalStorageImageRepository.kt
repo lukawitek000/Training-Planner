@@ -20,10 +20,10 @@ class InternalStorageImageRepository(
     private val directoryName: String
 ) : ImageRepository {
 
-    override suspend fun save(image: Image, fileName: String) = withContext(Dispatchers.IO) {
+    override suspend fun save(image: Image, fileName: String): String = withContext(Dispatchers.IO) {
         var outputStream: FileOutputStream? = null
+        val file = createFile(fileName)
         try {
-            val file = createFile(fileName)
             outputStream = FileOutputStream(file)
             outputStream.write(image.data)
         } catch (e: Exception) {
@@ -32,21 +32,7 @@ class InternalStorageImageRepository(
         } finally {
             closeStream(outputStream)
         }
-    }
-
-    override suspend fun read(fileName: String): Image? = withContext(Dispatchers.IO) {
-        var inputStream: FileInputStream? = null
-        try {
-            val file = createFile(fileName)
-            inputStream = FileInputStream(file)
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-            ImageFactory.fromBitmap(bitmap, ImageId(fileName))
-        } catch (e: Exception) {
-            Timber.d("Image file '$fileName' not found")
-            null
-        } finally {
-            closeStream(inputStream)
-        }
+        file.absolutePath
     }
 
     override suspend fun delete(fileName: String): Boolean = withContext(Dispatchers.IO) {
@@ -59,10 +45,10 @@ class InternalStorageImageRepository(
         }
     }
 
-    override suspend fun update(image: Image?, fileName: String) = withContext(Dispatchers.IO) {
+    override suspend fun update(image: Image, fileName: String) = withContext(Dispatchers.IO) {
         try {
             delete(fileName)
-            image?.let { save(image, fileName) } ?: Unit
+            save(image, fileName)
         } catch (e: Exception) {
             throw Exception("Couldn't update the image. Deleted failed.")
         }

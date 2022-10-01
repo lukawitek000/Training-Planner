@@ -111,4 +111,7 @@ dependencies {
 
     // Plots
     implementation "io.github.bytebeats:compose-charts:0.1.0"
+
+    // Glide for loading images
+    implementation "com.github.skydoves:landscapist-glide:2.0.0"
 }
