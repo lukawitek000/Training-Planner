@@ -13,7 +13,7 @@ object ExerciseMapper {
             name = exercise.name,
             description = exercise.description,
             category = CategoryMapper.toExerciseCategory(exercise.category),
-            imageId = exercise.imageId
+            image = ImageMapper.toImage(exercise.image)
         )
     }
 
@@ -23,15 +23,11 @@ object ExerciseMapper {
             name = exercise.name,
             description = exercise.description,
             category = CategoryMapper.toCategory(exercise.category),
-            imageId = exercise.imageId
+            image = ImageMapper.toImage(exercise.image)
         )
     }
 
     fun toPresentationExercises(exercises: List<DomainExercise>): List<Exercise> {
         return exercises.map { exercise -> ExerciseMapper.toPresentationExercise(exercise) }
     }
-
-    private fun Image.toBitmap() = BitmapFactory.decodeByteArray(data, 0, data.size)
-
-//    private fun Bitmap.toImage() = ImageFactory.fromBitmap(bitmap = this)
 }

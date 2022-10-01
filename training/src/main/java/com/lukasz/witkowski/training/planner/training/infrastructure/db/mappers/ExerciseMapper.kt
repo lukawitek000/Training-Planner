@@ -4,6 +4,7 @@ import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.domain.Image
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
@@ -44,7 +45,7 @@ internal object ExerciseMapper {
             exercise.name,
             exercise.description,
             exercise.category.ordinal,
-            exercise.imageId?.value
+            exercise.image?.path
         )
     }
 
@@ -54,7 +55,7 @@ internal object ExerciseMapper {
             dbExercise.name,
             dbExercise.description,
             ExerciseCategory.values()[dbExercise.category],
-            dbExercise.imageId?.let { ImageId(it) }
+            dbExercise.imagePath?.let { Image(ImageId.create(), it) }
         )
     }
 }

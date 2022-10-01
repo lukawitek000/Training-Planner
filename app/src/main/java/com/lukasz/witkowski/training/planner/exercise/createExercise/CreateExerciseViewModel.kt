@@ -7,23 +7,17 @@ import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.domain.Image
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Image
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ImageFactory
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ImageMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import timber.log.Timber
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 import javax.inject.Inject
 
 /** StateFlow with SavedStateHandle, do I need it?
@@ -75,7 +69,6 @@ open class CreateExerciseViewModel @Inject constructor(
                 name = name.value,
                 description = description.value,
                 category = category.value,
-                imageId = image.value?.let { ImageId.create() }
             )
             saveExercise(exercise)
         }
@@ -84,11 +77,10 @@ open class CreateExerciseViewModel @Inject constructor(
     private suspend fun saveExercise(exercise: Exercise) {
         try {
             _savingState.value = ResultHandler.Loading
-            val domainExercise = ExerciseMapper.toDomainExercise(exercise)
+            val image = saveImage()
+            val exerciseWithImage = exercise.copy(image = image)
+            val domainExercise = ExerciseMapper.toDomainExercise(exerciseWithImage)
             exerciseService.saveExercise(domainExercise)
-            domainExercise.imageId?.let {
-                exerciseService.saveImage(ImageFactory.fromBitmap(image.value!!, it))
-            }
             _savingState.value = ResultHandler.Success(true)
         } catch (e: Exception) {
             _savingState.value = ResultHandler.Error(message = "Saving exercise failed")
@@ -96,7 +88,10 @@ open class CreateExerciseViewModel @Inject constructor(
         }
     }
 
-//    private suspend fun mapExercise(exercise: Exercise): DomainExercise = withContext(Dispatchers.Default) {
-//        ExerciseMapper.toDomainExercise(exercise)
-//    }
+    private suspend fun saveImage(): Image? {
+        val imageWithData = image.value?.let { ImageFactory.fromBitmap(it) }
+        val domainImage =
+            imageWithData?.let { exerciseService.saveImage(imageWithData, imageWithData.fileName) }
+        return domainImage?.let { ImageMapper.toImage(it) }
+    }
 }

@@ -95,7 +95,7 @@ private fun GeneralExerciseInformation(
         modifier = modifier.padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        trainingExercise.exercise.imageId?.let { image ->
+        trainingExercise.exercise.image?.let { image ->
             ImageContainer(
                 modifier = Modifier
                     .fillMaxWidth(0.3f)

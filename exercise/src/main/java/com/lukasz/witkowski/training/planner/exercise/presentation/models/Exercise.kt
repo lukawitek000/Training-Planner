@@ -8,5 +8,5 @@ data class Exercise(
     val name: String,
     val description: String,
     val category: Category,
-    val imageId: ImageId? // TODO where to put bitmap, do the another object with id and bitmap?, then pass both exercise and this object to composable??
+    val image: Image? = null
 )

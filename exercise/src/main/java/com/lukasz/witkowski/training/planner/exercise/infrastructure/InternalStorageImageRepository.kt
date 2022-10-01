@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import com.lukasz.witkowski.training.planner.exercise.domain.Image
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageRepository
+import com.lukasz.witkowski.training.planner.exercise.domain.ImageWithData
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ImageFactory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,7 +21,7 @@ class InternalStorageImageRepository(
     private val directoryName: String
 ) : ImageRepository {
 
-    override suspend fun save(image: Image, fileName: String): String = withContext(Dispatchers.IO) {
+    override suspend fun save(image: ImageWithData, fileName: String): Image = withContext(Dispatchers.IO) {
         var outputStream: FileOutputStream? = null
         val file = createFile(fileName)
         try {
@@ -32,7 +33,7 @@ class InternalStorageImageRepository(
         } finally {
             closeStream(outputStream)
         }
-        file.absolutePath
+        Image(image.id, file.absolutePath)
     }
 
     override suspend fun delete(fileName: String): Boolean = withContext(Dispatchers.IO) {
@@ -45,7 +46,7 @@ class InternalStorageImageRepository(
         }
     }
 
-    override suspend fun update(image: Image, fileName: String) = withContext(Dispatchers.IO) {
+    override suspend fun update(image: ImageWithData, fileName: String) = withContext(Dispatchers.IO) {
         try {
             delete(fileName)
             save(image, fileName)

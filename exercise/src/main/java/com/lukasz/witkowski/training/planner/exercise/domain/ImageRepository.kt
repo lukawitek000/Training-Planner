@@ -6,9 +6,9 @@ interface ImageRepository {
     /**
      * Save [Image] with the provided file name.
      * @throws [Exception] if saving the [Image] fails.
-     * @return Path to the image.
+     * @return [Image] with path to the image.
      */
-    suspend fun save(image: Image, fileName: String): String
+    suspend fun save(image: ImageWithData, fileName: String): Image
 
     /**
      * Deletes image which was saved under the provided name.
@@ -20,7 +20,7 @@ interface ImageRepository {
     /**
      * Update file with new [Image].
      * @throws [Exception] if updating the [Image] fails.
-     * @return Path to the new image.
+     * @return [Image] with path to the new image.
      */
-    suspend fun update(image: Image, fileName: String): String
+    suspend fun update(image: ImageWithData, fileName: String): Image
 }

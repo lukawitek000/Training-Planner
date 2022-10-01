@@ -14,7 +14,7 @@ internal object ExerciseMapper {
             name = exercise.name,
             description = exercise.description,
             categoryId = exercise.category.ordinal,
-            imageId = exercise.imageId?.value
+            imagePath = exercise.image?.path
         )
     }
 
@@ -24,7 +24,7 @@ internal object ExerciseMapper {
             name = dbExercise.name,
             description = dbExercise.description,
             category = ExerciseCategory.values()[dbExercise.categoryId],
-            imageId = dbExercise.imageId?.let { ImageId(it) }
+            image = dbExercise.imagePath?.let { Image(ImageId.create(), it) }
         )
     }
 }

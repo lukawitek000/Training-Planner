@@ -4,15 +4,16 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.lukasz.witkowski.training.planner.exercise.domain.Image
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
+import com.lukasz.witkowski.training.planner.exercise.domain.ImageWithData
 import java.io.ByteArrayOutputStream
 import kotlin.math.roundToInt
 
 object ImageFactory {
-    fun fromBitmap(bitmap: Bitmap, imageId: ImageId): Image {
+    fun fromBitmap(bitmap: Bitmap, imageId: ImageId = ImageId.create()): ImageWithData {
         val outputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
         val compressedByteArray = compressImage(outputStream)
-        return Image(imageId, compressedByteArray)
+        return ImageWithData(imageId, compressedByteArray)
     }
 
     private fun compressImage(outputStream: ByteArrayOutputStream): ByteArray {

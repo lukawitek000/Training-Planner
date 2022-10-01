@@ -48,8 +48,7 @@ class EditExerciseViewModel @Inject constructor(
                 id = exerciseId,
                 name = name.value,
                 description = description.value,
-                category = category.value,
-                imageId = image.value?.let { ImageId.create() }
+                category = category.value
             )
             updateExercise(exercise)
         }

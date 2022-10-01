@@ -7,6 +7,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ImageFactory
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ImageMapper
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise as DomainTrainingExercise
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
@@ -37,17 +38,13 @@ object TrainingExerciseMapper {
 
     private fun toDomainExercise(exercise: Exercise): DomainExercise {
         return DomainExercise(
-            exercise.id, exercise.name, exercise.description, CategoryMapper.toExerciseCategory(exercise.category), exercise.imageId
+            exercise.id, exercise.name, exercise.description, CategoryMapper.toExerciseCategory(exercise.category), ImageMapper.toImage(exercise.image)
         )
     }
 
     private fun toPresentationExercise(exercise: DomainExercise): Exercise {
         return Exercise(
-            exercise.id, exercise.name, exercise.description, CategoryMapper.toCategory(exercise.category), exercise.imageId
+            exercise.id, exercise.name, exercise.description, CategoryMapper.toCategory(exercise.category), ImageMapper.toImage(exercise.image)
         )
     }
-
-    private fun Image.toBitmap() = BitmapFactory.decodeByteArray(data, 0, data.size)
-
-    private fun Bitmap.toImage() = ImageFactory.fromBitmap(bitmap = this, ImageId.create())
 }
