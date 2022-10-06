@@ -6,8 +6,9 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.Image
+import com.lukasz.witkowski.training.planner.exercise.domain.ImageByteArray
+import com.lukasz.witkowski.training.planner.exercise.domain.ImageReference
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageRepository
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageWithData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
@@ -23,8 +24,8 @@ class ExerciseService(
         exerciseRepository.insert(exercise)
     }
 
-    suspend fun saveImage(image: ImageWithData, fileName: String): Image {
-        return imageRepository.save(image, fileName)
+    suspend fun saveImage(image: ImageByteArray): ImageReference {
+        return imageRepository.save(image)
     }
 
     // TODO Should be all exercises taken from domain and then filter here, or the filtration should be made in infra (SQL query)? (less data transmission)

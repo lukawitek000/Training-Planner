@@ -16,8 +16,8 @@ internal class DbExerciseRepository(private val exerciseDao: ExerciseDao) : Exer
     }
 
     override suspend fun insert(exercise: Exercise): Boolean {
-        val dbExercise = ExerciseMapper.toDbExercise(exercise)
-        exerciseDao.insert(dbExercise)
+        val exerciseWithImage = ExerciseMapper.toExerciseWithImage(exercise)
+        exerciseDao.insert(exerciseWithImage)
         return true
     }
 
@@ -26,11 +26,7 @@ internal class DbExerciseRepository(private val exerciseDao: ExerciseDao) : Exer
     }
 
     override suspend fun updateExercise(updatedExercise: Exercise): Boolean {
-        val dbExercise = ExerciseMapper.toDbExercise(updatedExercise)
-        return exerciseDao.update(dbExercise) == SINGLE_ENTRY_UPDATE
-    }
-
-    companion object {
-        private const val SINGLE_ENTRY_UPDATE = 1
+        val exerciseWithImage = ExerciseMapper.toExerciseWithImage(updatedExercise)
+        return exerciseDao.update(exerciseWithImage)
     }
 }

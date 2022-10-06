@@ -45,7 +45,7 @@ internal object ExerciseMapper {
             exercise.name,
             exercise.description,
             exercise.category.ordinal,
-            exercise.image?.path
+            null // TODO handle image saving the same for training
         )
     }
 
@@ -55,7 +55,7 @@ internal object ExerciseMapper {
             dbExercise.name,
             dbExercise.description,
             ExerciseCategory.values()[dbExercise.category],
-            dbExercise.imagePath?.let { Image(ImageId.create(), it) }
+//            dbExercise.imagePath?.let { Image(ImageId.create(), it) }// TODO handle image saving the same for training
         )
     }
 }

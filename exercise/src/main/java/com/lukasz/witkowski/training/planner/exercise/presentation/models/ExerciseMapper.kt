@@ -3,17 +3,18 @@ package com.lukasz.witkowski.training.planner.exercise.presentation.models
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.lukasz.witkowski.training.planner.exercise.domain.Image
+import com.lukasz.witkowski.training.planner.exercise.domain.ImageReference
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 
 object ExerciseMapper {
 
-    fun toDomainExercise(exercise: Exercise): DomainExercise {
+    fun toDomainExercise(exercise: Exercise, imageReference: ImageReference? = null): DomainExercise {
         return DomainExercise(
             id = exercise.id,
             name = exercise.name,
             description = exercise.description,
             category = CategoryMapper.toExerciseCategory(exercise.category),
-            image = ImageMapper.toImage(exercise.image)
+            imageReference = imageReference
         )
     }
 
@@ -23,7 +24,7 @@ object ExerciseMapper {
             name = exercise.name,
             description = exercise.description,
             category = CategoryMapper.toCategory(exercise.category),
-            image = ImageMapper.toImage(exercise.image)
+            image = exercise.imageReference
         )
     }
 

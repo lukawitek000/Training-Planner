@@ -7,13 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.domain.ImageReference
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Image
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.ImageFactory
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.ImageMapper
+import com.lukasz.witkowski.training.planner.exercise.presentation.ImageFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -77,9 +76,8 @@ open class CreateExerciseViewModel @Inject constructor(
     private suspend fun saveExercise(exercise: Exercise) {
         try {
             _savingState.value = ResultHandler.Loading
-            val image = saveImage()
-            val exerciseWithImage = exercise.copy(image = image)
-            val domainExercise = ExerciseMapper.toDomainExercise(exerciseWithImage)
+            val imageReference = saveImage()
+            val domainExercise = ExerciseMapper.toDomainExercise(exercise, imageReference)
             exerciseService.saveExercise(domainExercise)
             _savingState.value = ResultHandler.Success(true)
         } catch (e: Exception) {
@@ -88,10 +86,8 @@ open class CreateExerciseViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveImage(): Image? {
-        val imageWithData = image.value?.let { ImageFactory.fromBitmap(it) }
-        val domainImage =
-            imageWithData?.let { exerciseService.saveImage(imageWithData, imageWithData.fileName) }
-        return domainImage?.let { ImageMapper.toImage(it) }
+    private suspend fun saveImage(): ImageReference? {
+        val imageByteArray = image.value?.let { ImageFactory.fromBitmap(it) }
+        return imageByteArray?.let { exerciseService.saveImage(imageByteArray) }
     }
 }
