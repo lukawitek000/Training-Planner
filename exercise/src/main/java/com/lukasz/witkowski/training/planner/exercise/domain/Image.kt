@@ -28,6 +28,12 @@ sealed interface ImageReference: Image {
      * Path to the location where the image is stored without name of the image
      */
     val path: String
+
+    /**
+     * Complete path to the image file.
+     */
+    val absolutePath: String
+        get() = "$path/$imageName"
 }
 
 data class ImageByteArray(
