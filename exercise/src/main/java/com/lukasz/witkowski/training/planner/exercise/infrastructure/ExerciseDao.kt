@@ -33,8 +33,14 @@ internal interface ExerciseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(dbImageReference: DbImageReference): Long
 
+    @Transaction
+    suspend fun deleteExerciseWithImage(exerciseId: String) {
+        deleteImageReferenceByExerciseId(exerciseId)
+        deleteExerciseById(exerciseId)
+    }
+
     @Query("DELETE FROM Exercise WHERE :id == id")
-    suspend fun delete(id: String)
+    suspend fun deleteExerciseById(id: String)
 
     @Transaction
     suspend fun update(exerciseWithImage: ExerciseWithImage): Boolean {

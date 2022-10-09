@@ -30,6 +30,10 @@ class ExerciseService(
         return imageRepository.update(image, oldImageName)
     }
 
+    private suspend fun deleteImage(image: ImageReference) {
+        imageRepository.delete(image.imageName)
+    }
+
     // TODO Should be all exercises taken from domain and then filter here, or the filtration should be made in infra (SQL query)? (less data transmission)
     fun getExercisesFromCategories(categories: List<ExerciseCategory>): Flow<List<Exercise>> {
         return exerciseRepository.getAll().map {
@@ -44,7 +48,7 @@ class ExerciseService(
             exerciseRepository.delete(exercise)
         }
         val deleteImage = async {
-            imageRepository.delete(exercise.getImageName())
+            exercise.imageReference?.let { deleteImage(it) }
         }
         deleteExercise.await()
         deleteImage.await()
@@ -57,6 +61,4 @@ class ExerciseService(
     suspend fun updateExercise(exercise: Exercise): Boolean {
         return exerciseRepository.updateExercise(exercise)
     }
-
-    private fun Exercise.getImageName(): String = "${id.value}_image"
 }

@@ -22,7 +22,7 @@ internal class DbExerciseRepository(private val exerciseDao: ExerciseDao) : Exer
     }
 
     override suspend fun delete(exercise: Exercise) {
-        exerciseDao.delete(exercise.id.value)
+        exerciseDao.deleteExerciseWithImage(exercise.id.value)
     }
 
     override suspend fun updateExercise(updatedExercise: Exercise): Boolean {
