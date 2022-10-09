@@ -2,7 +2,6 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
 import android.content.Context
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageByteArray
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageFile
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageReference
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageRepository
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +32,7 @@ class InternalStorageImageRepository(
         } finally {
             closeStream(outputStream)
         }
-        ImageFile(image.id, directoryPath.absolutePath)
+        ImageReference(image.id, directoryPath.absolutePath)
     }
 
     override suspend fun delete(fileName: String): Boolean = withContext(Dispatchers.IO) {
@@ -46,11 +45,11 @@ class InternalStorageImageRepository(
         }
     }
 
-    override suspend fun update(image: ImageByteArray, oldFileName: String) =
+    override suspend fun update(image: ImageByteArray?, oldFileName: String) =
         withContext(Dispatchers.IO) {
             try {
                 delete(oldFileName)
-                save(image)
+                image?.let { save(image) }
             } catch (e: Exception) {
                 throw Exception("Couldn't update the image. Deleted failed.")
             }

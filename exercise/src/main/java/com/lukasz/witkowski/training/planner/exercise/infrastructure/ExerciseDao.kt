@@ -38,21 +38,15 @@ internal interface ExerciseDao {
 
     @Transaction
     suspend fun update(exerciseWithImage: ExerciseWithImage): Boolean {
-        update(exerciseWithImage.exercise)
         val imgReference = exerciseWithImage.imageReference
-        if(imgReference == null) {
-            deleteImageReferenceByExerciseId(exerciseWithImage.exercise.id)
-        } else {
-            update(imgReference)
-        }
+        deleteImageReferenceByExerciseId(exerciseWithImage.exercise.id)
+        imgReference?.let { insert(it) }
+        update(exerciseWithImage.exercise)
         return true
     }
 
     @Update
     suspend fun update(dbExercise: DbExercise): Int // returns number of updated rows
-
-    @Update
-    suspend fun update(dbImageReference: DbImageReference): Int // returns number of updated rows
 
     @Query("DELETE FROM DBIMAGEREFERENCE WHERE exerciseId = :exerciseId")
     suspend fun deleteImageReferenceByExerciseId(exerciseId: String)

@@ -3,9 +3,8 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageFile
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageReference
+import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 
 internal object ExerciseMapper {
 
@@ -35,6 +34,6 @@ internal object ExerciseMapper {
     }
 
     private fun DbImageReference.toImageReference(): ImageReference {
-        return ImageFile(ImageId(id), path) // TODO how to handle other types
+        return ImageReference(ImageId(id), path)
     }
 }

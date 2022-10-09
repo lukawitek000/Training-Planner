@@ -18,9 +18,10 @@ interface ImageRepository {
     suspend fun delete(fileName: String): Boolean
 
     /**
-     * Update file with new [Image].
+     * Update file with new [ImageByteArray].
+     * If [ImageByteArray] is null, then it deletes old image file.
      * @throws [Exception] if updating the [Image] fails.
      * @return [Image] with path to the new image.
      */
-    suspend fun update(image: ImageByteArray, oldFileName: String): ImageReference
+    suspend fun update(image: ImageByteArray?, oldFileName: String): ImageReference?
 }

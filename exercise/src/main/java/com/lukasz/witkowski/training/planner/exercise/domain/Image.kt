@@ -1,39 +1,9 @@
 package com.lukasz.witkowski.training.planner.exercise.domain
 
-/**
- * Compressed image to reduce its size
- */
-//class ImageWithData(
-//    val id: ImageId,
-//    val data: ByteArray
-//) {
-//    val fileName: String
-//        get() = id.value
-//}
-//
-//class Image(
-//    val id: ImageId,
-//    val path: String
-//)
-
-
 sealed interface Image {
     val id: ImageId
     val imageName: String
         get() = "${id.value}_image"
-}
-
-sealed interface ImageReference: Image {
-    /**
-     * Path to the location where the image is stored without name of the image
-     */
-    val path: String
-
-    /**
-     * Complete path to the image file.
-     */
-    val absolutePath: String
-        get() = "$path/$imageName"
 }
 
 data class ImageByteArray(
@@ -41,7 +11,18 @@ data class ImageByteArray(
     val data: ByteArray
 ): Image
 
-data class ImageFile(
+data class ImageReference(
     override val id: ImageId,
-    override val path: String
-): ImageReference
+    val path: String,
+    val source: ImageSource = ImageSource.FILE
+): Image {
+    /**
+     * Complete path to the image file.
+     */
+    val absolutePath: String
+        get() = "$path/$imageName"
+
+    enum class ImageSource {
+        FILE
+    }
+}
