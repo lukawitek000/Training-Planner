@@ -9,6 +9,7 @@ data class TrainingPlan(
     val description: String = "",
     val exercises: List<TrainingExercise>,
     val isSynchronized: Boolean = false // TODO how to handle synchronization flags
+    // Enum flag created, deleted up-to-date
 ) {
 
     fun hasCategories(categories: List<ExerciseCategory>): Boolean {

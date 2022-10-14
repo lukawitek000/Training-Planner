@@ -46,6 +46,8 @@ class Time(val timeInMillis: Long) {
 
     operator fun minus(time: Time) = Time(this.timeInMillis - time.timeInMillis)
 
+    operator fun plus(time: Time) = Time(this.timeInMillis + time.timeInMillis)
+
     private fun appendZeroBeforeSecondDigitIfNeeded(
         seconds: Int,
         timeStringBuilder: StringBuilder
