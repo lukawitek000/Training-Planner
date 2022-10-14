@@ -27,7 +27,7 @@ private fun createTrainingExercisesWithDifferentSets(): List<TrainingExercise> {
         sets = 2,
         time = Time(10000L),
         restTime = Time(30000),
-        exercise = createExercise()
+        exercise = createDummyExercise()
     )
     val exercise2 = TrainingExercise(
         id = TrainingExerciseId.create(),
@@ -35,7 +35,7 @@ private fun createTrainingExercisesWithDifferentSets(): List<TrainingExercise> {
         sets = 3,
         time = Time(10000L),
         restTime = Time.NONE,
-        exercise = createExercise()
+        exercise = createDummyExercise()
     )
     val exercise3 = TrainingExercise(
         id = TrainingExerciseId.create(),
@@ -43,7 +43,7 @@ private fun createTrainingExercisesWithDifferentSets(): List<TrainingExercise> {
         sets = 1,
         time = Time(10000L),
         restTime = Time(30000),
-        exercise = createExercise()
+        exercise = createDummyExercise()
     )
     val exercise4 = TrainingExercise(
         id = TrainingExerciseId.create(),
@@ -51,11 +51,11 @@ private fun createTrainingExercisesWithDifferentSets(): List<TrainingExercise> {
         sets = 5,
         time = Time(10000L),
         restTime = Time(30000),
-        exercise = createExercise()
+        exercise = createDummyExercise()
     )
     return listOf(exercise1, exercise2, exercise3, exercise4)
 }
 
-private fun createExercise() = Exercise(
+fun createDummyExercise() = Exercise(
     ExerciseId.create(), "", ""
 )
