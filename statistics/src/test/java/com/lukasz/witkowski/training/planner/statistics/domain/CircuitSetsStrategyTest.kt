@@ -1,5 +1,7 @@
 package com.lukasz.witkowski.training.planner.statistics.domain
 
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsStrategy
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
@@ -42,7 +44,7 @@ class CircuitSetsStrategyTest {
     @Test
     fun `load single exercise with many sets`() {
         // given
-        val exercises = listOf(TrainingExercise(id = TrainingExerciseId.create(), sets = 3))
+        val exercises = listOf(TrainingExercise(id = TrainingExerciseId.create(), sets = 3, exercise = createExercise()))
         val trainingPlan = createTrainingPlan(exercises)
 
         // when
@@ -92,31 +94,41 @@ class CircuitSetsStrategyTest {
     private fun create4Exercises(): List<TrainingExercise> {
         val exercise1 = TrainingExercise(
             id = TrainingExerciseId.create(),
-            sets = 2
+            sets = 2,
+            exercise = createExercise()
         )
         val exercise2 = TrainingExercise(
             id = TrainingExerciseId.create(),
-            sets = 2
+            sets = 2,
+            exercise = createExercise()
         )
         val exercise3 = TrainingExercise(
             id = TrainingExerciseId.create(),
-            sets = 2
+            sets = 2,
+            exercise = createExercise()
         )
         val exercise4 = TrainingExercise(
             id = TrainingExerciseId.create(),
-            sets = 2
+            sets = 2,
+            exercise = createExercise()
         )
         return listOf(exercise1, exercise2, exercise3, exercise4)
     }
 
+    private fun createExercise() = Exercise(
+        ExerciseId.create(), "", ""
+    )
+
     private fun create2Exercises(): List<TrainingExercise> {
         val exercise1 = TrainingExercise(
             id = TrainingExerciseId.create(),
-            sets = 2
+            sets = 2,
+            exercise = createExercise()
         )
         val exercise2 = TrainingExercise(
             id = TrainingExerciseId.create(),
-            sets = 4
+            sets = 4,
+            exercise = createExercise()
         )
         return listOf(exercise1, exercise2)
     }

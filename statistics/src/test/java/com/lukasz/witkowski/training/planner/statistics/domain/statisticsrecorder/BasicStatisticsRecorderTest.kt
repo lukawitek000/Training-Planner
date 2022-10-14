@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder
 
 import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
@@ -195,22 +197,30 @@ class BasicStatisticsRecorderTest {
     private fun createTrainingExercises(): List<TrainingExercise> {
         val exercise1 = TrainingExercise(
             id = TrainingExerciseId.create(),
-            sets = 3
+            sets = 3,
+            exercise = createExercise()
         )
         val exercise2 = TrainingExercise(
             id = TrainingExerciseId.create(),
-            sets = 3
+            sets = 3,
+            exercise = createExercise()
         )
         val exercise3 = TrainingExercise(
             id = TrainingExerciseId.create(),
-            sets = 1
+            sets = 1,
+            exercise = createExercise()
         )
         val exercise4 = TrainingExercise(
             id = TrainingExerciseId.create(),
-            sets = 5
+            sets = 5,
+            exercise = createExercise()
         )
         return listOf(exercise1, exercise2, exercise3, exercise4)
     }
+
+    private fun createExercise() = Exercise(
+        ExerciseId.create(), "", ""
+    )
 
     private companion object {
         val TIME_10_SECONDS = Time(10000L)

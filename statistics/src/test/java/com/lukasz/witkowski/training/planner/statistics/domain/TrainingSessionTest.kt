@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.statistics.domain
 
 import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsStrategy
@@ -219,7 +221,8 @@ class TrainingSessionTest {
             repetitions = 10,
             sets = 2,
             time = Time(10000L),
-            restTime = Time(30000)
+            restTime = Time(30000),
+            exercise = createExercise()
         )
         return listOf(exercise)
     }
@@ -230,31 +233,39 @@ class TrainingSessionTest {
             repetitions = 10,
             sets = 2,
             time = Time(10000L),
-            restTime = Time(30000)
+            restTime = Time(30000),
+            exercise = createExercise()
         )
         val exercise2 = TrainingExercise(
             id = TrainingExerciseId.create(),
             repetitions = 10,
             sets = 3,
             time = Time(10000L),
-            restTime = Time.NONE
+            restTime = Time.NONE,
+            exercise = createExercise()
         )
         val exercise3 = TrainingExercise(
             id = TrainingExerciseId.create(),
             repetitions = 10,
             sets = 1,
             time = Time(10000L),
-            restTime = Time(30000)
+            restTime = Time(30000),
+            exercise = createExercise()
         )
         val exercise4 = TrainingExercise(
             id = TrainingExerciseId.create(),
             repetitions = 10,
             sets = 5,
             time = Time(10000L),
-            restTime = Time(30000)
+            restTime = Time(30000),
+            exercise = createExercise()
         )
         return listOf(exercise1, exercise2, exercise3, exercise4)
     }
+
+    private fun createExercise() = Exercise(
+        ExerciseId.create(), "", ""
+    )
 
     private fun assertRestTimeState(
         expectedState: TrainingSessionState,
