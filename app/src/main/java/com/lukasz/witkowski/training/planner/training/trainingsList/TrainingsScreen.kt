@@ -64,8 +64,8 @@ fun TrainingsScreen(
                 TrainingsList(
                     trainings = trainings,
                     navigateToTrainingOverview =  {
-                        //navigateToTrainingOverview // TODO revert this changes
-                          viewModel.sendTrainingPlan(it)
+                        navigateToTrainingOverview(it)
+//                          viewModel.sendTrainingPlan(it)// TODO for testing purposes
                                                   },
                     startTrainingSession = { navigateToTrainingSession(it.id) }
                 )

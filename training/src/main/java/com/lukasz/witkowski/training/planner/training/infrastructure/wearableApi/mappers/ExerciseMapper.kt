@@ -1,33 +1,38 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers
 
 import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.ExerciseJsonModel
 
 object ExerciseMapper {
 
-    fun toExerciseJsonModel(exercise: TrainingExercise): ExerciseJsonModel {
+    fun toExerciseJsonModel(trainingExercise: TrainingExercise): ExerciseJsonModel {
         return ExerciseJsonModel(
-            id = exercise.id.value,
-            name = exercise.name,
-            description = exercise.description,
-            category = exercise.category.ordinal,
-            repetitions = exercise.repetitions,
-            sets = exercise.sets,
-            time = exercise.time.timeInMillis,
-            restTime = exercise.restTime.timeInMillis
+            id = trainingExercise.id.value,
+            exerciseId = trainingExercise.exercise.id.value,
+            name = trainingExercise.exercise.name,
+            description = trainingExercise.exercise.description,
+            category = trainingExercise.exercise.category.ordinal,
+            repetitions = trainingExercise.repetitions,
+            sets = trainingExercise.sets,
+            time = trainingExercise.time.timeInMillis,
+            restTime = trainingExercise.restTime.timeInMillis
         )
     }
 
     fun toExercise(exerciseJsonModel: ExerciseJsonModel): TrainingExercise {
         return TrainingExercise(
             id = TrainingExerciseId(exerciseJsonModel.id),
-            name = exerciseJsonModel.name,
-            description = exerciseJsonModel.description,
-            category = ExerciseCategory.values()[exerciseJsonModel.category],
-            image = null,
+            exercise = Exercise(
+                ExerciseId(exerciseJsonModel.exerciseId),
+                exerciseJsonModel.name,
+                exerciseJsonModel.description,
+                ExerciseCategory.values()[exerciseJsonModel.category]
+            ),
             repetitions = exerciseJsonModel.repetitions,
             sets = exerciseJsonModel.sets,
             time = Time(exerciseJsonModel.time),

@@ -11,7 +11,7 @@ data class TrainingPlan(
     val isSynchronized: Boolean = false
 ) {
     fun getCategories(): List<Category> {
-        return exercises.map { exercise -> exercise.category }
+        return exercises.map { trainingExercise -> trainingExercise.exercise.category }
             .filter { category -> !category.isNone() }
             .distinct()
     }

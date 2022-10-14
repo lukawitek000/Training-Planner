@@ -9,9 +9,9 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exerci
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -69,10 +69,7 @@ class CreateTrainingViewModel @Inject constructor(
     ) {
         val trainingExercise = TrainingExercise(
             id = TrainingExerciseId.create(),
-            name = exercise.name,
-            description = exercise.description,
-            category = exercise.category,
-            image = exercise.image,
+            exercise = exercise,
             repetitions = reps.toIntOrNull() ?: 1,
             sets = sets.toIntOrNull() ?: 1,
             time = Time(minutes = minutes, seconds = seconds)

@@ -3,34 +3,32 @@ package com.lukasz.witkowski.training.planner.exercise.presentation.models
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.lukasz.witkowski.training.planner.exercise.domain.Image
+import com.lukasz.witkowski.training.planner.exercise.domain.ImageReference
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 
 object ExerciseMapper {
 
-    fun toDomainExercise(exercise: Exercise): com.lukasz.witkowski.training.planner.exercise.domain.Exercise {
-        return com.lukasz.witkowski.training.planner.exercise.domain.Exercise(
+    fun toDomainExercise(exercise: Exercise, imageReference: ImageReference? = null): DomainExercise {
+        return DomainExercise(
             id = exercise.id,
             name = exercise.name,
             description = exercise.description,
             category = CategoryMapper.toExerciseCategory(exercise.category),
-            image = exercise.image?.toImage()
+            imageReference = imageReference
         )
     }
 
-    fun toPresentationExercise(exercise: com.lukasz.witkowski.training.planner.exercise.domain.Exercise): Exercise {
+    fun toPresentationExercise(exercise: DomainExercise): Exercise {
         return Exercise(
             id = exercise.id,
             name = exercise.name,
             description = exercise.description,
             category = CategoryMapper.toCategory(exercise.category),
-            image = exercise.image?.toBitmap()
+            image = exercise.imageReference
         )
     }
 
-    fun toPresentationExercises(exercises: List<com.lukasz.witkowski.training.planner.exercise.domain.Exercise>): List<Exercise> {
+    fun toPresentationExercises(exercises: List<DomainExercise>): List<Exercise> {
         return exercises.map { exercise -> ExerciseMapper.toPresentationExercise(exercise) }
     }
-
-    private fun Image.toBitmap() = BitmapFactory.decodeByteArray(data, 0, data.size)
-
-    private fun Bitmap.toImage() = ImageFactory.fromBitmap(bitmap = this)
 }

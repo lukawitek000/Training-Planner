@@ -43,7 +43,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
@@ -370,7 +372,7 @@ private fun TrainingExerciseInfo(
                     .fillMaxWidth()
             ) {
                 Text(
-                    text = trainingExercise.name,
+                    text = trainingExercise.exercise.name,
                     fontSize = 24.sp,
                     color = MaterialTheme.colors.primary
                 )
@@ -431,8 +433,9 @@ fun TrainingExerciseListItemPreview() {
     TrainingExerciseListItem(
         trainingExercise = TrainingExercise(
             id = TrainingExerciseId(""),
-            name = "New exercise",
-            description = "",
+            exercise = Exercise(
+                ExerciseId.create(), "New exercise", "", Category(), null
+            ),
             repetitions = 10,
             sets = 5,
             time = Time(1000L),
@@ -448,8 +451,9 @@ fun TrainingExerciseListItemPreview() {
 fun RestTimeDialogPreview() {
     SetTrainingExerciseRestTimeDialog(
         trainingExercise = TrainingExercise(
-            category = Category(),
-            name = "Preview exercise",
+            exercise = Exercise(
+                ExerciseId.create(), "New exercise", "", Category(), null
+            ),
             id = TrainingExerciseId("")
         ),
         closeDialog = {},

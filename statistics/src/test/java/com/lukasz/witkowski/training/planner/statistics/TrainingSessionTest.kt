@@ -24,7 +24,8 @@ internal open class TrainingSessionTest {
             repetitions = 10,
             sets = 2,
             time = Time(10000L),
-            restTime = Time(30000)
+            restTime = Time(30000),
+            exercise = createDummyExercise()
         )
         return listOf(exercise)
     }

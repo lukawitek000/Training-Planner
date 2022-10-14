@@ -19,7 +19,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.trainingSession.components.TimerWithCircularProgressBar
@@ -40,14 +42,14 @@ fun RestTimeScreen(
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         TimerWithCircularProgressBar(totalTime = totalTime, timeLeft = timeLeft)
-        NextExerciseOverview(exercise = nextExercise)
+        NextExerciseOverview(trainingExercise = nextExercise)
     }
 }
 
 @Composable
 fun NextExerciseOverview(
     modifier: Modifier = Modifier,
-    exercise: TrainingExercise
+    trainingExercise: TrainingExercise
 ) {
     Column(modifier = modifier.padding(8.dp)) {
         Text(text = stringResource(id = R.string.next_exercise), fontSize = 24.sp)
@@ -55,14 +57,14 @@ fun NextExerciseOverview(
             Column {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = exercise.name,
+                    text = trainingExercise.exercise.name,
                     fontSize = 24.sp,
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 TrainingExerciseRepsSetsTimeOverviewRow(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    exercise = exercise,
+                    exercise = trainingExercise,
                     textColor = MaterialTheme.colors.primaryVariant
                 )
             }
@@ -79,9 +81,13 @@ private fun RestTimeScreenPreview() {
             totalTime = Time(10000),
             nextExercise = TrainingExercise(
                 id = TrainingExerciseId(""),
-                name = "Next exercise name",
-                description = "Next exercise description",
-                category = Category(0, R.string.category_back),
+                exercise = Exercise(
+                    ExerciseId.create(),
+                    name = "Next exercise name",
+                    description = "Next exercise description",
+                    category = Category(0, R.string.category_back),
+                    null
+                ),
                 repetitions = 15,
                 sets = 3,
                 time = Time(30000),

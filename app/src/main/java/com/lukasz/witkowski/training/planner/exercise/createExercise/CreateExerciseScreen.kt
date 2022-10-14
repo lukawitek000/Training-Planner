@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,7 +44,7 @@ import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
-import com.skydoves.landscapist.glide.GlideImage
+import com.skydoves.landscapist.coil.CoilImage
 import kotlinx.coroutines.launch
 
 @Composable
@@ -193,16 +194,14 @@ fun UploadImageLayout(
     onImageChange: (Bitmap) -> Unit
 ) {
     val launcher = imageActivityResultLauncher(onImageChange = onImageChange)
-    val placeholder =
-        Uri.parse("android.resource://com.lukasz.witkowski.training.planner/drawable/exercise_default")
+    val placeholder: Int = R.drawable.exercise_default
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ImageContainer {
-            GlideImage(
+            CoilImage(
                 imageModel = image ?: placeholder,
-                contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .width(200.dp)
                     .height(200.dp)

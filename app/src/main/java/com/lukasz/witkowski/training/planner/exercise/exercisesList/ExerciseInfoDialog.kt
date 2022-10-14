@@ -41,11 +41,11 @@ fun ExerciseInfoAlertDialog(
                 color = MaterialTheme.colors.primary
             )
             Divider(Modifier.padding(8.dp), color = MaterialTheme.colors.primary)
-            ImageWithDefaultPlaceholder(
-                modifier = Modifier,
-                imageDescription = "${exercise.name} image", image = exercise.image,
-                heightMax = 350.dp
-            )
+//            ImageWithDefaultPlaceholder(
+//                modifier = Modifier,
+//                imageDescription = "${exercise.name} image", image = exercise.image,
+//                heightMax = 350.dp
+//            )
             if (exercise.description.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(

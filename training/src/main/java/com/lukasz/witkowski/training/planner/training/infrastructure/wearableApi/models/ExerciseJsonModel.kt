@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.training.infrastructure.wearableAp
 
 data class ExerciseJsonModel(
     val id: String,
+    val exerciseId: String,
     val name: String,
     val description: String,
     val category: Int,

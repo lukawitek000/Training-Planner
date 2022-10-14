@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.room.Room
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
+import com.lukasz.witkowski.training.planner.exercise.domain.ImageRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDatabase
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.InternalStorageImageRepository
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
 import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoriesCollection
@@ -24,8 +26,8 @@ internal object ExerciseModule {
 
     @Singleton
     @Provides
-    fun provideExerciseService(exerciseRepository: ExerciseRepository): ExerciseService {
-        return ExerciseService(exerciseRepository)
+    fun provideExerciseService(exerciseRepository: ExerciseRepository, imageRepository: ImageRepository): ExerciseService {
+        return ExerciseService(exerciseRepository, imageRepository)
     }
 
     @Provides
@@ -42,6 +44,12 @@ internal object ExerciseModule {
     @Provides
     fun provideDbExerciseRepository(exerciseDao: ExerciseDao): DbExerciseRepository {
         return DbExerciseRepository(exerciseDao)
+    }
+
+    @Singleton
+    @Provides
+    fun provideInternalStorageImageRepository(@ApplicationContext context: Context): InternalStorageImageRepository {
+        return InternalStorageImageRepository(context, "exercise_images")
     }
 
     @Singleton

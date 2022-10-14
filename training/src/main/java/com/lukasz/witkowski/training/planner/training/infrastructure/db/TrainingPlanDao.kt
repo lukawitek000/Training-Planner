@@ -5,7 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
 import androidx.room.Transaction
-import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbExercise
+import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingExercise
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingPlanWithExercises
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +25,7 @@ internal interface TrainingPlanDao {
     suspend fun insertTraining(dbTrainingPlan: DbTrainingPlan)
 
     @Insert(onConflict = REPLACE)
-    suspend fun insertExercise(dbExercise: DbExercise)
+    suspend fun insertExercise(dbExercise: DbTrainingExercise)
 
     @Query("SELECT * FROM TrainingPlan")
     fun getAll(): Flow<List<DbTrainingPlanWithExercises>>
