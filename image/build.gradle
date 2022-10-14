@@ -40,7 +40,7 @@ def configFile = files("$rootDir/config/detekt/detekt.yml")
 
 apply plugin: 'io.gitlab.arturbosch.detekt'
 
-tasks.register("detektAll", Detekt) {
+tasks.register("customDetekt", Detekt) {
     description = "Custom DETEKT build for all modules"
     parallel = true
     buildUponDefaultConfig = false
