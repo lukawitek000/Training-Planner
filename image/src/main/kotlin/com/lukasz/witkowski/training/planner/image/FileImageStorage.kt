@@ -18,6 +18,8 @@ class FileImageStorage : ImageStorage {
         println("")
         println("")
         println("")
+        println("")
+        println("")
         return
     }
 }
