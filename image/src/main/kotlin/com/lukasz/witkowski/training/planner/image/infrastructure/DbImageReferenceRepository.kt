@@ -4,7 +4,7 @@ import com.lukasz.witkowski.training.planner.image.domain.ImageReferenceReposito
 import com.lukasz.witkowski.training.planner.image.presentation.ImageId
 import com.lukasz.witkowski.training.planner.image.presentation.ImageReference
 
-class DbImageReferenceRepository: ImageReferenceRepository {
+internal class DbImageReferenceRepository: ImageReferenceRepository {
     override fun save(imageReference: ImageReference): ImageId? {
         TODO("Not yet implemented")
     }

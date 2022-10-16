@@ -5,12 +5,13 @@ import com.lukasz.witkowski.training.planner.image.application.ImageService
 /**
  * Image storage that uses two repositories to store image and its reference.
  */
-class SharedImageStorage private constructor(private val imageService: ImageService): ImageStorage {
-    override fun saveImage(image: ImageByteArray): ImageReference {
-        return imageService.saveImage(image)
+class SharedImageStorage private constructor(private val imageService: ImageService) :
+    ImageStorage {
+    override fun saveImage(image: Image): ImageReference {
+        return imageService.saveImage(image.toImageByteArray())
     }
 
-    override fun readImage(imageId: ImageId): ImageByteArray {
+    override fun readImage(imageId: ImageId): Image {
         return imageService.readImage(imageId)
     }
 
@@ -18,8 +19,8 @@ class SharedImageStorage private constructor(private val imageService: ImageServ
         return imageService.readImageReference(imageId)
     }
 
-    override fun updateImage(image: ImageByteArray): ImageReference {
-        return imageService.updateImage(image)
+    override fun updateImage(image: Image): ImageReference {
+        return imageService.updateImage(image.toImageByteArray())
     }
 
     override fun deleteImage(imageId: ImageId, ownerId: String) {

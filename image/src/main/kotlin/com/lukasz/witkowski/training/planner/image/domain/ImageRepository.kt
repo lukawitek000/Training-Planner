@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.image.domain
 
-import com.lukasz.witkowski.training.planner.image.presentation.ImageByteArray
 import com.lukasz.witkowski.training.planner.image.presentation.ImageReference
 import java.io.IOException
 

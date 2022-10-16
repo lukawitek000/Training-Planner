@@ -1,7 +1,9 @@
 package com.lukasz.witkowski.training.planner.image.presentation
 
-data class ImageByteArray(
+import android.graphics.Bitmap
+
+data class Image(
     val imageId: ImageId,
     val ownerId: String,
-    val data: ByteArray
+    val bitmap: Bitmap
 )

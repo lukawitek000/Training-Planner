@@ -1,10 +1,10 @@
 package com.lukasz.witkowski.training.planner.image.infrastructure
 
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
-import com.lukasz.witkowski.training.planner.image.presentation.ImageByteArray
+import com.lukasz.witkowski.training.planner.image.domain.ImageByteArray
 import com.lukasz.witkowski.training.planner.image.presentation.ImageReference
 
-class InternalStorageImageRepository : ImageRepository {
+internal class InternalStorageImageRepository : ImageRepository {
     override suspend fun save(image: ImageByteArray): ImageReference {
         TODO("Not yet implemented")
     }
