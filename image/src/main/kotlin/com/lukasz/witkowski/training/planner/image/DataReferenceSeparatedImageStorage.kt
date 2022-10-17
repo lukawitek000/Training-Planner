@@ -6,7 +6,10 @@ import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
 /**
  * Image storage that uses two repositories to store image and its reference.
  */
-class DataReferenceSeparatedImageStorage private constructor(private val imageRepository: ImageRepository, private val imageReferenceRepository: ImageReferenceRepository) :
+internal class DataReferenceSeparatedImageStorage constructor(
+    private val imageRepository: ImageRepository,
+    private val imageReferenceRepository: ImageReferenceRepository
+) :
     ImageStorage {
     override fun saveImage(image: ImageByteArray): ImageReference {
         TODO("Not yet implemented")
