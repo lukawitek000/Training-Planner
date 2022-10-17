@@ -1,8 +1,8 @@
 package com.lukasz.witkowski.training.planner.image.infrastructure
 
 import com.lukasz.witkowski.training.planner.image.domain.ImageReferenceRepository
-import com.lukasz.witkowski.training.planner.image.presentation.ImageId
-import com.lukasz.witkowski.training.planner.image.presentation.ImageReference
+import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.image.ImageReference
 
 internal class DbImageReferenceRepository: ImageReferenceRepository {
     override fun save(imageReference: ImageReference): ImageId? {

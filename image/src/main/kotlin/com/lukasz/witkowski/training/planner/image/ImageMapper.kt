@@ -1,8 +1,7 @@
-package com.lukasz.witkowski.training.planner.image.presentation
+package com.lukasz.witkowski.training.planner.image
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.lukasz.witkowski.training.planner.image.domain.ImageByteArray
 import java.io.ByteArrayOutputStream
 import kotlin.math.roundToInt
 

@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.image.presentation
+package com.lukasz.witkowski.training.planner.image
 
 data class ImageReference(
     val imageId: ImageId,

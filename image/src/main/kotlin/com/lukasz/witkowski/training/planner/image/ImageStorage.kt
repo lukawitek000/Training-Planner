@@ -1,10 +1,10 @@
-package com.lukasz.witkowski.training.planner.image.presentation
+package com.lukasz.witkowski.training.planner.image
 
 interface ImageStorage {
-    fun saveImage(image: Image): ImageReference
-    fun readImage(imageId: ImageId): Image
+    fun saveImage(image: ImageByteArray): ImageReference
+    fun readImage(imageId: ImageId): ImageByteArray
     fun readImageReference(imageId: ImageId): ImageReference
-    fun updateImage(image: Image): ImageReference
+    fun updateImage(image: ImageByteArray): ImageReference
 
     /**
      * Delete image which is used by the owner based on the [ownerId].
