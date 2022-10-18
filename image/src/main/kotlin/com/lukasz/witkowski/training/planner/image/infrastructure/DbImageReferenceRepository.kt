@@ -5,7 +5,7 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
 
 internal class DbImageReferenceRepository: ImageReferenceRepository {
-    override fun save(imageReference: ImageReference): ImageId? {
+    override suspend fun save(imageReference: ImageReference): ImageId? {
         TODO("Not yet implemented")
     }
 
@@ -20,7 +20,11 @@ internal class DbImageReferenceRepository: ImageReferenceRepository {
         TODO("Not yet implemented")
     }
 
-    override fun read(ownerId: String): ImageReference {
+    override suspend fun readByOwnerId(ownerId: String): ImageReference {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun read(imageId: ImageId): ImageReference {
         TODO("Not yet implemented")
     }
 }

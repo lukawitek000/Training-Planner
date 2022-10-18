@@ -7,7 +7,7 @@ internal interface ImageReferenceRepository {
     /**
      * @return [ImageId] of the saved [ImageReference], _null_ if saving failed.
      */
-    fun save(imageReference: ImageReference): ImageId?
+    suspend fun save(imageReference: ImageReference): ImageId?
 
     fun delete(imageReference: ImageReference): Boolean
     /**
@@ -15,5 +15,7 @@ internal interface ImageReferenceRepository {
     */
     fun update(newImageReference: ImageReference, oldImageReference: ImageReference): ImageId?
 
-    fun read(ownerId: String): ImageReference
+    suspend fun readByOwnerId(ownerId: String): ImageReference?
+    suspend fun read(imageId: ImageId): ImageReference?
+
 }

@@ -1,8 +1,8 @@
 package com.lukasz.witkowski.training.planner.image
 
 interface ImageStorage {
-    fun saveImage(image: ImageByteArray): ImageReference
-    fun readImage(imageId: ImageId): ImageByteArray
+    suspend fun saveImage(image: ImageByteArray): ImageReference
+    suspend fun readImage(imageId: ImageId): ImageByteArray
     fun readImageReference(imageId: ImageId): ImageReference
     fun updateImage(image: ImageByteArray): ImageReference
 
