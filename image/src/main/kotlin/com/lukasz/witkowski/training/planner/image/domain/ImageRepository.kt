@@ -21,11 +21,10 @@ internal interface ImageRepository {
 
     /**
      * Update file with new [ImageByteArray].
-     * If [ImageByteArray] is null, then it deletes old image file.
      * @throws [Exception] if updating the [ImageReference] fails.
      * @return [ImageReference] with path to the new image.
      */
-    suspend fun update(image: ImageByteArray?, oldImageReference: ImageReference): ImageReference?
+    suspend fun update(image: ImageByteArray, oldImageReference: ImageReference): ImageReference
 
     /**
      * Read image from the storage based on the [ImageReference].
