@@ -9,10 +9,10 @@ import androidx.room.Transaction
 internal interface ImageReferenceDao {
 
     @Query("SELECT * FROM DBIMAGEREFERENCE WHERE id=:imageId")
-    fun getImageReference(imageId: String): DbImageReference
+    suspend fun getImageReference(imageId: String): DbImageReference
 
     @Transaction
-    fun insert(dbImageReferenceWithOwners: ImageReferenceWithOwners) {
+    suspend fun insert(dbImageReferenceWithOwners: ImageReferenceWithOwners) {
         insert(dbImageReferenceWithOwners.imageReference)
         for (imgOwner in dbImageReferenceWithOwners.owners) {
             insert(imgOwner)
@@ -20,8 +20,8 @@ internal interface ImageReferenceDao {
     }
 
     @Insert
-    fun insert(dbImageReference: DbImageReference): Long
+    suspend fun insert(dbImageReference: DbImageReference): Long
 
     @Insert
-    fun insert(dbImageOwner: DbImageOwner): Long
+    suspend fun insert(dbImageOwner: DbImageOwner): Long
 }
