@@ -34,6 +34,8 @@ android {
 
 dependencies {
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0"
+
+    testImplementation 'junit:junit:4.13.2'
 }
 
 def configFile = files("$rootDir/config/detekt/detekt.yml")
