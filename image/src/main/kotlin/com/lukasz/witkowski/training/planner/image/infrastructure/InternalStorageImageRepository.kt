@@ -5,6 +5,7 @@ import com.lukasz.witkowski.training.planner.image.ImageByteArray
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.Closeable
@@ -15,7 +16,7 @@ import java.io.IOException
 internal class InternalStorageImageRepository(
     private val context: Context,
     private val directoryName: String,
-    private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ImageRepository {
 
     private val directoryPath = context.getDir(directoryName, Context.MODE_PRIVATE)
@@ -33,7 +34,7 @@ internal class InternalStorageImageRepository(
         } finally {
             closeStream(outputStream)
         }
-        ImageReference(image.imageId, directoryPath.absolutePath)
+        ImageReference(image.imageId, image.ownerId, directoryPath.absolutePath)
     }
 
     override suspend fun read(imageReference: ImageReference): ImageByteArray? =
@@ -43,7 +44,7 @@ internal class InternalStorageImageRepository(
                 val file = File(filePath)
                 if (file.exists()) {
                     val byteArray = file.readBytes()
-                    ImageByteArray(imageReference.imageId, "", byteArray)
+                    ImageByteArray(imageReference.imageId, imageReference.ownerId, byteArray)
                 } else {
                     throw Exception("Image does not exist under the path ${imageReference.path}")
                 }
