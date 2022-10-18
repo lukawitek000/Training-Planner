@@ -34,7 +34,7 @@ internal class InternalStorageImageRepository(
         } finally {
             closeStream(outputStream)
         }
-        ImageReference(image.imageId, image.ownerId, directoryPath.absolutePath)
+        ImageReference(image.imageId, image.ownerId, file.absolutePath)
     }
 
     override suspend fun read(imageReference: ImageReference): ImageByteArray? =

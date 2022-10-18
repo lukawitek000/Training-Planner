@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageRefere
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageReferenceDatabase
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -55,7 +56,9 @@ class ImageStorageTest {
         println("Saved image path ${imageReference.path}")
         val readImage = imageStorage.readImage(imageReference.imageId)
 
-        assertEquals(image, readImage)
+        assertEquals(image.imageId, readImage.imageId)
+//        assertEquals(image.data, readImage.data)
+        assertArrayEquals(image.data, readImage.data)
     }
 
 
