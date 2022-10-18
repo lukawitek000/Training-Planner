@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-internal data class DbImageOwners(
+internal data class DbImageOwner(
     @PrimaryKey
     val ownerId: String,
     val imageId: String

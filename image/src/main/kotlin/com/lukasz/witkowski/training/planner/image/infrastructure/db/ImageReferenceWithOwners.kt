@@ -10,5 +10,5 @@ internal data class ImageReferenceWithOwners(
         parentColumn = "id",
         entityColumn = "imageId"
     )
-    val owners: List<DbImageOwners>
+    val owners: List<DbImageOwner>
 )
