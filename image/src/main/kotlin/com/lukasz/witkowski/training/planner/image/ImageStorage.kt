@@ -2,6 +2,11 @@ package com.lukasz.witkowski.training.planner.image
 
 interface ImageStorage {
     suspend fun saveImage(image: ImageByteArray): ImageReference
+
+    /**
+     * Read the image based on the [imageId].
+     * @throws [ImageNotFoundException] if the image was not found.
+     */
     suspend fun readImage(imageId: ImageId): ImageByteArray
     fun readImageReference(imageId: ImageId): ImageReference
     fun updateImage(image: ImageByteArray): ImageReference
