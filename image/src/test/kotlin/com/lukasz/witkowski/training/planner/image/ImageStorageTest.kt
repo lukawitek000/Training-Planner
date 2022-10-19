@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.image
 
 import android.content.Context
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.lukasz.witkowski.training.planner.image.infrastructure.DbImageReferenceRepository
@@ -13,7 +12,6 @@ import org.junit.After
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -26,9 +24,6 @@ class ImageStorageTest {
     private lateinit var imageStorage: ImageStorage
     private lateinit var imgReferenceDatabase: ImageReferenceDatabase
     private lateinit var imageReferencedDao: ImageReferenceDao
-
-    @get:Rule
-    var instantTask = InstantTaskExecutorRule()
 
     @Before
     fun setUp() {
@@ -53,7 +48,6 @@ class ImageStorageTest {
         val image = givenImageByteArray(imageId)
 
         val imageReference = imageStorage.saveImage(image)
-        println("Saved image path ${imageReference.path}")
         val readImage = imageStorage.readImage(imageReference.imageId)
 
         assertEquals(image.imageId, readImage.imageId)
@@ -62,7 +56,10 @@ class ImageStorageTest {
     }
 
 
-    private fun givenImageByteArray(imageId: ImageId, ownersId: List<String> = listOf("owner1")): ImageByteArray {
+    private fun givenImageByteArray(
+        imageId: ImageId,
+        ownersId: List<String> = listOf("owner1")
+    ): ImageByteArray {
         return ImageByteArray(imageId, ownersId, TestData.byteArray)
     }
 }
