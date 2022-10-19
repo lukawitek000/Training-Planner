@@ -2,7 +2,7 @@ package com.lukasz.witkowski.training.planner.image
 
 data class ImageByteArray(
     val imageId: ImageId,
-    val ownerId: String,
+    val ownersIds: List<String>,
     val data: ByteArray
 ) {
     val imageName: String

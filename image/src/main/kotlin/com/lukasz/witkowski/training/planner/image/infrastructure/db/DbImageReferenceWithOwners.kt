@@ -3,7 +3,7 @@ package com.lukasz.witkowski.training.planner.image.infrastructure.db
 import androidx.room.Embedded
 import androidx.room.Relation
 
-internal data class ImageReferenceWithOwners(
+internal data class DbImageReferenceWithOwners(
     @Embedded
     val imageReference: DbImageReference,
     @Relation(

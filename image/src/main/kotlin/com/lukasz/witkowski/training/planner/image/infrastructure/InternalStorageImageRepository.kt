@@ -34,7 +34,7 @@ internal class InternalStorageImageRepository(
         } finally {
             closeStream(outputStream)
         }
-        ImageReference(image.imageId, image.ownerId, file.absolutePath)
+        ImageReference(image.imageId, image.ownersIds, file.absolutePath)
     }
 
     override suspend fun read(imageReference: ImageReference): ImageByteArray? =
@@ -44,7 +44,7 @@ internal class InternalStorageImageRepository(
                 val file = File(filePath)
                 if (file.exists()) {
                     val byteArray = file.readBytes()
-                    ImageByteArray(imageReference.imageId, imageReference.ownerId, byteArray)
+                    ImageByteArray(imageReference.imageId, imageReference.ownersIds, byteArray)
                 } else {
                     throw Exception("Image does not exist under the path ${imageReference.path}")
                 }

@@ -50,19 +50,19 @@ class ImageStorageTest {
     @Test
     fun `saves and read by reference the same byte array`() = runBlocking {
         val imageId = ImageId("testing_imageId")
-        val image = givenImageByteArray(imageId, "testing_owner_id")
+        val image = givenImageByteArray(imageId)
 
         val imageReference = imageStorage.saveImage(image)
         println("Saved image path ${imageReference.path}")
         val readImage = imageStorage.readImage(imageReference.imageId)
 
         assertEquals(image.imageId, readImage.imageId)
-//        assertEquals(image.data, readImage.data)
+        assertEquals(image.ownersIds, readImage.ownersIds)
         assertArrayEquals(image.data, readImage.data)
     }
 
 
-    private fun givenImageByteArray(imageId: ImageId, ownerId: String = ""): ImageByteArray {
-        return ImageByteArray(imageId, ownerId, TestData.byteArray)
+    private fun givenImageByteArray(imageId: ImageId, ownersId: List<String> = listOf("owner1")): ImageByteArray {
+        return ImageByteArray(imageId, ownersId, TestData.byteArray)
     }
 }

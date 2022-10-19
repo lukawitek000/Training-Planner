@@ -10,11 +10,11 @@ object ImageMapper {
         val outputStream = ByteArrayOutputStream()
         image.bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
         val byteArray = outputStream.toByteArray()
-        return ImageByteArray(image.imageId, image.ownerId, byteArray)
+        return ImageByteArray(image.imageId, image.ownersIds, byteArray)
     }
 
     fun toImage(imageByteArray: ImageByteArray): Image {
         val bitmap = BitmapFactory.decodeByteArray(imageByteArray.data, 0, imageByteArray.data.size)
-        return Image(imageByteArray.imageId, imageByteArray.ownerId, bitmap)
+        return Image(imageByteArray.imageId, imageByteArray.ownersIds, bitmap)
     }
 }

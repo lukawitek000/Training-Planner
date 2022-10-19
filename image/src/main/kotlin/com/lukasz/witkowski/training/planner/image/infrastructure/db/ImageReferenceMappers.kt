@@ -3,10 +3,16 @@ package com.lukasz.witkowski.training.planner.image.infrastructure.db
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
 
-internal fun ImageReference.toDbImageReference(): DbImageReference {
-    return DbImageReference(imageId.value, path)
+internal fun ImageReference.toDbImageReferenceWithOwners(): DbImageReferenceWithOwners {
+    val imageId = imageId.value
+    val dbImageReference = DbImageReference(imageId, path)
+    val owners = ownersIds.map { DbImageOwner(it, imageId) }
+    return DbImageReferenceWithOwners(dbImageReference, owners)
 }
 
-internal fun DbImageReference.toImageReference(): ImageReference {
-    return ImageReference(ImageId(id), "ownID", path)
+internal fun DbImageReferenceWithOwners.toImageReference(): ImageReference {
+    val id = ImageId(imageReference.id)
+    val path = imageReference.path
+    val ownersIds = owners.map { it.ownerId }
+    return ImageReference(id, ownersIds, path)
 }

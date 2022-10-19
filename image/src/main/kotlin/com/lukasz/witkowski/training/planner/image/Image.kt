@@ -4,6 +4,6 @@ import android.graphics.Bitmap
 
 data class Image(
     val imageId: ImageId,
-    val ownerId: String,
+    val ownersIds: List<String>,
     val bitmap: Bitmap
 )
