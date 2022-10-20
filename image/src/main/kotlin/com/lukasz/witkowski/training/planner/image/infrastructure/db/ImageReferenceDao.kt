@@ -41,8 +41,8 @@ internal interface ImageReferenceDao {
     suspend fun getOwnersOfImage(imageId: String): List<DbImageOwner>?
 
     @Query("DELETE FROM DBIMAGEOWNER WHERE ownerId in (:ownersIds)")
-    suspend fun deleteImageOwners(ownersIds: List<String>): Long
+    suspend fun deleteImageOwners(ownersIds: List<String>): Int
 
     @Query("DELETE FROM DbImageReference WHERE id=:imageId")
-    suspend fun deleteImageReference(imageId: String): Long
+    suspend fun deleteImageReference(imageId: String): Int
 }

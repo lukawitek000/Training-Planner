@@ -24,7 +24,7 @@ internal class DbImageReferenceRepository(
             isImageReferenceDeletedSuccessfully = (deletedRows == ONE_ROW)
         }
         val deletedRows = imageReferenceDao.deleteImageOwners(imageReference.ownersIds)
-        return (deletedRows.toInt() == ownersIds.size) && isImageReferenceDeletedSuccessfully
+        return (deletedRows == ownersIds.size) && isImageReferenceDeletedSuccessfully
     }
 
     private suspend fun areAllOwnersToDelete(
@@ -54,6 +54,6 @@ internal class DbImageReferenceRepository(
     }
 
     private companion object {
-        const val ONE_ROW = 1L
+        const val ONE_ROW = 1
     }
 }
