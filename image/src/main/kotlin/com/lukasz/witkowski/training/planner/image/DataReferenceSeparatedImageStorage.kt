@@ -61,7 +61,7 @@ internal class DataReferenceSeparatedImageStorage constructor(
         val uniqueNewImage = generateUniqueIdIfNeeded(imageId, newImage)
         val oldImageReference =
             imageReferenceRepository.read(imageId) ?: return saveImage(uniqueNewImage)
-        if (shouldUpdateImageForAllOwners(oldImageReference, uniqueNewImage)) {
+        if (imageReferenceRepository.areAllImageOwners(imageId, uniqueNewImage.ownersIds)) {
             return updateImageForAllOwners(uniqueNewImage, oldImageReference)
         }
         val newImageReference = imageRepository.save(uniqueNewImage)
@@ -78,15 +78,6 @@ internal class DataReferenceSeparatedImageStorage constructor(
         } else {
             newImage
         }
-    }
-
-    private fun shouldUpdateImageForAllOwners(
-        oldImageReference: ImageReference,
-        newImage: ImageByteArray
-    ): Boolean {
-        val oldOwners = oldImageReference.ownersIds
-        val newImageOwners = newImage.ownersIds
-        return oldOwners.containsAll(newImageOwners) && newImageOwners.containsAll(oldOwners)
     }
 
     private suspend fun updateImageForAllOwners(

@@ -22,4 +22,8 @@ internal interface ImageReferenceRepository {
     suspend fun readByOwnerId(ownerId: String): ImageReference?
     suspend fun read(imageId: ImageId): ImageReference?
 
+    /**
+     * Check if the [ownersIds] are all owners of the image identified by [imageId]
+     */
+    suspend fun areAllImageOwners(imageId: ImageId, ownersIds: List<String>): Boolean
 }
