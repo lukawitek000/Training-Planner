@@ -29,18 +29,12 @@ internal class DataReferenceSeparatedImageStorage constructor(
     }
 
     override suspend fun updateImage(imageId: ImageId, newImage: ImageByteArray): ImageReference {
-        require(imageId != newImage.imageId)
-        val oldImageReference = imageReferenceRepository.read(imageId) ?: return saveImage(newImage)
-        val oldOwners = oldImageReference.ownersIds
-        val newImageOwners = newImage.ownersIds
-        val shouldUpdateImageForAllOwners = oldOwners.containsAll(newImageOwners) && newImageOwners.containsAll(oldOwners)
-        if(shouldUpdateImageForAllOwners) {
-            val newImageReference = imageRepository.update(newImage, oldImageReference)
-            imageReferenceRepository.delete(oldImageReference)
-            val newImageId = imageReferenceRepository.save(newImageReference)
-            return handleImageReferenceSavingResult(newImageId, newImageReference)
+        val uniqueNewImage = generateUniqueIdIfNeeded(imageId, newImage)
+        val oldImageReference = imageReferenceRepository.read(imageId) ?: return saveImage(uniqueNewImage)
+        if(shouldUpdateImageForAllOwners(oldImageReference, uniqueNewImage)) {
+            return updateImageForAllOwners(uniqueNewImage, oldImageReference)
         }
-        val newImageReference = imageRepository.save(newImage)
+        val newImageReference = imageRepository.save(uniqueNewImage)
         val newImageId = imageReferenceRepository.update(newImageReference, oldImageReference)
         return handleImageReferenceSavingResult(newImageId, newImageReference)
     }
@@ -57,6 +51,33 @@ internal class DataReferenceSeparatedImageStorage constructor(
             }
         }
         return deletedReference && isImageDeleted
+    }
+
+    private fun generateUniqueIdIfNeeded(oldImageId: ImageId, newImage: ImageByteArray): ImageByteArray {
+        return if (oldImageId == newImage.imageId) {
+            newImage.copy(imageId = ImageId.create())
+        } else {
+            newImage
+        }
+    }
+
+    private suspend fun updateImageForAllOwners(
+        newImage: ImageByteArray,
+        oldImageReference: ImageReference
+    ): ImageReference {
+        val newImageReference = imageRepository.update(newImage, oldImageReference)
+        imageReferenceRepository.delete(oldImageReference)
+        val newImageId = imageReferenceRepository.save(newImageReference)
+        return handleImageReferenceSavingResult(newImageId, newImageReference)
+    }
+
+    private fun shouldUpdateImageForAllOwners(
+        oldImageReference: ImageReference,
+        newImage: ImageByteArray
+    ): Boolean {
+        val oldOwners = oldImageReference.ownersIds
+        val newImageOwners = newImage.ownersIds
+        return oldOwners.containsAll(newImageOwners) && newImageOwners.containsAll(oldOwners)
     }
 
     private fun handleImageReferenceSavingResult(

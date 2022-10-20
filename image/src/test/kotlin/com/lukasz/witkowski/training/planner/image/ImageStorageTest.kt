@@ -153,10 +153,10 @@ class ImageStorageTest {
         imageStorage.saveImage(image)
 
         val newImage = givenImageByteArray(imageId, data = TestData.updatedByteArray)
-        imageStorage.updateImage(imageId, newImage)
-        val updatedImage = imageStorage.readImage(newImage.imageId)
+        val result = imageStorage.updateImage(imageId, newImage)
+        val updatedImage = imageStorage.readImageReference(result.imageId)
 
-        assertNotEquals(imageId, updatedImage.imageId)
+        assertNotEquals(imageId, updatedImage?.imageId)
     }
 
     @Test
