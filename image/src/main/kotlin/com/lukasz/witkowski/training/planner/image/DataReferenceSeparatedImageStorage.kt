@@ -29,7 +29,7 @@ internal class DataReferenceSeparatedImageStorage constructor(
     }
 
     override suspend fun readImageReference(imageId: ImageId): ImageReference? {
-        TODO("Not yet implemented")
+        return imageReferenceRepository.read(imageId)
     }
 
     override fun updateImage(image: ImageByteArray): ImageReference {
