@@ -14,7 +14,13 @@ interface ImageStorage {
      */
     suspend fun readImageReference(imageId: ImageId): ImageReference?
 
-    fun updateImage(image: ImageByteArray): ImageReference
+    /**
+     * The update will be done for the owners specified in [newImage].
+     * The id of the [newImage] should be different that previous one.
+     * If it will be the same the new one will be generated and returned in the [ImageReference]
+     * @param [newImage] the image data to update.
+     */
+    suspend fun updateImage(newImage: ImageByteArray): ImageReference
 
     /**
      * Delete image which is used by the owner based on the [ownerId].

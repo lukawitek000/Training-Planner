@@ -17,6 +17,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 
 @RunWith(RobolectricTestRunner::class)
@@ -129,10 +130,95 @@ class ImageStorageTest {
         println(exception.message)
     }
 
+    @Test
+    fun `update saved image for the owner`() = runBlocking {
+        val image = givenImageByteArray()
+        val imageReference = imageStorage.saveImage(image)
+
+        val newImage = givenImageByteArray(ImageId("updatedId"), data = TestData.updatedByteArray)
+        val updatedImageReference = imageStorage.updateImage(newImage)
+        val updatedImage = imageStorage.readImage(newImage.imageId)
+
+        assertEquals(image.ownersIds, updatedImageReference.ownersIds)
+        assertNotEquals(imageReference.imageId, updatedImageReference.imageId)
+        assertEquals(image.data.toString(), updatedImage.data.toString())
+    }
+
+    @Test
+    fun `generate new id if the new image has the same one`() = runBlocking {
+        val imageId = ImageId("Same_id")
+        val image = givenImageByteArray(imageId)
+        imageStorage.saveImage(image)
+
+        val newImage = givenImageByteArray(imageId, data = TestData.updatedByteArray)
+        val updatedImageReference = imageStorage.updateImage(newImage)
+        val updatedImage = imageStorage.readImage(newImage.imageId)
+
+        assertNotEquals(imageId, updatedImage.imageId)
+    }
+
+    @Test
+    fun `update image for all owners`() = runBlocking {
+        val owners = listOf("owner1", "owner2")
+        val image = givenImageByteArray(ownersId = owners)
+
+        imageStorage.saveImage(image)
+        val newImage = givenImageByteArray(
+            ImageId("UpdatedId"),
+            data = TestData.updatedByteArray,
+            ownersId = owners
+        )
+        val result = imageStorage.updateImage(newImage)
+        val updatedImageReference = imageStorage.readImage(newImage.imageId)
+
+        assertFailsWith<ImageNotFoundException> {
+            imageStorage.readImage(image.imageId)
+        }
+        assertEquals(owners, result.ownersIds)
+        assertEquals(updatedImageReference, result)
+    }
+
+    @Test
+    fun `update image for only 2 of 4 owners`() = runBlocking {
+        val owners = listOf("owner1", "owner2", "owner3", "owner4")
+        val image = givenImageByteArray(ownersId = owners)
+
+        imageStorage.saveImage(image)
+        val newImage = givenImageByteArray(
+            ImageId("UpdatedId"),
+            data = TestData.updatedByteArray,
+            ownersId = owners.take(2)
+        )
+        val result = imageStorage.updateImage(newImage)
+        val updatedImageReference = imageStorage.readImage(newImage.imageId)
+
+        val initialImageReference = imageStorage.readImage(image.imageId)
+        assertEquals(owners.takeLast(2), initialImageReference.ownersIds)
+        assertEquals(image.imageId, initialImageReference.imageId)
+
+        assertEquals(newImage.imageId, result.imageId)
+        assertEquals(owners.take(2), result.ownersIds)
+        assertEquals(updatedImageReference, result)
+    }
+
+    @Test
+    fun `update method saves image if it did not exist`() = runBlocking {
+        val owners = listOf("owner1", "owner2")
+        val image = givenImageByteArray(ownersId = owners)
+
+        val imageReference = imageStorage.updateImage(image)
+        val result = imageStorage.readImage(imageReference.imageId)
+
+        assertEquals(image.imageId, result.imageId)
+        assertEquals(owners, result.ownersIds)
+        assertArrayEquals(image.data, result.data)
+    }
+
     private fun givenImageByteArray(
         imageId: ImageId = ImageId("testing_imageId"),
-        ownersId: List<String> = listOf("owner1")
+        ownersId: List<String> = listOf("owner1"),
+        data: ByteArray = TestData.byteArray
     ): ImageByteArray {
-        return ImageByteArray(imageId, ownersId, TestData.byteArray)
+        return ImageByteArray(imageId, ownersId, data)
     }
 }
