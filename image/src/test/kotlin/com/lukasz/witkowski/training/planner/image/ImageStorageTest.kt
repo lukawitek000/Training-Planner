@@ -136,7 +136,7 @@ class ImageStorageTest {
         val imageReference = imageStorage.saveImage(image)
 
         val newImage = givenImageByteArray(ImageId("updatedId"), data = TestData.updatedByteArray)
-        val updatedImageReference = imageStorage.updateImage(newImage)
+        val updatedImageReference = imageStorage.updateImage(image.imageId, newImage)
         val updatedImage = imageStorage.readImage(newImage.imageId)
 
         assertEquals(image.ownersIds, updatedImageReference.ownersIds)
@@ -151,7 +151,7 @@ class ImageStorageTest {
         imageStorage.saveImage(image)
 
         val newImage = givenImageByteArray(imageId, data = TestData.updatedByteArray)
-        val updatedImageReference = imageStorage.updateImage(newImage)
+        imageStorage.updateImage(imageId, newImage)
         val updatedImage = imageStorage.readImage(newImage.imageId)
 
         assertNotEquals(imageId, updatedImage.imageId)
@@ -168,7 +168,7 @@ class ImageStorageTest {
             data = TestData.updatedByteArray,
             ownersId = owners
         )
-        val result = imageStorage.updateImage(newImage)
+        val result = imageStorage.updateImage(image.imageId, newImage)
         val updatedImageReference = imageStorage.readImage(newImage.imageId)
 
         assertFailsWith<ImageNotFoundException> {
@@ -189,7 +189,7 @@ class ImageStorageTest {
             data = TestData.updatedByteArray,
             ownersId = owners.take(2)
         )
-        val result = imageStorage.updateImage(newImage)
+        val result = imageStorage.updateImage(image.imageId, newImage)
         val updatedImageReference = imageStorage.readImage(newImage.imageId)
 
         val initialImageReference = imageStorage.readImage(image.imageId)
@@ -206,7 +206,7 @@ class ImageStorageTest {
         val owners = listOf("owner1", "owner2")
         val image = givenImageByteArray(ownersId = owners)
 
-        val imageReference = imageStorage.updateImage(image)
+        val imageReference = imageStorage.updateImage(ImageId("dummyId"), image)
         val result = imageStorage.readImage(imageReference.imageId)
 
         assertEquals(image.imageId, result.imageId)
