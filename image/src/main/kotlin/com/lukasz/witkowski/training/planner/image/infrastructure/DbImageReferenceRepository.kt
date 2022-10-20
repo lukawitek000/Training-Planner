@@ -37,9 +37,10 @@ internal class DbImageReferenceRepository(
         newImageReference: ImageReference,
         oldImageReference: ImageReference
     ): ImageId? {
-        val oldImageReferenceWithOwnersToUpdate = oldImageReference.copy(ownersIds = newImageReference.ownersIds)
+        val oldImageReferenceWithOwnersToUpdate =
+            oldImageReference.copy(ownersIds = newImageReference.ownersIds)
         val wasDeletedSuccessful = delete(oldImageReferenceWithOwnersToUpdate)
-        return if(wasDeletedSuccessful) {
+        return if (wasDeletedSuccessful) {
             save(newImageReference)
         } else {
             null

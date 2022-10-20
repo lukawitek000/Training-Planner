@@ -2,7 +2,6 @@ package com.lukasz.witkowski.training.planner.image.domain
 
 import com.lukasz.witkowski.training.planner.image.ImageByteArray
 import com.lukasz.witkowski.training.planner.image.ImageReference
-import java.io.IOException
 
 internal interface ImageRepository {
     /**

@@ -60,13 +60,16 @@ internal class DataReferenceSeparatedImageStorage constructor(
     override suspend fun updateImage(imageId: ImageId, newImage: ImageByteArray): ImageReference {
         val uniqueNewImage = generateUniqueIdIfNeeded(imageId, newImage)
         val oldImageReference =
-            imageReferenceRepository.read(imageId) ?: return saveImage(uniqueNewImage)
-        if (imageReferenceRepository.areAllImageOwners(imageId, uniqueNewImage.ownersIds)) {
-            return updateImageForAllOwners(uniqueNewImage, oldImageReference)
+            imageReferenceRepository.read(imageId)
+        return if (oldImageReference == null) {
+            saveImage(uniqueNewImage)
+        } else if (imageReferenceRepository.areAllImageOwners(imageId, uniqueNewImage.ownersIds)) {
+            updateImageForAllOwners(uniqueNewImage, oldImageReference)
+        } else {
+            val newImageReference = imageRepository.save(uniqueNewImage)
+            val newImageId = imageReferenceRepository.update(newImageReference, oldImageReference)
+            handleImageReferenceSavingResult(newImageId, newImageReference)
         }
-        val newImageReference = imageRepository.save(uniqueNewImage)
-        val newImageId = imageReferenceRepository.update(newImageReference, oldImageReference)
-        return handleImageReferenceSavingResult(newImageId, newImageReference)
     }
 
     private fun generateUniqueIdIfNeeded(
