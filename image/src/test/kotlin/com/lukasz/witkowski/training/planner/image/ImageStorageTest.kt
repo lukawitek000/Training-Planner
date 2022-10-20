@@ -16,7 +16,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import kotlin.math.exp
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
@@ -230,15 +229,17 @@ class ImageStorageTest {
     ) {
         var assertMessage = ""
         val sameSize = (expected.size == actual.size)
-        if(sameSize) {
+        if (sameSize) {
             for (i in expected.indices) {
-                if(expected[i] != actual[i]) {
-                    assertMessage = "Different value at $i:\n expected:<${expected.size}> but was:<${actual.size}>"
+                if (expected[i] != actual[i]) {
+                    assertMessage =
+                        "Different value at $i:\n expected:<${expected.size}> but was:<${actual.size}>"
                     break
                 }
             }
         } else {
-            assertMessage = "Different arrays size:\n expected:<${expected.size}> but was:<${actual.size}>"
+            assertMessage =
+                "Different arrays size:\n expected:<${expected.size}> but was:<${actual.size}>"
         }
         assertTrue(assertMessage.isNotEmpty(), assertMessage)
     }
