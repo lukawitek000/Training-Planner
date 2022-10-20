@@ -8,6 +8,7 @@ import androidx.room.Transaction
 @Dao
 internal interface ImageReferenceDao {
 
+    @Transaction
     @Query("SELECT * FROM DBIMAGEREFERENCE WHERE id=:imageId")
     suspend fun getImageReferenceWithOwners(imageId: String): DbImageReferenceWithOwners?
 
