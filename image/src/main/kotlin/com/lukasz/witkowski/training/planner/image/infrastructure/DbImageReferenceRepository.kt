@@ -15,8 +15,25 @@ internal class DbImageReferenceRepository(
         return imageReference.imageId
     }
 
-    override fun delete(imageReference: ImageReference): Boolean {
-        TODO("Not yet implemented")
+    override suspend fun delete(imageReference: ImageReference): Boolean {
+        val imageId = imageReference.imageId.value
+        val ownersIds = imageReference.ownersIds
+        var isImageReferenceDeletedSuccessfully = true
+        if (areAllOwnersToDelete(imageId, ownersIds)) {
+            val deletedRows = imageReferenceDao.deleteImageReference(imageId)
+            isImageReferenceDeletedSuccessfully = (deletedRows == ONE_ROW)
+        }
+        val deletedRows = imageReferenceDao.deleteImageOwners(imageReference.ownersIds)
+        return (deletedRows.toInt() == ownersIds.size) && isImageReferenceDeletedSuccessfully
+    }
+
+    private suspend fun areAllOwnersToDelete(
+        imageId: String,
+        ownersToDelete: List<String>
+    ): Boolean {
+        val allImageOwners =
+            imageReferenceDao.getOwnersOfImage(imageId)?.map { it.ownerId } ?: emptyList()
+        return allImageOwners.containsAll(ownersToDelete) && ownersToDelete.containsAll(allImageOwners)
     }
 
     override fun update(
@@ -31,8 +48,12 @@ internal class DbImageReferenceRepository(
         return dbImageReference?.toImageReference(ownerId)
     }
 
-    override suspend fun read(imageId: ImageId): ImageReference {
+    override suspend fun read(imageId: ImageId): ImageReference? {
         val dbImageReference = imageReferenceDao.getImageReferenceWithOwners(imageId.value)
-        return dbImageReference.toImageReference()
+        return dbImageReference?.toImageReference()
+    }
+
+    private companion object {
+        const val ONE_ROW = 1L
     }
 }

@@ -9,7 +9,11 @@ internal interface ImageReferenceRepository {
      */
     suspend fun save(imageReference: ImageReference): ImageId?
 
-    fun delete(imageReference: ImageReference): Boolean
+    /**
+     * Deletes image reference for all of owners included in the [imageReference].
+     * @return _true_ if delete was successful, otherwise _false_.
+     */
+    suspend fun delete(imageReference: ImageReference): Boolean
     /**
     * @return [ImageId] of the updated [ImageReference], _null_ if updating failed.
     */

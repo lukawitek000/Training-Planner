@@ -24,7 +24,7 @@ internal class DataReferenceSeparatedImageStorage constructor(
     override suspend fun readImage(imageId: ImageId): ImageByteArray {
         val imageReference = imageReferenceRepository.read(imageId)
         return imageReference?.let { imageRepository.read(it) }
-            ?: throw Exception("Image for id ${imageId.value} not found")
+            ?: throw ImageNotFoundException(imageId)
     }
 
     override fun readImageReference(imageId: ImageId): ImageReference {
@@ -38,7 +38,10 @@ internal class DataReferenceSeparatedImageStorage constructor(
     override suspend fun deleteImage(imageId: ImageId, ownerId: String): Boolean {
         val imageReference = imageReferenceRepository.readByOwnerId(ownerId) ?: throw ImageNotFoundException(imageId)
         val isImageDeleted = imageRepository.delete(imageReference)
-        imageReferenceRepository.delete(imageReference)
-        return false
+        if(isImageDeleted.not()) {
+            throw ImageNotFoundException(imageId)
+        }
+        val deletedReference = imageReferenceRepository.delete(imageReference)
+        return deletedReference && isImageDeleted
     }
 }
