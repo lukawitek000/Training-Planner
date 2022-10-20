@@ -11,13 +11,13 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.test.assertFailsWith
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
@@ -63,10 +63,10 @@ class ImageStorageTest {
 
         val imageReference = imageStorage.saveImage(image)
         imageStorage.deleteImage(imageReference.imageId, ownerId)
-//        assertThrows(ImageNotFoundException::class.java) {
+        val exception = assertFailsWith<ImageNotFoundException> {
             imageStorage.readImage(imageReference.imageId)
-//        }
-        assertTrue(true)
+        }
+        println(exception.message)
     }
 
     @Test
@@ -95,10 +95,10 @@ class ImageStorageTest {
         imageStorage.deleteImage(imageReference.imageId, owner1)
         imageStorage.deleteImage(imageReference.imageId, owner2)
 
-//        assertThrows(ImageNotFoundException::class.java) {
-        imageStorage.readImage(imageReference.imageId)
-//        }
-        assertTrue(true)
+        val exception = assertFailsWith<ImageNotFoundException> {
+            imageStorage.readImage(imageReference.imageId)
+        }
+        println(exception.message)
     }
 
     private fun givenImageByteArray(
