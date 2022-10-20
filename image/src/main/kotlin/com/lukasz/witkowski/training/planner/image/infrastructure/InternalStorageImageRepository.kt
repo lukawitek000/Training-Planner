@@ -29,7 +29,7 @@ internal class InternalStorageImageRepository(
         try {
             outputStream = FileOutputStream(file)
             outputStream.write(image.data)
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             e.printStackTrace()
             Timber.w("Saving file $fileName into $directoryName directory has failed.")
             throw ImageSaveFailedException(image.imageId)
@@ -51,7 +51,7 @@ internal class InternalStorageImageRepository(
                     Timber.w("Image does not exist under the path ${imageReference.path}")
                     null
                 }
-            } catch (e: Exception) {
+            } catch (e: SecurityException) {
                 e.printStackTrace()
                 null
             }
@@ -63,8 +63,8 @@ internal class InternalStorageImageRepository(
             try {
                 val file = File(imagePath)
                 file.delete()
-            } catch (e: Exception) {
-                Timber.w("Image file '$imagePath' not could not be deleted.")
+            } catch (e: SecurityException) {
+                Timber.w("Image delete was denied ${e.message}")
                 false
             }
         }
@@ -83,7 +83,7 @@ internal class InternalStorageImageRepository(
         try {
             closable?.close()
         } catch (e: IOException) {
-            e.printStackTrace()
+            Timber.w("Closing stream failed ${e.message}")
         }
     }
 }
