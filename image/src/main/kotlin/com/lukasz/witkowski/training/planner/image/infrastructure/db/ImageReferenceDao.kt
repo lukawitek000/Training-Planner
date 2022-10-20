@@ -24,4 +24,16 @@ internal interface ImageReferenceDao {
 
     @Insert
     suspend fun insert(dbImageOwner: DbImageOwner): Long
+
+    @Transaction
+    suspend fun getImageReferenceByOwnerId(ownerId: String): DbImageReference? {
+        val imageId = getImageOwnerById(ownerId)?.imageId
+        return imageId?.let { getImageReferenceById(it) }
+    }
+
+    @Query("SELECT * FROM DBIMAGEOWNER WHERE ownerId=:ownerId")
+    suspend fun getImageOwnerById(ownerId: String): DbImageOwner?
+
+    @Query("SELECT * FROM DBIMAGEREFERENCE WHERE id=:imageId")
+    suspend fun getImageReferenceById(imageId: String): DbImageReference
 }

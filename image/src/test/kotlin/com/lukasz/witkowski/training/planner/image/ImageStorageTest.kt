@@ -11,7 +11,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -97,6 +96,15 @@ class ImageStorageTest {
 
         val exception = assertFailsWith<ImageNotFoundException> {
             imageStorage.readImage(imageReference.imageId)
+        }
+        println(exception.message)
+    }
+
+    @Test
+    fun `delete image that does not exist throws exception`() = runBlocking {
+        val ownerId = "wrong_ownerId"
+        val exception = assertFailsWith<ImageNotFoundException> {
+            imageStorage.deleteImage(ImageId("dummyId"), ownerId)
         }
         println(exception.message)
     }

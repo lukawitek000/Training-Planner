@@ -16,3 +16,8 @@ internal fun DbImageReferenceWithOwners.toImageReference(): ImageReference {
     val ownersIds = owners.map { it.ownerId }
     return ImageReference(id, ownersIds, path)
 }
+
+internal fun DbImageReference.toImageReference(ownerId: String): ImageReference {
+    val imageId = ImageId(id)
+    return ImageReference(imageId, listOf(ownerId), path)
+}

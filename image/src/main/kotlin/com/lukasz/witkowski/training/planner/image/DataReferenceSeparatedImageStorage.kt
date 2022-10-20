@@ -35,7 +35,10 @@ internal class DataReferenceSeparatedImageStorage constructor(
         TODO("Not yet implemented")
     }
 
-    override fun deleteImage(imageId: ImageId, ownerId: String) {
-        TODO("Not yet implemented")
+    override suspend fun deleteImage(imageId: ImageId, ownerId: String): Boolean {
+        val imageReference = imageReferenceRepository.readByOwnerId(ownerId) ?: throw ImageNotFoundException(imageId)
+        val isImageDeleted = imageRepository.delete(imageReference)
+        imageReferenceRepository.delete(imageReference)
+        return false
     }
 }

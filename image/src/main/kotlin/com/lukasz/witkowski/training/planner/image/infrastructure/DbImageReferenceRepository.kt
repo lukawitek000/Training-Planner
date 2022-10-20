@@ -26,8 +26,9 @@ internal class DbImageReferenceRepository(
         TODO("Not yet implemented")
     }
 
-    override suspend fun readByOwnerId(ownerId: String): ImageReference {
-        TODO("Not yet implemented")
+    override suspend fun readByOwnerId(ownerId: String): ImageReference? {
+        val dbImageReference = imageReferenceDao.getImageReferenceByOwnerId(ownerId)
+        return dbImageReference?.toImageReference(ownerId)
     }
 
     override suspend fun read(imageId: ImageId): ImageReference {
