@@ -25,7 +25,7 @@ internal class DataReferenceSeparatedImageStorage constructor(
         return if (imageId != null) {
             imageReference
         } else {
-            throw Exception("Failed to save the image")
+            throw ImageSaveFailedException(imageReference.imageId)
         }
     }
 

@@ -14,7 +14,6 @@ internal interface ImageRepository {
 
     /**
      * Deletes image which was saved under the provided name.
-     * @throws [IOException] if the file could not be deleted.
      * @return _true_ if the file was deleted and _false_ otherwise.
      */
     suspend fun delete(imageReference: ImageReference): Boolean

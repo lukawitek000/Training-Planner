@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.image.infrastructure
 import android.content.Context
 import com.lukasz.witkowski.training.planner.image.ImageByteArray
 import com.lukasz.witkowski.training.planner.image.ImageReference
+import com.lukasz.witkowski.training.planner.image.ImageSaveFailedException
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +31,8 @@ internal class InternalStorageImageRepository(
             outputStream.write(image.data)
         } catch (e: Exception) {
             e.printStackTrace()
-            throw Exception("Saving file $fileName into $directoryName directory has failed.")
+            Timber.w("Saving file $fileName into $directoryName directory has failed.")
+            throw ImageSaveFailedException(image.imageId)
         } finally {
             closeStream(outputStream)
         }
@@ -71,13 +73,8 @@ internal class InternalStorageImageRepository(
         image: ImageByteArray,
         oldImageReference: ImageReference
     ): ImageReference = withContext(ioDispatcher) {
-        try {
-            delete(oldImageReference)
-            save(image)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            throw Exception("Image update failed ${e.message}")
-        }
+        delete(oldImageReference)
+        save(image)
     }
 
     private fun createFile(fileName: String) = File(directoryPath, fileName)
