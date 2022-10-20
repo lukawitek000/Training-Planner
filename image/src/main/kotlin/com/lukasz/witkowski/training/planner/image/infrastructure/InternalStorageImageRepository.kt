@@ -46,7 +46,8 @@ internal class InternalStorageImageRepository(
                     val byteArray = file.readBytes()
                     ImageByteArray(imageReference.imageId, imageReference.ownersIds, byteArray)
                 } else {
-                    throw Exception("Image does not exist under the path ${imageReference.path}")
+                    Timber.w("Image does not exist under the path ${imageReference.path}")
+                    null
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

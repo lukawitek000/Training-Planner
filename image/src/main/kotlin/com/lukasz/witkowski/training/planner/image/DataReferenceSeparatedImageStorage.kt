@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.image
 
 import com.lukasz.witkowski.training.planner.image.domain.ImageReferenceRepository
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
+import timber.log.Timber
 
 /**
  * Image storage that uses two repositories to store image and its reference.
@@ -37,11 +38,15 @@ internal class DataReferenceSeparatedImageStorage constructor(
 
     override suspend fun deleteImage(imageId: ImageId, ownerId: String): Boolean {
         val imageReference = imageReferenceRepository.readByOwnerId(ownerId) ?: throw ImageNotFoundException(imageId)
-        val isImageDeleted = imageRepository.delete(imageReference)
-        if(isImageDeleted.not()) {
-            throw ImageNotFoundException(imageId)
-        }
         val deletedReference = imageReferenceRepository.delete(imageReference)
+        val doesAnyReferenceExist = imageReferenceRepository.read(imageId) != null
+        var isImageDeleted = true
+        if(!doesAnyReferenceExist) {
+            isImageDeleted = imageRepository.delete(imageReference)
+            if(isImageDeleted.not()) {
+                Timber.w("Failed to delete image")
+            }
+        }
         return deletedReference && isImageDeleted
     }
 }

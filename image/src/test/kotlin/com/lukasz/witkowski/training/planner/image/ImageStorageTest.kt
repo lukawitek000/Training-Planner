@@ -75,6 +75,7 @@ class ImageStorageTest {
         val image = givenImageByteArray(ownersId = listOf(ownerId, ownerToDelete))
 
         val imageReference = imageStorage.saveImage(image)
+        println("Image saved path ${imageReference.path}")
         imageStorage.deleteImage(imageReference.imageId, ownerToDelete)
         val readImage = imageStorage.readImage(imageReference.imageId)
 
