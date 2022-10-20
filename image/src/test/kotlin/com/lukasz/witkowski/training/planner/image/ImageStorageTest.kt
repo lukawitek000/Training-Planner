@@ -17,6 +17,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNull
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
@@ -53,6 +54,24 @@ class ImageStorageTest {
         assertEquals(image.imageId, readImage.imageId)
         assertEquals(image.ownersIds, readImage.ownersIds)
         assertArrayEquals(image.data, readImage.data)
+    }
+
+    @Test
+    fun `saves the image and read its reference`() = runBlocking {
+        val image = givenImageByteArray()
+
+        val imageReference = imageStorage.saveImage(image)
+        val readReference = imageStorage.readImageReference(imageReference.imageId)
+
+        assertEquals(imageReference, readReference)
+    }
+
+    @Test
+    fun `read image reference for not existing image id`() = runBlocking {
+        val dummyImageId = ImageId("dummyId")
+        val readReference = imageStorage.readImageReference(dummyImageId)
+
+        assertNull(readReference)
     }
 
     @Test

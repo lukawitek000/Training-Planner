@@ -28,7 +28,7 @@ internal class DataReferenceSeparatedImageStorage constructor(
             ?: throw ImageNotFoundException(imageId)
     }
 
-    override fun readImageReference(imageId: ImageId): ImageReference {
+    override suspend fun readImageReference(imageId: ImageId): ImageReference? {
         TODO("Not yet implemented")
     }
 
