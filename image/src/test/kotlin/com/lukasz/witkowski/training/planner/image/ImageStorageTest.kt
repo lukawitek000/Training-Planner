@@ -16,9 +16,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.math.exp
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
@@ -141,7 +143,7 @@ class ImageStorageTest {
 
         assertEquals(image.ownersIds, updatedImageReference.ownersIds)
         assertNotEquals(imageReference.imageId, updatedImageReference.imageId)
-        assertEquals(image.data.toString(), updatedImage.data.toString())
+        assertByteArraysNotEqual(image.data, updatedImage.data)
     }
 
     @Test
@@ -169,7 +171,7 @@ class ImageStorageTest {
             ownersId = owners
         )
         val result = imageStorage.updateImage(image.imageId, newImage)
-        val updatedImageReference = imageStorage.readImage(newImage.imageId)
+        val updatedImageReference = imageStorage.readImageReference(newImage.imageId)
 
         assertFailsWith<ImageNotFoundException> {
             imageStorage.readImage(image.imageId)
@@ -190,11 +192,11 @@ class ImageStorageTest {
             ownersId = owners.take(2)
         )
         val result = imageStorage.updateImage(image.imageId, newImage)
-        val updatedImageReference = imageStorage.readImage(newImage.imageId)
+        val updatedImageReference = imageStorage.readImageReference(newImage.imageId)
 
-        val initialImageReference = imageStorage.readImage(image.imageId)
-        assertEquals(owners.takeLast(2), initialImageReference.ownersIds)
-        assertEquals(image.imageId, initialImageReference.imageId)
+        val initialImageReference = imageStorage.readImageReference(image.imageId)
+        assertEquals(owners.takeLast(2), initialImageReference?.ownersIds)
+        assertEquals(image.imageId, initialImageReference?.imageId)
 
         assertEquals(newImage.imageId, result.imageId)
         assertEquals(owners.take(2), result.ownersIds)
@@ -220,5 +222,24 @@ class ImageStorageTest {
         data: ByteArray = TestData.byteArray
     ): ImageByteArray {
         return ImageByteArray(imageId, ownersId, data)
+    }
+
+    private fun assertByteArraysNotEqual(
+        expected: ByteArray,
+        actual: ByteArray
+    ) {
+        var assertMessage = ""
+        val sameSize = (expected.size == actual.size)
+        if(sameSize) {
+            for (i in expected.indices) {
+                if(expected[i] != actual[i]) {
+                    assertMessage = "Different value at $i:\n expected:<${expected.size}> but was:<${actual.size}>"
+                    break
+                }
+            }
+        } else {
+            assertMessage = "Different arrays size:\n expected:<${expected.size}> but was:<${actual.size}>"
+        }
+        assertTrue(assertMessage.isNotEmpty(), assertMessage)
     }
 }

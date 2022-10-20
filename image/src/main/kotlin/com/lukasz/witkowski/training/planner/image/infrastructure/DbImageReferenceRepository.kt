@@ -36,11 +36,17 @@ internal class DbImageReferenceRepository(
         return allImageOwners.containsAll(ownersToDelete) && ownersToDelete.containsAll(allImageOwners)
     }
 
-    override fun update(
+    override suspend fun update(
         newImageReference: ImageReference,
         oldImageReference: ImageReference
     ): ImageId? {
-        TODO("Not yet implemented")
+        val oldImageReferenceWithOwnersToUpdate = oldImageReference.copy(ownersIds = newImageReference.ownersIds)
+        val wasDeletedSuccessful = delete(oldImageReferenceWithOwnersToUpdate)
+        return if(wasDeletedSuccessful) {
+            save(newImageReference)
+        } else {
+            null
+        }
     }
 
     override suspend fun readByOwnerId(ownerId: String): ImageReference? {

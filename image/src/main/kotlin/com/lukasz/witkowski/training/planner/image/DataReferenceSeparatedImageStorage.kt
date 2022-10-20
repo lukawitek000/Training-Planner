@@ -15,11 +15,7 @@ internal class DataReferenceSeparatedImageStorage constructor(
     override suspend fun saveImage(image: ImageByteArray): ImageReference {
         val imageReference = imageRepository.save(image)
         val imageId = imageReferenceRepository.save(imageReference)
-        return if (imageId != null) {
-            imageReference
-        } else {
-            throw Exception("Failed to save the image")
-        }
+        return handleImageReferenceSavingResult(imageId, imageReference)
     }
 
     override suspend fun readImage(imageId: ImageId): ImageByteArray {
@@ -33,7 +29,20 @@ internal class DataReferenceSeparatedImageStorage constructor(
     }
 
     override suspend fun updateImage(imageId: ImageId, newImage: ImageByteArray): ImageReference {
-        TODO("Not yet implemented")
+        require(imageId != newImage.imageId)
+        val oldImageReference = imageReferenceRepository.read(imageId) ?: return saveImage(newImage)
+        val oldOwners = oldImageReference.ownersIds
+        val newImageOwners = newImage.ownersIds
+        val shouldUpdateImageForAllOwners = oldOwners.containsAll(newImageOwners) && newImageOwners.containsAll(oldOwners)
+        if(shouldUpdateImageForAllOwners) {
+            val newImageReference = imageRepository.update(newImage, oldImageReference)
+            imageReferenceRepository.delete(oldImageReference)
+            val newImageId = imageReferenceRepository.save(newImageReference)
+            return handleImageReferenceSavingResult(newImageId, newImageReference)
+        }
+        val newImageReference = imageRepository.save(newImage)
+        val newImageId = imageReferenceRepository.update(newImageReference, oldImageReference)
+        return handleImageReferenceSavingResult(newImageId, newImageReference)
     }
 
     override suspend fun deleteImage(imageId: ImageId, ownerId: String): Boolean {
@@ -49,4 +58,16 @@ internal class DataReferenceSeparatedImageStorage constructor(
         }
         return deletedReference && isImageDeleted
     }
+
+    private fun handleImageReferenceSavingResult(
+        imageId: ImageId?,
+        imageReference: ImageReference
+    ): ImageReference {
+        return if (imageId != null) {
+            imageReference
+        } else {
+            throw Exception("Failed to save the image")
+        }
+    }
+
 }

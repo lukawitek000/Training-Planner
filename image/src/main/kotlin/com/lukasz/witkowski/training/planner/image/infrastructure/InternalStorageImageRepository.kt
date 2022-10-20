@@ -75,7 +75,8 @@ internal class InternalStorageImageRepository(
             delete(oldImageReference)
             save(image)
         } catch (e: Exception) {
-            throw Exception("Couldn't update the image. Deleted failed.")
+            e.printStackTrace()
+            throw Exception("Image update failed ${e.message}")
         }
     }
 

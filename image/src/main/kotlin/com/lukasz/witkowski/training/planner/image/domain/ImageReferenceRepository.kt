@@ -17,7 +17,7 @@ internal interface ImageReferenceRepository {
     /**
     * @return [ImageId] of the updated [ImageReference], _null_ if updating failed.
     */
-    fun update(newImageReference: ImageReference, oldImageReference: ImageReference): ImageId?
+    suspend fun update(newImageReference: ImageReference, oldImageReference: ImageReference): ImageId?
 
     suspend fun readByOwnerId(ownerId: String): ImageReference?
     suspend fun read(imageId: ImageId): ImageReference?
