@@ -3,6 +3,7 @@ import io.gitlab.arturbosch.detekt.Detekt
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
     id 'io.gitlab.arturbosch.detekt' version "1.21.0"
 }
 
@@ -30,10 +31,32 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4"
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+
+    def room_version = "2.4.3"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+
+
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0"
+
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.9'
+    testImplementation 'androidx.test:core:1.4.0'
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    // Without live data test is failing https://issuetracker.google.com/issues/237574812
+    testImplementation "androidx.lifecycle:lifecycle-livedata-ktx:2.5.1"
 }
 
 def configFile = files("$rootDir/config/detekt/detekt.yml")
