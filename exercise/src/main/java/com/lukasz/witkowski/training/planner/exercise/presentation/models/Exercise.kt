@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation.models
 
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageReference
+import com.lukasz.witkowski.training.planner.image.ImageReference
 
 data class Exercise(
     val id: ExerciseId,

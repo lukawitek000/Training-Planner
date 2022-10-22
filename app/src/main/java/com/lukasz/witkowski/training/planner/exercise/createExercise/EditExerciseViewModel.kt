@@ -1,17 +1,18 @@
 package com.lukasz.witkowski.training.planner.exercise.createExercise
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageReference
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
-import com.lukasz.witkowski.training.planner.exercise.presentation.ImageFactory
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
+import com.lukasz.witkowski.training.planner.image.Image
+import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.image.ImageMapper
+import com.lukasz.witkowski.training.planner.image.ImageReference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,15 +41,16 @@ class EditExerciseViewModel @Inject constructor(
                     onCategorySelected(index)
                 }
                 initialExercise.image?.let {
-                    val imageBitmap = loadBitmap(it)
+                    val imageBitmap = loadBitmap(it.imageId)
                     onImageChange(imageBitmap)
                 }
             }
         }
     }
 
-    private fun loadBitmap(imageReference: ImageReference): Bitmap {
-        return BitmapFactory.decodeFile(imageReference.absolutePath)
+    private suspend fun loadBitmap(imageId: ImageId): Bitmap {
+        val imageByteArray = exerciseService.readImage(imageId)
+        return ImageMapper.toImage(imageByteArray).bitmap
     }
 
     override fun createExercise() {
@@ -66,10 +68,10 @@ class EditExerciseViewModel @Inject constructor(
     private suspend fun updateExercise(exercise: Exercise) {
         try {
             _savingState.value = ResultHandler.Loading
-            val imageReference = updateImage()
+            val imageReference = updateImage(exercise)
             val domainExercise = ExerciseMapper.toDomainExercise(exercise, imageReference)
             val isUpdateSuccessful = exerciseService.updateExercise(domainExercise)
-            if(!isUpdateSuccessful) throw Exception("Updating exercise has failed")
+            if (!isUpdateSuccessful) throw Exception("Updating exercise has failed")
             _savingState.value =
                 ResultHandler.Success(isUpdateSuccessful)
         } catch (e: Exception) {
@@ -77,12 +79,17 @@ class EditExerciseViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateImage(): ImageReference? {
-        val initialExerciseBitmap = initialExercise.image?.let { loadBitmap(it) }
+    private suspend fun updateImage(exercise: Exercise): ImageReference? {
+        val initialExerciseBitmap = initialExercise.image?.let { loadBitmap(it.imageId) }
         val currentBitmap = image.value
-        return if(areBitmapsDifferent(initialExerciseBitmap, currentBitmap)) {
-            val currentByteArray = currentBitmap?.let { ImageFactory.fromBitmap(it) }
-            initialExercise.image?.let { exerciseService.updateImage(currentByteArray, it.imageName) }
+        return if (areBitmapsDifferent(initialExerciseBitmap, currentBitmap)) {
+            val image = Image(ImageId.create(), listOf(exercise.id.value), currentBitmap!!)
+            val imageByteArray = ImageMapper.toImageByteArray(image)
+            if(initialExercise.image == null) {
+                exerciseService.saveImage(imageByteArray)
+            } else {
+                exerciseService.updateImage(imageByteArray, initialExercise.image!!.imageId)
+            }
         } else {
             null
         }

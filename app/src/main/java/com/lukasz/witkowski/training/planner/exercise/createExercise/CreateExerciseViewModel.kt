@@ -7,12 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageReference
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
-import com.lukasz.witkowski.training.planner.exercise.presentation.ImageFactory
+import com.lukasz.witkowski.training.planner.image.Image
+import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.image.ImageMapper
+import com.lukasz.witkowski.training.planner.image.ImageReference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -76,7 +78,7 @@ open class CreateExerciseViewModel @Inject constructor(
     private suspend fun saveExercise(exercise: Exercise) {
         try {
             _savingState.value = ResultHandler.Loading
-            val imageReference = saveImage()
+            val imageReference = saveImage(exercise)
             val domainExercise = ExerciseMapper.toDomainExercise(exercise, imageReference)
             exerciseService.saveExercise(domainExercise)
             _savingState.value = ResultHandler.Success(true)
@@ -86,8 +88,9 @@ open class CreateExerciseViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveImage(): ImageReference? {
-        val imageByteArray = image.value?.let { ImageFactory.fromBitmap(it) }
-        return imageByteArray?.let { exerciseService.saveImage(imageByteArray) }
+    private suspend fun saveImage(exercise: Exercise): ImageReference? {
+        val image = image.value?.let { Image(ImageId.create(), listOf(exercise.id.value), it) } ?: return null
+        val imageByteArray = ImageMapper.toImageByteArray(image)
+        return exerciseService.saveImage(imageByteArray)
     }
 }
