@@ -33,7 +33,10 @@ class EditExerciseViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             exerciseService.getExerciseById(exerciseId).collect { domainExercise ->
-                initialExercise = ExerciseMapper.toPresentationExercise(domainExercise)
+                val imageReference = domainExercise.imageId?.let {
+                    exerciseService.readImageReference(it)
+                }
+                initialExercise = ExerciseMapper.toPresentationExercise(domainExercise, imageReference)
                 onExerciseNameChange(initialExercise.name)
                 onExerciseDescriptionChange(initialExercise.description)
                 val index = allCategories.indexOf(initialExercise.category)

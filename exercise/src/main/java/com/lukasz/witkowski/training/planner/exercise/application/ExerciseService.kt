@@ -4,8 +4,6 @@ import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageByteArray
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageByteArray
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
@@ -29,12 +27,12 @@ class ExerciseService(
         return imageStorage.saveImage(image)
     }
 
-    suspend fun updateImage(image: ImageByteArray?, oldImageId: ImageId): ImageReference? {
-        return image?.let { imageStorage.updateImage(oldImageId, it) }
+    suspend fun updateImage(image: ImageByteArray, oldImageId: ImageId): ImageReference {
+        return imageStorage.updateImage(oldImageId, image)
     }
 
-    private suspend fun deleteImage(image: ImageReference) {
-        imageStorage.deleteImage(image.imageName)
+    private suspend fun deleteImage(imageId: ImageId, exerciseId: ExerciseId) {
+        imageStorage.deleteImage(imageId, exerciseId.value)
     }
 
     // TODO Should be all exercises taken from domain and then filter here, or the filtration should be made in infra (SQL query)? (less data transmission)
@@ -51,7 +49,7 @@ class ExerciseService(
             exerciseRepository.delete(exercise)
         }
         val deleteImage = async {
-            exercise.imageReference?.let { deleteImage(it) }
+            exercise.imageId?.let { deleteImage(it, exercise.id) }
         }
         deleteExercise.await()
         deleteImage.await()
@@ -67,5 +65,9 @@ class ExerciseService(
 
     suspend fun readImage(imageId: ImageId): ImageByteArray {
         return imageStorage.readImage(imageId)
+    }
+
+    suspend fun readImageReference(imageId: ImageId): ImageReference? {
+        return imageStorage.readImageReference(imageId)
     }
 }
