@@ -32,13 +32,13 @@ object TrainingExerciseMapper {
 
     private fun toDomainExercise(exercise: Exercise): DomainExercise {
         return DomainExercise(
-            exercise.id, exercise.name, exercise.description, CategoryMapper.toExerciseCategory(exercise.category), exercise.image
+            exercise.id, exercise.name, exercise.description, CategoryMapper.toExerciseCategory(exercise.category), null
         )
     }
 
     private fun toPresentationExercise(exercise: DomainExercise): Exercise {
         return Exercise(
-            exercise.id, exercise.name, exercise.description, CategoryMapper.toCategory(exercise.category), exercise.imageReference
+            exercise.id, exercise.name, exercise.description, CategoryMapper.toCategory(exercise.category), null
         )
     }
 }
