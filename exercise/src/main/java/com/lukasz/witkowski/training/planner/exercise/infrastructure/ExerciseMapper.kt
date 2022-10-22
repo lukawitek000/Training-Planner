@@ -8,32 +8,24 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 
 internal object ExerciseMapper {
 
-    fun toExerciseWithImage(exercise: Exercise): ExerciseWithImage {
-        val dbExercise = DbExercise(
+    fun toDbExercise(exercise: Exercise): DbExercise {
+        return DbExercise(
             id = exercise.id.value,
             name = exercise.name,
             description = exercise.description,
-            categoryId = exercise.category.ordinal
+            categoryId = exercise.category.ordinal,
+            imageId = exercise.imageReference?.id?.value
         )
-        val imageReference = exercise.imageReference
-        val dbImageReference = imageReference?.run {
-            DbImageReference(id.value, dbExercise.id, path)
-        }
-        return ExerciseWithImage(dbExercise, dbImageReference)
     }
 
-    fun toExercise(exerciseWithImage: ExerciseWithImage): Exercise {
-        val (dbExercise, dbImageReference) = exerciseWithImage
+    fun toExercise(dbExercise: DbExercise): Exercise {
+        val imageReference = dbExercise.imageId?.let { ImageReference(ImageId(it), "")}
         return Exercise(
             id = ExerciseId(dbExercise.id),
             name = dbExercise.name,
             description = dbExercise.description,
             category = ExerciseCategory.values()[dbExercise.categoryId],
-            imageReference = dbImageReference?.toImageReference()
+            imageReference = imageReference
         )
-    }
-
-    private fun DbImageReference.toImageReference(): ImageReference {
-        return ImageReference(ImageId(id), path)
     }
 }

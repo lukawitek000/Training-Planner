@@ -8,7 +8,6 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ImageRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDatabase
-import com.lukasz.witkowski.training.planner.exercise.infrastructure.InternalStorageImageRepository
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
 import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoriesCollection

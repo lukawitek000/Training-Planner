@@ -12,48 +12,18 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 internal interface ExerciseDao {
 
-    @Transaction
     @Query("SELECT * FROM Exercise")
-    fun getAll(): Flow<List<ExerciseWithImage>>
+    fun getAll(): Flow<List<DbExercise>>
 
-    @Transaction
     @Query("SELECT * FROM Exercise WHERE :id == id")
-    fun getById(id: String): Flow<ExerciseWithImage>
-
-
-    @Transaction
-    suspend fun insert(exerciseWithImage: ExerciseWithImage): Long {
-        exerciseWithImage.imageReference?.let { insert(it) }
-        return insert(exerciseWithImage.exercise)
-    }
+    fun getById(id: String): Flow<DbExercise>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(dbExercise: DbExercise): Long
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(dbImageReference: DbImageReference): Long
-
-    @Transaction
-    suspend fun deleteExerciseWithImage(exerciseId: String) {
-        deleteImageReferenceByExerciseId(exerciseId)
-        deleteExerciseById(exerciseId)
-    }
-
     @Query("DELETE FROM Exercise WHERE :id == id")
-    suspend fun deleteExerciseById(id: String)
-
-    @Transaction
-    suspend fun update(exerciseWithImage: ExerciseWithImage): Boolean {
-        val imgReference = exerciseWithImage.imageReference
-        deleteImageReferenceByExerciseId(exerciseWithImage.exercise.id)
-        imgReference?.let { insert(it) }
-        update(exerciseWithImage.exercise)
-        return true
-    }
+    suspend fun deleteExerciseById(id: String): Int
 
     @Update
     suspend fun update(dbExercise: DbExercise): Int // returns number of updated rows
-
-    @Query("DELETE FROM DBIMAGEREFERENCE WHERE exerciseId = :exerciseId")
-    suspend fun deleteImageReferenceByExerciseId(exerciseId: String)
 }
