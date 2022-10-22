@@ -2,8 +2,6 @@ package com.lukasz.witkowski.training.planner.training.domain
 
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
-import com.lukasz.witkowski.training.planner.exercise.domain.Image
 
 /**
  * Class describing exercise in the training.

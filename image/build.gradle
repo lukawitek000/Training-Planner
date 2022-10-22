@@ -48,7 +48,6 @@ dependencies {
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
 
-
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0"
 
     testImplementation 'junit:junit:4.13.2'

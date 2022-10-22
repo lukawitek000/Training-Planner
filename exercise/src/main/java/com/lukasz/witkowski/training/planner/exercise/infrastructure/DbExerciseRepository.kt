@@ -8,25 +8,30 @@ import kotlinx.coroutines.flow.map
 
 internal class DbExerciseRepository(private val exerciseDao: ExerciseDao) : ExerciseRepository {
     override fun getById(id: ExerciseId): Flow<Exercise> {
-        return exerciseDao.getById(id.value).map { ExerciseMapper.toExercise(it)  }
+        return exerciseDao.getById(id.value).map { ExerciseMapper.toExercise(it) }
     }
 
     override fun getAll(): Flow<List<Exercise>> {
-        return exerciseDao.getAll().map { it.map { dbExercise -> ExerciseMapper.toExercise(dbExercise) } }
+        return exerciseDao.getAll()
+            .map { it.map { dbExercise -> ExerciseMapper.toExercise(dbExercise) } }
     }
 
     override suspend fun insert(exercise: Exercise): Boolean {
-        val exerciseWithImage = ExerciseMapper.toExerciseWithImage(exercise)
+        val exerciseWithImage = ExerciseMapper.toDbExercise(exercise)
         exerciseDao.insert(exerciseWithImage)
         return true
     }
 
     override suspend fun delete(exercise: Exercise) {
-        exerciseDao.deleteExerciseWithImage(exercise.id.value)
+        exerciseDao.deleteExerciseById(exercise.id.value)
     }
 
     override suspend fun updateExercise(updatedExercise: Exercise): Boolean {
-        val exerciseWithImage = ExerciseMapper.toExerciseWithImage(updatedExercise)
-        return exerciseDao.update(exerciseWithImage)
+        val dbExercise = ExerciseMapper.toDbExercise(updatedExercise)
+        return exerciseDao.update(dbExercise) == ONE_ROW
+    }
+
+    private companion object {
+        const val ONE_ROW = 1
     }
 }

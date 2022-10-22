@@ -45,7 +45,13 @@ class ExercisesListViewModel @Inject internal constructor(
         viewModelScope.launch {
             val categories = selectedCategories.value.map { CategoryMapper.toExerciseCategory(it) }
             exerciseService.getExercisesFromCategories(categories).collectLatest {
-                _exercises.emit(ExerciseMapper.toPresentationExercises(it))
+                val exercises = it.map { exercise ->
+                    val imageReference = exercise.imageId?.let { imageId ->
+                        exerciseService.readImageReference(imageId)
+                    }
+                    ExerciseMapper.toPresentationExercise(exercise, imageReference)
+                }
+                _exercises.emit(exercises)
             }
         }
     }

@@ -1,9 +1,7 @@
 package com.lukasz.witkowski.training.planner.exercise.di
 
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseRepository
-import com.lukasz.witkowski.training.planner.exercise.infrastructure.InternalStorageImageRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -17,9 +15,4 @@ internal abstract class RepositoryModule {
     abstract fun bindExerciseRepository(
         dbExerciseRepository: DbExerciseRepository
     ): ExerciseRepository
-
-    @Binds
-    abstract fun bindImageRepository(
-        internalStorageImageRepository: InternalStorageImageRepository
-    ): ImageRepository
 }

@@ -4,8 +4,6 @@ import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.domain.Image
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbExercise

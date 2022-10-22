@@ -4,15 +4,15 @@ import android.content.Context
 import androidx.room.Room
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDatabase
-import com.lukasz.witkowski.training.planner.exercise.infrastructure.InternalStorageImageRepository
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
 import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoryController
+import com.lukasz.witkowski.training.planner.image.ImageStorage
+import com.lukasz.witkowski.training.planner.image.ImageStorageFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -26,8 +26,8 @@ internal object ExerciseModule {
 
     @Singleton
     @Provides
-    fun provideExerciseService(exerciseRepository: ExerciseRepository, imageRepository: ImageRepository): ExerciseService {
-        return ExerciseService(exerciseRepository, imageRepository)
+    fun provideExerciseService(exerciseRepository: ExerciseRepository, imageStorage: ImageStorage): ExerciseService {
+        return ExerciseService(exerciseRepository, imageStorage)
     }
 
     @Provides
@@ -48,8 +48,8 @@ internal object ExerciseModule {
 
     @Singleton
     @Provides
-    fun provideInternalStorageImageRepository(@ApplicationContext context: Context): InternalStorageImageRepository {
-        return InternalStorageImageRepository(context, "exercise_images")
+    fun provideDefaultImageStorage(@ApplicationContext context: Context): ImageStorage {
+        return ImageStorageFactory.create(context, "exercise_images")
     }
 
     @Singleton

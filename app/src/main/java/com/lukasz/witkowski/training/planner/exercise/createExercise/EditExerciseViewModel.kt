@@ -1,21 +1,21 @@
 package com.lukasz.witkowski.training.planner.exercise.createExercise
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageReference
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
-import com.lukasz.witkowski.training.planner.exercise.presentation.ImageFactory
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
+import com.lukasz.witkowski.training.planner.image.Image
+import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.image.ImageMapper
+import com.lukasz.witkowski.training.planner.image.ImageReference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 
 @HiltViewModel
 class EditExerciseViewModel @Inject constructor(
@@ -24,32 +24,40 @@ class EditExerciseViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : CreateExerciseViewModel(exerciseService, categoriesCollection, savedStateHandle) {
 
-    private val _exerciseId = savedStateHandle.get<String>("exerciseId")!!
-    private val exerciseId: ExerciseId
-        get() = ExerciseId(_exerciseId)
-
     private lateinit var initialExercise: Exercise
 
     init {
         viewModelScope.launch {
             exerciseService.getExerciseById(exerciseId).collect { domainExercise ->
-                initialExercise = ExerciseMapper.toPresentationExercise(domainExercise)
+                initialExercise = mapToPresentationExercise(domainExercise)
                 onExerciseNameChange(initialExercise.name)
                 onExerciseDescriptionChange(initialExercise.description)
-                val index = allCategories.indexOf(initialExercise.category)
-                if (index >= 0) {
-                    onCategorySelected(index)
-                }
+                setExerciseCategory()
                 initialExercise.image?.let {
-                    val imageBitmap = loadBitmap(it)
+                    val imageBitmap = loadBitmap(it.imageId)
                     onImageChange(imageBitmap)
                 }
             }
         }
     }
 
-    private fun loadBitmap(imageReference: ImageReference): Bitmap {
-        return BitmapFactory.decodeFile(imageReference.absolutePath)
+    private fun setExerciseCategory() {
+        val index = allCategories.indexOf(initialExercise.category)
+        if (index >= 0) {
+            onCategorySelected(index)
+        }
+    }
+
+    private suspend fun mapToPresentationExercise(domainExercise: DomainExercise): Exercise {
+        val imageReference = domainExercise.imageId?.let {
+            exerciseService.readImageReference(it)
+        }
+        return ExerciseMapper.toPresentationExercise(domainExercise, imageReference)
+    }
+
+    private suspend fun loadBitmap(imageId: ImageId): Bitmap {
+        val imageByteArray = exerciseService.readImage(imageId)
+        return ImageMapper.toImage(imageByteArray).bitmap
     }
 
     override fun createExercise() {
@@ -67,10 +75,11 @@ class EditExerciseViewModel @Inject constructor(
     private suspend fun updateExercise(exercise: Exercise) {
         try {
             _savingState.value = ResultHandler.Loading
-            val imageReference = updateImage()
-            val domainExercise = ExerciseMapper.toDomainExercise(exercise, imageReference)
+            val imageReference = updateImage(exercise)
+            val exerciseWithImage = exercise.copy(image = imageReference)
+            val domainExercise = ExerciseMapper.toDomainExercise(exerciseWithImage)
             val isUpdateSuccessful = exerciseService.updateExercise(domainExercise)
-            if(!isUpdateSuccessful) throw Exception("Updating exercise has failed")
+            if (!isUpdateSuccessful) throw Exception("Updating exercise has failed")
             _savingState.value =
                 ResultHandler.Success(isUpdateSuccessful)
         } catch (e: Exception) {
@@ -78,19 +87,29 @@ class EditExerciseViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateImage(): ImageReference? {
-        val initialExerciseBitmap = initialExercise.image?.let { loadBitmap(it) }
-        val currentBitmap = image.value
-        return if(areBitmapsDifferent(initialExerciseBitmap, currentBitmap)) {
-            val currentByteArray = currentBitmap?.let { ImageFactory.fromBitmap(it) }
-            initialExercise.image?.let { exerciseService.updateImage(currentByteArray, it.imageName) }
+    private suspend fun updateImage(exercise: Exercise): ImageReference? {
+        val initialImage = initialExercise.image
+        val initialExerciseBitmap = initialImage?.let { loadBitmap(it.imageId) }
+        val currentBitmap = image.value?.bitmap
+        return if (!areBitmapsTheSame(initialExerciseBitmap, currentBitmap)) {
+            val image = Image(ImageId.create(), listOf(exercise.id.value), currentBitmap!!)
+            val imageByteArray = ImageMapper.toImageByteArray(image)
+            if (initialImage == null) {
+                exerciseService.saveImage(imageByteArray)
+            } else {
+                exerciseService.updateImage(imageByteArray, initialImage.imageId)
+            }
         } else {
-            null
+            initialImage
         }
     }
 
-    private fun areBitmapsDifferent(
+    private fun areBitmapsTheSame(
         initialExerciseBitmap: Bitmap?,
         currentBitmap: Bitmap?
-    ) = initialExerciseBitmap?.sameAs(currentBitmap) == false
+    ): Boolean {
+        return if (initialExerciseBitmap == null && currentBitmap == null) {
+            true
+        } else initialExerciseBitmap?.sameAs(currentBitmap) ?: true
+    }
 }

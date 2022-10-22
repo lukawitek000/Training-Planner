@@ -39,6 +39,7 @@ import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.SnackbarState
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
+import com.lukasz.witkowski.training.planner.image.Image
 import com.lukasz.witkowski.training.planner.ui.components.DropDownInput
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
@@ -142,7 +143,7 @@ private fun CreateExerciseFloatingActionButton(
 
 @Composable
 private fun CreateExerciseForm(
-    image: Bitmap?,
+    image: Image?,
     name: String,
     description: String,
     allCategories: List<Category>,
@@ -159,7 +160,7 @@ private fun CreateExerciseForm(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         UploadImageLayout(
-            image = image,
+            image = image?.bitmap,
             onImageChange = onImageChange
         )
         Spacer(modifier = Modifier.height(16.dp))
