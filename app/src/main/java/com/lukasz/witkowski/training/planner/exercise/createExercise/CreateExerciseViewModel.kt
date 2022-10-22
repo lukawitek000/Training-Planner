@@ -19,6 +19,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 /** StateFlow with SavedStateHandle, do I need it?
@@ -29,8 +30,12 @@ import javax.inject.Inject
 open class CreateExerciseViewModel @Inject constructor(
     private val exerciseService: ExerciseService,
     private val categoriesCollection: CategoriesCollection,
-    protected val savedStateHandle: SavedStateHandle
+    savedStateHandle: SavedStateHandle
 ) : ViewModel(), CategoriesCollection by categoriesCollection {
+
+//    protected open var exerciseId = ExerciseId.create()
+    private val _exerciseId = savedStateHandle.get<String>("exerciseId")
+    protected var exerciseId = _exerciseId?.let { ExerciseId(it) } ?: ExerciseId.create()
 
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
@@ -41,8 +46,8 @@ open class CreateExerciseViewModel @Inject constructor(
     private val _category = MutableStateFlow(Category())
     val category: StateFlow<Category> = _category
 
-    private val _image = MutableStateFlow<Bitmap?>(null)
-    val image: StateFlow<Bitmap?> = _image
+    private val _image = MutableStateFlow<Image?>(null)
+    val image: StateFlow<Image?> = _image
 
     protected val _savingState = MutableStateFlow<ResultHandler<Boolean>>(ResultHandler.Idle)
     val savingState: StateFlow<ResultHandler<Boolean>> = _savingState
@@ -60,13 +65,13 @@ open class CreateExerciseViewModel @Inject constructor(
     }
 
     fun onImageChange(bitmap: Bitmap) {
-        _image.value = bitmap
+        _image.value = Image(ImageId.create(), listOf(exerciseId.value), bitmap)
     }
 
     open fun createExercise() {
         viewModelScope.launch {
             val exercise = Exercise(
-                id = ExerciseId.create(),
+                id = exerciseId,
                 name = name.value,
                 description = description.value,
                 category = category.value,
@@ -78,7 +83,7 @@ open class CreateExerciseViewModel @Inject constructor(
     private suspend fun saveExercise(exercise: Exercise) {
         try {
             _savingState.value = ResultHandler.Loading
-            val imageReference = saveImage(exercise)
+            val imageReference = saveImage()
             val domainExercise = ExerciseMapper.toDomainExercise(exercise, imageReference)
             exerciseService.saveExercise(domainExercise)
             _savingState.value = ResultHandler.Success(true)
@@ -88,9 +93,8 @@ open class CreateExerciseViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveImage(exercise: Exercise): ImageReference? {
-        val image = image.value?.let { Image(ImageId.create(), listOf(exercise.id.value), it) } ?: return null
-        val imageByteArray = ImageMapper.toImageByteArray(image)
+    private suspend fun saveImage(): ImageReference? {
+        val imageByteArray = image.value?.let { ImageMapper.toImageByteArray(it) } ?: return null
         return exerciseService.saveImage(imageByteArray)
     }
 }
