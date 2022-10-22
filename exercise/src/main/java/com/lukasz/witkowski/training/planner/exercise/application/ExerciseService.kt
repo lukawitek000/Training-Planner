@@ -10,9 +10,7 @@ import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageStorage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import timber.log.Timber
 
-// TODO separate service for images, load async
 class ExerciseService(
     private val exerciseRepository: ExerciseRepository,
     private val imageStorage: ImageStorage
@@ -33,7 +31,6 @@ class ExerciseService(
         imageStorage.deleteImage(imageId, exerciseId.value)
     }
 
-    // TODO Should be all exercises taken from domain and then filter here, or the filtration should be made in infra (SQL query)? (less data transmission)
     fun getExercisesFromCategories(categories: List<ExerciseCategory>): Flow<List<Exercise>> {
         return exerciseRepository.getAll().map {
             it.filter { exercise ->
@@ -44,7 +41,6 @@ class ExerciseService(
 
     suspend fun deleteExercise(exercise: Exercise) {
         exerciseRepository.delete(exercise)
-        Timber.d("ImageID ${exercise.imageId}")
         exercise.imageId?.let { deleteImage(it, exercise.id) }
     }
 
