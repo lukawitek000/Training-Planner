@@ -76,7 +76,8 @@ class EditExerciseViewModel @Inject constructor(
         try {
             _savingState.value = ResultHandler.Loading
             val imageReference = updateImage(exercise)
-            val domainExercise = ExerciseMapper.toDomainExercise(exercise, imageReference)
+            val exerciseWithImage = exercise.copy(image = imageReference)
+            val domainExercise = ExerciseMapper.toDomainExercise(exerciseWithImage)
             val isUpdateSuccessful = exerciseService.updateExercise(domainExercise)
             if (!isUpdateSuccessful) throw Exception("Updating exercise has failed")
             _savingState.value =

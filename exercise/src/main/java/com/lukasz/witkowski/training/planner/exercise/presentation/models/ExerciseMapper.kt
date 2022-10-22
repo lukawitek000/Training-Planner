@@ -6,15 +6,14 @@ import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainE
 object ExerciseMapper {
 
     fun toDomainExercise(
-        exercise: Exercise,
-        imageReference: ImageReference? = null
+        exercise: Exercise
     ): DomainExercise {
         return DomainExercise(
             id = exercise.id,
             name = exercise.name,
             description = exercise.description,
             category = CategoryMapper.toExerciseCategory(exercise.category),
-            imageId = imageReference?.imageId
+            imageId = exercise.image?.imageId
         )
     }
 

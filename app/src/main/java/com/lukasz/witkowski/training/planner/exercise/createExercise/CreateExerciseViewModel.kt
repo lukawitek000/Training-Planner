@@ -33,7 +33,6 @@ open class CreateExerciseViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), CategoriesCollection by categoriesCollection {
 
-//    protected open var exerciseId = ExerciseId.create()
     private val _exerciseId = savedStateHandle.get<String>("exerciseId")
     protected var exerciseId = _exerciseId?.let { ExerciseId(it) } ?: ExerciseId.create()
 
@@ -84,7 +83,8 @@ open class CreateExerciseViewModel @Inject constructor(
         try {
             _savingState.value = ResultHandler.Loading
             val imageReference = saveImage()
-            val domainExercise = ExerciseMapper.toDomainExercise(exercise, imageReference)
+            val exerciseWithImage = exercise.copy(image = imageReference)
+            val domainExercise = ExerciseMapper.toDomainExercise(exerciseWithImage)
             exerciseService.saveExercise(domainExercise)
             _savingState.value = ResultHandler.Success(true)
         } catch (e: Exception) {

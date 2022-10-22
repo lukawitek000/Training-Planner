@@ -8,11 +8,9 @@ import com.lukasz.witkowski.training.planner.image.ImageByteArray
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageStorage
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 // TODO separate service for images, load async
 class ExerciseService(
@@ -44,15 +42,10 @@ class ExerciseService(
         }
     }
 
-    suspend fun deleteExercise(exercise: Exercise) = withContext(Dispatchers.IO) {
-        val deleteExercise = async {
-            exerciseRepository.delete(exercise)
-        }
-        val deleteImage = async {
-            exercise.imageId?.let { deleteImage(it, exercise.id) }
-        }
-        deleteExercise.await()
-        deleteImage.await()
+    suspend fun deleteExercise(exercise: Exercise) {
+        exerciseRepository.delete(exercise)
+        Timber.d("ImageID ${exercise.imageId}")
+        exercise.imageId?.let { deleteImage(it, exercise.id) }
     }
 
     fun getExerciseById(id: ExerciseId): Flow<Exercise> {
