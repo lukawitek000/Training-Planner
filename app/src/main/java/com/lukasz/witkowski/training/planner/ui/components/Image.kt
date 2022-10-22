@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageReference
+import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.skydoves.landscapist.ImageOptions
 import com.skydoves.landscapist.coil.CoilImage
 import java.io.File
@@ -19,7 +19,7 @@ fun Image(
     contentDescriptor: String,
     modifier: Modifier = Modifier
 ) {
-    val imgModel = imageReference?.let { File(it.absolutePath) } ?: defaultImage
+    val imgModel = imageReference?.let { File(it.path) } ?: defaultImage
     CoilImage(
         modifier = modifier,
         imageModel = imgModel,
