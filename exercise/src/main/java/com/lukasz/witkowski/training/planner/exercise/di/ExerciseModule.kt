@@ -12,6 +12,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryContr
 import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoryController
 import com.lukasz.witkowski.training.planner.image.ImageStorage
+import com.lukasz.witkowski.training.planner.image.ImageStorageFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -48,7 +49,7 @@ internal object ExerciseModule {
     @Singleton
     @Provides
     fun provideDefaultImageStorage(@ApplicationContext context: Context): ImageStorage {
-        return InternalStorageImageRepository(context, "exercise_images")
+        return ImageStorageFactory.create(context, "exercise_images")
     }
 
     @Singleton

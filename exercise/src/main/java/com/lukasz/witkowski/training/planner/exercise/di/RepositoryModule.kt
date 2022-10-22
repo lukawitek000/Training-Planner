@@ -15,9 +15,4 @@ internal abstract class RepositoryModule {
     abstract fun bindExerciseRepository(
         dbExerciseRepository: DbExerciseRepository
     ): ExerciseRepository
-
-    @Binds
-    abstract fun bindImageRepository(
-        internalStorageImageRepository: InternalStorageImageRepository
-    ): ImageRepository
 }
