@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.di
 
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseRepository
 import dagger.Binds
 import dagger.Module

@@ -6,7 +6,6 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageByteArray
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageReference
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow

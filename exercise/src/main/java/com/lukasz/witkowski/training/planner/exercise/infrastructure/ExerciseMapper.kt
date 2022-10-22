@@ -4,7 +4,6 @@ import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageReference
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 
 internal object ExerciseMapper {
 

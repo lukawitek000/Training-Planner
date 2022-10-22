@@ -3,7 +3,6 @@ package com.lukasz.witkowski.training.planner.exercise.presentation
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.lukasz.witkowski.training.planner.exercise.domain.ImageByteArray
-import com.lukasz.witkowski.training.planner.exercise.domain.ImageId
 import java.io.ByteArrayOutputStream
 import kotlin.math.roundToInt
 
