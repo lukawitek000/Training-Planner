@@ -4,12 +4,42 @@ kotlin = "1.6.10"
 agp = "7.2.2" # Android gradle plugin
 hilt = "2.38.1"
 
+compose = "1.1.1"
+timber = "5.0.1"
+detekt = "1.21.0"
+room = "2.4.3"
+coroutines = "1.6.4"
+
+# AndroidX
+testCore = "1.4.0"
+lifecycle = "2.5.1"
+
+# Tests
+junit = "4.13.2"
+roboelectric = "4.9"
 
 [libraries]
 
 hilt-gradlePlugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
-
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-
-# Kotlin General Dependencies
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
+roomKtx = { module = "androidx.room:room-ktx", version.ref = "room" }
+roomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+
+
+# AndroidX
+testCore = { module = "androidx.test:core", version.ref = "testCore" }
+lifecycleLivedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
+
+# Tests
+junit = { module = "junit:junit", version.ref = "junit" }
+roboelectric = { module = "org.robolectric:robolectric", version.ref = "roboelectric" }
+kotlinTestJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+
+[bundles]
+room = ["roomRuntime", "roomKtx", "roomCompiler"]
