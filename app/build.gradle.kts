@@ -7,12 +7,12 @@ plugins {
 val composeVersion: String by rootProject.extra
 
 android {
-    compileSdkVersion(33)
+    compileSdk = 33
 
     defaultConfig {
         applicationId = "com.lukasz.witkowski.training.planner"
-        minSdkVersion(23)
-        targetSdkVersion(31)
+        minSdk = 23
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0"
 
