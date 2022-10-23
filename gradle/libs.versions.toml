@@ -25,16 +25,16 @@ android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref 
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
-roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
-roomKtx = { module = "androidx.room:room-ktx", version.ref = "room" }
-roomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
 
 # AndroidX
-testCore = { module = "androidx.test:core", version.ref = "testCore" }
-lifecycleLivedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
+androidx-testCore = { module = "androidx.test:core", version.ref = "testCore" }
+androidx-lifecycleLivedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
+androidx-roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
+androidx-roomKtx = { module = "androidx.room:room-ktx", version.ref = "room" }
+androidx-roomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 
 # Tests
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -42,4 +42,4 @@ roboelectric = { module = "org.robolectric:robolectric", version.ref = "roboelec
 kotlinTestJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 
 [bundles]
-room = ["roomRuntime", "roomKtx", "roomCompiler"]
+room = ["androidx-roomRuntime", "androidx-roomKtx"]

@@ -16,14 +16,11 @@ android {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    implementation("com.jakewharton.timber:timber:5.0.1")
-
-    val roomVersion = "2.4.3"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
-
+    // TODO use version catalog everywhere
+    implementation(libs.coroutines.core)
+    implementation(libs.timber)
+    implementation(libs.bundles.room)
+    kapt(libs.androidx.roomCompiler)
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0")
 
     testImplementation("junit:junit:4.13.2")
