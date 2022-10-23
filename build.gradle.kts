@@ -1,7 +1,7 @@
+val composeVersion by extra("1.1.1")
+val kotlinVersion by extra("1.6.10")
+
 buildscript {
-    extra.apply {
-        set("kotlin_version", "1.6.10")
-    }
     repositories {
         google()
         mavenCentral()
@@ -12,8 +12,6 @@ buildscript {
         classpath("com.google.dagger:hilt-android-gradle-plugin:2.38.1")
     }
 }
-
-val composeVersion by extra("1.1.1")
 
 tasks.register("clean",Delete::class){
     delete(rootProject.buildDir)
