@@ -1,0 +1,15 @@
+[versions]
+
+kotlin = "1.6.10"
+agp = "7.2.2" # Android gradle plugin
+hilt = "2.38.1"
+
+
+[libraries]
+
+hilt-gradlePlugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
+
+android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+
+# Kotlin General Dependencies
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
