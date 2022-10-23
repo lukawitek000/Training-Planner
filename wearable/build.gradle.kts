@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.lukasz.witkowski.training.planner"
-        minSdk = 23
+        minSdk = 30
         targetSdk = 32
         versionCode = 1
         versionName = "1.0"
