@@ -2,7 +2,7 @@ import io.gitlab.arturbosch.detekt.Detekt
 
 plugins {
     id(BuildPlugins.commonLibraryPlugin)
-    id("io.gitlab.arturbosch.detekt") version "1.21.0"
+    alias(libs.plugins.detekt)
 }
 
 val kotlinVersion: String by rootProject.extra
@@ -16,19 +16,18 @@ android {
 }
 
 dependencies {
-    // TODO use version catalog everywhere
-    implementation(libs.coroutines.core)
+    implementation(libs.coroutinesCore)
     implementation(libs.timber)
     implementation(libs.bundles.room)
     kapt(libs.androidx.roomCompiler)
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0")
+    detektPlugins(libs.detektFormatting)
 
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.robolectric:robolectric:4.9")
-    testImplementation("androidx.test:core:1.4.0")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion")
+    testImplementation(libs.junit)
+    testImplementation(libs.roboelectric)
+    testImplementation(libs.androidx.testCore)
+    testImplementation(libs.kotlinTestJunit)
     // Without live data test is failing https://issuetracker.google.com/issues/237574812
-    testImplementation("androidx.lifecycle:lifecycle-livedata-ktx:2.5.1")
+    testImplementation(libs.androidx.lifecycleLivedataKtx)
 }
 
 tasks.register<Detekt>("customDetekt") {
