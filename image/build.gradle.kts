@@ -1,8 +1,8 @@
-import io.gitlab.arturbosch.detekt.Detekt
 
 plugins {
     id(BuildPlugins.commonLibraryPlugin)
-    alias(libs.plugins.detekt)
+    id(BuildPlugins.detektPlugin)
+    id(libs.plugins.detekt.get().pluginId)
 }
 
 val kotlinVersion: String by rootProject.extra
@@ -28,18 +28,4 @@ dependencies {
     testImplementation(libs.kotlinTestJunit)
     // Without live data test is failing https://issuetracker.google.com/issues/237574812
     testImplementation(libs.androidx.lifecycleLivedataKtx)
-}
-
-tasks.register<Detekt>("customDetekt") {
-    val configFile = files("$rootDir/config/detekt/detekt.yml")
-    description = "Custom DETEKT build for all modules"
-    parallel = true
-    buildUponDefaultConfig = false
-    setSource(files("src/main/kotlin", "src/main/java"))
-    config.setFrom(configFile)
-    reports {
-        html.enabled = true
-        xml.enabled = false
-        txt.enabled = false
-    }
 }
