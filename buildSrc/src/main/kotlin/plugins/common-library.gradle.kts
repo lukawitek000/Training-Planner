@@ -1,3 +1,10 @@
+package plugins
+
+import ConfigData
+import gradle.kotlin.dsl.accessors._c7cd46b2e483aef787386d5c14b0a82d.android
+import gradle.kotlin.dsl.accessors._c7cd46b2e483aef787386d5c14b0a82d.kotlinOptions
+import org.gradle.kotlin.dsl.kotlin
+
 plugins {
     id("com.android.library")
     kotlin("android")

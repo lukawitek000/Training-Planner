@@ -1,4 +1,7 @@
+package plugins
+
 import io.gitlab.arturbosch.detekt.Detekt
+import org.gradle.kotlin.dsl.register
 
 tasks.register<Detekt>("customDetekt") {
     val configFile = files("$rootDir/config/detekt/detekt.yml")

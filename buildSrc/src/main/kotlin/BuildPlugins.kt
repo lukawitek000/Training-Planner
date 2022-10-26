@@ -1,4 +1,4 @@
 object BuildPlugins {
-    val commonLibraryPlugin by lazy { "common-library" }
-    val detektPlugin by lazy { "detekt" }
+    const val commonLibraryPlugin = "plugins.common-library"
+    const val detektPlugin = "plugins.detekt"
 }
