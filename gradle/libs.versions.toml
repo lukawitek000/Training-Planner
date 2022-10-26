@@ -35,12 +35,17 @@ kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = 
 dagger-hiltAndroid = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 dagger-hiltAndroidCompiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 
+playServicesWearable = { module = "com.google.android.gms:play-services-wearable", version = "18.0.0" }
+
 # AndroidX
 androidx-testCore = { module = "androidx.test:core", version.ref = "testCore" }
 androidx-lifecycleLivedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 androidx-roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-roomKtx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-roomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+
+# KotlinX
+kotlinx-coroutinesPlayServices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
 
 # Tests
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -53,4 +58,4 @@ room = ["androidx-roomRuntime", "androidx-roomKtx"]
 [plugins]
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 androidLibrary = { id = "com.android.library", version.ref = "agp" }
-
+#daggerAndroidPlugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
