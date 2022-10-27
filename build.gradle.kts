@@ -1,6 +1,3 @@
-val composeVersion by extra("1.1.1")
-val kotlinVersion by extra("1.6.10")
-
 buildscript {
     repositories {
         google()
