@@ -3,6 +3,10 @@ package plugins
 import io.gitlab.arturbosch.detekt.Detekt
 import org.gradle.kotlin.dsl.register
 
+plugins {
+    id("io.gitlab.arturbosch.detekt")
+}
+
 tasks.register<Detekt>("customDetekt") {
     val configFile = files("$rootDir/config/detekt/detekt.yml")
     description = "Custom DETEKT build for all modules"

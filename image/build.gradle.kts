@@ -1,11 +1,8 @@
 
 plugins {
     id(BuildPlugins.commonLibraryPlugin)
-    id(BuildPlugins.detektPlugin)
-    id(libs.plugins.detekt.get().pluginId)
+    id(BuildPlugins.customDetektPlugin)
 }
-
-val kotlinVersion: String by rootProject.extra
 
 android {
     testOptions {

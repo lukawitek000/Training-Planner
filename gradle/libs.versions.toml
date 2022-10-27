@@ -75,7 +75,8 @@ kotlinTestJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.r
 [bundles]
 room = ["androidx-roomRuntime", "androidx-roomKtx"]
 
-[plugins]
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
-androidLibrary = { id = "com.android.library", version.ref = "agp" }
+# Clean project does not work when plugins are defined here
+#[plugins]
+#detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+#androidLibrary = { id = "com.android.library", version.ref = "agp" }
 #daggerAndroidPlugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
