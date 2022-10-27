@@ -27,5 +27,5 @@ dependencies {
     testImplementation(libs.androidx.testCore)
     testImplementation(libs.kotlinTestJunit)
     // Without live data test is failing https://issuetracker.google.com/issues/237574812
-    testImplementation(libs.androidx.lifecycleLivedataKtx)
+    testImplementation(libs.androidx.lifecycle.livedataKtx)
 }

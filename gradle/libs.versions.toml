@@ -38,10 +38,14 @@ dagger-hiltAndroidCompiler = { module = "com.google.dagger:hilt-android-compiler
 playServicesWearable = { module = "com.google.android.gms:play-services-wearable", version = "18.0.0" }
 gson = { module = "com.google.code.gson:gson", version = "2.9.1" }
 material = { module = "com.google.android.material:material", version = "1.7.0" }
+coil = { module = "com.github.skydoves:landscapist-coil", version = "2.0.0" }
+bytebeats-charts = { module = "io.github.bytebeats:compose-charts", version = "0.1.0" }
 
 # AndroidX
 androidx-testCore = { module = "androidx.test:core", version.ref = "testCore" }
-androidx-lifecycleLivedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-livedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
+androidx-lifecycle-viewmodelKtx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
 androidx-roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-roomKtx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-roomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
@@ -49,6 +53,16 @@ androidx-recyclerView = { module = "androidx.recyclerview:recyclerview", version
 androidx-percentLayout = { module = "androidx.percentlayout:percentlayout", version = "1.0.0" }
 androidx-wear = { module = "androidx.wear:wear", version = "1.2.0" }
 androidx-activityKtx = { module = "androidx.activity:activity-ktx", version = "1.6.0" }
+
+# Compose
+androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
+androidx-compose-uiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+androidx-compose-activity = { module = "androidx.activity:activity-compose", version = "1.6.0" }
+androidx-compose-navigation = { module = "androidx.navigation:navigation-compose", version = "2.5.2" }
+androidx-compose-material-iconsExtended = { module = "androidx.compose.material:material-icons-extended", version = "1.2.1" }
+androidx-compose-navigation-hilt = { module = "androidx.hilt:hilt-navigation-compose", version = "1.0.0" }
 
 # KotlinX
 kotlinx-coroutinesPlayServices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
