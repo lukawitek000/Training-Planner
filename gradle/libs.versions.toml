@@ -52,8 +52,8 @@ androidx-compose-uiToolingPreview = { module = "androidx.compose.ui:ui-tooling-p
 androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version = "1.6.0" }
 androidx-compose-navigation = { module = "androidx.navigation:navigation-compose", version = "2.5.2" }
-androidx-compose-material-iconsExtended = { module = "androidx.compose.material:material-icons-extended", version = "1.2.1" }
-androidx-compose-navigation-hilt = { module = "androidx.hilt:hilt-navigation-compose", version = "1.0.0" }
+androidx-compose-materialIconsExtended = { module = "androidx.compose.material:material-icons-extended", version = "1.2.1" }
+androidx-compose-navigationHilt = { module = "androidx.hilt:hilt-navigation-compose", version = "1.0.0" }
 
 # KotlinX
 kotlinx-coroutines-playServices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }

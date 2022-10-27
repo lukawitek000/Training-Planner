@@ -73,9 +73,9 @@ dependencies {
     implementation(libs.androidx.compose.material)
     debugImplementation(libs.androidx.compose.uiTooling)
     implementation(libs.androidx.compose.uiToolingPreview)
-    implementation(libs.androidx.compose.material.iconsExtended)
+    implementation(libs.androidx.compose.materialIconsExtended)
     implementation(libs.androidx.compose.navigation)
-    implementation(libs.androidx.compose.navigation.hilt)
+    implementation(libs.androidx.compose.navigationHilt)
 
     // Without this dependency there is a build error
     implementation(libs.google.playServicesWearable)
