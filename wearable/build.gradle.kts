@@ -38,9 +38,9 @@ dependencies {
     implementation(libs.androidx.wear)
     implementation(libs.material)
     implementation(libs.androidx.activityKtx)
+    implementation(libs.timber)
 
     // Hilt - dependency injection
     implementation(libs.dagger.hiltAndroid)
     kapt(libs.dagger.hiltAndroidCompiler)
-    implementation(libs.timber)
 }
