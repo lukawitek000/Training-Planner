@@ -16,7 +16,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.coroutinesCore)
+    implementation(libs.kotlinx.coroutines.core)
     implementation(libs.timber)
     implementation(libs.bundles.room)
     kapt(libs.androidx.roomCompiler)

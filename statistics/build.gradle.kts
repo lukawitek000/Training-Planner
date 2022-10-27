@@ -13,8 +13,8 @@ dependencies {
     testImplementation(libs.kotlinTestJunit)
 
     // Hilt - dependency injection
-    implementation(libs.dagger.hiltAndroid)
-    kapt(libs.dagger.hiltAndroidCompiler)
+    implementation(libs.google.dagger.hiltAndroid)
+    kapt(libs.google.dagger.hiltAndroidCompiler)
 
     implementation(libs.bundles.room)
     kapt(libs.androidx.roomCompiler)

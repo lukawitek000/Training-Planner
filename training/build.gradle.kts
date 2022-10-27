@@ -9,13 +9,13 @@ dependencies {
     implementation(project(":synchronization"))
     api(project(":shared"))
 
-    implementation(libs.kotlinx.coroutinesPlayServices)
-    implementation(libs.playServicesWearable)
+    implementation(libs.kotlinx.coroutines.playServices)
+    implementation(libs.google.playServicesWearable)
     implementation(libs.timber)
     implementation(libs.bundles.room)
     kapt(libs.androidx.roomCompiler)
 
     // Hilt - dependency injection
-    implementation(libs.dagger.hiltAndroid)
-    kapt(libs.dagger.hiltAndroidCompiler)
+    implementation(libs.google.dagger.hiltAndroid)
+    kapt(libs.google.dagger.hiltAndroidCompiler)
 }

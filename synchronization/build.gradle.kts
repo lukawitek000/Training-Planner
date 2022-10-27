@@ -3,9 +3,9 @@ plugins {
 }
 
 dependencies {
-    implementation(libs.coroutinesCore)
-    implementation(libs.kotlinx.coroutinesPlayServices)
-    implementation(libs.playServicesWearable)
-    implementation(libs.gson)
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.playServices)
+    implementation(libs.google.playServicesWearable)
+    implementation(libs.google.gson)
     implementation(libs.timber)
 }

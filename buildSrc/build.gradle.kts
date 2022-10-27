@@ -8,7 +8,7 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.android.gradlePlugin)
-    implementation(libs.kotlin.gradlePlugin)
-    implementation(libs.detekt.gradlePlugin)
+    implementation(libs.gradlePlugin.android)
+    implementation(libs.gradlePlugin.kotlin)
+    implementation(libs.gradlePlugin.detekt)
 }

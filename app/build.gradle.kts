@@ -65,10 +65,10 @@ dependencies {
     implementation(libs.bytebeats.charts)
 
     // Hilt - dependency injection
-    implementation(libs.dagger.hiltAndroid)
-    kapt(libs.dagger.hiltAndroidCompiler)
+    implementation(libs.google.dagger.hiltAndroid)
+    kapt(libs.google.dagger.hiltAndroidCompiler)
 
-    implementation(libs.material)
+    implementation(libs.google.material)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material)
     debugImplementation(libs.androidx.compose.uiTooling)
@@ -78,5 +78,5 @@ dependencies {
     implementation(libs.androidx.compose.navigation.hilt)
 
     // Without this dependency there is a build error
-    implementation(libs.playServicesWearable)
+    implementation(libs.google.playServicesWearable)
 }

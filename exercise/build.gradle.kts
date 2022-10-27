@@ -13,6 +13,6 @@ dependencies {
     kapt(libs.androidx.roomCompiler)
 
     // Hilt - dependency injection
-    implementation(libs.dagger.hiltAndroid)
-    kapt(libs.dagger.hiltAndroidCompiler)
+    implementation(libs.google.dagger.hiltAndroid)
+    kapt(libs.google.dagger.hiltAndroidCompiler)
 }

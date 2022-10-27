@@ -19,27 +19,18 @@ junit = "4.13.2"
 roboelectric = "4.9"
 
 [libraries]
+# Gradle plugins
+gradlePlugin-hilt = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
+gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "agp" }
+gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+gradlePlugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt"}
 
-hilt-gradlePlugin = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
-android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-
-timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
-coroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
-detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
-detekt-gradlePlugin = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt"}
-
-kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin"}
-
-dagger-hiltAndroid = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
-dagger-hiltAndroidCompiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
-
-playServicesWearable = { module = "com.google.android.gms:play-services-wearable", version = "18.0.0" }
-gson = { module = "com.google.code.gson:gson", version = "2.9.1" }
-material = { module = "com.google.android.material:material", version = "1.7.0" }
-coil = { module = "com.github.skydoves:landscapist-coil", version = "2.0.0" }
-bytebeats-charts = { module = "io.github.bytebeats:compose-charts", version = "0.1.0" }
+# Google
+google-dagger-hiltAndroid = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+google-dagger-hiltAndroidCompiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+google-playServicesWearable = { module = "com.google.android.gms:play-services-wearable", version = "18.0.0" }
+google-gson = { module = "com.google.code.gson:gson", version = "2.9.1" }
+google-material = { module = "com.google.android.material:material", version = "1.7.0" }
 
 # AndroidX
 androidx-testCore = { module = "androidx.test:core", version.ref = "testCore" }
@@ -65,7 +56,16 @@ androidx-compose-material-iconsExtended = { module = "androidx.compose.material:
 androidx-compose-navigation-hilt = { module = "androidx.hilt:hilt-navigation-compose", version = "1.0.0" }
 
 # KotlinX
-kotlinx-coroutinesPlayServices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
+kotlinx-coroutines-playServices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+
+# 3rd party
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin"}
+coil = { module = "com.github.skydoves:landscapist-coil", version = "2.0.0" }
+bytebeats-charts = { module = "io.github.bytebeats:compose-charts", version = "0.1.0" }
 
 # Tests
 junit = { module = "junit:junit", version.ref = "junit" }

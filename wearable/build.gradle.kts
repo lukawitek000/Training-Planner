@@ -34,13 +34,13 @@ android {
 dependencies {
     implementation(project(":training"))
     implementation(project(":exercise"))
-    implementation(libs.playServicesWearable)
+    implementation(libs.google.playServicesWearable)
     implementation(libs.androidx.wear)
-    implementation(libs.material)
+    implementation(libs.google.material)
     implementation(libs.androidx.activityKtx)
     implementation(libs.timber)
 
     // Hilt - dependency injection
-    implementation(libs.dagger.hiltAndroid)
-    kapt(libs.dagger.hiltAndroidCompiler)
+    implementation(libs.google.dagger.hiltAndroid)
+    kapt(libs.google.dagger.hiltAndroidCompiler)
 }
