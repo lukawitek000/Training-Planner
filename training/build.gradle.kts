@@ -7,7 +7,7 @@ plugins {
 dependencies {
     implementation(project(":exercise"))
     implementation(project(":synchronization"))
-    implementation(project(":shared"))
+    api(project(":shared"))
 
     implementation(libs.kotlinx.coroutinesPlayServices)
     implementation(libs.playServicesWearable)
