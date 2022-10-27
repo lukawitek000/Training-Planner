@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    api(project(":image"))
+    api(projects.image)
 
     // Kotlin reflection - Used to get subclasses of Category sealed class
     implementation(libs.kotlinReflect)

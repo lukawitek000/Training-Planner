@@ -6,7 +6,9 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Training Planner"
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
+rootProject.name = "Training-Planner"
 
 include(":app")
 include(":wearable")

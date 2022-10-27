@@ -53,9 +53,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":exercise"))
-    implementation(project(":training"))
-    implementation(project(":statistics"))
+    implementation(projects.exercise)
+    implementation(projects.training)
+    implementation(projects.statistics)
 
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.viewmodelKtx)

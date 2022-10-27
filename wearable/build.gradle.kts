@@ -32,8 +32,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":training"))
-    implementation(project(":exercise"))
+    implementation(projects.training)
+
     implementation(libs.google.playServicesWearable)
     implementation(libs.androidx.wear)
     implementation(libs.google.material)

@@ -5,9 +5,9 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":exercise"))
-    implementation(project(":synchronization"))
-    api(project(":shared"))
+    implementation(projects.synchronization)
+    api(projects.shared)
+    api(projects.exercise)
 
     implementation(libs.kotlinx.coroutines.playServices)
     implementation(libs.google.playServicesWearable)

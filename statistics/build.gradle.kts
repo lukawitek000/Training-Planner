@@ -5,9 +5,8 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":training"))
-    implementation(project(":exercise"))
-    implementation(project(":shared"))
+    implementation(projects.training)
+    api(projects.shared)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinTestJunit)
