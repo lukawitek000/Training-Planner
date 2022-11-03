@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.exercise.application.ExerciseConfiguration
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
@@ -75,41 +76,11 @@ class EditExerciseViewModel @Inject constructor(
     private suspend fun updateExercise(exercise: Exercise) {
         try {
             _savingState.value = ResultHandler.Loading
-            val imageReference = updateImage(exercise)
-            val exerciseWithImage = exercise.copy(image = imageReference)
-            val domainExercise = ExerciseMapper.toDomainExercise(exerciseWithImage)
-            val isUpdateSuccessful = exerciseService.updateExercise(domainExercise)
-            if (!isUpdateSuccessful) throw Exception("Updating exercise has failed")
-            _savingState.value =
-                ResultHandler.Success(isUpdateSuccessful)
+            val exerciseConfiguration = ExerciseMapper.toExerciseConfiguration(exercise, image.value)
+            exerciseService.updateExercise(exerciseId, exerciseConfiguration, null)
+            _savingState.value = ResultHandler.Success(true)
         } catch (e: Exception) {
             _savingState.value = ResultHandler.Error(message = "Updating exercise has failed")
         }
-    }
-
-    private suspend fun updateImage(exercise: Exercise): ImageReference? {
-        val initialImage = initialExercise.image
-        val initialExerciseBitmap = initialImage?.let { loadBitmap(it.imageId) }
-        val currentBitmap = image.value?.bitmap
-        return if (!areBitmapsTheSame(initialExerciseBitmap, currentBitmap)) {
-            val image = Image(ImageId.create(), listOf(exercise.id.value), currentBitmap!!)
-            val imageByteArray = ImageMapper.toImageByteArray(image)
-            if (initialImage == null) {
-                exerciseService.saveImage(imageByteArray)
-            } else {
-                exerciseService.updateImage(imageByteArray, initialImage.imageId)
-            }
-        } else {
-            initialImage
-        }
-    }
-
-    private fun areBitmapsTheSame(
-        initialExerciseBitmap: Bitmap?,
-        currentBitmap: Bitmap?
-    ): Boolean {
-        return if (initialExerciseBitmap == null && currentBitmap == null) {
-            true
-        } else initialExerciseBitmap?.sameAs(currentBitmap) ?: true
     }
 }

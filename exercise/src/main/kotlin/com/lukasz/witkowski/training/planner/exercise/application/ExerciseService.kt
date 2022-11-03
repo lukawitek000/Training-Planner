@@ -4,8 +4,10 @@ import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
+import com.lukasz.witkowski.training.planner.image.Image
 import com.lukasz.witkowski.training.planner.image.ImageByteArray
 import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.image.ImageMapper
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageStorage
 import kotlinx.coroutines.flow.Flow
@@ -22,7 +24,7 @@ class ExerciseService(
         exerciseRepository.insert(exercise)
     }
 
-    suspend fun saveImage(image: ImageByteArray): ImageReference {
+    private suspend fun saveImage(image: ImageByteArray): ImageReference {
         return imageStorage.saveImage(image)
     }
 
@@ -51,7 +53,12 @@ class ExerciseService(
         return exerciseRepository.getById(id)
     }
 
-    suspend fun updateExercise(exercise: Exercise): Boolean {
+    suspend fun updateExercise(
+        exerciseId: ExerciseId,
+        exerciseConfiguration: ExerciseConfiguration,
+        previousImage: ImageByteArray?
+    ): Boolean {
+        val exercise = createExercise(exerciseConfiguration, null, exerciseId)// TODO add check in image storage based on checksum
         return exerciseRepository.updateExercise(exercise)
     }
 
@@ -63,9 +70,13 @@ class ExerciseService(
         return imageStorage.readImageReference(imageId)
     }
 
-    private fun createExercise(exerciseConfiguration: ExerciseConfiguration, imageId: ImageId?): Exercise {
+    private fun createExercise(
+        exerciseConfiguration: ExerciseConfiguration,
+        imageId: ImageId?,
+        exerciseId: ExerciseId = ExerciseId.create()
+    ): Exercise {
         return Exercise(
-            ExerciseId.create(),
+            exerciseId,
             exerciseConfiguration.name,
             exerciseConfiguration.description,
             exerciseConfiguration.category,
