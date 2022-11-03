@@ -15,7 +15,10 @@ class ExerciseService(
     private val exerciseRepository: ExerciseRepository,
     private val imageStorage: ImageStorage
 ) {
-    suspend fun saveExercise(exercise: Exercise) {
+
+    suspend fun saveExercise(exerciseConfiguration: ExerciseConfiguration) {
+        val imageReference = exerciseConfiguration.image?.let { saveImage(it) }
+        val exercise = createExercise(exerciseConfiguration, imageReference?.imageId)
         exerciseRepository.insert(exercise)
     }
 
@@ -58,5 +61,15 @@ class ExerciseService(
 
     suspend fun readImageReference(imageId: ImageId): ImageReference? {
         return imageStorage.readImageReference(imageId)
+    }
+
+    private fun createExercise(exerciseConfiguration: ExerciseConfiguration, imageId: ImageId?): Exercise {
+        return Exercise(
+            ExerciseId.create(),
+            exerciseConfiguration.name,
+            exerciseConfiguration.description,
+            exerciseConfiguration.category,
+            imageId
+        )
     }
 }

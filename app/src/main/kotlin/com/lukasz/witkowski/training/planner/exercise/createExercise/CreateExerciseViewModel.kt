@@ -82,19 +82,12 @@ open class CreateExerciseViewModel @Inject constructor(
     private suspend fun saveExercise(exercise: Exercise) {
         try {
             _savingState.value = ResultHandler.Loading
-            val imageReference = saveImage()
-            val exerciseWithImage = exercise.copy(image = imageReference)
-            val domainExercise = ExerciseMapper.toDomainExercise(exerciseWithImage)
-            exerciseService.saveExercise(domainExercise)
+            val exerciseConfiguration = ExerciseMapper.toExerciseConfiguration(exercise, image.value)
+            exerciseService.saveExercise(exerciseConfiguration)
             _savingState.value = ResultHandler.Success(true)
         } catch (e: Exception) {
             _savingState.value = ResultHandler.Error(message = "Saving exercise failed")
             _savingState.value = ResultHandler.Idle
         }
-    }
-
-    private suspend fun saveImage(): ImageReference? {
-        val imageByteArray = image.value?.let { ImageMapper.toImageByteArray(it) } ?: return null
-        return exerciseService.saveImage(imageByteArray)
     }
 }
