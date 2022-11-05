@@ -8,7 +8,7 @@ interface ImageStorage {
      * Read the image based on the [imageId].
      * @throws [ImageNotFoundException] if the image was not found.
      */
-    suspend fun readImage(imageId: ImageId): ImageByteArray
+    suspend fun readImage(imageId: ImageId): Image
 
     /**
      * @return [ImageReference] for the [imageId] or _null_ if it does not exist.

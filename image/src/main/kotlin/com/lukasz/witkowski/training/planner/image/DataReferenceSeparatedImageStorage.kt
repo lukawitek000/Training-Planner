@@ -30,7 +30,7 @@ internal class DataReferenceSeparatedImageStorage constructor(
         }
     }
 
-    override suspend fun readImage(imageId: ImageId): ImageByteArray {
+    override suspend fun readImage(imageId: ImageId): Image {
         val imageReference = imageReferenceRepository.read(imageId)
         return imageReference?.let { imageRepository.read(it) }
             ?: throw ImageNotFoundException(imageId)
@@ -74,7 +74,7 @@ internal class DataReferenceSeparatedImageStorage constructor(
     }
 
     private suspend fun updateImageForAllOwners(
-        newImage: ImageByteArray,
+        newImage: Image,
         oldImageReference: ImageReference
     ): ImageReference {
         val newImageReference = imageRepository.update(newImage, oldImageReference)
@@ -84,7 +84,7 @@ internal class DataReferenceSeparatedImageStorage constructor(
     }
 
     private fun createImageByteArray(imageConfiguration: ImageConfiguration) =
-        ImageByteArray(
+        Image(
             generateImageId(),
             listOf(imageConfiguration.ownerId),
             imageConfiguration.data

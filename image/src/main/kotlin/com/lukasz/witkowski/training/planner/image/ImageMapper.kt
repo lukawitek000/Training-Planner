@@ -6,16 +6,20 @@ import java.io.ByteArrayOutputStream
 
 object ImageMapper {
 
-    fun toImage(image: ImageBitmap): Image {
+    fun toImageByteArray(image: ImageBitmap): ImageByteArray {
         val outputStream = ByteArrayOutputStream()
         image.bitmap.compress(Bitmap.CompressFormat.PNG, QUALITY_100, outputStream)
         val byteArray = outputStream.toByteArray()
-        return Image(byteArray)
+        return ImageByteArray(byteArray)
     }
 
-    fun toBitmapImage(imageByteArray: ImageByteArray): ImageBitmap {
-        val bitmap = BitmapFactory.decodeByteArray(imageByteArray.data, 0, imageByteArray.data.size)
+    fun toBitmapImage(image: Image): ImageBitmap {
+        val bitmap = BitmapFactory.decodeByteArray(image.data, 0, image.data.size)
         return ImageBitmap(bitmap)
+    }
+
+    fun toImageConfiguration(imageByteArray: ImageByteArray, ownerId: String): ImageConfiguration {
+        return ImageConfiguration(imageByteArray.data, ownerId)
     }
 
     private const val QUALITY_100 = 100

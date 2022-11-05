@@ -221,8 +221,8 @@ class ImageStorageTest {
         imageId: ImageId = ImageId("testing_imageId"),
         ownersId: List<String> = listOf("owner1"),
         data: ByteArray = TestData.byteArray
-    ): ImageByteArray {
-        return ImageByteArray(imageId, ownersId, data)
+    ): Image {
+        return Image(imageId, ownersId, data)
     }
 
     private fun assertByteArraysNotEqual(

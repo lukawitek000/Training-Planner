@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.image.infrastructure
 
 import android.content.Context
-import com.lukasz.witkowski.training.planner.image.ImageByteArray
+import com.lukasz.witkowski.training.planner.image.Image
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageSaveFailedException
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
@@ -22,7 +22,7 @@ internal class InternalStorageImageRepository(
 
     private val directoryPath = context.getDir(directoryName, Context.MODE_PRIVATE)
 
-    override suspend fun save(image: ImageByteArray): ImageReference = withContext(ioDispatcher) {
+    override suspend fun save(image: Image): ImageReference = withContext(ioDispatcher) {
         var outputStream: FileOutputStream? = null
         val fileName = image.imageName
         val file = createFile(fileName)
@@ -39,14 +39,14 @@ internal class InternalStorageImageRepository(
         ImageReference(image.imageId, image.ownersIds, file.absolutePath)
     }
 
-    override suspend fun read(imageReference: ImageReference): ImageByteArray? =
+    override suspend fun read(imageReference: ImageReference): Image? =
         withContext(ioDispatcher) {
             val filePath = imageReference.path
             try {
                 val file = File(filePath)
                 if (file.exists()) {
                     val byteArray = file.readBytes()
-                    ImageByteArray(imageReference.imageId, imageReference.ownersIds, byteArray)
+                    Image(imageReference.imageId, imageReference.ownersIds, byteArray)
                 } else {
                     Timber.w("Image does not exist under the path ${imageReference.path}")
                     null
@@ -70,7 +70,7 @@ internal class InternalStorageImageRepository(
         }
 
     override suspend fun update(
-        image: ImageByteArray,
+        image: Image,
         oldImageReference: ImageReference
     ): ImageReference = withContext(ioDispatcher) {
         delete(oldImageReference)

@@ -12,7 +12,6 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCol
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.image.ImageBitmap
-import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -70,7 +69,7 @@ open class CreateExerciseViewModel @Inject constructor(
             name = name.value,
             description = description.value,
             category = CategoryMapper.toExerciseCategory(category.value),
-            image = image.value?.let { ImageMapper.toImage(it) }
+            image = image.value?.let { ImageMapper.toImageByteArray(it) }
         )
     }
 
