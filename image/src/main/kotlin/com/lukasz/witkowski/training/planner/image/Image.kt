@@ -1,9 +1,10 @@
 package com.lukasz.witkowski.training.planner.image
 
-import android.graphics.Bitmap
-
 data class Image(
     val imageId: ImageId,
     val ownersIds: List<String>,
-    val bitmap: Bitmap
-)
+    val data: ByteArray
+) {
+    val imageName: String
+        get() = imageId.value + "_img"
+}

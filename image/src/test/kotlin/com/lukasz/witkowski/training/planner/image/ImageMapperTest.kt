@@ -14,13 +14,11 @@ class ImageMapperTest {
     @Test
     fun `convert image bitmap to byte array and back`() {
         val bitmap = givenTestBitmap()
-        val image = Image(ImageId("TestingId"), listOf("owner1", "2"), bitmap)
+        val image = ImageBitmap(bitmap)
 
         val byteArrayImage = ImageMapper.toImageByteArray(image)
-        val result = ImageMapper.toImage(byteArrayImage)
+        val result = ImageMapper.toBitmapImage(byteArrayImage)
 
-        assertEquals(image.imageId, result.imageId)
-        assertEquals(image.ownersIds, result.ownersIds)
         assertTrue(bitmap.sameAs(result.bitmap))
     }
 
