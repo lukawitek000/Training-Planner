@@ -3,16 +3,14 @@ package com.lukasz.witkowski.training.planner.exercise.createExercise
 import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseConfiguration
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
-import com.lukasz.witkowski.training.planner.image.Image
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageMapper
-import com.lukasz.witkowski.training.planner.image.ImageReference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -26,6 +24,9 @@ class EditExerciseViewModel @Inject constructor(
 ) : CreateExerciseViewModel(exerciseService, categoriesCollection, savedStateHandle) {
 
     private lateinit var initialExercise: Exercise
+
+    override val exerciseId: ExerciseId
+        get() = super.exerciseId ?: throw IllegalArgumentException("ExerciseId was to provided to edit screen")
 
     init {
         viewModelScope.launch {
@@ -62,25 +63,13 @@ class EditExerciseViewModel @Inject constructor(
     }
 
     override fun createExercise() {
-        viewModelScope.launch {
-            val exercise = Exercise(
-                id = exerciseId,
-                name = name.value,
-                description = description.value,
-                category = category.value
-            )
-            updateExercise(exercise)
-        }
+        val exerciseConfig = createExerciseConfiguration()
+        updateExercise(exerciseConfig)
     }
 
-    private suspend fun updateExercise(exercise: Exercise) {
-        try {
-            _savingState.value = ResultHandler.Loading
-            val exerciseConfiguration = ExerciseMapper.toExerciseConfiguration(exercise, image.value)
+    private fun updateExercise(exerciseConfiguration: ExerciseConfiguration) {
+        asynchronousOperation( "Updating exercise has failed") {
             exerciseService.updateExercise(exerciseId, exerciseConfiguration, null)
-            _savingState.value = ResultHandler.Success(true)
-        } catch (e: Exception) {
-            _savingState.value = ResultHandler.Error(message = "Updating exercise has failed")
         }
     }
 }
