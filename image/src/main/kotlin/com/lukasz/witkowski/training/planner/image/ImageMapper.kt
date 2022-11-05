@@ -13,8 +13,8 @@ object ImageMapper {
         return ImageByteArray(byteArray)
     }
 
-    fun toImageByteArray(image: Image): ImageByteArray {
-        return ImageByteArray(image.data)
+    fun toBitmapImage(image: Image): ImageBitmap {
+        return toBitmapImage(ImageByteArray(image.data))
     }
 
     fun toBitmapImage(imageByteArray: ImageByteArray): ImageBitmap {
