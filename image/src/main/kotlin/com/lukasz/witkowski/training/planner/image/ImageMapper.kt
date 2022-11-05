@@ -13,8 +13,12 @@ object ImageMapper {
         return ImageByteArray(byteArray)
     }
 
-    fun toBitmapImage(image: Image): ImageBitmap {
-        val bitmap = BitmapFactory.decodeByteArray(image.data, 0, image.data.size)
+    fun toImageByteArray(image: Image): ImageByteArray {
+        return ImageByteArray(image.data)
+    }
+
+    fun toBitmapImage(imageByteArray: ImageByteArray): ImageBitmap {
+        val bitmap = BitmapFactory.decodeByteArray(imageByteArray.data, 0, imageByteArray.data.size)
         return ImageBitmap(bitmap)
     }
 

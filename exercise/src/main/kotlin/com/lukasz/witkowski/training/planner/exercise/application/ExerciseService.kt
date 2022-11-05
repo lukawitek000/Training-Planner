@@ -65,8 +65,8 @@ class ExerciseService(
         return exerciseRepository.updateExercise(exercise)
     }
 
-    suspend fun readImage(imageId: ImageId): Image {
-        return imageStorage.readImage(imageId)
+    suspend fun readImage(imageId: ImageId): ImageByteArray {
+        return ImageMapper.toImageByteArray(imageStorage.readImage(imageId))
     }
 
     suspend fun readImageReference(imageId: ImageId): ImageReference? {
