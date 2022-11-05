@@ -32,16 +32,4 @@ object ExerciseMapper {
             image = imageReference
         )
     }
-
-    fun toExerciseConfiguration(
-        exercise: Exercise,
-        image: ImageBitmap?
-    ): ExerciseConfiguration {
-        return ExerciseConfiguration(
-            exercise.name,
-            exercise.description,
-            CategoryMapper.toExerciseCategory(exercise.category),
-            image?.let { ImageMapper.toImageByteArray(it) }
-        )
-    }
 }

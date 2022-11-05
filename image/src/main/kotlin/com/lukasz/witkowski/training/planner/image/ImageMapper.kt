@@ -5,11 +5,12 @@ import android.graphics.BitmapFactory
 import java.io.ByteArrayOutputStream
 
 object ImageMapper {
-    fun toImageByteArray(image: ImageBitmap): ImageByteArray {
+
+    fun toImage(image: ImageBitmap): Image {
         val outputStream = ByteArrayOutputStream()
         image.bitmap.compress(Bitmap.CompressFormat.PNG, QUALITY_100, outputStream)
         val byteArray = outputStream.toByteArray()
-        return ImageByteArray(image.imageId, image.ownersIds, byteArray)
+        return Image(byteArray)
     }
 
     fun toBitmapImage(imageByteArray: ImageByteArray): ImageBitmap {

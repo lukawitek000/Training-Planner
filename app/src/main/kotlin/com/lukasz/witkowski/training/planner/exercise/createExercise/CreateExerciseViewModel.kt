@@ -70,7 +70,7 @@ open class CreateExerciseViewModel @Inject constructor(
             name = name.value,
             description = description.value,
             category = CategoryMapper.toExerciseCategory(category.value),
-            image = image.value?.let { ImageMapper.toImageByteArray(it) }
+            image = image.value?.let { ImageMapper.toImage(it) }
         )
     }
 
