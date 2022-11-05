@@ -1,7 +1,8 @@
 package com.lukasz.witkowski.training.planner.image
 
 interface ImageStorage {
-    suspend fun saveImage(image: ImageByteArray): ImageReference
+
+    suspend fun saveImage(imageConfiguration: ImageConfiguration): ImageReference
 
     /**
      * Read the image based on the [imageId].
@@ -21,7 +22,7 @@ interface ImageStorage {
      * @param [newImage] the image data to update.
      * @param [imageId] the id of the image that will be updated.
      */
-    suspend fun updateImage(imageId: ImageId, newImage: ImageByteArray): ImageReference
+    suspend fun updateImage(imageId: ImageId, newImageConfiguration: ImageConfiguration): ImageReference
 
     /**
      * Delete image which is used by the owner based on the [ownerId].

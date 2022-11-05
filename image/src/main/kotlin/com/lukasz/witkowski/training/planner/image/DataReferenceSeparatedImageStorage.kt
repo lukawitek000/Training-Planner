@@ -12,7 +12,8 @@ internal class DataReferenceSeparatedImageStorage constructor(
     private val imageReferenceRepository: ImageReferenceRepository
 ) : ImageStorage {
 
-    override suspend fun saveImage(image: ImageByteArray): ImageReference {
+    override suspend fun saveImage(imageConfiguration: ImageConfiguration): ImageReference {
+        val image = createImageByteArray(imageConfiguration)
         val imageReference = imageRepository.save(image)
         val imageId = imageReferenceRepository.save(imageReference)
         return handleImageReferenceSavingResult(imageId, imageReference)
@@ -57,29 +58,18 @@ internal class DataReferenceSeparatedImageStorage constructor(
         return imageReferenceRepository.read(imageId) != null
     }
 
-    override suspend fun updateImage(imageId: ImageId, newImage: ImageByteArray): ImageReference {
-        val uniqueNewImage = generateUniqueIdIfNeeded(imageId, newImage)
+    override suspend fun updateImage(imageId: ImageId, newImageConfiguration: ImageConfiguration): ImageReference {
+        val newImage = createImageByteArray(newImageConfiguration)
         val oldImageReference =
             imageReferenceRepository.read(imageId)
         return if (oldImageReference == null) {
-            saveImage(uniqueNewImage)
-        } else if (imageReferenceRepository.areAllImageOwners(imageId, uniqueNewImage.ownersIds)) {
-            updateImageForAllOwners(uniqueNewImage, oldImageReference)
+            saveImage(newImageConfiguration)
+        } else if (imageReferenceRepository.areAllImageOwners(imageId, listOf(newImageConfiguration.ownerId))) {
+            updateImageForAllOwners(newImage, oldImageReference)
         } else {
-            val newImageReference = imageRepository.save(uniqueNewImage)
+            val newImageReference = imageRepository.save(newImage)
             val newImageId = imageReferenceRepository.update(newImageReference, oldImageReference)
             handleImageReferenceSavingResult(newImageId, newImageReference)
-        }
-    }
-
-    private fun generateUniqueIdIfNeeded(
-        oldImageId: ImageId,
-        newImage: ImageByteArray
-    ): ImageByteArray {
-        return if (oldImageId == newImage.imageId) {
-            newImage.copy(imageId = ImageId.create())
-        } else {
-            newImage
         }
     }
 
@@ -92,4 +82,13 @@ internal class DataReferenceSeparatedImageStorage constructor(
         val newImageId = imageReferenceRepository.save(newImageReference)
         return handleImageReferenceSavingResult(newImageId, newImageReference)
     }
+
+    private fun createImageByteArray(imageConfiguration: ImageConfiguration) =
+        ImageByteArray(
+            generateImageId(),
+            listOf(imageConfiguration.ownerId),
+            imageConfiguration.data
+        )
+
+    private fun generateImageId() = ImageId.create()
 }
