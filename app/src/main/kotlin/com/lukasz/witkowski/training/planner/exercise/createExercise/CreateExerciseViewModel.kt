@@ -11,7 +11,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
-import com.lukasz.witkowski.training.planner.image.Image
+import com.lukasz.witkowski.training.planner.image.ImageBitmap
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageMapper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,8 +43,8 @@ open class CreateExerciseViewModel @Inject constructor(
     private val _category = MutableStateFlow(Category())
     val category: StateFlow<Category> = _category
 
-    private val _image = MutableStateFlow<Image?>(null)
-    val image: StateFlow<Image?> = _image
+    private val _image = MutableStateFlow<ImageBitmap?>(null)
+    val image: StateFlow<ImageBitmap?> = _image
 
     protected val _savingState = MutableStateFlow<ResultHandler<Boolean>>(ResultHandler.Idle)
     val savingState: StateFlow<ResultHandler<Boolean>> = _savingState
@@ -62,7 +62,7 @@ open class CreateExerciseViewModel @Inject constructor(
     }
 
     fun onImageChange(bitmap: Bitmap) {
-        _image.value = Image(ImageId.create(), exerciseId?.let {listOf(exerciseId!!.value)} ?: emptyList(), bitmap) // TODO image config
+        _image.value = ImageBitmap(ImageId.create(), exerciseId?.let {listOf(exerciseId!!.value)} ?: emptyList(), bitmap) // TODO image config
     }
 
     protected fun createExerciseConfiguration(): ExerciseConfiguration {
