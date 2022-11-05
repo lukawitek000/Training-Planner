@@ -5,21 +5,19 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.exercise.application.ExerciseConfiguration
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.image.Image
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageMapper
-import com.lukasz.witkowski.training.planner.image.ImageReference
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 /** StateFlow with SavedStateHandle, do I need it?
@@ -34,7 +32,7 @@ open class CreateExerciseViewModel @Inject constructor(
 ) : ViewModel(), CategoriesCollection by categoriesCollection {
 
     private val _exerciseId = savedStateHandle.get<String>("exerciseId")
-    protected var exerciseId = _exerciseId?.let { ExerciseId(it) } ?: ExerciseId.create()
+    protected open val exerciseId = _exerciseId?.let { ExerciseId(it) }
 
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name
@@ -64,37 +62,38 @@ open class CreateExerciseViewModel @Inject constructor(
     }
 
     fun onImageChange(bitmap: Bitmap) {
-        _image.value = Image(ImageId.create(), listOf(exerciseId.value), bitmap)
+        _image.value = Image(ImageId.create(), exerciseId?.let {listOf(exerciseId!!.value)} ?: emptyList(), bitmap) // TODO image config
+    }
+
+    protected fun createExerciseConfiguration(): ExerciseConfiguration {
+        return ExerciseConfiguration(
+            name = name.value,
+            description = description.value,
+            category = CategoryMapper.toExerciseCategory(category.value),
+            image = image.value?.let { ImageMapper.toImageByteArray(it) }
+        )
     }
 
     open fun createExercise() {
+        val exerciseConfig = createExerciseConfiguration()
+        saveExercise(exerciseConfig)
+    }
+
+    private fun saveExercise(exerciseConfig: ExerciseConfiguration) {
+        asynchronousOperation("Saving exercise failed") {
+            exerciseService.saveExercise(exerciseConfig)
+        }
+    }
+
+    fun asynchronousOperation(errorMessage: String, operation: suspend () -> Unit) {
         viewModelScope.launch {
-            val exercise = Exercise(
-                id = exerciseId,
-                name = name.value,
-                description = description.value,
-                category = category.value,
-            )
-            saveExercise(exercise)
+            try {
+                _savingState.value = ResultHandler.Loading
+                operation()
+                _savingState.value = ResultHandler.Success(true)
+            } catch (e: Exception) {
+                _savingState.value = ResultHandler.Error(message = errorMessage)
+            }
         }
-    }
-
-    private suspend fun saveExercise(exercise: Exercise) {
-        try {
-            _savingState.value = ResultHandler.Loading
-            val imageReference = saveImage()
-            val exerciseWithImage = exercise.copy(image = imageReference)
-            val domainExercise = ExerciseMapper.toDomainExercise(exerciseWithImage)
-            exerciseService.saveExercise(domainExercise)
-            _savingState.value = ResultHandler.Success(true)
-        } catch (e: Exception) {
-            _savingState.value = ResultHandler.Error(message = "Saving exercise failed")
-            _savingState.value = ResultHandler.Idle
-        }
-    }
-
-    private suspend fun saveImage(): ImageReference? {
-        val imageByteArray = image.value?.let { ImageMapper.toImageByteArray(it) } ?: return null
-        return exerciseService.saveImage(imageByteArray)
     }
 }

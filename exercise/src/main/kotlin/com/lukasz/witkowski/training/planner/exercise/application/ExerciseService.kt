@@ -4,8 +4,10 @@ import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
+import com.lukasz.witkowski.training.planner.image.Image
 import com.lukasz.witkowski.training.planner.image.ImageByteArray
 import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.image.ImageMapper
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageStorage
 import kotlinx.coroutines.flow.Flow
@@ -15,11 +17,14 @@ class ExerciseService(
     private val exerciseRepository: ExerciseRepository,
     private val imageStorage: ImageStorage
 ) {
-    suspend fun saveExercise(exercise: Exercise) {
+
+    suspend fun saveExercise(exerciseConfiguration: ExerciseConfiguration) {
+        val imageReference = exerciseConfiguration.image?.let { saveImage(it) }
+        val exercise = createExercise(exerciseConfiguration, imageReference?.imageId)
         exerciseRepository.insert(exercise)
     }
 
-    suspend fun saveImage(image: ImageByteArray): ImageReference {
+    private suspend fun saveImage(image: ImageByteArray): ImageReference {
         return imageStorage.saveImage(image)
     }
 
@@ -44,11 +49,16 @@ class ExerciseService(
         exercise.imageId?.let { deleteImage(it, exercise.id) }
     }
 
-    fun getExerciseById(id: ExerciseId): Flow<Exercise> {
+    suspend fun getExerciseById(id: ExerciseId): Exercise {
         return exerciseRepository.getById(id)
     }
 
-    suspend fun updateExercise(exercise: Exercise): Boolean {
+    suspend fun updateExercise(
+        exerciseId: ExerciseId,
+        exerciseConfiguration: ExerciseConfiguration,
+        previousImage: ImageByteArray?
+    ): Boolean {
+        val exercise = createExercise(exerciseConfiguration, null, exerciseId)// TODO add check in image storage based on checksum
         return exerciseRepository.updateExercise(exercise)
     }
 
@@ -58,5 +68,19 @@ class ExerciseService(
 
     suspend fun readImageReference(imageId: ImageId): ImageReference? {
         return imageStorage.readImageReference(imageId)
+    }
+
+    private fun createExercise(
+        exerciseConfiguration: ExerciseConfiguration,
+        imageId: ImageId?,
+        exerciseId: ExerciseId = ExerciseId.create()
+    ): Exercise {
+        return Exercise(
+            exerciseId,
+            exerciseConfiguration.name,
+            exerciseConfiguration.description,
+            exerciseConfiguration.category,
+            imageId
+        )
     }
 }
