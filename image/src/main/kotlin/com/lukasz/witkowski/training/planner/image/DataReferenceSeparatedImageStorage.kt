@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.image
 
+import com.lukasz.witkowski.training.planner.image.domain.ChecksumCalculator
 import com.lukasz.witkowski.training.planner.image.domain.ImageReferenceRepository
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
 import timber.log.Timber
@@ -9,11 +10,12 @@ import timber.log.Timber
  */
 internal class DataReferenceSeparatedImageStorage constructor(
     private val imageRepository: ImageRepository,
-    private val imageReferenceRepository: ImageReferenceRepository
+    private val imageReferenceRepository: ImageReferenceRepository,
+    private val checksumCalculator: ChecksumCalculator
 ) : ImageStorage {
 
     override suspend fun saveImage(imageConfiguration: ImageConfiguration): ImageReference {
-        val image = createImageByteArray(imageConfiguration)
+        val image = createImage(imageConfiguration)
         val imageReference = imageRepository.save(image)
         val imageId = imageReferenceRepository.save(imageReference)
         return handleImageReferenceSavingResult(imageId, imageReference)
@@ -59,7 +61,7 @@ internal class DataReferenceSeparatedImageStorage constructor(
     }
 
     override suspend fun updateImage(imageId: ImageId, newImageConfiguration: ImageConfiguration): ImageReference {
-        val newImage = createImageByteArray(newImageConfiguration)
+        val newImage = createImage(newImageConfiguration)
         val oldImageReference =
             imageReferenceRepository.read(imageId)
         return if (oldImageReference == null) {
@@ -83,11 +85,12 @@ internal class DataReferenceSeparatedImageStorage constructor(
         return handleImageReferenceSavingResult(newImageId, newImageReference)
     }
 
-    private fun createImageByteArray(imageConfiguration: ImageConfiguration) =
+    private fun createImage(imageConfiguration: ImageConfiguration) =
         Image(
             generateImageId(),
             listOf(imageConfiguration.ownerId),
-            imageConfiguration.data
+            imageConfiguration.data,
+            checksumCalculator.calculate(ImageByteArray(imageConfiguration.data))
         )
 
     private fun generateImageId() = ImageId.create()

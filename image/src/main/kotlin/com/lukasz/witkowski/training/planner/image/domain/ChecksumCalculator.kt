@@ -1,13 +1,7 @@
 package com.lukasz.witkowski.training.planner.image.domain
 
-import com.lukasz.witkowski.training.planner.image.Image
-import java.util.zip.Adler32
+import com.lukasz.witkowski.training.planner.image.ImageByteArray
 
-class ChecksumCalculator {
-
-    fun calculate(image: Image): Long {
-        val checksum = Adler32()
-        checksum.update(image.data)
-        return checksum.value
-    }
+internal interface ChecksumCalculator {
+    fun calculate(image: ImageByteArray): Long
 }
