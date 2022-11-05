@@ -30,15 +30,14 @@ class EditExerciseViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            exerciseService.getExerciseById(exerciseId).collect { domainExercise ->
-                initialExercise = mapToPresentationExercise(domainExercise)
-                onExerciseNameChange(initialExercise.name)
-                onExerciseDescriptionChange(initialExercise.description)
-                setExerciseCategory()
-                initialExercise.image?.let {
-                    val imageBitmap = loadBitmap(it.imageId)
-                    onImageChange(imageBitmap)
-                }
+            val domainExercise = exerciseService.getExerciseById(exerciseId)
+            initialExercise = mapToPresentationExercise(domainExercise)
+            onExerciseNameChange(initialExercise.name)
+            onExerciseDescriptionChange(initialExercise.description)
+            setExerciseCategory()
+            initialExercise.image?.let {
+                val imageBitmap = loadBitmap(it.imageId)
+                onImageChange(imageBitmap)
             }
         }
     }

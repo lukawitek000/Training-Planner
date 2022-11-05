@@ -16,7 +16,7 @@ internal interface ExerciseDao {
     fun getAll(): Flow<List<DbExercise>>
 
     @Query("SELECT * FROM Exercise WHERE :id == id")
-    fun getById(id: String): Flow<DbExercise>
+    suspend fun getById(id: String): DbExercise
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(dbExercise: DbExercise): Long

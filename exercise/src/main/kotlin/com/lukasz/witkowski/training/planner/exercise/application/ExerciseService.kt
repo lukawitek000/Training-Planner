@@ -49,7 +49,7 @@ class ExerciseService(
         exercise.imageId?.let { deleteImage(it, exercise.id) }
     }
 
-    fun getExerciseById(id: ExerciseId): Flow<Exercise> {
+    suspend fun getExerciseById(id: ExerciseId): Exercise {
         return exerciseRepository.getById(id)
     }
 
