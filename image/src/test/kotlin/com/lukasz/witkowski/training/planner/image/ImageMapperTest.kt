@@ -17,7 +17,7 @@ class ImageMapperTest {
         val image = ImageBitmap(ImageId("TestingId"), listOf("owner1", "2"), bitmap)
 
         val byteArrayImage = ImageMapper.toImageByteArray(image)
-        val result = ImageMapper.toImage(byteArrayImage)
+        val result = ImageMapper.toBitmapImage(byteArrayImage)
 
         assertEquals(image.imageId, result.imageId)
         assertEquals(image.ownersIds, result.ownersIds)

@@ -58,7 +58,7 @@ class EditExerciseViewModel @Inject constructor(
 
     private suspend fun loadBitmap(imageId: ImageId): Bitmap {
         val imageByteArray = exerciseService.readImage(imageId)
-        return ImageMapper.toImage(imageByteArray).bitmap
+        return ImageMapper.toBitmapImage(imageByteArray).bitmap
     }
 
     override fun createExercise() {

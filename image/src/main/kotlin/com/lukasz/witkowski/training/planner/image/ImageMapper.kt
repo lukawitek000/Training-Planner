@@ -12,9 +12,9 @@ object ImageMapper {
         return ImageByteArray(image.imageId, image.ownersIds, byteArray)
     }
 
-    fun toImage(imageByteArray: ImageByteArray): ImageBitmap {
+    fun toBitmapImage(imageByteArray: ImageByteArray): ImageBitmap {
         val bitmap = BitmapFactory.decodeByteArray(imageByteArray.data, 0, imageByteArray.data.size)
-        return ImageBitmap(imageByteArray.imageId, imageByteArray.ownersIds, bitmap)
+        return ImageBitmap(bitmap)
     }
 
     private const val QUALITY_100 = 100

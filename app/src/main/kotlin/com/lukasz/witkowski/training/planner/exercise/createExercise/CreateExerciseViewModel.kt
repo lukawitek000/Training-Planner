@@ -62,7 +62,7 @@ open class CreateExerciseViewModel @Inject constructor(
     }
 
     fun onImageChange(bitmap: Bitmap) {
-        _image.value = ImageBitmap(ImageId.create(), exerciseId?.let {listOf(exerciseId!!.value)} ?: emptyList(), bitmap) // TODO image config
+        _image.value = ImageBitmap(bitmap)
     }
 
     protected fun createExerciseConfiguration(): ExerciseConfiguration {
