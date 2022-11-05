@@ -7,10 +7,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
-internal class DbExerciseRepository(private val exerciseDao: ExerciseDao) : ExerciseRepository {
+internal class DbExerciseRepository(
+    private val exerciseDao: ExerciseDao,
+    private val ioDispatcher: CoroutineContext = Dispatchers.IO
+) : ExerciseRepository {
 
-    override suspend fun getById(id: ExerciseId): Exercise = withContext(Dispatchers.IO) {
+    override suspend fun getById(id: ExerciseId): Exercise = withContext(ioDispatcher) {
         val dbExercise = exerciseDao.getById(id.value)
         ExerciseMapper.toExercise(dbExercise)
     }
@@ -20,20 +24,20 @@ internal class DbExerciseRepository(private val exerciseDao: ExerciseDao) : Exer
             .map { it.map { dbExercise -> ExerciseMapper.toExercise(dbExercise) } }
     }
 
-    override suspend fun insert(exercise: Exercise): Boolean {
+    override suspend fun insert(exercise: Exercise): Boolean = withContext(ioDispatcher) {
         val exerciseWithImage = ExerciseMapper.toDbExercise(exercise)
-        exerciseDao.insert(exerciseWithImage)
-        return true
+        exerciseDao.insert(exerciseWithImage) == ONE_ROW.toLong()
     }
 
-    override suspend fun delete(exercise: Exercise) {
-        exerciseDao.deleteExerciseById(exercise.id.value)
+    override suspend fun delete(exercise: Exercise) = withContext(ioDispatcher) {
+        exerciseDao.deleteExerciseById(exercise.id.value) == ONE_ROW
     }
 
-    override suspend fun updateExercise(updatedExercise: Exercise): Boolean {
-        val dbExercise = ExerciseMapper.toDbExercise(updatedExercise)
-        return exerciseDao.update(dbExercise) == ONE_ROW
-    }
+    override suspend fun updateExercise(updatedExercise: Exercise): Boolean =
+        withContext(ioDispatcher) {
+            val dbExercise = ExerciseMapper.toDbExercise(updatedExercise)
+            exerciseDao.update(dbExercise) == ONE_ROW
+        }
 
     private companion object {
         const val ONE_ROW = 1
