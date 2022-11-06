@@ -25,4 +25,10 @@ internal interface ImageReferenceRepository {
      * Check if the [ownersIds] are all owners of the image identified by [imageId]
      */
     suspend fun areAllImageOwners(imageId: ImageId, ownersIds: List<String>): Boolean
+
+    /**
+     * Check if the image with the provided [checksum] is already stored.
+     */
+    suspend fun isImageAlreadySaved(checksum: Long): Boolean
+    suspend fun addOwnerToImage(checksum: Long, ownerId: String): ImageReference
 }

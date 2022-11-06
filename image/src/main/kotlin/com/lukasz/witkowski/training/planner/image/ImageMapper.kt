@@ -28,13 +28,14 @@ object ImageMapper {
         return ImageConfiguration(imageByteArray.data, ownerId)
     }
 
-    internal fun toImage(domainImage: DomainImage): Image {
-        return Image(domainImage.imageId, domainImage.data)
-    }
-
-    internal fun toImageReference(domainImageReference: DomainImageReference): ImageReference {
-        return ImageReference(domainImageReference.imageId, domainImageReference.path)
-    }
-
     private const val QUALITY_100 = 100
+}
+
+
+internal fun DomainImage.toImage(): Image {
+    return Image(imageId, data)
+}
+
+internal fun DomainImageReference.toImageReference(): ImageReference {
+    return ImageReference(imageId, path)
 }

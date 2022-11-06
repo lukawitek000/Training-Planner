@@ -46,4 +46,7 @@ internal interface ImageReferenceDao {
 
     @Query("DELETE FROM DbImageReference WHERE id=:imageId")
     suspend fun deleteImageReference(imageId: String): Int
+
+    @Query("SELECT * FROM DBIMAGEREFERENCE WHERE checksum=:checksum")
+    suspend fun getImageReferencesByChecksum(checksum: Long): List<DbImageReference>
 }

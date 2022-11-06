@@ -3,9 +3,12 @@ package com.lukasz.witkowski.training.planner.image.infrastructure
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.domain.ImageReference
 import com.lukasz.witkowski.training.planner.image.domain.ImageReferenceRepository
+import com.lukasz.witkowski.training.planner.image.infrastructure.db.DbImageOwner
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageReferenceDao
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.toDbImageReferenceWithOwners
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.toImageReference
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 internal class DbImageReferenceRepository(
     private val imageReferenceDao: ImageReferenceDao
@@ -31,6 +34,18 @@ internal class DbImageReferenceRepository(
         val allImageOwners =
             imageReferenceDao.getOwnersOfImage(imageId.value)?.map { it.ownerId } ?: emptyList()
         return allImageOwners.containsAll(ownersIds) && ownersIds.containsAll(allImageOwners)
+    }
+
+    override suspend fun isImageAlreadySaved(checksum: Long): Boolean = withContext(Dispatchers.IO) {
+        val imagesWithEqualChecksum = imageReferenceDao.getImageReferencesByChecksum(checksum)
+        imagesWithEqualChecksum.isNotEmpty()
+    }
+
+    override suspend fun addOwnerToImage(checksum: Long, ownerId: String): ImageReference = withContext(Dispatchers.IO) {
+        val sameImage = imageReferenceDao.getImageReferencesByChecksum(checksum).first()
+        imageReferenceDao.insert(DbImageOwner(ownerId, sameImage.id))
+        val owners = imageReferenceDao.getOwnersOfImage(sameImage.id)
+        ImageReference(ImageId(sameImage.id), owners!!.map { it.ownerId }, sameImage.path, checksum)
     }
 
     override suspend fun update(

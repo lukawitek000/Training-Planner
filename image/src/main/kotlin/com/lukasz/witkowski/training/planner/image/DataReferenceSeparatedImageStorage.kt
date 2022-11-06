@@ -3,9 +3,9 @@ package com.lukasz.witkowski.training.planner.image
 import com.lukasz.witkowski.training.planner.image.domain.ChecksumCalculator
 import com.lukasz.witkowski.training.planner.image.domain.ImageReferenceRepository
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
-import com.lukasz.witkowski.training.planner.image.domain.ImageReference as DomainImageReference
-import com.lukasz.witkowski.training.planner.image.domain.Image as DomainImage
 import timber.log.Timber
+import com.lukasz.witkowski.training.planner.image.domain.Image as DomainImage
+import com.lukasz.witkowski.training.planner.image.domain.ImageReference as DomainImageReference
 
 /**
  * Image storage that uses two repositories to store image and its reference.
@@ -37,13 +37,12 @@ internal class DataReferenceSeparatedImageStorage constructor(
     override suspend fun readImage(imageId: ImageId): Image {
         val imageReference = imageReferenceRepository.read(imageId)
         val domainImage = imageReference?.let { imageRepository.read(it) }
-        return domainImage?.let { ImageMapper.toImage(it) }
-            ?: throw ImageNotFoundException(imageId)
+        return domainImage?.toImage() ?: throw ImageNotFoundException(imageId)
     }
 
     override suspend fun readImageReference(imageId: ImageId): ImageReference? {
         val domainImageReference = imageReferenceRepository.read(imageId)
-        return domainImageReference?.let { ImageMapper.toImageReference(it) }
+        return domainImageReference?.toImageReference()
     }
 
     override suspend fun deleteImage(imageId: ImageId, ownerId: String): Boolean {
@@ -64,29 +63,27 @@ internal class DataReferenceSeparatedImageStorage constructor(
         return imageReferenceRepository.read(imageId) != null
     }
 
-    override suspend fun updateImage(imageId: ImageId, newImageConfiguration: ImageConfiguration): ImageReference {
-        val newImage = createImage(newImageConfiguration)
-        val oldImageReference =
-            imageReferenceRepository.read(imageId)
-        return if (oldImageReference == null) {
-            saveImage(newImageConfiguration)
-        } else if (imageReferenceRepository.areAllImageOwners(imageId, listOf(newImageConfiguration.ownerId))) {
-            updateImageForAllOwners(newImage, oldImageReference)
-        } else {
-            val newImageReference = imageRepository.save(newImage)
-            val newImageId = imageReferenceRepository.update(newImageReference, oldImageReference)
-            handleImageReferenceSavingResult(newImageId, newImageReference)
-        }
-    }
-
-    private suspend fun updateImageForAllOwners(
-        newImage: Image,
-        oldImageReference: ImageReference
+    override suspend fun updateImage(
+        imageId: ImageId,
+        newImageConfiguration: ImageConfiguration
     ): ImageReference {
-        val newImageReference = imageRepository.update(newImage, oldImageReference)
-        imageReferenceRepository.delete(oldImageReference)
-        val newImageId = imageReferenceRepository.save(newImageReference)
-        return handleImageReferenceSavingResult(newImageId, newImageReference)
+        val newImage = createImage(newImageConfiguration)
+        return if (imageReferenceRepository.isImageAlreadySaved(newImage.checksum)) {
+            imageReferenceRepository.addOwnerToImage(
+                newImage.checksum,
+                newImageConfiguration.ownerId
+            ).toImageReference()
+        } else {
+            val oldImageReference = imageReferenceRepository.read(imageId)
+            if (oldImageReference == null) {
+                saveImage(newImageConfiguration)
+            } else {
+                val newImageReference = imageRepository.save(newImage)
+                val newImageId =
+                    imageReferenceRepository.update(newImageReference, oldImageReference)
+                handleImageReferenceSavingResult(newImageId, newImageReference)
+            }
+        }
     }
 
     private fun createImage(imageConfiguration: ImageConfiguration) =
