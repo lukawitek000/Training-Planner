@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.image.infrastructure
 
 import com.lukasz.witkowski.training.planner.image.ImageId
-import com.lukasz.witkowski.training.planner.image.ImageReference
+import com.lukasz.witkowski.training.planner.image.domain.ImageReference
 import com.lukasz.witkowski.training.planner.image.domain.ImageReferenceRepository
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageReferenceDao
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.toDbImageReferenceWithOwners

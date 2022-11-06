@@ -1,9 +1,9 @@
 package com.lukasz.witkowski.training.planner.image.infrastructure
 
 import android.content.Context
-import com.lukasz.witkowski.training.planner.image.Image
-import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageSaveFailedException
+import com.lukasz.witkowski.training.planner.image.domain.Image
+import com.lukasz.witkowski.training.planner.image.domain.ImageReference
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +36,7 @@ internal class InternalStorageImageRepository(
         } finally {
             closeStream(outputStream)
         }
-        ImageReference(image.imageId, image.ownersIds, file.absolutePath)
+        ImageReference(image.imageId, image.ownersIds, file.absolutePath, image.checksum)
     }
 
     override suspend fun read(imageReference: ImageReference): Image? =
@@ -46,7 +46,7 @@ internal class InternalStorageImageRepository(
                 val file = File(filePath)
                 if (file.exists()) {
                     val byteArray = file.readBytes()
-                    Image(imageReference.imageId, imageReference.ownersIds, byteArray)
+                    Image(imageReference.imageId, imageReference.ownersIds, byteArray, imageReference.checksum)
                 } else {
                     Timber.w("Image does not exist under the path ${imageReference.path}")
                     null

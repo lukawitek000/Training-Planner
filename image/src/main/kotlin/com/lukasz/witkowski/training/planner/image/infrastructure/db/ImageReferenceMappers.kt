@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.image.infrastructure.db
 
 import com.lukasz.witkowski.training.planner.image.ImageId
-import com.lukasz.witkowski.training.planner.image.ImageReference
+import com.lukasz.witkowski.training.planner.image.domain.ImageReference
 
 internal fun ImageReference.toDbImageReferenceWithOwners(): DbImageReferenceWithOwners {
     val imageId = imageId.value

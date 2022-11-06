@@ -1,8 +1,5 @@
 package com.lukasz.witkowski.training.planner.image.domain
 
-import com.lukasz.witkowski.training.planner.image.Image
-import com.lukasz.witkowski.training.planner.image.ImageReference
-
 internal interface ImageRepository {
     /**
      * Save [Image].

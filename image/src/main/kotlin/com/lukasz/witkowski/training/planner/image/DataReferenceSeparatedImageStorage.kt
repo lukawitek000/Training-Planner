@@ -3,6 +3,8 @@ package com.lukasz.witkowski.training.planner.image
 import com.lukasz.witkowski.training.planner.image.domain.ChecksumCalculator
 import com.lukasz.witkowski.training.planner.image.domain.ImageReferenceRepository
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
+import com.lukasz.witkowski.training.planner.image.domain.ImageReference as DomainImageReference
+import com.lukasz.witkowski.training.planner.image.domain.Image as DomainImage
 import timber.log.Timber
 
 /**
@@ -23,10 +25,10 @@ internal class DataReferenceSeparatedImageStorage constructor(
 
     private fun handleImageReferenceSavingResult(
         imageId: ImageId?,
-        imageReference: ImageReference
+        imageReference: DomainImageReference
     ): ImageReference {
         return if (imageId != null) {
-            imageReference
+            ImageReference(imageId, imageReference.path)
         } else {
             throw ImageSaveFailedException(imageReference.imageId)
         }
@@ -34,12 +36,14 @@ internal class DataReferenceSeparatedImageStorage constructor(
 
     override suspend fun readImage(imageId: ImageId): Image {
         val imageReference = imageReferenceRepository.read(imageId)
-        return imageReference?.let { imageRepository.read(it) }
+        val domainImage = imageReference?.let { imageRepository.read(it) }
+        return domainImage?.let { ImageMapper.toImage(it) }
             ?: throw ImageNotFoundException(imageId)
     }
 
     override suspend fun readImageReference(imageId: ImageId): ImageReference? {
-        return imageReferenceRepository.read(imageId)
+        val domainImageReference = imageReferenceRepository.read(imageId)
+        return domainImageReference?.let { ImageMapper.toImageReference(it) }
     }
 
     override suspend fun deleteImage(imageId: ImageId, ownerId: String): Boolean {
@@ -86,7 +90,7 @@ internal class DataReferenceSeparatedImageStorage constructor(
     }
 
     private fun createImage(imageConfiguration: ImageConfiguration) =
-        Image(
+        DomainImage(
             generateImageId(),
             listOf(imageConfiguration.ownerId),
             imageConfiguration.data,
