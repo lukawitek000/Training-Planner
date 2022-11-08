@@ -7,18 +7,20 @@ import com.lukasz.witkowski.training.planner.image.infrastructure.db.DbImageOwne
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageReferenceDao
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.toDbImageReferenceWithOwners
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.toImageReference
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 internal class DbImageReferenceRepository(
-    private val imageReferenceDao: ImageReferenceDao
+    private val imageReferenceDao: ImageReferenceDao,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ImageReferenceRepository {
-    override suspend fun save(imageReference: ImageReference): ImageId = withContext(Dispatchers.IO) {
+    override suspend fun save(imageReference: ImageReference): ImageId = withContext(ioDispatcher) {
         imageReferenceDao.insert(imageReference.toDbImageReferenceWithOwners())
         imageReference.imageId
     }
 
-    override suspend fun delete(imageReference: ImageReference): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun delete(imageReference: ImageReference): Boolean = withContext(ioDispatcher) {
         val imageId = imageReference.imageId
         val ownersIds = imageReference.ownersIds
         var isImageReferenceDeletedSuccessfully = true
@@ -30,18 +32,18 @@ internal class DbImageReferenceRepository(
         (deletedRows == ownersIds.size) && isImageReferenceDeletedSuccessfully
     }
 
-    override suspend fun areAllImageOwners(imageId: ImageId, ownersIds: List<String>): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun areAllImageOwners(imageId: ImageId, ownersIds: List<String>): Boolean = withContext(ioDispatcher) {
         val allImageOwners =
             imageReferenceDao.getOwnersOfImage(imageId.value)?.map { it.ownerId } ?: emptyList()
         allImageOwners.containsAll(ownersIds) && ownersIds.containsAll(allImageOwners)
     }
 
-    override suspend fun isImageAlreadySaved(checksum: Long): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun isImageAlreadySaved(checksum: Long): Boolean = withContext(ioDispatcher) {
         val imagesWithEqualChecksum = imageReferenceDao.getImageReferencesByChecksum(checksum)
         imagesWithEqualChecksum.isNotEmpty()
     }
 
-    override suspend fun addOwnerToImage(checksum: Long, ownerId: String): ImageReference = withContext(Dispatchers.IO) {
+    override suspend fun addOwnerToImage(checksum: Long, ownerId: String): ImageReference = withContext(ioDispatcher) {
         val sameImage = imageReferenceDao.getImageReferencesByChecksum(checksum).first()
         imageReferenceDao.insert(DbImageOwner(ownerId, sameImage.id))
         val owners = imageReferenceDao.getOwnersOfImage(sameImage.id)
@@ -51,7 +53,7 @@ internal class DbImageReferenceRepository(
     override suspend fun update(
         newImageReference: ImageReference,
         oldImageReference: ImageReference
-    ): ImageId? = withContext(Dispatchers.IO) {
+    ): ImageId? = withContext(ioDispatcher) {
         val oldImageReferenceWithOwnersToUpdate =
             oldImageReference.copy(ownersIds = newImageReference.ownersIds)
         val wasDeletedSuccessful = delete(oldImageReferenceWithOwnersToUpdate)
@@ -62,14 +64,14 @@ internal class DbImageReferenceRepository(
         }
     }
 
-    override suspend fun readByOwnerId(ownerId: String): ImageReference? {
+    override suspend fun readByOwnerId(ownerId: String): ImageReference? = withContext(ioDispatcher) {
         val dbImageReference = imageReferenceDao.getImageReferenceByOwnerId(ownerId)
-        return dbImageReference?.toImageReference(ownerId)
+        dbImageReference?.toImageReference(ownerId)
     }
 
-    override suspend fun read(imageId: ImageId): ImageReference? {
+    override suspend fun read(imageId: ImageId): ImageReference? = withContext(ioDispatcher) {
         val dbImageReference = imageReferenceDao.getImageReferenceWithOwners(imageId.value)
-        return dbImageReference?.toImageReference()
+        dbImageReference?.toImageReference()
     }
 
     private companion object {
