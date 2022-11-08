@@ -69,7 +69,7 @@ class ImageStorageTest {
     }
 
     @Test
-    fun `read image reference for not existing image id`() = runBlocking {
+    fun `read image reference for not existing image id returns null`() = runBlocking {
         val dummyImageId = ImageId("dummyId")
         val readReference = imageStorage.readImageReference(dummyImageId)
 
@@ -77,7 +77,7 @@ class ImageStorageTest {
     }
 
     @Test
-    fun `saving and deleting the image causes reading attempt to fail`() = runBlocking {
+    fun `read deleted image throws exception`() = runBlocking {
         val ownerId = "test_owner"
         val imageConfiguration = givenImageConfiguration(ownerId = ownerId)
 
@@ -90,7 +90,7 @@ class ImageStorageTest {
     }
 
     @Test
-    fun `save the same image for two owners and deleting for one`() = runBlocking {
+    fun `delete image for one owner`() = runBlocking {
         val ownerId = "test_owner"
         val ownerToDelete = "test_delete_owner"
         val imageConfiguration1 = givenImageConfiguration(ownerId = ownerId)
@@ -109,7 +109,7 @@ class ImageStorageTest {
     }
 
     @Test
-    fun `saving image with two owners and deleting for each of them`() = runBlocking {
+    fun `read deleted image for all owners throws exception`() = runBlocking {
         val owner1 = "test_owner"
         val owner2 = "test_delete_owner"
         val imageConfiguration1 = givenImageConfiguration(ownerId = owner1)
