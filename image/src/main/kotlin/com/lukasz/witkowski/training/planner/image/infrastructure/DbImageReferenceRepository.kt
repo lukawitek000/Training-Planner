@@ -13,12 +13,12 @@ import kotlinx.coroutines.withContext
 internal class DbImageReferenceRepository(
     private val imageReferenceDao: ImageReferenceDao
 ) : ImageReferenceRepository {
-    override suspend fun save(imageReference: ImageReference): ImageId {
+    override suspend fun save(imageReference: ImageReference): ImageId = withContext(Dispatchers.IO) {
         imageReferenceDao.insert(imageReference.toDbImageReferenceWithOwners())
-        return imageReference.imageId
+        imageReference.imageId
     }
 
-    override suspend fun delete(imageReference: ImageReference): Boolean {
+    override suspend fun delete(imageReference: ImageReference): Boolean = withContext(Dispatchers.IO) {
         val imageId = imageReference.imageId
         val ownersIds = imageReference.ownersIds
         var isImageReferenceDeletedSuccessfully = true
@@ -27,13 +27,13 @@ internal class DbImageReferenceRepository(
             isImageReferenceDeletedSuccessfully = (deletedRows == ONE_ROW)
         }
         val deletedRows = imageReferenceDao.deleteImageOwners(imageReference.ownersIds)
-        return (deletedRows == ownersIds.size) && isImageReferenceDeletedSuccessfully
+        (deletedRows == ownersIds.size) && isImageReferenceDeletedSuccessfully
     }
 
-    override suspend fun areAllImageOwners(imageId: ImageId, ownersIds: List<String>): Boolean {
+    override suspend fun areAllImageOwners(imageId: ImageId, ownersIds: List<String>): Boolean = withContext(Dispatchers.IO) {
         val allImageOwners =
             imageReferenceDao.getOwnersOfImage(imageId.value)?.map { it.ownerId } ?: emptyList()
-        return allImageOwners.containsAll(ownersIds) && ownersIds.containsAll(allImageOwners)
+        allImageOwners.containsAll(ownersIds) && ownersIds.containsAll(allImageOwners)
     }
 
     override suspend fun isImageAlreadySaved(checksum: Long): Boolean = withContext(Dispatchers.IO) {
@@ -51,11 +51,11 @@ internal class DbImageReferenceRepository(
     override suspend fun update(
         newImageReference: ImageReference,
         oldImageReference: ImageReference
-    ): ImageId? {
+    ): ImageId? = withContext(Dispatchers.IO) {
         val oldImageReferenceWithOwnersToUpdate =
             oldImageReference.copy(ownersIds = newImageReference.ownersIds)
         val wasDeletedSuccessful = delete(oldImageReferenceWithOwnersToUpdate)
-        return if (wasDeletedSuccessful) {
+        if (wasDeletedSuccessful) {
             save(newImageReference)
         } else {
             null

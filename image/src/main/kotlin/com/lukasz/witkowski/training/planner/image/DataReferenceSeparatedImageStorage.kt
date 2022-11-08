@@ -75,6 +75,7 @@ internal class DataReferenceSeparatedImageStorage constructor(
     ): ImageReference {
         val newImage = createImage(newImageConfiguration)
         return if (imageReferenceRepository.isImageAlreadySaved(newImage.checksum)) {
+            deleteImage(imageId, newImageConfiguration.ownerId)
             imageReferenceRepository.addOwnerToImage(
                 newImage.checksum,
                 newImageConfiguration.ownerId
@@ -85,8 +86,7 @@ internal class DataReferenceSeparatedImageStorage constructor(
                 saveImage(newImageConfiguration)
             } else {
                 val newImageReference = imageRepository.save(newImage)
-                val newImageId =
-                    imageReferenceRepository.update(newImageReference, oldImageReference)
+                val newImageId = imageReferenceRepository.update(newImageReference, oldImageReference)
                 handleImageReferenceSavingResult(newImageId, newImageReference)
             }
         }

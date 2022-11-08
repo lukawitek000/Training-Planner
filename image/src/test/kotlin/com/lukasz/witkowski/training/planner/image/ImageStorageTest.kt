@@ -20,6 +20,8 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.test.assertFailsWith
+import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
@@ -136,55 +138,49 @@ class ImageStorageTest {
         }
         Unit
     }
-//
-//    @Test
-//    fun `update saved image for the owner`() = runBlocking {
-//        val image = givenImageByteArray()
-//        val imageReference = imageStorage.saveImage(image)
-//
-//        val newImage = givenImageByteArray(ImageId("updatedId"), data = TestData.updatedByteArray)
-//        val updatedImageReference = imageStorage.updateImage(image.imageId, newImage)
-//        val updatedImage = imageStorage.readImage(newImage.imageId)
-//
-//        assertEquals(image.ownersIds, updatedImageReference.ownersIds)
-//        assertNotEquals(imageReference.imageId, updatedImageReference.imageId)
-//        assertByteArraysNotEqual(image.data, updatedImage.data)
-//    }
-//
-//    @Test
-//    fun `generate new id if the new image has the same one`() = runBlocking {
-//        val imageId = ImageId("Same_id")
-//        val image = givenImageByteArray(imageId)
-//        imageStorage.saveImage(image)
-//
-//        val newImage = givenImageByteArray(imageId, data = TestData.updatedByteArray)
-//        val result = imageStorage.updateImage(imageId, newImage)
-//        val updatedImage = imageStorage.readImageReference(result.imageId)
-//
-//        assertNotEquals(imageId, updatedImage?.imageId)
-//    }
-//
-//    @Test
-//    fun `update image for all owners`() = runBlocking {
-//        val owners = listOf("owner1", "owner2")
-//        val image = givenImageByteArray(ownersId = owners)
-//
-//        imageStorage.saveImage(image)
-//        val newImage = givenImageByteArray(
-//            ImageId("UpdatedId"),
-//            data = TestData.updatedByteArray,
-//            ownersId = owners
-//        )
-//        val result = imageStorage.updateImage(image.imageId, newImage)
-//        val updatedImageReference = imageStorage.readImageReference(newImage.imageId)
-//
-//        assertFailsWith<ImageNotFoundException> {
-//            imageStorage.readImage(image.imageId)
-//        }
-//        assertEquals(owners, result.ownersIds)
-//        assertEquals(updatedImageReference, result)
-//    }
-//
+
+    @Test
+    fun `update saved image for the owner`() = runBlocking {
+        val imageConfiguration = givenImageConfiguration()
+        val imageReference = imageStorage.saveImage(imageConfiguration)
+
+        val newImage = givenImageConfiguration(data = TestData.updatedByteArray)
+        val updatedImageReference = imageStorage.updateImage(imageReference.imageId, newImage)
+        val updatedImage = imageStorage.readImage(updatedImageReference.imageId)
+
+        assertFailsWith<ImageNotFoundException> {
+            imageStorage.readImage(imageReference.imageId)
+        }
+        assertNotEquals(imageReference.imageId, updatedImageReference.imageId)
+        assertByteArraysNotEqual(imageConfiguration.data, updatedImage.data)
+    }
+
+    @Test
+    fun `update image for all owners`() = runBlocking {
+        val owners = listOf("owner1", "owner2")
+        val imageConfiguration1 = givenImageConfiguration(ownerId = owners[0])
+        val imageConfiguration2 = givenImageConfiguration(ownerId = owners[1])
+
+        val imageReference1 = imageStorage.saveImage(imageConfiguration1)
+        val imageReference2 = imageStorage.saveImage(imageConfiguration2)
+        assertEquals(imageReference1, imageReference2)
+
+        val updatedImageConfiguration1 = givenImageConfiguration(data = TestData.updatedByteArray, ownerId = owners[0])
+        val updatedImageConfiguration2 = givenImageConfiguration(data = TestData.updatedByteArray, ownerId = owners[1])
+
+        val result1 = imageStorage.updateImage(imageReference1.imageId, updatedImageConfiguration1)
+        val result2 = imageStorage.updateImage(imageReference2.imageId, updatedImageConfiguration2)
+        val updatedImageReference1 = imageStorage.readImageReference(result1.imageId)
+        val updatedImageReference2 = imageStorage.readImageReference(result2.imageId)
+
+        assertFailsWith<ImageNotFoundException> {
+            imageStorage.readImage(imageReference1.imageId)
+        }
+        assertEquals(result1, updatedImageReference1)
+        assertEquals(result2, updatedImageReference2)
+        assertEquals(updatedImageReference1, updatedImageReference2)
+    }
+
 //    @Test
 //    fun `update image for only 2 of 4 owners`() = runBlocking {
 //        val owners = listOf("owner1", "owner2", "owner3", "owner4")
@@ -227,25 +223,25 @@ class ImageStorageTest {
     ): ImageConfiguration {
         return ImageConfiguration(data, ownerId)
     }
-//
-//    private fun assertByteArraysNotEqual(
-//        expected: ByteArray,
-//        actual: ByteArray
-//    ) {
-//        var assertMessage = ""
-//        val sameSize = (expected.size == actual.size)
-//        if (sameSize) {
-//            for (i in expected.indices) {
-//                if (expected[i] != actual[i]) {
-//                    assertMessage =
-//                        "Different value at $i:\n expected:<${expected.size}> but was:<${actual.size}>"
-//                    break
-//                }
-//            }
-//        } else {
-//            assertMessage =
-//                "Different arrays size:\n expected:<${expected.size}> but was:<${actual.size}>"
-//        }
-//        assertTrue(assertMessage.isNotEmpty(), assertMessage)
-//    }
+
+    private fun assertByteArraysNotEqual(
+        expected: ByteArray,
+        actual: ByteArray
+    ) {
+        var assertMessage = ""
+        val sameSize = (expected.size == actual.size)
+        if (sameSize) {
+            for (i in expected.indices) {
+                if (expected[i] != actual[i]) {
+                    assertMessage =
+                        "Different value at $i:\n expected:<${expected.size}> but was:<${actual.size}>"
+                    break
+                }
+            }
+        } else {
+            assertMessage =
+                "Different arrays size:\n expected:<${expected.size}> but was:<${actual.size}>"
+        }
+        assertTrue(assertMessage.isNotEmpty(), assertMessage)
+    }
 }
