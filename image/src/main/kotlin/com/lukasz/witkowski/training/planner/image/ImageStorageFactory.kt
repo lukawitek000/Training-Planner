@@ -12,7 +12,7 @@ object ImageStorageFactory {
         val database = Room.databaseBuilder(
             context,
             ImageReferenceDatabase::class.java, "image-references-database"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
         val imageRepository = DbImageReferenceRepository(database.imageReferenceDao())
         val imageReferenceRepository = InternalStorageImageRepository(context, directoryName)
         val checksumCalculator = Adler32ChecksumCalculator()
