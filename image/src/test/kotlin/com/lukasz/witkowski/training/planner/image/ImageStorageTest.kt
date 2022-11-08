@@ -3,10 +3,12 @@ package com.lukasz.witkowski.training.planner.image
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import com.lukasz.witkowski.training.planner.image.infrastructure.Adler32ChecksumCalculator
 import com.lukasz.witkowski.training.planner.image.infrastructure.DbImageReferenceRepository
 import com.lukasz.witkowski.training.planner.image.infrastructure.InternalStorageImageRepository
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageReferenceDao
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageReferenceDatabase
+import junit.framework.Assert.assertNull
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
@@ -17,66 +19,60 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
-import kotlin.test.assertFailsWith
-import kotlin.test.assertNotEquals
-import kotlin.test.assertNull
-import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
-@Ignore("Will be removed after checking for the same image in the storage")
 class ImageStorageTest {
-//
-//    private lateinit var imageStorage: ImageStorage
-//    private lateinit var imgReferenceDatabase: ImageReferenceDatabase
-//    private lateinit var imageReferencedDao: ImageReferenceDao
-//
-//    @Before
-//    fun setUp() {
-//        val applicationContext: Context = ApplicationProvider.getApplicationContext()
-//        val imgRepository = InternalStorageImageRepository(applicationContext, "testing_images")
-//        imgReferenceDatabase =
-//            Room.inMemoryDatabaseBuilder(applicationContext, ImageReferenceDatabase::class.java)
-//                .allowMainThreadQueries().build()
-//        imageReferencedDao = imgReferenceDatabase.imageReferenceDao()
-//        val imgRefRepository = DbImageReferenceRepository(imageReferencedDao)
-//        imageStorage = DataReferenceSeparatedImageStorage(imgRepository, imgRefRepository)
-//    }
-//
-//    @After
-//    fun closeDb() {
-//        imgReferenceDatabase.close()
-//    }
-//
-//    @Test
-//    fun `saves and read by reference the same byte array`() = runBlocking {
-//        val image = givenImageByteArray()
-//
-//        val imageReference = imageStorage.saveImage(image)
-//        val readImage = imageStorage.readImage(imageReference.imageId)
-//
-//        assertEquals(image.imageId, readImage.imageId)
-//        assertEquals(image.ownersIds, readImage.ownersIds)
-//        assertArrayEquals(image.data, readImage.data)
-//    }
-//
-//    @Test
-//    fun `saves the image and read its reference`() = runBlocking {
-//        val image = givenImageByteArray()
-//
-//        val imageReference = imageStorage.saveImage(image)
-//        val readReference = imageStorage.readImageReference(imageReference.imageId)
-//
-//        assertEquals(imageReference, readReference)
-//    }
-//
-//    @Test
-//    fun `read image reference for not existing image id`() = runBlocking {
-//        val dummyImageId = ImageId("dummyId")
-//        val readReference = imageStorage.readImageReference(dummyImageId)
-//
-//        assertNull(readReference)
-//    }
+
+    private lateinit var imageStorage: ImageStorage
+    private lateinit var imgReferenceDatabase: ImageReferenceDatabase
+    private lateinit var imageReferencedDao: ImageReferenceDao
+
+    @Before
+    fun setUp() {
+        val applicationContext: Context = ApplicationProvider.getApplicationContext()
+        val imgRepository = InternalStorageImageRepository(applicationContext, "testing_images")
+        imgReferenceDatabase =
+            Room.inMemoryDatabaseBuilder(applicationContext, ImageReferenceDatabase::class.java)
+                .allowMainThreadQueries().build()
+        imageReferencedDao = imgReferenceDatabase.imageReferenceDao()
+        val imgRefRepository = DbImageReferenceRepository(imageReferencedDao)
+        val checksumCalculator = Adler32ChecksumCalculator()
+        imageStorage = DataReferenceSeparatedImageStorage(imgRepository, imgRefRepository, checksumCalculator)
+    }
+
+    @After
+    fun closeDb() {
+        imgReferenceDatabase.close()
+    }
+
+    @Test
+    fun `saves and read by reference the same byte array`() = runBlocking {
+        val imageConfiguration = givenImageConfiguration()
+
+        val imageReference = imageStorage.saveImage(imageConfiguration)
+        val readImage = imageStorage.readImage(imageReference.imageId)
+
+        assertArrayEquals(imageConfiguration.data, readImage.data)
+    }
+
+    @Test
+    fun `saves the image and read its reference`() = runBlocking {
+        val image = givenImageConfiguration()
+
+        val imageReference = imageStorage.saveImage(image)
+        val readReference = imageStorage.readImageReference(imageReference.imageId)
+
+        assertEquals(imageReference, readReference)
+    }
+
+    @Test
+    fun `read image reference for not existing image id`() = runBlocking {
+        val dummyImageId = ImageId("dummyId")
+        val readReference = imageStorage.readImageReference(dummyImageId)
+
+        assertNull(readReference)
+    }
 //
 //    @Test
 //    fun `saving and deleting the image causes reading attempt to fail`() = runBlocking {
@@ -217,13 +213,12 @@ class ImageStorageTest {
 //        assertArrayEquals(image.data, result.data)
 //    }
 //
-//    private fun givenImageByteArray(
-//        imageId: ImageId = ImageId("testing_imageId"),
-//        ownersId: List<String> = listOf("owner1"),
-//        data: ByteArray = TestData.byteArray
-//    ): Image {
-//        return Image(imageId, ownersId, data)
-//    }
+    private fun givenImageConfiguration(
+        ownerId: String = "owner1",
+        data: ByteArray = TestData.byteArray
+    ): ImageConfiguration {
+        return ImageConfiguration(data, ownerId)
+    }
 //
 //    private fun assertByteArraysNotEqual(
 //        expected: ByteArray,
