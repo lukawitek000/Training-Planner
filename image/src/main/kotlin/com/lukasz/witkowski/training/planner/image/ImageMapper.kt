@@ -31,7 +31,6 @@ object ImageMapper {
     private const val QUALITY_100 = 100
 }
 
-
 internal fun DomainImage.toImage(): Image {
     return Image(imageId, data)
 }
