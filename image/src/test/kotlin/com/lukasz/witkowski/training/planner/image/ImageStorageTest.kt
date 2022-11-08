@@ -8,19 +8,18 @@ import com.lukasz.witkowski.training.planner.image.infrastructure.DbImageReferen
 import com.lukasz.witkowski.training.planner.image.infrastructure.InternalStorageImageRepository
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageReferenceDao
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageReferenceDatabase
-import junit.framework.Assert.assertNull
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
@@ -181,42 +180,42 @@ class ImageStorageTest {
         assertEquals(updatedImageReference1, updatedImageReference2)
     }
 
-//    @Test
-//    fun `update image for only 2 of 4 owners`() = runBlocking {
-//        val owners = listOf("owner1", "owner2", "owner3", "owner4")
-//        val image = givenImageByteArray(ownersId = owners)
-//
-//        imageStorage.saveImage(image)
-//        val newImage = givenImageByteArray(
-//            ImageId("UpdatedId"),
-//            data = TestData.updatedByteArray,
-//            ownersId = owners.take(2)
-//        )
-//        val result = imageStorage.updateImage(image.imageId, newImage)
-//        val updatedImageReference = imageStorage.readImageReference(newImage.imageId)
-//
-//        val initialImageReference = imageStorage.readImageReference(image.imageId)
-//        assertEquals(owners.takeLast(2), initialImageReference?.ownersIds)
-//        assertEquals(image.imageId, initialImageReference?.imageId)
-//
-//        assertEquals(newImage.imageId, result.imageId)
-//        assertEquals(owners.take(2), result.ownersIds)
-//        assertEquals(updatedImageReference, result)
-//    }
-//
-//    @Test
-//    fun `update method saves image if it did not exist`() = runBlocking {
-//        val owners = listOf("owner1", "owner2")
-//        val image = givenImageByteArray(ownersId = owners)
-//
-//        val imageReference = imageStorage.updateImage(ImageId("dummyId"), image)
-//        val result = imageStorage.readImage(imageReference.imageId)
-//
-//        assertEquals(image.imageId, result.imageId)
-//        assertEquals(owners, result.ownersIds)
-//        assertArrayEquals(image.data, result.data)
-//    }
-//
+    @Test
+    fun `update image for only 1 of 2 owners`() = runBlocking {
+        val owners = listOf("owner1", "owner2")
+        val imageConfiguration1 = givenImageConfiguration(ownerId = owners[0])
+        val imageConfiguration2 = givenImageConfiguration(ownerId = owners[1])
+
+        val imageReference1 = imageStorage.saveImage(imageConfiguration1)
+        imageStorage.saveImage(imageConfiguration2)
+
+        val newImageConfiguration = givenImageConfiguration(ownerId = owners[0], data = TestData.updatedByteArray)
+        val updateResult = imageStorage.updateImage(imageReference1.imageId, newImageConfiguration)
+        val updatedImageReference = imageStorage.readImageReference(updateResult.imageId)
+        val updatedImage = imageStorage.readImage(updatedImageReference!!.imageId)
+
+        val initialImageReference = imageStorage.readImageReference(imageReference1.imageId)
+        val initialImage = imageStorage.readImage(imageReference1.imageId)
+
+        assertEquals(imageReference1.imageId, initialImageReference?.imageId)
+        assertEquals(updatedImageReference, updateResult)
+        assertArrayEquals(TestData.updatedByteArray, updatedImage.data)
+        assertArrayEquals(TestData.byteArray, initialImage.data)
+    }
+
+    @Test
+    fun `update method saves image if it did not exist`() = runBlocking {
+        val imageConfiguration = givenImageConfiguration()
+        val notExistingImageId = ImageId("dummyId")
+
+        val imageReference = imageStorage.updateImage(notExistingImageId, imageConfiguration)
+        val result = imageStorage.readImage(notExistingImageId)
+
+        assertEquals(notExistingImageId, imageReference.imageId)
+        assertEquals(notExistingImageId, result.imageId)
+        assertArrayEquals(imageConfiguration.data, result.data)
+    }
+
     private fun givenImageConfiguration(
         ownerId: String = "owner1",
         data: ByteArray = TestData.byteArray
