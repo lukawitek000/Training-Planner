@@ -19,6 +19,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
+import kotlin.test.assertFailsWith
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28])
@@ -73,61 +74,69 @@ class ImageStorageTest {
 
         assertNull(readReference)
     }
-//
-//    @Test
-//    fun `saving and deleting the image causes reading attempt to fail`() = runBlocking {
-//        val ownerId = "test_owner"
-//        val image = givenImageByteArray(ownersId = listOf(ownerId))
-//
-//        val imageReference = imageStorage.saveImage(image)
-//        imageStorage.deleteImage(imageReference.imageId, ownerId)
-//        val exception = assertFailsWith<ImageNotFoundException> {
-//            imageStorage.readImage(imageReference.imageId)
-//        }
-//        println(exception.message)
-//    }
-//
-//    @Test
-//    fun `saving image with two owners and deleting for one`() = runBlocking {
-//        val ownerId = "test_owner"
-//        val ownerToDelete = "test_delete_owner"
-//        val image = givenImageByteArray(ownersId = listOf(ownerId, ownerToDelete))
-//
-//        val imageReference = imageStorage.saveImage(image)
-//        println("Image saved path ${imageReference.path}")
-//        imageStorage.deleteImage(imageReference.imageId, ownerToDelete)
-//        val readImage = imageStorage.readImage(imageReference.imageId)
-//
-//        assertEquals(1, readImage.ownersIds.size)
-//        assertEquals(ownerId, readImage.ownersIds.first())
-//        assertEquals(image.imageId, readImage.imageId)
-//        assertArrayEquals(image.data, readImage.data)
-//    }
-//
-//    @Test
-//    fun `saving image with two owners and deleting for each of them`() = runBlocking {
-//        val owner1 = "test_owner"
-//        val owner2 = "test_delete_owner"
-//        val image = givenImageByteArray(ownersId = listOf(owner1, owner2))
-//
-//        val imageReference = imageStorage.saveImage(image)
-//        imageStorage.deleteImage(imageReference.imageId, owner1)
-//        imageStorage.deleteImage(imageReference.imageId, owner2)
-//
-//        val exception = assertFailsWith<ImageNotFoundException> {
-//            imageStorage.readImage(imageReference.imageId)
-//        }
-//        println(exception.message)
-//    }
-//
-//    @Test
-//    fun `delete image that does not exist throws exception`() = runBlocking {
-//        val ownerId = "wrong_ownerId"
-//        val exception = assertFailsWith<ImageNotFoundException> {
-//            imageStorage.deleteImage(ImageId("dummyId"), ownerId)
-//        }
-//        println(exception.message)
-//    }
+
+    @Test
+    fun `saving and deleting the image causes reading attempt to fail`() = runBlocking {
+        val ownerId = "test_owner"
+        val imageConfiguration = givenImageConfiguration(ownerId = ownerId)
+
+        val imageReference = imageStorage.saveImage(imageConfiguration)
+        imageStorage.deleteImage(imageReference.imageId, ownerId)
+        assertFailsWith<ImageNotFoundException> {
+            imageStorage.readImage(imageReference.imageId)
+        }
+        Unit
+    }
+
+    @Test
+    @Ignore
+    fun `save the same image for two owners and deleting for one`() = runBlocking {
+        val ownerId = "test_owner"
+        val ownerToDelete = "test_delete_owner"
+        val imageConfiguration1 = givenImageConfiguration(ownerId = ownerId)
+        val imageConfiguration2 = givenImageConfiguration(ownerId = ownerToDelete)
+
+        val imageReference1 = imageStorage.saveImage(imageConfiguration1)
+        val imageReference2 = imageStorage.saveImage(imageConfiguration2)
+        imageStorage.deleteImage(imageReference2.imageId, ownerToDelete)
+
+        val readImage1 = imageStorage.readImage(imageReference1.imageId)
+        assertArrayEquals(imageConfiguration1.data, readImage1.data)
+
+        // The same image saved so it should be read from the storage without the exception
+        val readImage2 = imageStorage.readImage(imageReference2.imageId)
+        assertArrayEquals(imageConfiguration2.data, readImage2.data)
+    }
+
+    @Test
+    fun `saving image with two owners and deleting for each of them`() = runBlocking {
+        val owner1 = "test_owner"
+        val owner2 = "test_delete_owner"
+        val imageConfiguration1 = givenImageConfiguration(ownerId = owner1)
+        val imageConfiguration2 = givenImageConfiguration(ownerId = owner2)
+
+        val imageReference1 = imageStorage.saveImage(imageConfiguration1)
+        val imageReference2 = imageStorage.saveImage(imageConfiguration2)
+        imageStorage.deleteImage(imageReference1.imageId, owner1)
+        imageStorage.deleteImage(imageReference2.imageId, owner2)
+
+        assertFailsWith<ImageNotFoundException> {
+            imageStorage.readImage(imageReference1.imageId)
+        }
+        assertFailsWith<ImageNotFoundException> {
+            imageStorage.readImage(imageReference2.imageId)
+        }
+        Unit
+    }
+
+    @Test
+    fun `delete image that does not exist throws exception`() = runBlocking {
+        val ownerId = "wrong_ownerId"
+        assertFailsWith<ImageNotFoundException> {
+            imageStorage.deleteImage(ImageId("dummyId"), ownerId)
+        }
+        Unit
+    }
 //
 //    @Test
 //    fun `update saved image for the owner`() = runBlocking {
