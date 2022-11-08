@@ -17,10 +17,16 @@ internal class DataReferenceSeparatedImageStorage constructor(
 ) : ImageStorage {
 
     override suspend fun saveImage(imageConfiguration: ImageConfiguration): ImageReference {
-        val image = createImage(imageConfiguration)
-        val imageReference = imageRepository.save(image)
-        val imageId = imageReferenceRepository.save(imageReference)
-        return handleImageReferenceSavingResult(imageId, imageReference)
+        val newImageChecksum = checksumCalculator.calculate(imageConfiguration.toImageByteArray())
+        return if (imageReferenceRepository.isImageAlreadySaved(newImageChecksum)) {
+            Timber.d("Image is already stored in the storage, added new owner to it.")
+            imageReferenceRepository.addOwnerToImage(newImageChecksum, imageConfiguration.ownerId).toImageReference()
+        } else {
+            val image = createImage(imageConfiguration)
+            val imageReference = imageRepository.save(image)
+            val imageId = imageReferenceRepository.save(imageReference)
+            handleImageReferenceSavingResult(imageId, imageReference)
+        }
     }
 
     private fun handleImageReferenceSavingResult(

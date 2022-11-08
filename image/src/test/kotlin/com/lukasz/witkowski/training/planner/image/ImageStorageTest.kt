@@ -89,7 +89,6 @@ class ImageStorageTest {
     }
 
     @Test
-    @Ignore
     fun `save the same image for two owners and deleting for one`() = runBlocking {
         val ownerId = "test_owner"
         val ownerToDelete = "test_delete_owner"

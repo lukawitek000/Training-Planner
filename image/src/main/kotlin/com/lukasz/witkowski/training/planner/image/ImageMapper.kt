@@ -39,3 +39,7 @@ internal fun DomainImage.toImage(): Image {
 internal fun DomainImageReference.toImageReference(): ImageReference {
     return ImageReference(imageId, path)
 }
+
+internal fun ImageConfiguration.toImageByteArray(): ImageByteArray {
+    return ImageByteArray(data)
+}
