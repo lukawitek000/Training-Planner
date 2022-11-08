@@ -31,10 +31,6 @@ class ExerciseService(
         return imageStorage.saveImage(imageConfiguration)
     }
 
-//    suspend fun updateImage(image: Image, oldImageId: ImageId): ImageReference {
-//        return imageStorage.updateImage(oldImageId, image)
-//    }
-
     private suspend fun deleteImage(imageId: ImageId, exerciseId: ExerciseId) {
         imageStorage.deleteImage(imageId, exerciseId.value)
     }
@@ -61,8 +57,23 @@ class ExerciseService(
         exerciseConfiguration: ExerciseConfiguration,
         previousImage: Image?
     ): Boolean {
-        val exercise = createExercise(exerciseConfiguration, null, exerciseId)// TODO add check in image storage based on checksum
+        val updatedImage = updateImage(exerciseConfiguration.image, previousImage?.imageId, exerciseId)
+        val exercise = createExercise(exerciseConfiguration, updatedImage?.imageId, exerciseId)
         return exerciseRepository.updateExercise(exercise)
+    }
+
+    private suspend fun updateImage(imageByteArray: ImageByteArray?, oldImageId: ImageId?, exerciseId: ExerciseId): ImageReference? {
+        val imageConfiguration = imageByteArray?.let { ImageMapper.toImageConfiguration(it, exerciseId.value) }
+        return if(oldImageId == null) {
+            imageConfiguration?.let { imageStorage.saveImage(imageConfiguration) }
+        } else {
+            if(imageConfiguration == null) {
+                imageStorage.deleteImage(oldImageId, exerciseId.value)
+                null // Do not exist after delete
+            } else {
+                imageConfiguration.let { imageStorage.updateImage(oldImageId, imageConfiguration) }
+            }
+        }
     }
 
     suspend fun readImage(imageId: ImageId): Image {
