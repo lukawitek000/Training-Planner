@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 
 @Dao
+@Suppress("TooManyFunctions")
 internal interface ImageReferenceDao {
 
     @Transaction
