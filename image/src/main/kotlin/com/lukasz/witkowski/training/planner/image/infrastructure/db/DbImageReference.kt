@@ -7,5 +7,7 @@ import androidx.room.PrimaryKey
 internal data class DbImageReference(
     @PrimaryKey
     val id: String,
-    val path: String
+    val path: String,
+    // TODO this column should be unique
+    val checksum: Long
 )

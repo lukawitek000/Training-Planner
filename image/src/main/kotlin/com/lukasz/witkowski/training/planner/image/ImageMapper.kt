@@ -3,6 +3,8 @@ package com.lukasz.witkowski.training.planner.image
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import java.io.ByteArrayOutputStream
+import com.lukasz.witkowski.training.planner.image.domain.Image as DomainImage
+import com.lukasz.witkowski.training.planner.image.domain.ImageReference as DomainImageReference
 
 object ImageMapper {
 
@@ -27,4 +29,16 @@ object ImageMapper {
     }
 
     private const val QUALITY_100 = 100
+}
+
+internal fun DomainImage.toImage(): Image {
+    return Image(imageId, data)
+}
+
+internal fun DomainImageReference.toImageReference(): ImageReference {
+    return ImageReference(imageId, path)
+}
+
+internal fun ImageConfiguration.toImageByteArray(): ImageByteArray {
+    return ImageByteArray(data)
 }

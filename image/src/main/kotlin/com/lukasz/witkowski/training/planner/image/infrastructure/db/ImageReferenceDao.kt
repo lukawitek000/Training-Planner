@@ -2,10 +2,12 @@ package com.lukasz.witkowski.training.planner.image.infrastructure.db
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 
 @Dao
+@Suppress("TooManyFunctions")
 internal interface ImageReferenceDao {
 
     @Transaction
@@ -20,10 +22,10 @@ internal interface ImageReferenceDao {
         }
     }
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(dbImageReference: DbImageReference): Long
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(dbImageOwner: DbImageOwner): Long
 
     @Transaction
@@ -46,4 +48,7 @@ internal interface ImageReferenceDao {
 
     @Query("DELETE FROM DbImageReference WHERE id=:imageId")
     suspend fun deleteImageReference(imageId: String): Int
+
+    @Query("SELECT * FROM DBIMAGEREFERENCE WHERE checksum=:checksum")
+    suspend fun getImageReferencesByChecksum(checksum: Long): List<DbImageReference>
 }

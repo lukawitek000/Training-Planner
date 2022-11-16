@@ -3,7 +3,7 @@ package com.lukasz.witkowski.training.planner.image.infrastructure.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
-@Database(entities = [DbImageReference::class, DbImageOwner::class], version = 1)
+@Database(entities = [DbImageReference::class, DbImageOwner::class], version = 2, exportSchema = false)
 internal abstract class ImageReferenceDatabase : RoomDatabase() {
     abstract fun imageReferenceDao(): ImageReferenceDao
 }
