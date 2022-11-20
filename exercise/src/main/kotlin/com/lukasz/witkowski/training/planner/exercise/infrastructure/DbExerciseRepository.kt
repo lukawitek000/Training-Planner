@@ -15,7 +15,7 @@ internal class DbExerciseRepository(
 ) : ExerciseRepository {
 
     override suspend fun getById(id: ExerciseId): Exercise = withContext(ioDispatcher) {
-        val dbExercise = exerciseDao.getById(id.value)
+        val dbExercise = exerciseDao.getById(id.value.toString())
         ExerciseMapper.toExercise(dbExercise)
     }
 
@@ -30,7 +30,7 @@ internal class DbExerciseRepository(
     }
 
     override suspend fun delete(exercise: Exercise) = withContext(ioDispatcher) {
-        exerciseDao.deleteExerciseById(exercise.id.value) == ONE_ROW
+        exerciseDao.deleteExerciseById(exercise.id.value.toString()) == ONE_ROW
     }
 
     override suspend fun updateExercise(updatedExercise: Exercise): Boolean =

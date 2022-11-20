@@ -32,7 +32,7 @@ class ExerciseService(
     }
 
     private suspend fun deleteImage(imageId: ImageId, exerciseId: ExerciseId) {
-        imageStorage.deleteImage(imageId, exerciseId.value)
+        imageStorage.deleteImage(imageId, exerciseId.value.toString())
     }
 
     fun getExercisesFromCategories(categories: List<ExerciseCategory>): Flow<List<Exercise>> {
@@ -68,7 +68,7 @@ class ExerciseService(
             imageConfiguration?.let { imageStorage.saveImage(imageConfiguration) }
         } else {
             if(imageConfiguration == null) {
-                imageStorage.deleteImage(oldImageId, exerciseId.value)
+                imageStorage.deleteImage(oldImageId, exerciseId.value.toString())
                 null // Do not exist after delete
             } else {
                 imageConfiguration.let { imageStorage.updateImage(oldImageId, imageConfiguration) }
