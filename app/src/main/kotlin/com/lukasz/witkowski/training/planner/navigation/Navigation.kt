@@ -48,7 +48,7 @@ fun Navigation(
                 viewModel = trainingsListViewModel,
                 onCreateTrainingFabClicked = { navController.navigate(route = NavItem.CreateTraining.route) },
                 navigateToTrainingOverview = { navController.navigate(route = "${NavItem.TrainingOverview.route}/$it") },
-                navigateToTrainingSession = { navController.navigate(route = "${NavItem.TrainingSession.route}/${it.value}") }
+                navigateToTrainingSession = { navController.navigate(route = "${NavItem.TrainingSession.route}/$it") }
             )
         }
 
@@ -62,7 +62,7 @@ fun Navigation(
                     navController.navigate(NavItem.CreateExercise.route)
                 },
                 navigateToExerciseEditScreen = {
-                    navController.navigate("${NavItem.EditExercise.route}/${it.value}")
+                    navController.navigate("${NavItem.EditExercise.route}/$it")
                 })
         }
 

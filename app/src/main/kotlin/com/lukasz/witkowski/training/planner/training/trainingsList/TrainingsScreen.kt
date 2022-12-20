@@ -42,7 +42,7 @@ fun TrainingsScreen(
     innerPadding: PaddingValues = PaddingValues(),
     viewModel: TrainingsListViewModel,
     onCreateTrainingFabClicked: () -> Unit = {},
-    navigateToTrainingOverview: (String) -> Unit,
+    navigateToTrainingOverview: (TrainingPlanId) -> Unit,
     navigateToTrainingSession: (TrainingPlanId) -> Unit
 ) {
     val trainings by viewModel.trainingPlans.collectAsState(emptyList())
@@ -98,7 +98,7 @@ private fun CreateTrainingFab(
 fun TrainingsList(
     modifier: Modifier = Modifier,
     trainings: List<TrainingPlan>,
-    navigateToTrainingOverview: (String) -> Unit,
+    navigateToTrainingOverview: (TrainingPlanId) -> Unit,
     startTrainingSession: (TrainingPlan) -> Unit
 ) {
     LazyColumn(
@@ -106,7 +106,7 @@ fun TrainingsList(
     ) {
         items(trainings) { trainingWithExercises ->
             ListCardItem(modifier = Modifier,
-                onCardClicked = { navigateToTrainingOverview(trainingWithExercises.id.value) }) {
+                onCardClicked = { navigateToTrainingOverview(trainingWithExercises.id) }) {
                 TrainingListItemContent(
                     trainingPlan = trainingWithExercises,
                     startTrainingSession = startTrainingSession

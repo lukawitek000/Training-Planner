@@ -9,7 +9,7 @@ internal object TrainingPlanMapper {
     fun toDbTrainingPlanWithExercises(trainingPlan: TrainingPlan): DbTrainingPlanWithExercises {
         return DbTrainingPlanWithExercises(
             trainingPlan = DbTrainingPlan(
-                id = trainingPlan.id.value,
+                id = trainingPlan.id.toString(),
                 name = trainingPlan.title,
                 description = trainingPlan.description,
                 isSynchronized = trainingPlan.isSynchronized
@@ -17,7 +17,7 @@ internal object TrainingPlanMapper {
             exercises = trainingPlan.exercises.map {
                 ExerciseMapper.toDbTrainingExercise(
                     trainingExercise = it,
-                    trainingId = trainingPlan.id.value
+                    trainingId = trainingPlan.id.toString()
                 )
             },
         )

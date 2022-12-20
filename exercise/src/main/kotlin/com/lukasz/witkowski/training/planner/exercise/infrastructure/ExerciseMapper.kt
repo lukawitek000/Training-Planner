@@ -4,16 +4,17 @@ import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.image.ImageId
+import java.util.UUID
 
 internal object ExerciseMapper {
 
     fun toDbExercise(exercise: Exercise): DbExercise {
         return DbExercise(
-            id = exercise.id.value,
+            id = exercise.id.toString(),
             name = exercise.name,
             description = exercise.description,
             categoryId = exercise.category.ordinal,
-            imageId = exercise.imageId?.value
+            imageId = exercise.imageId?.toString()
         )
     }
 

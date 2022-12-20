@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.planner.image.infrastructure.db.toImageRefe
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 internal class DbImageReferenceRepository(
     private val imageReferenceDao: ImageReferenceDao,
@@ -26,18 +27,20 @@ internal class DbImageReferenceRepository(
             val ownersIds = imageReference.ownersIds
             var isImageReferenceDeletedSuccessfully = true
             if (areAllImageOwners(imageId, ownersIds)) {
-                val deletedRows = imageReferenceDao.deleteImageReference(imageId.value)
+                val deletedRows = imageReferenceDao.deleteImageReference(imageId.toString())
                 isImageReferenceDeletedSuccessfully = (deletedRows == ONE_ROW)
             }
-            val deletedRows = imageReferenceDao.deleteImageOwners(imageReference.ownersIds)
+            val ownersIdsString = ownersIds.map { it.toString() }
+            val deletedRows = imageReferenceDao.deleteImageOwners(ownersIdsString)
             (deletedRows == ownersIds.size) && isImageReferenceDeletedSuccessfully
         }
 
-    override suspend fun areAllImageOwners(imageId: ImageId, ownersIds: List<String>): Boolean =
+    override suspend fun areAllImageOwners(imageId: ImageId, ownersIds: List<UUID>): Boolean =
         withContext(ioDispatcher) {
+            val ownersIdsString = ownersIds.map { it.toString() }
             val allImageOwners =
-                imageReferenceDao.getOwnersOfImage(imageId.value)?.map { it.ownerId } ?: emptyList()
-            allImageOwners.containsAll(ownersIds) && ownersIds.containsAll(allImageOwners)
+                imageReferenceDao.getOwnersOfImage(imageId.toString())?.map { it.ownerId } ?: emptyList()
+            allImageOwners.containsAll(ownersIdsString) && ownersIdsString.containsAll(allImageOwners)
         }
 
     override suspend fun isImageAlreadySaved(checksum: Long): Boolean = withContext(ioDispatcher) {
@@ -45,14 +48,14 @@ internal class DbImageReferenceRepository(
         imagesWithEqualChecksum.isNotEmpty()
     }
 
-    override suspend fun addOwnerToImage(checksum: Long, ownerId: String): ImageReference =
+    override suspend fun addOwnerToImage(checksum: Long, ownerId: UUID): ImageReference =
         withContext(ioDispatcher) {
             val sameImage = imageReferenceDao.getImageReferencesByChecksum(checksum).first()
-            imageReferenceDao.insert(DbImageOwner(ownerId, sameImage.id))
+            imageReferenceDao.insert(DbImageOwner(ownerId.toString(), sameImage.id))
             val owners = imageReferenceDao.getOwnersOfImage(sameImage.id)
             ImageReference(
                 ImageId(sameImage.id),
-                owners!!.map { it.ownerId },
+                owners!!.map { UUID.fromString(it.ownerId) },
                 sameImage.path,
                 checksum
             )
@@ -72,14 +75,14 @@ internal class DbImageReferenceRepository(
         }
     }
 
-    override suspend fun readByOwnerId(ownerId: String): ImageReference? =
+    override suspend fun readByOwnerId(ownerId: UUID): ImageReference? =
         withContext(ioDispatcher) {
-            val dbImageReference = imageReferenceDao.getImageReferenceByOwnerId(ownerId)
-            dbImageReference?.toImageReference(ownerId)
+            val dbImageReference = imageReferenceDao.getImageReferenceByOwnerId(ownerId.toString())
+            dbImageReference?.toImageReference(ownerId.toString())
         }
 
     override suspend fun read(imageId: ImageId): ImageReference? = withContext(ioDispatcher) {
-        val dbImageReference = imageReferenceDao.getImageReferenceWithOwners(imageId.value)
+        val dbImageReference = imageReferenceDao.getImageReferenceWithOwners(imageId.toString())
         dbImageReference?.toImageReference()
     }
 

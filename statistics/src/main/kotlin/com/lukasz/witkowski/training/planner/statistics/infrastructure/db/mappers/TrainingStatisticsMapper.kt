@@ -13,8 +13,8 @@ object TrainingStatisticsMapper {
     fun toDbTrainingStatistics(trainingStatistics: TrainingStatistics): DbTrainingWithExercisesStatistics {
         return DbTrainingWithExercisesStatistics(
             trainingStatistics = DbTrainingStatistics(
-                id = trainingStatistics.id.value,
-                trainingPlanId = trainingStatistics.trainingPlanId.value,
+                id = trainingStatistics.id.toString(),
+                trainingPlanId = trainingStatistics.trainingPlanId.toString(),
                 totalTime = trainingStatistics.totalTime.timeInMillis,
                 date = trainingStatistics.date.time
             ),
