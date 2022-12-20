@@ -4,6 +4,7 @@ import com.lukasz.witkowski.training.planner.image.domain.ChecksumCalculator
 import com.lukasz.witkowski.training.planner.image.domain.ImageReferenceRepository
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
 import timber.log.Timber
+import java.util.UUID
 import com.lukasz.witkowski.training.planner.image.domain.Image as DomainImage
 import com.lukasz.witkowski.training.planner.image.domain.ImageReference as DomainImageReference
 
@@ -60,7 +61,7 @@ internal class DataReferenceSeparatedImageStorage constructor(
         return domainImageReference?.toImageReference()
     }
 
-    override suspend fun deleteImage(imageId: ImageId, ownerId: String): Boolean {
+    override suspend fun deleteImage(imageId: ImageId, ownerId: UUID): Boolean {
         val imageReference =
             imageReferenceRepository.readByOwnerId(ownerId) ?: throw ImageNotFoundException(imageId)
         val deletedReference = imageReferenceRepository.delete(imageReference)

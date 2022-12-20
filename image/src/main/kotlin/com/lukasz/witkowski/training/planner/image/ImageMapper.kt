@@ -26,7 +26,7 @@ object ImageMapper {
     }
 
     fun toImageConfiguration(imageByteArray: ImageByteArray, ownerId: UUID): ImageConfiguration {
-        return ImageConfiguration(imageByteArray.data, ownerId.toString())
+        return ImageConfiguration(imageByteArray.data, ownerId)
     }
 
     private const val QUALITY_100 = 100

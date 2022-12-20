@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.image.domain
 
 import com.lukasz.witkowski.training.planner.image.ImageId
+import java.util.UUID
 
 internal interface ImageReferenceRepository {
     /**
@@ -18,17 +19,17 @@ internal interface ImageReferenceRepository {
     */
     suspend fun update(newImageReference: ImageReference, oldImageReference: ImageReference): ImageId?
 
-    suspend fun readByOwnerId(ownerId: String): ImageReference?
+    suspend fun readByOwnerId(ownerId: UUID): ImageReference?
     suspend fun read(imageId: ImageId): ImageReference?
 
     /**
      * Check if the [ownersIds] are all owners of the image identified by [imageId]
      */
-    suspend fun areAllImageOwners(imageId: ImageId, ownersIds: List<String>): Boolean
+    suspend fun areAllImageOwners(imageId: ImageId, ownersIds: List<UUID>): Boolean
 
     /**
      * Check if the image with the provided [checksum] is already stored.
      */
     suspend fun isImageAlreadySaved(checksum: Long): Boolean
-    suspend fun addOwnerToImage(checksum: Long, ownerId: String): ImageReference
+    suspend fun addOwnerToImage(checksum: Long, ownerId: UUID): ImageReference
 }

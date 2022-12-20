@@ -1,10 +1,11 @@
 package com.lukasz.witkowski.training.planner.image.domain
 
 import com.lukasz.witkowski.training.planner.image.ImageId
+import java.util.UUID
 
 internal class Image(
     val imageId: ImageId,
-    val ownersIds: List<String>,
+    val ownersIds: List<UUID>,
     val data: ByteArray,
     val checksum: Long
 ) {
