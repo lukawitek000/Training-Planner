@@ -71,7 +71,7 @@ class ImageStorageTest {
 
     @Test
     fun `read image reference for not existing image id returns null`() = runBlocking {
-        val dummyImageId = ImageId("dummyId")
+        val dummyImageId = ImageId("abc123".toUUID())
         val readReference = imageStorage.readImageReference(dummyImageId)
 
         assertNull(readReference)
@@ -79,7 +79,7 @@ class ImageStorageTest {
 
     @Test
     fun `read deleted image throws exception`() = runBlocking {
-        val ownerId = "test_owner"
+        val ownerId = "abc123".toUUID()
         val imageConfiguration = givenImageConfiguration(ownerId = ownerId)
 
         val imageReference = imageStorage.saveImage(imageConfiguration)
@@ -92,8 +92,8 @@ class ImageStorageTest {
 
     @Test
     fun `delete image for one owner`() = runBlocking {
-        val ownerId = "test_owner"
-        val ownerToDelete = "test_delete_owner"
+        val ownerId = "abc123".toUUID()
+        val ownerToDelete = "5463".toUUID()
         val imageConfiguration1 = givenImageConfiguration(ownerId = ownerId)
         val imageConfiguration2 = givenImageConfiguration(ownerId = ownerToDelete)
 
@@ -111,15 +111,15 @@ class ImageStorageTest {
 
     @Test
     fun `read deleted image for all owners throws exception`() = runBlocking {
-        val owner1 = "test_owner"
-        val owner2 = "test_delete_owner"
+        val owner1 = "abc123".toUUID()
+        val ownerToDelete = "5673".toUUID()
         val imageConfiguration1 = givenImageConfiguration(ownerId = owner1)
-        val imageConfiguration2 = givenImageConfiguration(ownerId = owner2)
+        val imageConfiguration2 = givenImageConfiguration(ownerId = ownerToDelete)
 
         val imageReference1 = imageStorage.saveImage(imageConfiguration1)
         val imageReference2 = imageStorage.saveImage(imageConfiguration2)
         imageStorage.deleteImage(imageReference1.imageId, owner1)
-        imageStorage.deleteImage(imageReference2.imageId, owner2)
+        imageStorage.deleteImage(imageReference2.imageId, ownerToDelete)
 
         assertFailsWith<ImageNotFoundException> {
             imageStorage.readImage(imageReference1.imageId)
@@ -132,9 +132,9 @@ class ImageStorageTest {
 
     @Test
     fun `delete image that does not exist throws exception`() = runBlocking {
-        val ownerId = "wrong_ownerId"
+        val ownerId = "abc123".toUUID()
         assertFailsWith<ImageNotFoundException> {
-            imageStorage.deleteImage(ImageId("dummyId"), ownerId)
+            imageStorage.deleteImage(ImageId("12345".toUUID()), ownerId)
         }
         Unit
     }
@@ -157,7 +157,7 @@ class ImageStorageTest {
 
     @Test
     fun `update image for all owners`() = runBlocking {
-        val owners = listOf("owner1", "owner2")
+        val owners = listOf("abc123".toUUID(), "123abc".toUUID())
         val imageConfiguration1 = givenImageConfiguration(ownerId = owners[0])
         val imageConfiguration2 = givenImageConfiguration(ownerId = owners[1])
 
@@ -183,7 +183,7 @@ class ImageStorageTest {
 
     @Test
     fun `update image for only 1 of 2 owners`() = runBlocking {
-        val owners = listOf("owner1", "owner2")
+        val owners = listOf("abc123".toUUID(), "123abc".toUUID())
         val imageConfiguration1 = givenImageConfiguration(ownerId = owners[0])
         val imageConfiguration2 = givenImageConfiguration(ownerId = owners[1])
 
@@ -207,7 +207,7 @@ class ImageStorageTest {
     @Test
     fun `update method saves image if it did not exist`() = runBlocking {
         val imageConfiguration = givenImageConfiguration()
-        val notExistingImageId = ImageId("dummyId")
+        val notExistingImageId = ImageId("abc123".toUUID())
 
         val imageReference = imageStorage.updateImage(notExistingImageId, imageConfiguration)
         val result = imageStorage.readImage(notExistingImageId)
@@ -218,7 +218,7 @@ class ImageStorageTest {
     }
 
     private fun givenImageConfiguration(
-        ownerId: String = "owner1",
+        ownerId: UUID = "abc123".toUUID(),
         data: ByteArray = TestData.byteArray
     ): ImageConfiguration {
         return ImageConfiguration(data, ownerId)
@@ -244,4 +244,6 @@ class ImageStorageTest {
         }
         assertTrue(assertMessage.isNotEmpty(), assertMessage)
     }
+
+    private fun String.toUUID() = UUID.fromString("$this-000-000-000-000")
 }
