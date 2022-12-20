@@ -17,7 +17,7 @@ object ExerciseStatisticsMapper {
             exerciseStatistics = DbExerciseStatistics(
                 id = exerciseStatistics.id.value,
                 trainingStatisticsId = trainingStatisticsId.value,
-                trainingExerciseId = exerciseStatistics.trainingExerciseId.value
+                trainingExerciseId = exerciseStatistics.trainingExerciseId.toString()
             ),
             exerciseAttemptsStatistics = exerciseStatistics.attemptsStatistics.map {
                 ExerciseAttemptStatisticsMapper.toDbExerciseAttemptStatistics(

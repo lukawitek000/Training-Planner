@@ -16,7 +16,7 @@ internal object ExerciseMapper {
         trainingId: String
     ): DbTrainingExercise {
         return DbTrainingExercise(
-            id = trainingExercise.id.value,
+            id = trainingExercise.id.toString(),
             trainingId = trainingId,
             exercise = toDbExercise(trainingExercise.exercise),
             repetitions = trainingExercise.repetitions,
