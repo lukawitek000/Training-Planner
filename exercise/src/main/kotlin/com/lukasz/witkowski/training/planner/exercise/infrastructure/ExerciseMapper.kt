@@ -4,6 +4,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.image.ImageId
+import java.util.UUID
 
 internal object ExerciseMapper {
 
@@ -13,7 +14,7 @@ internal object ExerciseMapper {
             name = exercise.name,
             description = exercise.description,
             categoryId = exercise.category.ordinal,
-            imageId = exercise.imageId?.value
+            imageId = exercise.imageId?.toString()
         )
     }
 

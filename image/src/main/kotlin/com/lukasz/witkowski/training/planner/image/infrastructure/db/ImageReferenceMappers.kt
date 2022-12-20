@@ -2,9 +2,10 @@ package com.lukasz.witkowski.training.planner.image.infrastructure.db
 
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.domain.ImageReference
+import java.util.UUID
 
 internal fun ImageReference.toDbImageReferenceWithOwners(): DbImageReferenceWithOwners {
-    val imageId = imageId.value
+    val imageId = imageId.toString()
     val dbImageReference = DbImageReference(imageId, path, checksum)
     val owners = ownersIds.map { DbImageOwner(it, imageId) }
     return DbImageReferenceWithOwners(dbImageReference, owners)

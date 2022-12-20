@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.planner.image.infrastructure.db.toImageRefe
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.UUID
 
 internal class DbImageReferenceRepository(
     private val imageReferenceDao: ImageReferenceDao,
@@ -26,7 +27,7 @@ internal class DbImageReferenceRepository(
             val ownersIds = imageReference.ownersIds
             var isImageReferenceDeletedSuccessfully = true
             if (areAllImageOwners(imageId, ownersIds)) {
-                val deletedRows = imageReferenceDao.deleteImageReference(imageId.value)
+                val deletedRows = imageReferenceDao.deleteImageReference(imageId.toString())
                 isImageReferenceDeletedSuccessfully = (deletedRows == ONE_ROW)
             }
             val deletedRows = imageReferenceDao.deleteImageOwners(imageReference.ownersIds)
@@ -36,7 +37,7 @@ internal class DbImageReferenceRepository(
     override suspend fun areAllImageOwners(imageId: ImageId, ownersIds: List<String>): Boolean =
         withContext(ioDispatcher) {
             val allImageOwners =
-                imageReferenceDao.getOwnersOfImage(imageId.value)?.map { it.ownerId } ?: emptyList()
+                imageReferenceDao.getOwnersOfImage(imageId.toString())?.map { it.ownerId } ?: emptyList()
             allImageOwners.containsAll(ownersIds) && ownersIds.containsAll(allImageOwners)
         }
 
@@ -79,7 +80,7 @@ internal class DbImageReferenceRepository(
         }
 
     override suspend fun read(imageId: ImageId): ImageReference? = withContext(ioDispatcher) {
-        val dbImageReference = imageReferenceDao.getImageReferenceWithOwners(imageId.value)
+        val dbImageReference = imageReferenceDao.getImageReferenceWithOwners(imageId.toString())
         dbImageReference?.toImageReference()
     }
 
