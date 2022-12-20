@@ -14,7 +14,7 @@ object TrainingStatisticsMapper {
         return DbTrainingWithExercisesStatistics(
             trainingStatistics = DbTrainingStatistics(
                 id = trainingStatistics.id.value,
-                trainingPlanId = trainingStatistics.trainingPlanId.value,
+                trainingPlanId = trainingStatistics.trainingPlanId.toString(),
                 totalTime = trainingStatistics.totalTime.timeInMillis,
                 date = trainingStatistics.date.time
             ),

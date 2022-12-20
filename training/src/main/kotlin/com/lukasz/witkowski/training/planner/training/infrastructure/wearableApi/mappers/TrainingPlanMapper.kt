@@ -17,7 +17,7 @@ object TrainingPlanMapper {
 
     fun toTrainingPlanJsonModel(trainingPlan: TrainingPlan): TrainingPlanJsonModel {
         return TrainingPlanJsonModel(
-            id = trainingPlan.id.value,
+            id = trainingPlan.id.toString(),
             title = trainingPlan.title,
             description = trainingPlan.description,
             exercises = trainingPlan.exercises.map { ExerciseMapper.toExerciseJsonModel(it) }

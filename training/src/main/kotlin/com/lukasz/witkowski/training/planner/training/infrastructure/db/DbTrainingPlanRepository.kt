@@ -36,7 +36,7 @@ internal class DbTrainingPlanRepository(
     }
 
     override suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): TrainingPlan {
-        val id = trainingPlanId.value
+        val id = trainingPlanId.toString()
         val dbTrainingPlanWithExercises = trainingPlanDao.getTrainingPlanById(id)
         return TrainingPlanMapper.toTrainingPlan(dbTrainingPlanWithExercises)
     }

@@ -20,7 +20,7 @@ class DbStatisticsRepository(private val statisticsDao: StatisticsDao) : Statist
     }
 
     override fun getByTrainingPlanId(trainingPlanId: TrainingPlanId): Flow<List<TrainingStatistics>> {
-        return statisticsDao.getTrainingStatistics(trainingPlanId.value).map { statisticsList ->
+        return statisticsDao.getTrainingStatistics(trainingPlanId.toString()).map { statisticsList ->
             statisticsList.map { TrainingStatisticsMapper.toTrainingStatistics(it) }
         }
     }

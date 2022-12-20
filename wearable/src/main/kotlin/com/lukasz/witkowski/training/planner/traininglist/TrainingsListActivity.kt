@@ -52,7 +52,7 @@ class TrainingsListActivity : ComponentActivity() {
 
     private fun navigateToStartTrainingActivity(trainingId: TrainingPlanId, trainingTitle: String) {
         val intent = Intent(this, StartTrainingActivity::class.java)
-        intent.putExtra(TRAINING_ID_KEY, trainingId.value)
+        intent.putExtra(TRAINING_ID_KEY, trainingId.toString())
         intent.putExtra(TRAINING_TITLE_KEY, trainingTitle)
         startActivity(intent)
     }
