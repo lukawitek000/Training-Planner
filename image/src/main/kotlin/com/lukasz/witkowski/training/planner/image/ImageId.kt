@@ -5,7 +5,7 @@ import java.util.UUID
 @JvmInline
 value class ImageId(val value: UUID) {
 
-    constructor(name: String): this(UUID.fromString(name))
+    constructor(name: String) : this(UUID.fromString(name))
 
     override fun toString() = value.toString()
 
