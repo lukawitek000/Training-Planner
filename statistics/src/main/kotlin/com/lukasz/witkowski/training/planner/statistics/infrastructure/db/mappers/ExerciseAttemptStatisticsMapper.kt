@@ -14,7 +14,7 @@ object ExerciseAttemptStatisticsMapper {
         exerciseStatisticsId: ExerciseStatisticsId
     ): DbExerciseAttemptStatistics {
         return DbExerciseAttemptStatistics(
-            id = exerciseAttemptStatistics.id.value,
+            id = exerciseAttemptStatistics.id.toString(),
             exerciseStatisticsId = exerciseStatisticsId.value,
             trainingExerciseId = exerciseAttemptStatistics.trainingExerciseId.toString(),
             time = exerciseAttemptStatistics.time.timeInMillis,
