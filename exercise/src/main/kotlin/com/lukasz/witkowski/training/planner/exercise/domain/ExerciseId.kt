@@ -9,4 +9,6 @@ value class ExerciseId(val value: UUID) {
     companion object {
         fun create(): ExerciseId = ExerciseId(UUID.randomUUID())
     }
+
+    override fun toString(): String = value.toString()
 }

@@ -13,7 +13,7 @@ object ExerciseMapper {
     fun toExerciseJsonModel(trainingExercise: TrainingExercise): ExerciseJsonModel {
         return ExerciseJsonModel(
             id = trainingExercise.id.value,
-            exerciseId = trainingExercise.exercise.id.value.toString(),
+            exerciseId = trainingExercise.exercise.id.toString(),
             name = trainingExercise.exercise.name,
             description = trainingExercise.exercise.description,
             category = trainingExercise.exercise.category.ordinal,

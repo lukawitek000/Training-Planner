@@ -10,7 +10,7 @@ internal object ExerciseMapper {
 
     fun toDbExercise(exercise: Exercise): DbExercise {
         return DbExercise(
-            id = exercise.id.value.toString(),
+            id = exercise.id.toString(),
             name = exercise.name,
             description = exercise.description,
             categoryId = exercise.category.ordinal,

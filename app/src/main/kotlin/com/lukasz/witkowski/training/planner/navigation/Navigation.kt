@@ -62,7 +62,7 @@ fun Navigation(
                     navController.navigate(NavItem.CreateExercise.route)
                 },
                 navigateToExerciseEditScreen = {
-                    navController.navigate("${NavItem.EditExercise.route}/${it.value}")
+                    navController.navigate("${NavItem.EditExercise.route}/$it")
                 })
         }
 

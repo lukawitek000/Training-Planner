@@ -39,7 +39,7 @@ internal object ExerciseMapper {
 
     private fun toDbExercise(exercise: Exercise): DbExercise {
         return DbExercise(
-            exercise.id.value.toString(),
+            exercise.id.toString(),
             exercise.name,
             exercise.description,
             exercise.category.ordinal,

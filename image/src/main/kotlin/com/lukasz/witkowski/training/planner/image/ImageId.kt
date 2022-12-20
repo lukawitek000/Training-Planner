@@ -3,7 +3,7 @@ package com.lukasz.witkowski.training.planner.image
 import java.util.UUID
 
 @JvmInline
-value class ImageId(private val value: UUID) {
+value class ImageId(val value: UUID) {
     constructor(name: String): this(UUID.fromString(name))
 
     companion object {
