@@ -39,6 +39,7 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += "-Xjvm-default=enable"
     }
 
     buildFeatures {
@@ -76,6 +77,9 @@ dependencies {
     implementation(libs.androidx.compose.materialIconsExtended)
     implementation(libs.androidx.compose.navigation)
     implementation(libs.androidx.compose.navigationHilt)
+    // https://programmer.ink/think/a-new-way-to-create-a-viewmodel-creationextras.html
+    implementation(libs.androidx.compose.activity) // is it required? works without
+    implementation(libs.androidx.compose.lifecycleViewmodelCompose) // is it required? works without
 
     // Without this dependency there is a build error
     implementation(libs.google.playServicesWearable)

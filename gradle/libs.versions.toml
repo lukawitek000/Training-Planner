@@ -54,6 +54,7 @@ androidx-compose-activity = { module = "androidx.activity:activity-compose", ver
 androidx-compose-navigation = { module = "androidx.navigation:navigation-compose", version = "2.5.2" }
 androidx-compose-materialIconsExtended = { module = "androidx.compose.material:material-icons-extended", version = "1.2.1" }
 androidx-compose-navigationHilt = { module = "androidx.hilt:hilt-navigation-compose", version = "1.0.0" }
+androidx-compose-lifecycleViewmodelCompose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version = "2.5.1" }
 
 # KotlinX
 kotlinx-coroutines-playServices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
