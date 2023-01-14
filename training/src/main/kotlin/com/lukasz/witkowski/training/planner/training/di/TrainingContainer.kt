@@ -9,7 +9,7 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.db.DbTraini
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.TrainingPlanDatabase
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.WearableTrainingPlanSender
 
-class TrainingContainer(private val context: Context) {
+class TrainingContainer private constructor(context: Context) {
 
     private val trainingPlanDb = Room.databaseBuilder(
         context,
@@ -29,5 +29,19 @@ class TrainingContainer(private val context: Context) {
 
     val service: TrainingPlanService by lazy {
         TrainingPlanService(trainingPlanRepository, trainingPlanSender)
+    }
+
+    companion object {
+        @Volatile
+        private var instance: TrainingContainer? = null
+
+        fun getInstance(context: Context): TrainingContainer {
+            return synchronized(this) {
+                if (instance == null) {
+                    instance = TrainingContainer(context)
+                }
+                instance!!
+            }
+        }
     }
 }

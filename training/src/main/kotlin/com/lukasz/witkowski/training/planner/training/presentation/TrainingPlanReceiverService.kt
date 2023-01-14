@@ -1,10 +1,12 @@
 package com.lukasz.witkowski.training.planner.training.presentation
 
+import android.content.Context
 import com.google.android.gms.wearable.ChannelClient
 import com.google.android.gms.wearable.Wearable
 import com.google.android.gms.wearable.WearableListenerService
 import com.lukasz.witkowski.training.planner.synchronization.WearableChannelClientReceiver
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
+import com.lukasz.witkowski.training.planner.training.di.TrainingContainer
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers.TrainingPlanMapper
@@ -25,8 +27,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class TrainingPlanReceiverService : WearableListenerService() {
 
-    @Inject
-    lateinit var trainingPlanService: TrainingPlanService
+    private val trainingPlanService: TrainingPlanService by lazy {
+        TrainingContainer.getInstance(applicationContext).service
+    }
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(this) }

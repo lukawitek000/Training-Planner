@@ -10,6 +10,6 @@ import com.lukasz.witkowski.training.planner.training.di.TrainingContainer
 class AppContainer(private val context: Context) {
     private val imageStorage = ImageStorageFactory.create(context, "TrainingPlannerImageStorage")
     val exerciseContainer = ExerciseContainer(context, imageStorage)
-    val trainingContainer = TrainingContainer(context)
+    val trainingContainer = TrainingContainer.getInstance(context)
     val statisticsContainer = StatisticsContainer(context)
 }
