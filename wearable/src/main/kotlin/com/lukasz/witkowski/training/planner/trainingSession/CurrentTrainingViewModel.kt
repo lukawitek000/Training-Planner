@@ -14,9 +14,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
-class CurrentTrainingViewModel
-@Inject constructor(
+class CurrentTrainingViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val trainingPlanService: TrainingPlanService
 ) : ViewModel() {

@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.wear.widget.WearableLinearLayoutManager
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingPlansListBinding
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_ID_KEY
@@ -25,7 +26,9 @@ class TrainingsListActivity : ComponentActivity() {
 
     private lateinit var binding: ActivityTrainingPlansListBinding
     private lateinit var adapter: TrainingPlansAdapter
-    private val viewModel: TrainingPlansListViewModel by viewModels()
+    private val viewModel: TrainingPlansListViewModel by viewModels(factoryProducer = {
+        WearableTrainingPlannerViewModelFactory()
+    })
     private var isServiceStarted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
