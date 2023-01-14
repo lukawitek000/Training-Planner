@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.image
+package com.lukasz.witkowski.training.planner.image.di
 
 import android.content.Context
 import com.lukasz.witkowski.training.planner.image.domain.ChecksumCalculator
@@ -9,7 +9,7 @@ import com.lukasz.witkowski.training.planner.image.infrastructure.DbImageReferen
 import com.lukasz.witkowski.training.planner.image.infrastructure.InternalStorageImageRepository
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageReferenceDatabase
 
-internal class ImageContainer(context: Context, directoryName: String) {
+internal class ImageContext(context: Context, directoryName: String) {
     private val database = ImageReferenceDatabase.getInstance(context)
     val imageRepository: ImageRepository = InternalStorageImageRepository(context, directoryName)
     val imageReferenceRepository: ImageReferenceRepository = DbImageReferenceRepository(database.imageReferenceDao())
