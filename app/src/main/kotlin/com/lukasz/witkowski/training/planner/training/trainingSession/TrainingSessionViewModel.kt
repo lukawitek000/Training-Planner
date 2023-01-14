@@ -17,8 +17,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
-class TrainingSessionViewModel @Inject constructor(
+class TrainingSessionViewModel(
     private val trainingPlanService: TrainingPlanService,
     private val trainingSessionService: TrainingSessionService,
     private val trainingStatisticsService: TrainingStatisticsService,
