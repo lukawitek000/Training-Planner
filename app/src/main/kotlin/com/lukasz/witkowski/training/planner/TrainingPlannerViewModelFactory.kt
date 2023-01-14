@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
+import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
 
 class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
@@ -41,17 +42,15 @@ class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
             TrainingsListViewModel::class.java -> {
                 val trainingContainer = trainingContainer(extras)
                 val exerciseContainer = exerciseContainer(extras)
-                val savedStateHandle = extras.createSavedStateHandle()
-                TrainingsListViewModel(
-                    trainingContainer.service,
-                    exerciseContainer.categoryController,
-                    savedStateHandle
-                )
+                TrainingsListViewModel(trainingContainer.service, exerciseContainer.categoryController)
+            }
+            CreateTrainingViewModel::class.java -> {
+                val trainingContainer = trainingContainer(extras)
+                CreateTrainingViewModel(trainingContainer.service)
             }
             else -> throw IllegalStateException("Unknown class $modelClass")
         } as T
     }
-
 
     private fun exerciseContainer(extras: CreationExtras) =
         trainingPlannerApplication(extras).appContainer.exerciseContainer

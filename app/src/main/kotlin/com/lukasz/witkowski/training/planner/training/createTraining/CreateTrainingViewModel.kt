@@ -16,13 +16,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class CreateTrainingViewModel @Inject constructor(
-    private val trainingPlanService: TrainingPlanService,
-    private val savedStateHandle: SavedStateHandle
+    private val trainingPlanService: TrainingPlanService
 ) : ViewModel() {
+
+    init {
+        Timber.d("LWWW creat createtrainingviewmodel")
+    }
 
     private val _title = MutableStateFlow("")
     val title: StateFlow<String>

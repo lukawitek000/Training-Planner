@@ -18,8 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TrainingsListViewModel @Inject constructor(
     private val trainingPlanService: TrainingPlanService,
-    categoryController: CategoryController,
-    private val savedStateHandle: SavedStateHandle
+    categoryController: CategoryController
 ) : ViewModel(), CategoryController by categoryController {
 
 

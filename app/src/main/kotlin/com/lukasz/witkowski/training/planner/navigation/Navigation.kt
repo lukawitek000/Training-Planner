@@ -10,6 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStoreOwner
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -19,12 +21,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.lukasz.witkowski.training.planner.SnackbarState
+import com.lukasz.witkowski.training.planner.TrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
-import com.lukasz.witkowski.training.planner.TrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingScreen
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingViewModel
@@ -35,6 +37,7 @@ import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSe
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsScreen
+import timber.log.Timber
 
 @Composable
 fun Navigation(
@@ -54,6 +57,8 @@ fun Navigation(
                 navigateToTrainingSession = { navController.navigate(route = "${NavItem.TrainingSession.route}/$it") }
             )
         }
+
+        createTrainingNavGraph(innerPadding, navController)
 
         composable(NavItem.Exercises.route) {
             val viewModel: ExercisesListViewModel = trainingPlannerViewModel()
@@ -95,7 +100,6 @@ fun Navigation(
                 navigateUp = { navController.navigateUp() }
             )
         }
-        createTrainingNavGraph(innerPadding, navController)
 
         composable(
             "${NavItem.TrainingOverview.route}/{trainingId}",
@@ -125,9 +129,15 @@ fun Navigation(
 }
 
 @Composable
-private inline fun <reified VM : ViewModel> trainingPlannerViewModel(): VM {
+private inline fun <reified VM : ViewModel> trainingPlannerViewModel(
+    viewModelStoreOwner: ViewModelStoreOwner = checkNotNull(
+        LocalViewModelStoreOwner.current
+    ) {
+        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+    }
+): VM {
     val factory = remember { TrainingPlannerViewModelFactory() }
-    return viewModel(factory = factory)
+    return viewModel(viewModelStoreOwner, factory = factory)
 }
 
 private fun NavGraphBuilder.createTrainingNavGraph(
@@ -145,10 +155,10 @@ private fun NavGraphBuilder.createTrainingNavGraph(
     ) {
 
         composable(NavItem.CreateTraining.route) {
+            Timber.d("LWWW composable route create training plan")
             val createTrainingBackStackEntry =
                 remember { navController.getBackStackEntry(NavItem.CreateTrainingGraph.route) }
-            val createTrainingViewModel: CreateTrainingViewModel =
-                hiltViewModel(createTrainingBackStackEntry)
+            val createTrainingViewModel: CreateTrainingViewModel = trainingPlannerViewModel(createTrainingBackStackEntry)
             CreateTrainingScreen(
                 modifier = Modifier.padding(padding),
                 viewModel = createTrainingViewModel,
@@ -157,18 +167,18 @@ private fun NavGraphBuilder.createTrainingNavGraph(
             )
 
         }
-//        composable(NavItem.PickExercise.route) {
-//            val viewModel: ExercisesListViewModel = hiltViewModel()
-//            val createTrainingBackStackEntry =
-//                remember { navController.getBackStackEntry(NavItem.CreateTrainingGraph.route) }
-//            val createTrainingViewModel: CreateTrainingViewModel =
-//                hiltViewModel(createTrainingBackStackEntry)
-//            PickExerciseScreen(
-//                modifier = Modifier.padding(padding),
-//                viewModel = viewModel,
-//                createTrainingViewModel = createTrainingViewModel,
-//                navigateBack = { navController.navigateUp() }
-//            )
-//        }
+        composable(NavItem.PickExercise.route) {
+            Timber.d("LWWW composable route pick exercise")
+            val viewModel: ExercisesListViewModel = trainingPlannerViewModel()
+            val createTrainingBackStackEntry =
+                remember { navController.getBackStackEntry(NavItem.CreateTrainingGraph.route) }
+            val createTrainingViewModel: CreateTrainingViewModel = trainingPlannerViewModel(createTrainingBackStackEntry)
+            PickExerciseScreen(
+                modifier = Modifier.padding(padding),
+                viewModel = viewModel,
+                createTrainingViewModel = createTrainingViewModel,
+                navigateBack = { navController.navigateUp() }
+            )
+        }
     }
 }
