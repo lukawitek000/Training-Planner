@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExercis
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.training.trainingOverview.TrainingOverviewViewModel
+import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
 
 class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
@@ -43,7 +44,10 @@ class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
             TrainingsListViewModel::class.java -> {
                 val trainingContainer = trainingContainer(extras)
                 val exerciseContainer = exerciseContainer(extras)
-                TrainingsListViewModel(trainingContainer.service, exerciseContainer.categoryController)
+                TrainingsListViewModel(
+                    trainingContainer.service,
+                    exerciseContainer.categoryController
+                )
             }
             CreateTrainingViewModel::class.java -> {
                 val trainingContainer = trainingContainer(extras)
@@ -53,7 +57,23 @@ class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
                 val trainingContainer = trainingContainer(extras)
                 val statisticsContainer = statisticsContainer(extras)
                 val savedStateHandle = extras.createSavedStateHandle()
-                TrainingOverviewViewModel(trainingContainer.service, statisticsContainer.trainingStatisticsService, savedStateHandle)
+                TrainingOverviewViewModel(
+                    trainingContainer.service,
+                    statisticsContainer.trainingStatisticsService,
+                    savedStateHandle
+                )
+            }
+            TrainingSessionViewModel::class.java -> {
+                val trainingContainer = trainingContainer(extras)
+                val statisticsContainer = statisticsContainer(extras)
+                val savedStateHandle = extras.createSavedStateHandle()
+                TrainingSessionViewModel(
+                    trainingContainer.service,
+                    statisticsContainer.trainingSessionService,
+                    statisticsContainer.trainingStatisticsService,
+                    statisticsContainer.timerController,
+                    savedStateHandle
+                )
             }
             else -> throw IllegalStateException("Unknown class $modelClass")
         } as T

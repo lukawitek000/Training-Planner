@@ -117,7 +117,7 @@ fun Navigation(
             "${NavItem.TrainingSession.route}/{trainingId}",
             arguments = listOf(navArgument("trainingId") { type = NavType.StringType })
         ) {
-            val viewModel: TrainingSessionViewModel = hiltViewModel()
+            val viewModel: TrainingSessionViewModel = trainingPlannerViewModel()
             TrainingSessionScreen(
                 modifier = Modifier.padding(innerPadding),
                 viewModel = viewModel,

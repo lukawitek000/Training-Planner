@@ -20,10 +20,10 @@ import javax.inject.Inject
 @HiltViewModel
 class TrainingSessionViewModel @Inject constructor(
     private val trainingPlanService: TrainingPlanService,
-    private val savedStateHandle: SavedStateHandle,
     private val trainingSessionService: TrainingSessionService,
     private val trainingStatisticsService: TrainingStatisticsService,
-    timerController: TimerController
+    timerController: TimerController,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel(),
     TimerController by timerController {
 
