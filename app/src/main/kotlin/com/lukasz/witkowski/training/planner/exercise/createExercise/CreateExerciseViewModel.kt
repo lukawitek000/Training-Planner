@@ -23,8 +23,7 @@ import javax.inject.Inject
  * https://medium.com/mobile-app-development-publication/saving-stateflow-state-in-viewmodel-2ee9ed9b1a83
  */
 
-@HiltViewModel
-open class CreateExerciseViewModel @Inject constructor(
+open class CreateExerciseViewModel(
     private val exerciseService: ExerciseService,
     private val categoriesCollection: CategoriesCollection,
     savedStateHandle: SavedStateHandle

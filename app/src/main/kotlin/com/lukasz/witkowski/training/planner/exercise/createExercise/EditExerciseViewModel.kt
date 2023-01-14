@@ -16,8 +16,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 
-@HiltViewModel
-class EditExerciseViewModel @Inject constructor(
+class EditExerciseViewModel(
     private val exerciseService: ExerciseService,
     categoriesCollection: CategoriesCollection,
     savedStateHandle: SavedStateHandle

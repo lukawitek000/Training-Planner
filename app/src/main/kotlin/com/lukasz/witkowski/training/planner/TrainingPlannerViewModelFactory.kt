@@ -15,8 +15,7 @@ class TrainingPlannerViewModelFactory: ViewModelProvider.Factory {
         return when(modelClass) {
             ExercisesListViewModel::class.java -> {
                 val exerciseContainer = exerciseContainer(extras)
-                val savedStateHandle = extras.createSavedStateHandle()
-                ExercisesListViewModel(exerciseContainer.service, exerciseContainer.categoryController, savedStateHandle)
+                ExercisesListViewModel(exerciseContainer.service, exerciseContainer.categoryController)
             }
             CreateExerciseViewModel::class.java -> {
                 val exerciseContainer = exerciseContainer(extras)
