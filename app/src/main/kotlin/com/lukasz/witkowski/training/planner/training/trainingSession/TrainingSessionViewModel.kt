@@ -10,12 +10,10 @@ import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSes
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 class TrainingSessionViewModel(
     private val trainingPlanService: TrainingPlanService,

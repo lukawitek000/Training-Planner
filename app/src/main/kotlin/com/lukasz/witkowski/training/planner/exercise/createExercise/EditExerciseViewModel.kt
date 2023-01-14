@@ -11,9 +11,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exerci
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageMapper
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 
 class EditExerciseViewModel(

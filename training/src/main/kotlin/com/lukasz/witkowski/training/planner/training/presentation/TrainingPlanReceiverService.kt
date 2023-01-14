@@ -11,7 +11,6 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers.TrainingPlanMapper
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.TrainingPlanJsonModel
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
@@ -22,9 +21,7 @@ import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import java.io.InputStream
 import java.io.OutputStream
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class TrainingPlanReceiverService : WearableListenerService() {
 
     private val trainingPlanService: TrainingPlanService by lazy {

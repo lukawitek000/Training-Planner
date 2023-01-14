@@ -1,8 +1,6 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
-    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -65,10 +63,6 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.bytebeats.charts)
 
-    // Hilt - dependency injection
-    implementation(libs.google.dagger.hiltAndroid)
-    kapt(libs.google.dagger.hiltAndroidCompiler)
-
     implementation(libs.google.material)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material)
@@ -76,7 +70,6 @@ dependencies {
     implementation(libs.androidx.compose.uiToolingPreview)
     implementation(libs.androidx.compose.materialIconsExtended)
     implementation(libs.androidx.compose.navigation)
-    implementation(libs.androidx.compose.navigationHilt)
     // https://programmer.ink/think/a-new-way-to-create-a-viewmodel-creationextras.html
     implementation(libs.androidx.compose.activity) // is it required? works without
     implementation(libs.androidx.compose.lifecycleViewmodelCompose) // is it required? works without

@@ -6,9 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingRestTimeBinding
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class TrainingRestTimeFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingRestTimeBinding

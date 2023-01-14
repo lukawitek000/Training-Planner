@@ -2,7 +2,6 @@
 
 kotlin = "1.6.10"
 agp = "7.2.2" # Android gradle plugin
-hilt = "2.38.1"
 
 compose = "1.1.1"
 timber = "5.0.1"
@@ -20,14 +19,11 @@ roboelectric = "4.9"
 
 [libraries]
 # Gradle plugins
-gradlePlugin-hilt = { module = "com.google.dagger:hilt-android-gradle-plugin", version.ref = "hilt" }
 gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 gradlePlugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt"}
 
 # Google
-google-dagger-hiltAndroid = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
-google-dagger-hiltAndroidCompiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 google-playServicesWearable = { module = "com.google.android.gms:play-services-wearable", version = "18.0.0" }
 google-gson = { module = "com.google.code.gson:gson", version = "2.9.1" }
 google-material = { module = "com.google.android.material:material", version = "1.7.0" }
@@ -53,7 +49,6 @@ androidx-compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", versio
 androidx-compose-activity = { module = "androidx.activity:activity-compose", version = "1.6.0" }
 androidx-compose-navigation = { module = "androidx.navigation:navigation-compose", version = "2.5.2" }
 androidx-compose-materialIconsExtended = { module = "androidx.compose.material:material-icons-extended", version = "1.2.1" }
-androidx-compose-navigationHilt = { module = "androidx.hilt:hilt-navigation-compose", version = "1.0.0" }
 androidx-compose-lifecycleViewmodelCompose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version = "2.5.1" }
 
 # KotlinX
@@ -80,4 +75,3 @@ room = ["androidx-roomRuntime", "androidx-roomKtx"]
 #[plugins]
 #detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 #androidLibrary = { id = "com.android.library", version.ref = "agp" }
-#daggerAndroidPlugin = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

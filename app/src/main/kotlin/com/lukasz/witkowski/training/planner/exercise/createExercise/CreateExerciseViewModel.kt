@@ -13,11 +13,9 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Catego
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.image.ImageBitmap
 import com.lukasz.witkowski.training.planner.image.ImageMapper
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /** StateFlow with SavedStateHandle, do I need it?
  * https://medium.com/mobile-app-development-publication/saving-stateflow-state-in-viewmodel-2ee9ed9b1a83

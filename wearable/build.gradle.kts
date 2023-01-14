@@ -1,8 +1,6 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
-    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -44,8 +42,4 @@ dependencies {
     implementation(libs.google.material)
     implementation(libs.androidx.activityKtx)
     implementation(libs.timber)
-
-    // Hilt - dependency injection
-    implementation(libs.google.dagger.hiltAndroid)
-    kapt(libs.google.dagger.hiltAndroidCompiler)
 }

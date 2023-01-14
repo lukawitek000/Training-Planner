@@ -18,10 +18,8 @@ import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_TITLE_KEY
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
-import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
-@AndroidEntryPoint
 class TrainingsListActivity : ComponentActivity() {
 
     private lateinit var binding: ActivityTrainingPlansListBinding
