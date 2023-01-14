@@ -9,6 +9,7 @@ import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerc
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingViewModel
+import com.lukasz.witkowski.training.planner.training.trainingOverview.TrainingOverviewViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
 
 class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
@@ -48,6 +49,12 @@ class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
                 val trainingContainer = trainingContainer(extras)
                 CreateTrainingViewModel(trainingContainer.service)
             }
+            TrainingOverviewViewModel::class.java -> {
+                val trainingContainer = trainingContainer(extras)
+                val statisticsContainer = statisticsContainer(extras)
+                val savedStateHandle = extras.createSavedStateHandle()
+                TrainingOverviewViewModel(trainingContainer.service, statisticsContainer.trainingStatisticsService, savedStateHandle)
+            }
             else -> throw IllegalStateException("Unknown class $modelClass")
         } as T
     }
@@ -57,6 +64,9 @@ class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
 
     private fun trainingContainer(extras: CreationExtras) =
         trainingPlannerApplication(extras).appContainer.trainingContainer
+
+    private fun statisticsContainer(extras: CreationExtras) =
+        trainingPlannerApplication(extras).appContainer.statisticsContainer
 
     private fun trainingPlannerApplication(extras: CreationExtras) =
         checkNotNull(extras[APPLICATION_KEY]) as TrainingPlannerApplication

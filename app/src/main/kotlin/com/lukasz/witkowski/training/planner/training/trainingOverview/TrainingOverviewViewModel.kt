@@ -22,8 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class TrainingOverviewViewModel @Inject constructor(
     private val trainingPlanService: TrainingPlanService,
-    private val trainingStatisticsService: TrainingStatisticsService,
-    private val savedStateHandle: SavedStateHandle
+    trainingStatisticsService: TrainingStatisticsService,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _trainingId = savedStateHandle.get<String>("trainingId") ?: ""
