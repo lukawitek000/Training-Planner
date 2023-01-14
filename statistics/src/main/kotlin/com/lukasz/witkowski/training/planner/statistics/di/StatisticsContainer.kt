@@ -13,15 +13,8 @@ import com.lukasz.witkowski.training.planner.statistics.presentation.TimerContro
 
 class StatisticsContainer(private val context: Context) {
 
-    private val statisticsDb = Room.databaseBuilder(
-        context,
-        StatisticsDatabase::class.java,
-        "Statistics Database"
-    )
-        .fallbackToDestructiveMigration()
-        .build()
-
     private val statisticsRepository: StatisticsRepository by lazy {
+        val statisticsDb = StatisticsDatabase.getInstance(context)
         DbStatisticsRepository(statisticsDb.statisticsDao())
     }
 

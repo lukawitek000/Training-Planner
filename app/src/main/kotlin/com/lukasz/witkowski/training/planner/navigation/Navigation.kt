@@ -154,7 +154,6 @@ private fun NavGraphBuilder.createTrainingNavGraph(
     ) {
 
         composable(NavItem.CreateTraining.route) {
-            Timber.d("LWWW composable route create training plan")
             val createTrainingBackStackEntry =
                 remember { navController.getBackStackEntry(NavItem.CreateTrainingGraph.route) }
             val createTrainingViewModel: CreateTrainingViewModel = trainingPlannerViewModel(createTrainingBackStackEntry)
@@ -167,7 +166,6 @@ private fun NavGraphBuilder.createTrainingNavGraph(
 
         }
         composable(NavItem.PickExercise.route) {
-            Timber.d("LWWW composable route pick exercise")
             val viewModel: ExercisesListViewModel = trainingPlannerViewModel()
             val createTrainingBackStackEntry =
                 remember { navController.getBackStackEntry(NavItem.CreateTrainingGraph.route) }

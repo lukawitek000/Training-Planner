@@ -15,16 +15,8 @@ import kotlinx.coroutines.Dispatchers
 
 class ExerciseContainer(private val context: Context, private val imageStorage: ImageStorage) {
 
-    private val exerciseDb = Room.databaseBuilder(
-        context,
-        ExerciseDatabase::class.java,
-        "Exercise Database"
-    )
-        .fallbackToDestructiveMigration()
-        .build()
-
-
     private val exerciseRepository: ExerciseRepository by lazy {
+        val exerciseDb = ExerciseDatabase.getInstance(context)
         DbExerciseRepository(exerciseDb.exerciseDao(), ioDispatcher = Dispatchers.IO)
     }
 

@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.di
 
 import android.content.Context
-import androidx.room.Room
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
@@ -11,15 +10,8 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi
 
 class TrainingContainer private constructor(context: Context) {
 
-    private val trainingPlanDb = Room.databaseBuilder(
-        context,
-        TrainingPlanDatabase::class.java,
-        "Training Plan Database"
-    )
-        .fallbackToDestructiveMigration()
-        .build()
-
     private val trainingPlanRepository: TrainingPlanRepository by lazy {
+        val trainingPlanDb = TrainingPlanDatabase.getInstance(context)
         DbTrainingPlanRepository(trainingPlanDb.trainingPlanDao())
     }
 
