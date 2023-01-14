@@ -7,17 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSavedStateRegistryOwner
-import androidx.lifecycle.createSavedStateHandle
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.HasDefaultViewModelProviderFactory
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.createSavedStateHandle
-import androidx.lifecycle.viewmodel.CreationExtras
-import androidx.lifecycle.viewmodel.MutableCreationExtras
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -27,13 +19,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.lukasz.witkowski.training.planner.SnackbarState
-import com.lukasz.witkowski.training.planner.TrainingPlannerApplication
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModelFactory
+import com.lukasz.witkowski.training.planner.TrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingScreen
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingViewModel
@@ -44,7 +35,6 @@ import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSe
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsScreen
-import timber.log.Timber
 
 @Composable
 fun Navigation(
@@ -66,20 +56,7 @@ fun Navigation(
         }
 
         composable(NavItem.Exercises.route) {
-            // https://programmer.ink/think/a-new-way-to-create-a-viewmodel-creationextras.html
-            Timber.d("LWWW compose create exercises list viewmodel")
-//            val owner = LocalViewModelStoreOwner.current
-//            val defaultExtras = (owner as? HasDefaultViewModelProviderFactory)?.defaultViewModelCreationExtras ?: CreationExtras.Empty
-//            val extras = MutableCreationExtras(defaultExtras)
-//            extras.apply {
-//                set(ViewModelProvider.NewInstanceFactory.VIEW_MODEL_KEY, "1")
-//            }
-            val factory = remember { ExercisesListViewModelFactory() }
-//            Timber.d("LWWW factory $factory")
-//            val viewModel: ExercisesListViewModel = remember { factory.create(ExercisesListViewModel::class.java, extras) }
-//            Timber.d("LWWW viewmodel $viewModel")
-//            val viewModel: ExercisesListViewModel = hiltViewModel()
-            val viewModel: ExercisesListViewModel = viewModel(factory = factory)
+            val viewModel: ExercisesListViewModel = trainingPlannerViewModel()
             ExercisesScreen(
                 modifier = Modifier.padding(innerPadding),
                 viewModel = viewModel,
@@ -93,7 +70,7 @@ fun Navigation(
         }
 
         composable(NavItem.CreateExercise.route) {
-            val viewModel: CreateExerciseViewModel = hiltViewModel()
+            val viewModel: CreateExerciseViewModel = trainingPlannerViewModel()
             CreateExerciseScreen(
                 Modifier.padding(innerPadding),
                 viewModel = viewModel,
@@ -110,7 +87,7 @@ fun Navigation(
                     type = NavType.StringType
                 })
         ) {
-            val viewModel: EditExerciseViewModel = hiltViewModel()
+            val viewModel: EditExerciseViewModel = trainingPlannerViewModel()
             EditExerciseScreen(
                 Modifier.padding(innerPadding),
                 viewModel = viewModel,
@@ -145,6 +122,12 @@ fun Navigation(
         }
 
     }
+}
+
+@Composable
+private inline fun <reified VM : ViewModel> trainingPlannerViewModel(): VM {
+    val factory = remember { TrainingPlannerViewModelFactory() }
+    return viewModel(factory = factory)
 }
 
 private fun NavGraphBuilder.createTrainingNavGraph(

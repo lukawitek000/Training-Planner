@@ -30,7 +30,6 @@ class ExercisesListViewModel @Inject internal constructor(
     init {
         fetchExercises()
         observeSelectedCategories()
-        Timber.d("LWWW init of the exercises list viewmodel")
     }
 
     private fun observeSelectedCategories() {
@@ -79,10 +78,5 @@ class ExercisesListViewModel @Inject internal constructor(
                 _exercises.emit(allExercises.toList())
             }
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Timber.d("LWWW on cleared the exercises list viewmodel")
     }
 }
