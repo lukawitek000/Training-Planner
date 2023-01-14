@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.image.di
 
 import android.content.Context
+import com.lukasz.witkowski.training.planner.image.DataReferenceSeparatedImageStorage
+import com.lukasz.witkowski.training.planner.image.ImageStorage
 import com.lukasz.witkowski.training.planner.image.domain.ChecksumCalculator
 import com.lukasz.witkowski.training.planner.image.domain.ImageReferenceRepository
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
@@ -9,9 +11,22 @@ import com.lukasz.witkowski.training.planner.image.infrastructure.DbImageReferen
 import com.lukasz.witkowski.training.planner.image.infrastructure.InternalStorageImageRepository
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageReferenceDatabase
 
-internal class ImageContainer(context: Context, directoryName: String) {
-    private val database = ImageReferenceDatabase.getInstance(context)
-    val imageRepository: ImageRepository = InternalStorageImageRepository(context, directoryName)
-    val imageReferenceRepository: ImageReferenceRepository = DbImageReferenceRepository(database.imageReferenceDao())
-    val checksumCalculator: ChecksumCalculator = Adler32ChecksumCalculator()
+class ImageContainer(context: Context, directoryName: String) {
+
+    private val imageRepository: ImageRepository by lazy {
+        InternalStorageImageRepository(context, directoryName)
+    }
+
+    private val imageReferenceRepository: ImageReferenceRepository by lazy {
+        val database = ImageReferenceDatabase.getInstance(context)
+        DbImageReferenceRepository(database.imageReferenceDao())
+    }
+
+    private val checksumCalculator: ChecksumCalculator by lazy {
+        Adler32ChecksumCalculator()
+    }
+
+    val imageStorage: ImageStorage by lazy {
+        DataReferenceSeparatedImageStorage(imageRepository, imageReferenceRepository, checksumCalculator)
+    }
 }
