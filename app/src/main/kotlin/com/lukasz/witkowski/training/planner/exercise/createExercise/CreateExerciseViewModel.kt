@@ -19,49 +19,38 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-/** StateFlow with SavedStateHandle, do I need it?
- * https://medium.com/mobile-app-development-publication/saving-stateflow-state-in-viewmodel-2ee9ed9b1a83
- */
-
 @HiltViewModel
 open class CreateExerciseViewModel @Inject constructor(
     private val exerciseService: ExerciseService,
     private val categoriesCollection: CategoriesCollection,
-    savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel(), CategoriesCollection by categoriesCollection {
 
     private val _exerciseId = savedStateHandle.get<String>("exerciseId")
     protected open val exerciseId = _exerciseId?.let { ExerciseId(it) }
 
-    private val _name = MutableStateFlow("")
-    val name: StateFlow<String> = _name
-
-    private val _description = MutableStateFlow("")
-    val description: StateFlow<String> = _description
-
-    private val _category = MutableStateFlow(Category())
-    val category: StateFlow<Category> = _category
-
-    private val _image = MutableStateFlow<ImageBitmap?>(null)
-    val image: StateFlow<ImageBitmap?> = _image
+    val name = savedStateHandle.getStateFlow(NAME_KEY, "")
+    val description = savedStateHandle.getStateFlow(DESCRIPTION_KEY, "")
+    val category = savedStateHandle.getStateFlow(CATEGORY_KEY, Category())
+    val image: StateFlow<ImageBitmap?> = savedStateHandle.getStateFlow(IMAGE_KEY, null) // investigate how to save bitmap it seems to be to big
 
     protected val _savingState = MutableStateFlow<ResultHandler<Boolean>>(ResultHandler.Idle)
     val savingState: StateFlow<ResultHandler<Boolean>> = _savingState
 
     fun onExerciseNameChange(newName: String) {
-        _name.value = newName
+        savedStateHandle[NAME_KEY] = newName
     }
 
     fun onExerciseDescriptionChange(newDescription: String) {
-        _description.value = newDescription
+        savedStateHandle[DESCRIPTION_KEY] = newDescription
     }
 
     fun onCategorySelected(newCategoryIndex: Int) {
-        _category.value = allCategories[newCategoryIndex]
+        savedStateHandle[CATEGORY_KEY] = allCategories[newCategoryIndex]
     }
 
     fun onImageChange(bitmap: Bitmap) {
-        _image.value = ImageBitmap(bitmap)
+        savedStateHandle[IMAGE_KEY] = ImageBitmap(bitmap)
     }
 
     protected fun createExerciseConfiguration(): ExerciseConfiguration {
@@ -94,5 +83,12 @@ open class CreateExerciseViewModel @Inject constructor(
                 _savingState.value = ResultHandler.Error(message = errorMessage)
             }
         }
+    }
+
+    private companion object {
+        const val NAME_KEY = "name_key"
+        const val DESCRIPTION_KEY = "description_key"
+        const val CATEGORY_KEY = "category_key"
+        const val IMAGE_KEY = "image_key"
     }
 }

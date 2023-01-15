@@ -2,6 +2,7 @@
 plugins {
     id(BuildPlugins.commonLibraryPlugin)
     id(BuildPlugins.customDetektPlugin)
+    id("kotlin-parcelize")
 }
 
 android {

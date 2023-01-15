@@ -1,5 +1,6 @@
 plugins {
     id(BuildPlugins.commonLibraryPlugin)
+    id("kotlin-parcelize")
 }
 
 dependencies {
