@@ -12,11 +12,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class StartTrainingActivity : ComponentActivity() {
 
-    companion object {
-        const val TRAINING_ID_KEY = "trainingId"
-        const val TRAINING_TITLE_KEY = "trainingTitle"
-    }
-
     private lateinit var binding: ActivityStartTrainingBinding
     private val viewModel by viewModels<StartTrainingViewModel>()
 
@@ -59,5 +54,10 @@ class StartTrainingActivity : ComponentActivity() {
         val intent = Intent(this, CurrentTrainingActivity::class.java)
         intent.putExtra(TRAINING_ID_KEY, viewModel.trainingId)
         startActivity(intent)
+    }
+
+    companion object {
+        const val TRAINING_ID_KEY = "trainingId"
+        const val TRAINING_TITLE_KEY = "trainingTitle"
     }
 }
