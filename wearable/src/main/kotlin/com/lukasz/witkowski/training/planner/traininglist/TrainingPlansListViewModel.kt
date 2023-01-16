@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.dummyTrainingsList
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
@@ -29,9 +30,8 @@ class TrainingPlansListViewModel
         viewModelScope.launch {
             _trainingPlans.value = ResultHandler.Loading
             trainingPlanService.getTrainingPlansFromCategories().collectLatest {
-                _trainingPlans.value =
-                    ResultHandler.Success(TrainingPlanMapper.toPresentationTrainingPlans(it))
-//                _trainingPlans.value = ResultHandler.Success(dummyTrainingsList)
+//                _trainingPlans.value = ResultHandler.Success(TrainingPlanMapper.toPresentationTrainingPlans(it))
+                _trainingPlans.value = ResultHandler.Success(dummyTrainingsList)
             }
         }
     }
