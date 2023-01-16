@@ -26,6 +26,10 @@ android {
         }
     }
 
+    kotlinOptions {
+        this.freeCompilerArgs += "-Xextended-compiler-checks"
+    }
+
     buildFeatures {
         viewBinding = true
     }

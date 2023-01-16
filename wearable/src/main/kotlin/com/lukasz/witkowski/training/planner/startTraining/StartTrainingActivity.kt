@@ -20,20 +20,8 @@ class StartTrainingActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityStartTrainingBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        retrieveTrainingProperties()
         setQuestionText()
         setButtonsClickListeners()
-    }
-
-    private fun retrieveTrainingProperties() {
-        val trainingId = intent.extras?.getString(TRAINING_ID_KEY)
-        val trainingTitle = intent.extras?.getString(TRAINING_TITLE_KEY)
-        if (trainingId == null || trainingTitle == null) {
-            finish()
-            return
-        }
-        viewModel.trainingId = trainingId
-        viewModel.trainingTitle = trainingTitle
     }
 
     private fun setQuestionText() {

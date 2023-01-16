@@ -13,7 +13,6 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,7 +22,9 @@ class TrainingSessionViewModel
     private val trainingPlanService: TrainingPlanService
 ) : ViewModel() {
 
-    private val _trainingPlanId = savedStateHandle.get<String>(StartTrainingActivity.TRAINING_ID_KEY)!!
+    private val _trainingPlanId =
+        savedStateHandle.get<String>(StartTrainingActivity.TRAINING_ID_KEY)
+            ?: throw IllegalStateException("Missing training id")
     val trainingPlanId: TrainingPlanId
         get() = TrainingPlanId(_trainingPlanId)
 
