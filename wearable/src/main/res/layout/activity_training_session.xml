@@ -1,31 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.wear.widget.BoxInsetLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.wear.widget.BoxInsetLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_gray"
     android:padding="@dimen/box_inset_layout_padding"
-    tools:context=".trainingSession.CurrentTrainingActivity"
+    tools:context=".trainingSession.TrainingSessionActivity"
     tools:deviceIds="wear">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <include
             android:id="@+id/loading_view"
-            layout="@layout/loading_view"
-            />
+            layout="@layout/loading_view" />
 
         <androidx.wear.widget.SwipeDismissFrameLayout
             android:id="@+id/swipe_dismiss_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/current_training_fragment_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
+
         </androidx.wear.widget.SwipeDismissFrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.wear.widget.BoxInsetLayout>

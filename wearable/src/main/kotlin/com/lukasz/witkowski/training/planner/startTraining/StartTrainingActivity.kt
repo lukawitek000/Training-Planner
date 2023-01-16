@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.ActivityStartTrainingBinding
-import com.lukasz.witkowski.training.planner.trainingSession.CurrentTrainingActivity
+import com.lukasz.witkowski.training.planner.trainingSession.TrainingSessionActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -51,7 +51,7 @@ class StartTrainingActivity : ComponentActivity() {
     }
 
     private fun startTraining() {
-        val intent = Intent(this, CurrentTrainingActivity::class.java)
+        val intent = Intent(this, TrainingSessionActivity::class.java)
         intent.putExtra(TRAINING_ID_KEY, viewModel.trainingId)
         startActivity(intent)
     }

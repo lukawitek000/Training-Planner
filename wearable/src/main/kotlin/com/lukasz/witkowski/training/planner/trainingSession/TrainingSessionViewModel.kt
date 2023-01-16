@@ -7,24 +7,29 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.dummyTrainingsList
+import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class CurrentTrainingViewModel
+class TrainingSessionViewModel
 @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val trainingPlanService: TrainingPlanService
 ) : ViewModel() {
 
+    private val _trainingPlanId = savedStateHandle.get<String>(StartTrainingActivity.TRAINING_ID_KEY)!!
+    val trainingPlanId: TrainingPlanId
+        get() = TrainingPlanId(_trainingPlanId)
+
     private val _trainingPlan = MutableLiveData<ResultHandler<TrainingPlan>>()
     val trainingPlan: LiveData<ResultHandler<TrainingPlan>> = _trainingPlan
 
-    private var trainingPlanId: TrainingPlanId? = null
 
     fun fetchTrainingPlan() {
         viewModelScope.launch {
@@ -34,9 +39,5 @@ class CurrentTrainingViewModel
 //            _trainingWithExercises.value = ResultHandler.Success(trainingRepository.fetchDummyTrainingById(trainingId))
 //            _trainingWithExercises.value = ResultHandler.Success(trainingPlanService.fetchTrainingById(trainingId))
         }
-    }
-
-    fun setTrainingId(trainingId: String) {
-        trainingPlanId = TrainingPlanId(trainingId)
     }
 }
