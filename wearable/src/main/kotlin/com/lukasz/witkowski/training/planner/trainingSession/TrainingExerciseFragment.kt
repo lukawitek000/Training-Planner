@@ -4,18 +4,28 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingExerciseBinding
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TrainingExerciseFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingExerciseBinding
     private val sharedViewModel by activityViewModels<TrainingSessionViewModel>()
+    private val viewModel by viewModels<TrainingExerciseViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,9 +37,11 @@ class TrainingExerciseFragment : Fragment() {
         return binding.root
     }
 
+
     private fun observeTrainingExercise() {
         sharedViewModel.currentExercise.observe(viewLifecycleOwner) {
             populateUi(it)
+            setUpTimer(it)
         }
     }
 
@@ -45,15 +57,29 @@ class TrainingExerciseFragment : Fragment() {
     private fun setUpTimerView(trainingExercise: TrainingExercise) {
         binding.apply {
             val time = trainingExercise.time
-            if(time.isNotZero()) {
+            if (time.isNotZero()) {
                 timerLayout.visibility = View.VISIBLE
-                timerTv.text = time.toTimerString(false)
+                setTimeOnTimer(time)
             } else {
                 timerLayout.visibility = View.GONE
             }
         }
+        setUpTimerIcon()
     }
 
+    private fun setUpTimerIcon() {
+        launchInStartedState {
+            viewModel.isRunning.collectLatest {
+                val icon = if (it) R.drawable.ic_pause else R.drawable.ic_play_arrow
+                binding.startPauseTimerBtn.setImageDrawable(
+                    ContextCompat.getDrawable(
+                        requireContext(),
+                        icon
+                    )
+                )
+            }
+        }
+    }
 
     private fun setUpButtonsListeners() {
         setUpCompletedButton()
@@ -63,22 +89,55 @@ class TrainingExerciseFragment : Fragment() {
 
     private fun setUpCompletedButton() {
         binding.completedBtn.setOnClickListener {
+            stopTimer()
             sharedViewModel.completed()
         }
     }
 
     private fun setUpSkipButton() {
         binding.skipBtn.setOnClickListener {
+            stopTimer()
             sharedViewModel.skip()
         }
     }
 
+    private fun stopTimer() = viewModel.stopTimer()
+
     private fun setUpTimerControlButton() {
         binding.startPauseTimerBtn.setOnClickListener {
-
+            if (viewModel.isRunning.value) {
+                viewModel.pauseTimer()
+            } else {
+                viewModel.startTimer()
+            }
         }
     }
 
+    private fun setUpTimer(trainingExercise: TrainingExercise) {
+        if (trainingExercise.time.isZero()) return
+        observeTimer()
+        viewModel.setTimer(trainingExercise.time)
+    }
+
+    private fun observeTimer() {
+        launchInStartedState {
+            viewModel.timer.collectLatest {
+                setTimeOnTimer(it)
+            }
+        }
+    }
+
+    private fun setTimeOnTimer(time: Time) {
+        binding.timerTv.text = time.toTimerString(false)
+    }
+
+    private fun launchInStartedState(block: suspend CoroutineScope.() -> Unit) {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                block()
+            }
+        }
+    }
 
     companion object {
         fun newInstance(): TrainingExerciseFragment {

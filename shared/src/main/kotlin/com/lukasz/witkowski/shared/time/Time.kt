@@ -46,6 +46,8 @@ class Time(val timeInMillis: Long) {
 
     fun isNotZero() = timeInMillis > 0L
 
+    fun isZero() = timeInMillis == 0L
+
     operator fun minus(time: Time) = Time(this.timeInMillis - time.timeInMillis)
 
     operator fun plus(time: Time) = Time(this.timeInMillis + time.timeInMillis)

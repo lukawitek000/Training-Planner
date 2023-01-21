@@ -44,6 +44,7 @@ dependencies {
     implementation(libs.google.material)
     implementation(libs.androidx.activityKtx)
     implementation(libs.androidx.fragmentKtx)
+    implementation(libs.androidx.lifecycle.livedataKtx)
     implementation(libs.timber)
 
     // Hilt - dependency injection
