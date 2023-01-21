@@ -20,4 +20,10 @@ class TrainingExerciseFragment : Fragment() {
         binding = FragmentTrainingExerciseBinding.inflate(inflater, container, false)
         return binding.root
     }
+
+    companion object {
+        fun newInstance(): TrainingExerciseFragment {
+            return TrainingExerciseFragment()
+        }
+    }
 }

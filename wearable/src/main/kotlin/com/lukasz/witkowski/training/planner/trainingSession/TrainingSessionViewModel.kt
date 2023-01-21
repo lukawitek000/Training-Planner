@@ -8,8 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.dummyTrainingsList
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
+import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
+import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
+import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -19,7 +23,8 @@ import javax.inject.Inject
 class TrainingSessionViewModel
 @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val trainingPlanService: TrainingPlanService
+    private val trainingPlanService: TrainingPlanService,
+    private val trainingSessionService: TrainingSessionService
 ) : ViewModel() {
 
     private val _trainingPlanId =
@@ -31,11 +36,18 @@ class TrainingSessionViewModel
     private val _trainingPlan = MutableLiveData<ResultHandler<TrainingPlan>>()
     val trainingPlan: LiveData<ResultHandler<TrainingPlan>> = _trainingPlan
 
+    private val _trainingSessionState = MutableLiveData<TrainingSessionState>()
+    val trainingSessionState: LiveData<TrainingSessionState> = _trainingSessionState
 
     fun fetchTrainingPlan() {
         viewModelScope.launch {
             _trainingPlan.value = ResultHandler.Loading
             _trainingPlan.value = ResultHandler.Success(dummyTrainingsList.first { it.id == trainingPlanId })
         }
+    }
+
+    fun startTrainingSession(trainingPlan: TrainingPlan) {
+        val state = trainingSessionService.startTraining(TrainingPlanMapper.toDomainTrainingPlan(trainingPlan))
+        _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(state)
     }
 }

@@ -20,4 +20,10 @@ class TrainingRestTimeFragment : Fragment() {
         binding = FragmentTrainingRestTimeBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
+
+    companion object {
+        fun newInstance(): TrainingRestTimeFragment {
+            return TrainingRestTimeFragment()
+        }
+    }
 }

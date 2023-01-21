@@ -37,11 +37,13 @@ android {
 
 dependencies {
     implementation(projects.training)
+    implementation(projects.statistics)
 
     implementation(libs.google.playServicesWearable)
     implementation(libs.androidx.wear)
     implementation(libs.google.material)
     implementation(libs.androidx.activityKtx)
+    implementation(libs.androidx.fragmentKtx)
     implementation(libs.timber)
 
     // Hilt - dependency injection
