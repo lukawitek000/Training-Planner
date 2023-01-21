@@ -56,13 +56,20 @@ class TrainingExerciseFragment : Fragment() {
 
 
     private fun setUpButtonsListeners() {
-        setUpNextButton()
+        setUpCompletedButton()
+        setUpSkipButton()
         setUpTimerControlButton()
     }
 
-    private fun setUpNextButton() {
-        binding.nextBtn.setOnClickListener {
+    private fun setUpCompletedButton() {
+        binding.completedBtn.setOnClickListener {
             sharedViewModel.completed()
+        }
+    }
+
+    private fun setUpSkipButton() {
+        binding.skipBtn.setOnClickListener {
+            sharedViewModel.skip()
         }
     }
 
@@ -71,7 +78,6 @@ class TrainingExerciseFragment : Fragment() {
 
         }
     }
-
 
 
     companion object {
