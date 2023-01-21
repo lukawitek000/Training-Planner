@@ -8,13 +8,15 @@ class Time(val timeInMillis: Long) {
         seconds: Int
     ) : this((((hour * MINUTES_IN_HOUR) + minutes) * SECONDS_IN_MINUTE + seconds) * MILLIS_IN_SECOND)
 
-    fun toTimerString(): String {
+    fun toTimerString(includeTenthSecond: Boolean = true): String {
         val (minutes, seconds) = calculateMinutesAndSeconds()
         val timeStringBuilder = StringBuilder()
         if (minutes > 0) timeStringBuilder.append(minutes).append(":")
         appendZeroBeforeSecondDigitIfNeeded(seconds, timeStringBuilder)
         timeStringBuilder.append(seconds)
-        appendTenthSecond(minutes, seconds, timeStringBuilder)
+        if (includeTenthSecond) {
+            appendTenthSecond(minutes, seconds, timeStringBuilder)
+        }
         return timeStringBuilder.toString()
     }
 

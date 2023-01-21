@@ -74,7 +74,7 @@ class TrainingSessionActivity : FragmentActivity() {
     private fun observeTrainingSessionState() {
         viewModel.trainingSessionState.observe(this) {
             when(it) {
-                is TrainingSessionState.ExerciseState -> showCurrentExercise(it.exercise)
+                is TrainingSessionState.ExerciseState -> showCurrentExercise(it)
                 is TrainingSessionState.RestTimeState -> showRestTime(it)
                 is TrainingSessionState.SummaryState -> showTrainingSessionSummary(it)
                 is TrainingSessionState.IdleState -> throw IllegalStateException("Wrong training session state $it")
@@ -82,13 +82,13 @@ class TrainingSessionActivity : FragmentActivity() {
         }
     }
 
-    private fun showCurrentExercise(exercise: TrainingExercise?) {
+    private fun showCurrentExercise(state: TrainingSessionState.ExerciseState) {
         Timber.d("LWWW show current exercise fragment")
         val fragment = TrainingExerciseFragment.newInstance()
         replaceFragment(fragment)
     }
 
-    private fun showRestTime(restTimeState: TrainingSessionState.RestTimeState) {
+    private fun showRestTime(state: TrainingSessionState.RestTimeState) {
         Timber.d("LWWW show rest time fragment")
         val fragment = TrainingRestTimeFragment.newInstance()
         replaceFragment(fragment)

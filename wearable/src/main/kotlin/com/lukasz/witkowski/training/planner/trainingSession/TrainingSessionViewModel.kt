@@ -14,6 +14,7 @@ import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSes
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
+import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -49,5 +50,9 @@ class TrainingSessionViewModel
     fun startTrainingSession(trainingPlan: TrainingPlan) {
         val state = trainingSessionService.startTraining(TrainingPlanMapper.toDomainTrainingPlan(trainingPlan))
         _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(state)
+    }
+
+    fun trainingExercise(): TrainingExercise {
+        return trainingSessionState.value!!.exercise!!
     }
 }

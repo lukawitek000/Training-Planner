@@ -24,7 +24,8 @@ val dummyTrainingsList = listOf<TrainingPlan>(
                     Category(2, R.string.category_back),
                     null
                 ),
-                repetitions = 10, sets = 3, restTime = Time(minutes = 1, seconds = 30)
+                repetitions = 10, sets = 3, restTime = Time(minutes = 1, seconds = 30),
+                time = Time(minutes = 1, seconds = 30)
             ),
             TrainingExercise(
                 TrainingExerciseId.create(),
@@ -38,7 +39,6 @@ val dummyTrainingsList = listOf<TrainingPlan>(
                 repetitions = 20,
                 sets = 4,
                 restTime = Time(minutes = 0, seconds = 10),
-                time = Time(seconds = 30)
             ),
             TrainingExercise(
                 TrainingExerciseId.create(),

@@ -23,9 +23,9 @@
             android:autoSizeMinTextSize="14sp"
             android:autoSizeStepGranularity="2sp"
             android:autoSizeTextType="uniform"
-            android:text="Exercise 1 title"
             android:textAlignment="center"
             android:textColor="@color/orange"
+            tools:text="Exercise 1 title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -35,9 +35,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
-            android:text="Reps: 30"
             android:textColor="@color/light_orange"
             android:textSize="11sp"
+            tools:text="Reps: 30"
             app:layout_constraintEnd_toStartOf="@+id/sets_tv"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_chainStyle="spread"
@@ -49,38 +49,43 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
-            android:text="Sets: 3"
             android:textColor="@color/light_orange"
             android:textSize="11sp"
+            tools:text="Sets: 3"
             app:layout_constraintBottom_toBottomOf="@+id/repetitions_tv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/repetitions_tv"
             app:layout_constraintTop_toTopOf="@+id/repetitions_tv" />
 
-        <TextView
-            android:id="@+id/timer_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="01:30"
-            android:textColor="@color/white"
-            android:textSize="34sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/repetitions_tv" />
-
-        <ImageButton
-            android:id="@+id/start_pause_timer_btn"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/timer_layout"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@drawable/button_round_shape"
-            android:contentDescription="@string/play_or_pause_control_button"
-            android:src="@drawable/ic_play_arrow"
-            android:hapticFeedbackEnabled="true"
-            app:layout_constraintBottom_toBottomOf="@+id/timer_tv"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/timer_tv"
-            app:layout_constraintTop_toTopOf="@+id/timer_tv" />
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:visibility="visible"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@+id/repetitions_tv">
+
+            <TextView
+                android:id="@+id/timer_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:textSize="34sp"
+                android:layout_marginEnd="8dp"
+                tools:text="01:30" />
+
+            <ImageButton
+                android:id="@+id/start_pause_timer_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/button_round_shape"
+                android:contentDescription="@string/play_or_pause_control_button"
+                android:src="@drawable/ic_play_arrow"
+                android:hapticFeedbackEnabled="true" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/next_btn"
@@ -92,7 +97,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/timer_tv" />
+            app:layout_constraintTop_toBottomOf="@+id/timer_layout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.wear.widget.BoxInsetLayout>
