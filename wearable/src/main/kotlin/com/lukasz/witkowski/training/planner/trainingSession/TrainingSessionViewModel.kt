@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.planner.dummyTrainingsList
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
+import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState as DomainSessionState
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
@@ -52,10 +53,24 @@ class TrainingSessionViewModel
 
     fun startTrainingSession(trainingPlan: TrainingPlan) {
         val state = trainingSessionService.startTraining(TrainingPlanMapper.toDomainTrainingPlan(trainingPlan))
-        _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(state)
+        setSessionState(state)
     }
 
     fun setCurrentTrainingExercise(trainingExercise: TrainingExercise) {
         _currentExercise.value = trainingExercise
+    }
+
+    fun completed() {
+        val state = trainingSessionService.completed()
+        setSessionState(state)
+    }
+
+    fun skip() {
+        val state = trainingSessionService.skip()
+        setSessionState(state)
+    }
+
+    private fun setSessionState(state: DomainSessionState) {
+        _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(state)
     }
 }
