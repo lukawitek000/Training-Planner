@@ -18,20 +18,23 @@ class TrainingExerciseFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingExerciseBinding
     private val sharedViewModel by activityViewModels<TrainingSessionViewModel>()
-    private val viewModel by viewModels<TrainingExerciseViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentTrainingExerciseBinding.inflate(inflater, container, false)
-        viewModel.setCurrentExercise(sharedViewModel.trainingExercise())
-        setUpViews()
+        observeTrainingExercise()
         return binding.root
     }
 
-    private fun setUpViews() {
-        val trainingExercise = viewModel.currentExercise
+    private fun observeTrainingExercise() {
+        sharedViewModel.currentExercise.observe(viewLifecycleOwner) {
+            setUpViews(it)
+        }
+    }
+
+    private fun setUpViews(trainingExercise: TrainingExercise) {
         binding.apply {
             exerciseNameTv.text = trainingExercise.exercise.name
             repetitionsTv.text = getString(R.string.reps_text, trainingExercise.repetitions)

@@ -84,6 +84,7 @@ class TrainingSessionActivity : FragmentActivity() {
 
     private fun showCurrentExercise(state: TrainingSessionState.ExerciseState) {
         Timber.d("LWWW show current exercise fragment")
+        viewModel.setCurrentTrainingExercise(state.exercise!!)
         val fragment = TrainingExerciseFragment.newInstance()
         replaceFragment(fragment)
     }

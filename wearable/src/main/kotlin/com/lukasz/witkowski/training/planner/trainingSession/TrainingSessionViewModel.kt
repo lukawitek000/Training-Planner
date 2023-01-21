@@ -40,6 +40,9 @@ class TrainingSessionViewModel
     private val _trainingSessionState = MutableLiveData<TrainingSessionState>()
     val trainingSessionState: LiveData<TrainingSessionState> = _trainingSessionState
 
+    private val _currentExercise = MutableLiveData<TrainingExercise>()
+    val currentExercise: LiveData<TrainingExercise> = _currentExercise
+
     fun fetchTrainingPlan() {
         viewModelScope.launch {
             _trainingPlan.value = ResultHandler.Loading
@@ -52,7 +55,7 @@ class TrainingSessionViewModel
         _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(state)
     }
 
-    fun trainingExercise(): TrainingExercise {
-        return trainingSessionState.value!!.exercise!!
+    fun setCurrentTrainingExercise(trainingExercise: TrainingExercise) {
+        _currentExercise.value = trainingExercise
     }
 }
