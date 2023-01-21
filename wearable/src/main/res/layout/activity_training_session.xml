@@ -9,18 +9,15 @@
     tools:context=".trainingSession.TrainingSessionActivity"
     tools:deviceIds="wear">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <include
-            android:id="@+id/loading_view"
-            layout="@layout/loading_view" />
-
         <androidx.wear.widget.SwipeDismissFrameLayout
             android:id="@+id/swipe_dismiss_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <include
+                android:id="@+id/loading_view"
+                layout="@layout/loading_view"
+                android:visibility="visible"/>
 
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/current_training_fragment_container"
@@ -28,5 +25,4 @@
                 android:layout_height="match_parent"/>
 
         </androidx.wear.widget.SwipeDismissFrameLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.wear.widget.BoxInsetLayout>

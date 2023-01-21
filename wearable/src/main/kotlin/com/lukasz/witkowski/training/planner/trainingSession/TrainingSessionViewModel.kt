@@ -35,10 +35,7 @@ class TrainingSessionViewModel
     fun fetchTrainingPlan() {
         viewModelScope.launch {
             _trainingPlan.value = ResultHandler.Loading
-            _trainingPlan.value =
-                ResultHandler.Success(dummyTrainingsList.first { it.id == trainingPlanId })
-//            _trainingWithExercises.value = ResultHandler.Success(trainingRepository.fetchDummyTrainingById(trainingId))
-//            _trainingWithExercises.value = ResultHandler.Success(trainingPlanService.fetchTrainingById(trainingId))
+            _trainingPlan.value = ResultHandler.Success(dummyTrainingsList.first { it.id == trainingPlanId })
         }
     }
 }
