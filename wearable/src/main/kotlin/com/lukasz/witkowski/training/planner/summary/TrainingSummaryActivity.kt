@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import com.lukasz.witkowski.training.planner.R
 import dagger.hilt.android.AndroidEntryPoint
 
+// TODO most probably to pass data it will be convenient to save it to db and load it in this activity
 @AndroidEntryPoint
 class TrainingSummaryActivity : ComponentActivity() {
 
