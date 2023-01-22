@@ -8,24 +8,19 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingExerciseBinding
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TrainingExerciseFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingExerciseBinding
     private val sharedViewModel by activityViewModels<TrainingSessionViewModel>()
-    private val viewModel by viewModels<TrainingExerciseViewModel>()
+    private val viewModel by viewModels<TimerViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -129,14 +124,6 @@ class TrainingExerciseFragment : Fragment() {
 
     private fun setTimeOnTimer(time: Time) {
         binding.timerTv.text = time.toTimerString(false)
-    }
-
-    private fun launchInStartedState(block: suspend CoroutineScope.() -> Unit) {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                block()
-            }
-        }
     }
 
     companion object {

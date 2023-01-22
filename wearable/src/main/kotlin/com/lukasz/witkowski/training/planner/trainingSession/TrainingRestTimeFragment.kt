@@ -7,14 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingRestTimeBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @AndroidEntryPoint
@@ -22,7 +17,7 @@ class TrainingRestTimeFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingRestTimeBinding
     private val sharedViewModel by activityViewModels<TrainingSessionViewModel>()
-    private val viewModel by viewModels<TrainingExerciseViewModel>()
+    private val viewModel by viewModels<TimerViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,7 +48,7 @@ class TrainingRestTimeFragment : Fragment() {
         viewModel.timer.collectLatest {
             Timber.d("LWWW timer ${it.toTimerString()}")
             binding.restTimeTimerTv.text = it.toTimerString(false)
-            if(it.isZero()) {
+            if (it.isZero()) {
                 Timber.d("LWWW timer is 0")
                 sharedViewModel.skip()
             }
@@ -72,14 +67,6 @@ class TrainingRestTimeFragment : Fragment() {
             Timber.d("LWWW has finished $it") // TODO never called
             if (it) {
                 sharedViewModel.skip()
-            }
-        }
-    }
-
-    private fun launchInStartedState(block: suspend CoroutineScope.() -> Unit) {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                block()
             }
         }
     }

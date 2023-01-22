@@ -7,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class TrainingExerciseViewModel @Inject constructor(
+class TimerViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     timerController: TimerController
 ) : ViewModel(), TimerController by timerController
