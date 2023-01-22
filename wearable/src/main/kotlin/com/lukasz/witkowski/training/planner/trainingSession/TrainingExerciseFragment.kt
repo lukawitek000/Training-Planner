@@ -46,12 +46,11 @@ class TrainingExerciseFragment : Fragment() {
             repetitionsTv.text = getString(R.string.reps_text, trainingExercise.repetitions)
             setsTv.text = getString(R.string.sets_text, trainingExercise.sets)
         }
-        setUpTimerView(trainingExercise)
+        setUpTimerView(trainingExercise.time)
     }
 
-    private fun setUpTimerView(trainingExercise: TrainingExercise) {
+    private fun setUpTimerView(time: Time) {
         binding.apply {
-            val time = trainingExercise.time
             if (time.isNotZero()) {
                 timerLayout.visibility = View.VISIBLE
                 setTimeOnTimer(time)
@@ -118,6 +117,11 @@ class TrainingExerciseFragment : Fragment() {
         launchInStartedState {
             viewModel.timer.collectLatest {
                 setTimeOnTimer(it)
+                if(it.isZero()) {
+                    val time = sharedViewModel.currentExercise.value!!.time
+                    viewModel.setTimer(time)
+                    setUpTimerView(time)
+                }
             }
         }
     }

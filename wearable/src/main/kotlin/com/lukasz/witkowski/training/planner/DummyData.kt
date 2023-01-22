@@ -25,7 +25,7 @@ val dummyTrainingsList = listOf<TrainingPlan>(
                     null
                 ),
                 repetitions = 10, sets = 3, restTime = Time(minutes = 1, seconds = 30),
-                time = Time(minutes = 1, seconds = 30)
+                time = Time(minutes = 0, seconds = 5)
             ),
             TrainingExercise(
                 TrainingExerciseId.create(),
