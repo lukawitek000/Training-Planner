@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.trainingSession
+package com.lukasz.witkowski.training.planner.utils
 
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner

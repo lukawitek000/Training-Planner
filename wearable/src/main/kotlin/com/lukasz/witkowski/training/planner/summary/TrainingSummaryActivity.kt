@@ -1,12 +1,17 @@
 package com.lukasz.witkowski.training.planner.summary
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSummaryBinding
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
+import com.lukasz.witkowski.training.planner.utils.launchInStartedState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class TrainingSummaryActivity : ComponentActivity() {
@@ -24,14 +29,19 @@ class TrainingSummaryActivity : ComponentActivity() {
     }
 
     private fun fetchSummary() {
-        viewModel.trainingStatistics.observe(this) {
-            populateUi(it)
+        launchInStartedState {
+            viewModel.loadTrainingStatistics().collectLatest {
+                populateUi(it)
+            }
         }
-        viewModel.loadTrainingStatistics()
     }
 
     private fun populateUi(trainingStatistics: TrainingStatistics) {
-        binding.totalTimeTv.text = trainingStatistics.totalTime.toString()
-        binding.burnedCaloriesTv.text = trainingStatistics.id.toString()
+        binding.apply {
+            summaryContentLayout.visibility = View.VISIBLE
+            loadingStatisticsPb.visibility = View.GONE
+            totalTimeTv.text = trainingStatistics.totalTime.toString()
+//            burnedCaloriesTv.text = trainingStatistics.id.toString()
+        }
     }
 }

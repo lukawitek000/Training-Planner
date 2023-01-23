@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
@@ -11,6 +13,7 @@ import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingSt
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.trainingSession.TrainingSessionActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -27,11 +30,5 @@ class TrainingSummaryViewModel
     private val trainingStatisticsId: TrainingStatisticsId
         get() = TrainingStatisticsId(_trainingStatisticsId)
 
-    private val _trainingStatistics = MutableLiveData<TrainingStatistics>()
-    val trainingStatistics: LiveData<TrainingStatistics>
-        get() = _trainingStatistics
-
-    fun loadTrainingStatistics() {
-
-    }
+    fun loadTrainingStatistics() = trainingStatisticsService.getStatistics(trainingStatisticsId)
 }

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingRestTimeBinding
+import com.lukasz.witkowski.training.planner.utils.launchInStartedState
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
