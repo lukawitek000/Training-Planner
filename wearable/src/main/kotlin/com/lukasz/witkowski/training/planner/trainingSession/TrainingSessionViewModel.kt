@@ -9,6 +9,8 @@ import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.dummyTrainingsList
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
+import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
+import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState as DomainSessionState
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
@@ -26,7 +28,8 @@ class TrainingSessionViewModel
 @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val trainingPlanService: TrainingPlanService,
-    private val trainingSessionService: TrainingSessionService
+    private val trainingSessionService: TrainingSessionService,
+    private val trainingStatisticsService: TrainingStatisticsService
 ) : ViewModel() {
 
     private val _trainingPlanId =
@@ -43,6 +46,9 @@ class TrainingSessionViewModel
 
     private val _currentExercise = MutableLiveData<TrainingExercise>()
     val currentExercise: LiveData<TrainingExercise> = _currentExercise
+
+    private val _trainingStatisticsId = MutableLiveData<TrainingStatisticsId>()
+    val trainingStatisticsId: LiveData<TrainingStatisticsId> = _trainingStatisticsId
 
     fun fetchTrainingPlan() {
         viewModelScope.launch {
@@ -72,5 +78,13 @@ class TrainingSessionViewModel
 
     private fun setSessionState(state: DomainSessionState) {
         _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(state)
+    }
+
+    fun saveTrainingSessionSummary(summaryState: TrainingSessionState.SummaryState) {
+        viewModelScope.launch {
+            val statistics = summaryState.statistics
+            trainingStatisticsService.save(statistics)
+            _trainingStatisticsId.value = statistics.id
+        }
     }
 }

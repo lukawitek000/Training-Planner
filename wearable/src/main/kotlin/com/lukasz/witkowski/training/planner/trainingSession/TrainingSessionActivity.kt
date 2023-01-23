@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.trainingSession
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -12,7 +13,9 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSessionBinding
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingViewModel
+import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
+import com.lukasz.witkowski.training.planner.summary.TrainingSummaryActivity
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
@@ -32,6 +35,7 @@ class TrainingSessionActivity : FragmentActivity() {
         setContentView(binding.root)
         setUpSwipeToDismiss()
         observeTrainingPlan()
+        observeTrainingStatisticsId()
         observeTrainingSessionState()
         viewModel.fetchTrainingPlan()
         Timber.d("LWWW training plan id ${viewModel.trainingPlanId}")
@@ -71,12 +75,18 @@ class TrainingSessionActivity : FragmentActivity() {
         viewModel.startTrainingSession(trainingPlan)
     }
 
+    private fun observeTrainingStatisticsId() {
+        viewModel.trainingStatisticsId.observe(this) {
+            showTrainingSessionSummary(it)
+        }
+    }
+
     private fun observeTrainingSessionState() {
         viewModel.trainingSessionState.observe(this) {
             when(it) {
                 is TrainingSessionState.ExerciseState -> showCurrentExercise(it)
                 is TrainingSessionState.RestTimeState -> showRestTime(it)
-                is TrainingSessionState.SummaryState -> showTrainingSessionSummary(it)
+                is TrainingSessionState.SummaryState -> viewModel.saveTrainingSessionSummary(it)
                 is TrainingSessionState.IdleState -> throw IllegalStateException("Wrong training session state $it")
             }
         }
@@ -102,8 +112,13 @@ class TrainingSessionActivity : FragmentActivity() {
         }
     }
 
-    private fun showTrainingSessionSummary(state: TrainingSessionState.SummaryState) {
-//        TODO("Not yet implemented")
+    private fun showTrainingSessionSummary(id: TrainingStatisticsId) {
+        val intent = Intent(this, TrainingSummaryActivity::class.java)
+        intent.putExtra(TRAINING_STATISTICS_ID, id.value.toString())
+        startActivity(intent)
     }
 
+    companion object {
+        const val TRAINING_STATISTICS_ID = "TRAINING_STATISTICS_ID"
+    }
 }
