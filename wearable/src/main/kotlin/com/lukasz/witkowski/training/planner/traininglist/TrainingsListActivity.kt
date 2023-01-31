@@ -27,7 +27,6 @@ class TrainingsListActivity : ComponentActivity() {
     private val viewModel: TrainingPlansListViewModel by viewModels(factoryProducer = {
         WearableTrainingPlannerViewModelFactory()
     })
-    private var isServiceStarted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.TrainingPlannerTheme)
@@ -35,6 +34,7 @@ class TrainingsListActivity : ComponentActivity() {
         binding = ActivityTrainingPlansListBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setUpTrainingAdapter()
+        observeFetchedTrainingPlans()
         fetchTrainingPlans()
         permissionLauncher.launch(REQUIRED_PERMISSIONS)
     }
@@ -59,7 +59,6 @@ class TrainingsListActivity : ComponentActivity() {
     }
 
     private fun fetchTrainingPlans() {
-        observeFetchedTrainingPlans()
         viewModel.getTrainingPlans()
     }
 
@@ -102,7 +101,6 @@ class TrainingsListActivity : ComponentActivity() {
         adapter.submitList(data)
     }
 
-    // TODO handle in ui denied permissions, and do not allow later to use this sensors if they are denied
     private val permissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { result ->
@@ -110,6 +108,11 @@ class TrainingsListActivity : ComponentActivity() {
             Timber.d("All required permissions granted")
         } else {
             Timber.w("Not all required permissions granted")
+            Toast.makeText(
+                this,
+                "Permissions are required to collect body condition data",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 

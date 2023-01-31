@@ -154,8 +154,7 @@ private fun NavGraphBuilder.createTrainingNavGraph(
     ) {
 
         composable(NavItem.CreateTraining.route) {
-            val createTrainingBackStackEntry =
-                remember { navController.getBackStackEntry(NavItem.CreateTrainingGraph.route) }
+            val createTrainingBackStackEntry = remember(it) { navController.getBackStackEntry(NavItem.CreateTrainingGraph.route) }
             val createTrainingViewModel: CreateTrainingViewModel = trainingPlannerViewModel(createTrainingBackStackEntry)
             CreateTrainingScreen(
                 modifier = Modifier.padding(padding),
@@ -167,8 +166,7 @@ private fun NavGraphBuilder.createTrainingNavGraph(
         }
         composable(NavItem.PickExercise.route) {
             val viewModel: ExercisesListViewModel = trainingPlannerViewModel()
-            val createTrainingBackStackEntry =
-                remember { navController.getBackStackEntry(NavItem.CreateTrainingGraph.route) }
+            val createTrainingBackStackEntry = remember(it) { navController.getBackStackEntry(NavItem.CreateTrainingGraph.route) }
             val createTrainingViewModel: CreateTrainingViewModel = trainingPlannerViewModel(createTrainingBackStackEntry)
             PickExerciseScreen(
                 modifier = Modifier.padding(padding),

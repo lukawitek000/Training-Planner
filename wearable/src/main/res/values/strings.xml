@@ -3,7 +3,8 @@
     <string name="yes">YES</string>
     <string name="no">NO</string>
     <string name="start_training_question">Do you want to start %1$s training?</string>
-    <string name="next">NEXT</string>
+    <string name="completed">COMPLETED</string>
+    <string name="skip">SKIP</string>
     <string name="reps_text">Reps: %1$d</string>
     <string name="sets_text">Sets: %1$d</string>
     <string name="play_or_pause_control_button">Play or pause control button</string>
@@ -20,4 +21,5 @@
     <string name="training_time">Training time</string>
     <string name="training_plan_does_not_exist">Training plan does not exist</string>
     <string name="fetching_training_plans_failed">Fetching training plans failed</string>
+    <string name="unknown_value">--</string>
 </resources>

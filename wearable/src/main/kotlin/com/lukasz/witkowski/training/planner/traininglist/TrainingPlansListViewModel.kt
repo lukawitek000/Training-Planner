@@ -13,17 +13,19 @@ import kotlinx.coroutines.launch
 
 class TrainingPlansListViewModel(private val trainingPlanService: TrainingPlanService) :
     ViewModel() {
-
     private val _trainingPlans = MutableLiveData<ResultHandler<List<TrainingPlan>>>()
     val trainingPlans: LiveData<ResultHandler<List<TrainingPlan>>> = _trainingPlans
 
     fun getTrainingPlans() {
         viewModelScope.launch {
-            _trainingPlans.value = ResultHandler.Loading
-            trainingPlanService.getTrainingPlansFromCategories().collectLatest {
-//                _trainingPlans.value =
-//                    ResultHandler.Success(TrainingPlanMapper.toPresentationTrainingPlans(it))
-                _trainingPlans.value = ResultHandler.Success(dummyTrainingsList)
+            try {
+                _trainingPlans.value = ResultHandler.Loading
+                trainingPlanService.getTrainingPlansFromCategories().collectLatest {
+//                _trainingPlans.value = ResultHandler.Success(TrainingPlanMapper.toPresentationTrainingPlans(it))
+                    _trainingPlans.value = ResultHandler.Success(dummyTrainingsList)
+                }
+            } catch (e: Exception) {
+                _trainingPlans.value = ResultHandler.Error("Training plan fetch failed", e)
             }
         }
     }

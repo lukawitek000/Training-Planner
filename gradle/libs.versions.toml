@@ -40,6 +40,7 @@ androidx-recyclerView = { module = "androidx.recyclerview:recyclerview", version
 androidx-percentLayout = { module = "androidx.percentlayout:percentlayout", version = "1.0.0" }
 androidx-wear = { module = "androidx.wear:wear", version = "1.2.0" }
 androidx-activityKtx = { module = "androidx.activity:activity-ktx", version = "1.6.0" }
+androidx-fragmentKtx = { module = "androidx.fragment:fragment-ktx", version = "1.5.5" }
 
 # Compose
 androidx-compose-ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }

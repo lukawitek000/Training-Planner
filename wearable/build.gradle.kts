@@ -26,7 +26,11 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs += "-Xjvm-default=enable"
+        freeCompilerArgs += kotlin.collections.listOf<String>(
+            "-Xjvm-default=enable",
+            "-Xextended-compiler-checks"
+        )
+
     }
 
     buildFeatures {
@@ -36,10 +40,13 @@ android {
 
 dependencies {
     implementation(projects.training)
+    implementation(projects.statistics)
 
     implementation(libs.google.playServicesWearable)
     implementation(libs.androidx.wear)
     implementation(libs.google.material)
     implementation(libs.androidx.activityKtx)
+    implementation(libs.androidx.fragmentKtx)
+    implementation(libs.androidx.lifecycle.livedataKtx)
     implementation(libs.timber)
 }

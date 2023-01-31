@@ -36,5 +36,8 @@ interface StatisticsDao {
     suspend fun insert(dbExerciseStatistics: DbExerciseStatistics)
 
     @Query("SELECT * FROM TrainingStatistics WHERE trainingPlanId=:trainingPlanId")
-    fun getTrainingStatistics(trainingPlanId: String): Flow<List<DbTrainingWithExercisesStatistics>>
+    fun getTrainingStatisticsByTrainingPlanId(trainingPlanId: String): Flow<List<DbTrainingWithExercisesStatistics>>
+
+    @Query("SELECT * FROM TrainingStatistics WHERE id=:id")
+    fun getTrainingStatisticsById(id: String): Flow<DbTrainingWithExercisesStatistics>
 }
