@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.statistics.infrastructure
 
 import com.lukasz.witkowski.training.planner.statistics.domain.StatisticsRepository
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
+import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.StatisticsDao
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.mappers.TrainingStatisticsMapper
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
@@ -20,8 +21,14 @@ class DbStatisticsRepository(private val statisticsDao: StatisticsDao) : Statist
     }
 
     override fun getByTrainingPlanId(trainingPlanId: TrainingPlanId): Flow<List<TrainingStatistics>> {
-        return statisticsDao.getTrainingStatistics(trainingPlanId.toString()).map { statisticsList ->
+        return statisticsDao.getTrainingStatisticsByTrainingPlanId(trainingPlanId.toString()).map { statisticsList ->
             statisticsList.map { TrainingStatisticsMapper.toTrainingStatistics(it) }
+        }
+    }
+
+    override fun getByTrainingStatisticsId(trainingStatisticsId: TrainingStatisticsId): Flow<TrainingStatistics> {
+        return statisticsDao.getTrainingStatisticsById(trainingStatisticsId.toString()).map {
+            TrainingStatisticsMapper.toTrainingStatistics(it)
         }
     }
 }

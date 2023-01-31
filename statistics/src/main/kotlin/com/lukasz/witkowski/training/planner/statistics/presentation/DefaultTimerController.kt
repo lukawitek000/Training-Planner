@@ -38,6 +38,7 @@ class DefaultTimerController : TimerController {
                 delay(DELAY_IN_MILLIS)
                 _timer.value = Time(timer.value.timeInMillis - DELAY_IN_MILLIS)
             }
+            _isRunning.value = false
         }
     }
 

@@ -38,7 +38,7 @@
             android:name="com.lukasz.witkowski.training.planner.summary.TrainingSummaryActivity"
             android:exported="false" />
         <activity
-            android:name="com.lukasz.witkowski.training.planner.trainingSession.CurrentTrainingActivity"
+            android:name="com.lukasz.witkowski.training.planner.trainingSession.TrainingSessionActivity"
             android:noHistory="true"
             android:exported="false" />
         <activity

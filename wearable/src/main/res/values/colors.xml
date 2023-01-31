@@ -4,5 +4,6 @@
     <color name="light_orange">#FFC947</color>
     <color name="white">#FFFFFF</color>
     <color name="gray">#242424</color>
+    <color name="light_gray">#FFC4C4C4</color>
     <color name="background_gray">#121212</color>
 </resources>
