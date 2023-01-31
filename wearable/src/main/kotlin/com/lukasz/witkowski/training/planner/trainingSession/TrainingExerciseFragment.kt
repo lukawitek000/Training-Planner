@@ -10,18 +10,19 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingExerciseBinding
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.utils.launchInStartedState
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
-@AndroidEntryPoint
 class TrainingExerciseFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingExerciseBinding
     private val sharedViewModel by activityViewModels<TrainingSessionViewModel>()
-    private val viewModel by viewModels<TimerViewModel>()
+    private val viewModel by viewModels<TimerViewModel>(factoryProducer = {
+        WearableTrainingPlannerViewModelFactory()
+    })
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

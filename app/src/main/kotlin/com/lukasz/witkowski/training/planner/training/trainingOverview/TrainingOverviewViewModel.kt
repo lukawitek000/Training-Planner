@@ -10,20 +10,16 @@ import com.lukasz.witkowski.training.planner.training.application.TrainingPlanSe
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-
-@HiltViewModel
-class TrainingOverviewViewModel @Inject constructor(
+class TrainingOverviewViewModel(
     private val trainingPlanService: TrainingPlanService,
-    private val trainingStatisticsService: TrainingStatisticsService,
-    private val savedStateHandle: SavedStateHandle
+    trainingStatisticsService: TrainingStatisticsService,
+    savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _trainingId = savedStateHandle.get<String>("trainingId") ?: ""

@@ -10,23 +10,20 @@ import androidx.fragment.app.commit
 import androidx.wear.widget.SwipeDismissFrameLayout
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSessionBinding
-import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
-import com.lukasz.witkowski.training.planner.startTraining.StartTrainingViewModel
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.summary.TrainingSummaryActivity
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
-import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
-@AndroidEntryPoint
 class TrainingSessionActivity : FragmentActivity() {
 
     private lateinit var binding: ActivityTrainingSessionBinding
-    private val viewModel by viewModels<TrainingSessionViewModel>()
+    private val viewModel by viewModels<TrainingSessionViewModel>(factoryProducer = {
+        WearableTrainingPlannerViewModelFactory()
+    })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.TrainingPlannerTheme)

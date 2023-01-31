@@ -28,11 +28,7 @@ import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
 import com.lukasz.witkowski.training.planner.ui.components.CustomSnackbar
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

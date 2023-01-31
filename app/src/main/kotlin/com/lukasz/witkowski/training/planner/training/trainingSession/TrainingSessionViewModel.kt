@@ -10,20 +10,17 @@ import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSes
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class TrainingSessionViewModel @Inject constructor(
+class TrainingSessionViewModel(
     private val trainingPlanService: TrainingPlanService,
-    private val savedStateHandle: SavedStateHandle,
     private val trainingSessionService: TrainingSessionService,
     private val trainingStatisticsService: TrainingStatisticsService,
-    timerController: TimerController
+    timerController: TimerController,
+    private val savedStateHandle: SavedStateHandle
 ) : ViewModel(),
     TimerController by timerController {
 

@@ -11,8 +11,4 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.bundles.room)
     kapt(libs.androidx.roomCompiler)
-
-    // Hilt - dependency injection
-    implementation(libs.google.dagger.hiltAndroid)
-    kapt(libs.google.dagger.hiltAndroidCompiler)
 }

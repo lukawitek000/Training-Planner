@@ -7,9 +7,7 @@ import androidx.activity.viewModels
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.ActivityStartTrainingBinding
 import com.lukasz.witkowski.training.planner.trainingSession.TrainingSessionActivity
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class StartTrainingActivity : ComponentActivity() {
 
     private lateinit var binding: ActivityStartTrainingBinding

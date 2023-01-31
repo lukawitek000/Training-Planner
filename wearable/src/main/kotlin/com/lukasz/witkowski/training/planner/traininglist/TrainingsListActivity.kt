@@ -11,21 +11,22 @@ import androidx.activity.viewModels
 import androidx.wear.widget.WearableLinearLayoutManager
 import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingPlansListBinding
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_ID_KEY
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_TITLE_KEY
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
-import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
-@AndroidEntryPoint
 class TrainingsListActivity : ComponentActivity() {
 
     private lateinit var binding: ActivityTrainingPlansListBinding
     private lateinit var adapter: TrainingPlansAdapter
-    private val viewModel: TrainingPlansListViewModel by viewModels()
+    private val viewModel: TrainingPlansListViewModel by viewModels(factoryProducer = {
+        WearableTrainingPlannerViewModelFactory()
+    })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.TrainingPlannerTheme)

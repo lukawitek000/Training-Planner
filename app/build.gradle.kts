@@ -1,8 +1,6 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
-    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -39,6 +37,7 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += "-Xjvm-default=enable"
     }
 
     buildFeatures {
@@ -64,10 +63,6 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.bytebeats.charts)
 
-    // Hilt - dependency injection
-    implementation(libs.google.dagger.hiltAndroid)
-    kapt(libs.google.dagger.hiltAndroidCompiler)
-
     implementation(libs.google.material)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material)
@@ -75,7 +70,8 @@ dependencies {
     implementation(libs.androidx.compose.uiToolingPreview)
     implementation(libs.androidx.compose.materialIconsExtended)
     implementation(libs.androidx.compose.navigation)
-    implementation(libs.androidx.compose.navigationHilt)
+    implementation(libs.androidx.compose.activity)
+    implementation(libs.androidx.compose.lifecycleViewmodelCompose)
 
     // Without this dependency there is a build error
     implementation(libs.google.playServicesWearable)

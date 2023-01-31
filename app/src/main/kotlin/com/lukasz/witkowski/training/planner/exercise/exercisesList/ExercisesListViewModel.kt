@@ -1,27 +1,21 @@
 package com.lukasz.witkowski.training.planner.exercise.exercisesList
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
-import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import javax.inject.Inject
 
-@HiltViewModel
-class ExercisesListViewModel @Inject internal constructor(
+
+class ExercisesListViewModel(
     private val exerciseService: ExerciseService,
-    categoryController: CategoryController,
-    private val savedStateHandle: SavedStateHandle
+    categoryController: CategoryController
 ) : ViewModel(), CategoryController by categoryController {
 
     private val _exercises = MutableStateFlow<List<Exercise>>(emptyList())
@@ -78,11 +72,5 @@ class ExercisesListViewModel @Inject internal constructor(
                 _exercises.emit(allExercises.toList())
             }
         }
-    }
-
-    // TODO event sourcing
-
-    override fun onCleared() {
-        super.onCleared()
     }
 }

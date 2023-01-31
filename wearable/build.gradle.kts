@@ -1,8 +1,6 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    kotlin("kapt")
-    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -27,7 +25,12 @@ android {
     }
 
     kotlinOptions {
-        this.freeCompilerArgs += "-Xextended-compiler-checks"
+        jvmTarget = "1.8"
+        freeCompilerArgs += listOf(
+            "-Xjvm-default=enable",
+            "-Xextended-compiler-checks"
+        )
+
     }
 
     buildFeatures {
@@ -46,8 +49,4 @@ dependencies {
     implementation(libs.androidx.fragmentKtx)
     implementation(libs.androidx.lifecycle.livedataKtx)
     implementation(libs.timber)
-
-    // Hilt - dependency injection
-    implementation(libs.google.dagger.hiltAndroid)
-    kapt(libs.google.dagger.hiltAndroidCompiler)
 }
