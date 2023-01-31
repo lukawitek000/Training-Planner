@@ -36,7 +36,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
         val exerciseToRecordAttempt = trainingExercises.first()
 
         // when
-        trainingSession.start(Time.NONE)
+        trainingSession.start(Time.ZERO)
         trainingSession.completed(TIME_10_SECONDS)
         val trainingStatistics = completeRestOfTheTraining(trainingSession).statistics
         val attemptStatistics =
@@ -59,7 +59,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
 
         // when
         // when
-        trainingSession.start(Time.NONE)
+        trainingSession.start(Time.ZERO)
         val summaryState = completeRestOfTheTraining(trainingSession)
 
         val trainingStatistics = summaryState.statistics
@@ -96,7 +96,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
     @Test
     fun `record statistics for completed training`() {
         // when
-        trainingSession.start(Time.NONE)
+        trainingSession.start(Time.ZERO)
         val summaryState = completeRestOfTheTraining(trainingSession)
         val statistics = summaryState.statistics
 
@@ -201,7 +201,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
 
     private fun completeRestOfTheTraining(
         trainingSession: TrainingSession,
-        startTime: Time = Time.NONE
+        startTime: Time = Time.ZERO
     ): TrainingSessionState.SummaryState {
         var time = startTime
         var state: TrainingSessionState? = null

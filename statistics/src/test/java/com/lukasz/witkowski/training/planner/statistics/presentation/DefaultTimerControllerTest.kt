@@ -10,6 +10,6 @@ class DefaultTimerControllerTest {
 
     @Test
     fun `initialized timer controller has the time set to 0`() {
-        assertEquals(Time.NONE, timerController.timer.value)
+        assertEquals(Time.ZERO, timerController.timer.value)
     }
 }

@@ -82,6 +82,6 @@ class Time(val timeInMillis: Long) {
         private const val MILLIS_IN_CENTISECOND = 100L
         private const val MILLIS_IN_MINUTE = SECONDS_IN_MINUTE * MILLIS_IN_SECOND
         private const val MILLIS_IN_HOUR = MINUTES_IN_HOUR * MILLIS_IN_MINUTE
-        val NONE = Time(0L)
+        val ZERO = Time(0L)
     }
 }

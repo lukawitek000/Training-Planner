@@ -17,7 +17,7 @@ class DefaultTimerController : TimerController {
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Default)
     private var timerJob: Job? = null
 
-    private val _timer = MutableStateFlow(Time.NONE)
+    private val _timer = MutableStateFlow(Time.ZERO)
     override val timer: StateFlow<Time>
         get() = _timer
 
@@ -29,7 +29,7 @@ class DefaultTimerController : TimerController {
     private val _isRunning = MutableStateFlow(false)
     override val isRunning: StateFlow<Boolean>
         get() = _isRunning
-    private var initialTime = Time.NONE
+    private var initialTime = Time.ZERO
 
     override fun startTimer() {
         timerJob = coroutineScope.launch {
