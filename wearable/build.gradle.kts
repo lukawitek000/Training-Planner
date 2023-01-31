@@ -26,7 +26,7 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
-        freeCompilerArgs += kotlin.collections.listOf<String>(
+        freeCompilerArgs += listOf(
             "-Xjvm-default=enable",
             "-Xextended-compiler-checks"
         )

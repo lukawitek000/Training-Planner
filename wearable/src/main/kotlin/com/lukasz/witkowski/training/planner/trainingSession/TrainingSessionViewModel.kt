@@ -19,13 +19,9 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class TrainingSessionViewModel
-@Inject constructor(
+class TrainingSessionViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val trainingPlanService: TrainingPlanService,
     private val trainingSessionService: TrainingSessionService,

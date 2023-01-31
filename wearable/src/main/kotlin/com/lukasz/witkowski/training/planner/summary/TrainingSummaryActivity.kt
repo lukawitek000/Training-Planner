@@ -6,6 +6,7 @@ import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSummaryBinding
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.traininglist.TrainingsListActivity
@@ -15,7 +16,9 @@ import kotlinx.coroutines.flow.collectLatest
 class TrainingSummaryActivity : ComponentActivity() {
 
     private lateinit var binding: ActivityTrainingSummaryBinding
-    private val viewModel by viewModels<TrainingSummaryViewModel>()
+    private val viewModel by viewModels<TrainingSummaryViewModel>(factoryProducer = {
+        WearableTrainingPlannerViewModelFactory()
+    })
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.TrainingPlannerTheme)

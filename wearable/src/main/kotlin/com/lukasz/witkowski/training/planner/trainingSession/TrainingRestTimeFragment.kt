@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingRestTimeBinding
 import com.lukasz.witkowski.training.planner.utils.launchInStartedState
 import kotlinx.coroutines.flow.collectLatest
@@ -16,7 +17,9 @@ class TrainingRestTimeFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingRestTimeBinding
     private val sharedViewModel by activityViewModels<TrainingSessionViewModel>()
-    private val viewModel by viewModels<TimerViewModel>()
+    private val viewModel by viewModels<TimerViewModel>(factoryProducer = {
+        WearableTrainingPlannerViewModelFactory()
+    })
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

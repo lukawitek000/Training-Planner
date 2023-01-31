@@ -26,7 +26,7 @@ class StatisticsContainer(private val context: Context) {
         TrainingStatisticsService(statisticsRepository)
     }
 
-    val timerController: TimerController by lazy {
-        DefaultTimerController()
+    fun timerController(): TimerController {
+        return DefaultTimerController()
     }
 }
