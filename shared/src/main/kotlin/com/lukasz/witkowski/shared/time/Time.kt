@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.shared.time
 
-class Time(val timeInMillis: Long) {
+data class Time(val timeInMillis: Long) {
 
     constructor(
         hour: Int = 0,

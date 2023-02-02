@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.statistics.presentation
 
 import com.lukasz.witkowski.shared.time.Time
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -12,9 +14,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class DefaultTimerController : TimerController {
+class DefaultTimerController(
+    private val tickDelayInMillis: Long = DELAY_IN_MILLIS,
+    timerDispatcher: CoroutineDispatcher = Dispatchers.Default
+) : TimerController {
 
-    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Default)
+    private val coroutineScope: CoroutineScope =
+        CoroutineScope(timerDispatcher + CoroutineName("DefaultTimerController"))
     private var timerJob: Job? = null
 
     private val _timer = MutableStateFlow(Time.ZERO)
@@ -22,7 +28,7 @@ class DefaultTimerController : TimerController {
         get() = _timer
 
     override val hasFinished: StateFlow<Boolean>
-        get() = _timer.map { it.timeInMillis < DELAY_IN_MILLIS }
+        get() = _timer.map { it.timeInMillis < tickDelayInMillis }
             .stateIn(coroutineScope, SharingStarted.Lazily, false)
 
 
@@ -34,9 +40,9 @@ class DefaultTimerController : TimerController {
     override fun startTimer() {
         timerJob = coroutineScope.launch {
             _isRunning.value = true
-            while (isRunning.value && _timer.value.timeInMillis >= DELAY_IN_MILLIS) {
-                delay(DELAY_IN_MILLIS)
-                _timer.value = Time(timer.value.timeInMillis - DELAY_IN_MILLIS)
+            while (isRunning.value && _timer.value.timeInMillis >= tickDelayInMillis) {
+                delay(tickDelayInMillis)
+                _timer.value = Time(timer.value.timeInMillis - tickDelayInMillis)
             }
             _isRunning.value = false
         }
