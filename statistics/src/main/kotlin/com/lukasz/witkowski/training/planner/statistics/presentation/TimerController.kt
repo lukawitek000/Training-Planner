@@ -18,7 +18,7 @@ interface TimerController {
     fun resumeTimer()
 
     /**
-     * Stop the timer and reset to the initial time set by [setTimer] method.
+     * Stop the timer and reset to the initial time set by [setTimer] method. (should it reset?? I have a method for that)
      */
     fun stopTimer()
 

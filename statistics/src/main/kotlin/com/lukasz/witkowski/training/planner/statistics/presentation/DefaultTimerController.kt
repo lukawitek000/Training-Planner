@@ -35,8 +35,12 @@ class DefaultTimerController(
     private var initialTime = Time.ZERO
 
     override fun startTimer() {
+        startTimer(initialTime)
+    }
+
+    private fun startTimer(initTime: Time) {
         timerJob = coroutineScope.launch {
-            _timer.value = initialTime
+            _timer.value = initTime
             _isRunning.value = true
             while (isRunning.value && _timer.value.timeInMillis >= tickDelayInMillis) {
                 delay(tickDelayInMillis)
@@ -60,7 +64,7 @@ class DefaultTimerController(
     }
 
     override fun resumeTimer() {
-        startTimer()
+        startTimer(_timer.value)
     }
 
     override fun resetTimer() {

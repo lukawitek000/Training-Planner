@@ -179,7 +179,71 @@ class DefaultTimerControllerTest {
 
         timerController.resetTimer()
         scheduler.advanceTimeBy(2 * SECOND_IN_MILLIS + MILLIS_TO_EMIT_LAST_VALUE)
-        println("Result $resultList")
+
+        assertContentEquals(listOf(Time(seconds = 5), Time(seconds = 4), Time(seconds = 3), Time(seconds = 5)), resultList)
+        assertFalse(timerController.isRunning.value)
+        assertFalse(timerController.hasFinished.value)
+        job.cancel()
+    }
+
+    @Test
+    fun `after pause new values are not emitted`() = runTest(testDispatcher) {
+        givenTimerController(SECOND_IN_MILLIS)
+        val time = Time(seconds = 5)
+        val resultList = mutableListOf<Time>()
+        val job = launch {
+            timerController.timer.toList(resultList)
+        }
+        timerController.setTimer(time)
+        timerController.startTimer()
+        scheduler.advanceTimeBy(2 * SECOND_IN_MILLIS + MILLIS_TO_EMIT_LAST_VALUE)
+
+        timerController.pauseTimer()
+        scheduler.advanceTimeBy(2 * SECOND_IN_MILLIS + MILLIS_TO_EMIT_LAST_VALUE)
+
+        assertContentEquals(listOf(Time(seconds = 5), Time(seconds = 4), Time(seconds = 3)), resultList)
+        assertFalse(timerController.isRunning.value)
+        assertFalse(timerController.hasFinished.value)
+        job.cancel()
+    }
+
+    @Test
+    fun `resume after pause emits consecutive time till finished`() = runTest(testDispatcher) {
+        givenTimerController(SECOND_IN_MILLIS)
+        val time = Time(seconds = 5)
+        val resultList = mutableListOf<Time>()
+        val job = launch {
+            timerController.timer.toList(resultList)
+        }
+        timerController.setTimer(time)
+        timerController.startTimer()
+        scheduler.advanceTimeBy(2 * SECOND_IN_MILLIS + MILLIS_TO_EMIT_LAST_VALUE)
+
+        timerController.pauseTimer()
+        scheduler.advanceTimeBy(2 * SECOND_IN_MILLIS + MILLIS_TO_EMIT_LAST_VALUE)
+        timerController.resumeTimer()
+        scheduler.advanceTimeBy(3 * SECOND_IN_MILLIS + MILLIS_TO_EMIT_LAST_VALUE)
+
+        assertContentEquals(listOf(Time(seconds = 5), Time(seconds = 4), Time(seconds = 3), Time(seconds = 2), Time(seconds = 1), Time(seconds = 0)), resultList)
+        assertFalse(timerController.isRunning.value)
+        assertTrue(timerController.hasFinished.value)
+        job.cancel()
+    }
+
+    @Test
+    fun `resume start timer if it was not started yet`() = runTest(testDispatcher) {
+        givenTimerController(SECOND_IN_MILLIS)
+        val time = Time(seconds = 5)
+        val resultList = mutableListOf<Time>()
+        val job = launch {
+            timerController.timer.toList(resultList)
+        }
+        timerController.setTimer(time)
+        timerController.resumeTimer()
+        scheduler.advanceTimeBy(2 * SECOND_IN_MILLIS + MILLIS_TO_EMIT_LAST_VALUE)
+        timerController.stopTimer()
+        scheduler.advanceTimeBy(3 * SECOND_IN_MILLIS + MILLIS_TO_EMIT_LAST_VALUE)
+
         assertContentEquals(listOf(Time(seconds = 5), Time(seconds = 4), Time(seconds = 3), Time(seconds = 5)), resultList)
         assertFalse(timerController.isRunning.value)
         assertFalse(timerController.hasFinished.value)
