@@ -8,10 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class DefaultTimerController(
@@ -27,9 +24,9 @@ class DefaultTimerController(
     override val timer: StateFlow<Time>
         get() = _timer
 
+    private val _hasFinished = MutableStateFlow(false)
     override val hasFinished: StateFlow<Boolean>
-        get() = _timer.map { it.timeInMillis < tickDelayInMillis }
-            .stateIn(coroutineScope, SharingStarted.Lazily, false)
+        get() = _hasFinished
 
 
     private val _isRunning = MutableStateFlow(false)
@@ -39,10 +36,14 @@ class DefaultTimerController(
 
     override fun startTimer() {
         timerJob = coroutineScope.launch {
+            _timer.value = initialTime
             _isRunning.value = true
             while (isRunning.value && _timer.value.timeInMillis >= tickDelayInMillis) {
                 delay(tickDelayInMillis)
                 _timer.value = Time(timer.value.timeInMillis - tickDelayInMillis)
+            }
+            if (timer.value.timeInMillis < tickDelayInMillis) {
+                _hasFinished.value = true
             }
             _isRunning.value = false
         }
@@ -64,7 +65,7 @@ class DefaultTimerController(
 
     override fun resetTimer() {
         stopTimer()
-        _timer.value = initialTime
+        _hasFinished.value = false
     }
 
     override fun setTimer(startTime: Time) {
