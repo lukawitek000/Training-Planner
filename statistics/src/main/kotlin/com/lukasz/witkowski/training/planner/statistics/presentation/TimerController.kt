@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.statistics.presentation
 import com.lukasz.witkowski.shared.time.Time
 import kotlinx.coroutines.flow.StateFlow
 
+// TODO revise this interface if all of the data is needed
 interface TimerController {
     val timer: StateFlow<Time>
 
