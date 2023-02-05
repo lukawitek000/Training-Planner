@@ -1,42 +1,54 @@
 package com.lukasz.witkowski.training.planner.statistics.presentation
 
 import com.lukasz.witkowski.shared.time.Time
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class DefaultTimerController : TimerController {
+class CoroutinesTimerController(
+    private val tickDelayInMillis: Long = DELAY_IN_MILLIS,
+    timerDispatcher: CoroutineDispatcher = Dispatchers.Default
+) : TimerController {
 
-    private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.Default)
+    private val coroutineScope: CoroutineScope =
+        CoroutineScope(timerDispatcher + CoroutineName("DefaultTimerController"))
     private var timerJob: Job? = null
 
-    private val _timer = MutableStateFlow(Time.NONE)
+    private val _timer = MutableStateFlow(Time.ZERO)
     override val timer: StateFlow<Time>
         get() = _timer
 
+    private val _hasFinished = MutableStateFlow(false)
     override val hasFinished: StateFlow<Boolean>
-        get() = _timer.map { it.timeInMillis < DELAY_IN_MILLIS }
-            .stateIn(coroutineScope, SharingStarted.Lazily, false)
+        get() = _hasFinished
 
 
     private val _isRunning = MutableStateFlow(false)
     override val isRunning: StateFlow<Boolean>
         get() = _isRunning
-    private var initialTime = Time.NONE
+    private var initialTime = Time.ZERO
 
     override fun startTimer() {
+        startTimer(initialTime)
+    }
+
+    private fun startTimer(initTime: Time) {
         timerJob = coroutineScope.launch {
+            _timer.value = initTime
             _isRunning.value = true
-            while (isRunning.value && _timer.value.timeInMillis >= DELAY_IN_MILLIS) {
-                delay(DELAY_IN_MILLIS)
-                _timer.value = Time(timer.value.timeInMillis - DELAY_IN_MILLIS)
+            while (isRunning.value) {
+                delay(tickDelayInMillis)
+                _timer.value = Time(timer.value.timeInMillis - tickDelayInMillis)
+                if (timer.value.timeInMillis < tickDelayInMillis) {
+                    _hasFinished.value = true
+                    break
+                }
             }
             _isRunning.value = false
         }
@@ -49,16 +61,16 @@ class DefaultTimerController : TimerController {
 
     override fun pauseTimer() {
         _isRunning.value = false
+        _hasFinished.value = false
         timerJob?.cancel()
     }
 
     override fun resumeTimer() {
-        startTimer()
+        startTimer(_timer.value)
     }
 
     override fun resetTimer() {
         stopTimer()
-        _timer.value = initialTime
     }
 
     override fun setTimer(startTime: Time) {

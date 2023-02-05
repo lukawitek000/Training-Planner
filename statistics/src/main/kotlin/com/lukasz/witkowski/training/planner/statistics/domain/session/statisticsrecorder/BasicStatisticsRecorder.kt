@@ -19,9 +19,9 @@ class BasicStatisticsRecorder(
     private val trainingPlanId: TrainingPlanId
 ) {
 
-    private var startTrainingTime = Time.NONE
+    private var startTrainingTime = Time.ZERO
     private var exercisesAttemptsStatistics = mutableListOf<ExerciseAttemptStatistics>()
-    private var currentExerciseStartTime = Time.NONE
+    private var currentExerciseStartTime = Time.ZERO
     private var currentExerciseId: TrainingExerciseId? = null
     private var currentExerciseSet: Int = 0
 

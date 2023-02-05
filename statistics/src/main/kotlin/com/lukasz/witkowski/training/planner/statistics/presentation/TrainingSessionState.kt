@@ -7,7 +7,7 @@ import com.lukasz.witkowski.training.planner.training.presentation.models.Traini
 
 sealed class TrainingSessionState(
     val exercise: TrainingExercise? = null,
-    val time: Time = Time.NONE
+    val time: Time = Time.ZERO
 ) {
 
     object IdleState : TrainingSessionState()
