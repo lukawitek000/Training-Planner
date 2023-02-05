@@ -8,7 +8,7 @@ import android.os.IBinder
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 
-class SessionServiceConnector(serviceConnectedCallback: (SessionService) -> Unit) {
+class SessionServiceConnector(private val notificationPendingIntentProvider: NotificationPendingIntentProvider, serviceConnectedCallback: (SessionService) -> Unit) {
 
     private var sessionService: SessionService? = null
     var serviceConnected = false
@@ -28,6 +28,7 @@ class SessionServiceConnector(serviceConnectedCallback: (SessionService) -> Unit
 
     // on start
     fun bindService(context: Context) {
+        SessionService.notificationPendingIntentProvider = notificationPendingIntentProvider
         val intent = Intent(
             context.applicationContext,
             SessionService::class.java

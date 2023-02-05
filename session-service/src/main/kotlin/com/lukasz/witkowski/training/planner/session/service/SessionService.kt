@@ -14,6 +14,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import timber.log.Timber
 
@@ -24,6 +25,7 @@ class SessionService : Service() {
     private var isStarted = false
 
     override fun onBind(intent: Intent): IBinder {
+        Timber.d("onBind")
         if(!isStarted) {
             isStarted = true
             startService(intent)
@@ -65,12 +67,12 @@ class SessionService : Service() {
 
     private fun createNotification(): Notification {
         createNotificationChannel()
-
         return NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.logo)
             .setContentTitle("Training session")
             .setContentTitle("Title of the training and description or reps")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(notificationPendingIntentProvider.provide(this))
             .build()
     }
 
@@ -89,18 +91,17 @@ class SessionService : Service() {
 
     private fun setUpOngoingActivity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) return
+        val contentIntent = notificationPendingIntentProvider.provide(this)
         val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.logo)
+            .setContentIntent(contentIntent)
             .setOngoing(true)
         val status = Status.Builder()
             .addTemplate("Running training")
             .build()
-        val startActivityIntent = Intent(this, SessionService::class.java)
-        val touchIntent = PendingIntent.getService(this, 1, startActivityIntent, PendingIntent.FLAG_IMMUTABLE)
         val ongoingActivity =
             OngoingActivity.Builder(this, ONGOING_ACTIVITY_NOTIFICATION_ID, notificationBuilder)
                 .setStatus(status)
-                .setTouchIntent(touchIntent)
                 .build()
         ongoingActivity.apply(this)
         NotificationManagerCompat.from(this).run {
@@ -112,5 +113,9 @@ class SessionService : Service() {
         private const val NOTIFICATION_CHANNEL_ID = "session_notification_channel"
         private const val NOTIFICATION_ID = 1
         private const val ONGOING_ACTIVITY_NOTIFICATION_ID = 1
+
+
+        // TODO to late inject initialization this provider is  need in onstartcommand or even in oncreate
+        lateinit var notificationPendingIntentProvider: NotificationPendingIntentProvider
     }
 }

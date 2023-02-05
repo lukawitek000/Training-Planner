@@ -25,16 +25,22 @@ class TrainingSessionActivity : FragmentActivity() {
     private val viewModel by viewModels<TrainingSessionViewModel>(factoryProducer = {
         WearableTrainingPlannerViewModelFactory()
     })
-    private val sessionServiceConnector = SessionServiceConnector{
-        val trainingPlan = (viewModel.trainingPlan.value as ResultHandler.Success).value
-        it.setUpService(viewModel.trainingSessionService, trainingPlan)
-    }
+
+    private lateinit var notificationPendingIntentProvider: WearableNotificationPendingIntentProvider
+    private lateinit var sessionServiceConnector: SessionServiceConnector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.TrainingPlannerTheme)
         super.onCreate(savedInstanceState)
         binding = ActivityTrainingSessionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        notificationPendingIntentProvider =
+            WearableNotificationPendingIntentProvider(viewModel.trainingPlanId)
+        sessionServiceConnector =
+            SessionServiceConnector(notificationPendingIntentProvider) {
+                val trainingPlan = (viewModel.trainingPlan.value as ResultHandler.Success).value
+                it.setUpService(viewModel.trainingSessionService, trainingPlan)
+            }
         setUpSwipeToDismiss()
         observeTrainingPlan()
         observeTrainingStatisticsId()
@@ -64,7 +70,7 @@ class TrainingSessionActivity : FragmentActivity() {
 
     private fun observeTrainingPlan() {
         viewModel.trainingPlan.observe(this) {
-            when(it) {
+            when (it) {
                 is ResultHandler.Loading -> showProgressBar()
                 is ResultHandler.Success -> startTrainingSession(it.value)
                 else -> throw IllegalStateException("Unknown state TrainingPlan $it")
@@ -95,7 +101,7 @@ class TrainingSessionActivity : FragmentActivity() {
 
     private fun observeTrainingSessionState() {
         viewModel.trainingSessionState.observe(this) {
-            when(it) {
+            when (it) {
                 is TrainingSessionState.ExerciseState -> showCurrentExercise(it)
                 is TrainingSessionState.RestTimeState -> showRestTime(it)
                 is TrainingSessionState.SummaryState -> viewModel.saveTrainingSessionSummary(it)
