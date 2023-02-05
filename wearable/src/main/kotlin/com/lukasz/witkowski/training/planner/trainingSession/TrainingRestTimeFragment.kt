@@ -48,7 +48,6 @@ class TrainingRestTimeFragment : Fragment() {
 
     private suspend fun observeTimer() {
         viewModel.timer.collectLatest {
-            Timber.d("LWWW timer ${it.toTimerString()}")
             binding.restTimeTimerTv.text = it.toTimerString(false)
             if (it.isZero()) {
                 Timber.d("LWWW timer is 0")

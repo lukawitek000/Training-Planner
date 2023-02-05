@@ -20,6 +20,7 @@ import com.lukasz.witkowski.training.planner.training.presentation.mappers.Train
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class TrainingSessionViewModel(
     private val savedStateHandle: SavedStateHandle,
@@ -54,6 +55,7 @@ class TrainingSessionViewModel(
     }
 
     fun startTrainingSession(trainingPlan: TrainingPlan) {
+        Timber.d("Start training session")
         val state = trainingSessionService.startTraining(TrainingPlanMapper.toDomainTrainingPlan(trainingPlan))
         setSessionState(state)
     }
