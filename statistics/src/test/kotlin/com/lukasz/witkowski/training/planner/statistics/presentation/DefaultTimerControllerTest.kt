@@ -15,7 +15,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-// TODO refactor, a lot of duplicated code for testing here
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultTimerControllerTest {
 

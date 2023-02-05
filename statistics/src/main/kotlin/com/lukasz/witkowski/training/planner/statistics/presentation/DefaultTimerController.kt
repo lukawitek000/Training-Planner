@@ -42,12 +42,13 @@ class DefaultTimerController(
         timerJob = coroutineScope.launch {
             _timer.value = initTime
             _isRunning.value = true
-            while (isRunning.value && _timer.value.timeInMillis >= tickDelayInMillis) {
+            while (isRunning.value) {
                 delay(tickDelayInMillis)
                 _timer.value = Time(timer.value.timeInMillis - tickDelayInMillis)
-            }
-            if (timer.value.timeInMillis < tickDelayInMillis) {
-                _hasFinished.value = true
+                if (timer.value.timeInMillis < tickDelayInMillis) {
+                    _hasFinished.value = true
+                    break
+                }
             }
             _isRunning.value = false
         }
@@ -60,6 +61,7 @@ class DefaultTimerController(
 
     override fun pauseTimer() {
         _isRunning.value = false
+        _hasFinished.value = false
         timerJob?.cancel()
     }
 
@@ -69,7 +71,6 @@ class DefaultTimerController(
 
     override fun resetTimer() {
         stopTimer()
-        _hasFinished.value = false
     }
 
     override fun setTimer(startTime: Time) {
