@@ -39,6 +39,7 @@ androidx-roomCompiler = { module = "androidx.room:room-compiler", version.ref = 
 androidx-recyclerView = { module = "androidx.recyclerview:recyclerview", version = "1.2.1" }
 androidx-percentLayout = { module = "androidx.percentlayout:percentlayout", version = "1.0.0" }
 androidx-wear = { module = "androidx.wear:wear", version = "1.2.0" }
+androidx-wearOngoing = { module = "androidx.wear:wear-ongoing", version = "1.0.0" }
 androidx-activityKtx = { module = "androidx.activity:activity-ktx", version = "1.6.0" }
 androidx-fragmentKtx = { module = "androidx.fragment:fragment-ktx", version = "1.5.5" }
 

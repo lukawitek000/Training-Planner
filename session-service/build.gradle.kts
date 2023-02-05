@@ -11,5 +11,6 @@ dependencies {
     implementation(projects.training)
 
     implementation(libs.androidx.core)
+    implementation(libs.androidx.wearOngoing)
     implementation(libs.timber)
 }
