@@ -2,7 +2,6 @@ package com.lukasz.witkowski.training.planner.statistics.presentation
 
 import com.lukasz.witkowski.shared.time.Time
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -16,7 +15,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class DefaultTimerControllerTest {
+class CoroutinesTimerControllerTest {
 
     private val scheduler = TestCoroutineScheduler()
     private val testDispatcher = StandardTestDispatcher(scheduler)
@@ -251,7 +250,7 @@ class DefaultTimerControllerTest {
     }
 
     private fun givenTimerController(tickDelayInMillis: Long = SECOND_IN_MILLIS) {
-        timerController = DefaultTimerController(tickDelayInMillis, testDispatcher)
+        timerController = CoroutinesTimerController(tickDelayInMillis, testDispatcher)
     }
 
     companion object {

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class DefaultTimerController(
+class CoroutinesTimerController(
     private val tickDelayInMillis: Long = DELAY_IN_MILLIS,
     timerDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : TimerController {
