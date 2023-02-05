@@ -34,7 +34,7 @@ private fun createTrainingExercisesWithDifferentSets(): List<TrainingExercise> {
         repetitions = 10,
         sets = 3,
         time = Time(10000L),
-        restTime = Time.NONE,
+        restTime = Time.ZERO,
         exercise = createDummyExercise()
     )
     val exercise3 = TrainingExercise(
