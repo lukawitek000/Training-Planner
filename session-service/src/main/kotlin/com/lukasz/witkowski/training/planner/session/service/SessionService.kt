@@ -21,8 +21,13 @@ class SessionService : Service() {
 
     private lateinit var trainingSessionService: TrainingSessionService
     private val binder = LocalBinder()
+    private var isStarted = false
 
     override fun onBind(intent: Intent): IBinder {
+        if(!isStarted) {
+            isStarted = true
+            startService(intent)
+        }
         return binder
     }
 
@@ -32,15 +37,20 @@ class SessionService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.d("onStartCommand")
-        return super.onStartCommand(intent, flags, startId)
+        val notification = createNotification()
+        startForeground(NOTIFICATION_ID, notification)
+        setUpOngoingActivity()
+        return START_STICKY
     }
 
     override fun onCreate() {
         super.onCreate()
         Timber.d("onCreate")
-        val notification = createNotification()
-        startForeground(NOTIFICATION_ID, notification)
-        setUpOngoingActivity()
+    }
+
+    override fun onUnbind(intent: Intent?): Boolean {
+        Timber.d("onUnbind")
+        return super.onUnbind(intent)
     }
 
     override fun onDestroy() {
