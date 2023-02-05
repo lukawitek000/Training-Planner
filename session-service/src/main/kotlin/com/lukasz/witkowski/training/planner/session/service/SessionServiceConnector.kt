@@ -6,8 +6,9 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
+import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 
-class SessionServiceConnector {
+class SessionServiceConnector(serviceConnectedCallback: (SessionService) -> Unit) {
 
     private var sessionService: SessionService? = null
     var serviceConnected = false
@@ -17,12 +18,12 @@ class SessionServiceConnector {
             val binder = service as SessionService.LocalBinder
             sessionService = binder.getService()
             serviceConnected = true
+            serviceConnectedCallback(sessionService!!)
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
             serviceConnected = false
         }
-
     }
 
     // on start
@@ -40,9 +41,7 @@ class SessionServiceConnector {
 
     }
 
-    fun setTrainingSessionService(trainingSessionService: TrainingSessionService) {
-
+    fun setUpService(trainingSessionService: TrainingSessionService, trainingPlan: TrainingPlan) {
+        sessionService!!.setUpService(trainingSessionService, trainingPlan)
     }
-
-
 }

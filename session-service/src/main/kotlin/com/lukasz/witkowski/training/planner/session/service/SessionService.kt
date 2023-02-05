@@ -4,17 +4,19 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
+import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import timber.log.Timber
 
 class SessionService : Service() {
+
+    private lateinit var trainingSessionService: TrainingSessionService
     private val binder = LocalBinder()
 
     override fun onBind(intent: Intent): IBinder {
@@ -37,8 +39,9 @@ class SessionService : Service() {
         startForeground(NOTIFICATION_ID, notification)
     }
 
-    fun trainingId(): TrainingPlanId {
-        return TrainingPlanId("TestId")
+    fun setUpService(trainingSessionService: TrainingSessionService, trainingPlan: TrainingPlan) {
+        Timber.d("Set training session $trainingPlan")
+        this.trainingSessionService = trainingSessionService
     }
 
     private fun createNotification(): Notification {

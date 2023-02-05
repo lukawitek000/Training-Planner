@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 class TrainingSessionViewModel(
     private val savedStateHandle: SavedStateHandle,
     private val trainingPlanService: TrainingPlanService,
-    private val trainingSessionService: TrainingSessionService,
+    val trainingSessionService: TrainingSessionService,
     private val trainingStatisticsService: TrainingStatisticsService
 ) : ViewModel() {
 

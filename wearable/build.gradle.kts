@@ -41,6 +41,7 @@ android {
 dependencies {
     implementation(projects.training)
     implementation(projects.statistics)
+    implementation(projects.sessionService)
 
     implementation(libs.google.playServicesWearable)
     implementation(libs.androidx.wear)

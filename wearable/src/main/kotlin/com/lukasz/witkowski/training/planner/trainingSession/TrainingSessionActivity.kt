@@ -12,6 +12,7 @@ import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSessionBinding
+import com.lukasz.witkowski.training.planner.session.service.SessionServiceConnector
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.summary.TrainingSummaryActivity
@@ -24,6 +25,10 @@ class TrainingSessionActivity : FragmentActivity() {
     private val viewModel by viewModels<TrainingSessionViewModel>(factoryProducer = {
         WearableTrainingPlannerViewModelFactory()
     })
+    private val sessionServiceConnector = SessionServiceConnector{
+        val trainingPlan = (viewModel.trainingPlan.value as ResultHandler.Success).value
+        it.setUpService(viewModel.trainingSessionService, trainingPlan)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.TrainingPlannerTheme)
@@ -36,6 +41,16 @@ class TrainingSessionActivity : FragmentActivity() {
         observeTrainingSessionState()
         viewModel.fetchTrainingPlan()
         Timber.d("LWWW training plan id ${viewModel.trainingPlanId}")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        sessionServiceConnector.bindService(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        sessionServiceConnector.unbindService(this)
     }
 
     private fun setUpSwipeToDismiss() {
