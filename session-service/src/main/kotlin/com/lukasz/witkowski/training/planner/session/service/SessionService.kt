@@ -6,7 +6,7 @@ import android.os.Binder
 import android.os.IBinder
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 
-class TrainingSessionService: Service() {
+class SessionService: Service() {
     private val binder = LocalBinder()
 
     fun trainingId(): TrainingPlanId {
@@ -18,6 +18,6 @@ class TrainingSessionService: Service() {
     }
 
     inner class LocalBinder: Binder() {
-        fun getService(): TrainingSessionService = this@TrainingSessionService
+        fun getService(): SessionService = this@SessionService
     }
 }
