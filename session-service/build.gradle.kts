@@ -9,4 +9,7 @@ android {
 dependencies {
     implementation(projects.statistics)
     implementation(projects.training)
+
+    implementation(libs.androidx.core)
+    implementation(libs.timber)
 }

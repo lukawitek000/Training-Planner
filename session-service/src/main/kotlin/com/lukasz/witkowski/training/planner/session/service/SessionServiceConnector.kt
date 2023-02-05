@@ -25,6 +25,7 @@ class SessionServiceConnector {
 
     }
 
+    // on start
     fun bindService(context: Context) {
         val intent = Intent(
             context.applicationContext,
@@ -33,6 +34,7 @@ class SessionServiceConnector {
         context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }
 
+    // on stop
     fun unbindService(context: Context) {
         context.unbindService(connection)
 
