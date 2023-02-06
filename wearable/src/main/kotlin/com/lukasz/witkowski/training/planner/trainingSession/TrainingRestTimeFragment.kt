@@ -9,6 +9,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingRestTimeBinding
+import com.lukasz.witkowski.training.planner.session.service.SessionServiceConnector
+import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.utils.launchInStartedState
 import kotlinx.coroutines.flow.collectLatest
@@ -21,20 +23,33 @@ class TrainingRestTimeFragment : Fragment() {
     private val viewModel by viewModels<TimerViewModel>(factoryProducer = {
         WearableTrainingPlannerViewModelFactory()
     })
+    private val serviceConnector = SessionServiceConnector()
+
+    private lateinit var timerController: TimerController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentTrainingRestTimeBinding.inflate(layoutInflater, container, false)
-        setUpSkipButton()
-        observeTrainingExercise()
+        serviceConnector.bindService(requireContext())
+        viewModel.timerController.observe(viewLifecycleOwner) {
+            timerController = it
+            setUpSkipButton()
+            observeTrainingExercise()
+        }
+        viewModel.provideTimerController(serviceConnector::restTimeTimer)
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        serviceConnector.unbindService(requireContext())
     }
 
     private fun setUpSkipButton() {
         binding.skipRestTimeTv.setOnClickListener {
-            viewModel.stopTimer()
+            timerController.stopTimer()
             skipRestTime()
         }
     }
@@ -44,20 +59,20 @@ class TrainingRestTimeFragment : Fragment() {
             if(it is TrainingSessionState.RestTimeState) {
                 observeTimer()
                 observeTimerFinished()
-                viewModel.setTimer(it.time)
-                viewModel.startTimer()
+                timerController.setTimer(it.time)
+                timerController.startTimer()
             }
         }
     }
 
     private fun observeTimer() = launchInStartedState {
-        viewModel.timer.collectLatest {
+        timerController.timer.collectLatest {
             binding.restTimeTimerTv.text = it.toTimerString(false)
         }
     }
 
     private fun observeTimerFinished() = launchInStartedState {
-        viewModel.hasFinished.collectLatest {
+        timerController.hasFinished.collectLatest {
             if (it) {
                 skipRestTime()
             }

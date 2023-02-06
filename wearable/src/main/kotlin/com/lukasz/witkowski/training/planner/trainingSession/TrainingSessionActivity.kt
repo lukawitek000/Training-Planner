@@ -26,7 +26,6 @@ class TrainingSessionActivity : FragmentActivity() {
         WearableTrainingPlannerViewModelFactory()
     })
 
-    private lateinit var notificationPendingIntentProvider: WearableNotificationPendingIntentProvider
     private lateinit var sessionServiceConnector: SessionServiceConnector
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,10 +33,9 @@ class TrainingSessionActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTrainingSessionBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        notificationPendingIntentProvider =
-            WearableNotificationPendingIntentProvider(viewModel.trainingPlanId)
-        sessionServiceConnector =
-            SessionServiceConnector(notificationPendingIntentProvider)
+        sessionServiceConnector = SessionServiceConnector().apply {
+            notificationPendingIntentProvider = WearableNotificationPendingIntentProvider(viewModel.trainingPlanId)
+        }
         setUpSwipeToDismiss()
         observeTrainingPlan()
         observeTrainingStatisticsId()

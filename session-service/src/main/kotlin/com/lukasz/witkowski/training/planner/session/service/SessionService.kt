@@ -15,6 +15,7 @@ import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.statistics.di.StatisticsContainer
+import com.lukasz.witkowski.training.planner.statistics.presentation.CoroutinesTimerController
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import timber.log.Timber
@@ -23,6 +24,9 @@ class SessionService : Service() {
 
     private val trainingSessionService: TrainingSessionService by lazy {
         StatisticsContainer.getInstance(applicationContext).trainingSessionService
+    }
+    val restTimeTimer by lazy {
+        RestTimeTimer(CoroutinesTimerController())
     }
     private val binder = LocalBinder()
     private var isStarted = false
@@ -70,7 +74,7 @@ class SessionService : Service() {
             .setContentTitle("Training session")
             .setContentTitle("Title of the training and description or reps")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setContentIntent(notificationPendingIntentProvider.provide(this))
+            .setContentIntent(notificationPendingIntentProvider!!.provide(this))
             .build()
     }
 
@@ -89,7 +93,7 @@ class SessionService : Service() {
 
     private fun setUpOngoingActivity() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) return
-        val contentIntent = notificationPendingIntentProvider.provide(this)
+        val contentIntent = notificationPendingIntentProvider!!.provide(this)
         val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.logo)
             .setContentIntent(contentIntent)
@@ -114,6 +118,6 @@ class SessionService : Service() {
 
 
         // TODO to late inject initialization this provider is  need in onstartcommand or even in oncreate
-        lateinit var notificationPendingIntentProvider: NotificationPendingIntentProvider
+        var notificationPendingIntentProvider: NotificationPendingIntentProvider? = null
     }
 }
