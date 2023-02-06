@@ -14,13 +14,16 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
+import com.lukasz.witkowski.training.planner.statistics.di.StatisticsContainer
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import timber.log.Timber
 
 class SessionService : Service() {
 
-    private lateinit var trainingSessionService: TrainingSessionService
+    private val trainingSessionService: TrainingSessionService by lazy {
+        StatisticsContainer.getInstance(applicationContext).trainingSessionService
+    }
     private val binder = LocalBinder()
     private var isStarted = false
 
@@ -58,11 +61,6 @@ class SessionService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         Timber.d("onDestroy")
-    }
-
-    fun setUpService(trainingSessionService: TrainingSessionService, trainingPlan: TrainingPlan) {
-        Timber.d("Set training session $trainingPlan")
-        this.trainingSessionService = trainingSessionService
     }
 
     private fun createNotification(): Notification {

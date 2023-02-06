@@ -37,10 +37,7 @@ class TrainingSessionActivity : FragmentActivity() {
         notificationPendingIntentProvider =
             WearableNotificationPendingIntentProvider(viewModel.trainingPlanId)
         sessionServiceConnector =
-            SessionServiceConnector(notificationPendingIntentProvider) {
-                val trainingPlan = (viewModel.trainingPlan.value as ResultHandler.Success).value
-                it.setUpService(viewModel.trainingSessionService, trainingPlan)
-            }
+            SessionServiceConnector(notificationPendingIntentProvider)
         setUpSwipeToDismiss()
         observeTrainingPlan()
         observeTrainingStatisticsId()

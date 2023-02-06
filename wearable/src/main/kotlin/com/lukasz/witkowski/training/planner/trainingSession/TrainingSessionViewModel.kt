@@ -12,13 +12,13 @@ import com.lukasz.witkowski.training.planner.statistics.application.TrainingSess
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
-import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState as DomainSessionState
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -47,17 +47,27 @@ class TrainingSessionViewModel(
     private val _trainingStatisticsId = MutableLiveData<TrainingStatisticsId>()
     val trainingStatisticsId: LiveData<TrainingStatisticsId> = _trainingStatisticsId
 
+    init {
+        viewModelScope.launch {
+            trainingSessionService.trainingSessionState.collectLatest {
+                Timber.d("Session collected latest state $it")
+                _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(it)
+            }
+        }
+    }
+
     fun fetchTrainingPlan() {
+        if (trainingSessionState.value !is TrainingSessionState.IdleState) return
         viewModelScope.launch {
             _trainingPlan.value = ResultHandler.Loading
-            _trainingPlan.value = ResultHandler.Success(dummyTrainingsList.first { it.id == trainingPlanId })
+            _trainingPlan.value =
+                ResultHandler.Success(dummyTrainingsList.first { it.id == trainingPlanId })
         }
     }
 
     fun startTrainingSession(trainingPlan: TrainingPlan) {
         Timber.d("Start training session")
-        val state = trainingSessionService.startTraining(TrainingPlanMapper.toDomainTrainingPlan(trainingPlan))
-        setSessionState(state)
+        trainingSessionService.startTraining(TrainingPlanMapper.toDomainTrainingPlan(trainingPlan))
     }
 
     fun setCurrentTrainingExercise(trainingExercise: TrainingExercise) {
@@ -65,17 +75,11 @@ class TrainingSessionViewModel(
     }
 
     fun completed() {
-        val state = trainingSessionService.completed()
-        setSessionState(state)
+        trainingSessionService.completed()
     }
 
     fun skip() {
-        val state = trainingSessionService.skip()
-        setSessionState(state)
-    }
-
-    private fun setSessionState(state: DomainSessionState) {
-        _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(state)
+        trainingSessionService.skip()
     }
 
     fun saveTrainingSessionSummary(summaryState: TrainingSessionState.SummaryState) {

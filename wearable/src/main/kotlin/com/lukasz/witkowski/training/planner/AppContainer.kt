@@ -7,5 +7,5 @@ import com.lukasz.witkowski.training.planner.training.di.TrainingContainer
 
 class AppContainer(private val context: Context) {
     val trainingContainer = TrainingContainer.getInstance(context)
-    val statisticsContainer = StatisticsContainer(context)
+    val statisticsContainer = StatisticsContainer.getInstance(context)
 }

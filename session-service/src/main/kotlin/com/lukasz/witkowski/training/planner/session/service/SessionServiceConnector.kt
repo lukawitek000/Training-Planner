@@ -8,7 +8,7 @@ import android.os.IBinder
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 
-class SessionServiceConnector(private val notificationPendingIntentProvider: NotificationPendingIntentProvider, serviceConnectedCallback: (SessionService) -> Unit) {
+class SessionServiceConnector(private val notificationPendingIntentProvider: NotificationPendingIntentProvider) {
 
     private var sessionService: SessionService? = null
     var serviceConnected = false
@@ -18,7 +18,6 @@ class SessionServiceConnector(private val notificationPendingIntentProvider: Not
             val binder = service as SessionService.LocalBinder
             sessionService = binder.getService()
             serviceConnected = true
-            serviceConnectedCallback(sessionService!!)
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -39,10 +38,5 @@ class SessionServiceConnector(private val notificationPendingIntentProvider: Not
     // on stop
     fun unbindService(context: Context) {
         context.unbindService(connection)
-
-    }
-
-    fun setUpService(trainingSessionService: TrainingSessionService, trainingPlan: TrainingPlan) {
-        sessionService!!.setUpService(trainingSessionService, trainingPlan)
     }
 }
