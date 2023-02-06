@@ -39,4 +39,8 @@ class SessionServiceConnector(private val notificationPendingIntentProvider: Not
     fun unbindService(context: Context) {
         context.unbindService(connection)
     }
+
+    fun stopService() {
+        sessionService!!.stopSelf()
+    }
 }

@@ -38,4 +38,6 @@ class TrainingSessionService(
         trainingSession.stop()
         _trainingSessionState.value = TrainingSessionState.IdleState
     }
+
+    fun isTrainingSessionStarted() = trainingSessionState.value !is TrainingSessionState.IdleState
 }

@@ -100,9 +100,12 @@ class TrainingSessionActivity : FragmentActivity() {
         viewModel.trainingSessionState.observe(this) {
             when (it) {
                 is TrainingSessionState.ExerciseState -> showCurrentExercise(it)
-                is TrainingSessionState.RestTimeState -> showRestTime(it)
-                is TrainingSessionState.SummaryState -> viewModel.saveTrainingSessionSummary(it)
-                is TrainingSessionState.IdleState -> throw IllegalStateException("Wrong training session state $it")
+                is TrainingSessionState.RestTimeState -> showRestTime()
+                is TrainingSessionState.SummaryState -> {
+                    showProgressBar()
+                    viewModel.saveTrainingSessionSummary(it)
+                }
+                is TrainingSessionState.IdleState -> showProgressBar()
             }
         }
     }
@@ -114,7 +117,7 @@ class TrainingSessionActivity : FragmentActivity() {
         replaceFragment(fragment)
     }
 
-    private fun showRestTime(state: TrainingSessionState.RestTimeState) {
+    private fun showRestTime() {
         Timber.d("LWWW show rest time fragment")
         val fragment = TrainingRestTimeFragment.newInstance()
         replaceFragment(fragment)
@@ -128,6 +131,7 @@ class TrainingSessionActivity : FragmentActivity() {
     }
 
     private fun showTrainingSessionSummary(id: TrainingStatisticsId) {
+        sessionServiceConnector.stopService()
         val intent = Intent(this, TrainingSummaryActivity::class.java)
         intent.putExtra(TRAINING_STATISTICS_ID, id.value.toString())
         startActivity(intent)

@@ -18,6 +18,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -57,7 +58,7 @@ class TrainingSessionViewModel(
     }
 
     fun fetchTrainingPlan() {
-        if (trainingSessionState.value !is TrainingSessionState.IdleState) return
+        if (trainingSessionService.isTrainingSessionStarted()) return
         viewModelScope.launch {
             _trainingPlan.value = ResultHandler.Loading
             _trainingPlan.value =
