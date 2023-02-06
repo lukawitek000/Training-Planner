@@ -18,6 +18,7 @@ class SessionServiceConnector {
     var serviceConnected = false
     var notificationPendingIntentProvider: NotificationPendingIntentProvider? = null
     private var restTimeTimerController: (TimerController) -> Unit = {}
+    private var exerciseTimerController: (TimerController) -> Unit = {}
 
     private val connection = object: ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -26,7 +27,7 @@ class SessionServiceConnector {
             serviceConnected = true
             sessionService?.let {
                 restTimeTimerController(it.restTimeTimer)
-
+                exerciseTimerController(it.exerciseTimer)
             }
         }
 
@@ -56,5 +57,9 @@ class SessionServiceConnector {
 
     fun restTimeTimerController(callback: (TimerController) -> Unit) {
         this.restTimeTimerController = callback
+    }
+
+    fun exerciseTimerController(callback: (TimerController) -> Unit) {
+        this.exerciseTimerController = callback
     }
 }

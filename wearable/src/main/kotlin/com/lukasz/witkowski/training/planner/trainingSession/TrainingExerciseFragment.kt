@@ -7,11 +7,11 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingExerciseBinding
+import com.lukasz.witkowski.training.planner.session.service.SessionServiceConnector
+import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.utils.launchInStartedState
@@ -21,9 +21,8 @@ class TrainingExerciseFragment : Fragment() {
 
     private lateinit var binding: FragmentTrainingExerciseBinding
     private val sharedViewModel by activityViewModels<TrainingSessionViewModel>()
-    private val viewModel by viewModels<TimerViewModel>(factoryProducer = {
-        WearableTrainingPlannerViewModelFactory()
-    })
+    private val serviceConnector = SessionServiceConnector()
+    private lateinit var timerController: TimerController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,16 +30,27 @@ class TrainingExerciseFragment : Fragment() {
     ): View {
         binding = FragmentTrainingExerciseBinding.inflate(inflater, container, false)
         observeTrainingExercise()
-        setUpButtonsListeners()
+        serviceConnector.exerciseTimerController {
+            timerController = it
+            setUpButtonsListeners()
+            // this methods are needed only if the time is set
+            setUpTimerIcon()
+            observeTimer()
+        }
+        serviceConnector.bindService(requireContext())
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        serviceConnector.unbindService(requireContext())
+    }
 
     private fun observeTrainingExercise() {
         sharedViewModel.trainingSessionState.observe(viewLifecycleOwner) {
             if (it is TrainingSessionState.ExerciseState) {
                 populateUi(it.currentExercise)
-                setUpTimer(it.currentExercise)
+                setUpTimerView(it.currentExercise.time)
             }
         }
     }
@@ -53,24 +63,8 @@ class TrainingExerciseFragment : Fragment() {
         }
     }
 
-    private fun setUpTimer(trainingExercise: TrainingExercise) {
-        setUpTimerView(trainingExercise.time)
-        if (trainingExercise.time.isZero()) return
-        observeTimer()
-        observeTimerHasFinished()
-        viewModel.setTimer(trainingExercise.time)
-    }
-
     private fun setUpTimerView(time: Time) {
-        binding.apply {
-            if (time.isNotZero()) {
-                timerLayout.visibility = View.VISIBLE
-                setTimeOnTimer(time)
-                setUpTimerIcon()
-            } else {
-                timerLayout.visibility = View.GONE
-            }
-        }
+        binding.timerLayout.visibility = if (time.isZero()) View.GONE else View.VISIBLE
     }
 
     private fun setTimeOnTimer(time: Time) {
@@ -78,7 +72,7 @@ class TrainingExerciseFragment : Fragment() {
     }
 
     private fun setUpTimerIcon() = launchInStartedState {
-        viewModel.isRunning.collectLatest {
+        timerController.isRunning.collectLatest {
             val icon = if (it) R.drawable.ic_pause else R.drawable.ic_play_arrow
             binding.startPauseTimerBtn.setImageDrawable(
                 ContextCompat.getDrawable(
@@ -90,20 +84,10 @@ class TrainingExerciseFragment : Fragment() {
     }
 
     private fun observeTimer() = launchInStartedState {
-        viewModel.timer.collectLatest {
+        timerController.timer.collectLatest {
             setTimeOnTimer(it)
         }
     }
-
-
-    private fun observeTimerHasFinished() = launchInStartedState {
-        viewModel.hasFinished.collectLatest {
-            if (it) {
-                viewModel.resetTimer()
-            }
-        }
-    }
-
 
     private fun setUpButtonsListeners() {
         setUpCompletedButton()
@@ -125,14 +109,15 @@ class TrainingExerciseFragment : Fragment() {
         }
     }
 
-    private fun stopTimer() = viewModel.stopTimer()
+    private fun stopTimer() = timerController.stopTimer()
 
     private fun setUpTimerControlButton() {
         binding.startPauseTimerBtn.setOnClickListener {
-            if (viewModel.isRunning.value) {
-                viewModel.pauseTimer()
+            // TODO consider adding some toggle method to timer class
+            if (timerController.isRunning.value) {
+                timerController.pauseTimer()
             } else {
-                viewModel.resumeTimer()
+                timerController.resumeTimer()
             }
         }
     }

@@ -34,12 +34,13 @@ class SessionService : Service() {
         StatisticsContainer.getInstance(applicationContext).trainingSessionService
     }
     val restTimeTimer by lazy {
-        RestTimeTimer(CoroutinesTimerController())
+        CoroutinesTimerController()
+    }
+    val exerciseTimer by lazy {
+        CoroutinesTimerController()
     }
     private val coroutineScope =
         CoroutineScope(Dispatchers.Default + CoroutineName("SessionService"))
-
-
 
     private val binder = LocalBinder()
     private var isStarted = false
@@ -70,8 +71,8 @@ class SessionService : Service() {
         Timber.d("onCreate")
         observeTrainingSessionState()
         observeRestTimeTimer()
+        observeExerciseTimer()
     }
-
 
     private fun observeTrainingSessionState() = coroutineScope.launch {
         trainingSessionService.trainingSessionState.map {
@@ -80,13 +81,27 @@ class SessionService : Service() {
             )
         }.collectLatest {
             when (it) {
-                is TrainingSessionState.ExerciseState -> Unit
+                is TrainingSessionState.ExerciseState -> handleExerciseState(it)
                 is TrainingSessionState.RestTimeState -> handleRestTimeState(it)
                 is TrainingSessionState.SummaryState -> Unit
                 is TrainingSessionState.IdleState -> Unit
             }
         }
     }
+
+    private fun handleExerciseState(exerciseState: TrainingSessionState.ExerciseState) {
+        exerciseTimer.setTimer(exerciseState.currentExercise.time)
+    }
+
+
+    private fun observeExerciseTimer() = coroutineScope.launch {
+        exerciseTimer.hasFinished.collectLatest {
+            if (it && isActive) {
+                exerciseTimer.resetTimer()
+            }
+        }
+    }
+
     // TODO Would be good to cancel scope when the app leaves rest time state
     private fun observeRestTimeTimer() = coroutineScope.launch {
         restTimeTimer.hasFinished.collectLatest {

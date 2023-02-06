@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.lukasz.witkowski.training.planner.summary.TrainingSummaryViewModel
-import com.lukasz.witkowski.training.planner.trainingSession.TimerViewModel
 import com.lukasz.witkowski.training.planner.trainingSession.TrainingSessionViewModel
 import com.lukasz.witkowski.training.planner.traininglist.TrainingPlansListViewModel
 
@@ -26,10 +25,6 @@ class WearableTrainingPlannerViewModelFactory : ViewModelProvider.Factory {
                     statisticsContainer.trainingSessionService,
                     statisticsContainer.trainingStatisticsService
                 )
-            }
-            TimerViewModel::class.java -> {
-                val statisticsContainer = statisticsContainer(extras)
-                TimerViewModel(statisticsContainer.timerController())
             }
             TrainingSummaryViewModel::class.java -> {
                 val statisticsContainer = statisticsContainer(extras)
