@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingRestTimeBinding
+import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.utils.launchInStartedState
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
@@ -26,51 +27,44 @@ class TrainingRestTimeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentTrainingRestTimeBinding.inflate(layoutInflater, container, false)
-        observeTrainingExercise()
         setUpSkipButton()
+        observeTrainingExercise()
         return binding.root
-    }
-
-    private fun observeTrainingExercise() {
-        sharedViewModel.currentExercise.observe(viewLifecycleOwner) {
-            viewModel.setTimer(it.restTime)
-            viewModel.startTimer()
-            setUpTimerView()
-        }
-    }
-
-    private fun setUpTimerView() {
-        launchInStartedState {
-            observeTimer()
-            observeTimerFinished()
-        }
-    }
-
-    private suspend fun observeTimer() {
-        viewModel.timer.collectLatest {
-            binding.restTimeTimerTv.text = it.toTimerString(false)
-            if (it.isZero()) {
-                Timber.d("LWWW timer is 0")
-                sharedViewModel.skip()
-            }
-        }
     }
 
     private fun setUpSkipButton() {
         binding.skipRestTimeTv.setOnClickListener {
             viewModel.stopTimer()
-            sharedViewModel.skip()
+            skipRestTime()
         }
     }
 
-    private suspend fun observeTimerFinished() {
-        viewModel.hasFinished.collectLatest {
-            Timber.d("LWWW has finished $it") // TODO never called
-            if (it) {
-                sharedViewModel.skip()
+    private fun observeTrainingExercise() {
+        sharedViewModel.trainingSessionState.observe(viewLifecycleOwner) {
+            if(it is TrainingSessionState.RestTimeState) {
+                observeTimer()
+                observeTimerFinished()
+                viewModel.setTimer(it.time)
+                viewModel.startTimer()
             }
         }
     }
+
+    private fun observeTimer() = launchInStartedState {
+        viewModel.timer.collectLatest {
+            binding.restTimeTimerTv.text = it.toTimerString(false)
+        }
+    }
+
+    private fun observeTimerFinished() = launchInStartedState {
+        viewModel.hasFinished.collectLatest {
+            if (it) {
+                skipRestTime()
+            }
+        }
+    }
+
+    private fun skipRestTime() = sharedViewModel.skip()
 
     companion object {
         fun newInstance(): TrainingRestTimeFragment {

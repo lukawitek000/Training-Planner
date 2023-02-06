@@ -12,6 +12,7 @@ import com.lukasz.witkowski.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingExerciseBinding
+import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.utils.launchInStartedState
 import kotlinx.coroutines.flow.collectLatest
@@ -36,9 +37,11 @@ class TrainingExerciseFragment : Fragment() {
 
 
     private fun observeTrainingExercise() {
-        sharedViewModel.currentExercise.observe(viewLifecycleOwner) {
-            populateUi(it)
-            setUpTimer(it)
+        sharedViewModel.trainingSessionState.observe(viewLifecycleOwner) {
+            if (it is TrainingSessionState.ExerciseState) {
+                populateUi(it.currentExercise)
+                setUpTimer(it.currentExercise)
+            }
         }
     }
 
@@ -48,7 +51,14 @@ class TrainingExerciseFragment : Fragment() {
             repetitionsTv.text = getString(R.string.reps_text, trainingExercise.repetitions)
             setsTv.text = getString(R.string.sets_text, trainingExercise.sets)
         }
+    }
+
+    private fun setUpTimer(trainingExercise: TrainingExercise) {
         setUpTimerView(trainingExercise.time)
+        if (trainingExercise.time.isZero()) return
+        observeTimer()
+        observeTimerHasFinished()
+        viewModel.setTimer(trainingExercise.time)
     }
 
     private fun setUpTimerView(time: Time) {
@@ -56,26 +66,44 @@ class TrainingExerciseFragment : Fragment() {
             if (time.isNotZero()) {
                 timerLayout.visibility = View.VISIBLE
                 setTimeOnTimer(time)
+                setUpTimerIcon()
             } else {
                 timerLayout.visibility = View.GONE
             }
         }
-        setUpTimerIcon()
     }
 
-    private fun setUpTimerIcon() {
-        launchInStartedState {
-            viewModel.isRunning.collectLatest {
-                val icon = if (it) R.drawable.ic_pause else R.drawable.ic_play_arrow
-                binding.startPauseTimerBtn.setImageDrawable(
-                    ContextCompat.getDrawable(
-                        requireContext(),
-                        icon
-                    )
+    private fun setTimeOnTimer(time: Time) {
+        binding.timerTv.text = time.toTimerString(false)
+    }
+
+    private fun setUpTimerIcon() = launchInStartedState {
+        viewModel.isRunning.collectLatest {
+            val icon = if (it) R.drawable.ic_pause else R.drawable.ic_play_arrow
+            binding.startPauseTimerBtn.setImageDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    icon
                 )
+            )
+        }
+    }
+
+    private fun observeTimer() = launchInStartedState {
+        viewModel.timer.collectLatest {
+            setTimeOnTimer(it)
+        }
+    }
+
+
+    private fun observeTimerHasFinished() = launchInStartedState {
+        viewModel.hasFinished.collectLatest {
+            if (it) {
+                viewModel.resetTimer()
             }
         }
     }
+
 
     private fun setUpButtonsListeners() {
         setUpCompletedButton()
@@ -104,32 +132,9 @@ class TrainingExerciseFragment : Fragment() {
             if (viewModel.isRunning.value) {
                 viewModel.pauseTimer()
             } else {
-                viewModel.startTimer()
+                viewModel.resumeTimer()
             }
         }
-    }
-
-    private fun setUpTimer(trainingExercise: TrainingExercise) {
-        if (trainingExercise.time.isZero()) return
-        observeTimer()
-        viewModel.setTimer(trainingExercise.time)
-    }
-
-    private fun observeTimer() {
-        launchInStartedState {
-            viewModel.timer.collectLatest {
-                setTimeOnTimer(it)
-                if(it.isZero()) {
-                    val time = sharedViewModel.currentExercise.value!!.time
-                    viewModel.setTimer(time)
-                    setUpTimerView(time)
-                }
-            }
-        }
-    }
-
-    private fun setTimeOnTimer(time: Time) {
-        binding.timerTv.text = time.toTimerString(false)
     }
 
     companion object {
