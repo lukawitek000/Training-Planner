@@ -3,7 +3,6 @@ package com.lukasz.witkowski.training.planner.session.service
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
@@ -16,8 +15,17 @@ import androidx.wear.ongoing.Status
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.statistics.di.StatisticsContainer
 import com.lukasz.witkowski.training.planner.statistics.presentation.CoroutinesTimerController
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
+import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
+import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class SessionService : Service() {
@@ -28,12 +36,17 @@ class SessionService : Service() {
     val restTimeTimer by lazy {
         RestTimeTimer(CoroutinesTimerController())
     }
+    private val coroutineScope =
+        CoroutineScope(Dispatchers.Default + CoroutineName("SessionService"))
+
+
+
     private val binder = LocalBinder()
     private var isStarted = false
 
     override fun onBind(intent: Intent): IBinder {
         Timber.d("onBind")
-        if(!isStarted) {
+        if (!isStarted) {
             isStarted = true
             startService(intent)
         }
@@ -55,6 +68,37 @@ class SessionService : Service() {
     override fun onCreate() {
         super.onCreate()
         Timber.d("onCreate")
+        observeTrainingSessionState()
+        observeRestTimeTimer()
+    }
+
+
+    private fun observeTrainingSessionState() = coroutineScope.launch {
+        trainingSessionService.trainingSessionState.map {
+            TrainingSessionStateMapper.toPresentation(
+                it
+            )
+        }.collectLatest {
+            when (it) {
+                is TrainingSessionState.ExerciseState -> Unit
+                is TrainingSessionState.RestTimeState -> handleRestTimeState(it)
+                is TrainingSessionState.SummaryState -> Unit
+                is TrainingSessionState.IdleState -> Unit
+            }
+        }
+    }
+    // TODO Would be good to cancel scope when the app leaves rest time state
+    private fun observeRestTimeTimer() = coroutineScope.launch {
+        restTimeTimer.hasFinished.collectLatest {
+            if (it && isActive) {
+                trainingSessionService.skip()
+            }
+        }
+    }
+
+    private fun handleRestTimeState(state: TrainingSessionState.RestTimeState) {
+        restTimeTimer.setTimer(state.time)
+        restTimeTimer.startTimer()
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
@@ -63,6 +107,7 @@ class SessionService : Service() {
     }
 
     override fun onDestroy() {
+        coroutineScope.cancel()
         super.onDestroy()
         Timber.d("onDestroy")
     }

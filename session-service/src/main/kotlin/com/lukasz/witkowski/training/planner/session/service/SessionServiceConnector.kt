@@ -17,11 +17,17 @@ class SessionServiceConnector {
     private var sessionService: SessionService? = null
     var serviceConnected = false
     var notificationPendingIntentProvider: NotificationPendingIntentProvider? = null
+    private var restTimeTimerController: (TimerController) -> Unit = {}
+
     private val connection = object: ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val binder = service as SessionService.LocalBinder
             sessionService = binder.getService()
             serviceConnected = true
+            sessionService?.let {
+                restTimeTimerController(it.restTimeTimer)
+
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -48,10 +54,7 @@ class SessionServiceConnector {
         sessionService!!.stopSelf()
     }
 
-    suspend fun restTimeTimer(): TimerController = withContext(Dispatchers.Default) {
-        while (sessionService == null) {
-            // waiting for service connection
-        }
-        sessionService!!.restTimeTimer
+    fun restTimeTimerController(callback: (TimerController) -> Unit) {
+        this.restTimeTimerController = callback
     }
 }
