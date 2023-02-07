@@ -14,18 +14,14 @@ import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.statistics.di.StatisticsContainer
-import com.lukasz.witkowski.training.planner.statistics.presentation.CoroutinesTimerController
-import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -34,13 +30,11 @@ class SessionService : Service() {
     private val trainingSessionService: TrainingSessionService by lazy {
         StatisticsContainer.getInstance(applicationContext).trainingSessionService
     }
-    private var timerReadyCallback: (TimerController) -> Unit = {}
-    private var timerHelper: TimerHelper? = null
-        set(value) {
-            field = value
-            value?.let(timerReadyCallback)
-        }
-    private fun createTimerController() = CoroutinesTimerController()
+
+    private fun createServiceTimerController() = ServiceTimerController(StatisticsContainer.getInstance(applicationContext).timerController())
+
+    var serviceTimerController: ServiceTimerController? = null
+        private set
     private val coroutineScope =
         CoroutineScope(Dispatchers.Default + CoroutineName("SessionService"))
 
@@ -74,17 +68,11 @@ class SessionService : Service() {
         observeTrainingSessionState()
     }
 
-    fun setOnTimerReadyCallback(timerReadyCallback: (TimerController) -> Unit) {
-        this.timerReadyCallback = timerReadyCallback
-        timerHelper?.let(timerReadyCallback)
-    }
-
     private fun observeTrainingSessionState() = coroutineScope.launch {
         trainingSessionService.trainingSessionState.map {
             TrainingSessionStateMapper.toPresentation(it)
         }.collectLatest {
-            Timber.d("Session state changed $it")
-            timerHelper?.cancel()
+            resetTimerHelper()
             when (it) {
                 is TrainingSessionState.ExerciseState -> handleExerciseState(it)
                 is TrainingSessionState.RestTimeState -> handleRestTimeState(it)
@@ -94,19 +82,24 @@ class SessionService : Service() {
         }
     }
 
+    private fun resetTimerHelper() {
+        serviceTimerController?.cancel()
+        serviceTimerController = null
+    }
+
     private fun handleExerciseState(exerciseState: TrainingSessionState.ExerciseState) {
-        timerHelper = TimerHelper(createTimerController())
-        timerHelper?.setTimer(exerciseState.currentExercise.time)
-        timerHelper?.observeHasFinished {
-            timerHelper?.resetTimer()
+        serviceTimerController = createServiceTimerController()
+        serviceTimerController?.setTimer(exerciseState.currentExercise.time)
+        serviceTimerController?.observeHasFinished {
+            serviceTimerController?.resetTimer()
         }
     }
 
     private fun handleRestTimeState(state: TrainingSessionState.RestTimeState) {
-        timerHelper = TimerHelper(createTimerController())
-        timerHelper?.setTimer(state.time)
-        timerHelper?.startTimer()
-        timerHelper?.observeHasFinished {
+        serviceTimerController = createServiceTimerController()
+        serviceTimerController?.setTimer(state.time)
+        serviceTimerController?.startTimer()
+        serviceTimerController?.observeHasFinished {
             trainingSessionService.skip()
         }
     }

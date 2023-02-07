@@ -5,30 +5,21 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
-import com.lukasz.witkowski.training.planner.statistics.presentation.CoroutinesTimerController
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.withContext
 
 class SessionServiceConnector {
 
     private var sessionService: SessionService? = null
     var serviceConnected = false
     var notificationPendingIntentProvider: NotificationPendingIntentProvider? = null
-    private lateinit var timerController: StateFlow<TimerController>
-//    private var restTimeTimerController: (TimerController) -> Unit = {}
-//    private var exerciseTimerController: (TimerController) -> Unit = {}
     private var timerReadyCallback: (TimerController) -> Unit = {}
 
-    private val connection = object: ServiceConnection {
+    private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val binder = service as SessionService.LocalBinder
             sessionService = binder.getService()
             serviceConnected = true
-            sessionService?.setOnTimerReadyCallback(timerReadyCallback)
+            sessionService!!.serviceTimerController?.let(timerReadyCallback)
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -38,7 +29,9 @@ class SessionServiceConnector {
 
     // on start
     fun bindService(context: Context) {
-        notificationPendingIntentProvider?.let { SessionService.notificationPendingIntentProvider = it }
+        notificationPendingIntentProvider?.let {
+            SessionService.notificationPendingIntentProvider = it
+        }
         val intent = Intent(
             context.applicationContext,
             SessionService::class.java
@@ -58,12 +51,4 @@ class SessionServiceConnector {
     fun setTimerReadyCallback(callback: (TimerController) -> Unit) {
         this.timerReadyCallback = callback
     }
-
-//    fun restTimeTimerController(callback: (TimerController) -> Unit) {
-//        this.restTimeTimerController = callback
-//    }
-//
-//    fun exerciseTimerController(callback: (TimerController) -> Unit) {
-//        this.exerciseTimerController = callback
-//    }
 }

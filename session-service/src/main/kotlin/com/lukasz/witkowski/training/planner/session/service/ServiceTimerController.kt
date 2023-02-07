@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-class TimerHelper(timerController: TimerController): TimerController by timerController {
+class ServiceTimerController(timerController: TimerController): TimerController by timerController {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default + CoroutineName("TimerHelper"))
 
