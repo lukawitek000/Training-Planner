@@ -12,34 +12,16 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.wear.ongoing.OngoingActivity
 import androidx.wear.ongoing.Status
-import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
-import com.lukasz.witkowski.training.planner.statistics.di.StatisticsContainer
-import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
-import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
-import kotlinx.coroutines.CoroutineName
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
+import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 import timber.log.Timber
 
 class SessionService : Service() {
 
-    private val trainingSessionService: TrainingSessionService by lazy {
-        StatisticsContainer.getInstance(applicationContext).trainingSessionService
-    }
-
-    private fun createServiceTimerController() = ServiceTimerController(StatisticsContainer.getInstance(applicationContext).timerController())
-
-    var serviceTimerController: ServiceTimerController? = null
-        private set
-    private val coroutineScope =
-        CoroutineScope(Dispatchers.Default + CoroutineName("SessionService"))
-
+    private val trainingSessionController by lazy { TrainingSessionController(applicationContext) }
     private val binder = LocalBinder()
     private var isStarted = false
+    val timer: TimerController?
+        get() = trainingSessionController.serviceTimerController
 
     override fun onBind(intent: Intent): IBinder {
         Timber.d("onBind")
@@ -65,43 +47,7 @@ class SessionService : Service() {
     override fun onCreate() {
         super.onCreate()
         Timber.d("onCreate")
-        observeTrainingSessionState()
-    }
-
-    private fun observeTrainingSessionState() = coroutineScope.launch {
-        trainingSessionService.trainingSessionState.map {
-            TrainingSessionStateMapper.toPresentation(it)
-        }.collectLatest {
-            resetTimerHelper()
-            when (it) {
-                is TrainingSessionState.ExerciseState -> handleExerciseState(it)
-                is TrainingSessionState.RestTimeState -> handleRestTimeState(it)
-                is TrainingSessionState.SummaryState -> Unit
-                is TrainingSessionState.IdleState -> Unit
-            }
-        }
-    }
-
-    private fun resetTimerHelper() {
-        serviceTimerController?.cancel()
-        serviceTimerController = null
-    }
-
-    private fun handleExerciseState(exerciseState: TrainingSessionState.ExerciseState) {
-        serviceTimerController = createServiceTimerController()
-        serviceTimerController?.setTimer(exerciseState.currentExercise.time)
-        serviceTimerController?.observeHasFinished {
-            serviceTimerController?.resetTimer()
-        }
-    }
-
-    private fun handleRestTimeState(state: TrainingSessionState.RestTimeState) {
-        serviceTimerController = createServiceTimerController()
-        serviceTimerController?.setTimer(state.time)
-        serviceTimerController?.startTimer()
-        serviceTimerController?.observeHasFinished {
-            trainingSessionService.skip()
-        }
+        trainingSessionController.observeSessionState()
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
@@ -110,7 +56,7 @@ class SessionService : Service() {
     }
 
     override fun onDestroy() {
-        coroutineScope.cancel()
+        trainingSessionController.destroy()
         super.onDestroy()
         Timber.d("onDestroy")
     }

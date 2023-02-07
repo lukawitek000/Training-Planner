@@ -19,7 +19,7 @@ class SessionServiceConnector {
             val binder = service as SessionService.LocalBinder
             sessionService = binder.getService()
             serviceConnected = true
-            sessionService!!.serviceTimerController?.let(timerReadyCallback)
+            sessionService?.timer?.let(timerReadyCallback)
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
