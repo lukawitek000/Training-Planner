@@ -30,7 +30,7 @@ class TrainingExerciseFragment : Fragment() {
     ): View {
         binding = FragmentTrainingExerciseBinding.inflate(inflater, container, false)
         observeTrainingExercise()
-        serviceConnector.exerciseTimerController {
+        serviceConnector.setTimerReadyCallback {
             timerController = it
             setUpButtonsListeners()
             // this methods are needed only if the time is set

@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.planner.statistics.presentation.CoroutinesT
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 
 class SessionServiceConnector {
@@ -17,18 +18,17 @@ class SessionServiceConnector {
     private var sessionService: SessionService? = null
     var serviceConnected = false
     var notificationPendingIntentProvider: NotificationPendingIntentProvider? = null
-    private var restTimeTimerController: (TimerController) -> Unit = {}
-    private var exerciseTimerController: (TimerController) -> Unit = {}
+    private lateinit var timerController: StateFlow<TimerController>
+//    private var restTimeTimerController: (TimerController) -> Unit = {}
+//    private var exerciseTimerController: (TimerController) -> Unit = {}
+    private var timerReadyCallback: (TimerController) -> Unit = {}
 
     private val connection = object: ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val binder = service as SessionService.LocalBinder
             sessionService = binder.getService()
             serviceConnected = true
-            sessionService?.let {
-                restTimeTimerController(it.restTimeTimer)
-                exerciseTimerController(it.exerciseTimer)
-            }
+            sessionService?.setOnTimerReadyCallback(timerReadyCallback)
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -55,11 +55,15 @@ class SessionServiceConnector {
         sessionService!!.stopSelf()
     }
 
-    fun restTimeTimerController(callback: (TimerController) -> Unit) {
-        this.restTimeTimerController = callback
+    fun setTimerReadyCallback(callback: (TimerController) -> Unit) {
+        this.timerReadyCallback = callback
     }
 
-    fun exerciseTimerController(callback: (TimerController) -> Unit) {
-        this.exerciseTimerController = callback
-    }
+//    fun restTimeTimerController(callback: (TimerController) -> Unit) {
+//        this.restTimeTimerController = callback
+//    }
+//
+//    fun exerciseTimerController(callback: (TimerController) -> Unit) {
+//        this.exerciseTimerController = callback
+//    }
 }

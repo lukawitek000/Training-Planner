@@ -28,7 +28,7 @@ class TrainingRestTimeFragment : Fragment() {
     ): View {
         binding = FragmentTrainingRestTimeBinding.inflate(layoutInflater, container, false)
         // TODO where to bind service in fragments???
-        serviceConnector.restTimeTimerController {
+        serviceConnector.setTimerReadyCallback {
             setUpSkipButton(it)
             observeTimer(it)
         }

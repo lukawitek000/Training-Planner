@@ -15,6 +15,7 @@ import androidx.wear.ongoing.Status
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.statistics.di.StatisticsContainer
 import com.lukasz.witkowski.training.planner.statistics.presentation.CoroutinesTimerController
+import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
 import kotlinx.coroutines.CoroutineName
@@ -33,12 +34,13 @@ class SessionService : Service() {
     private val trainingSessionService: TrainingSessionService by lazy {
         StatisticsContainer.getInstance(applicationContext).trainingSessionService
     }
-    val restTimeTimer by lazy {
-        CoroutinesTimerController()
-    }
-    val exerciseTimer by lazy {
-        CoroutinesTimerController()
-    }
+    private var timerReadyCallback: (TimerController) -> Unit = {}
+    private var timerHelper: TimerHelper? = null
+        set(value) {
+            field = value
+            value?.let(timerReadyCallback)
+        }
+    private fun createTimerController() = CoroutinesTimerController()
     private val coroutineScope =
         CoroutineScope(Dispatchers.Default + CoroutineName("SessionService"))
 
@@ -70,16 +72,19 @@ class SessionService : Service() {
         super.onCreate()
         Timber.d("onCreate")
         observeTrainingSessionState()
-        observeRestTimeTimer()
-        observeExerciseTimer()
+    }
+
+    fun setOnTimerReadyCallback(timerReadyCallback: (TimerController) -> Unit) {
+        this.timerReadyCallback = timerReadyCallback
+        timerHelper?.let(timerReadyCallback)
     }
 
     private fun observeTrainingSessionState() = coroutineScope.launch {
         trainingSessionService.trainingSessionState.map {
-            TrainingSessionStateMapper.toPresentation(
-                it
-            )
+            TrainingSessionStateMapper.toPresentation(it)
         }.collectLatest {
+            Timber.d("Session state changed $it")
+            timerHelper?.cancel()
             when (it) {
                 is TrainingSessionState.ExerciseState -> handleExerciseState(it)
                 is TrainingSessionState.RestTimeState -> handleRestTimeState(it)
@@ -90,30 +95,20 @@ class SessionService : Service() {
     }
 
     private fun handleExerciseState(exerciseState: TrainingSessionState.ExerciseState) {
-        exerciseTimer.setTimer(exerciseState.currentExercise.time)
-    }
-
-
-    private fun observeExerciseTimer() = coroutineScope.launch {
-        exerciseTimer.hasFinished.collectLatest {
-            if (it && isActive) {
-                exerciseTimer.resetTimer()
-            }
-        }
-    }
-
-    // TODO Would be good to cancel scope when the app leaves rest time state
-    private fun observeRestTimeTimer() = coroutineScope.launch {
-        restTimeTimer.hasFinished.collectLatest {
-            if (it && isActive) {
-                trainingSessionService.skip()
-            }
+        timerHelper = TimerHelper(createTimerController())
+        timerHelper?.setTimer(exerciseState.currentExercise.time)
+        timerHelper?.observeHasFinished {
+            timerHelper?.resetTimer()
         }
     }
 
     private fun handleRestTimeState(state: TrainingSessionState.RestTimeState) {
-        restTimeTimer.setTimer(state.time)
-        restTimeTimer.startTimer()
+        timerHelper = TimerHelper(createTimerController())
+        timerHelper?.setTimer(state.time)
+        timerHelper?.startTimer()
+        timerHelper?.observeHasFinished {
+            trainingSessionService.skip()
+        }
     }
 
     override fun onUnbind(intent: Intent?): Boolean {
