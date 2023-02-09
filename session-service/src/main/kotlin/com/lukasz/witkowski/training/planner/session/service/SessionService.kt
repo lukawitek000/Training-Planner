@@ -16,8 +16,8 @@ class SessionService : Service() {
     private val binder = LocalBinder()
     private var isStarted = false
     private val notificationFactory: NotificationFactory by lazy { SessionServiceContainer.getInstance().notificationFactory }
-    private val notificationPendingIntentProvider: NotificationPendingIntentProvider by lazy {
-        SessionServiceContainer.getInstance().notificationPendingIntentProvider
+    private val trainingSessionPendingIntentFactory: TrainingSessionPendingIntentFactory by lazy {
+        SessionServiceContainer.getInstance().trainingSessionPendingIntentFactory
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -35,7 +35,7 @@ class SessionService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val channelId = NotificationChannelFactory.create(this)
-        val pendingIntent = notificationPendingIntentProvider.provide(
+        val pendingIntent = trainingSessionPendingIntentFactory.create(
             this,
             trainingSessionController.trainingPlan.id
         )

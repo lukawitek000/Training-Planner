@@ -11,7 +11,6 @@ dependencies {
     implementation(projects.training)
 
     implementation(libs.androidx.core)
-    implementation(libs.androidx.wearOngoing)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.timber)
 }

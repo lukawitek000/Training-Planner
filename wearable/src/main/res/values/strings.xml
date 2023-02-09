@@ -22,4 +22,5 @@
     <string name="training_plan_does_not_exist">Training plan does not exist</string>
     <string name="fetching_training_plans_failed">Fetching training plans failed</string>
     <string name="unknown_value">--</string>
+    <string name="ongoing_notification_status">Training session running</string>
 </resources>

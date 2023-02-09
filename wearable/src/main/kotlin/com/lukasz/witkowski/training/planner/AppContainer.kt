@@ -1,14 +1,13 @@
 package com.lukasz.witkowski.training.planner
 
 import android.content.Context
-import com.lukasz.witkowski.training.planner.exercise.di.ExerciseContainer
-import com.lukasz.witkowski.training.planner.session.service.OngoingActivityNotificationFactory
+import com.lukasz.witkowski.training.planner.trainingSession.notification.OngoingActivityNotificationFactory
 import com.lukasz.witkowski.training.planner.session.service.SessionServiceContainer
 import com.lukasz.witkowski.training.planner.statistics.di.StatisticsContainer
 import com.lukasz.witkowski.training.planner.training.di.TrainingContainer
-import com.lukasz.witkowski.training.planner.trainingSession.WearableNotificationPendingIntentProvider
+import com.lukasz.witkowski.training.planner.trainingSession.notification.WearableTrainingSessionPendingIntentFactory
 
-class AppContainer(private val context: Context) {
+class AppContainer(context: Context) {
     val trainingContainer = TrainingContainer.getInstance(context)
     val statisticsContainer = StatisticsContainer.getInstance(context)
 
@@ -17,7 +16,7 @@ class AppContainer(private val context: Context) {
     }
 
     private fun initializeSessionServiceContainer() {
-        val notificationPendingIntentProvider = WearableNotificationPendingIntentProvider()
+        val notificationPendingIntentProvider = WearableTrainingSessionPendingIntentFactory()
         val notificationFactory = OngoingActivityNotificationFactory()
         SessionServiceContainer.initialize(notificationPendingIntentProvider, notificationFactory)
     }

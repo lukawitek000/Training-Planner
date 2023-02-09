@@ -4,6 +4,6 @@ import android.app.PendingIntent
 import android.content.Context
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 
-interface NotificationPendingIntentProvider {
-    fun provide(context: Context, trainingPlanId: TrainingPlanId): PendingIntent
+interface TrainingSessionPendingIntentFactory {
+    fun create(context: Context, trainingPlanId: TrainingPlanId): PendingIntent
 }

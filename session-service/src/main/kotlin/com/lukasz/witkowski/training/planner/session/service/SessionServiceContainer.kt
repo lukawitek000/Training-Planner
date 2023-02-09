@@ -3,7 +3,7 @@ package com.lukasz.witkowski.training.planner.session.service
 import timber.log.Timber
 
 class SessionServiceContainer private constructor(
-    val notificationPendingIntentProvider: NotificationPendingIntentProvider,
+    val trainingSessionPendingIntentFactory: TrainingSessionPendingIntentFactory,
     val notificationFactory: NotificationFactory
 ) {
 
@@ -21,13 +21,13 @@ class SessionServiceContainer private constructor(
         }
 
         fun initialize(
-            notificationPendingIntentProvider: NotificationPendingIntentProvider,
+            trainingSessionPendingIntentFactory: TrainingSessionPendingIntentFactory,
             notificationFactory: NotificationFactory
         ) {
             return synchronized(this) {
                 if (instance == null) {
                     instance = SessionServiceContainer(
-                        notificationPendingIntentProvider,
+                        trainingSessionPendingIntentFactory,
                         notificationFactory
                     )
                 }
