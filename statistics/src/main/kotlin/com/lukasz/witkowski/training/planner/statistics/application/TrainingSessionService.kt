@@ -21,7 +21,11 @@ class TrainingSessionService(
     val trainingSessionState: StateFlow<TrainingSessionState>
         get() = _trainingSessionState
 
+    var trainingPlan: TrainingPlan? = null
+        private set
+
     fun startTraining(trainingPlan: TrainingPlan) {
+        this.trainingPlan = trainingPlan
         trainingSession = TrainingSession(trainingPlan, trainingSetsStrategy)
         _trainingSessionState.value = trainingSession.start(timeProvider.currentTime())
     }

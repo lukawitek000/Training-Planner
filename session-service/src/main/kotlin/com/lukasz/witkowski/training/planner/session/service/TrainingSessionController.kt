@@ -23,6 +23,8 @@ class TrainingSessionController(private val context: Context) {
     var serviceTimerController: ServiceTimerController? = null
         private set
 
+    val trainingTitle = trainingSessionService.trainingPlan?.title
+
     fun observeSessionState() = coroutineScope.launch {
         trainingSessionService.trainingSessionState.map {
             TrainingSessionStateMapper.toPresentation(it)
