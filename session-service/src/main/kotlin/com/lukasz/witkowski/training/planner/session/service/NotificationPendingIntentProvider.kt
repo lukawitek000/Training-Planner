@@ -5,5 +5,5 @@ import android.content.Context
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 
 interface NotificationPendingIntentProvider {
-    fun provide(context: Context): PendingIntent
+    fun provide(context: Context, trainingPlanId: TrainingPlanId): PendingIntent
 }

@@ -33,9 +33,7 @@ class TrainingSessionActivity : FragmentActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTrainingSessionBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        sessionServiceConnector = SessionServiceConnector().apply {
-            notificationPendingIntentProvider = WearableNotificationPendingIntentProvider(viewModel.trainingPlanId)
-        }
+        sessionServiceConnector = SessionServiceConnector()
         setUpSwipeToDismiss()
         observeTrainingPlan()
         observeTrainingStatisticsId()

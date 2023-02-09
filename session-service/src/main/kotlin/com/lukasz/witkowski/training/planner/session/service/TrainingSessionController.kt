@@ -5,6 +5,7 @@ import com.lukasz.witkowski.training.planner.statistics.application.TrainingSess
 import com.lukasz.witkowski.training.planner.statistics.di.StatisticsContainer
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +24,9 @@ class TrainingSessionController(private val context: Context) {
     var serviceTimerController: ServiceTimerController? = null
         private set
 
-    val trainingTitle = trainingSessionService.trainingPlan?.title
+    val trainingPlan: TrainingPlan
+        get() = trainingSessionService.trainingPlan
+            ?: throw IllegalStateException("TrainingSession was not started, the training plan is null")
 
     fun observeSessionState() = coroutineScope.launch {
         trainingSessionService.trainingSessionState.map {

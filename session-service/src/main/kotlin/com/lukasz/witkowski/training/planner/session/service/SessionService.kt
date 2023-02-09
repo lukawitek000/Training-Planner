@@ -15,7 +15,10 @@ class SessionService : Service() {
 
     private val binder = LocalBinder()
     private var isStarted = false
-    private val notificationFactory: NotificationFactory by lazy { OngoingActivityNotificationFactory() }
+    private val notificationFactory: NotificationFactory by lazy { SessionServiceContainer.getInstance().notificationFactory }
+    private val notificationPendingIntentProvider: NotificationPendingIntentProvider by lazy {
+        SessionServiceContainer.getInstance().notificationPendingIntentProvider
+    }
 
     override fun onBind(intent: Intent): IBinder {
         Timber.d("onBind")
@@ -32,7 +35,11 @@ class SessionService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val channelId = NotificationChannelFactory.create(this)
-        val notification = notificationFactory.create(this, channelId)
+        val pendingIntent = notificationPendingIntentProvider.provide(
+            this,
+            trainingSessionController.trainingPlan.id
+        )
+        val notification = notificationFactory.create(this, channelId, pendingIntent)
         startForeground(NOTIFICATION_ID, notification)
         return START_STICKY
     }
@@ -49,8 +56,5 @@ class SessionService : Service() {
 
     companion object {
         private const val NOTIFICATION_ID = 1
-
-        // TODO to late inject initialization this provider is  need in onstartcommand or even in oncreate
-        var notificationPendingIntentProvider: NotificationPendingIntentProvider? = null
     }
 }

@@ -10,9 +10,8 @@ import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import timber.log.Timber
 
-class WearableNotificationPendingIntentProvider(private val trainingPlanId: TrainingPlanId): NotificationPendingIntentProvider {
-    override fun provide(context: Context): PendingIntent {
-        Timber.d("Session From constructor training plan id${this.trainingPlanId}")
+class WearableNotificationPendingIntentProvider: NotificationPendingIntentProvider {
+    override fun provide(context: Context, trainingPlanId: TrainingPlanId): PendingIntent {
         val startActivityIntent = Intent(context, TrainingSessionActivity::class.java)
         startActivityIntent.putExtra(StartTrainingActivity.TRAINING_ID_KEY, trainingPlanId.toString())
         return  TaskStackBuilder.create(context).run {

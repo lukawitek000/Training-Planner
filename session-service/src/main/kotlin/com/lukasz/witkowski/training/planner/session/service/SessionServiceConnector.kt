@@ -11,7 +11,6 @@ class SessionServiceConnector {
 
     private var sessionService: SessionService? = null
     var serviceConnected = false
-    var notificationPendingIntentProvider: NotificationPendingIntentProvider? = null
     private var timerReadyCallback: (TimerController) -> Unit = {}
 
     private val connection = object : ServiceConnection {
@@ -29,9 +28,6 @@ class SessionServiceConnector {
 
     // on start
     fun bindService(context: Context) {
-        notificationPendingIntentProvider?.let {
-            SessionService.notificationPendingIntentProvider = it
-        }
         val intent = Intent(
             context.applicationContext,
             SessionService::class.java
