@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
+import timber.log.Timber
 
 class SessionServiceConnector {
 
@@ -26,7 +27,6 @@ class SessionServiceConnector {
         }
     }
 
-    // on start
     fun bindService(context: Context) {
         val intent = Intent(
             context.applicationContext,
@@ -35,14 +35,10 @@ class SessionServiceConnector {
         context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }
 
-    // on stop
     fun unbindService(context: Context) {
         context.unbindService(connection)
     }
 
-    fun stopService() {
-        sessionService!!.stopSelf()
-    }
     // TODO some better way to get the timer, currently I assume that the service initializes new timer before the service is bound to fragment
     fun setTimerReadyCallback(callback: (TimerController) -> Unit) {
         this.timerReadyCallback = callback

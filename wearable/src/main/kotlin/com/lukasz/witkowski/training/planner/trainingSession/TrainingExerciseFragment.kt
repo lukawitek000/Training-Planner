@@ -37,12 +37,16 @@ class TrainingExerciseFragment : Fragment() {
             setUpTimerIcon()
             observeTimer()
         }
-        serviceConnector.bindService(requireContext())
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onStart() {
+        serviceConnector.bindService(requireContext())
+        super.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
         serviceConnector.unbindService(requireContext())
     }
 

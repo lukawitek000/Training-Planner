@@ -27,17 +27,20 @@ class TrainingRestTimeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentTrainingRestTimeBinding.inflate(layoutInflater, container, false)
-        // TODO where to bind service in fragments???
         serviceConnector.setTimerReadyCallback {
             setUpSkipButton(it)
             observeTimer(it)
         }
-        serviceConnector.bindService(requireContext())
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onStart() {
+        serviceConnector.bindService(requireContext())
+        super.onStart()
+    }
+
+    override fun onStop() {
+        super.onStop()
         serviceConnector.unbindService(requireContext())
     }
 

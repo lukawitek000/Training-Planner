@@ -36,7 +36,6 @@ class TrainingSessionActivity : FragmentActivity() {
         sessionServiceConnector = SessionServiceConnector()
         setUpSwipeToDismiss()
         observeTrainingPlan()
-        observeTrainingStatisticsId()
         observeTrainingSessionState()
         viewModel.fetchTrainingPlan()
         Timber.d("LWWW training plan id ${viewModel.trainingPlanId}")
@@ -86,27 +85,18 @@ class TrainingSessionActivity : FragmentActivity() {
         viewModel.startTrainingSession(trainingPlan)
     }
 
-    private fun observeTrainingStatisticsId() {
-        viewModel.trainingStatisticsId.observe(this) {
-            showTrainingSessionSummary(it)
-        }
-    }
-
     private fun observeTrainingSessionState() {
         viewModel.trainingSessionState.observe(this) {
             when (it) {
-                is TrainingSessionState.ExerciseState -> showCurrentExercise(it)
+                is TrainingSessionState.ExerciseState -> showCurrentExercise()
                 is TrainingSessionState.RestTimeState -> showRestTime()
-                is TrainingSessionState.SummaryState -> {
-                    showProgressBar()
-                    viewModel.saveTrainingSessionSummary(it)
-                }
+                is TrainingSessionState.SummaryState -> showTrainingSessionSummary(it)
                 is TrainingSessionState.IdleState -> showProgressBar()
             }
         }
     }
 
-    private fun showCurrentExercise(state: TrainingSessionState.ExerciseState) {
+    private fun showCurrentExercise() {
         Timber.d("LWWW show current exercise fragment")
         val fragment = TrainingExerciseFragment.newInstance()
         replaceFragment(fragment)
@@ -125,8 +115,8 @@ class TrainingSessionActivity : FragmentActivity() {
         }
     }
 
-    private fun showTrainingSessionSummary(id: TrainingStatisticsId) {
-        sessionServiceConnector.stopService()
+    private fun showTrainingSessionSummary(state: TrainingSessionState.SummaryState) {
+        val id = state.statistics.id
         val intent = Intent(this, TrainingSummaryActivity::class.java)
         intent.putExtra(TRAINING_STATISTICS_ID, id.value.toString())
         startActivity(intent)

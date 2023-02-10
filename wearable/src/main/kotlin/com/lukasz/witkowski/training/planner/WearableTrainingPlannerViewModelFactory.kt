@@ -22,8 +22,7 @@ class WearableTrainingPlannerViewModelFactory : ViewModelProvider.Factory {
                 TrainingSessionViewModel(
                     savedStateHandle,
                     trainingContainer.service,
-                    statisticsContainer.trainingSessionService,
-                    statisticsContainer.trainingStatisticsService
+                    statisticsContainer.trainingSessionService
                 )
             }
             TrainingSummaryViewModel::class.java -> {

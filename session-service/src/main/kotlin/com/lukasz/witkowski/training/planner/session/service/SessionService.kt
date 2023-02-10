@@ -3,11 +3,13 @@ package com.lukasz.witkowski.training.planner.session.service
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
+import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 import timber.log.Timber
 
-class SessionService : Service() {
+class SessionService : Service(), SessionFinishedListener {
 
     private val trainingSessionController by lazy { TrainingSessionController(applicationContext) }
     val timer: TimerController?
@@ -21,7 +23,6 @@ class SessionService : Service() {
     }
 
     override fun onBind(intent: Intent): IBinder {
-        Timber.d("onBind")
         if (!isStarted) {
             isStarted = true
             startService(intent)
@@ -47,11 +48,20 @@ class SessionService : Service() {
     override fun onCreate() {
         super.onCreate()
         trainingSessionController.observeSessionState()
+        trainingSessionController.addSessionFinishedListener(this)
     }
 
     override fun onDestroy() {
+        Timber.d("ondestroy service")
         trainingSessionController.destroy()
+        trainingSessionController.removeSessionFinishedListener(this)
         super.onDestroy()
+    }
+
+    override fun onSessionFinished(trainingStatisticsId: TrainingStatisticsId) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) throw IllegalStateException("Unsupported android sdk version")
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     companion object {
