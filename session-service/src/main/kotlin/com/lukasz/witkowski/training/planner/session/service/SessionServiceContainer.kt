@@ -6,7 +6,6 @@ class SessionServiceContainer private constructor(
     val trainingSessionPendingIntentFactory: TrainingSessionPendingIntentFactory,
     val notificationFactory: NotificationFactory
 ) {
-
     companion object {
         @Volatile
         private var instance: SessionServiceContainer? = null

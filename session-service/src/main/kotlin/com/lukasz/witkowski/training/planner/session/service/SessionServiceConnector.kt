@@ -43,7 +43,7 @@ class SessionServiceConnector {
     fun stopService() {
         sessionService!!.stopSelf()
     }
-
+    // TODO some better way to get the timer, currently I assume that the service initializes new timer before the service is bound to fragment
     fun setTimerReadyCallback(callback: (TimerController) -> Unit) {
         this.timerReadyCallback = callback
     }

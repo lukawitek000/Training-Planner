@@ -15,8 +15,9 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
 class TrainingSessionController(private val context: Context) {
+    private val statisticsContainer: StatisticsContainer by lazy { StatisticsContainer.getInstance(context) }
     private val trainingSessionService: TrainingSessionService by lazy {
-        StatisticsContainer.getInstance(context).trainingSessionService
+        statisticsContainer.trainingSessionService
     }
     private val coroutineScope =
         CoroutineScope(Dispatchers.Default + CoroutineName("TrainingSessionController"))
@@ -68,7 +69,6 @@ class TrainingSessionController(private val context: Context) {
         }
     }
 
-    // TODO how to inject it, some provider interface???
     private fun createServiceTimerController() =
-        ServiceTimerController(StatisticsContainer.getInstance(context).timerController())
+        ServiceTimerController(statisticsContainer.timerController())
 }
