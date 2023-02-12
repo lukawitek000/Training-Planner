@@ -28,9 +28,7 @@ class TrainingSessionActivity : FragmentActivity() {
     })
 
     private lateinit var sessionServiceConnector: SessionServiceConnector
-
     private val sessionFinishedListener = SessionFinishedListener {
-        Timber.d("Session finished $it")
         showTrainingSessionSummary(it)
     }
 
@@ -40,28 +38,28 @@ class TrainingSessionActivity : FragmentActivity() {
         binding = ActivityTrainingSessionBinding.inflate(layoutInflater)
         setContentView(binding.root)
         sessionServiceConnector = SessionServiceConnector()
-        sessionServiceConnector.addSessionFinishedListener(sessionFinishedListener)
         setUpSwipeToDismiss()
         observeTrainingPlan()
         observeTrainingSessionState()
         viewModel.fetchTrainingPlan()
-        Timber.d("LWWW training plan id ${viewModel.trainingPlanId}")
     }
 
     override fun onStart() {
         super.onStart()
+
+        sessionServiceConnector.addSessionFinishedListener(sessionFinishedListener)
         sessionServiceConnector.bindService(this)
     }
 
     override fun onStop() {
         super.onStop()
+        sessionServiceConnector.removeSessionFinishedListener(sessionFinishedListener)
         sessionServiceConnector.unbindService(this)
     }
 
     private fun setUpSwipeToDismiss() {
         binding.swipeDismissLayout.addCallback(object : SwipeDismissFrameLayout.Callback() {
             override fun onDismissed(layout: SwipeDismissFrameLayout?) {
-                Timber.d("LWWW dismissed")
                 finish()
             }
         })
@@ -104,13 +102,11 @@ class TrainingSessionActivity : FragmentActivity() {
     }
 
     private fun showCurrentExercise() {
-        Timber.d("LWWW show current exercise fragment")
         val fragment = TrainingExerciseFragment.newInstance()
         replaceFragment(fragment)
     }
 
     private fun showRestTime() {
-        Timber.d("LWWW show rest time fragment")
         val fragment = TrainingRestTimeFragment.newInstance()
         replaceFragment(fragment)
     }

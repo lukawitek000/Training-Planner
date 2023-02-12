@@ -28,7 +28,7 @@ class TrainingSessionViewModel(
     private val _trainingPlanId =
         savedStateHandle.get<String>(StartTrainingActivity.TRAINING_ID_KEY)
             ?: throw IllegalStateException("Missing training id")
-    val trainingPlanId: TrainingPlanId
+    private val trainingPlanId: TrainingPlanId
         get() = TrainingPlanId(_trainingPlanId)
 
     private val _trainingPlan = MutableLiveData<ResultHandler<TrainingPlan>>()
@@ -40,7 +40,6 @@ class TrainingSessionViewModel(
     init {
         viewModelScope.launch {
             trainingSessionService.trainingSessionState.collectLatest {
-                Timber.d("Session collected latest state $it")
                 _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(it)
             }
         }
@@ -56,7 +55,6 @@ class TrainingSessionViewModel(
     }
 
     fun startTrainingSession(trainingPlan: TrainingPlan) {
-        Timber.d("Start training session")
         trainingSessionService.startTraining(TrainingPlanMapper.toDomainTrainingPlan(trainingPlan))
     }
 

@@ -6,7 +6,7 @@ import android.content.Context
 import android.os.Build
 import androidx.core.app.NotificationManagerCompat
 
-object NotificationChannelFactory {
+internal object NotificationChannelFactory {
     private const val NOTIFICATION_CHANNEL_ID = "session_notification_channel"
 
     fun create(context: Context): String {

@@ -9,7 +9,7 @@ import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingSt
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 import timber.log.Timber
 
-class SessionService : Service(), SessionFinishedListener {
+internal class SessionService : Service(), SessionFinishedListener {
 
     val trainingSessionController by lazy { TrainingSessionController(applicationContext) }
     val timer: TimerController?
@@ -52,7 +52,6 @@ class SessionService : Service(), SessionFinishedListener {
     }
 
     override fun onDestroy() {
-        Timber.d("ondestroy service")
         trainingSessionController.destroy()
         trainingSessionController.removeSessionFinishedListener(this)
         super.onDestroy()

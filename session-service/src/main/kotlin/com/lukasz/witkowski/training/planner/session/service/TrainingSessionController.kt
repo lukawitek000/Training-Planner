@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class TrainingSessionController(private val context: Context) {
+internal class TrainingSessionController(private val context: Context) {
     private val statisticsContainer: StatisticsContainer by lazy { StatisticsContainer.getInstance(context) }
     private val trainingSessionService: TrainingSessionService by lazy { statisticsContainer.trainingSessionService }
     private val trainingStatisticsService: TrainingStatisticsService by lazy { statisticsContainer.trainingStatisticsService }
@@ -31,7 +31,7 @@ class TrainingSessionController(private val context: Context) {
     val trainingPlan: TrainingPlan
         get() = trainingSessionService.trainingPlan
             ?: throw IllegalStateException("TrainingSession was not started, the training plan is null")
-    // TODO maybe it is enough to have single value not array
+
     private val sessionFinishedListeners = mutableSetOf<SessionFinishedListener>()
 
     fun observeSessionState() = coroutineScope.launch {

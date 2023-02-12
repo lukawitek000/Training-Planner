@@ -43,12 +43,15 @@ class SessionServiceConnector {
         context.unbindService(connection)
     }
 
-    // TODO some better way to get the timer, currently I assume that the service initializes new timer before the service is bound to fragment
     fun setTimerReadyCallback(callback: (TimerController) -> Unit) {
         this.timerReadyCallback = callback
     }
-    // TODO same as above, I need this to navigate to summary screen
+
     fun addSessionFinishedListener(sessionFinishedListener: SessionFinishedListener) {
         this.sessionFinishedListener = sessionFinishedListener
+    }
+
+    fun removeSessionFinishedListener(sessionFinishedListener: SessionFinishedListener) {
+        sessionService?.trainingSessionController?.removeSessionFinishedListener(sessionFinishedListener)
     }
 }
