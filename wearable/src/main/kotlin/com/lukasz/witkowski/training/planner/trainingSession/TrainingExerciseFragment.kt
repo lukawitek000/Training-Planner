@@ -117,7 +117,6 @@ class TrainingExerciseFragment : Fragment() {
 
     private fun setUpTimerControlButton() {
         binding.startPauseTimerBtn.setOnClickListener {
-            // TODO consider adding some toggle method to timer class
             if (timerController.isRunning.value) {
                 timerController.pauseTimer()
             } else {

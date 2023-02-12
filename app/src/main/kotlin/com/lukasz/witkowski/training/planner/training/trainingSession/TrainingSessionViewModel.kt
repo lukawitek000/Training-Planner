@@ -114,8 +114,8 @@ class TrainingSessionViewModel(
     }
 
     override fun onCleared() {
-        super.onCleared()
         stopTimer()
         trainingSessionService.stopTraining()
+        super.onCleared()
     }
 }
