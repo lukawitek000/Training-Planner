@@ -11,7 +11,7 @@ import timber.log.Timber
 
 class SessionService : Service(), SessionFinishedListener {
 
-    private val trainingSessionController by lazy { TrainingSessionController(applicationContext) }
+    val trainingSessionController by lazy { TrainingSessionController(applicationContext) }
     val timer: TimerController?
         get() = trainingSessionController.serviceTimerController
 

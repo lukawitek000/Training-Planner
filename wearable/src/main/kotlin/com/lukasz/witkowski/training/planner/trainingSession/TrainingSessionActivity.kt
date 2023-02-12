@@ -12,6 +12,7 @@ import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSessionBinding
+import com.lukasz.witkowski.training.planner.session.service.SessionFinishedListener
 import com.lukasz.witkowski.training.planner.session.service.SessionServiceConnector
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
@@ -28,12 +29,18 @@ class TrainingSessionActivity : FragmentActivity() {
 
     private lateinit var sessionServiceConnector: SessionServiceConnector
 
+    private val sessionFinishedListener = SessionFinishedListener {
+        Timber.d("Session finished $it")
+        showTrainingSessionSummary(it)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.TrainingPlannerTheme)
         super.onCreate(savedInstanceState)
         binding = ActivityTrainingSessionBinding.inflate(layoutInflater)
         setContentView(binding.root)
         sessionServiceConnector = SessionServiceConnector()
+        sessionServiceConnector.addSessionFinishedListener(sessionFinishedListener)
         setUpSwipeToDismiss()
         observeTrainingPlan()
         observeTrainingSessionState()
@@ -90,7 +97,7 @@ class TrainingSessionActivity : FragmentActivity() {
             when (it) {
                 is TrainingSessionState.ExerciseState -> showCurrentExercise()
                 is TrainingSessionState.RestTimeState -> showRestTime()
-                is TrainingSessionState.SummaryState -> showTrainingSessionSummary(it)
+                is TrainingSessionState.SummaryState -> showProgressBar()
                 is TrainingSessionState.IdleState -> showProgressBar()
             }
         }
@@ -115,8 +122,7 @@ class TrainingSessionActivity : FragmentActivity() {
         }
     }
 
-    private fun showTrainingSessionSummary(state: TrainingSessionState.SummaryState) {
-        val id = state.statistics.id
+    private fun showTrainingSessionSummary(id: TrainingStatisticsId) {
         val intent = Intent(this, TrainingSummaryActivity::class.java)
         intent.putExtra(TRAINING_STATISTICS_ID, id.value.toString())
         startActivity(intent)

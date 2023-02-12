@@ -13,6 +13,7 @@ class SessionServiceConnector {
     private var sessionService: SessionService? = null
     var serviceConnected = false
     private var timerReadyCallback: (TimerController) -> Unit = {}
+    private var sessionFinishedListener: SessionFinishedListener? = null
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
@@ -20,6 +21,9 @@ class SessionServiceConnector {
             sessionService = binder.getService()
             serviceConnected = true
             sessionService?.timer?.let(timerReadyCallback)
+            sessionFinishedListener?.let {
+                sessionService!!.trainingSessionController.addSessionFinishedListener(it)
+            }
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -42,5 +46,9 @@ class SessionServiceConnector {
     // TODO some better way to get the timer, currently I assume that the service initializes new timer before the service is bound to fragment
     fun setTimerReadyCallback(callback: (TimerController) -> Unit) {
         this.timerReadyCallback = callback
+    }
+    // TODO same as above, I need this to navigate to summary screen
+    fun addSessionFinishedListener(sessionFinishedListener: SessionFinishedListener) {
+        this.sessionFinishedListener = sessionFinishedListener
     }
 }
