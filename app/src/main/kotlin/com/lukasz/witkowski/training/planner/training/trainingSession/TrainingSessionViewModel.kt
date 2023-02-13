@@ -10,9 +10,11 @@ import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSes
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class TrainingSessionViewModel(
@@ -28,10 +30,10 @@ class TrainingSessionViewModel(
         ?: throw Exception("Training plan id was not provided")
     private val trainingId = TrainingPlanId(_trainingId)
 
-    private val _trainingSessionState =
-        MutableStateFlow<TrainingSessionState>(TrainingSessionState.IdleState)
     val trainingSessionState: StateFlow<TrainingSessionState>
-        get() = _trainingSessionState
+        get() = trainingSessionService.trainingSessionState.map {
+            TrainingSessionStateMapper.toPresentation(it)
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), TrainingSessionState.IdleState)
     private val currentState: TrainingSessionState
         get() = trainingSessionState.value
 
@@ -43,14 +45,12 @@ class TrainingSessionViewModel(
 
     fun completed() {
         stopTimer()
-        val state = trainingSessionService.completed()
-        _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(state)
+        trainingSessionService.completed()
     }
 
     fun skip() {
         stopTimer()
-        val state = trainingSessionService.skip()
-        _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(state)
+        trainingSessionService.skip()
     }
 
     fun saveStatistics() {
@@ -63,10 +63,8 @@ class TrainingSessionViewModel(
 
     private fun fetchTrainingPlan() {
         viewModelScope.launch {
-            // TODO maybe it should be moved to the service??
             val trainingPlan = trainingPlanService.getTrainingPlanById(trainingId)
-            val state = trainingSessionService.startTraining(trainingPlan)
-            _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(state)
+            trainingSessionService.startTraining(trainingPlan)
         }
     }
 
@@ -83,9 +81,10 @@ class TrainingSessionViewModel(
 
     private fun observeTrainingSessionState() {
         viewModelScope.launch {
-            trainingSessionState.collect {
-                setTimerForRestTimeAndExercise(it)
-                startRestTimeTimer(it)
+            trainingSessionService.trainingSessionState.collectLatest {
+                val state = TrainingSessionStateMapper.toPresentation(it)
+                setTimerForRestTimeAndExercise(state)
+                startRestTimeTimer(state)
             }
         }
     }
@@ -115,8 +114,8 @@ class TrainingSessionViewModel(
     }
 
     override fun onCleared() {
-        super.onCleared()
         stopTimer()
         trainingSessionService.stopTraining()
+        super.onCleared()
     }
 }

@@ -12,6 +12,8 @@ import com.lukasz.witkowski.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSessionBinding
+import com.lukasz.witkowski.training.planner.session.service.SessionFinishedListener
+import com.lukasz.witkowski.training.planner.session.service.SessionServiceConnector
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.summary.TrainingSummaryActivity
@@ -25,23 +27,39 @@ class TrainingSessionActivity : FragmentActivity() {
         WearableTrainingPlannerViewModelFactory()
     })
 
+    private lateinit var sessionServiceConnector: SessionServiceConnector
+    private val sessionFinishedListener = SessionFinishedListener {
+        showTrainingSessionSummary(it)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.TrainingPlannerTheme)
         super.onCreate(savedInstanceState)
         binding = ActivityTrainingSessionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        sessionServiceConnector = SessionServiceConnector()
         setUpSwipeToDismiss()
         observeTrainingPlan()
-        observeTrainingStatisticsId()
         observeTrainingSessionState()
         viewModel.fetchTrainingPlan()
-        Timber.d("LWWW training plan id ${viewModel.trainingPlanId}")
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        sessionServiceConnector.addSessionFinishedListener(sessionFinishedListener)
+        sessionServiceConnector.bindService(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        sessionServiceConnector.removeSessionFinishedListener(sessionFinishedListener)
+        sessionServiceConnector.unbindService(this)
     }
 
     private fun setUpSwipeToDismiss() {
         binding.swipeDismissLayout.addCallback(object : SwipeDismissFrameLayout.Callback() {
             override fun onDismissed(layout: SwipeDismissFrameLayout?) {
-                Timber.d("LWWW dismissed")
                 finish()
             }
         })
@@ -49,7 +67,7 @@ class TrainingSessionActivity : FragmentActivity() {
 
     private fun observeTrainingPlan() {
         viewModel.trainingPlan.observe(this) {
-            when(it) {
+            when (it) {
                 is ResultHandler.Loading -> showProgressBar()
                 is ResultHandler.Success -> startTrainingSession(it.value)
                 else -> throw IllegalStateException("Unknown state TrainingPlan $it")
@@ -72,32 +90,23 @@ class TrainingSessionActivity : FragmentActivity() {
         viewModel.startTrainingSession(trainingPlan)
     }
 
-    private fun observeTrainingStatisticsId() {
-        viewModel.trainingStatisticsId.observe(this) {
-            showTrainingSessionSummary(it)
-        }
-    }
-
     private fun observeTrainingSessionState() {
         viewModel.trainingSessionState.observe(this) {
-            when(it) {
-                is TrainingSessionState.ExerciseState -> showCurrentExercise(it)
-                is TrainingSessionState.RestTimeState -> showRestTime(it)
-                is TrainingSessionState.SummaryState -> viewModel.saveTrainingSessionSummary(it)
-                is TrainingSessionState.IdleState -> throw IllegalStateException("Wrong training session state $it")
+            when (it) {
+                is TrainingSessionState.ExerciseState -> showCurrentExercise()
+                is TrainingSessionState.RestTimeState -> showRestTime()
+                is TrainingSessionState.SummaryState -> showProgressBar()
+                is TrainingSessionState.IdleState -> showProgressBar()
             }
         }
     }
 
-    private fun showCurrentExercise(state: TrainingSessionState.ExerciseState) {
-        Timber.d("LWWW show current exercise fragment")
-        viewModel.setCurrentTrainingExercise(state.exercise!!)
+    private fun showCurrentExercise() {
         val fragment = TrainingExerciseFragment.newInstance()
         replaceFragment(fragment)
     }
 
-    private fun showRestTime(state: TrainingSessionState.RestTimeState) {
-        Timber.d("LWWW show rest time fragment")
+    private fun showRestTime() {
         val fragment = TrainingRestTimeFragment.newInstance()
         replaceFragment(fragment)
     }

@@ -6,6 +6,8 @@ import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingS
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSetsPolicy
 import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.TimeProvider
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 class TrainingSessionService(
     private val timeProvider: TimeProvider,
@@ -14,20 +16,32 @@ class TrainingSessionService(
 
     private lateinit var trainingSession: TrainingSession
 
-    fun startTraining(trainingPlan: TrainingPlan): TrainingSessionState {
+    private val _trainingSessionState =
+        MutableStateFlow<TrainingSessionState>(TrainingSessionState.IdleState)
+    val trainingSessionState: StateFlow<TrainingSessionState>
+        get() = _trainingSessionState
+
+    var trainingPlan: TrainingPlan? = null
+        private set
+
+    fun startTraining(trainingPlan: TrainingPlan) {
+        this.trainingPlan = trainingPlan
         trainingSession = TrainingSession(trainingPlan, trainingSetsStrategy)
-        return trainingSession.start(timeProvider.currentTime())
+        _trainingSessionState.value = trainingSession.start(timeProvider.currentTime())
     }
 
-    fun skip(): TrainingSessionState {
-        return trainingSession.skip(timeProvider.currentTime())
+    fun skip() {
+        _trainingSessionState.value = trainingSession.skip(timeProvider.currentTime())
     }
 
-    fun completed(): TrainingSessionState {
-        return trainingSession.completed(timeProvider.currentTime())
+    fun completed() {
+        _trainingSessionState.value = trainingSession.completed(timeProvider.currentTime())
     }
 
     fun stopTraining() {
         trainingSession.stop()
+        _trainingSessionState.value = TrainingSessionState.IdleState
     }
+
+    fun isTrainingSessionStarted() = trainingSessionState.value !is TrainingSessionState.IdleState
 }

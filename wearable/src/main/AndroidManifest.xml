@@ -39,6 +39,7 @@
             android:exported="false" />
         <activity
             android:name="com.lukasz.witkowski.training.planner.trainingSession.TrainingSessionActivity"
+            android:parentActivityName=".traininglist.TrainingsListActivity"
             android:noHistory="true"
             android:exported="false" />
         <activity

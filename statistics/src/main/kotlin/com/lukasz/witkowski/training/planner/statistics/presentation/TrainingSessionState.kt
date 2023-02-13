@@ -12,7 +12,7 @@ sealed class TrainingSessionState(
 
     object IdleState : TrainingSessionState()
 
-    class ExerciseState(currentExercise: TrainingExercise) :
+    class ExerciseState(val currentExercise: TrainingExercise) :
         TrainingSessionState(currentExercise, currentExercise.time)
 
     class RestTimeState(nextExercise: TrainingExercise, private val restTime: Time) :

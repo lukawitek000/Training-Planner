@@ -10,7 +10,6 @@ room = "2.4.3"
 coroutines = "1.6.4"
 
 # AndroidX
-testCore = "1.4.0"
 lifecycle = "2.5.1"
 
 # Tests
@@ -29,7 +28,8 @@ google-gson = { module = "com.google.code.gson:gson", version = "2.9.1" }
 google-material = { module = "com.google.android.material:material", version = "1.7.0" }
 
 # AndroidX
-androidx-testCore = { module = "androidx.test:core", version.ref = "testCore" }
+androidx-testCore = { module = "androidx.test:core", version = "1.4.0" }
+androidx-core = { module = "androidx.core:core", version = "1.6.0" }
 androidx-lifecycle-livedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodelKtx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
@@ -39,6 +39,7 @@ androidx-roomCompiler = { module = "androidx.room:room-compiler", version.ref = 
 androidx-recyclerView = { module = "androidx.recyclerview:recyclerview", version = "1.2.1" }
 androidx-percentLayout = { module = "androidx.percentlayout:percentlayout", version = "1.0.0" }
 androidx-wear = { module = "androidx.wear:wear", version = "1.2.0" }
+androidx-wearOngoing = { module = "androidx.wear:wear-ongoing", version = "1.0.0" }
 androidx-activityKtx = { module = "androidx.activity:activity-ktx", version = "1.6.0" }
 androidx-fragmentKtx = { module = "androidx.fragment:fragment-ktx", version = "1.5.5" }
 

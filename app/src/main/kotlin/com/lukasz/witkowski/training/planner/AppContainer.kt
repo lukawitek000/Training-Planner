@@ -10,5 +10,5 @@ class AppContainer(private val context: Context) {
     private val imageContainer = ImageContainer(context, "TrainingPlannerImageStorage")
     val exerciseContainer = ExerciseContainer(context, imageContainer.imageStorage)
     val trainingContainer = TrainingContainer.getInstance(context)
-    val statisticsContainer = StatisticsContainer(context)
+    val statisticsContainer = StatisticsContainer.getInstance(context)
 }
