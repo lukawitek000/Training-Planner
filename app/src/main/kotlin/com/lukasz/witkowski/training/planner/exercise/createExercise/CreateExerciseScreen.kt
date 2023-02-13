@@ -224,7 +224,7 @@ private fun imageActivityResultLauncher(
         contract = ActivityResultContracts.GetContent(),
         onResult = { uri ->
             if (uri == null) return@rememberLauncherForActivityResult
-            val bitmap = if (Build.VERSION.SDK_INT < 28) {
+            val bitmap = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
                 MediaStore.Images
                     .Media.getBitmap(context.contentResolver, uri)
             } else {
