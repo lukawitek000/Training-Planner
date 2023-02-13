@@ -6,18 +6,23 @@ import com.lukasz.witkowski.training.planner.statistics.TrainingSessionTest
 import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsPolicy
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSetsPolicy
-import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.TimeProvider
 import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder.FixedTimeProvider
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
-import java.lang.Exception
 import kotlin.test.assertFailsWith
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class TrainingSessionServiceTest : TrainingSessionTest() {
 
-    private val timeProvider: TimeProvider = FixedTimeProvider()
+    private val timeProvider: FixedTimeProvider = FixedTimeProvider()
     private val trainingSetsPolicy: TrainingSetsPolicy = CircuitSetsPolicy()
 
     private lateinit var trainingExercises: List<TrainingExercise>
@@ -32,13 +37,47 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
     }
 
     @Test
-    fun `load first exercise after training starts`() {
-        val state = whenStartTrainingSession()
+    fun `load first exercise after training starts`() = runTest {
+        whenStartTrainingSession()
+        val state = trainingSessionService.trainingSessionState.first()
 
         assertExerciseState(
             expectedState = TrainingSessionState.ExerciseState(trainingExercises.first()),
             trainingSessionState = state
         )
+    }
+
+    @Test
+    fun `emit 1st exercise, rest time and 2nd exercise`() = runTest(UnconfinedTestDispatcher()) {
+        val testResult = mutableListOf<TrainingSessionState>()
+        val job = launch {
+            trainingSessionService.trainingSessionState.toList(testResult)
+        }
+        whenStartTrainingSession()
+        // complete 1st exercise
+        trainingSessionService.completed()
+        // skip rest time
+        trainingSessionService.skip()
+
+        val firstExercise = trainingExercises.first()
+        assert(testResult.first() is TrainingSessionState.IdleState)
+        assertExerciseState(
+            expectedState = TrainingSessionState.ExerciseState(trainingExercises.first()),
+            trainingSessionState = testResult[1]
+        )
+        val secondExercise = trainingExercises[1]
+        assertRestTimeState(
+            expectedState = TrainingSessionState.RestTimeState(
+                secondExercise,
+                firstExercise.restTime
+            ),
+            trainingSessionState = testResult[2]
+        )
+        assertExerciseState(
+            expectedState = TrainingSessionState.ExerciseState(secondExercise),
+            trainingSessionState = testResult[3]
+        )
+        job.cancel()
     }
 
     @Test
@@ -69,5 +108,7 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
         }
     }
 
-    private fun whenStartTrainingSession() = trainingSessionService.startTraining(trainingPlan)
+    private fun whenStartTrainingSession() {
+        trainingSessionService.startTraining(trainingPlan)
+    }
 }
