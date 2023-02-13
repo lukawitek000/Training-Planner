@@ -10,7 +10,6 @@ internal object NotificationChannelFactory {
     private const val NOTIFICATION_CHANNEL_ID = "session_notification_channel"
 
     fun create(context: Context): String {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) throw IllegalStateException("Unsupported android sdk version")
         val name = context.resources.getString(R.string.session_service_channel_name)
         val channel = NotificationChannel(
             NOTIFICATION_CHANNEL_ID,
