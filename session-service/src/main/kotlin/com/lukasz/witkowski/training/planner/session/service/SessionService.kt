@@ -58,7 +58,6 @@ internal class SessionService : Service(), SessionFinishedListener {
     }
 
     override fun onSessionFinished(trainingStatisticsId: TrainingStatisticsId) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) throw IllegalStateException("Unsupported android sdk version")
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
