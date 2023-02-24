@@ -4,23 +4,20 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.TrainingPlanJsonModel
 
-object TrainingPlanMapper {
+internal fun TrainingPlanJsonModel.toTrainingPlan(): TrainingPlan {
+    return TrainingPlan(
+        id = TrainingPlanId(id),
+        title = title,
+        description = description,
+        exercises = exercises.map { it.toTrainingExercise() }
+    )
+}
 
-    fun toTrainingPlan(trainingPlanJsonModel: TrainingPlanJsonModel): TrainingPlan {
-        return TrainingPlan(
-            id = TrainingPlanId(trainingPlanJsonModel.id),
-            title = trainingPlanJsonModel.title,
-            description = trainingPlanJsonModel.description,
-            exercises = trainingPlanJsonModel.exercises.map { it.toTrainingExercise() }
-        )
-    }
-
-    fun toTrainingPlanJsonModel(trainingPlan: TrainingPlan): TrainingPlanJsonModel {
-        return TrainingPlanJsonModel(
-            id = trainingPlan.id.toString(),
-            title = trainingPlan.title,
-            description = trainingPlan.description,
-            exercises = trainingPlan.exercises.map { it.toExerciseJsonModel() }
-        )
-    }
+internal fun TrainingPlan.toTrainingPlanJsonModel(): TrainingPlanJsonModel {
+    return TrainingPlanJsonModel(
+        id = id.toString(),
+        title = title,
+        description = description,
+        exercises = exercises.map { it.toExerciseJsonModel() }
+    )
 }

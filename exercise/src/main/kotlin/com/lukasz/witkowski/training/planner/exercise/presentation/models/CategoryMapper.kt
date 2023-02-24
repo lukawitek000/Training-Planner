@@ -3,12 +3,6 @@ package com.lukasz.witkowski.training.planner.exercise.presentation.models
 import com.lukasz.witkowski.training.planner.exercise.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 
-object CategoryMapper {
-
-    fun toExerciseCategory(category: Category): ExerciseCategory =
-        ExerciseCategory.values()[category.id]
-}
-
 fun ExerciseCategory.toCategory() = when (this) {
     ExerciseCategory.NONE -> Category(ordinal, R.string.category_none)
     ExerciseCategory.LEGS -> Category(ordinal, R.string.category_legs)
