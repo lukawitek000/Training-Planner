@@ -4,27 +4,23 @@ import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.image.ImageId
-import java.util.UUID
 
-internal object ExerciseMapper {
+internal fun Exercise.toDbExercise(): DbExercise {
+    return DbExercise(
+        id = id.toString(),
+        name = name,
+        description = description,
+        categoryId = category.ordinal,
+        imageId = imageId?.toString()
+    )
+}
 
-    fun toDbExercise(exercise: Exercise): DbExercise {
-        return DbExercise(
-            id = exercise.id.toString(),
-            name = exercise.name,
-            description = exercise.description,
-            categoryId = exercise.category.ordinal,
-            imageId = exercise.imageId?.toString()
-        )
-    }
-
-    fun toExercise(dbExercise: DbExercise): Exercise {
-        return Exercise(
-            id = ExerciseId(dbExercise.id),
-            name = dbExercise.name,
-            description = dbExercise.description,
-            category = ExerciseCategory.values()[dbExercise.categoryId],
-            imageId = dbExercise.imageId?.let { ImageId(it) }
-        )
-    }
+internal fun DbExercise.toExercise(): Exercise {
+    return Exercise(
+        id = ExerciseId(id),
+        name = name,
+        description = description,
+        category = ExerciseCategory.values()[categoryId],
+        imageId = imageId?.let { ImageId(it) }
+    )
 }

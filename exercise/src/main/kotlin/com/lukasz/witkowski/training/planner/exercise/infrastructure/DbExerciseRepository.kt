@@ -16,16 +16,16 @@ internal class DbExerciseRepository(
 
     override suspend fun getById(id: ExerciseId): Exercise = withContext(ioDispatcher) {
         val dbExercise = exerciseDao.getById(id.toString())
-        ExerciseMapper.toExercise(dbExercise)
+        dbExercise.toExercise()
     }
 
     override fun getAll(): Flow<List<Exercise>> {
         return exerciseDao.getAll()
-            .map { it.map { dbExercise -> ExerciseMapper.toExercise(dbExercise) } }
+            .map { it.map { dbExercise -> dbExercise.toExercise() } }
     }
 
     override suspend fun insert(exercise: Exercise): Boolean = withContext(ioDispatcher) {
-        val exerciseWithImage = ExerciseMapper.toDbExercise(exercise)
+        val exerciseWithImage = exercise.toDbExercise()
         exerciseDao.insert(exerciseWithImage) == ONE_ROW.toLong()
     }
 
@@ -35,7 +35,7 @@ internal class DbExerciseRepository(
 
     override suspend fun updateExercise(updatedExercise: Exercise): Boolean =
         withContext(ioDispatcher) {
-            val dbExercise = ExerciseMapper.toDbExercise(updatedExercise)
+            val dbExercise = updatedExercise.toDbExercise()
             exerciseDao.update(dbExercise) == ONE_ROW
         }
 

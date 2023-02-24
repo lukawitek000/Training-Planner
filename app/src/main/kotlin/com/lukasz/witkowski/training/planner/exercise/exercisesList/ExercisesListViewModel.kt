@@ -6,7 +6,8 @@ import com.lukasz.witkowski.training.planner.exercise.application.ExerciseServic
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toDomainExercise
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -43,7 +44,7 @@ class ExercisesListViewModel(
                     val imageReference = exercise.imageId?.let { imageId ->
                         exerciseService.readImageReference(imageId)
                     }
-                    ExerciseMapper.toPresentationExercise(exercise, imageReference)
+                    exercise.toPresentationExercise(imageReference)
                 }
                 _exercises.emit(exercises)
             }
@@ -52,8 +53,7 @@ class ExercisesListViewModel(
 
     fun deleteExercise(exercise: Exercise) {
         viewModelScope.launch {
-            val domainExercise = ExerciseMapper.toDomainExercise(exercise)
-            exerciseService.deleteExercise(domainExercise)
+            exerciseService.deleteExercise(exercise.toDomainExercise())
         }
     }
 
@@ -68,7 +68,7 @@ class ExercisesListViewModel(
     fun undoDeleting(exercise: Exercise) {
         viewModelScope.launch {
             val allExercises = _exercises.value.toMutableSet()
-            if(allExercises.add(exercise)) {
+            if (allExercises.add(exercise)) {
                 _exercises.emit(allExercises.toList())
             }
         }

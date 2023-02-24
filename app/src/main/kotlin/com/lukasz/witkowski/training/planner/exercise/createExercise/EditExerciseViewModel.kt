@@ -8,9 +8,8 @@ import com.lukasz.witkowski.training.planner.exercise.application.ExerciseServic
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise
 import com.lukasz.witkowski.training.planner.image.ImageId
-import com.lukasz.witkowski.training.planner.image.ImageMapper
 import com.lukasz.witkowski.training.planner.image.toBitmapImage
 import kotlinx.coroutines.launch
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
@@ -24,7 +23,8 @@ class EditExerciseViewModel(
     private lateinit var initialExercise: Exercise
 
     override val exerciseId: ExerciseId
-        get() = super.exerciseId ?: throw IllegalArgumentException("ExerciseId was to provided to edit screen")
+        get() = super.exerciseId
+            ?: throw IllegalArgumentException("ExerciseId was to provided to edit screen")
 
     init {
         viewModelScope.launch {
@@ -51,7 +51,7 @@ class EditExerciseViewModel(
         val imageReference = domainExercise.imageId?.let {
             exerciseService.readImageReference(it)
         }
-        return ExerciseMapper.toPresentationExercise(domainExercise, imageReference)
+        return domainExercise.toPresentationExercise(imageReference)
     }
 
     private suspend fun loadBitmap(imageId: ImageId): Bitmap {
@@ -65,7 +65,7 @@ class EditExerciseViewModel(
     }
 
     private fun updateExercise(exerciseConfiguration: ExerciseConfiguration) {
-        asynchronousOperation( "Updating exercise has failed") {
+        asynchronousOperation("Updating exercise has failed") {
             exerciseService.updateExercise(exerciseId, exerciseConfiguration, null)
         }
     }

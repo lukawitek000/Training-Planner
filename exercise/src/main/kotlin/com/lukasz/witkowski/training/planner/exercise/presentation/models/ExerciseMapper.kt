@@ -3,30 +3,22 @@ package com.lukasz.witkowski.training.planner.exercise.presentation.models
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 
-object ExerciseMapper {
+fun Exercise.toDomainExercise(): DomainExercise {
+    return DomainExercise(
+        id = id,
+        name = name,
+        description = description,
+        category = CategoryMapper.toExerciseCategory(category),
+        imageId = image?.imageId
+    )
+}
 
-    fun toDomainExercise(
-        exercise: Exercise
-    ): DomainExercise {
-        return DomainExercise(
-            id = exercise.id,
-            name = exercise.name,
-            description = exercise.description,
-            category = CategoryMapper.toExerciseCategory(exercise.category),
-            imageId = exercise.image?.imageId
-        )
-    }
-
-    fun toPresentationExercise(
-        exercise: DomainExercise,
-        imageReference: ImageReference?
-    ): Exercise {
-        return Exercise(
-            id = exercise.id,
-            name = exercise.name,
-            description = exercise.description,
-            category = CategoryMapper.toCategory(exercise.category),
-            image = imageReference
-        )
-    }
+fun DomainExercise.toPresentationExercise(imageReference: ImageReference?): Exercise {
+    return Exercise(
+        id = id,
+        name = name,
+        description = description,
+        category = CategoryMapper.toCategory(category),
+        image = imageReference
+    )
 }
