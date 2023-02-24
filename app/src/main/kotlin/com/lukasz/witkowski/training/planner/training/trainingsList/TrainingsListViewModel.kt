@@ -8,6 +8,8 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.toExer
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
+import com.lukasz.witkowski.training.planner.training.presentation.mappers.toDomainTrainingPlan
+import com.lukasz.witkowski.training.planner.training.presentation.mappers.toPresentationTrainingPlans
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -40,7 +42,7 @@ class TrainingsListViewModel(
         viewModelScope.launch {
             val categories = selectedCategories.value.map { it.toExerciseCategory() }
             trainingPlanService.getTrainingPlansFromCategories(categories).collectLatest {
-                _trainingPlans.emit(TrainingPlanMapper.toPresentationTrainingPlans(it))
+                _trainingPlans.emit(it.toPresentationTrainingPlans())
             }
         }
     }
@@ -48,7 +50,7 @@ class TrainingsListViewModel(
     fun sendTrainingPlan(id: String) {
         viewModelScope.launch {
             _trainingPlans.value.firstOrNull { it.id.toString() == id }?.let {
-                trainingPlanService.sendTrainingPlan(TrainingPlanMapper.toDomainTrainingPlan(it))
+                trainingPlanService.sendTrainingPlan(it.toDomainTrainingPlan())
             }
         }
     }

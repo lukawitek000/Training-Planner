@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.planner.training.application.TrainingPlanSe
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
+import com.lukasz.witkowski.training.planner.training.presentation.mappers.toPresentationTrainingPlan
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -42,8 +43,7 @@ class TrainingOverviewViewModel(
             _trainingPlan.value = ResultHandler.Loading
             val domainTrainingPlan =
                 trainingPlanService.getTrainingPlanById(trainingPlanId = trainingPlanId)
-            val trainingPlan =
-                TrainingPlanMapper.toPresentationTrainingPlan(trainingPlan = domainTrainingPlan)
+            val trainingPlan = domainTrainingPlan.toPresentationTrainingPlan()
             _trainingPlan.value = ResultHandler.Success(trainingPlan)
         }
     }
