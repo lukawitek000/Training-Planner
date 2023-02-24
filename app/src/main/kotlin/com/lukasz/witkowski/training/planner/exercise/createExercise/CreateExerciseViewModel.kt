@@ -13,6 +13,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Catego
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.image.ImageBitmap
 import com.lukasz.witkowski.training.planner.image.ImageMapper
+import com.lukasz.witkowski.training.planner.image.toImageByteArray
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -66,7 +67,7 @@ open class CreateExerciseViewModel(
             name = name.value,
             description = description.value,
             category = CategoryMapper.toExerciseCategory(category.value),
-            image = image.value?.let { ImageMapper.toImageByteArray(it) }
+            image = image.value?.toImageByteArray()
         )
     }
 

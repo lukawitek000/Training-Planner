@@ -11,6 +11,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exerci
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseMapper
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageMapper
+import com.lukasz.witkowski.training.planner.image.toBitmapImage
 import kotlinx.coroutines.launch
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 
@@ -55,7 +56,7 @@ class EditExerciseViewModel(
 
     private suspend fun loadBitmap(imageId: ImageId): Bitmap {
         val image = exerciseService.readImage(imageId)
-        return ImageMapper.toBitmapImage(image).bitmap
+        return image.toBitmapImage().bitmap
     }
 
     override fun createExercise() {

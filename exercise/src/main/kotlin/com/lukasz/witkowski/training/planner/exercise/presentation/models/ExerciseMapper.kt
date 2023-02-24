@@ -1,8 +1,5 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation.models
 
-import com.lukasz.witkowski.training.planner.exercise.application.ExerciseConfiguration
-import com.lukasz.witkowski.training.planner.image.ImageBitmap
-import com.lukasz.witkowski.training.planner.image.ImageMapper
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 
