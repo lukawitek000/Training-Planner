@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.shared.utils
+package com.lukasz.witkowski.training.planner.shared.utils
 
 sealed class ResultHandler<out T : Any> {
     data class Success<out T : Any>(val value: T) : ResultHandler<T>()

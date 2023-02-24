@@ -25,8 +25,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.time.formatToString
-import com.lukasz.witkowski.shared.utils.toPercentage
+import com.lukasz.witkowski.training.planner.shared.time.formatToString
+import com.lukasz.witkowski.training.planner.shared.utils.toPercentage
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseStatistics

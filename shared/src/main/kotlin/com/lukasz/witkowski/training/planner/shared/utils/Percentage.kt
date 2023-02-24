@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.shared.utils
+package com.lukasz.witkowski.training.planner.shared.utils
 
 import kotlin.math.roundToInt
 
