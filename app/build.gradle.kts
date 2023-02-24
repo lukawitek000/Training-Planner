@@ -5,6 +5,7 @@ plugins {
 
 android {
     compileSdk = ConfigData.compileSdk
+    namespace = ConfigData.applicationNamespace
 
     defaultConfig {
         applicationId = ConfigData.applicationId
