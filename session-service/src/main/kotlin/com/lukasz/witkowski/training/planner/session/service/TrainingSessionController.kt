@@ -7,6 +7,7 @@ import com.lukasz.witkowski.training.planner.statistics.di.StatisticsContainer
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
+import com.lukasz.witkowski.training.planner.statistics.presentation.toPresentationTrainingSessionState
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -36,7 +37,7 @@ internal class TrainingSessionController(private val context: Context) {
 
     fun observeSessionState() = coroutineScope.launch {
         trainingSessionService.trainingSessionState.map {
-            TrainingSessionStateMapper.toPresentation(it)
+            it.toPresentationTrainingSessionState()
         }.collectLatest {
             resetTimerHelper()
             when (it) {

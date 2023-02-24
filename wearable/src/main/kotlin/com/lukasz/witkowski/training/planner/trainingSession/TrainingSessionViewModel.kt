@@ -11,6 +11,7 @@ import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
+import com.lukasz.witkowski.training.planner.statistics.presentation.toPresentationTrainingSessionState
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
@@ -40,7 +41,7 @@ class TrainingSessionViewModel(
     init {
         viewModelScope.launch {
             trainingSessionService.trainingSessionState.collectLatest {
-                _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(it)
+                _trainingSessionState.value = it.toPresentationTrainingSessionState()
             }
         }
     }
