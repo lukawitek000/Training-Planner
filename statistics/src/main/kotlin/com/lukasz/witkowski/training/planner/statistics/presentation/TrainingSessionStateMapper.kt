@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.statistics.presentation
 
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
-import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.toPresentationTrainingExercise
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.toPresentationTrainingPlan
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState as PresentationState
