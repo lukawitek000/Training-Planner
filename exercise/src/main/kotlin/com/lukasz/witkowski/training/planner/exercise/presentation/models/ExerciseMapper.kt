@@ -8,7 +8,7 @@ fun Exercise.toDomainExercise(): DomainExercise {
         id = id,
         name = name,
         description = description,
-        category = CategoryMapper.toExerciseCategory(category),
+        category = category.toExerciseCategory(),
         imageId = image?.imageId
     )
 }
@@ -18,7 +18,7 @@ fun DomainExercise.toPresentationExercise(imageReference: ImageReference?): Exer
         id = id,
         name = name,
         description = description,
-        category = CategoryMapper.toCategory(category),
+        category = category.toCategory(),
         image = imageReference
     )
 }

@@ -7,6 +7,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryContr
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toDomainExercise
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -38,7 +39,7 @@ class ExercisesListViewModel(
 
     private fun fetchExercises() {
         viewModelScope.launch {
-            val categories = selectedCategories.value.map { CategoryMapper.toExerciseCategory(it) }
+            val categories = selectedCategories.value.map { it.toExerciseCategory() }
             exerciseService.getExercisesFromCategories(categories).collectLatest {
                 val exercises = it.map { exercise ->
                     val imageReference = exercise.imageId?.let { imageId ->
