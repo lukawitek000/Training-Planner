@@ -11,7 +11,7 @@ object TrainingPlanMapper {
             id = TrainingPlanId(trainingPlanJsonModel.id),
             title = trainingPlanJsonModel.title,
             description = trainingPlanJsonModel.description,
-            exercises = trainingPlanJsonModel.exercises.map { ExerciseMapper.toExercise(it) }
+            exercises = trainingPlanJsonModel.exercises.map { it.toTrainingExercise() }
         )
     }
 
@@ -20,7 +20,7 @@ object TrainingPlanMapper {
             id = trainingPlan.id.toString(),
             title = trainingPlan.title,
             description = trainingPlan.description,
-            exercises = trainingPlan.exercises.map { ExerciseMapper.toExerciseJsonModel(it) }
+            exercises = trainingPlan.exercises.map { it.toExerciseJsonModel() }
         )
     }
 }
