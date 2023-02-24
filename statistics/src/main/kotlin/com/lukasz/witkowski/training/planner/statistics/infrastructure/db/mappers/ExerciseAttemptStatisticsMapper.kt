@@ -7,29 +7,23 @@ import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseSt
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models.DbExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 
-object ExerciseAttemptStatisticsMapper {
+internal fun ExerciseAttemptStatistics.toDbExerciseAttemptStatistics(exerciseStatisticsId: ExerciseStatisticsId): DbExerciseAttemptStatistics {
+    return DbExerciseAttemptStatistics(
+        id = id.toString(),
+        exerciseStatisticsId = exerciseStatisticsId.toString(),
+        trainingExerciseId = trainingExerciseId.toString(),
+        time = time.timeInMillis,
+        set = set,
+        completed = completed
+    )
+}
 
-    fun toDbExerciseAttemptStatistics(
-        exerciseAttemptStatistics: ExerciseAttemptStatistics,
-        exerciseStatisticsId: ExerciseStatisticsId
-    ): DbExerciseAttemptStatistics {
-        return DbExerciseAttemptStatistics(
-            id = exerciseAttemptStatistics.id.toString(),
-            exerciseStatisticsId = exerciseStatisticsId.toString(),
-            trainingExerciseId = exerciseAttemptStatistics.trainingExerciseId.toString(),
-            time = exerciseAttemptStatistics.time.timeInMillis,
-            set = exerciseAttemptStatistics.set,
-            completed = exerciseAttemptStatistics.completed
-        )
-    }
-
-    fun toExerciseAttemptStatistics(dbExerciseAttemptStatistics: DbExerciseAttemptStatistics): ExerciseAttemptStatistics {
-        return ExerciseAttemptStatistics(
-            id = ExerciseAttemptStatisticsId(dbExerciseAttemptStatistics.id),
-            trainingExerciseId = TrainingExerciseId(dbExerciseAttemptStatistics.id),
-            time = Time(dbExerciseAttemptStatistics.time),
-            set = dbExerciseAttemptStatistics.set,
-            completed = dbExerciseAttemptStatistics.completed
-        )
-    }
+internal fun DbExerciseAttemptStatistics.toExerciseAttemptStatistics(): ExerciseAttemptStatistics {
+    return ExerciseAttemptStatistics(
+        id = ExerciseAttemptStatisticsId(id),
+        trainingExerciseId = TrainingExerciseId(id),
+        time = Time(time),
+        set = set,
+        completed = completed
+    )
 }

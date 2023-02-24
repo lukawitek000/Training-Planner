@@ -8,32 +8,24 @@ import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
 
-object TrainingStatisticsMapper {
+internal fun TrainingStatistics.toDbTrainingStatistics(): DbTrainingWithExercisesStatistics {
+    return DbTrainingWithExercisesStatistics(
+        trainingStatistics = DbTrainingStatistics(
+            id = id.toString(),
+            trainingPlanId = trainingPlanId.toString(),
+            totalTime = totalTime.timeInMillis,
+            date = date.time
+        ),
+        exercisesStatistics = exercisesStatistics.map { it.toDbExerciseStatistics(id) }
+    )
+}
 
-    fun toDbTrainingStatistics(trainingStatistics: TrainingStatistics): DbTrainingWithExercisesStatistics {
-        return DbTrainingWithExercisesStatistics(
-            trainingStatistics = DbTrainingStatistics(
-                id = trainingStatistics.id.toString(),
-                trainingPlanId = trainingStatistics.trainingPlanId.toString(),
-                totalTime = trainingStatistics.totalTime.timeInMillis,
-                date = trainingStatistics.date.time
-            ),
-            exercisesStatistics = trainingStatistics.exercisesStatistics.map {
-                ExerciseStatisticsMapper.toDbExerciseStatistics(it, trainingStatistics.id)
-            }
-        )
-    }
-
-    fun toTrainingStatistics(dbTrainingWithExercisesStatistics: DbTrainingWithExercisesStatistics): TrainingStatistics {
-        val dbTrainingStatistics = dbTrainingWithExercisesStatistics.trainingStatistics
-        return TrainingStatistics(
-            id = TrainingStatisticsId(dbTrainingStatistics.id),
-            trainingPlanId = TrainingPlanId(dbTrainingStatistics.trainingPlanId),
-            totalTime = Time(dbTrainingStatistics.totalTime),
-            date = Date(dbTrainingStatistics.date),
-            exercisesStatistics = dbTrainingWithExercisesStatistics.exercisesStatistics.map {
-                ExerciseStatisticsMapper.toExerciseStatistics(it)
-            }
-        )
-    }
+internal fun DbTrainingWithExercisesStatistics.toTrainingStatistics(): TrainingStatistics {
+    return TrainingStatistics(
+        id = TrainingStatisticsId(trainingStatistics.id),
+        trainingPlanId = TrainingPlanId(trainingStatistics.trainingPlanId),
+        totalTime = Time(trainingStatistics.totalTime),
+        date = Date(trainingStatistics.date),
+        exercisesStatistics = exercisesStatistics.map { it.toExerciseStatistics() }
+    )
 }
