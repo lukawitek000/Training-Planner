@@ -8,8 +8,8 @@ import com.lukasz.witkowski.training.planner.statistics.application.TrainingStat
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import com.lukasz.witkowski.training.planner.training.presentation.mappers.toPresentationTrainingPlan
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +31,8 @@ class TrainingOverviewViewModel(
         get() = _trainingPlan
 
     val trainingStatistics: StateFlow<List<TrainingStatistics>> =
-        trainingStatisticsService.getStatistics(trainingPlanId).stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
+        trainingStatisticsService.getStatistics(trainingPlanId)
+            .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 
     init {
         fetchTrainingPlan()
@@ -42,8 +43,7 @@ class TrainingOverviewViewModel(
             _trainingPlan.value = ResultHandler.Loading
             val domainTrainingPlan =
                 trainingPlanService.getTrainingPlanById(trainingPlanId = trainingPlanId)
-            val trainingPlan =
-                TrainingPlanMapper.toPresentationTrainingPlan(trainingPlan = domainTrainingPlan)
+            val trainingPlan = domainTrainingPlan.toPresentationTrainingPlan()
             _trainingPlan.value = ResultHandler.Success(trainingPlan)
         }
     }

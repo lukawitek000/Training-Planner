@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.training.presentation
 
-import android.content.Context
 import com.google.android.gms.wearable.ChannelClient
 import com.google.android.gms.wearable.Wearable
 import com.google.android.gms.wearable.WearableListenerService
@@ -9,7 +8,7 @@ import com.lukasz.witkowski.training.planner.training.application.TrainingPlanSe
 import com.lukasz.witkowski.training.planner.training.di.TrainingContainer
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers.TrainingPlanMapper
+import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers.toTrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.TrainingPlanJsonModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +55,7 @@ class TrainingPlanReceiverService : WearableListenerService() {
     ): Flow<TrainingPlan> {
         receiver = WearableChannelClientReceiver(inputStream, outputStream)
         return receiver.receiveData(TrainingPlanJsonModel::class.java)
-            .map { TrainingPlanMapper.toTrainingPlan(it) }
+            .map { it.toTrainingPlan() }
     }
 
     private suspend fun confirmReceivingTrainingPlan(id: TrainingPlanId) {

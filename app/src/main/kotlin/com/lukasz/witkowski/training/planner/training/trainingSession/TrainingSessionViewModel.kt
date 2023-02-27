@@ -7,7 +7,7 @@ import com.lukasz.witkowski.training.planner.statistics.application.TrainingSess
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
-import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
+import com.lukasz.witkowski.training.planner.statistics.presentation.toPresentationTrainingSessionState
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,7 +32,7 @@ class TrainingSessionViewModel(
 
     val trainingSessionState: StateFlow<TrainingSessionState>
         get() = trainingSessionService.trainingSessionState.map {
-            TrainingSessionStateMapper.toPresentation(it)
+            it.toPresentationTrainingSessionState()
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), TrainingSessionState.IdleState)
     private val currentState: TrainingSessionState
         get() = trainingSessionState.value
@@ -82,7 +82,7 @@ class TrainingSessionViewModel(
     private fun observeTrainingSessionState() {
         viewModelScope.launch {
             trainingSessionService.trainingSessionState.collectLatest {
-                val state = TrainingSessionStateMapper.toPresentation(it)
+                val state = it.toPresentationTrainingSessionState()
                 setTimerForRestTimeAndExercise(state)
                 startRestTimeTimer(state)
             }

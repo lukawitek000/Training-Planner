@@ -7,29 +7,26 @@ import java.util.UUID
 import com.lukasz.witkowski.training.planner.image.domain.Image as DomainImage
 import com.lukasz.witkowski.training.planner.image.domain.ImageReference as DomainImageReference
 
-object ImageMapper {
+private const val QUALITY_100 = 100
 
-    fun toImageByteArray(image: ImageBitmap): ImageByteArray {
-        val outputStream = ByteArrayOutputStream()
-        image.bitmap.compress(Bitmap.CompressFormat.PNG, QUALITY_100, outputStream)
-        val byteArray = outputStream.toByteArray()
-        return ImageByteArray(byteArray)
-    }
+fun ImageBitmap.toImageByteArray(): ImageByteArray {
+    val outputStream = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.PNG, QUALITY_100, outputStream)
+    val byteArray = outputStream.toByteArray()
+    return ImageByteArray(byteArray)
+}
 
-    fun toBitmapImage(image: Image): ImageBitmap {
-        return toBitmapImage(ImageByteArray(image.data))
-    }
+fun Image.toBitmapImage(): ImageBitmap {
+    return ImageByteArray(data).toBitmapImage()
+}
 
-    fun toBitmapImage(imageByteArray: ImageByteArray): ImageBitmap {
-        val bitmap = BitmapFactory.decodeByteArray(imageByteArray.data, 0, imageByteArray.data.size)
-        return ImageBitmap(bitmap)
-    }
+fun ImageByteArray.toBitmapImage(): ImageBitmap {
+    val bitmap = BitmapFactory.decodeByteArray(data, 0, data.size)
+    return ImageBitmap(bitmap)
+}
 
-    fun toImageConfiguration(imageByteArray: ImageByteArray, ownerId: UUID): ImageConfiguration {
-        return ImageConfiguration(imageByteArray.data, ownerId)
-    }
-
-    private const val QUALITY_100 = 100
+fun ImageByteArray.toImageConfiguration(ownerId: UUID): ImageConfiguration {
+    return ImageConfiguration(data, ownerId)
 }
 
 internal fun DomainImage.toImage(): Image {

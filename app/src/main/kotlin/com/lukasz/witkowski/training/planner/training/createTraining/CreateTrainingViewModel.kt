@@ -8,7 +8,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exerci
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
+import com.lukasz.witkowski.training.planner.training.presentation.mappers.toDomainTrainingPlan
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -101,11 +101,7 @@ class CreateTrainingViewModel(
                 description = description.value,
                 exercises = trainingExercises.value
             )
-            trainingPlanService.saveTrainingPlan(
-                TrainingPlanMapper.toDomainTrainingPlan(
-                    trainingPlan
-                )
-            )
+            trainingPlanService.saveTrainingPlan(trainingPlan.toDomainTrainingPlan())
         }
     }
 }

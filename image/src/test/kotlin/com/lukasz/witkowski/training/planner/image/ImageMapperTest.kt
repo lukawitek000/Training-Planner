@@ -15,8 +15,8 @@ class ImageMapperTest {
         val bitmap = givenTestBitmap()
         val image = ImageBitmap(bitmap)
 
-        val byteArrayImage = ImageMapper.toImageByteArray(image)
-        val result = ImageMapper.toBitmapImage(byteArrayImage)
+        val byteArrayImage = image.toImageByteArray()
+        val result = byteArrayImage.toBitmapImage()
 
         assertTrue(bitmap.sameAs(result.bitmap))
     }

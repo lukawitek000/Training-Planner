@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.domain
 
 enum class ExerciseCategory {
-    // TODO why unknown is wrong, make nullable?
     NONE,
     LEGS,
     SHOULDERS,
@@ -11,7 +10,7 @@ enum class ExerciseCategory {
     BACK,
     ABS,
     STRETCHING,
-    CHEST
-}
+    CHEST;
 
-fun isCategoryNone(category: ExerciseCategory) = category == ExerciseCategory.NONE
+    fun isNone() = this == NONE
+}
