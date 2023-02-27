@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers
 
-import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId

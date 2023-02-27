@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.shared.time.Time
 
 
 @Composable

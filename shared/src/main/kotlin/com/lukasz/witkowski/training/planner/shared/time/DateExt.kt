@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.shared.time
+package com.lukasz.witkowski.training.planner.shared.time
 
 import java.text.SimpleDateFormat
 import java.util.Date

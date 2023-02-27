@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.statistics.infrastructure.db.mappers
 
-import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models.DbTrainingStatistics

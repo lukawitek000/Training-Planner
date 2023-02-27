@@ -1,10 +1,11 @@
-
 plugins {
     id(BuildPlugins.commonLibraryPlugin)
     id(BuildPlugins.customDetektPlugin)
 }
 
 android {
+    namespace = "com.lukasz.witkowski.training.planner.image"
+
     testOptions {
         unitTests {
             isIncludeAndroidResources = true

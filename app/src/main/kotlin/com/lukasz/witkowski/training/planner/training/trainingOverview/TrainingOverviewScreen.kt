@@ -25,9 +25,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.lukasz.witkowski.shared.time.Time
-import com.lukasz.witkowski.shared.time.formatToString
-import com.lukasz.witkowski.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.shared.time.Time
+import com.lukasz.witkowski.training.planner.shared.time.formatToString
+import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category

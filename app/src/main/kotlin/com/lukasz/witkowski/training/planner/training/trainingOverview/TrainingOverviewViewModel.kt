@@ -3,7 +3,7 @@ package com.lukasz.witkowski.training.planner.training.trainingOverview
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService

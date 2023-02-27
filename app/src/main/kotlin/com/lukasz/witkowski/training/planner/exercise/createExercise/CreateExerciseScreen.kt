@@ -33,7 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.lukasz.witkowski.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.SnackbarState
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category

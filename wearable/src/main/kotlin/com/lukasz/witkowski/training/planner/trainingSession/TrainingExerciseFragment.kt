@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.lukasz.witkowski.shared.time.Time
+import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingExerciseBinding
 import com.lukasz.witkowski.training.planner.session.service.SessionServiceConnector

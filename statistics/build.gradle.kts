@@ -2,6 +2,10 @@ plugins {
     id(BuildPlugins.commonLibraryPlugin)
 }
 
+android {
+    namespace = "com.lukasz.witkowski.training.planner.statistics"
+}
+
 dependencies {
     implementation(projects.training)
     api(projects.shared)
