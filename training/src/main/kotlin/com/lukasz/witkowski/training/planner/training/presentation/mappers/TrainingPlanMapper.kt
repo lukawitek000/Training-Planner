@@ -1,38 +1,28 @@
 package com.lukasz.witkowski.training.planner.training.presentation.mappers
 
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan as DomainTrainingPlan
 
-object TrainingPlanMapper {
+fun TrainingPlan.toDomainTrainingPlan(): DomainTrainingPlan {
+    return DomainTrainingPlan(
+        id = id,
+        title = title,
+        description = description,
+        exercises = exercises.map { it.toDomainTrainingExercise() },
+        isSynchronized = isSynchronized
+    )
+}
 
-    fun toDomainTrainingPlan(trainingPlan: TrainingPlan): com.lukasz.witkowski.training.planner.training.domain.TrainingPlan {
-        return com.lukasz.witkowski.training.planner.training.domain.TrainingPlan(
-            id = trainingPlan.id,
-            title = trainingPlan.title,
-            description = trainingPlan.description,
-            exercises = trainingPlan.exercises.map {
-                TrainingExerciseMapper.toDomainTrainingExercise(
-                    it
-                )
-            },
-            isSynchronized = trainingPlan.isSynchronized
-        )
-    }
+fun DomainTrainingPlan.toPresentationTrainingPlan(): TrainingPlan {
+    return TrainingPlan(
+        id = id,
+        title = title,
+        description = description,
+        exercises = exercises.map { it.toPresentationTrainingExercise() },
+        isSynchronized = isSynchronized
+    )
+}
 
-    fun toPresentationTrainingPlan(trainingPlan: com.lukasz.witkowski.training.planner.training.domain.TrainingPlan): TrainingPlan {
-        return TrainingPlan(
-            id = trainingPlan.id,
-            title = trainingPlan.title,
-            description = trainingPlan.description,
-            exercises = trainingPlan.exercises.map {
-                TrainingExerciseMapper.toPresentationTrainingExercise(
-                    it
-                )
-            },
-            isSynchronized = trainingPlan.isSynchronized
-        )
-    }
-
-    fun toPresentationTrainingPlans(trainingPlans: List<com.lukasz.witkowski.training.planner.training.domain.TrainingPlan>): List<TrainingPlan> {
-        return trainingPlans.map { toPresentationTrainingPlan(it) }
-    }
+fun List<DomainTrainingPlan>.toPresentationTrainingPlans(): List<TrainingPlan> {
+    return map { it.toPresentationTrainingPlan() }
 }

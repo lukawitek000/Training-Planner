@@ -8,35 +8,32 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.ExerciseJsonModel
 
-object ExerciseMapper {
+internal fun TrainingExercise.toExerciseJsonModel(): ExerciseJsonModel {
+    return ExerciseJsonModel(
+        id = id.toString(),
+        exerciseId = exercise.id.toString(),
+        name = exercise.name,
+        description = exercise.description,
+        category = exercise.category.ordinal,
+        repetitions = repetitions,
+        sets = sets,
+        time = time.timeInMillis,
+        restTime = restTime.timeInMillis
+    )
+}
 
-    fun toExerciseJsonModel(trainingExercise: TrainingExercise): ExerciseJsonModel {
-        return ExerciseJsonModel(
-            id = trainingExercise.id.toString(),
-            exerciseId = trainingExercise.exercise.id.toString(),
-            name = trainingExercise.exercise.name,
-            description = trainingExercise.exercise.description,
-            category = trainingExercise.exercise.category.ordinal,
-            repetitions = trainingExercise.repetitions,
-            sets = trainingExercise.sets,
-            time = trainingExercise.time.timeInMillis,
-            restTime = trainingExercise.restTime.timeInMillis
-        )
-    }
-
-    fun toExercise(exerciseJsonModel: ExerciseJsonModel): TrainingExercise {
-        return TrainingExercise(
-            id = TrainingExerciseId(exerciseJsonModel.id),
-            exercise = Exercise(
-                ExerciseId(exerciseJsonModel.exerciseId),
-                exerciseJsonModel.name,
-                exerciseJsonModel.description,
-                ExerciseCategory.values()[exerciseJsonModel.category]
-            ),
-            repetitions = exerciseJsonModel.repetitions,
-            sets = exerciseJsonModel.sets,
-            time = Time(exerciseJsonModel.time),
-            restTime = Time(exerciseJsonModel.restTime)
-        )
-    }
+internal fun ExerciseJsonModel.toTrainingExercise(): TrainingExercise {
+    return TrainingExercise(
+        id = TrainingExerciseId(id),
+        exercise = Exercise(
+            ExerciseId(exerciseId),
+            name,
+            description,
+            ExerciseCategory.values()[category]
+        ),
+        repetitions = repetitions,
+        sets = sets,
+        time = Time(time),
+        restTime = Time(restTime)
+    )
 }

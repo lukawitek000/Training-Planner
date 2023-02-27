@@ -6,24 +6,26 @@ import com.lukasz.witkowski.training.planner.statistics.application.TrainingStat
 import com.lukasz.witkowski.training.planner.statistics.di.StatisticsContainer
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
-import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
+import com.lukasz.witkowski.training.planner.statistics.presentation.toPresentationTrainingSessionState
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 internal class TrainingSessionController(private val context: Context) {
-    private val statisticsContainer: StatisticsContainer by lazy { StatisticsContainer.getInstance(context) }
+    private val statisticsContainer: StatisticsContainer by lazy {
+        StatisticsContainer.getInstance(
+            context
+        )
+    }
     private val trainingSessionService: TrainingSessionService by lazy { statisticsContainer.trainingSessionService }
     private val trainingStatisticsService: TrainingStatisticsService by lazy { statisticsContainer.trainingStatisticsService }
-    private val coroutineScope = CoroutineScope(Dispatchers.Default + CoroutineName("TrainingSessionController"))
+    private val coroutineScope =
+        CoroutineScope(Dispatchers.Default + CoroutineName("TrainingSessionController"))
 
     var serviceTimerController: ServiceTimerController? = null
         private set
@@ -36,7 +38,7 @@ internal class TrainingSessionController(private val context: Context) {
 
     fun observeSessionState() = coroutineScope.launch {
         trainingSessionService.trainingSessionState.map {
-            TrainingSessionStateMapper.toPresentation(it)
+            it.toPresentationTrainingSessionState()
         }.collectLatest {
             resetTimerHelper()
             when (it) {

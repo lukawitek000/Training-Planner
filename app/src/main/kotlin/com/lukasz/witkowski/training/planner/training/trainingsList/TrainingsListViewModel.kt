@@ -3,10 +3,11 @@ package com.lukasz.witkowski.training.planner.training.trainingsList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.CategoryMapper
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toExerciseCategory
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
+import com.lukasz.witkowski.training.planner.training.presentation.mappers.toDomainTrainingPlan
+import com.lukasz.witkowski.training.planner.training.presentation.mappers.toPresentationTrainingPlans
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -37,9 +38,9 @@ class TrainingsListViewModel(
 
     private fun fetchExercises() {
         viewModelScope.launch {
-            val categories = selectedCategories.value.map { CategoryMapper.toExerciseCategory(it) }
+            val categories = selectedCategories.value.map { it.toExerciseCategory() }
             trainingPlanService.getTrainingPlansFromCategories(categories).collectLatest {
-                _trainingPlans.emit(TrainingPlanMapper.toPresentationTrainingPlans(it))
+                _trainingPlans.emit(it.toPresentationTrainingPlans())
             }
         }
     }
@@ -47,7 +48,7 @@ class TrainingsListViewModel(
     fun sendTrainingPlan(id: String) {
         viewModelScope.launch {
             _trainingPlans.value.firstOrNull { it.id.toString() == id }?.let {
-                trainingPlanService.sendTrainingPlan(TrainingPlanMapper.toDomainTrainingPlan(it))
+                trainingPlanService.sendTrainingPlan(it.toDomainTrainingPlan())
             }
         }
     }

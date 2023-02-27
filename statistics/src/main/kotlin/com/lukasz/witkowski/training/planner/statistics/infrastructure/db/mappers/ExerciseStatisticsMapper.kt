@@ -7,34 +7,25 @@ import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models.DbExerciseWithAttemptsStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 
-object ExerciseStatisticsMapper {
+internal fun ExerciseStatistics.toDbExerciseStatistics(trainingStatisticsId: TrainingStatisticsId): DbExerciseWithAttemptsStatistics {
+    return DbExerciseWithAttemptsStatistics(
+        exerciseStatistics = DbExerciseStatistics(
+            id = id.toString(),
+            trainingStatisticsId = trainingStatisticsId.toString(),
+            trainingExerciseId = trainingExerciseId.toString()
+        ),
+        exerciseAttemptsStatistics = attemptsStatistics.map {
+            it.toDbExerciseAttemptStatistics(id)
+        }
+    )
+}
 
-    fun toDbExerciseStatistics(
-        exerciseStatistics: ExerciseStatistics,
-        trainingStatisticsId: TrainingStatisticsId
-    ): DbExerciseWithAttemptsStatistics {
-        return DbExerciseWithAttemptsStatistics(
-            exerciseStatistics = DbExerciseStatistics(
-                id = exerciseStatistics.id.toString(),
-                trainingStatisticsId = trainingStatisticsId.toString(),
-                trainingExerciseId = exerciseStatistics.trainingExerciseId.toString()
-            ),
-            exerciseAttemptsStatistics = exerciseStatistics.attemptsStatistics.map {
-                ExerciseAttemptStatisticsMapper.toDbExerciseAttemptStatistics(
-                    it,
-                    exerciseStatistics.id
-                )
-            }
-        )
-    }
-
-    fun toExerciseStatistics(dbExerciseWithAttemptsStatistics: DbExerciseWithAttemptsStatistics): ExerciseStatistics {
-        return ExerciseStatistics(
-            id = ExerciseStatisticsId(dbExerciseWithAttemptsStatistics.exerciseStatistics.id),
-            trainingExerciseId = TrainingExerciseId(dbExerciseWithAttemptsStatistics.exerciseStatistics.trainingExerciseId),
-            attemptsStatistics = dbExerciseWithAttemptsStatistics.exerciseAttemptsStatistics.map {
-                ExerciseAttemptStatisticsMapper.toExerciseAttemptStatistics(it)
-            }
-        )
-    }
+internal fun DbExerciseWithAttemptsStatistics.toExerciseStatistics(): ExerciseStatistics {
+    return ExerciseStatistics(
+        id = ExerciseStatisticsId(exerciseStatistics.id),
+        trainingExerciseId = TrainingExerciseId(exerciseStatistics.trainingExerciseId),
+        attemptsStatistics = exerciseAttemptsStatistics.map {
+            it.toExerciseAttemptStatistics()
+        }
+    )
 }

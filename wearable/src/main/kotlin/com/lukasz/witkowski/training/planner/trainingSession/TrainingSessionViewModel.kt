@@ -10,14 +10,13 @@ import com.lukasz.witkowski.training.planner.dummyTrainingsList
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
-import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionStateMapper
+import com.lukasz.witkowski.training.planner.statistics.presentation.toPresentationTrainingSessionState
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.presentation.mappers.TrainingPlanMapper
+import com.lukasz.witkowski.training.planner.training.presentation.mappers.toDomainTrainingPlan
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class TrainingSessionViewModel(
     private val savedStateHandle: SavedStateHandle,
@@ -40,7 +39,7 @@ class TrainingSessionViewModel(
     init {
         viewModelScope.launch {
             trainingSessionService.trainingSessionState.collectLatest {
-                _trainingSessionState.value = TrainingSessionStateMapper.toPresentation(it)
+                _trainingSessionState.value = it.toPresentationTrainingSessionState()
             }
         }
     }
@@ -55,7 +54,7 @@ class TrainingSessionViewModel(
     }
 
     fun startTrainingSession(trainingPlan: TrainingPlan) {
-        trainingSessionService.startTraining(TrainingPlanMapper.toDomainTrainingPlan(trainingPlan))
+        trainingSessionService.startTraining(trainingPlan.toDomainTrainingPlan())
     }
 
     fun completed() {

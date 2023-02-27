@@ -6,11 +6,10 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.image.Image
 import com.lukasz.witkowski.training.planner.image.ImageByteArray
-import com.lukasz.witkowski.training.planner.image.ImageConfiguration
 import com.lukasz.witkowski.training.planner.image.ImageId
-import com.lukasz.witkowski.training.planner.image.ImageMapper
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageStorage
+import com.lukasz.witkowski.training.planner.image.toImageConfiguration
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -27,7 +26,7 @@ class ExerciseService(
     }
 
     private suspend fun saveImage(imageByteArray: ImageByteArray, exerciseId: ExerciseId): ImageReference {
-        val imageConfiguration = ImageMapper.toImageConfiguration(imageByteArray, exerciseId.value)
+        val imageConfiguration = imageByteArray.toImageConfiguration(exerciseId.value)
         return imageStorage.saveImage(imageConfiguration)
     }
 
@@ -63,7 +62,7 @@ class ExerciseService(
     }
 
     private suspend fun updateImage(imageByteArray: ImageByteArray?, oldImageId: ImageId?, exerciseId: ExerciseId): ImageReference? {
-        val imageConfiguration = imageByteArray?.let { ImageMapper.toImageConfiguration(it, exerciseId.value) }
+        val imageConfiguration = imageByteArray?.toImageConfiguration(exerciseId.value)
         return if(oldImageId == null) {
             imageConfiguration?.let { imageStorage.saveImage(imageConfiguration) }
         } else {
