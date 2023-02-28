@@ -7,7 +7,6 @@ import com.lukasz.witkowski.training.planner.synchronization.WearableChannelClie
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.di.TrainingContainer
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers.toTrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.TrainingPlanJsonModel
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +37,7 @@ class TrainingPlanReceiverService : WearableListenerService() {
             val (inputStream, outputStream) = openStreams(channel)
             receiveTrainingPlan(inputStream, outputStream).collect {
                 trainingPlanService.saveTrainingPlan(it)
-                confirmReceivingTrainingPlan(it.id)
+                confirmReceivingTrainingPlan()
             }
         }
     }
@@ -58,7 +57,7 @@ class TrainingPlanReceiverService : WearableListenerService() {
             .map { it.toTrainingPlan() }
     }
 
-    private suspend fun confirmReceivingTrainingPlan(id: TrainingPlanId) {
+    private suspend fun confirmReceivingTrainingPlan() {
         receiver.sendReceivingConfirmation()
     }
 
