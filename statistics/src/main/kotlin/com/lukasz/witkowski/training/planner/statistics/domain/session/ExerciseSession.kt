@@ -4,7 +4,7 @@ import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 
-class ExerciseSession(
+internal class ExerciseSession(
     private val exercise: TrainingExercise,
     private val startTime: Time,
     private val set: Int
