@@ -7,7 +7,9 @@ import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models.DbExerciseWithAttemptsStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 
-internal fun ExerciseStatistics.toDbExerciseStatistics(trainingStatisticsId: TrainingStatisticsId): DbExerciseWithAttemptsStatistics {
+internal fun ExerciseStatistics.toDbExerciseStatistics(
+    trainingStatisticsId: TrainingStatisticsId
+): DbExerciseWithAttemptsStatistics {
     return DbExerciseWithAttemptsStatistics(
         exerciseStatistics = DbExerciseStatistics(
             id = id.toString(),

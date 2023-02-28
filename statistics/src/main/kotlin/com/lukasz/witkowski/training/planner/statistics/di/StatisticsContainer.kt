@@ -9,7 +9,6 @@ import com.lukasz.witkowski.training.planner.statistics.infrastructure.DbStatist
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.StatisticsDatabase
 import com.lukasz.witkowski.training.planner.statistics.presentation.CoroutinesTimerController
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
-import com.lukasz.witkowski.training.planner.training.di.TrainingContainer
 
 class StatisticsContainer private constructor(context: Context) {
 

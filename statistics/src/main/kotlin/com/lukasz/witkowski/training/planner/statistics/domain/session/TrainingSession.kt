@@ -1,8 +1,6 @@
 package com.lukasz.witkowski.training.planner.statistics.domain.session
 
 import com.lukasz.witkowski.training.planner.shared.time.Time
-import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
-import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.BasicStatisticsRecorder
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 
@@ -66,7 +64,7 @@ internal class TrainingSession(
                 startRecordingExerciseStatistics(currentExercise, time)
                 TrainingSessionState.ExerciseState(currentExercise)
             }
-            else -> throw Exception("Unknown training session state")
+            else -> throw IllegalStateException("Unknown training session state")
         }.also {
             state = it
         }
@@ -99,5 +97,4 @@ internal class TrainingSession(
     private fun isExerciseState() = state is TrainingSessionState.ExerciseState
 
     private fun isTrainingSessionStopped() = state is TrainingSessionState.IdleState
-
 }
