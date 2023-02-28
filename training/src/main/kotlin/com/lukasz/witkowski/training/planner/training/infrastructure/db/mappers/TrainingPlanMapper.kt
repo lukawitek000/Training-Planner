@@ -26,4 +26,3 @@ internal fun DbTrainingPlanWithExercises.toTrainingPlan(): TrainingPlan {
         isSynchronized = trainingPlan.isSynchronized
     )
 }
-

@@ -9,6 +9,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import timber.log.Timber
+import java.io.IOException
 
 class TrainingPlanService(
     private val trainingPlanRepository: TrainingPlanRepository,
@@ -47,10 +48,8 @@ class TrainingPlanService(
                     // TODO handle failed synchronization
                 }
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (e: IOException) {
             Timber.d("Sending failed ${e.message}")
         }
-
     }
 }
