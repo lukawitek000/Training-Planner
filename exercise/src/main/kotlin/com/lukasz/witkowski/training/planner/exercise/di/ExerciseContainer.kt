@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.di
 
 import android.content.Context
-import androidx.room.Room
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseRepository
@@ -27,5 +26,4 @@ class ExerciseContainer(private val context: Context, private val imageStorage: 
     val categoriesCollection: CategoriesCollection by lazy { DefaultCategoriesCollection() }
 
     val categoryController: CategoryController by lazy { DefaultCategoryController(categoriesCollection) }
-
 }

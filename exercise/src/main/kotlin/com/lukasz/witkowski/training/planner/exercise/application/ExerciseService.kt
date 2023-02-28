@@ -25,7 +25,10 @@ class ExerciseService(
         exerciseRepository.insert(exercise)
     }
 
-    private suspend fun saveImage(imageByteArray: ImageByteArray, exerciseId: ExerciseId): ImageReference {
+    private suspend fun saveImage(
+        imageByteArray: ImageByteArray,
+        exerciseId: ExerciseId
+    ): ImageReference {
         val imageConfiguration = imageByteArray.toImageConfiguration(exerciseId.value)
         return imageStorage.saveImage(imageConfiguration)
     }
@@ -56,17 +59,22 @@ class ExerciseService(
         exerciseConfiguration: ExerciseConfiguration,
         previousImage: Image?
     ): Boolean {
-        val updatedImage = updateImage(exerciseConfiguration.image, previousImage?.imageId, exerciseId)
+        val updatedImage =
+            updateImage(exerciseConfiguration.image, previousImage?.imageId, exerciseId)
         val exercise = createExercise(exerciseConfiguration, updatedImage?.imageId, exerciseId)
         return exerciseRepository.updateExercise(exercise)
     }
 
-    private suspend fun updateImage(imageByteArray: ImageByteArray?, oldImageId: ImageId?, exerciseId: ExerciseId): ImageReference? {
+    private suspend fun updateImage(
+        imageByteArray: ImageByteArray?,
+        oldImageId: ImageId?,
+        exerciseId: ExerciseId
+    ): ImageReference? {
         val imageConfiguration = imageByteArray?.toImageConfiguration(exerciseId.value)
-        return if(oldImageId == null) {
+        return if (oldImageId == null) {
             imageConfiguration?.let { imageStorage.saveImage(imageConfiguration) }
         } else {
-            if(imageConfiguration == null) {
+            if (imageConfiguration == null) {
                 imageStorage.deleteImage(oldImageId, exerciseId.value)
                 null // Do not exist after delete
             } else {
