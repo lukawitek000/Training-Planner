@@ -1,6 +1,6 @@
 plugins {
     id(BuildPlugins.commonLibraryPlugin)
-    id(BuildPlugins.customDetektPlugin)
+    id(BuildPlugins.detektPlugin)
 }
 
 android {

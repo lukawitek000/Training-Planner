@@ -15,4 +15,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Detekt
-        run: ./gradlew customDetekt
+        run: ./gradlew detekt

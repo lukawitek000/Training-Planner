@@ -19,13 +19,16 @@ class ExerciseService(
 ) {
 
     suspend fun saveExercise(exerciseConfiguration: ExerciseConfiguration) {
-        val exerciseId = generateExerciseId()
+        val exerciseId = ExerciseId.create()
         val imageReference = exerciseConfiguration.image?.let { saveImage(it, exerciseId) }
-        val exercise = createExercise(exerciseConfiguration, imageReference?.imageId, exerciseId)
+        val exercise = ExerciseFactory.create(exerciseConfiguration, imageReference?.imageId, exerciseId)
         exerciseRepository.insert(exercise)
     }
 
-    private suspend fun saveImage(imageByteArray: ImageByteArray, exerciseId: ExerciseId): ImageReference {
+    private suspend fun saveImage(
+        imageByteArray: ImageByteArray,
+        exerciseId: ExerciseId
+    ): ImageReference {
         val imageConfiguration = imageByteArray.toImageConfiguration(exerciseId.value)
         return imageStorage.saveImage(imageConfiguration)
     }
@@ -56,17 +59,22 @@ class ExerciseService(
         exerciseConfiguration: ExerciseConfiguration,
         previousImage: Image?
     ): Boolean {
-        val updatedImage = updateImage(exerciseConfiguration.image, previousImage?.imageId, exerciseId)
-        val exercise = createExercise(exerciseConfiguration, updatedImage?.imageId, exerciseId)
+        val updatedImage =
+            updateImage(exerciseConfiguration.image, previousImage?.imageId, exerciseId)
+        val exercise = ExerciseFactory.create(exerciseConfiguration, updatedImage?.imageId, exerciseId)
         return exerciseRepository.updateExercise(exercise)
     }
 
-    private suspend fun updateImage(imageByteArray: ImageByteArray?, oldImageId: ImageId?, exerciseId: ExerciseId): ImageReference? {
+    private suspend fun updateImage(
+        imageByteArray: ImageByteArray?,
+        oldImageId: ImageId?,
+        exerciseId: ExerciseId
+    ): ImageReference? {
         val imageConfiguration = imageByteArray?.toImageConfiguration(exerciseId.value)
-        return if(oldImageId == null) {
+        return if (oldImageId == null) {
             imageConfiguration?.let { imageStorage.saveImage(imageConfiguration) }
         } else {
-            if(imageConfiguration == null) {
+            if (imageConfiguration == null) {
                 imageStorage.deleteImage(oldImageId, exerciseId.value)
                 null // Do not exist after delete
             } else {
@@ -82,20 +90,4 @@ class ExerciseService(
     suspend fun readImageReference(imageId: ImageId): ImageReference? {
         return imageStorage.readImageReference(imageId)
     }
-
-    private fun createExercise(
-        exerciseConfiguration: ExerciseConfiguration,
-        imageId: ImageId?,
-        exerciseId: ExerciseId = generateExerciseId()
-    ): Exercise {
-        return Exercise(
-            exerciseId,
-            exerciseConfiguration.name,
-            exerciseConfiguration.description,
-            exerciseConfiguration.category,
-            imageId
-        )
-    }
-
-    private fun generateExerciseId() = ExerciseId.create()
 }
