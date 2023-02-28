@@ -7,13 +7,15 @@ plugins {
     id("io.gitlab.arturbosch.detekt")
 }
 
-tasks.register<Detekt>("customDetekt") {
-    val configFile = files("$rootDir/config/detekt/detekt.yml")
-    description = "Custom DETEKT build for all modules"
+detekt {
+    config = files("$rootDir/config/detekt/detekt.yml")
+    description = "CUSTOM Detekt check"
     parallel = true
     buildUponDefaultConfig = false
-    setSource(files("src/main/kotlin", "src/main/java"))
-    config.setFrom(configFile)
+    source = files("src/main/kotlin", "src/main/java")
+}
+
+tasks.named<Detekt>("detekt").configure {
     reports {
         html.required.set(true)
         xml.required.set(false)
