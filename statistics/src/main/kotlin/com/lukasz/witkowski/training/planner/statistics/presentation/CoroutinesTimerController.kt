@@ -28,7 +28,6 @@ class CoroutinesTimerController(
     override val hasFinished: StateFlow<Boolean>
         get() = _hasFinished
 
-
     private val _isRunning = MutableStateFlow(false)
     override val isRunning: StateFlow<Boolean>
         get() = _isRunning

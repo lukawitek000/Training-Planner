@@ -1,8 +1,6 @@
 package com.lukasz.witkowski.training.planner.statistics.domain.session
 
 import com.lukasz.witkowski.training.planner.shared.time.Time
-import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
-import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.BasicStatisticsRecorder
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 
@@ -10,6 +8,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
  * Training session aggregate - controls state of the training session.
  * Requires [TrainingPlan] with at least one [TrainingExercise].
  */
+@Suppress("TooManyFunctions")
 internal class TrainingSession(
     private val trainingPlan: TrainingPlan,
     private val trainingSetsPolicy: TrainingSetsPolicy
@@ -32,8 +31,9 @@ internal class TrainingSession(
         trainingStatistics = TrainingStatistics(trainingPlan, startTime)
         val firstExercise = loadExercise()
         exerciseSession = ExerciseSession(firstExercise, startTime, 1)
-        state = TrainingSessionState.ExerciseState(firstExercise)
-        return state
+        return TrainingSessionState.ExerciseState(firstExercise).also {
+            state = it
+        }
     }
 
     fun skip(time: Time): TrainingSessionState {
@@ -66,10 +66,8 @@ internal class TrainingSession(
                 startRecordingExerciseStatistics(currentExercise, time)
                 TrainingSessionState.ExerciseState(currentExercise)
             }
-            else -> throw Exception("Unknown training session state")
-        }.also {
-            state = it
-        }
+            else -> throw UnknownTrainingSessionStateException("Unknown training session state.")
+        }.also { state = it }
     }
 
     private fun startRecordingExerciseStatistics(currentExercise: TrainingExercise, time: Time) {
@@ -99,5 +97,4 @@ internal class TrainingSession(
     private fun isExerciseState() = state is TrainingSessionState.ExerciseState
 
     private fun isTrainingSessionStopped() = state is TrainingSessionState.IdleState
-
 }

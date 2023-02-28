@@ -5,8 +5,7 @@ import com.lukasz.witkowski.training.planner.training.presentation.mappers.toPre
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.toPresentationTrainingPlan
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState as PresentationState
 
-fun TrainingSessionState.toPresentationTrainingSessionState(
-): PresentationState {
+fun TrainingSessionState.toPresentationTrainingSessionState(): PresentationState {
     val exercise = exercise?.toPresentationTrainingExercise()
     return when (this) {
         is TrainingSessionState.ExerciseState -> PresentationState.ExerciseState(exercise!!)
