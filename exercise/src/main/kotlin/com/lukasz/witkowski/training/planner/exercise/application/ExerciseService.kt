@@ -19,9 +19,9 @@ class ExerciseService(
 ) {
 
     suspend fun saveExercise(exerciseConfiguration: ExerciseConfiguration) {
-        val exerciseId = generateExerciseId()
+        val exerciseId = ExerciseId.create()
         val imageReference = exerciseConfiguration.image?.let { saveImage(it, exerciseId) }
-        val exercise = createExercise(exerciseConfiguration, imageReference?.imageId, exerciseId)
+        val exercise = ExerciseFactory.create(exerciseConfiguration, imageReference?.imageId, exerciseId)
         exerciseRepository.insert(exercise)
     }
 
@@ -61,7 +61,7 @@ class ExerciseService(
     ): Boolean {
         val updatedImage =
             updateImage(exerciseConfiguration.image, previousImage?.imageId, exerciseId)
-        val exercise = createExercise(exerciseConfiguration, updatedImage?.imageId, exerciseId)
+        val exercise = ExerciseFactory.create(exerciseConfiguration, updatedImage?.imageId, exerciseId)
         return exerciseRepository.updateExercise(exercise)
     }
 
@@ -90,20 +90,4 @@ class ExerciseService(
     suspend fun readImageReference(imageId: ImageId): ImageReference? {
         return imageStorage.readImageReference(imageId)
     }
-
-    private fun createExercise(
-        exerciseConfiguration: ExerciseConfiguration,
-        imageId: ImageId?,
-        exerciseId: ExerciseId = generateExerciseId()
-    ): Exercise {
-        return Exercise(
-            exerciseId,
-            exerciseConfiguration.name,
-            exerciseConfiguration.description,
-            exerciseConfiguration.category,
-            imageId
-        )
-    }
-
-    private fun generateExerciseId() = ExerciseId.create()
 }
