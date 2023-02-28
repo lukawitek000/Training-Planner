@@ -64,7 +64,7 @@ internal class TrainingSession(
                 startRecordingExerciseStatistics(currentExercise, time)
                 TrainingSessionState.ExerciseState(currentExercise)
             }
-            else -> throw IllegalStateException("Unknown training session state")
+            else -> throw UnknownTrainingSessionStateException("Unknown training session state.")
         }.also {
             state = it
         }
