@@ -1,6 +1,5 @@
 plugins {
     id(BuildPlugins.commonLibraryPlugin)
-    id(BuildPlugins.detektPlugin)
 }
 
 android {
@@ -12,7 +11,6 @@ dependencies {
     api(projects.shared)
     api(projects.exercise)
 
-//    detektPlugins(libs.detektFormatting)
     implementation(libs.kotlinx.coroutines.playServices)
     implementation(libs.google.playServicesWearable)
     implementation(libs.timber)
