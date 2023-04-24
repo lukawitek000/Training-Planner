@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
-import timber.log.Timber
 
 class SessionServiceConnector {
 
@@ -52,6 +51,8 @@ class SessionServiceConnector {
     }
 
     fun removeSessionFinishedListener(sessionFinishedListener: SessionFinishedListener) {
-        sessionService?.trainingSessionController?.removeSessionFinishedListener(sessionFinishedListener)
+        sessionService?.trainingSessionController?.removeSessionFinishedListener(
+            sessionFinishedListener
+        )
     }
 }
