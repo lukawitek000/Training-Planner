@@ -18,7 +18,7 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.bundles.room)
     kapt(libs.androidx.roomCompiler)
-    detektPlugins(libs.detektFormatting)
+//    detektPlugins(libs.detektFormatting)
 
     testImplementation(libs.junit)
     testImplementation(libs.roboelectric)
