@@ -80,7 +80,8 @@ class WearableChannelClientSender<T, K>(
     }
 
     private suspend fun sendObjectAndWaitForAcknowledge(
-        byteArray: ByteArray, id: K
+        byteArray: ByteArray,
+        id: K
     ): SynchronizationStatus<K> {
         return try {
             outputStream.writeSuspending(byteArray)

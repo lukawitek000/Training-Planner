@@ -20,7 +20,6 @@ suspend fun OutputStream.writeByteSuspending(number: Int) = withContext(Dispatch
     write(number)
 }
 
-
 suspend fun OutputStream.writeIntSuspending(number: Int) = withContext(Dispatchers.IO) {
     val byteArray = number.toByteArray()
     writeSuspending(byteArray)
@@ -44,7 +43,7 @@ suspend fun InputStream.readIntSuspending(): Int = withContext(Dispatchers.IO) {
     buffer.toInt()
 }
 
-
+@Suppress("MagicNumber")
 private fun Int.toByteArray(): ByteArray {
     val byteArray = ByteArray(INTEGER_VALUE_BUFFER_SIZE)
     for (i in 0..3) {
@@ -53,6 +52,7 @@ private fun Int.toByteArray(): ByteArray {
     return byteArray
 }
 
-private fun ByteArray.toInt(): Int {
-    return (this[3].toInt() shl 24) or (this[2].toInt() and 0xff shl 16) or (this[1].toInt() and 0xff shl 8) or (this[0].toInt() and 0xff)
-}
+@Suppress("MagicNumber")
+private fun ByteArray.toInt() =
+    ((this[3].toInt() shl 24) or (this[2].toInt() and 0xff shl 16)
+            or (this[1].toInt() and 0xff shl 8) or (this[0].toInt() and 0xff))
