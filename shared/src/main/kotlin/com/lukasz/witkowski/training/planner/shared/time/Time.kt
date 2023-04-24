@@ -56,7 +56,7 @@ data class Time(val timeInMillis: Long) {
         seconds: Int,
         timeStringBuilder: StringBuilder
     ) {
-        if (timeStringBuilder.isNotEmpty() && seconds in 0..9) {
+        if (timeStringBuilder.isNotEmpty() && seconds in DIGIT_RANGE) {
             timeStringBuilder.append(0)
         }
     }
@@ -82,6 +82,7 @@ data class Time(val timeInMillis: Long) {
         private const val MILLIS_IN_CENTISECOND = 100L
         private const val MILLIS_IN_MINUTE = SECONDS_IN_MINUTE * MILLIS_IN_SECOND
         private const val MILLIS_IN_HOUR = MINUTES_IN_HOUR * MILLIS_IN_MINUTE
+        private val DIGIT_RANGE = 0..9
         val ZERO = Time(0L)
     }
 }

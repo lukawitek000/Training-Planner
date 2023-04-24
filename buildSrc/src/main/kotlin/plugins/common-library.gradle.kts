@@ -1,8 +1,11 @@
 package plugins
 
+import BuildPlugins
 import ConfigData
-import gradle.kotlin.dsl.accessors._c7cd46b2e483aef787386d5c14b0a82d.android
-import gradle.kotlin.dsl.accessors._c7cd46b2e483aef787386d5c14b0a82d.kotlinOptions
+import com.android.build.gradle.LibraryExtension
+import org.gradle.accessors.dm.LibrariesForLibs
+import gradle.kotlin.dsl.accessors._6b1cdd1e881959619ea23cf7941079a9.detekt
+import gradle.kotlin.dsl.accessors._6b1cdd1e881959619ea23cf7941079a9.detektPlugins
 import org.gradle.kotlin.dsl.kotlin
 
 plugins {
@@ -11,7 +14,9 @@ plugins {
     kotlin("kapt")
 }
 
-android {
+apply(plugin = BuildPlugins.detektPlugin)
+
+configure<LibraryExtension> {
     compileSdk = ConfigData.compileSdk
 
     defaultConfig {
@@ -36,5 +41,10 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+
+    val libs = the<LibrariesForLibs>()
+    dependencies {
+        detektPlugins(libs.detektFormatting)
     }
 }

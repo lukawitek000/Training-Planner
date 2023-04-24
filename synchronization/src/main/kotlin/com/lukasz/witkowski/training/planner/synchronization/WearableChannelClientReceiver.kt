@@ -12,7 +12,7 @@ class WearableChannelClientReceiver(
 
     fun <T> receiveData(type: Class<T>): Flow<T> = flow {
         val numberOfItems = inputStream.readByteSuspending()
-        for (i in 0 until numberOfItems) {
+        (0 until numberOfItems).forEach {
             emit(receiveSingleTrainingPlan(type))
         }
     }

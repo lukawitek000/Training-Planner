@@ -1,6 +1,5 @@
 plugins {
     id(BuildPlugins.commonLibraryPlugin)
-    id(BuildPlugins.detektPlugin)
 }
 
 android {
@@ -18,7 +17,6 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.bundles.room)
     kapt(libs.androidx.roomCompiler)
-    detektPlugins(libs.detektFormatting)
 
     testImplementation(libs.junit)
     testImplementation(libs.roboelectric)

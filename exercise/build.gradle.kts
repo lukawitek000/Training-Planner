@@ -1,6 +1,5 @@
 plugins {
     id(BuildPlugins.commonLibraryPlugin)
-    id(BuildPlugins.detektPlugin)
 }
 
 android {
@@ -13,7 +12,6 @@ dependencies {
     // Kotlin reflection - Used to get subclasses of Category sealed class
     implementation(libs.kotlinReflect)
 
-    detektPlugins(libs.detektFormatting)
     implementation(libs.timber)
     implementation(libs.bundles.room)
     kapt(libs.androidx.roomCompiler)

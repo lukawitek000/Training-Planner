@@ -3,11 +3,9 @@ package com.lukasz.witkowski.training.planner.session.service
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
-import android.os.Build
 import android.os.IBinder
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
-import timber.log.Timber
 
 internal class SessionService : Service(), SessionFinishedListener {
 
@@ -17,7 +15,9 @@ internal class SessionService : Service(), SessionFinishedListener {
 
     private val binder = LocalBinder()
     private var isStarted = false
-    private val notificationFactory: NotificationFactory by lazy { SessionServiceContainer.getInstance().notificationFactory }
+    private val notificationFactory: NotificationFactory by lazy {
+        SessionServiceContainer.getInstance().notificationFactory
+    }
     private val trainingSessionPendingIntentFactory: TrainingSessionPendingIntentFactory by lazy {
         SessionServiceContainer.getInstance().trainingSessionPendingIntentFactory
     }

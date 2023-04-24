@@ -12,10 +12,9 @@ class SessionServiceContainer private constructor(
 
         fun getInstance(): SessionServiceContainer {
             return synchronized(this) {
-                if (instance == null) {
-                    throw IllegalStateException("SessionServiceContainer not initialized.")
+                checkNotNull(instance) {
+                    "SessionServiceContainer not initialized."
                 }
-                instance!!
             }
         }
 

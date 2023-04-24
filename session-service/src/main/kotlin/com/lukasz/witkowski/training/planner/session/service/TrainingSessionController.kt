@@ -22,8 +22,12 @@ internal class TrainingSessionController(private val context: Context) {
             context
         )
     }
-    private val trainingSessionService: TrainingSessionService by lazy { statisticsContainer.trainingSessionService }
-    private val trainingStatisticsService: TrainingStatisticsService by lazy { statisticsContainer.trainingStatisticsService }
+    private val trainingSessionService: TrainingSessionService by lazy {
+        statisticsContainer.trainingSessionService
+    }
+    private val trainingStatisticsService: TrainingStatisticsService by lazy {
+        statisticsContainer.trainingStatisticsService
+    }
     private val coroutineScope =
         CoroutineScope(Dispatchers.Default + CoroutineName("TrainingSessionController"))
 
@@ -31,8 +35,9 @@ internal class TrainingSessionController(private val context: Context) {
         private set
 
     val trainingPlan: TrainingPlan
-        get() = trainingSessionService.trainingPlan
-            ?: throw IllegalStateException("TrainingSession was not started, the training plan is null")
+        get() = checkNotNull(trainingSessionService.trainingPlan) {
+            "TrainingSession was not started, the training plan is null"
+        }
 
     private val sessionFinishedListeners = mutableSetOf<SessionFinishedListener>()
 
