@@ -30,6 +30,7 @@ class TrainingSessionService(
 
     var state: TrainingSessionState = TrainingSessionState.IdleState
         private set(value) {
+            timer.stop()
             if (value is TrainingSessionState.RestTimeState) {
                 timer.setTime(value.restTime)
             } else if (value is TrainingSessionState.ExerciseState) {
@@ -56,22 +57,22 @@ class TrainingSessionService(
     fun startTraining(trainingPlan: TrainingPlan) {
         this.trainingPlan = trainingPlan
         trainingSession = TrainingSession(trainingPlan, trainingSetsStrategy)
-        _trainingSessionState.value = trainingSession.start(timeProvider.currentTime())
+        state = trainingSession.start(timeProvider.currentTime())
     }
 
     fun skip() {
         stopTimer()
-        _trainingSessionState.value = trainingSession.skip(timeProvider.currentTime())
+        state = trainingSession.skip(timeProvider.currentTime())
     }
 
     fun completed() {
         stopTimer()
-        _trainingSessionState.value = trainingSession.completed(timeProvider.currentTime())
+        state = trainingSession.completed(timeProvider.currentTime())
     }
 
     fun stopTraining() {
         trainingSession.stop()
-        _trainingSessionState.value = TrainingSessionState.IdleState
+        state = TrainingSessionState.IdleState
     }
 
     fun isTrainingSessionStarted() = trainingSessionState.value !is TrainingSessionState.IdleState

@@ -71,7 +71,6 @@ class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
                     trainingContainer.service,
                     statisticsContainer.trainingSessionService,
                     statisticsContainer.trainingStatisticsService,
-                    statisticsContainer.timerController(),
                     savedStateHandle
                 )
             }
