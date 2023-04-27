@@ -28,13 +28,16 @@ class Timer(
     private val _hasFinished = MutableStateFlow(false)
     val hasFinished: StateFlow<Boolean>
         get() = _hasFinished
-    
-    
+
     private var _isRunning = MutableStateFlow(false)
     val isRunning: StateFlow<Boolean>
-    get() = _isRunning
+        get() = _isRunning
+
+    var isPaused = false
+        private set
 
     fun setTime(startTime: Time) {
+        isPaused = false
         initialTime = startTime
         _time.value = initialTime
     }
@@ -46,6 +49,7 @@ class Timer(
     fun stop() {
         pause()
         setTime(initialTime)
+        isPaused = false
     }
 
     fun resume() {
@@ -53,17 +57,15 @@ class Timer(
     }
 
     fun pause() {
+        isPaused = true
         _isRunning.value = false
-        _hasFinished.value = false
         timerJob?.cancel()
     }
 
-
-
     private fun start(initTime: Time) {
         timerJob = coroutineScope.launch {
+            setUpInitialFlags()
             _time.value = initTime
-            _isRunning.value = true
             while (_isRunning.value) {
                 delay(tickDelayInMillis)
                 _time.value = Time(time.value.timeInMillis - tickDelayInMillis)
@@ -72,8 +74,13 @@ class Timer(
                     break
                 }
             }
-            _isRunning.value = false
         }
+    }
+
+    private fun setUpInitialFlags() {
+        isPaused = false
+        _isRunning.value = true
+        _hasFinished.value = false
     }
 
     private companion object {

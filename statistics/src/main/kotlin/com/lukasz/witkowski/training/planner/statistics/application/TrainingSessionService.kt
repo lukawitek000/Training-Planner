@@ -77,20 +77,20 @@ class TrainingSessionService(
     fun isTrainingSessionStarted() = trainingSessionState.value !is TrainingSessionState.IdleState
 
     fun startTimer() {
-        observeTimer()
-        timer.start()
-    }
-
-    fun pauseTimer() {
-        timer.pause()
+        if(timer.isPaused) {
+            timer.resume()
+        } else {
+            observeTimer()
+            timer.start()
+        }
     }
 
     fun stopTimer() {
         timer.stop()
     }
 
-    fun resumeTimer() {
-        timer.resume()
+    fun pauseTimer() {
+        timer.pause()
     }
 
     private fun observeTimer() {
