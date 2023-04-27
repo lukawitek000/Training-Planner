@@ -5,6 +5,7 @@ import com.lukasz.witkowski.training.planner.statistics.application.TrainingSess
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
 import com.lukasz.witkowski.training.planner.statistics.domain.StatisticsRepository
 import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.SystemTimeProvider
+import com.lukasz.witkowski.training.planner.statistics.domain.timer.Timer
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.DbStatisticsRepository
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.StatisticsDatabase
 import com.lukasz.witkowski.training.planner.statistics.presentation.CoroutinesTimerController
@@ -18,7 +19,7 @@ class StatisticsContainer private constructor(context: Context) {
     }
 
     val trainingSessionService: TrainingSessionService by lazy {
-        TrainingSessionService(SystemTimeProvider())
+        TrainingSessionService(SystemTimeProvider(), Timer())
     }
 
     val trainingStatisticsService: TrainingStatisticsService by lazy {

@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.training.trainingSession
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
 import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
@@ -21,10 +22,8 @@ class TrainingSessionViewModel(
     private val trainingPlanService: TrainingPlanService,
     private val trainingSessionService: TrainingSessionService,
     private val trainingStatisticsService: TrainingStatisticsService,
-    timerController: TimerController,
     private val savedStateHandle: SavedStateHandle
-) : ViewModel(),
-    TimerController by timerController {
+) : ViewModel() {
 
     private val _trainingId = savedStateHandle.get<String>("trainingId")
         ?: throw Exception("Training plan id was not provided")
@@ -37,19 +36,19 @@ class TrainingSessionViewModel(
     private val currentState: TrainingSessionState
         get() = trainingSessionState.value
 
+    val time: StateFlow<Time> = trainingSessionService.time
+    val isTimerRunning: StateFlow<Boolean> = trainingSessionService.isTimerRunning
+
     init {
         fetchTrainingPlan()
-        observeTimer()
-        observeTrainingSessionState()
+        //observeTrainingSessionState()
     }
 
     fun completed() {
-        stopTimer()
         trainingSessionService.completed()
     }
 
     fun skip() {
-        stopTimer()
         trainingSessionService.skip()
     }
 
@@ -68,53 +67,64 @@ class TrainingSessionViewModel(
         }
     }
 
-    private fun observeTimer() {
-        viewModelScope.launch {
-            hasFinished.collectLatest {
-                if (it) {
-                    navigateNextIfRestTimeElapsed()
-                    resetTimerIfExerciseTimeElapsed()
-                }
-            }
-        }
+    fun startTimer() {
+        trainingSessionService.startTimer()
+    }
+    fun pauseTimer() {
+        trainingSessionService.pauseTimer()
+    }
+    fun stopTimer() {
+        trainingSessionService.stopTimer()
     }
 
-    private fun observeTrainingSessionState() {
-        viewModelScope.launch {
-            trainingSessionService.trainingSessionState.collectLatest {
-                val state = it.toPresentationTrainingSessionState()
-                setTimerForRestTimeAndExercise(state)
-                startRestTimeTimer(state)
-            }
-        }
-    }
+//    private fun observeTimer() {
+//        viewModelScope.launch {
+//            hasFinished.collectLatest {
+//                if (it) {
+//                    navigateNextIfRestTimeElapsed()
+//                    resetTimerIfExerciseTimeElapsed()
+//                }
+//            }
+//        }
+//    }
 
-    private fun startRestTimeTimer(state: TrainingSessionState) {
-        if (state is TrainingSessionState.RestTimeState) {
-            startTimer()
-        }
-    }
+//    private fun observeTrainingSessionState() {
+//        viewModelScope.launch {
+//            trainingSessionService.trainingSessionState.collectLatest {
+//                val state = it.toPresentationTrainingSessionState()
+////                setTimerForRestTimeAndExercise(state)
+////                startRestTimeTimer(state)
+//            }
+//        }
+//    }
 
-    private fun setTimerForRestTimeAndExercise(state: TrainingSessionState) {
-        if (state is TrainingSessionState.RestTimeState || state is TrainingSessionState.ExerciseState) {
-            setTimer(state.time)
-        }
-    }
-
-    private fun resetTimerIfExerciseTimeElapsed() {
-        if (currentState is TrainingSessionState.ExerciseState) {
-            resetTimer()
-        }
-    }
-
-    private fun navigateNextIfRestTimeElapsed() {
-        if (currentState is TrainingSessionState.RestTimeState) {
-            skip()
-        }
-    }
+//    private fun startRestTimeTimer(state: TrainingSessionState) {
+//        if (state is TrainingSessionState.RestTimeState) {
+//            startTimer()
+//        }
+//    }
+//
+//    private fun setTimerForRestTimeAndExercise(state: TrainingSessionState) {
+//        if (state is TrainingSessionState.RestTimeState || state is TrainingSessionState.ExerciseState) {
+//            setTimer(state.time)
+//        }
+//    }
+//
+//    private fun resetTimerIfExerciseTimeElapsed() {
+//        if (currentState is TrainingSessionState.ExerciseState) {
+//            resetTimer()
+//        }
+//    }
+//
+//    private fun navigateNextIfRestTimeElapsed() {
+//        if (currentState is TrainingSessionState.RestTimeState) {
+//            skip()
+//        }
+//    }
 
     override fun onCleared() {
-        stopTimer()
+        // stopping session on exiting the screen has to be handled differently, due to foreground service
+      //  stopTimer()
         trainingSessionService.stopTraining()
         super.onCleared()
     }

@@ -32,8 +32,8 @@ fun TrainingSessionScreen(
     navigateBack: () -> Unit
 ) {
     val trainingSessionState by viewModel.trainingSessionState.collectAsState()
-    val time by viewModel.timer.collectAsState()
-    val isTimerRunning by viewModel.isRunning.collectAsState()
+    val time by viewModel.time.collectAsState()
+    val isTimerRunning by viewModel.isTimerRunning.collectAsState()
 
     Scaffold(
         modifier = modifier,
@@ -53,7 +53,7 @@ fun TrainingSessionScreen(
                         remainingTime = time,
                         start = { viewModel.startTimer() },
                         pause = { viewModel.pauseTimer() },
-                        reset = { viewModel.resetTimer() },
+                        reset = { viewModel.stopTimer() },
                         isTimerRunning = isTimerRunning
                     )
                     is TrainingSessionState.RestTimeState -> RestTimeScreen(
