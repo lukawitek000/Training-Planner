@@ -89,6 +89,9 @@ class TrainingSessionService(
         timer.stop()
     }
 
+    fun resumeTimer() {
+        timer.resume()
+    }
 
     private fun observeTimer() {
         scope.launch {

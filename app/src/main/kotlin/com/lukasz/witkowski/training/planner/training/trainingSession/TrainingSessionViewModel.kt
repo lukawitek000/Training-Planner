@@ -76,6 +76,9 @@ class TrainingSessionViewModel(
     fun stopTimer() {
         trainingSessionService.stopTimer()
     }
+    fun resumeTimer() {
+        trainingSessionService.resumeTimer()
+    }
 
 //    private fun observeTimer() {
 //        viewModelScope.launch {

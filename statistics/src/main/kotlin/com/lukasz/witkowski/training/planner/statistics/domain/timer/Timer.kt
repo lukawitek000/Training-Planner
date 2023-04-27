@@ -34,6 +34,11 @@ class Timer(
     val isRunning: StateFlow<Boolean>
     get() = _isRunning
 
+    fun setTime(startTime: Time) {
+        initialTime = startTime
+        _time.value = initialTime
+    }
+
     fun start() {
         start(initialTime)
     }
@@ -43,16 +48,17 @@ class Timer(
         setTime(initialTime)
     }
 
+    fun resume() {
+        start(_time.value)
+    }
+
     fun pause() {
         _isRunning.value = false
         _hasFinished.value = false
         timerJob?.cancel()
     }
 
-    fun setTime(startTime: Time) {
-        initialTime = startTime
-        _time.value = initialTime
-    }
+
 
     private fun start(initTime: Time) {
         timerJob = coroutineScope.launch {
