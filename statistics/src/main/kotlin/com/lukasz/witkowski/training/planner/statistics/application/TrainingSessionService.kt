@@ -27,17 +27,9 @@ class TrainingSessionService(
     val isTimerRunning: StateFlow<Boolean>
         get() = timer.isRunning
 
-    var state: TrainingSessionState = TrainingSessionState.IdleState
+    private var state: TrainingSessionState = TrainingSessionState.IdleState
         private set(value) {
-            timer.stop()
-            if (value is TrainingSessionState.RestTimeState) {
-                timer.setTime(value.restTime)
-            } else if (value is TrainingSessionState.ExerciseState) {
-                value.exercise?.let { timer.setTime(it.time) }
-            }
-            if (value is TrainingSessionState.RestTimeState) {
-                timer.start()
-            }
+            configureTimer(value)
             _trainingSessionState.value = value
             field = value
         }
@@ -113,6 +105,21 @@ class TrainingSessionService(
     private fun navigateNextIfRestTimeElapsed() {
         if (state is TrainingSessionState.RestTimeState) {
             skip()
+        }
+    }
+
+    private val TrainingSessionState.time: Time?
+        get() = when(this) {
+            is TrainingSessionState.RestTimeState -> restTime
+            is TrainingSessionState.ExerciseState -> exercise?.time
+            else -> null
+        }
+
+    private fun configureTimer(value: TrainingSessionState) {
+        timer.stop()
+        value.time?.let { timer.setTime(it) }
+        if (value is TrainingSessionState.RestTimeState) {
+            timer.start()
         }
     }
 }
