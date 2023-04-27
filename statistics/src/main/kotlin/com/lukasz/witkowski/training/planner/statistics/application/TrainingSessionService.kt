@@ -24,9 +24,8 @@ class TrainingSessionService(
     private lateinit var trainingSession: TrainingSession
     private val scope = CoroutineScope(Dispatchers.Default)
 
-    private var _isTimerRunning: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isTimerRunning: StateFlow<Boolean>
-        get() = _isTimerRunning
+        get() = timer.isRunning
 
     var state: TrainingSessionState = TrainingSessionState.IdleState
         private set(value) {
@@ -78,18 +77,15 @@ class TrainingSessionService(
     fun isTrainingSessionStarted() = trainingSessionState.value !is TrainingSessionState.IdleState
 
     fun startTimer() {
-        _isTimerRunning.value = true
         observeTimer()
         timer.start()
     }
 
     fun pauseTimer() {
-        _isTimerRunning.value = false
         timer.pause()
     }
 
     fun stopTimer() {
-        _isTimerRunning.value = false
         timer.stop()
     }
 
@@ -98,7 +94,6 @@ class TrainingSessionService(
         scope.launch {
             timer.hasFinished.collectLatest {
                 if (it) {
-                    _isTimerRunning.value = false
                     navigateNextIfRestTimeElapsed()
                     resetTimerIfExerciseTimeElapsed()
                 }

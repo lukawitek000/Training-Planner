@@ -19,7 +19,6 @@ class Timer(
     private val coroutineScope: CoroutineScope =
         CoroutineScope(timerDispatcher + CoroutineName("Timer"))
     private var timerJob: Job? = null
-    private var isRunning = false
     private var initialTime = Time.ZERO
 
     private val _time = MutableStateFlow(Time.ZERO)
@@ -29,6 +28,11 @@ class Timer(
     private val _hasFinished = MutableStateFlow(false)
     val hasFinished: StateFlow<Boolean>
         get() = _hasFinished
+    
+    
+    private var _isRunning = MutableStateFlow(false)
+    val isRunning: StateFlow<Boolean>
+    get() = _isRunning
 
     fun start() {
         start(initialTime)
@@ -40,7 +44,7 @@ class Timer(
     }
 
     fun pause() {
-        isRunning = false
+        _isRunning.value = false
         _hasFinished.value = false
         timerJob?.cancel()
     }
@@ -53,8 +57,8 @@ class Timer(
     private fun start(initTime: Time) {
         timerJob = coroutineScope.launch {
             _time.value = initTime
-            isRunning = true
-            while (isRunning) {
+            _isRunning.value = true
+            while (_isRunning.value) {
                 delay(tickDelayInMillis)
                 _time.value = Time(time.value.timeInMillis - tickDelayInMillis)
                 if (time.value.timeInMillis < tickDelayInMillis) {
@@ -62,7 +66,7 @@ class Timer(
                     break
                 }
             }
-            isRunning = false
+            _isRunning.value = false
         }
     }
 
