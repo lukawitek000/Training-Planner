@@ -70,11 +70,17 @@ class Timer(
                 delay(tickDelayInMillis)
                 _time.value = Time(time.value.timeInMillis - tickDelayInMillis)
                 if (time.value.timeInMillis < tickDelayInMillis) {
-                    _hasFinished.value = true
+                    timerFinished()
                     break
                 }
             }
         }
+    }
+
+    private fun timerFinished() {
+        _hasFinished.value = true
+        _isRunning.value = false
+        isPaused = false
     }
 
     private fun setUpInitialFlags() {

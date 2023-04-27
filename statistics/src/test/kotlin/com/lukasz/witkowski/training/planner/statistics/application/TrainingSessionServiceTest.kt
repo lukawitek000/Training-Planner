@@ -7,6 +7,7 @@ import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSe
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSetsPolicy
 import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder.FixedTimeProvider
+import com.lukasz.witkowski.training.planner.statistics.domain.timer.Timer
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -33,7 +34,7 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
     fun setUp() {
         trainingExercises = TRAINING_EXERCISES
         trainingPlan = TRAINING_PLAN
-        trainingSessionService = TrainingSessionService(timeProvider, trainingSetsPolicy)
+        trainingSessionService = TrainingSessionService(timeProvider, Timer(), trainingSetsPolicy)
     }
 
     @Test
