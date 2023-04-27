@@ -82,6 +82,7 @@ class TrainingSessionService(
         observeTimer()
         timer.start()
     }
+
     fun pauseTimer() {
         _isTimerRunning.value = false
         timer.pause()
@@ -97,6 +98,7 @@ class TrainingSessionService(
         scope.launch {
             timer.hasFinished.collectLatest {
                 if (it) {
+                    _isTimerRunning.value = false
                     navigateNextIfRestTimeElapsed()
                     resetTimerIfExerciseTimeElapsed()
                 }
