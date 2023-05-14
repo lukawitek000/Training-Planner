@@ -5,13 +5,10 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
-import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 
 internal class SessionService : Service(), SessionFinishedListener {
 
     val trainingSessionController by lazy { TrainingSessionController(applicationContext) }
-    val timer: TimerController?
-        get() = trainingSessionController.serviceTimerController
 
     private val binder = LocalBinder()
     private var isStarted = false

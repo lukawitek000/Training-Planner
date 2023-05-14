@@ -74,7 +74,7 @@ class TrainingSessionService(
         if(timer.isPaused) {
             timer.resume()
         } else {
-            observeTimer()
+            observeTimerFinished()
             timer.start()
         }
     }
@@ -87,7 +87,7 @@ class TrainingSessionService(
         timer.pause()
     }
 
-    private fun observeTimer() {
+    private fun observeTimerFinished() {
         scope.launch {
             timer.hasFinished.collectLatest {
                 if (it) {

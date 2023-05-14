@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.dummyTrainingsList
+import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
@@ -15,6 +16,7 @@ import com.lukasz.witkowski.training.planner.training.application.TrainingPlanSe
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.presentation.mappers.toDomainTrainingPlan
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -35,6 +37,9 @@ class TrainingSessionViewModel(
 
     private val _trainingSessionState = MutableLiveData<TrainingSessionState>()
     val trainingSessionState: LiveData<TrainingSessionState> = _trainingSessionState
+
+    val time: StateFlow<Time> = trainingSessionService.time
+    val isTimerRunning: StateFlow<Boolean> = trainingSessionService.isTimerRunning
 
     init {
         viewModelScope.launch {
@@ -57,11 +62,18 @@ class TrainingSessionViewModel(
         trainingSessionService.startTraining(trainingPlan.toDomainTrainingPlan())
     }
 
-    fun completed() {
-        trainingSessionService.completed()
+    fun completed() = trainingSessionService.completed()
+
+    fun skip() = trainingSessionService.skip()
+
+    fun stopTimer() = trainingSessionService.stopTimer()
+
+    fun timerPauseOrResume() {
+        if (trainingSessionService.isTimerRunning.value) {
+            trainingSessionService.pauseTimer()
+        } else {
+            trainingSessionService.startTimer()
+        }
     }
 
-    fun skip() {
-        trainingSessionService.skip()
-    }
 }
