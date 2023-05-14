@@ -31,9 +31,6 @@ internal class TrainingSessionController(private val context: Context) {
     private val coroutineScope =
         CoroutineScope(Dispatchers.Default + CoroutineName("TrainingSessionController"))
 
-    var serviceTimerController: ServiceTimerController? = null
-        private set
-
     val trainingPlan: TrainingPlan
         get() = checkNotNull(trainingSessionService.trainingPlan) {
             "TrainingSession was not started, the training plan is null"
@@ -45,12 +42,8 @@ internal class TrainingSessionController(private val context: Context) {
         trainingSessionService.trainingSessionState.map {
             it.toPresentationTrainingSessionState()
         }.collectLatest {
-            resetTimerHelper()
-            when (it) {
-                is TrainingSessionState.ExerciseState -> handleExerciseState(it)
-                is TrainingSessionState.RestTimeState -> handleRestTimeState(it)
-                is TrainingSessionState.SummaryState -> handleSummaryState(it)
-                is TrainingSessionState.IdleState -> Unit
+            if (it is TrainingSessionState.SummaryState) {
+                handleSummaryState(it)
             }
         }
     }
@@ -73,35 +66,10 @@ internal class TrainingSessionController(private val context: Context) {
         coroutineScope.cancel()
     }
 
-    private fun resetTimerHelper() {
-        serviceTimerController?.cancel()
-        serviceTimerController = null
-    }
-
-    private fun handleExerciseState(exerciseState: TrainingSessionState.ExerciseState) {
-        serviceTimerController = createServiceTimerController()
-        serviceTimerController?.setTimer(exerciseState.currentExercise.time)
-        serviceTimerController?.observeHasFinished {
-            serviceTimerController?.resetTimer()
-        }
-    }
-
-    private fun handleRestTimeState(state: TrainingSessionState.RestTimeState) {
-        serviceTimerController = createServiceTimerController()
-        serviceTimerController?.setTimer(state.time)
-        serviceTimerController?.startTimer()
-        serviceTimerController?.observeHasFinished {
-            trainingSessionService.skip()
-        }
-    }
-
     private fun handleSummaryState(state: TrainingSessionState.SummaryState) {
         coroutineScope.launch {
             trainingStatisticsService.save(state.statistics)
             notifySessionFinished(state.statistics.id)
         }
     }
-
-    private fun createServiceTimerController() =
-        ServiceTimerController(statisticsContainer.timerController())
 }

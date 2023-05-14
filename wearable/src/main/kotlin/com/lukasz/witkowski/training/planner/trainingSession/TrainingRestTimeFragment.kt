@@ -6,15 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingRestTimeBinding
 import com.lukasz.witkowski.training.planner.session.service.SessionServiceConnector
-import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
-import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.utils.launchInStartedState
 import kotlinx.coroutines.flow.collectLatest
-import timber.log.Timber
 
 class TrainingRestTimeFragment : Fragment() {
 
@@ -27,10 +22,8 @@ class TrainingRestTimeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentTrainingRestTimeBinding.inflate(layoutInflater, container, false)
-        serviceConnector.setTimerReadyCallback {
-            setUpSkipButton(it)
-            observeTimer(it)
-        }
+        setUpSkipButton()
+        observeTimer()
         return binding.root
     }
 
@@ -44,15 +37,15 @@ class TrainingRestTimeFragment : Fragment() {
         serviceConnector.unbindService(requireContext())
     }
 
-    private fun setUpSkipButton(timerController: TimerController) {
+    private fun setUpSkipButton() {
         binding.skipRestTimeTv.setOnClickListener {
-            timerController.stopTimer()
+            sharedViewModel.stopTimer()
             sharedViewModel.skip()
         }
     }
 
-    private fun observeTimer(timerController: TimerController) = launchInStartedState {
-        timerController.timer.collectLatest {
+    private fun observeTimer() = launchInStartedState {
+        sharedViewModel.time.collectLatest {
             binding.restTimeTimerTv.text = it.toTimerString(false)
         }
     }

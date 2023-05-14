@@ -12,6 +12,7 @@ dependencies {
 
     implementation(libs.bundles.room)
     kapt(libs.androidx.roomCompiler)
+    implementation(libs.timber)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinTestJunit)

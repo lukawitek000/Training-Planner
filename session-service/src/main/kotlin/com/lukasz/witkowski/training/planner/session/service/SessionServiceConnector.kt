@@ -5,13 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
 
 class SessionServiceConnector {
 
     private var sessionService: SessionService? = null
     var serviceConnected = false
-    private var timerReadyCallback: (TimerController) -> Unit = {}
     private var sessionFinishedListener: SessionFinishedListener? = null
 
     private val connection = object : ServiceConnection {
@@ -19,7 +17,6 @@ class SessionServiceConnector {
             val binder = service as SessionService.LocalBinder
             sessionService = binder.getService()
             serviceConnected = true
-            sessionService?.timer?.let(timerReadyCallback)
             sessionFinishedListener?.let {
                 sessionService!!.trainingSessionController.addSessionFinishedListener(it)
             }
@@ -40,10 +37,6 @@ class SessionServiceConnector {
 
     fun unbindService(context: Context) {
         context.unbindService(connection)
-    }
-
-    fun setTimerReadyCallback(callback: (TimerController) -> Unit) {
-        this.timerReadyCallback = callback
     }
 
     fun addSessionFinishedListener(sessionFinishedListener: SessionFinishedListener) {

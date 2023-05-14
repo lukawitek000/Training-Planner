@@ -7,11 +7,10 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingExerciseBinding
 import com.lukasz.witkowski.training.planner.session.service.SessionServiceConnector
-import com.lukasz.witkowski.training.planner.statistics.presentation.TimerController
+import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.utils.launchInStartedState
@@ -22,7 +21,6 @@ class TrainingExerciseFragment : Fragment() {
     private lateinit var binding: FragmentTrainingExerciseBinding
     private val sharedViewModel by activityViewModels<TrainingSessionViewModel>()
     private val serviceConnector = SessionServiceConnector()
-    private lateinit var timerController: TimerController
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,13 +28,7 @@ class TrainingExerciseFragment : Fragment() {
     ): View {
         binding = FragmentTrainingExerciseBinding.inflate(inflater, container, false)
         observeTrainingExercise()
-        serviceConnector.setTimerReadyCallback {
-            timerController = it
-            setUpButtonsListeners()
-            // this methods are needed only if the time is set
-            setUpTimerIcon()
-            observeTimer()
-        }
+        setUpButtonsListeners()
         return binding.root
     }
 
@@ -54,7 +46,7 @@ class TrainingExerciseFragment : Fragment() {
         sharedViewModel.trainingSessionState.observe(viewLifecycleOwner) {
             if (it is TrainingSessionState.ExerciseState) {
                 populateUi(it.currentExercise)
-                setUpTimerView(it.currentExercise.time)
+                setUpTimer(it.currentExercise.time)
             }
         }
     }
@@ -67,8 +59,19 @@ class TrainingExerciseFragment : Fragment() {
         }
     }
 
-    private fun setUpTimerView(time: Time) {
-        binding.timerLayout.visibility = if (time.isZero()) View.GONE else View.VISIBLE
+    private fun setUpTimer(time: Time) {
+        if (time.isZero()) {
+            binding.timerLayout.visibility = View.GONE
+            return
+        }
+        setUpTimerIcon()
+        observeTimer()
+        observeTimerFinished()
+        binding.timerLayout.visibility = View.VISIBLE
+    }
+
+    private fun observeTimerFinished() {
+
     }
 
     private fun setTimeOnTimer(time: Time) {
@@ -76,7 +79,7 @@ class TrainingExerciseFragment : Fragment() {
     }
 
     private fun setUpTimerIcon() = launchInStartedState {
-        timerController.isRunning.collectLatest {
+        sharedViewModel.isTimerRunning.collectLatest {
             val icon = if (it) R.drawable.ic_pause else R.drawable.ic_play_arrow
             binding.startPauseTimerBtn.setImageDrawable(
                 ContextCompat.getDrawable(
@@ -88,7 +91,7 @@ class TrainingExerciseFragment : Fragment() {
     }
 
     private fun observeTimer() = launchInStartedState {
-        timerController.timer.collectLatest {
+        sharedViewModel.time.collectLatest {
             setTimeOnTimer(it)
         }
     }
@@ -113,15 +116,11 @@ class TrainingExerciseFragment : Fragment() {
         }
     }
 
-    private fun stopTimer() = timerController.stopTimer()
+    private fun stopTimer() = sharedViewModel.stopTimer()
 
     private fun setUpTimerControlButton() {
         binding.startPauseTimerBtn.setOnClickListener {
-            if (timerController.isRunning.value) {
-                timerController.pauseTimer()
-            } else {
-                timerController.resumeTimer()
-            }
+            sharedViewModel.timerPauseOrResume()
         }
     }
 
