@@ -3,17 +3,19 @@ package com.lukasz.witkowski.training.planner.shared.time
 import android.content.Context
 import com.lukasz.witkowski.training.planner.shared.R
 
-class TimeFormatter(private val context: Context) {
+class TimeFormatter internal constructor(private val resourcesProvider: ResourcesProvider) {
 
-    fun toString(time: Time, includeTenthSecond: Boolean = true): String {
+    constructor(context: Context): this(SystemResourcesProvider(context))
+
+    fun format(time: Time, includeTenthSecond: Boolean = true): String {
         val (minutes, seconds) = time.minutesAndSeconds()
         return StringBuilder()
             .appendMinutes(minutes)
-            .appendSeparator(context.getString(R.string.minutes_seconds_separator))
+            .appendSeparator(resourcesProvider.provideString(R.string.minutes_seconds_separator))
             .appendSeconds(seconds)
             .apply {
                 if (includeTenthSecond) {
-                    appendTenthSecond(time, context.getString(R.string.seconds_tenth_second_separator))
+                    appendTenthSecond(time, resourcesProvider.provideString(R.string.seconds_tenth_second_separator))
                 }
             }.toString()
     }
@@ -21,7 +23,6 @@ class TimeFormatter(private val context: Context) {
     private fun StringBuilder.appendMinutes(minutes: Int) = apply {
         if (minutes > 0) {
             append(minutes)
-            append(context.getString(R.string.minutes_seconds_separator))
         }
     }
 

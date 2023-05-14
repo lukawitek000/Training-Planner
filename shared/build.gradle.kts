@@ -8,6 +8,7 @@ android {
 
 dependencies {
     implementation(libs.timber)
+    implementation(libs.androidx.annotation)
 
     testImplementation(libs.junit)
 }
