@@ -42,7 +42,7 @@ internal class TrainingSessionController(private val context: Context) {
         trainingSessionService.trainingSessionState.map {
             it.toPresentationTrainingSessionState()
         }.collectLatest {
-            if(it is TrainingSessionState.SummaryState) {
+            if (it is TrainingSessionState.SummaryState) {
                 handleSummaryState(it)
             }
         }

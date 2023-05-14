@@ -71,7 +71,7 @@ class TrainingSessionService(
     fun isTrainingSessionStarted() = trainingSessionState.value !is TrainingSessionState.IdleState
 
     fun startTimer() {
-        if(timer.isPaused) {
+        if (timer.isPaused) {
             timer.resume()
         } else {
             observeTimerFinished()
@@ -111,7 +111,7 @@ class TrainingSessionService(
     }
 
     private val TrainingSessionState.time: Time?
-        get() = when(this) {
+        get() = when (this) {
             is TrainingSessionState.RestTimeState -> restTime
             is TrainingSessionState.ExerciseState -> exercise?.time
             else -> null
