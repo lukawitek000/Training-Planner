@@ -9,7 +9,7 @@ data class Time(val timeInMillis: Long) {
     ) : this((((hour * MINUTES_IN_HOUR) + minutes) * SECONDS_IN_MINUTE + seconds) * MILLIS_IN_SECOND)
 
     fun toTimerString(includeTenthSecond: Boolean = true): String {
-        val (minutes, seconds) = calculateMinutesAndSeconds()
+        val (minutes, seconds) = minutesAndSeconds()
         val timeStringBuilder = StringBuilder()
         if (minutes > 0) timeStringBuilder.append(minutes).append(":")
         appendZeroBeforeSecondDigitIfNeeded(seconds, timeStringBuilder)
@@ -23,7 +23,7 @@ data class Time(val timeInMillis: Long) {
     override fun toString(): String {
         val hours = timeInMillis / MILLIS_IN_HOUR
         val remainingTime = timeInMillis - hours * MILLIS_IN_HOUR
-        val (minutes, seconds) = calculateMinutesAndSeconds(remainingTime)
+        val (minutes, seconds) = minutesAndSeconds(remainingTime)
         val timeStringBuilder = StringBuilder()
         if (hours > 0) timeStringBuilder.append("${hours}h")
         if (minutes > 0) {
@@ -37,7 +37,7 @@ data class Time(val timeInMillis: Long) {
         return timeStringBuilder.toString()
     }
 
-    fun calculateMinutesAndSeconds(millis: Long = timeInMillis): Pair<Int, Int> {
+    fun minutesAndSeconds(millis: Long = timeInMillis): Pair<Int, Int> {
         val millisToSeconds = millis / MILLIS_IN_SECOND
         val minutes = millisToSeconds / SECONDS_IN_MINUTE
         val seconds = millisToSeconds % SECONDS_IN_MINUTE

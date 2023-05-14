@@ -40,7 +40,7 @@ class TimeTest {
 
         timeValues.forEach { time ->
             // when
-            val minutesSecondsPair = time.calculateMinutesAndSeconds()
+            val minutesSecondsPair = time.minutesAndSeconds()
 
             // then
             assertEquals(minutesAndSeconds[time], minutesSecondsPair)

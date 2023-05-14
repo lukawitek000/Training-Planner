@@ -321,7 +321,7 @@ fun SetTrainingExerciseRestTimeDialog(
     setRestTimeToExercise: (TrainingExercise, Int, Int) -> Unit,
     closeDialog: () -> Unit
 ) {
-    val (currentMinutes, currentSeconds) = trainingExercise.restTime.calculateMinutesAndSeconds()
+    val (currentMinutes, currentSeconds) = trainingExercise.restTime.minutesAndSeconds()
     var minutes by remember { mutableStateOf(currentMinutes) }
     var seconds by remember { mutableStateOf(currentSeconds) }
 
