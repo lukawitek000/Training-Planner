@@ -8,6 +8,7 @@ import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingS
 import com.lukasz.witkowski.training.planner.statistics.domain.session.statisticsrecorder.TimeProvider
 import com.lukasz.witkowski.training.planner.statistics.domain.timer.Timer
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,10 +20,11 @@ class TrainingSessionService(
     private val timeProvider: TimeProvider,
     private val timer: Timer,
     private val trainingSetsStrategy: TrainingSetsPolicy = CircuitSetsPolicy(),
+    private val backgroundDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
 
     private lateinit var trainingSession: TrainingSession
-    private val scope = CoroutineScope(Dispatchers.Default)
+    private val scope = CoroutineScope(backgroundDispatcher)
 
     val isTimerRunning: StateFlow<Boolean>
         get() = timer.isRunning
@@ -116,10 +118,10 @@ class TrainingSessionService(
         }
 
     private fun configureTimer(value: TrainingSessionState) {
-        timer.stop()
+        stopTimer()
         value.time?.let { timer.setTime(it) }
         if (value is TrainingSessionState.RestTimeState) {
-            timer.start()
+            startTimer()
         }
     }
 }
