@@ -46,6 +46,7 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
+import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
@@ -306,7 +307,7 @@ private fun TrainingExerciseRestTime(
         }
         if (restTime.isNotZero()) {
             Text(
-                text = restTime.toString(),
+                text = TimeFormatter(LocalContext.current).formatTime(restTime),
                 color = MaterialTheme.colors.primary,
                 fontSize = 18.sp
             )
@@ -417,7 +418,7 @@ fun ExerciseSetsRepsTimeInfo(
             Text(
                 text = stringResource(
                     id = R.string.time_with_value,
-                    trainingExercise.time.toString()
+                    TimeFormatter(LocalContext.current).formatTime(trainingExercise.time)
                 ),
                 color = MaterialTheme.colors.primaryVariant
             )

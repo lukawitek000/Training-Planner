@@ -20,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +33,7 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
+import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
@@ -188,7 +190,7 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, trainingExercise: Trai
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(text = "Rest time: ")
-                    Text(text = trainingExercise.restTime.toString())
+                    Text(text = TimeFormatter(LocalContext.current).formatTime(trainingExercise.restTime))
                 }
             }
         }
@@ -228,7 +230,7 @@ fun SingleTrainingStatisticsItem(
             Text(
                 text = stringResource(
                     id = R.string.time_text,
-                    trainingStatistics.totalTime.toString()
+                    TimeFormatter(LocalContext.current).formatTime(trainingStatistics.totalTime)
                 ), fontSize = fontSize
             )
             Text(text = "Effective time: ${trainingStatistics.effectiveTime}", fontSize = fontSize)

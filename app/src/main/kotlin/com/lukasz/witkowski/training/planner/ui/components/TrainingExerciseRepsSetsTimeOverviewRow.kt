@@ -9,9 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.TextUnit
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 
 @Composable
@@ -43,7 +45,7 @@ fun TrainingExerciseRepsSetsTimeOverviewRow(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = stringResource(id = R.string.time), fontSize = fontSize, color = textColor)
-                Text(text = exercise.time.toString(), fontSize = fontSize, color = textColor)
+                Text(text = TimeFormatter(LocalContext.current).formatTime(exercise.time), fontSize = fontSize, color = textColor)
             }
         }
     }
