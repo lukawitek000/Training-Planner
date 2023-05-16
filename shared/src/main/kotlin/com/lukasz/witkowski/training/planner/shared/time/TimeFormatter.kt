@@ -65,7 +65,7 @@ class TimeFormatter internal constructor(private val resourcesProvider: Resource
     private fun StringBuilder.appendHoursTime(hours: Int) = apply {
         if (hours > 0) {
             append(hours)
-            appendSeparator("h")
+            appendSeparator(resourcesProvider.provideString(R.string.hour_shortcut))
         }
     }
 
@@ -75,7 +75,7 @@ class TimeFormatter internal constructor(private val resourcesProvider: Resource
                 appendSpace()
             }
             append(minutes)
-            appendSeparator("min")
+            appendSeparator(resourcesProvider.provideString(R.string.minutes_shortcut))
         }
     }
 
@@ -85,7 +85,7 @@ class TimeFormatter internal constructor(private val resourcesProvider: Resource
                 appendSpace()
             }
             append(seconds)
-            appendSeparator("s")
+            appendSeparator(resourcesProvider.provideString(R.string.seconds_shortcut))
         }
     }
 
