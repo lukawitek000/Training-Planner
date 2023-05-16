@@ -37,7 +37,7 @@ class TimeFormatterFormatTimeTest(
                 arrayOf(Time(hour = 2, minutes = 10, seconds = 9), "2h 10min"),
                 arrayOf(Time(hour = 2, minutes = 5, seconds = 0), "2h 5min"),
                 arrayOf(Time(hour = 2, minutes = 65, seconds = 0), "3h 5min"),
-                arrayOf(Time(hour = 2, minutes = 0, seconds = 0), "2h"),
+                arrayOf(Time(hour = 2, minutes = 0, seconds = 0), "2h")
             )
         }
     }
