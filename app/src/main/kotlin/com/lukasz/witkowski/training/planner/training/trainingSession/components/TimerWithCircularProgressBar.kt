@@ -9,9 +9,11 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.shared.time.Time
+import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 
 
 @Composable
@@ -31,6 +33,6 @@ fun TimerWithCircularProgressBar(
             progress = timeLeft.timeInMillis / totalTime.timeInMillis.toFloat(),
             strokeWidth = 24.dp
         )
-        Text(text = timeLeft.toTimerString(), fontSize = 42.sp)
+        Text(text = TimeFormatter(LocalContext.current).formatTime(timeLeft), fontSize = 42.sp)
     }
 }
