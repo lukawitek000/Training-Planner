@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="minutes_seconds_separator">:</string>
+    <string name="seconds_tenth_second_separator">.</string>
+    <string name="hour_shortcut">h</string>
+    <string name="minutes_shortcut">min</string>
+    <string name="seconds_shortcut">s</string>
+</resources>

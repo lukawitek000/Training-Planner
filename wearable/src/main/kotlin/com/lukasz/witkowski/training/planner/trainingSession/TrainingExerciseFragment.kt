@@ -11,6 +11,7 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingExerciseBinding
 import com.lukasz.witkowski.training.planner.session.service.SessionServiceConnector
 import com.lukasz.witkowski.training.planner.shared.time.Time
+import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.utils.launchInStartedState
@@ -75,7 +76,7 @@ class TrainingExerciseFragment : Fragment() {
     }
 
     private fun setTimeOnTimer(time: Time) {
-        binding.timerTv.text = time.toTimerString(false)
+        binding.timerTv.text = TimeFormatter(requireContext()).formatTimer(time, false)
     }
 
     private fun setUpTimerIcon() = launchInStartedState {

@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.lukasz.witkowski.training.planner.databinding.FragmentTrainingRestTimeBinding
 import com.lukasz.witkowski.training.planner.session.service.SessionServiceConnector
+import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.utils.launchInStartedState
 import kotlinx.coroutines.flow.collectLatest
 
@@ -46,7 +47,8 @@ class TrainingRestTimeFragment : Fragment() {
 
     private fun observeTimer() = launchInStartedState {
         sharedViewModel.time.collectLatest {
-            binding.restTimeTimerTv.text = it.toTimerString(false)
+            binding.restTimeTimerTv.text =
+                TimeFormatter(requireContext()).formatTimer(it, false)
         }
     }
 

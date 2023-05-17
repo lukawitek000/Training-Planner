@@ -21,13 +21,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.shared.time.formatToString
 import com.lukasz.witkowski.training.planner.shared.utils.toPercentage
-import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
@@ -75,14 +77,14 @@ fun TrainingStatisticsSummary(
         Text(
             text = stringResource(
                 id = R.string.total_time,
-                trainingStatistics.totalTime.toString()
+                TimeFormatter(LocalContext.current).formatTime(trainingStatistics.totalTime)
             ), fontSize = 18.sp
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = stringResource(
                 id = R.string.effective_time,
-                trainingStatistics.effectiveTime.toString()
+                TimeFormatter(LocalContext.current).formatTime(trainingStatistics.effectiveTime)
             ), fontSize = 18.sp
         )
         Spacer(modifier = Modifier.height(4.dp))
@@ -118,9 +120,18 @@ fun ExerciseStatisticsSummary(
     trainingExercise: TrainingExercise
 ) {
     Column(modifier) {
-        Text(text = trainingExercise.exercise.name, fontSize = 28.sp, color = MaterialTheme.colors.secondary)
+        Text(
+            text = trainingExercise.exercise.name,
+            fontSize = 28.sp,
+            color = MaterialTheme.colors.secondary
+        )
         Spacer(modifier = Modifier.height(4.dp))
-        Text(stringResource(id = R.string.total_time, exerciseStatistics.totalTime.toString()))
+        Text(
+            stringResource(
+                id = R.string.total_time,
+                TimeFormatter(LocalContext.current).formatTime(exerciseStatistics.totalTime)
+            )
+        )
         Text(
             stringResource(
                 id = R.string.completeness_rate,
@@ -146,7 +157,12 @@ fun ExerciseDetailStatistics(
                     Column(Modifier.weight(1.0f)) {
                         Text(text = stringResource(id = R.string.attempt_set, it.set))
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text(text = stringResource(id = R.string.attempt_time, it.time.toString()))
+                        Text(
+                            text = stringResource(
+                                id = R.string.attempt_time,
+                                TimeFormatter(LocalContext.current).formatTime(it.time)
+                            )
+                        )
                     }
                     CompletedOrSkippedMark(
                         modifier = Modifier.weight(1.0f),
