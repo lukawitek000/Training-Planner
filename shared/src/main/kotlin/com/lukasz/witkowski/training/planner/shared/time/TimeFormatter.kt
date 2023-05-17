@@ -3,10 +3,16 @@ package com.lukasz.witkowski.training.planner.shared.time
 import android.content.Context
 import com.lukasz.witkowski.training.planner.shared.R
 
+/**
+ * Format [Time] to user friendly string representation based on the provided resources by the [ResourcesProvider].
+ */
 class TimeFormatter internal constructor(private val resourcesProvider: ResourcesProvider) {
 
     constructor(context: Context) : this(SystemResourcesProvider(context))
 
+    /**
+     * Format [Time] to the representation with hours, minutes and seconds eg. 1h 20min, 10min 2s
+     */
     fun formatTime(time: Time): String {
         val hours = (time.timeInMillis / MILLIS_IN_HOUR).toInt()
         val remainingTime = time.timeInMillis - hours * MILLIS_IN_HOUR
@@ -18,6 +24,9 @@ class TimeFormatter internal constructor(private val resourcesProvider: Resource
             .toString()
     }
 
+    /**
+     * Format [Time] to timer representation e.g 10:11, 3:02, 2.3, 2:15.2
+     */
     fun formatTimer(time: Time, includeTenthSecond: Boolean = true): String {
         val (minutes, seconds) = time.minutesAndSeconds()
         return StringBuilder()
