@@ -15,7 +15,7 @@ lifecycle = "2.5.1"
 
 # Tests
 junit = "4.13.2"
-roboelectric = "4.9"
+roboelectric = "4.10.3"
 
 [libraries]
 # Gradle plugins
