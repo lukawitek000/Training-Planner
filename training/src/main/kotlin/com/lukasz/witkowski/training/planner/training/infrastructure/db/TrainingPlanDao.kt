@@ -2,7 +2,7 @@ package com.lukasz.witkowski.training.planner.training.infrastructure.db
 
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy.REPLACE
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingExercise
@@ -21,10 +21,10 @@ internal interface TrainingPlanDao {
         }
     }
 
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTraining(dbTrainingPlan: DbTrainingPlan)
 
-    @Insert(onConflict = REPLACE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExercise(dbExercise: DbTrainingExercise)
 
     @Query("SELECT * FROM TrainingPlan")

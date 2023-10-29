@@ -88,7 +88,7 @@ fun CreateTrainingScreen(
             hideToast = { showNoEnoughDataToCreateTrainingPlanToast = false }
         )
         CreateTrainingScreenContent(
-            modifier = Modifier,
+            modifier = Modifier.padding(it),
             title = title,
             onTitleChanged = { viewModel.onTrainingTitleChanged(it) },
             description = description,
@@ -102,7 +102,7 @@ fun CreateTrainingScreen(
         )
         if (pickedTrainingExercise != null) {
             SetTrainingExerciseRestTimeDialog(
-                modifier = Modifier,
+                modifier = Modifier.padding(it),
                 trainingExercise = pickedTrainingExercise!!,
                 setRestTimeToExercise = { trainingExercise, minutes, seconds ->
                     viewModel.setRestTimeToExercise(
