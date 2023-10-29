@@ -5,7 +5,7 @@ agp = "8.1.2" # Android gradle plugin
 
 compose = "1.1.1"
 timber = "5.0.1"
-detekt = "1.21.0"
+detekt = "1.23.1"
 ktlint = "11.3.1"
 room = "2.4.3"
 coroutines = "1.6.4"
