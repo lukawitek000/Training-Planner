@@ -10,4 +10,5 @@ runs:
         distribution: 'zulu'
         java-version: '17'
     - name: Set up gradle
+      shell: bash
       run: ./gradlew help
