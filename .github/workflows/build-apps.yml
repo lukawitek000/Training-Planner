@@ -12,18 +12,13 @@ jobs:
   buildApps:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-      - name: Set up gradle
-        run: ./gradlew help
+      - uses: ./.github/workflows/set-up.yml
+        # Build application for Android phone
       - name: Build debug mobile app
         run: ./gradlew :app:assembleDebug
       - name: Build release mobile app
         run: ./gradlew :app:assembleRelease
+        # Build application for Android watch
       - name: Build debug wearable app
         run: ./gradlew :wearable:assembleDebug
       - name: Build release wearable app
