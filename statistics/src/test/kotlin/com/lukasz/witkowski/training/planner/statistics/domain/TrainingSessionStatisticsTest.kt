@@ -53,6 +53,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
     }
 
     @Test
+    @Suppress("LongMethod")
     fun `record statistics for exercise from 3 attempts`() {
         // given
         val exerciseToRecordStatistics = trainingExercises[1]
@@ -105,6 +106,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
         assertTrainingStatistics(expectedStatistics, statistics)
     }
 
+    @Suppress("LongMethod")
     private fun createExpectedStatisticsForCompletedTraining() = TrainingStatistics(
         trainingPlanId = trainingPlan.id,
         totalTime = Time(seconds = 180),

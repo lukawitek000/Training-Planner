@@ -8,7 +8,6 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 
-
 val TRAINING_EXERCISES = createTrainingExercisesWithDifferentSets()
 val TRAINING_PLAN = createTrainingPlan(TRAINING_EXERCISES)
 
@@ -20,6 +19,7 @@ fun createTrainingPlan(trainingExercises: List<TrainingExercise>): TrainingPlan 
     )
 }
 
+@Suppress("LongMethod")
 private fun createTrainingExercisesWithDifferentSets(): List<TrainingExercise> {
     val exercise1 = TrainingExercise(
         id = TrainingExerciseId.create(),
