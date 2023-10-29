@@ -39,7 +39,7 @@ fun TrainingSessionScreen(
         modifier = modifier,
     ) {
         Column(
-            modifier.fillMaxSize(),
+            modifier.padding(it).fillMaxSize(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Box(

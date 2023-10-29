@@ -60,6 +60,7 @@ fun PickExerciseScreen(
         }
     ) {
         ExercisesScreenContent(
+            modifier = Modifier.padding(it),
             viewModel = viewModel,
             isPickingExerciseMode = true,
             onExerciseClicked = { pickedExercise ->
