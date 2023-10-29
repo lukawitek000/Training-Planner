@@ -71,6 +71,7 @@ fun ExercisesScreen(
         },
     ) {
         ExercisesScreenContent(
+            modifier = Modifier.padding(it),
             viewModel = viewModel,
             onExerciseDeleted = {
                 // TODO If this screen is popped up from backstack the snack bar results are not handled (https://developer.android.com/jetpack/compose/state#viewmodels-source-of-truth)
@@ -92,6 +93,7 @@ fun ExercisesScreen(
 
 @Composable
 fun ExercisesScreenContent(
+    modifier: Modifier = Modifier,
     viewModel: ExercisesListViewModel,
     isPickingExerciseMode: Boolean = false,
     onExerciseClicked: (Exercise) -> Unit = {},
@@ -129,7 +131,7 @@ fun ExercisesScreenContent(
         )
     }
 
-    Column() {
+    Column(modifier = modifier) {
         CategoryFilters(
             categories = viewModel.categoriesWithoutNone,
             selectedCategories = selectedCategoriesList,
