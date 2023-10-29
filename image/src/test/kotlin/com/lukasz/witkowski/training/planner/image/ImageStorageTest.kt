@@ -154,6 +154,7 @@ class ImageStorageTest {
     }
 
     @Test
+    @Suppress("LongMethod")
     fun `update image for all owners`() = runBlocking {
         val owners = listOf("abc123".toUUID(), "123abc".toUUID())
         val imageConfiguration1 = givenImageConfiguration(ownerId = owners[0])

@@ -35,9 +35,11 @@ interface StatisticsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(dbExerciseStatistics: DbExerciseStatistics)
 
+    @Transaction
     @Query("SELECT * FROM TrainingStatistics WHERE trainingPlanId=:trainingPlanId")
     fun getTrainingStatisticsByTrainingPlanId(trainingPlanId: String): Flow<List<DbTrainingWithExercisesStatistics>>
 
+    @Transaction
     @Query("SELECT * FROM TrainingStatistics WHERE id=:id")
     fun getTrainingStatisticsById(id: String): Flow<DbTrainingWithExercisesStatistics>
 }

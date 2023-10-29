@@ -43,7 +43,13 @@ class CircuitSetsPolicyTest {
     @Test
     fun `load single exercise with many sets`() {
         // given
-        val exercises = listOf(TrainingExercise(id = TrainingExerciseId.create(), sets = 3, exercise = createDummyExercise()))
+        val exercises = listOf(
+            TrainingExercise(
+                id = TrainingExerciseId.create(),
+                sets = 3,
+                exercise = createDummyExercise()
+            )
+        )
         val trainingPlan = createTrainingPlan(exercises)
 
         // when
@@ -90,6 +96,7 @@ class CircuitSetsPolicyTest {
         assertContentEquals(expectedExercisesOrder, loadedExercises)
     }
 
+    @Suppress("LongMethod")
     private fun create4Exercises(): List<TrainingExercise> {
         val exercise1 = TrainingExercise(
             id = TrainingExerciseId.create(),

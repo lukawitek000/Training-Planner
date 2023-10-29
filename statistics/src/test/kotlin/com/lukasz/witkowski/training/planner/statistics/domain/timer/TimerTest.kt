@@ -61,6 +61,7 @@ class TimerTest {
     }
 
     @Test
+    @Suppress("LongMethod")
     fun `timer emits 3 values withing 3 seconds`() = runTest(testDispatcher) {
         givenTimerController(SECOND_IN_MILLIS)
         val time = Time(seconds = 20)
@@ -84,6 +85,7 @@ class TimerTest {
     }
 
     @Test
+    @Suppress("LongMethod")
     fun `timer stops emitting after 3 seconds and reset to initial value`() =
         runTest(testDispatcher) {
             givenTimerController(SECOND_IN_MILLIS)
@@ -116,6 +118,7 @@ class TimerTest {
         }
 
     @Test
+    @Suppress("LongMethod")
     fun `timer emits 3 seconds and is finished`() = runTest(testDispatcher) {
         givenTimerController(SECOND_IN_MILLIS)
         val time = Time(seconds = 3)
@@ -143,6 +146,7 @@ class TimerTest {
     }
 
     @Test
+    @Suppress("LongMethod")
     fun `start timer after it has finished`() = runTest(testDispatcher) {
         givenTimerController(SECOND_IN_MILLIS)
         val time = Time(seconds = 3)
@@ -205,6 +209,7 @@ class TimerTest {
     }
 
     @Test
+    @Suppress("LongMethod")
     fun `after pause new values are not emitted`() = runTest(testDispatcher) {
         givenTimerController(SECOND_IN_MILLIS)
         val time = Time(seconds = 5)
@@ -230,6 +235,7 @@ class TimerTest {
     }
 
     @Test
+    @Suppress("LongMethod")
     fun `resume after pause emits consecutive time till finished`() = runTest(testDispatcher) {
         givenTimerController(SECOND_IN_MILLIS)
         val time = Time(seconds = 5)
@@ -264,6 +270,7 @@ class TimerTest {
     }
 
     @Test
+    @Suppress("LongMethod")
     fun `resume start timer if it was not started yet`() = runTest(testDispatcher) {
         givenTimerController(SECOND_IN_MILLIS)
         val time = Time(seconds = 5)

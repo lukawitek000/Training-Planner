@@ -11,7 +11,6 @@ import com.lukasz.witkowski.training.planner.statistics.domain.timer.Timer
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -63,6 +62,7 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
     }
 
     @Test
+    @Suppress("LongMethod")
     fun `emit 1st exercise, rest time and 2nd exercise`() = runTest(UnconfinedTestDispatcher()) {
         val testResult = mutableListOf<TrainingSessionState>()
         val job = launch {
@@ -166,7 +166,6 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
             expectedState = TrainingSessionState.ExerciseState(trainingExercises.first()),
             trainingSessionState = trainingSessionService.trainingSessionState.value
         )
-
     }
 
     @Test
