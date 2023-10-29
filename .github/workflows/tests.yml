@@ -8,7 +8,6 @@ on:
   pull_request:
     branches:
       - master
-      - develop
   schedule:
     # every midnight (utc time)
     - cron:  '0 0 * * *'
