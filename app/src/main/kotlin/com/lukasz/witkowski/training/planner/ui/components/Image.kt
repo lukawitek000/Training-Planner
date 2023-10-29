@@ -22,7 +22,7 @@ fun Image(
     val imgModel = imageReference?.let { File(it.path) } ?: defaultImage
     CoilImage(
         modifier = modifier,
-        imageModel = imgModel,
+        imageModel = { imgModel },
         imageOptions = ImageOptions(contentDescription = contentDescriptor, contentScale = ContentScale.Fit),
         loading = {
             Box(modifier = Modifier.matchParentSize()) {
