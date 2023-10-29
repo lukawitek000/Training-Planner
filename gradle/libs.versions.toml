@@ -1,6 +1,6 @@
 [versions]
 
-kotlin = "1.6.10"
+kotlin = "1.9.10"
 agp = "8.1.2" # Android gradle plugin
 
 compose = "1.1.1"
