@@ -76,7 +76,6 @@ fun CreateExerciseScreen(
             )
         }
     ) {
-
         when (savingState) {
             is ResultHandler.Idle, is ResultHandler.Error -> {
                 LaunchedEffect(Unit) {
@@ -106,7 +105,7 @@ fun CreateExerciseScreen(
             }
             else -> {
                 LoadingScreen(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(it),
                     message = stringResource(id = R.string.saving_exercise, name)
                 )
             }

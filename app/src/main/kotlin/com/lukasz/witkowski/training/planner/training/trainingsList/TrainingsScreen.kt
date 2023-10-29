@@ -54,7 +54,7 @@ fun TrainingsScreen(
             CreateTrainingFab(onClicked = onCreateTrainingFabClicked)
         }
     ) {
-        Column {
+        Column(modifier = Modifier.padding(it)) {
             CategoryFilters(
                 categories = viewModel.categoriesWithoutNone,
                 selectedCategories = selectedCategoriesList,

@@ -61,8 +61,7 @@ fun TrainingOverviewScreen(
     val trainingStatistics by viewModel.trainingStatistics.collectAsState()
     Scaffold(modifier = modifier) {
         LazyColumn(
-            modifier = Modifier
-                .padding(8.dp),
+            modifier = Modifier.padding(it)
         ) {
             item {
                 if (trainingPlan is ResultHandler.Loading) {
