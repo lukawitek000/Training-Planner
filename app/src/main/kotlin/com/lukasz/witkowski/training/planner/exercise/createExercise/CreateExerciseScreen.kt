@@ -8,6 +8,7 @@ import android.provider.MediaStore
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -199,7 +200,7 @@ fun UploadImageLayout(
     ) {
         ImageContainer {
             CoilImage(
-                imageModel = image ?: placeholder,
+                imageModel = { image ?: placeholder },
                 modifier = Modifier
                     .width(200.dp)
                     .height(200.dp)
