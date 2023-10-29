@@ -16,7 +16,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.annotation.Config
 import java.util.UUID
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
@@ -24,7 +23,6 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [28])
 class ImageStorageTest {
 
     private lateinit var imageStorage: ImageStorage
