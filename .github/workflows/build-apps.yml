@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ../actions/set-up
+      - uses: ./.github/actions/set-up
         # Build application for Android phone
       - name: Build debug mobile app
         run: ./gradlew :app:assembleDebug
