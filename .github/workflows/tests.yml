@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/set-up.yml
+      - uses: ./.github/actions/set-up
       # Execute unit tests
       - name: Unit Test
         run: ./gradlew testDebugUnitTest

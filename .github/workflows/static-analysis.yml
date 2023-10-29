@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./.github/actions/set-up.yml
+      - uses: ./.github/actions/set-up
         # Execute static code analysis
       - name: Check
         run: ./gradlew check -x test
