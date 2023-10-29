@@ -12,6 +12,7 @@ jobs:
   buildApps:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - uses: ./.github/workflows/set-up.yml
         # Build application for Android phone
       - name: Build debug mobile app
