@@ -27,6 +27,7 @@ internal interface TrainingPlanDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExercise(dbExercise: DbTrainingExercise)
 
+    @Transaction
     @Query("SELECT * FROM TrainingPlan")
     fun getAll(): Flow<List<DbTrainingPlanWithExercises>>
 
@@ -47,6 +48,7 @@ internal interface TrainingPlanDao {
     @Query("DELETE FROM Exercise WHERE id=:id")
     suspend fun deleteExerciseById(id: String)
 
+    @Transaction
     @Query("SELECT * FROM TrainingPlan WHERE id=:id")
     suspend fun getTrainingPlanById(id: String): DbTrainingPlanWithExercises
 }

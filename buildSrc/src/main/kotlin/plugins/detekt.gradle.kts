@@ -8,11 +8,11 @@ plugins {
 }
 
 detekt {
-    config = files("$rootDir/config/detekt/detekt.yml")
+    config.from("$rootDir/config/detekt/detekt.yml")
     description = "CUSTOM Detekt check"
     parallel = true
     buildUponDefaultConfig = false
-    source = files("src/main/kotlin", "src/main/java")
+    source.from("src/main/kotlin", "src/main/java")
 }
 
 tasks.named<Detekt>("detekt").configure {
