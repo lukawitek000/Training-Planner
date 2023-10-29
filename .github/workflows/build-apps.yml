@@ -1,0 +1,26 @@
+name: Build apps debug and release
+
+on:
+  pull_request:
+    branches:
+      - master
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  buildApps:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/set-up
+        # Build application for Android phone
+      - name: Build debug mobile app
+        run: ./gradlew :app:assembleDebug
+      - name: Build release mobile app
+        run: ./gradlew :app:assembleRelease
+        # Build application for Android watch
+      - name: Build debug wearable app
+        run: ./gradlew :wearable:assembleDebug
+      - name: Build release wearable app
+        run: ./gradlew :wearable:assembleRelease
