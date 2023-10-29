@@ -13,10 +13,6 @@ coroutines = "1.6.4"
 # AndroidX
 lifecycle = "2.5.1"
 
-# Tests
-junit = "4.13.2"
-roboelectric = "4.11"
-
 [libraries]
 # Gradle plugins
 gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "agp" }
@@ -70,8 +66,8 @@ coil = { module = "com.github.skydoves:landscapist-coil", version = "2.0.0" }
 bytebeats-charts = { module = "io.github.bytebeats:compose-charts", version = "0.1.2" }
 
 # Tests
-junit = { module = "junit:junit", version.ref = "junit" }
-roboelectric = { module = "org.robolectric:robolectric", version.ref = "roboelectric" }
+junit = { module = "junit:junit", version = "4.13.2" }
+roboelectric = { module = "org.robolectric:robolectric", version = "4.11" }
 kotlinTestJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 
 [bundles]
