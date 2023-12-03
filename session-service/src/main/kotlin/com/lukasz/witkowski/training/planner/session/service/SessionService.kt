@@ -4,11 +4,13 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 
-internal class SessionService : Service(), SessionFinishedListener {
+internal class SessionService : Service() {
 
-    val trainingSessionController by lazy { TrainingSessionController(applicationContext) }
+    val trainingSessionController by lazy { TrainingSessionController(applicationContext) {
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+    } }
 
     private val binder = LocalBinder()
     private var isStarted = false
@@ -44,19 +46,12 @@ internal class SessionService : Service(), SessionFinishedListener {
 
     override fun onCreate() {
         super.onCreate()
-        trainingSessionController.observeSessionState()
-        trainingSessionController.addSessionFinishedListener(this)
+        trainingSessionController.onServiceDestroy()
     }
 
     override fun onDestroy() {
-        trainingSessionController.destroy()
-        trainingSessionController.removeSessionFinishedListener(this)
+        trainingSessionController.onServiceCreate()
         super.onDestroy()
-    }
-
-    override fun onSessionFinished(trainingStatisticsId: TrainingStatisticsId) {
-        stopForeground(STOP_FOREGROUND_REMOVE)
-        stopSelf()
     }
 
     companion object {

@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorde
 import com.lukasz.witkowski.training.planner.statistics.domain.timer.Timer
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
@@ -38,6 +39,8 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
     private val scheduler = TestCoroutineScheduler()
     private val testDispatcher = StandardTestDispatcher(scheduler)
 
+    private val trainingStatisticsService: TrainingStatisticsService = mockk()
+
     @Before
     fun setUp() {
         trainingExercises = TRAINING_EXERCISES
@@ -45,6 +48,7 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
         trainingSessionService = TrainingSessionService(
             timeProvider,
             Timer(timerDispatcher = testDispatcher),
+            trainingStatisticsService,
             trainingSetsPolicy,
             testDispatcher
         )

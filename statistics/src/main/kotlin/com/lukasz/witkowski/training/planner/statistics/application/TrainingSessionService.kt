@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.statistics.application
 
 import com.lukasz.witkowski.training.planner.shared.time.Time
+import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsPolicy
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSession
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 class TrainingSessionService(
     private val timeProvider: TimeProvider,
     private val timer: Timer,
+    private val trainingStatisticsService: TrainingStatisticsService,
     private val trainingSetsStrategy: TrainingSetsPolicy = CircuitSetsPolicy(),
     private val backgroundDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
@@ -29,12 +31,13 @@ class TrainingSessionService(
     val isTimerRunning: StateFlow<Boolean>
         get() = timer.isRunning
 
-    private var state: TrainingSessionState = TrainingSessionState.IdleState
+    private var state: TrainingSessionState
         private set(value) {
             configureTimer(value)
             _trainingSessionState.value = value
-            field = value
+            saveTrainingSessionStatistics(value)
         }
+        get() = _trainingSessionState.value
 
     private val _trainingSessionState =
         MutableStateFlow<TrainingSessionState>(TrainingSessionState.IdleState)
@@ -46,6 +49,8 @@ class TrainingSessionService(
 
     val time: StateFlow<Time>
         get() = timer.time
+
+    private val trainingSessionFinishedListeners = mutableSetOf<SessionFinishedListener>()
 
     fun startTraining(trainingPlan: TrainingPlan) {
         this.trainingPlan = trainingPlan
@@ -85,6 +90,34 @@ class TrainingSessionService(
 
     fun pauseTimer() {
         timer.pause()
+    }
+
+    fun addSessionFinishedListener(sessionFinishedListener: SessionFinishedListener) {
+        trainingSessionFinishedListeners.add(sessionFinishedListener)
+    }
+
+    fun removeSessionFinishedListener(sessionFinishedListener: SessionFinishedListener) {
+        trainingSessionFinishedListeners.remove(sessionFinishedListener)
+    }
+
+    private fun saveTrainingSessionStatistics(state: TrainingSessionState) {
+        if (state is TrainingSessionState.SummaryState) {
+            scope.launch {
+                // This saving has to be completed in foreground service
+                // After save is finished the ui is notified
+                // Consider moving decision to save to the application layer of statistics
+                // It will simplify the code in the presentation, always the training will be marked as finish only if the statistics were saved.
+
+                trainingStatisticsService.save(state.statistics)
+                notifySessionFinished(state.statistics.id)
+            }
+        }
+    }
+
+    private fun notifySessionFinished(trainingStatisticsId: TrainingStatisticsId) {
+        trainingSessionFinishedListeners.forEach {
+            it.onSessionFinished(trainingStatisticsId)
+        }
     }
 
     private fun observeTimerFinished() {
