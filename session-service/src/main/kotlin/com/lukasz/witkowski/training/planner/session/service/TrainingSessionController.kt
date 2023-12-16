@@ -7,7 +7,10 @@ import com.lukasz.witkowski.training.planner.statistics.di.StatisticsContainer
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 
-internal class TrainingSessionController(private val context: Context, private val onSessionFinished: () -> Unit): SessionFinishedListener {
+internal class TrainingSessionController(
+    private val context: Context,
+    private val onSessionFinished: () -> Unit
+) : SessionFinishedListener {
 
     private val statisticsContainer: StatisticsContainer by lazy {
         StatisticsContainer.getInstance(context)

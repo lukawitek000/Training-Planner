@@ -156,6 +156,6 @@ class TrainingSessionService(
     }
 
     companion object {
-        private val LISTENER_ALREADY_ADDED_MESSAGE = "The SessionFinishedListener was already added"
+        private const val LISTENER_ALREADY_ADDED_MESSAGE = "The SessionFinishedListener was already added"
     }
 }
