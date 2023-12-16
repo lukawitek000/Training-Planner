@@ -93,7 +93,9 @@ class TrainingSessionService(
     }
 
     fun addSessionFinishedListener(sessionFinishedListener: SessionFinishedListener) {
-        trainingSessionFinishedListeners.add(sessionFinishedListener)
+        require(trainingSessionFinishedListeners.add(sessionFinishedListener)) {
+            LISTENER_ALREADY_ADDED_MESSAGE
+        }
     }
 
     fun removeSessionFinishedListener(sessionFinishedListener: SessionFinishedListener) {
@@ -103,11 +105,6 @@ class TrainingSessionService(
     private fun saveTrainingSessionStatistics(state: TrainingSessionState) {
         if (state is TrainingSessionState.SummaryState) {
             scope.launch {
-                // This saving has to be completed in foreground service
-                // After save is finished the ui is notified
-                // Consider moving decision to save to the application layer of statistics
-                // It will simplify the code in the presentation, always the training will be marked as finish only if the statistics were saved.
-
                 trainingStatisticsService.save(state.statistics)
                 notifySessionFinished(state.statistics.id)
             }
@@ -156,5 +153,9 @@ class TrainingSessionService(
         if (value is TrainingSessionState.RestTimeState) {
             startTimer()
         }
+    }
+
+    companion object {
+        private val LISTENER_ALREADY_ADDED_MESSAGE = "The SessionFinishedListener was already added"
     }
 }
