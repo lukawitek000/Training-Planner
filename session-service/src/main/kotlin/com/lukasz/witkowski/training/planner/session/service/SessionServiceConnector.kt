@@ -10,16 +10,12 @@ class SessionServiceConnector {
 
     private var sessionService: SessionService? = null
     var serviceConnected = false
-    private var sessionFinishedListener: SessionFinishedListener? = null
 
     private val connection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val binder = service as SessionService.LocalBinder
             sessionService = binder.getService()
             serviceConnected = true
-            sessionFinishedListener?.let {
-                sessionService!!.trainingSessionController.addSessionFinishedListener(it)
-            }
         }
 
         override fun onServiceDisconnected(name: ComponentName) {
@@ -37,15 +33,5 @@ class SessionServiceConnector {
 
     fun unbindService(context: Context) {
         context.unbindService(connection)
-    }
-
-    fun addSessionFinishedListener(sessionFinishedListener: SessionFinishedListener) {
-        this.sessionFinishedListener = sessionFinishedListener
-    }
-
-    fun removeSessionFinishedListener(sessionFinishedListener: SessionFinishedListener) {
-        sessionService?.trainingSessionController?.removeSessionFinishedListener(
-            sessionFinishedListener
-        )
     }
 }

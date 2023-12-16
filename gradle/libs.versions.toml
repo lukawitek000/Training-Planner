@@ -70,6 +70,7 @@ bytebeats-charts = { module = "io.github.bytebeats:compose-charts", version = "0
 junit = { module = "junit:junit", version = "4.13.2" }
 roboelectric = { module = "org.robolectric:robolectric", version = "4.11" }
 kotlinTestJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+mockk = { module = "io.mockk:mockk", version = "1.13.3" }
 
 [bundles]
 room = ["androidx-roomRuntime", "androidx-roomKtx"]
