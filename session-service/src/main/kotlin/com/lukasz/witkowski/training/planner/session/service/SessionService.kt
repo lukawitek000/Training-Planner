@@ -7,7 +7,7 @@ import android.os.IBinder
 
 internal class SessionService : Service() {
 
-    val trainingSessionController by lazy { TrainingSessionController(applicationContext) {
+    private val trainingSessionController by lazy { TrainingSessionController(applicationContext) {
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     } }
