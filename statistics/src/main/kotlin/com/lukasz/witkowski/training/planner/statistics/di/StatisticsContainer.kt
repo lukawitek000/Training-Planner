@@ -17,7 +17,7 @@ class StatisticsContainer private constructor(context: Context) {
     }
 
     val trainingSessionService: TrainingSessionService by lazy {
-        TrainingSessionService(SystemTimeProvider(), Timer())
+        TrainingSessionService(SystemTimeProvider(), Timer(), trainingStatisticsService)
     }
 
     val trainingStatisticsService: TrainingStatisticsService by lazy {
