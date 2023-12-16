@@ -10,6 +10,9 @@ import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorde
 import com.lukasz.witkowski.training.planner.statistics.domain.timer.Timer
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import io.mockk.coEvery
+import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
@@ -17,11 +20,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 // TODO use new timer in the wearable
 // remove old timer controller
@@ -38,6 +43,8 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
     private val scheduler = TestCoroutineScheduler()
     private val testDispatcher = StandardTestDispatcher(scheduler)
 
+    private val trainingStatisticsService: TrainingStatisticsService = mockk()
+
     @Before
     fun setUp() {
         trainingExercises = TRAINING_EXERCISES
@@ -45,6 +52,7 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
         trainingSessionService = TrainingSessionService(
             timeProvider,
             Timer(timerDispatcher = testDispatcher),
+            trainingStatisticsService,
             trainingSetsPolicy,
             testDispatcher
         )
@@ -200,7 +208,57 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
             )
         }
 
+    @Test
+    fun `throw when two same SessionFinishedListeners are registered`() {
+        val listener = mockk<SessionFinishedListener>()
+        trainingSessionService.addSessionFinishedListener(listener)
+
+        assertFailsWith<IllegalArgumentException> {
+            trainingSessionService.addSessionFinishedListener(listener)
+        }
+    }
+
+    @Test
+    fun `do not throw if same SessionFinishedListener was added after removing it`() {
+        val listener = mockk<SessionFinishedListener>()
+        trainingSessionService.addSessionFinishedListener(listener)
+        trainingSessionService.removeSessionFinishedListener(listener)
+
+        trainingSessionService.addSessionFinishedListener(listener)
+    }
+
+    @Test
+    fun `inform the SessionFinishedListener when the session is in summary state and saving has finished`() =
+        runTest(testDispatcher) {
+            val listener = mockk<SessionFinishedListener>(relaxed = true)
+            trainingSessionService.addSessionFinishedListener(listener)
+
+            coEvery { trainingStatisticsService.save(any()) } returns Unit
+
+            whenStartTrainingSession()
+            whenAllTrainingExercisesCompleted()
+            advanceUntilIdle()
+
+            val state = trainingSessionService.trainingSessionState.value
+            assertTrue(state is TrainingSessionState.SummaryState)
+            verify(exactly = 1) { listener.onSessionFinished(state.statistics.id) }
+        }
+
     private fun whenStartTrainingSession() {
         trainingSessionService.startTraining(trainingPlan)
     }
+
+    private fun whenAllTrainingExercisesCompleted() {
+        val steps = TRAINING_EXERCISES.fold(0) { acc, trainingExercise ->
+            val restTime = if (trainingExercise.hasRestTime()) 1 else 0
+            acc + (restTime + 1) * trainingExercise.sets
+        }.let {
+            if (TRAINING_EXERCISES.last().hasRestTime()) it - 1 else it
+        }
+        for (i in 0 until steps) {
+            trainingSessionService.completed()
+        }
+    }
+
+    private fun TrainingExercise.hasRestTime() = restTime.isNotZero()
 }

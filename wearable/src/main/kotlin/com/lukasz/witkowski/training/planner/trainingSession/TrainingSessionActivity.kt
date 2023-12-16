@@ -12,13 +12,11 @@ import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSessionBinding
-import com.lukasz.witkowski.training.planner.session.service.SessionFinishedListener
 import com.lukasz.witkowski.training.planner.session.service.SessionServiceConnector
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.summary.TrainingSummaryActivity
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
-import timber.log.Timber
 
 class TrainingSessionActivity : FragmentActivity() {
 
@@ -28,9 +26,6 @@ class TrainingSessionActivity : FragmentActivity() {
     })
 
     private lateinit var sessionServiceConnector: SessionServiceConnector
-    private val sessionFinishedListener = SessionFinishedListener {
-        showTrainingSessionSummary(it)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.TrainingPlannerTheme)
@@ -46,14 +41,11 @@ class TrainingSessionActivity : FragmentActivity() {
 
     override fun onStart() {
         super.onStart()
-
-        sessionServiceConnector.addSessionFinishedListener(sessionFinishedListener)
         sessionServiceConnector.bindService(this)
     }
 
     override fun onStop() {
         super.onStop()
-        sessionServiceConnector.removeSessionFinishedListener(sessionFinishedListener)
         sessionServiceConnector.unbindService(this)
     }
 
@@ -95,7 +87,7 @@ class TrainingSessionActivity : FragmentActivity() {
             when (it) {
                 is TrainingSessionState.ExerciseState -> showCurrentExercise()
                 is TrainingSessionState.RestTimeState -> showRestTime()
-                is TrainingSessionState.SummaryState -> showProgressBar()
+                is TrainingSessionState.SummaryState -> showTrainingSessionSummary(it.statistics.id)
                 is TrainingSessionState.IdleState -> showProgressBar()
             }
         }
