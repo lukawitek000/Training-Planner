@@ -63,7 +63,7 @@ kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-t
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 detektFormatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 kotlinReflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin"}
-coil = { module = "com.github.skydoves:landscapist-coil", version = "2.2.12" }
+coil = { module = "com.github.skydoves:landscapist-coil", version = "2.2.13" }
 bytebeats-charts = { module = "io.github.bytebeats:compose-charts", version = "0.1.2" }
 
 # Tests
