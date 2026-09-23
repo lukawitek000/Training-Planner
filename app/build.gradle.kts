@@ -56,17 +56,7 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.bytebeats.charts)
 
-//    implementation(libs.google.material)
-//    implementation(libs.androidx.compose.ui)
-//    implementation(libs.androidx.compose.material)
-//    debugImplementation(libs.androidx.compose.ui.tooling)
-//    implementation(libs.androidx.compose.ui.tooling.preview)
-//    implementation(libs.androidx.compose.material.icons.extended)
-//    implementation(libs.androidx.compose.navigation)
-//    implementation(libs.androidx.activity.compose)
-//    implementation(libs.androidx.compose.lifecycleViewmodelCompose)
     implementation(platform(libs.compose.bom))
-
     implementation(libs.compose.ui)
     implementation(libs.compose.material)
     debugImplementation(libs.compose.ui.tooling)

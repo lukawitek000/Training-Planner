@@ -7,7 +7,6 @@ import org.gradle.kotlin.dsl.configure
 
 plugins {
     id("com.android.library")
-    //id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
 }
 
@@ -37,17 +36,3 @@ extensions.configure<LibraryExtension> {
     }
 }
 
-// Access the version catalog using VersionCatalogsExtension
-val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-
-dependencies {
-    // Look up libraries from gradle/libs.versions.toml dynamically
-    libs.findLibrary("kotlin-stdlib").ifPresent { stdlib ->
-        add("implementation", stdlib)
-    }
-
-    // Optional: add Kotlin BOM if defined in catalog
-    libs.findLibrary("kotlin-bom").ifPresent { bom ->
-        add("implementation", platform(bom))
-    }
-}

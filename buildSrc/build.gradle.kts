@@ -8,13 +8,6 @@ repositories {
     gradlePluginPortal()
 }
 
-//dependencies {
-//    implementation(libs.android.gradle.plugin)
-//    implementation(libs.kotlin.gradle.plugin)
-//    implementation(libs.ksp.gradle.plugin)
-//}
-
-
 dependencies {
     implementation(
         libs.plugins.android.application.get().let {
