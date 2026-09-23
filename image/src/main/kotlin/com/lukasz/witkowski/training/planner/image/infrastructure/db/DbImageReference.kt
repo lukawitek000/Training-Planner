@@ -8,5 +8,5 @@ data class DbImageReference(
     @PrimaryKey
     val id: String,
     val path: String,
-    val checksum: Long
+    val checksum: Long,
 )

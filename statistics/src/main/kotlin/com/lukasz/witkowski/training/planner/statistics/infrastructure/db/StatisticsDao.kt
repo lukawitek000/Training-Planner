@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface StatisticsDao {
-
     @Transaction
     suspend fun insertAllStatistics(dbTrainingWithExercisesStatistics: DbTrainingWithExercisesStatistics) {
         val dbTrainingStatistics = dbTrainingWithExercisesStatistics.trainingStatistics

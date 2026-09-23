@@ -9,14 +9,14 @@ data class TrainingStatistics(
     val trainingPlanId: TrainingPlanId,
     val totalTime: Time,
     val date: Date,
-    val exercisesStatistics: List<ExerciseStatistics>
+    val exercisesStatistics: List<ExerciseStatistics>,
 ) {
-
     val effectiveTime: Time
         get() {
-            val timeInMillis = exercisesStatistics.sumOf {
-                it.totalTime.timeInMillis
-            }
+            val timeInMillis =
+                exercisesStatistics.sumOf {
+                    it.totalTime.timeInMillis
+                }
             return Time(timeInMillis)
         }
 }

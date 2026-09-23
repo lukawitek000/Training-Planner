@@ -8,14 +8,13 @@ internal object ExerciseFactory {
     fun create(
         exerciseConfiguration: ExerciseConfiguration,
         imageId: ImageId?,
-        exerciseId: ExerciseId = ExerciseId.create()
-    ): Exercise {
-        return Exercise(
+        exerciseId: ExerciseId = ExerciseId.create(),
+    ): Exercise =
+        Exercise(
             exerciseId,
             exerciseConfiguration.name,
             exerciseConfiguration.description,
             exerciseConfiguration.category,
-            imageId
+            imageId,
         )
-    }
 }

@@ -9,7 +9,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface ExerciseDao {
-
     @Query("SELECT * FROM Exercise")
     fun getAll(): Flow<List<DbExercise>>
 

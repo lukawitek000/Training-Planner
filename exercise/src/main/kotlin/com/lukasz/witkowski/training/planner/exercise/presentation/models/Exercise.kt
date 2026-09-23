@@ -8,5 +8,5 @@ data class Exercise(
     val name: String,
     val description: String,
     val category: Category,
-    val image: ImageReference? = null
+    val image: ImageReference? = null,
 )

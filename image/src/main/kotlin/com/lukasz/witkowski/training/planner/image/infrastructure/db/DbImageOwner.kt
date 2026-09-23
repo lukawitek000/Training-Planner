@@ -7,5 +7,5 @@ import androidx.room3.PrimaryKey
 data class DbImageOwner(
     @PrimaryKey
     val ownerId: String,
-    val imageId: String
+    val imageId: String,
 )

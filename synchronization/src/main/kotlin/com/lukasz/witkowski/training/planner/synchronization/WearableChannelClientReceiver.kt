@@ -7,15 +7,15 @@ import java.io.OutputStream
 
 class WearableChannelClientReceiver(
     private val inputStream: InputStream,
-    private val outputStream: OutputStream
+    private val outputStream: OutputStream,
 ) {
-
-    fun <T> receiveData(type: Class<T>): Flow<T> = flow {
-        val numberOfItems = inputStream.readByteSuspending()
-        for (i in 0 until numberOfItems) {
-            emit(receiveSingleTrainingPlan(type))
+    fun <T> receiveData(type: Class<T>): Flow<T> =
+        flow {
+            val numberOfItems = inputStream.readByteSuspending()
+            for (i in 0 until numberOfItems) {
+                emit(receiveSingleTrainingPlan(type))
+            }
         }
-    }
 
     suspend fun sendReceivingConfirmation() {
         outputStream.writeByteSuspending(ACKNOWLEDGE_FLAG)
@@ -28,7 +28,5 @@ class WearableChannelClientReceiver(
         return gson.fromJson(String(buffer), type)
     }
 
-    private suspend fun getBufferSize(): Int {
-        return inputStream.readIntSuspending()
-    }
+    private suspend fun getBufferSize(): Int = inputStream.readIntSuspending()
 }

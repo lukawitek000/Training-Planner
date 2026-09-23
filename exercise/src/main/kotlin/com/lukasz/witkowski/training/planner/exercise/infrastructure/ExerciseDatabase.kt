@@ -13,19 +13,19 @@ internal abstract class ExerciseDatabase : RoomDatabase() {
         @Volatile
         private var instance: ExerciseDatabase? = null
 
-        fun getInstance(context: Context): ExerciseDatabase {
-            return synchronized(this) {
+        fun getInstance(context: Context): ExerciseDatabase =
+            synchronized(this) {
                 if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context,
-                        ExerciseDatabase::class.java,
-                        "Exercise Database"
-                    )
-                        .fallbackToDestructiveMigration(true)
-                        .build()
+                    instance =
+                        Room
+                            .databaseBuilder(
+                                context,
+                                ExerciseDatabase::class.java,
+                                "Exercise Database",
+                            ).fallbackToDestructiveMigration(true)
+                            .build()
                 }
                 instance!!
             }
-        }
     }
 }

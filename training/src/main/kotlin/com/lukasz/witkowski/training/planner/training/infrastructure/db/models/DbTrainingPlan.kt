@@ -9,5 +9,5 @@ data class DbTrainingPlan(
     val id: String,
     val name: String,
     val description: String,
-    val isSynchronized: Boolean
+    val isSynchronized: Boolean,
 )

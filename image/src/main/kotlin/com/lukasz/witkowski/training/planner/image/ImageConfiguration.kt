@@ -4,7 +4,7 @@ import java.util.UUID
 
 data class ImageConfiguration(
     val data: ByteArray,
-    val ownerId: UUID
+    val ownerId: UUID,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -13,7 +13,5 @@ data class ImageConfiguration(
         } ?: false
     }
 
-    override fun hashCode(): Int {
-        return 31 * data.contentHashCode() + ownerId.hashCode()
-    }
+    override fun hashCode(): Int = 31 * data.contentHashCode() + ownerId.hashCode()
 }

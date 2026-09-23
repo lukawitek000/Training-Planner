@@ -4,33 +4,31 @@ import timber.log.Timber
 
 class SessionServiceContainer private constructor(
     val trainingSessionPendingIntentFactory: TrainingSessionPendingIntentFactory,
-    val notificationFactory: NotificationFactory
+    val notificationFactory: NotificationFactory,
 ) {
     companion object {
         @Volatile
         private var instance: SessionServiceContainer? = null
 
-        fun getInstance(): SessionServiceContainer {
-            return synchronized(this) {
+        fun getInstance(): SessionServiceContainer =
+            synchronized(this) {
                 checkNotNull(instance) {
                     "SessionServiceContainer not initialized."
                 }
             }
-        }
 
         fun initialize(
             trainingSessionPendingIntentFactory: TrainingSessionPendingIntentFactory,
-            notificationFactory: NotificationFactory
-        ) {
-            return synchronized(this) {
-                if (instance == null) {
-                    instance = SessionServiceContainer(
+            notificationFactory: NotificationFactory,
+        ) = synchronized(this) {
+            if (instance == null) {
+                instance =
+                    SessionServiceContainer(
                         trainingSessionPendingIntentFactory,
-                        notificationFactory
+                        notificationFactory,
                     )
-                }
-                Timber.w("SessionServiceContainer is already initialized.")
             }
+            Timber.w("SessionServiceContainer is already initialized.")
         }
     }
 }

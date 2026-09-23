@@ -11,8 +11,10 @@ import com.lukasz.witkowski.training.planner.image.infrastructure.DbImageReferen
 import com.lukasz.witkowski.training.planner.image.infrastructure.InternalStorageImageRepository
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageReferenceDatabase
 
-class ImageContainer(context: Context, directoryName: String) {
-
+class ImageContainer(
+    context: Context,
+    directoryName: String,
+) {
     private val imageRepository: ImageRepository by lazy {
         InternalStorageImageRepository(context, directoryName)
     }

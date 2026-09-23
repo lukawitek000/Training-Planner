@@ -8,6 +8,7 @@ import org.gradle.kotlin.dsl.configure
 plugins {
     id("com.android.library")
     id("com.google.devtools.ksp")
+    id("org.jlleitschuh.gradle.ktlint")
 }
 
 extensions.configure<LibraryExtension> {

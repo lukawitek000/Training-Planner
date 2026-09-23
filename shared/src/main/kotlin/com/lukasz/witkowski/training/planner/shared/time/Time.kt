@@ -1,11 +1,12 @@
 package com.lukasz.witkowski.training.planner.shared.time
 
-data class Time(val timeInMillis: Long) {
-
+data class Time(
+    val timeInMillis: Long,
+) {
     constructor(
         hour: Int = 0,
         minutes: Int = 0,
-        seconds: Int
+        seconds: Int,
     ) : this((((hour * MINUTES_IN_HOUR) + minutes) * SECONDS_IN_MINUTE + seconds) * MILLIS_IN_SECOND)
 
     fun minutesAndSeconds(millis: Long = timeInMillis): Pair<Int, Int> {

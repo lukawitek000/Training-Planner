@@ -9,7 +9,6 @@ import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
 class ImageMapperTest {
-
     @Test
     fun `convert image bitmap to byte array and back`() {
         val bitmap = givenTestBitmap()

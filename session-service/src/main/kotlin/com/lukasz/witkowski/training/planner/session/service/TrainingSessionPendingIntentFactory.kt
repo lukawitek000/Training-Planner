@@ -5,5 +5,8 @@ import android.content.Context
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 
 interface TrainingSessionPendingIntentFactory {
-    fun create(context: Context, trainingPlanId: TrainingPlanId): PendingIntent
+    fun create(
+        context: Context,
+        trainingPlanId: TrainingPlanId,
+    ): PendingIntent
 }

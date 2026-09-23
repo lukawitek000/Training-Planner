@@ -8,7 +8,7 @@ data class DbTrainingWithExercisesStatistics(
     @Relation(
         parentColumns = ["id"],
         entityColumns = ["trainingStatisticsId"],
-        entity = DbExerciseStatistics::class
+        entity = DbExerciseStatistics::class,
     )
-    val exercisesStatistics: List<DbExerciseWithAttemptsStatistics>
+    val exercisesStatistics: List<DbExerciseWithAttemptsStatistics>,
 )

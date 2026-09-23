@@ -10,11 +10,12 @@ internal object NotificationChannelFactory {
 
     fun create(context: Context): String {
         val name = context.resources.getString(R.string.session_service_channel_name)
-        val channel = NotificationChannel(
-            NOTIFICATION_CHANNEL_ID,
-            name,
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
+        val channel =
+            NotificationChannel(
+                NOTIFICATION_CHANNEL_ID,
+                name,
+                NotificationManager.IMPORTANCE_DEFAULT,
+            )
         val notificationManagerCompat = NotificationManagerCompat.from(context)
         notificationManagerCompat.createNotificationChannel(channel)
         return NOTIFICATION_CHANNEL_ID

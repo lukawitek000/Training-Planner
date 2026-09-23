@@ -5,22 +5,20 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.image.ImageId
 
-internal fun Exercise.toDbExercise(): DbExercise {
-    return DbExercise(
+internal fun Exercise.toDbExercise(): DbExercise =
+    DbExercise(
         id = id.toString(),
         name = name,
         description = description,
         categoryId = category.ordinal,
-        imageId = imageId?.toString()
+        imageId = imageId?.toString(),
     )
-}
 
-internal fun DbExercise.toExercise(): Exercise {
-    return Exercise(
+internal fun DbExercise.toExercise(): Exercise =
+    Exercise(
         id = ExerciseId(id),
         name = name,
         description = description,
         category = ExerciseCategory.values()[categoryId],
-        imageId = imageId?.let { ImageId(it) }
+        imageId = imageId?.let { ImageId(it) },
     )
-}

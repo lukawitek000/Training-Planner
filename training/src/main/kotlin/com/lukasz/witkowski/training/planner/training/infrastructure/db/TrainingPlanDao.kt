@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface TrainingPlanDao {
-
     @Transaction
     suspend fun insertTrainingWithTrainingExercises(dbTrainingPlanWithExercises: DbTrainingPlanWithExercises) {
         insertTraining(dbTrainingPlanWithExercises.trainingPlan)

@@ -11,5 +11,5 @@ data class DbExerciseAttemptStatistics(
     val trainingExerciseId: String,
     val time: Long,
     val set: Int,
-    val completed: Boolean
+    val completed: Boolean,
 )

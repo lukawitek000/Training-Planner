@@ -8,7 +8,7 @@ data class DbImageReferenceWithOwners(
     val imageReference: DbImageReference,
     @Relation(
         parentColumns = ["id"],
-        entityColumns = ["imageId"]
+        entityColumns = ["imageId"],
     )
-    val owners: List<DbImageOwner>
+    val owners: List<DbImageOwner>,
 )

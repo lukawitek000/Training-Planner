@@ -8,5 +8,5 @@ data class DbExerciseStatistics(
     @PrimaryKey
     val id: String,
     val trainingStatisticsId: String,
-    val trainingExerciseId: String
+    val trainingExerciseId: String,
 )

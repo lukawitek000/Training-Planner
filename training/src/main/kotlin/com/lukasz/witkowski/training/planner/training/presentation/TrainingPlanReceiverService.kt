@@ -21,7 +21,6 @@ import java.io.InputStream
 import java.io.OutputStream
 
 class TrainingPlanReceiverService : WearableListenerService() {
-
     private val trainingPlanService: TrainingPlanService by lazy {
         TrainingContainer.getInstance(applicationContext).service
     }
@@ -50,10 +49,11 @@ class TrainingPlanReceiverService : WearableListenerService() {
 
     private fun receiveTrainingPlan(
         inputStream: InputStream,
-        outputStream: OutputStream
+        outputStream: OutputStream,
     ): Flow<TrainingPlan> {
         receiver = WearableChannelClientReceiver(inputStream, outputStream)
-        return receiver.receiveData(TrainingPlanJsonModel::class.java)
+        return receiver
+            .receiveData(TrainingPlanJsonModel::class.java)
             .map { it.toTrainingPlan() }
     }
 

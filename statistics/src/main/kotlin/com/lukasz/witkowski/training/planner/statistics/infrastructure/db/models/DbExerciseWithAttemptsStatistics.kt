@@ -7,7 +7,7 @@ data class DbExerciseWithAttemptsStatistics(
     @Embedded val exerciseStatistics: DbExerciseStatistics,
     @Relation(
         parentColumns = ["id"],
-        entityColumns = ["exerciseStatisticsId"]
+        entityColumns = ["exerciseStatisticsId"],
     )
-    val exerciseAttemptsStatistics: List<DbExerciseAttemptStatistics>
+    val exerciseAttemptsStatistics: List<DbExerciseAttemptStatistics>,
 )

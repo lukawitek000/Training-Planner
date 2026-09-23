@@ -7,5 +7,5 @@ data class ExerciseConfiguration(
     val name: String,
     val description: String,
     val category: ExerciseCategory,
-    val image: ImageByteArray? = null
+    val image: ImageByteArray? = null,
 )

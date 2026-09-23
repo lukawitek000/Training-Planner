@@ -16,9 +16,8 @@ import java.util.Date
  *  * Completeness rate of exercises
  */
 class BasicStatisticsRecorder(
-    private val trainingPlanId: TrainingPlanId
+    private val trainingPlanId: TrainingPlanId,
 ) {
-
     private var startTrainingTime = Time.ZERO
     private var exercisesAttemptsStatistics = mutableListOf<ExerciseAttemptStatistics>()
     private var currentExerciseStartTime = Time.ZERO
@@ -35,35 +34,44 @@ class BasicStatisticsRecorder(
         return trainingStatistics
     }
 
-    fun startRecordingExercise(trainingExerciseId: TrainingExerciseId, set: Int, startTime: Time) {
+    fun startRecordingExercise(
+        trainingExerciseId: TrainingExerciseId,
+        set: Int,
+        startTime: Time,
+    ) {
         currentExerciseStartTime = startTime
         currentExerciseId = trainingExerciseId
         currentExerciseSet = set
     }
 
-    fun stopRecordingExercise(isCompleted: Boolean, stopTime: Time) {
-        val exerciseAttemptStatistics = ExerciseAttemptStatistics(
-            trainingExerciseId = currentExerciseId!!,
-            time = stopTime - currentExerciseStartTime,
-            set = currentExerciseSet,
-            completed = isCompleted
-        )
+    fun stopRecordingExercise(
+        isCompleted: Boolean,
+        stopTime: Time,
+    ) {
+        val exerciseAttemptStatistics =
+            ExerciseAttemptStatistics(
+                trainingExerciseId = currentExerciseId!!,
+                time = stopTime - currentExerciseStartTime,
+                set = currentExerciseSet,
+                completed = isCompleted,
+            )
         exercisesAttemptsStatistics.add(exerciseAttemptStatistics)
     }
 
     private fun gatherTrainingStatistics(time: Time): TrainingStatistics {
         val exercisesStatisticsMap = exercisesAttemptsStatistics.groupBy { it.trainingExerciseId }
-        val exercisesStatistics = exercisesStatisticsMap.map { (exerciseId, attemptsStatistics) ->
-            ExerciseStatistics(
-                trainingExerciseId = exerciseId,
-                attemptsStatistics = attemptsStatistics
-            )
-        }
+        val exercisesStatistics =
+            exercisesStatisticsMap.map { (exerciseId, attemptsStatistics) ->
+                ExerciseStatistics(
+                    trainingExerciseId = exerciseId,
+                    attemptsStatistics = attemptsStatistics,
+                )
+            }
         return TrainingStatistics(
             trainingPlanId = trainingPlanId,
             totalTime = time - startTrainingTime,
             date = Date(), // TODO how to provide a date
-            exercisesStatistics = exercisesStatistics
+            exercisesStatistics = exercisesStatistics,
         )
     }
 }

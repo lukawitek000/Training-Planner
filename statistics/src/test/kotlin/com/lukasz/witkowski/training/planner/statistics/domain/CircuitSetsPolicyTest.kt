@@ -11,7 +11,6 @@ import org.junit.Test
 import kotlin.test.assertContentEquals
 
 class CircuitSetsPolicyTest {
-
     private lateinit var circuitSetsPolicy: CircuitSetsPolicy
 
     @Before
@@ -29,27 +28,29 @@ class CircuitSetsPolicyTest {
         val loadedExercises = circuitSetsPolicy.loadExercises(trainingPlan)
 
         // then
-        val expectedExercisesOrder = listOf(
-            exercises.first(),
-            exercises[1],
-            exercises.first(),
-            exercises[1],
-            exercises[1],
-            exercises[1]
-        )
+        val expectedExercisesOrder =
+            listOf(
+                exercises.first(),
+                exercises[1],
+                exercises.first(),
+                exercises[1],
+                exercises[1],
+                exercises[1],
+            )
         assertContentEquals(expectedExercisesOrder, loadedExercises)
     }
 
     @Test
     fun `load single exercise with many sets`() {
         // given
-        val exercises = listOf(
-            TrainingExercise(
-                id = TrainingExerciseId.create(),
-                sets = 3,
-                exercise = createDummyExercise()
+        val exercises =
+            listOf(
+                TrainingExercise(
+                    id = TrainingExerciseId.create(),
+                    sets = 3,
+                    exercise = createDummyExercise(),
+                ),
             )
-        )
         val trainingPlan = createTrainingPlan(exercises)
 
         // when
@@ -83,63 +84,69 @@ class CircuitSetsPolicyTest {
         val loadedExercises = circuitSetsPolicy.loadExercises(trainingPlan)
 
         // then
-        val expectedExercisesOrder = listOf(
-            exercises[0],
-            exercises[1],
-            exercises[2],
-            exercises[3],
-            exercises[0],
-            exercises[1],
-            exercises[2],
-            exercises[3]
-        )
+        val expectedExercisesOrder =
+            listOf(
+                exercises[0],
+                exercises[1],
+                exercises[2],
+                exercises[3],
+                exercises[0],
+                exercises[1],
+                exercises[2],
+                exercises[3],
+            )
         assertContentEquals(expectedExercisesOrder, loadedExercises)
     }
 
     @Suppress("LongMethod")
     private fun create4Exercises(): List<TrainingExercise> {
-        val exercise1 = TrainingExercise(
-            id = TrainingExerciseId.create(),
-            sets = 2,
-            exercise = createDummyExercise()
-        )
-        val exercise2 = TrainingExercise(
-            id = TrainingExerciseId.create(),
-            sets = 2,
-            exercise = createDummyExercise()
-        )
-        val exercise3 = TrainingExercise(
-            id = TrainingExerciseId.create(),
-            sets = 2,
-            exercise = createDummyExercise()
-        )
-        val exercise4 = TrainingExercise(
-            id = TrainingExerciseId.create(),
-            sets = 2,
-            exercise = createDummyExercise()
-        )
+        val exercise1 =
+            TrainingExercise(
+                id = TrainingExerciseId.create(),
+                sets = 2,
+                exercise = createDummyExercise(),
+            )
+        val exercise2 =
+            TrainingExercise(
+                id = TrainingExerciseId.create(),
+                sets = 2,
+                exercise = createDummyExercise(),
+            )
+        val exercise3 =
+            TrainingExercise(
+                id = TrainingExerciseId.create(),
+                sets = 2,
+                exercise = createDummyExercise(),
+            )
+        val exercise4 =
+            TrainingExercise(
+                id = TrainingExerciseId.create(),
+                sets = 2,
+                exercise = createDummyExercise(),
+            )
         return listOf(exercise1, exercise2, exercise3, exercise4)
     }
 
     private fun create2Exercises(): List<TrainingExercise> {
-        val exercise1 = TrainingExercise(
-            id = TrainingExerciseId.create(),
-            sets = 2,
-            exercise = createDummyExercise()
-        )
-        val exercise2 = TrainingExercise(
-            id = TrainingExerciseId.create(),
-            sets = 4,
-            exercise = createDummyExercise()
-        )
+        val exercise1 =
+            TrainingExercise(
+                id = TrainingExerciseId.create(),
+                sets = 2,
+                exercise = createDummyExercise(),
+            )
+        val exercise2 =
+            TrainingExercise(
+                id = TrainingExerciseId.create(),
+                sets = 4,
+                exercise = createDummyExercise(),
+            )
         return listOf(exercise1, exercise2)
     }
 
-    private fun createTrainingPlan(trainingExercises: List<TrainingExercise>): TrainingPlan {
-        return TrainingPlan(
+    private fun createTrainingPlan(trainingExercises: List<TrainingExercise>): TrainingPlan =
+        TrainingPlan(
             id = TrainingPlanId.create(),
             title = "Training Plan Title",
-            exercises = trainingExercises
+            exercises = trainingExercises,
         )
-    }
 }

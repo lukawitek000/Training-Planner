@@ -7,7 +7,7 @@ data class DbTrainingPlanWithExercises(
     @Embedded val trainingPlan: DbTrainingPlan,
     @Relation(
         parentColumns = ["id"],
-        entityColumns = ["trainingId"]
+        entityColumns = ["trainingId"],
     )
-    val exercises: List<DbTrainingExercise>
+    val exercises: List<DbTrainingExercise>,
 )

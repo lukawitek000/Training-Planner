@@ -12,8 +12,10 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCatego
 import com.lukasz.witkowski.training.planner.image.ImageStorage
 import kotlinx.coroutines.Dispatchers
 
-class ExerciseContainer(private val context: Context, private val imageStorage: ImageStorage) {
-
+class ExerciseContainer(
+    private val context: Context,
+    private val imageStorage: ImageStorage,
+) {
     private val exerciseRepository: ExerciseRepository by lazy {
         val exerciseDb = ExerciseDatabase.getInstance(context)
         DbExerciseRepository(exerciseDb.exerciseDao(), ioDispatcher = Dispatchers.IO)

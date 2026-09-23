@@ -2,7 +2,7 @@ package com.lukasz.witkowski.training.planner.image
 
 data class Image internal constructor(
     val imageId: ImageId,
-    val data: ByteArray
+    val data: ByteArray,
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -11,7 +11,5 @@ data class Image internal constructor(
         } ?: false
     }
 
-    override fun hashCode(): Int {
-        return 31 * imageId.hashCode() + data.contentHashCode()
-    }
+    override fun hashCode(): Int = 31 * imageId.hashCode() + data.contentHashCode()
 }

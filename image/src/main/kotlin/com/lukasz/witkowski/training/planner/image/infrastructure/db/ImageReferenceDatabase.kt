@@ -8,7 +8,7 @@ import androidx.room3.RoomDatabase
 @Database(
     entities = [DbImageReference::class, DbImageOwner::class],
     version = 2,
-    exportSchema = false
+    exportSchema = false,
 )
 internal abstract class ImageReferenceDatabase : RoomDatabase() {
     abstract fun imageReferenceDao(): ImageReferenceDao
@@ -17,17 +17,19 @@ internal abstract class ImageReferenceDatabase : RoomDatabase() {
         @Volatile
         private var instance: ImageReferenceDatabase? = null
 
-        fun getInstance(context: Context): ImageReferenceDatabase {
-            return synchronized(this) {
+        fun getInstance(context: Context): ImageReferenceDatabase =
+            synchronized(this) {
                 if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context,
-                        ImageReferenceDatabase::class.java,
-                        "image-references-database"
-                    ).fallbackToDestructiveMigration().build()
+                    instance =
+                        Room
+                            .databaseBuilder(
+                                context,
+                                ImageReferenceDatabase::class.java,
+                                "image-references-database",
+                            ).fallbackToDestructiveMigration()
+                            .build()
                 }
                 instance!!
             }
-        }
     }
 }

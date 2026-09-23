@@ -11,13 +11,15 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.models.TrainingPlanJsonModel
 import kotlinx.coroutines.flow.Flow
 
-class WearableTrainingPlanSender(private val context: Context) : TrainingPlanSender {
-
-    private val sender = WearableChannelClientSender<TrainingPlanJsonModel, TrainingPlanId>(
-        context,
-        TRAINING_PATH,
-        getId = { getTrainingPlanId() }
-    )
+class WearableTrainingPlanSender(
+    private val context: Context,
+) : TrainingPlanSender {
+    private val sender =
+        WearableChannelClientSender<TrainingPlanJsonModel, TrainingPlanId>(
+            context,
+            TRAINING_PATH,
+            getId = { getTrainingPlanId() },
+        )
 
     override fun send(trainingPlans: List<TrainingPlan>): Flow<SynchronizationStatus<TrainingPlanId>> {
         val trainingPlansJson = trainingPlans.map { it.toTrainingPlanJsonModel() }

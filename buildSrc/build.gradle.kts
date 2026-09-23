@@ -32,4 +32,8 @@ dependencies {
             "${it.pluginId}:${it.pluginId}.gradle.plugin:${it.version}"
         }
     )
+
+    // Add Detekt and Ktlint plugin dependencies
+    implementation(libs.plugins.detekt.get().let { "${it.pluginId}:${it.pluginId}.gradle.plugin:${it.version}" })
+    implementation(libs.plugins.ktlint.get().let { "${it.pluginId}:${it.pluginId}.gradle.plugin:${it.version}" })
 }

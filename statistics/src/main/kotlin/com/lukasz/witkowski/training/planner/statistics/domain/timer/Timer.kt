@@ -13,9 +13,8 @@ import kotlinx.coroutines.launch
 
 class Timer(
     private val tickDelayInMillis: Long = DELAY_IN_MILLIS,
-    timerDispatcher: CoroutineDispatcher = Dispatchers.Default
+    timerDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
-
     private val coroutineScope: CoroutineScope =
         CoroutineScope(timerDispatcher + CoroutineName("Timer"))
     private var timerJob: Job? = null
@@ -65,16 +64,17 @@ class Timer(
     private fun start(initTime: Time) {
         setUpInitialFlags()
         _time.value = initTime
-        timerJob = coroutineScope.launch {
-            while (_isRunning.value) {
-                delay(tickDelayInMillis)
-                _time.value = Time(time.value.timeInMillis - tickDelayInMillis)
-                if (time.value.timeInMillis < tickDelayInMillis) {
-                    timerFinished()
-                    break
+        timerJob =
+            coroutineScope.launch {
+                while (_isRunning.value) {
+                    delay(tickDelayInMillis)
+                    _time.value = Time(time.value.timeInMillis - tickDelayInMillis)
+                    if (time.value.timeInMillis < tickDelayInMillis) {
+                        timerFinished()
+                        break
+                    }
                 }
             }
-        }
     }
 
     private fun timerFinished() {

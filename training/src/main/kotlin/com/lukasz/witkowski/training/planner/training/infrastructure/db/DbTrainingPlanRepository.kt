@@ -9,9 +9,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 internal class DbTrainingPlanRepository(
-    private val trainingPlanDao: TrainingPlanDao
+    private val trainingPlanDao: TrainingPlanDao,
 ) : TrainingPlanRepository {
-
     override suspend fun save(trainingPlan: TrainingPlan) {
         val trainingPlanWithExercise = trainingPlan.toDbTrainingPlanWithExercises()
         trainingPlanDao.insertTrainingWithTrainingExercises(trainingPlanWithExercise)
@@ -21,13 +20,12 @@ internal class DbTrainingPlanRepository(
         // TODO Not implemented
     }
 
-    override fun getAll(): Flow<List<TrainingPlan>> {
-        return trainingPlanDao.getAll().map {
+    override fun getAll(): Flow<List<TrainingPlan>> =
+        trainingPlanDao.getAll().map {
             it.map { dbTrainingPlanWithExercises ->
                 dbTrainingPlanWithExercises.toTrainingPlan()
             }
         }
-    }
 
     override suspend fun delete(trainingPlan: TrainingPlan) {
         val dbTrainingPlanWithExercises = trainingPlan.toDbTrainingPlanWithExercises()

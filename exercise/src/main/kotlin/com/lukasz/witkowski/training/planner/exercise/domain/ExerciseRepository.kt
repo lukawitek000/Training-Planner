@@ -4,7 +4,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface ExerciseRepository {
     suspend fun getById(id: ExerciseId): Exercise
+
     fun getAll(): Flow<List<Exercise>>
+
     /**
      * Returns true when the insertion has finished
      */

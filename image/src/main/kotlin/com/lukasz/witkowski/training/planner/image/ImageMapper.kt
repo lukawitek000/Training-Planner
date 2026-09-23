@@ -16,27 +16,17 @@ fun ImageBitmap.toImageByteArray(): ImageByteArray {
     return ImageByteArray(byteArray)
 }
 
-fun Image.toBitmapImage(): ImageBitmap {
-    return ImageByteArray(data).toBitmapImage()
-}
+fun Image.toBitmapImage(): ImageBitmap = ImageByteArray(data).toBitmapImage()
 
 fun ImageByteArray.toBitmapImage(): ImageBitmap {
     val bitmap = BitmapFactory.decodeByteArray(data, 0, data.size)
     return ImageBitmap(bitmap)
 }
 
-fun ImageByteArray.toImageConfiguration(ownerId: UUID): ImageConfiguration {
-    return ImageConfiguration(data, ownerId)
-}
+fun ImageByteArray.toImageConfiguration(ownerId: UUID): ImageConfiguration = ImageConfiguration(data, ownerId)
 
-internal fun DomainImage.toImage(): Image {
-    return Image(imageId, data)
-}
+internal fun DomainImage.toImage(): Image = Image(imageId, data)
 
-internal fun DomainImageReference.toImageReference(): ImageReference {
-    return ImageReference(imageId, path)
-}
+internal fun DomainImageReference.toImageReference(): ImageReference = ImageReference(imageId, path)
 
-internal fun ImageConfiguration.toImageByteArray(): ImageByteArray {
-    return ImageByteArray(data)
-}
+internal fun ImageConfiguration.toImageByteArray(): ImageByteArray = ImageByteArray(data)
