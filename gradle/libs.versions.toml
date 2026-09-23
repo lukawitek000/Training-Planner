@@ -45,17 +45,11 @@ androidx-fragmentKtx = { module = "androidx.fragment:fragment-ktx", version = "1
 
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 compose-ui = { module = "androidx.compose.ui:ui" }
-compose-material = { module = "androidx.compose.material:material" }
 compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-
-# Core Icons (Mandatory/Base set)
-androidx-compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
-# Extended Icons (Optional, but contains full library: search, favorite, etc.)
-androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 
 # Room
 androidx-roomRuntime = { module = "androidx.room3:room3-runtime", version.ref = "room" }
