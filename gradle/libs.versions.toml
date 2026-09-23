@@ -94,10 +94,10 @@ koin-compose = { group = "io.insert-koin", name = "koin-compose" }
 koin-compose-viewmodel = { group = "io.insert-koin", name = "koin-compose-viewmodel" }
 koin-compose-navigation3 = { group = "io.insert-koin", name = "koin-compose-navigation3" }
 
-roboelectric = { module = "org.robolectric:robolectric", version = "4.11.1" }
-androidx-testCore = { module = "androidx.test:core", version = "1.5.0" }
+roboelectric = { module = "org.robolectric:robolectric", version = "4.17" }
+androidx-testCore = { module = "androidx.test:core", version = "1.7.0" }
 kotlinTestJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
-mockk = { module = "io.mockk:mockk", version = "1.13.3" }
+mockk = { module = "io.mockk:mockk", version = "1.14.11" }
 
 
 [plugins]
