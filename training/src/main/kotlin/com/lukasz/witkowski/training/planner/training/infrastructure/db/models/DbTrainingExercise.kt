@@ -1,11 +1,11 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.db.models
 
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room3.Embedded
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 
 @Entity(tableName = "Exercise")
-internal data class DbTrainingExercise(
+data class DbTrainingExercise(
     @PrimaryKey
     val id: String,
     val trainingId: String,

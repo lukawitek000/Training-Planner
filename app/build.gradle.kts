@@ -28,8 +28,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     buildFeatures {
@@ -56,15 +56,28 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.bytebeats.charts)
 
-    implementation(libs.google.material)
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.material3)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.androidx.compose.ui.tooling.preview)
-    implementation(libs.androidx.compose.material.icons.extended)
+//    implementation(libs.google.material)
+//    implementation(libs.androidx.compose.ui)
+//    implementation(libs.androidx.compose.material)
+//    debugImplementation(libs.androidx.compose.ui.tooling)
+//    implementation(libs.androidx.compose.ui.tooling.preview)
+//    implementation(libs.androidx.compose.material.icons.extended)
+//    implementation(libs.androidx.compose.navigation)
+//    implementation(libs.androidx.activity.compose)
+//    implementation(libs.androidx.compose.lifecycleViewmodelCompose)
+    implementation(platform(libs.compose.bom))
+
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material)
+    debugImplementation(libs.compose.ui.tooling)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material.icons.extended)
+
     implementation(libs.androidx.compose.navigation)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.lifecycleViewmodelCompose)
+
+    implementation(libs.google.material)
 
     // Without this dependency there is a build error
     implementation(libs.google.playServicesWearable)

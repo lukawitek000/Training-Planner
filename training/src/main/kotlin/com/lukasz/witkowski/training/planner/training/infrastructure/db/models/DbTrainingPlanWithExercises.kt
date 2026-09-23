@@ -1,13 +1,13 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.db.models
 
-import androidx.room.Embedded
-import androidx.room.Relation
+import androidx.room3.Embedded
+import androidx.room3.Relation
 
-internal data class DbTrainingPlanWithExercises(
+data class DbTrainingPlanWithExercises(
     @Embedded val trainingPlan: DbTrainingPlan,
     @Relation(
-        parentColumn = "id",
-        entityColumn = "trainingId"
+        parentColumns = ["id"],
+        entityColumns = ["trainingId"]
     )
     val exercises: List<DbTrainingExercise>
 )

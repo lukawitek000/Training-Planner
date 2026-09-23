@@ -7,7 +7,7 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.11.0"
 activityCompose = "1.13.0"
 kotlin = "2.4.10"
-composeBom = "2026.08.00"
+composeBom = "2026.09.00"
 nav3Core = "1.1.7"
 lifecycleViewmodelNav3 = "2.11.0"
 kotlinSerialization = "2.4.10"
@@ -18,20 +18,16 @@ koinCompiler = "1.1.0"
 ksp = "2.3.10"
 detekt = "1.23.4"
 ktlint = "11.6.1"
-room = "2.8.5"
+room = "3.0.3"
 coroutines = "1.11.0"
 lifecycle = "2.11.0"
 
 [libraries]
-gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "agp" }
-gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-gradlePlugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plugin", version.ref = "detekt"}
-gradlePlugin-ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
 
 # Google
 google-playServicesWearable = { module = "com.google.android.gms:play-services-wearable", version = "18.1.0" }
-google-gson = { module = "com.google.code.gson:gson", version = "2.10.1" }
-google-material = { module = "com.google.android.material:material", version = "1.10.0" }
+google-gson = { module = "com.google.code.gson:gson", version = "2.14.0" }
+google-material = { module = "com.google.android.material:material", version = "1.14.0" }
 
 # KotlinX
 kotlinx-coroutines-playServices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
@@ -52,14 +48,21 @@ androidx-wearOngoing = { module = "androidx.wear:wear-ongoing", version = "1.0.0
 androidx-activityKtx = { module = "androidx.activity:activity-ktx", version = "1.8.0" }
 androidx-fragmentKtx = { module = "androidx.fragment:fragment-ktx", version = "1.6.1" }
 
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+compose-ui = { module = "androidx.compose.ui:ui" }
+compose-material = { module = "androidx.compose.material:material" }
+compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
+compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+# androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-material = { module = "androidx.compose.material:material", version.ref = "composeBom" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 # Core Icons (Mandatory/Base set)
 androidx-compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
@@ -67,9 +70,9 @@ androidx-compose-material-icons-core = { group = "androidx.compose.material", na
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 
 # Room
-androidx-roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
-androidx-roomKtx = { module = "androidx.room:room-ktx", version.ref = "room" }
-androidx-roomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+androidx-roomRuntime = { module = "androidx.room3:room3-runtime", version.ref = "room" }
+# androidx-roomKtx = { module = "androidx.room3:room3-ktx", version.ref = "room" }
+androidx-roomCompiler = { module = "androidx.room3:room3-compiler", version.ref = "room" }
 
 # Core Navigation 3 libraries
 androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
@@ -90,9 +93,9 @@ androidx-lifecycle-viewmodelKtx = { module = "androidx.lifecycle:lifecycle-viewm
 androidx-lifecycle-livedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
 
 timber = { module = "com.jakewharton.timber:timber", version = "5.0.1" }
-coil = { module = "com.github.skydoves:landscapist-coil", version = "2.2.12" }
-bytebeats-charts = { module = "io.github.bytebeats:compose-charts", version = "0.1.2" }
-androidx-compose-navigation = { module = "androidx.navigation:navigation-compose", version = "2.7.4" }
+coil = { module = "com.github.skydoves:landscapist-coil", version = "2.13.2" }
+bytebeats-charts = { module = "io.github.bytebeats:compose-charts", version = "0.2.1" }
+androidx-compose-navigation = { module = "androidx.navigation:navigation-compose", version = "2.10.1" }
 androidx-compose-lifecycleViewmodelCompose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version = "2.6.2" }
 
 # Koin BOM
@@ -113,13 +116,14 @@ mockk = { module = "io.mockk:mockk", version = "1.13.3" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrains-kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization"}
 koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koinCompiler" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 [bundles]
-room = ["androidx-roomRuntime", "androidx-roomKtx"]
+#room = ["androidx-roomRuntime", "androidx-roomKtx"]
 koin = [
     "koin-android",
     "koin-compose",

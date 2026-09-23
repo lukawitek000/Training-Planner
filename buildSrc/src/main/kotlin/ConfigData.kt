@@ -1,5 +1,5 @@
 object ConfigData {
-    const val compileSdk = 36
+    const val compileSdk = 37
     const val minSdk = 28
     const val wearableMinSdk = 30
     const val targetSdk = 36

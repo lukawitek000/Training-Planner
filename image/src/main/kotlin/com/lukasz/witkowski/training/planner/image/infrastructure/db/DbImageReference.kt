@@ -1,10 +1,10 @@
 package com.lukasz.witkowski.training.planner.image.infrastructure.db
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 
 @Entity
-internal data class DbImageReference(
+data class DbImageReference(
     @PrimaryKey
     val id: String,
     val path: String,

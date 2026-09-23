@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.image
 
 import android.content.Context
-import androidx.room.Room
+import androidx.room3.Room
 import androidx.test.core.app.ApplicationProvider
 import com.lukasz.witkowski.training.planner.image.infrastructure.Adler32ChecksumCalculator
 import com.lukasz.witkowski.training.planner.image.infrastructure.DbImageReferenceRepository

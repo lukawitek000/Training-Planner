@@ -15,7 +15,7 @@ android {
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.timber)
-    implementation(libs.bundles.room)
+    implementation(libs.androidx.roomRuntime)
     ksp(libs.androidx.roomCompiler)
 
     testImplementation(libs.junit)

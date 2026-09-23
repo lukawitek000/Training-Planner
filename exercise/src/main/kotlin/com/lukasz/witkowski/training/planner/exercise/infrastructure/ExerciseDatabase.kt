@@ -1,9 +1,9 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room3.Database
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
 
 @Database(entities = [DbExercise::class], version = 6, exportSchema = false)
 internal abstract class ExerciseDatabase : RoomDatabase() {
@@ -21,7 +21,7 @@ internal abstract class ExerciseDatabase : RoomDatabase() {
                         ExerciseDatabase::class.java,
                         "Exercise Database"
                     )
-                        .fallbackToDestructiveMigration()
+                        .fallbackToDestructiveMigration(true)
                         .build()
                 }
                 instance!!
