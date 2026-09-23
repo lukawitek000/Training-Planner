@@ -1,19 +1,17 @@
 package com.lukasz.witkowski.training.planner
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.material.Scaffold
-import androidx.compose.material.SnackbarHost
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,6 +31,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         setContent {
             TrainingPlannerTheme {
                 TrainingPlannerApp()
@@ -49,13 +48,14 @@ fun TrainingPlannerApp() {
         val destinationRoute = backStackEntry?.destination?.route
         it.route == destinationRoute?.substringBefore('/')
     } ?: NavItem.Trainings
-    val scaffoldState = rememberScaffoldState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
     val scope = rememberCoroutineScope()
     val snackbarState = remember(scope) {
         SnackbarState(
             scope = scope,
             show = { message, actionLabel ->
-                scaffoldState.snackbarHostState.showSnackbar(message, actionLabel = actionLabel)
+                snackbarHostState.showSnackbar(message, actionLabel = actionLabel)
             }
         )
     }
@@ -79,9 +79,8 @@ fun TrainingPlannerApp() {
                 navController.navigateUp()
             }
         },
-        scaffoldState = scaffoldState,
         snackbarHost = {
-            SnackbarHost(hostState = it) { data ->
+            SnackbarHost(hostState = snackbarHostState) { data ->
                 CustomSnackbar(snackbarData = data)
             }
         }

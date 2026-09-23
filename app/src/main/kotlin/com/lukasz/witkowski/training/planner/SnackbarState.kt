@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner
 
-import androidx.compose.material.SnackbarResult
+import androidx.compose.material3.SnackbarResult
 import kotlinx.coroutines.CoroutineScope
 
 data class SnackbarState(
