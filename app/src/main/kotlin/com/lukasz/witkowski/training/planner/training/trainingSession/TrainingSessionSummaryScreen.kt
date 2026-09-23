@@ -12,11 +12,11 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.SkipNext
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,7 +53,7 @@ fun TrainingSessionSummaryScreen(
                 text = trainingPlan.title,
                 fontSize = 32.sp,
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colors.secondary
+                color = MaterialTheme.colorScheme.secondary
             )
 
             TrainingStatisticsSummary(trainingStatistics = statistics)
@@ -123,7 +123,7 @@ fun ExerciseStatisticsSummary(
         Text(
             text = trainingExercise.exercise.name,
             fontSize = 28.sp,
-            color = MaterialTheme.colors.secondary
+            color = MaterialTheme.colorScheme.secondary
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
