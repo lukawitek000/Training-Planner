@@ -1,22 +1,18 @@
 package com.lukasz.witkowski.training.planner.ui.components
 
-import androidx.appcompat.widget.MenuPopupWindow
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ExposedDropdownMenuBox
-import androidx.compose.material.ExposedDropdownMenuDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,13 +46,13 @@ fun DropDownInput(
                 .onGloballyPositioned { coordinates ->
                     textFieldSize = coordinates.size.toSize()
                 },
-            label = { Text(text = label, color = MaterialTheme.colors.primaryVariant) },
-            textStyle = TextStyle(color = MaterialTheme.colors.primary),
+            label = { Text(text = label, color = MaterialTheme.colorScheme.secondary) },
+            textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
             trailingIcon = {
                 Icon(
                     imageVector = icon,
                     contentDescription = "Drop down arrow",
-                    tint = MaterialTheme.colors.primary,
+                    tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.clickable { expanded = !expanded }
                 )
             },
@@ -68,13 +64,16 @@ fun DropDownInput(
             modifier = Modifier.width(with(LocalDensity.current) { textFieldSize.width.toDp() })
         ) {
             suggestions.forEach {
-                DropdownMenuItem(onClick = {
-                    Timber.d("Item clicked")
-                    onSuggestionSelected(suggestions.indexOf(it))
-                    expanded = !expanded
-                }) {
-                    Text(text = it, color = MaterialTheme.colors.primary)
-                }
+                DropdownMenuItem(
+                    onClick = {
+                        Timber.d("Item clicked")
+                        onSuggestionSelected(suggestions.indexOf(it))
+                        expanded = !expanded
+                    },
+                    text = {
+                        Text(text = it, color = MaterialTheme.colorScheme.primary)
+                    }
+                )
             }
         }
     }

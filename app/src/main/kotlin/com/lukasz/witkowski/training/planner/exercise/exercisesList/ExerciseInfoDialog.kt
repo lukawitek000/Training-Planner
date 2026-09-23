@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,9 +38,9 @@ fun ExerciseInfoAlertDialog(
             Text(
                 text = exercise.name,
                 fontSize = 32.sp,
-                color = MaterialTheme.colors.primary
+                color = MaterialTheme.colorScheme.primary
             )
-            Divider(Modifier.padding(8.dp), color = MaterialTheme.colors.primary)
+            HorizontalDivider(Modifier.padding(8.dp), color = MaterialTheme.colorScheme.primary)
 //            ImageWithDefaultPlaceholder(
 //                modifier = Modifier,
 //                imageDescription = "${exercise.name} image", image = exercise.image,

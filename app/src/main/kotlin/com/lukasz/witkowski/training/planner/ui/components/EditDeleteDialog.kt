@@ -1,17 +1,13 @@
 package com.lukasz.witkowski.training.planner.ui.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -40,22 +36,17 @@ fun EditDeleteDialog(
                 textAlign = TextAlign.Center
             )
         },
-        buttons = {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                PopUpButton(text = "Edit", action = onEditClicked)
-                PopUpButton(
-                    text = "Delete",
-                    action = onDeleteClicked,
-                    textColor = Color.Red
-                )
-            }
-        }
+        dismissButton = {
+            PopUpButton(
+                text = "Delete",
+                action = onDeleteClicked,
+                textColor = Color.Red
+            )
+        },
+        confirmButton = {
+            PopUpButton(text = "Edit", action = onEditClicked)
+
+        },
     )
 }
 
@@ -63,13 +54,13 @@ fun EditDeleteDialog(
 private fun PopUpButton(
     modifier: Modifier = Modifier,
     text: String,
-    textColor: Color = MaterialTheme.colors.onPrimary,
+    textColor: Color = MaterialTheme.colorScheme.onPrimary,
     action: () -> Unit
 ) {
     Button(
         modifier = modifier,
         onClick = action,
-        colors = ButtonDefaults.buttonColors(backgroundColor = LightGrey),
+        colors = ButtonDefaults.buttonColors(containerColor = LightGrey),
         contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp)
     ) {
         Text(

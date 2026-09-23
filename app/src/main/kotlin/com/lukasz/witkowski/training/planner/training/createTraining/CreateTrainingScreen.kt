@@ -17,15 +17,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.Button
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -308,7 +308,7 @@ private fun TrainingExerciseRestTime(
         if (restTime.isNotZero()) {
             Text(
                 text = TimeFormatter(LocalContext.current).formatTime(restTime),
-                color = MaterialTheme.colors.primary,
+                color = MaterialTheme.colorScheme.primary,
                 fontSize = 18.sp
             )
         }
@@ -337,7 +337,7 @@ fun SetTrainingExerciseRestTimeDialog(
             Text(
                 text = stringResource(id = R.string.rest_time_title),
                 fontSize = 32.sp,
-                color = MaterialTheme.colors.primary
+                color = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = stringResource(id = R.string.rest_time_info), textAlign = TextAlign.Center)
@@ -365,7 +365,7 @@ private fun TrainingExerciseInfo(
             modifier = Modifier,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "${index + 1}.", fontSize = 32.sp, color = MaterialTheme.colors.primary)
+            Text(text = "${index + 1}.", fontSize = 32.sp, color = MaterialTheme.colorScheme.primary)
             Spacer(modifier = Modifier.width(16.dp))
             Column(
                 modifier = Modifier
@@ -375,7 +375,7 @@ private fun TrainingExerciseInfo(
                 Text(
                     text = trainingExercise.exercise.name,
                     fontSize = 24.sp,
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 ExerciseSetsRepsTimeInfo(trainingExercise = trainingExercise)
@@ -389,7 +389,7 @@ private fun TrainingExerciseInfo(
                     },
                 imageVector = Icons.Default.Close,
                 contentDescription = stringResource(id = R.string.remove_training_exercise),
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }
@@ -407,12 +407,12 @@ fun ExerciseSetsRepsTimeInfo(
         Text(
             text = stringResource(id = R.string.reps_with_value, trainingExercise.repetitions),
             modifier = Modifier.weight(1f),
-            color = MaterialTheme.colors.primaryVariant
+            color = MaterialTheme.colorScheme.secondary
         )
         Text(
             text = stringResource(id = R.string.sets_with_value, trainingExercise.sets),
             modifier = Modifier.weight(1f),
-            color = MaterialTheme.colors.primaryVariant
+            color = MaterialTheme.colorScheme.secondary
         )
         if (trainingExercise.time.isNotZero()) {
             Text(
@@ -420,7 +420,7 @@ fun ExerciseSetsRepsTimeInfo(
                     id = R.string.time_with_value,
                     TimeFormatter(LocalContext.current).formatTime(trainingExercise.time)
                 ),
-                color = MaterialTheme.colors.primaryVariant
+                color = MaterialTheme.colorScheme.secondary
             )
         } else {
             Spacer(modifier = Modifier.weight(1f))

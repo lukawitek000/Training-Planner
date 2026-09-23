@@ -9,10 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +43,7 @@ fun ListCardItem(
     val bgdColor = if (markedSelected) OrangeTransparent else backgroundColor
     val borderModifier = if (markedSelected) Modifier.border(
         2.dp,
-        MaterialTheme.colors.primary,
+        MaterialTheme.colorScheme.primary,
         MaterialTheme.shapes.medium
     ) else Modifier
     Card(
@@ -50,7 +51,7 @@ fun ListCardItem(
             .padding(4.dp)
             .fillMaxWidth()
             .then(borderModifier),
-        backgroundColor = bgdColor
+        colors = CardDefaults.cardColors(containerColor = bgdColor)
     ) {
         Box(modifier = Modifier
             .pointerInput(Unit) {
@@ -100,9 +101,9 @@ fun TextField(
             .fillMaxWidth()
             .focusRequester(fr),
         label = {
-            Text(text = label, color = MaterialTheme.colors.primaryVariant)
+            Text(text = label, color = MaterialTheme.colorScheme.secondary)
         },
-        textStyle = TextStyle(color = MaterialTheme.colors.primary),
+        textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
         maxLines = maxLines,
         keyboardOptions = KeyboardOptions(imeAction = imeAction, keyboardType = keyboardType),
         keyboardActions = KeyboardActions(

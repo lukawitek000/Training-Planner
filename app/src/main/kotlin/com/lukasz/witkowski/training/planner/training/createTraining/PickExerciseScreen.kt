@@ -9,16 +9,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
-import androidx.compose.material.Checkbox
-import androidx.compose.material.CheckboxDefaults
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -183,7 +183,7 @@ fun SetTrainingExercisePropertiesDialog(
                 fontSize = 32.sp,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(16.dp),
-                color = MaterialTheme.colors.primary
+                color = MaterialTheme.colorScheme.primary
             )
             SetsAndRepsInput(
                 modifier = Modifier,
@@ -252,12 +252,12 @@ private fun TimerSetCheckbox(
         Checkbox(
             checked = !isTimerSetEnable,
             onCheckedChange = { toggleCheckbox() },
-            colors = CheckboxDefaults.colors(uncheckedColor = MaterialTheme.colors.primary)
+            colors = CheckboxDefaults.colors(uncheckedColor = MaterialTheme.colorScheme.primary)
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
             text = stringResource(id = R.string.do_not_set_timer),
-            color = MaterialTheme.colors.primary
+            color = MaterialTheme.colorScheme.primary
         )
     }
 }

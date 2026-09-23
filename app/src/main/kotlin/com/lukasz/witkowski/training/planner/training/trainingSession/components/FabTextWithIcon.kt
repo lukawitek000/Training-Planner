@@ -2,12 +2,12 @@ package com.lukasz.witkowski.training.planner.training.trainingSession.component
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SkipNext
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,12 +24,12 @@ fun FabTextWithIcon(
     text: String,
     imageVector: ImageVector,
     onClick: () -> Unit,
-    backgroundColor: Color = MaterialTheme.colors.secondary
+    backgroundColor: Color = MaterialTheme.colorScheme.secondary
 ) {
     FloatingActionButton(
         modifier = modifier,
         onClick = onClick,
-        backgroundColor = backgroundColor
+        containerColor = backgroundColor
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 16.dp),
