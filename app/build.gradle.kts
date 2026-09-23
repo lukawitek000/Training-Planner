@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    kotlin("android")
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -27,17 +27,9 @@ android {
         }
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 
     buildFeatures {
@@ -66,12 +58,12 @@ dependencies {
 
     implementation(libs.google.material)
     implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.material)
-    debugImplementation(libs.androidx.compose.uiTooling)
-    implementation(libs.androidx.compose.uiToolingPreview)
-    implementation(libs.androidx.compose.materialIconsExtended)
+    implementation(libs.androidx.compose.material3)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.compose.navigation)
-    implementation(libs.androidx.compose.activity)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.lifecycleViewmodelCompose)
 
     // Without this dependency there is a build error

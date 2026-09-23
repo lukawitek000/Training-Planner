@@ -11,7 +11,7 @@ dependencies {
     api(projects.shared)
 
     implementation(libs.bundles.room)
-    kapt(libs.androidx.roomCompiler)
+    ksp(libs.androidx.roomCompiler)
     implementation(libs.timber)
 
     testImplementation(libs.junit)

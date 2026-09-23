@@ -14,5 +14,5 @@ dependencies {
 
     implementation(libs.timber)
     implementation(libs.bundles.room)
-    kapt(libs.androidx.roomCompiler)
+    ksp(libs.androidx.roomCompiler)
 }
