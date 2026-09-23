@@ -36,7 +36,6 @@ import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSe
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsScreen
-import timber.log.Timber
 
 @Composable
 fun Navigation(
