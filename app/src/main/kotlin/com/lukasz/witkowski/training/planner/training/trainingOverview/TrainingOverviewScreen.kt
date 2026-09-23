@@ -12,9 +12,9 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -78,7 +78,7 @@ fun TrainingOverviewScreen(
                     modifier = Modifier.fillMaxWidth(),
                     text = "Statistics",
                     fontSize = 26.sp,
-                    color = MaterialTheme.colors.primary
+                    color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(16.dp))
             }
@@ -119,7 +119,7 @@ fun TrainingOverviewContent(
             text = trainingPlan.title,
             fontSize = 32.sp,
             textAlign = TextAlign.Center,
-            color = MaterialTheme.colors.primary
+            color = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.height(16.dp))
         if (trainingPlan.description.isNotEmpty()) {
@@ -262,14 +262,14 @@ fun HeartRateLineChart(
                 .padding(16.dp),
             lineChartData = lineChartData,
             pointDrawer = EmptyPointDrawer,
-            lineDrawer = SolidLineDrawer(color = MaterialTheme.colors.primary),
+            lineDrawer = SolidLineDrawer(color = MaterialTheme.colorScheme.primary),
             yAxisDrawer = SimpleYAxisDrawer(
-                labelTextColor = MaterialTheme.colors.primaryVariant,
+                labelTextColor = MaterialTheme.colorScheme.primaryContainer,
                 drawLabelEvery = 3,
-                axisLineColor = MaterialTheme.colors.primaryVariant
+                axisLineColor = MaterialTheme.colorScheme.primaryContainer
             ),
             xAxisDrawer = SimpleXAxisDrawer(
-                axisLineColor = MaterialTheme.colors.primaryVariant
+                axisLineColor = MaterialTheme.colorScheme.primaryContainer
             ),
             horizontalOffset = 0f
         )
