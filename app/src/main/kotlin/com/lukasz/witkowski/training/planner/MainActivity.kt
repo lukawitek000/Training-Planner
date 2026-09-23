@@ -68,7 +68,7 @@ fun TrainingPlannerApp() {
                 exit = slideOutVertically(targetOffsetY = { it }),
             ) {
                 BottomNavigationBar(
-                    backStackEntry = backStackEntry,
+                    currentRoute = backStackEntry?.destination?.route,
                     onItemClick = {
                         handleBottomMenuItemClicked(navController, it)
                     })
