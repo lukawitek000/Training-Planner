@@ -7,7 +7,6 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
  * Exercises are performed in succession.
  */
 class CircuitSetsPolicy : TrainingSetsPolicy {
-
     override fun loadExercises(trainingPlan: TrainingPlan): List<TrainingExercise> {
         val maxSets = trainingPlan.exercises.maxOfOrNull { it.sets } ?: return emptyList()
         val allExercises = mutableListOf<TrainingExercise>()

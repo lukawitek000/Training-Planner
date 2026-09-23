@@ -11,9 +11,8 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 @Suppress("TooManyFunctions")
 internal class TrainingSession(
     private val trainingPlan: TrainingPlan,
-    private val trainingSetsPolicy: TrainingSetsPolicy
+    private val trainingSetsPolicy: TrainingSetsPolicy,
 ) {
-
     private val exercises = mutableListOf<TrainingExercise>()
     private var state: TrainingSessionState = TrainingSessionState.IdleState
     private val currentExercise: TrainingExercise
@@ -51,8 +50,8 @@ internal class TrainingSession(
         state = TrainingSessionState.IdleState
     }
 
-    private fun next(time: Time): TrainingSessionState {
-        return when {
+    private fun next(time: Time): TrainingSessionState =
+        when {
             isTrainingSessionFinished() && !isTrainingSessionStopped() -> {
                 val trainingStatistics = this.trainingStatistics.gatherTrainingStatistics(time)
                 TrainingSessionState.SummaryState(trainingStatistics, trainingPlan)
@@ -68,13 +67,18 @@ internal class TrainingSession(
             }
             else -> throw UnknownTrainingSessionStateException("Unknown training session state.")
         }.also { state = it }
-    }
 
-    private fun startRecordingExerciseStatistics(currentExercise: TrainingExercise, time: Time) {
+    private fun startRecordingExerciseStatistics(
+        currentExercise: TrainingExercise,
+        time: Time,
+    ) {
         exerciseSession = ExerciseSession(currentExercise, time, getCurrentSet(currentExercise))
     }
 
-    private fun stopRecordingExerciseStatistics(isCompleted: Boolean, time: Time) {
+    private fun stopRecordingExerciseStatistics(
+        isCompleted: Boolean,
+        time: Time,
+    ) {
         if (isExerciseState()) {
             val exerciseAttemptStatistics = exerciseSession.stop(isCompleted, time)
             trainingStatistics.addExerciseAttemptStatistics(exerciseAttemptStatistics)
@@ -83,7 +87,7 @@ internal class TrainingSession(
 
     private fun getNextExerciseOverview() = exercises.first()
 
-    private fun loadExercise(): TrainingExercise = exercises.removeFirst()
+    private fun loadExercise(): TrainingExercise = exercises.removeAt(0)
 
     private fun getCurrentSet(currentExercise: TrainingExercise): Int {
         val numberOfLeftAttempts = exercises.count { it.id == currentExercise.id }

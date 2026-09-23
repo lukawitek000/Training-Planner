@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 
 @Entity(tableName = "ExerciseAttemptStatistics")
 data class DbExerciseAttemptStatistics(
@@ -11,5 +11,5 @@ data class DbExerciseAttemptStatistics(
     val trainingExerciseId: String,
     val time: Long,
     val set: Int,
-    val completed: Boolean
+    val completed: Boolean,
 )

@@ -4,5 +4,5 @@ data class TrainingPlanJsonModel(
     val id: String,
     val title: String,
     val description: String,
-    val exercises: List<ExerciseJsonModel>
+    val exercises: List<ExerciseJsonModel>,
 )

@@ -9,5 +9,5 @@ data class ExerciseJsonModel(
     val repetitions: Int,
     val sets: Int,
     val time: Long,
-    val restTime: Long
+    val restTime: Long,
 )

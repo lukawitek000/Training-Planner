@@ -4,7 +4,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class TimeTest {
-
     @Test
     fun `calculate minutes and seconds from millis`() {
         // given
@@ -19,11 +18,12 @@ class TimeTest {
         }
     }
 
-    private val minutesAndSeconds = mapOf(
-        Time(623_000) to Pair(10, 23),
-        Time(480_000) to Pair(8, 0),
-        Time(10_000) to Pair(0, 10),
-        Time(0) to Pair(0, 0),
-        Time(60_000) to Pair(1, 0)
-    )
+    private val minutesAndSeconds =
+        mapOf(
+            Time(623_000) to Pair(10, 23),
+            Time(480_000) to Pair(8, 0),
+            Time(10_000) to Pair(0, 10),
+            Time(0) to Pair(0, 0),
+            Time(60_000) to Pair(1, 0),
+        )
 }

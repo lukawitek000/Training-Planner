@@ -9,8 +9,9 @@ import com.lukasz.witkowski.training.planner.statistics.domain.timer.Timer
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.DbStatisticsRepository
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.StatisticsDatabase
 
-class StatisticsContainer private constructor(context: Context) {
-
+class StatisticsContainer private constructor(
+    context: Context,
+) {
     private val statisticsRepository: StatisticsRepository by lazy {
         val statisticsDb = StatisticsDatabase.getInstance(context)
         DbStatisticsRepository(statisticsDb.statisticsDao())
@@ -28,13 +29,12 @@ class StatisticsContainer private constructor(context: Context) {
         @Volatile
         private var instance: StatisticsContainer? = null
 
-        fun getInstance(context: Context): StatisticsContainer {
-            return synchronized(this) {
+        fun getInstance(context: Context): StatisticsContainer =
+            synchronized(this) {
                 if (instance == null) {
                     instance = StatisticsContainer(context)
                 }
                 instance!!
             }
-        }
     }
 }

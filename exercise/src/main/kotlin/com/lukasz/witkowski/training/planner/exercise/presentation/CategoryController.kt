@@ -5,5 +5,6 @@ import kotlinx.coroutines.flow.StateFlow
 
 interface CategoryController : CategoriesCollection {
     val selectedCategories: StateFlow<List<Category>>
+
     fun selectCategory(category: Category)
 }

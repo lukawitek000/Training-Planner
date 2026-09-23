@@ -32,7 +32,6 @@ import kotlin.test.assertTrue
 // remove old timer controller
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class TrainingSessionServiceTest : TrainingSessionTest() {
-
     private val timeProvider: FixedTimeProvider = FixedTimeProvider()
     private val trainingSetsPolicy: TrainingSetsPolicy = CircuitSetsPolicy()
 
@@ -49,59 +48,64 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
     fun setUp() {
         trainingExercises = TRAINING_EXERCISES
         trainingPlan = TRAINING_PLAN
-        trainingSessionService = TrainingSessionService(
-            timeProvider,
-            Timer(timerDispatcher = testDispatcher),
-            trainingStatisticsService,
-            trainingSetsPolicy,
-            testDispatcher
-        )
+        trainingSessionService =
+            TrainingSessionService(
+                timeProvider,
+                Timer(timerDispatcher = testDispatcher),
+                trainingStatisticsService,
+                trainingSetsPolicy,
+                testDispatcher,
+            )
     }
 
     @Test
-    fun `load first exercise after training starts`() = runTest {
-        whenStartTrainingSession()
-        val state = trainingSessionService.trainingSessionState.first()
+    fun `load first exercise after training starts`() =
+        runTest {
+            whenStartTrainingSession()
+            val state = trainingSessionService.trainingSessionState.first()
 
-        assertExerciseState(
-            expectedState = TrainingSessionState.ExerciseState(trainingExercises.first()),
-            trainingSessionState = state
-        )
-    }
+            assertExerciseState(
+                expectedState = TrainingSessionState.ExerciseState(trainingExercises.first()),
+                trainingSessionState = state,
+            )
+        }
 
     @Test
     @Suppress("LongMethod")
-    fun `emit 1st exercise, rest time and 2nd exercise`() = runTest(UnconfinedTestDispatcher()) {
-        val testResult = mutableListOf<TrainingSessionState>()
-        val job = launch {
-            trainingSessionService.trainingSessionState.toList(testResult)
-        }
-        whenStartTrainingSession()
-        // complete 1st exercise
-        trainingSessionService.completed()
-        // skip rest time
-        trainingSessionService.skip()
+    fun `emit 1st exercise, rest time and 2nd exercise`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val testResult = mutableListOf<TrainingSessionState>()
+            val job =
+                launch {
+                    trainingSessionService.trainingSessionState.toList(testResult)
+                }
+            whenStartTrainingSession()
+            // complete 1st exercise
+            trainingSessionService.completed()
+            // skip rest time
+            trainingSessionService.skip()
 
-        val firstExercise = trainingExercises.first()
-        assert(testResult.first() is TrainingSessionState.IdleState)
-        assertExerciseState(
-            expectedState = TrainingSessionState.ExerciseState(trainingExercises.first()),
-            trainingSessionState = testResult[1]
-        )
-        val secondExercise = trainingExercises[1]
-        assertRestTimeState(
-            expectedState = TrainingSessionState.RestTimeState(
-                secondExercise,
-                firstExercise.restTime
-            ),
-            trainingSessionState = testResult[2]
-        )
-        assertExerciseState(
-            expectedState = TrainingSessionState.ExerciseState(secondExercise),
-            trainingSessionState = testResult[3]
-        )
-        job.cancel()
-    }
+            val firstExercise = trainingExercises.first()
+            assert(testResult.first() is TrainingSessionState.IdleState)
+            assertExerciseState(
+                expectedState = TrainingSessionState.ExerciseState(trainingExercises.first()),
+                trainingSessionState = testResult[1],
+            )
+            val secondExercise = trainingExercises[1]
+            assertRestTimeState(
+                expectedState =
+                    TrainingSessionState.RestTimeState(
+                        secondExercise,
+                        firstExercise.restTime,
+                    ),
+                trainingSessionState = testResult[2],
+            )
+            assertExerciseState(
+                expectedState = TrainingSessionState.ExerciseState(secondExercise),
+                trainingSessionState = testResult[3],
+            )
+            job.cancel()
+        }
 
     @Test
     fun `call skip method without starting training session`() {
@@ -163,18 +167,19 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
     }
 
     @Test
-    fun `exercise state is the same after the timer has finished`() = runTest(testDispatcher) {
-        whenStartTrainingSession()
-        trainingSessionService.startTimer()
+    fun `exercise state is the same after the timer has finished`() =
+        runTest(testDispatcher) {
+            whenStartTrainingSession()
+            trainingSessionService.startTimer()
 
-        scheduler.advanceTimeBy(trainingExercises.first().time.timeInMillis + 1)
+            scheduler.advanceTimeBy(trainingExercises.first().time.timeInMillis + 1)
 
-        assert(!trainingSessionService.isTimerRunning.value)
-        assertExerciseState(
-            expectedState = TrainingSessionState.ExerciseState(trainingExercises.first()),
-            trainingSessionState = trainingSessionService.trainingSessionState.value
-        )
-    }
+            assert(!trainingSessionService.isTimerRunning.value)
+            assertExerciseState(
+                expectedState = TrainingSessionState.ExerciseState(trainingExercises.first()),
+                trainingSessionState = trainingSessionService.trainingSessionState.value,
+            )
+        }
 
     @Test
     fun `timer is started after changing to rest time state`() {
@@ -193,8 +198,9 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
             assertRestTimeState(
                 TrainingSessionState.RestTimeState(
                     trainingExercises[1],
-                    trainingExercises.first().restTime
-                ), trainingSessionService.trainingSessionState.value
+                    trainingExercises.first().restTime,
+                ),
+                trainingSessionService.trainingSessionState.value,
             )
 
             assert(trainingSessionService.isTimerRunning.value)
@@ -204,7 +210,7 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
 
             assertExerciseState(
                 expectedState = TrainingSessionState.ExerciseState(trainingExercises[1]),
-                trainingSessionState = trainingSessionService.trainingSessionState.value
+                trainingSessionState = trainingSessionService.trainingSessionState.value,
             )
         }
 
@@ -249,12 +255,14 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
     }
 
     private fun whenAllTrainingExercisesCompleted() {
-        val steps = TRAINING_EXERCISES.fold(0) { acc, trainingExercise ->
-            val restTime = if (trainingExercise.hasRestTime()) 1 else 0
-            acc + (restTime + 1) * trainingExercise.sets
-        }.let {
-            if (TRAINING_EXERCISES.last().hasRestTime()) it - 1 else it
-        }
+        val steps =
+            TRAINING_EXERCISES
+                .fold(0) { acc, trainingExercise ->
+                    val restTime = if (trainingExercise.hasRestTime()) 1 else 0
+                    acc + (restTime + 1) * trainingExercise.sets
+                }.let {
+                    if (TRAINING_EXERCISES.last().hasRestTime()) it - 1 else it
+                }
         for (i in 0 until steps) {
             trainingSessionService.completed()
         }

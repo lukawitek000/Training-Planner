@@ -13,26 +13,24 @@ import java.io.IOException
 
 class TrainingPlanService(
     private val trainingPlanRepository: TrainingPlanRepository,
-    private val trainingPlanSender: TrainingPlanSender
+    private val trainingPlanSender: TrainingPlanSender,
 ) {
-
     suspend fun saveTrainingPlan(trainingPlan: TrainingPlan) {
         trainingPlanRepository.save(trainingPlan)
     }
 
-    fun getTrainingPlansFromCategories(categories: List<ExerciseCategory> = emptyList()): Flow<List<TrainingPlan>> {
-        return trainingPlanRepository.getAll().map {
+    fun getTrainingPlansFromCategories(categories: List<ExerciseCategory> = emptyList()): Flow<List<TrainingPlan>> =
+        trainingPlanRepository.getAll().map {
             it.filter { trainingPlan ->
-                categories.isEmpty() || trainingPlan.hasCategories(
-                    categories
-                )
+                categories.isEmpty() ||
+                    trainingPlan.hasCategories(
+                        categories,
+                    )
             }
         }
-    }
 
-    suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): TrainingPlan {
-        return trainingPlanRepository.getTrainingPlanById(trainingPlanId)
-    }
+    suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): TrainingPlan =
+        trainingPlanRepository.getTrainingPlanById(trainingPlanId)
 
     suspend fun sendTrainingPlan(trainingPlan: TrainingPlan) {
         sendData(listOf(trainingPlan))

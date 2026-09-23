@@ -1,9 +1,9 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room3.Database
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
 
 @Database(entities = [DbExercise::class], version = 6, exportSchema = false)
 internal abstract class ExerciseDatabase : RoomDatabase() {
@@ -13,19 +13,19 @@ internal abstract class ExerciseDatabase : RoomDatabase() {
         @Volatile
         private var instance: ExerciseDatabase? = null
 
-        fun getInstance(context: Context): ExerciseDatabase {
-            return synchronized(this) {
+        fun getInstance(context: Context): ExerciseDatabase =
+            synchronized(this) {
                 if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context,
-                        ExerciseDatabase::class.java,
-                        "Exercise Database"
-                    )
-                        .fallbackToDestructiveMigration()
-                        .build()
+                    instance =
+                        Room
+                            .databaseBuilder(
+                                context,
+                                ExerciseDatabase::class.java,
+                                "Exercise Database",
+                            ).fallbackToDestructiveMigration(true)
+                            .build()
                 }
                 instance!!
             }
-        }
     }
 }

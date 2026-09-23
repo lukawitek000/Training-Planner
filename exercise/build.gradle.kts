@@ -13,6 +13,6 @@ dependencies {
     implementation(libs.kotlinReflect)
 
     implementation(libs.timber)
-    implementation(libs.bundles.room)
-    kapt(libs.androidx.roomCompiler)
+    implementation(libs.androidx.roomRuntime)
+    ksp(libs.androidx.roomCompiler)
 }

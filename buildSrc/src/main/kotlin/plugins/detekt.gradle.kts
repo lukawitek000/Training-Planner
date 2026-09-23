@@ -1,7 +1,6 @@
 package plugins
 
 import io.gitlab.arturbosch.detekt.Detekt
-import org.gradle.kotlin.dsl.register
 
 plugins {
     id("io.gitlab.arturbosch.detekt")

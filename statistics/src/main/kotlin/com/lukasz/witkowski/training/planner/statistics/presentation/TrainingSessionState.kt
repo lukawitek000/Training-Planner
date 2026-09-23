@@ -7,17 +7,21 @@ import com.lukasz.witkowski.training.planner.training.presentation.models.Traini
 
 sealed class TrainingSessionState(
     val exercise: TrainingExercise? = null,
-    val time: Time = Time.ZERO
+    val time: Time = Time.ZERO,
 ) {
-
     object IdleState : TrainingSessionState()
 
-    class ExerciseState(val currentExercise: TrainingExercise) :
-        TrainingSessionState(currentExercise, currentExercise.time)
+    class ExerciseState(
+        val currentExercise: TrainingExercise,
+    ) : TrainingSessionState(currentExercise, currentExercise.time)
 
-    class RestTimeState(nextExercise: TrainingExercise, private val restTime: Time) :
-        TrainingSessionState(nextExercise, restTime)
+    class RestTimeState(
+        nextExercise: TrainingExercise,
+        private val restTime: Time,
+    ) : TrainingSessionState(nextExercise, restTime)
 
-    data class SummaryState(val statistics: TrainingStatistics, val trainingPlan: TrainingPlan) :
-        TrainingSessionState(time = statistics.totalTime)
+    data class SummaryState(
+        val statistics: TrainingStatistics,
+        val trainingPlan: TrainingPlan,
+    ) : TrainingSessionState(time = statistics.totalTime)
 }

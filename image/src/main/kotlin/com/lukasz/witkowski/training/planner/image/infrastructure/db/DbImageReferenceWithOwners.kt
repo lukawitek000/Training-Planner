@@ -1,14 +1,14 @@
 package com.lukasz.witkowski.training.planner.image.infrastructure.db
 
-import androidx.room.Embedded
-import androidx.room.Relation
+import androidx.room3.Embedded
+import androidx.room3.Relation
 
-internal data class DbImageReferenceWithOwners(
+data class DbImageReferenceWithOwners(
     @Embedded
     val imageReference: DbImageReference,
     @Relation(
-        parentColumn = "id",
-        entityColumn = "imageId"
+        parentColumns = ["id"],
+        entityColumns = ["imageId"],
     )
-    val owners: List<DbImageOwner>
+    val owners: List<DbImageOwner>,
 )

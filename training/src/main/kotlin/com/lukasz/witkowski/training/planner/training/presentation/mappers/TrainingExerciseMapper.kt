@@ -7,40 +7,40 @@ import com.lukasz.witkowski.training.planner.training.presentation.models.Traini
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise as DomainTrainingExercise
 
-fun TrainingExercise.toDomainTrainingExercise(): DomainTrainingExercise {
-    return DomainTrainingExercise(
+fun TrainingExercise.toDomainTrainingExercise(): DomainTrainingExercise =
+    DomainTrainingExercise(
         id = id,
         exercise = toDomainExercise(exercise),
         repetitions = repetitions,
         sets = sets,
         time = time,
-        restTime = restTime
+        restTime = restTime,
     )
-}
 
-fun DomainTrainingExercise.toPresentationTrainingExercise(): TrainingExercise {
-    return TrainingExercise(
+fun DomainTrainingExercise.toPresentationTrainingExercise(): TrainingExercise =
+    TrainingExercise(
         id = id,
         exercise = toPresentationExercise(exercise),
         repetitions = repetitions,
         sets = sets,
         time = time,
-        restTime = restTime
+        restTime = restTime,
     )
-}
 
-private fun toDomainExercise(exercise: Exercise): DomainExercise {
-    return DomainExercise(
+private fun toDomainExercise(exercise: Exercise): DomainExercise =
+    DomainExercise(
         exercise.id,
         exercise.name,
         exercise.description,
         exercise.category.toExerciseCategory(),
-        null
+        null,
     )
-}
 
-private fun toPresentationExercise(exercise: DomainExercise): Exercise {
-    return Exercise(
-        exercise.id, exercise.name, exercise.description, exercise.category.toCategory(), null
+private fun toPresentationExercise(exercise: DomainExercise): Exercise =
+    Exercise(
+        exercise.id,
+        exercise.name,
+        exercise.description,
+        exercise.category.toCategory(),
+        null,
     )
-}

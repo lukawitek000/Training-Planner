@@ -5,7 +5,6 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 
 class PercentageKtTest {
-
     @Test
     fun `convert fraction to percentage string with floor round`() {
         // given

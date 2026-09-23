@@ -11,27 +11,29 @@ import kotlin.coroutines.CoroutineContext
 
 internal class DbExerciseRepository(
     private val exerciseDao: ExerciseDao,
-    private val ioDispatcher: CoroutineContext = Dispatchers.IO
+    private val ioDispatcher: CoroutineContext = Dispatchers.IO,
 ) : ExerciseRepository {
+    override suspend fun getById(id: ExerciseId): Exercise =
+        withContext(ioDispatcher) {
+            val dbExercise = exerciseDao.getById(id.toString())
+            dbExercise.toExercise()
+        }
 
-    override suspend fun getById(id: ExerciseId): Exercise = withContext(ioDispatcher) {
-        val dbExercise = exerciseDao.getById(id.toString())
-        dbExercise.toExercise()
-    }
-
-    override fun getAll(): Flow<List<Exercise>> {
-        return exerciseDao.getAll()
+    override fun getAll(): Flow<List<Exercise>> =
+        exerciseDao
+            .getAll()
             .map { it.map { dbExercise -> dbExercise.toExercise() } }
-    }
 
-    override suspend fun insert(exercise: Exercise): Boolean = withContext(ioDispatcher) {
-        val exerciseWithImage = exercise.toDbExercise()
-        exerciseDao.insert(exerciseWithImage) == ONE_ROW.toLong()
-    }
+    override suspend fun insert(exercise: Exercise): Boolean =
+        withContext(ioDispatcher) {
+            val exerciseWithImage = exercise.toDbExercise()
+            exerciseDao.insert(exerciseWithImage) == ONE_ROW.toLong()
+        }
 
-    override suspend fun delete(exercise: Exercise) = withContext(ioDispatcher) {
-        exerciseDao.deleteExerciseById(exercise.id.toString()) == ONE_ROW
-    }
+    override suspend fun delete(exercise: Exercise) =
+        withContext(ioDispatcher) {
+            exerciseDao.deleteExerciseById(exercise.id.toString()) == ONE_ROW
+        }
 
     override suspend fun updateExercise(updatedExercise: Exercise): Boolean =
         withContext(ioDispatcher) {

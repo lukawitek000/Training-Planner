@@ -5,14 +5,35 @@ plugins {
 repositories {
     google()
     mavenCentral()
-    maven("https://plugins.gradle.org/m2/")
+    gradlePluginPortal()
 }
 
 dependencies {
-    implementation(libs.gradlePlugin.android)
-    implementation(libs.gradlePlugin.kotlin)
-    implementation(libs.gradlePlugin.detekt)
-    implementation(libs.gradlePlugin.ktlint)
-    // Required for the workaround to use version catalog in buildSrc https://github.com/gradle/gradle/issues/15383
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+    implementation(
+        libs.plugins.android.application.get().let {
+            "${it.pluginId}:${it.pluginId}.gradle.plugin:${it.version}"
+        }
+    )
+
+    implementation(
+        libs.plugins.android.library.get().let {
+            "${it.pluginId}:${it.pluginId}.gradle.plugin:${it.version}"
+        }
+    )
+
+    implementation(
+        libs.plugins.kotlin.android.get().let {
+            "${it.pluginId}:${it.pluginId}.gradle.plugin:${it.version}"
+        }
+    )
+
+    implementation(
+        libs.plugins.ksp.get().let {
+            "${it.pluginId}:${it.pluginId}.gradle.plugin:${it.version}"
+        }
+    )
+
+    // Add Detekt and Ktlint plugin dependencies
+    implementation(libs.plugins.detekt.get().let { "${it.pluginId}:${it.pluginId}.gradle.plugin:${it.version}" })
+    implementation(libs.plugins.ktlint.get().let { "${it.pluginId}:${it.pluginId}.gradle.plugin:${it.version}" })
 }

@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    kotlin("android")
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -27,17 +27,9 @@ android {
         }
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
-
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     buildFeatures {
@@ -64,15 +56,18 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.bytebeats.charts)
 
-    implementation(libs.google.material)
-    implementation(libs.androidx.compose.ui)
-    implementation(libs.androidx.compose.material)
-    debugImplementation(libs.androidx.compose.uiTooling)
-    implementation(libs.androidx.compose.uiToolingPreview)
-    implementation(libs.androidx.compose.materialIconsExtended)
+    implementation(platform(libs.compose.bom))
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material)
+    debugImplementation(libs.compose.ui.tooling)
+    implementation(libs.compose.ui.tooling.preview)
+    implementation(libs.compose.material.icons.extended)
+
     implementation(libs.androidx.compose.navigation)
-    implementation(libs.androidx.compose.activity)
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.lifecycleViewmodelCompose)
+
+    implementation(libs.google.material)
 
     // Without this dependency there is a build error
     implementation(libs.google.playServicesWearable)

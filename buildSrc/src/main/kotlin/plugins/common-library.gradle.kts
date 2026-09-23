@@ -1,24 +1,17 @@
 package plugins
 
-import BuildPlugins
 import ConfigData
-import com.android.build.gradle.LibraryExtension
-import org.gradle.accessors.dm.LibrariesForLibs
-import gradle.kotlin.dsl.accessors._6b1cdd1e881959619ea23cf7941079a9.detekt
-import gradle.kotlin.dsl.accessors._6b1cdd1e881959619ea23cf7941079a9.detektPlugins
-import org.gradle.kotlin.dsl.kotlin
+import com.android.build.api.dsl.LibraryExtension
+import org.gradle.api.JavaVersion
+import org.gradle.kotlin.dsl.configure
 
 plugins {
     id("com.android.library")
-    kotlin("android")
-    kotlin("kapt")
+    id("com.google.devtools.ksp")
     id("org.jlleitschuh.gradle.ktlint")
-//    id("org.jlleitschuh.gradle.ktlint")
 }
 
-apply(plugin = BuildPlugins.detektPlugin)
-
-configure<LibraryExtension> {
+extensions.configure<LibraryExtension> {
     compileSdk = ConfigData.compileSdk
 
     defaultConfig {
@@ -29,23 +22,25 @@ configure<LibraryExtension> {
     }
 
     buildTypes {
-        getByName("release") {
+        named("release") {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
+}
 
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
-    val libs = the<LibrariesForLibs>()
-    dependencies {
-        detektPlugins(libs.detektFormatting)
-    }
+tasks.withType<Test>().configureEach {
+    jvmArgs(
+        "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.base/java.util=ALL-UNNAMED"
+    )
 }

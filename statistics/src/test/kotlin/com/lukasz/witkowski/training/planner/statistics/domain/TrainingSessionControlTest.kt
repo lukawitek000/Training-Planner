@@ -12,7 +12,6 @@ import org.junit.Test
 import kotlin.test.assertFailsWith
 
 internal class TrainingSessionControlTest : TrainingSessionTest() {
-
     private val time = Time(100)
 
     @Test
@@ -40,10 +39,11 @@ internal class TrainingSessionControlTest : TrainingSessionTest() {
         val trainingSessionState = trainingSession.completed(time)
 
         // then
-        val expectedState = TrainingSessionState.RestTimeState(
-            TRAINING_EXERCISES[1],
-            TRAINING_EXERCISES.first().restTime
-        )
+        val expectedState =
+            TrainingSessionState.RestTimeState(
+                TRAINING_EXERCISES[1],
+                TRAINING_EXERCISES.first().restTime,
+            )
         assertRestTimeState(expectedState, trainingSessionState)
     }
 
@@ -76,10 +76,11 @@ internal class TrainingSessionControlTest : TrainingSessionTest() {
         val trainingSessionState = trainingSession.completed(time)
 
         // then
-        val expectedState = TrainingSessionState.RestTimeState(
-            TRAINING_EXERCISES.first(),
-            TRAINING_EXERCISES.last().restTime
-        )
+        val expectedState =
+            TrainingSessionState.RestTimeState(
+                TRAINING_EXERCISES.first(),
+                TRAINING_EXERCISES.last().restTime,
+            )
         assertRestTimeState(expectedState, trainingSessionState)
     }
 

@@ -17,27 +17,27 @@ import java.io.IOException
 internal class InternalStorageImageRepository(
     private val context: Context,
     private val directoryName: String,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : ImageRepository {
-
     private val directoryPath = context.getDir(directoryName, Context.MODE_PRIVATE)
 
-    override suspend fun save(image: Image): ImageReference = withContext(ioDispatcher) {
-        var outputStream: FileOutputStream? = null
-        val fileName = image.imageName
-        val file = createFile(fileName)
-        try {
-            outputStream = FileOutputStream(file)
-            outputStream.write(image.data)
-        } catch (e: IOException) {
-            e.printStackTrace()
-            Timber.w("Saving file $fileName into $directoryName directory has failed.")
-            throw ImageSaveFailedException(image.imageId)
-        } finally {
-            closeStream(outputStream)
+    override suspend fun save(image: Image): ImageReference =
+        withContext(ioDispatcher) {
+            var outputStream: FileOutputStream? = null
+            val fileName = image.imageName
+            val file = createFile(fileName)
+            try {
+                outputStream = FileOutputStream(file)
+                outputStream.write(image.data)
+            } catch (e: IOException) {
+                e.printStackTrace()
+                Timber.w("Saving file $fileName into $directoryName directory has failed.")
+                throw ImageSaveFailedException(image.imageId)
+            } finally {
+                closeStream(outputStream)
+            }
+            ImageReference(image.imageId, image.ownersIds, file.absolutePath, image.checksum)
         }
-        ImageReference(image.imageId, image.ownersIds, file.absolutePath, image.checksum)
-    }
 
     override suspend fun read(imageReference: ImageReference): Image? =
         withContext(ioDispatcher) {
@@ -71,11 +71,12 @@ internal class InternalStorageImageRepository(
 
     override suspend fun update(
         image: Image,
-        oldImageReference: ImageReference
-    ): ImageReference = withContext(ioDispatcher) {
-        delete(oldImageReference)
-        save(image)
-    }
+        oldImageReference: ImageReference,
+    ): ImageReference =
+        withContext(ioDispatcher) {
+            delete(oldImageReference)
+            save(image)
+        }
 
     private fun createFile(fileName: String) = File(directoryPath, fileName)
 

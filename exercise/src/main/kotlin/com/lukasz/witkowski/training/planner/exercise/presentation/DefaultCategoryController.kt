@@ -4,9 +4,9 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Catego
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class DefaultCategoryController(private val categoriesCollection: CategoriesCollection) :
-    CategoryController {
-
+class DefaultCategoryController(
+    private val categoriesCollection: CategoriesCollection,
+) : CategoryController {
     private val _selectedCategories = MutableStateFlow<List<Category>>(emptyList())
     override val selectedCategories: StateFlow<List<Category>>
         get() = _selectedCategories

@@ -9,7 +9,5 @@ class SystemTimeProvider : TimeProvider {
         return Time(timeInMillis)
     }
 
-    override fun currentDate(): Date {
-        return Date()
-    }
+    override fun currentDate(): Date = Date()
 }

@@ -8,8 +8,9 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.db.DbTraini
 import com.lukasz.witkowski.training.planner.training.infrastructure.db.TrainingPlanDatabase
 import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.WearableTrainingPlanSender
 
-class TrainingContainer private constructor(context: Context) {
-
+class TrainingContainer private constructor(
+    context: Context,
+) {
     private val trainingPlanRepository: TrainingPlanRepository by lazy {
         val trainingPlanDb = TrainingPlanDatabase.getInstance(context)
         DbTrainingPlanRepository(trainingPlanDb.trainingPlanDao())
@@ -27,13 +28,12 @@ class TrainingContainer private constructor(context: Context) {
         @Volatile
         private var instance: TrainingContainer? = null
 
-        fun getInstance(context: Context): TrainingContainer {
-            return synchronized(this) {
+        fun getInstance(context: Context): TrainingContainer =
+            synchronized(this) {
                 if (instance == null) {
                     instance = TrainingContainer(context)
                 }
                 instance!!
             }
-        }
     }
 }

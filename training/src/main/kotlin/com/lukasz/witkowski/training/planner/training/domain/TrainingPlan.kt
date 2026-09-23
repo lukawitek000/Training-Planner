@@ -7,15 +7,12 @@ data class TrainingPlan(
     val title: String,
     val description: String = "",
     val exercises: List<TrainingExercise>,
-    val isSynchronized: Boolean = false
+    val isSynchronized: Boolean = false,
 ) {
+    fun hasCategories(categories: List<ExerciseCategory>): Boolean = getAllCategories().containsAll(categories)
 
-    fun hasCategories(categories: List<ExerciseCategory>): Boolean {
-        return getAllCategories().containsAll(categories)
-    }
-
-    private fun getAllCategories(): List<ExerciseCategory> {
-        return exercises.map { trainingExercise -> trainingExercise.exercise.category }
+    private fun getAllCategories(): List<ExerciseCategory> =
+        exercises
+            .map { trainingExercise -> trainingExercise.exercise.category }
             .filter { category -> !category.isNone() }
-    }
 }

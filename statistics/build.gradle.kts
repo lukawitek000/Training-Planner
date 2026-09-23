@@ -10,8 +10,8 @@ dependencies {
     implementation(projects.training)
     api(projects.shared)
 
-    implementation(libs.bundles.room)
-    kapt(libs.androidx.roomCompiler)
+    implementation(libs.androidx.roomRuntime)
+    ksp(libs.androidx.roomCompiler)
     implementation(libs.timber)
 
     testImplementation(libs.junit)

@@ -5,7 +5,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 
 data class Category constructor(
     val id: Int,
-    val res: Int = R.string.category_none
+    val res: Int = R.string.category_none,
 ) {
     constructor() : this(id = ExerciseCategory.NONE.ordinal, res = R.string.category_none)
 

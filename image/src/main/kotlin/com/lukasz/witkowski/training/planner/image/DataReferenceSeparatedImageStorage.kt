@@ -14,9 +14,8 @@ import com.lukasz.witkowski.training.planner.image.domain.ImageReference as Doma
 internal class DataReferenceSeparatedImageStorage constructor(
     private val imageRepository: ImageRepository,
     private val imageReferenceRepository: ImageReferenceRepository,
-    private val checksumCalculator: ChecksumCalculator
+    private val checksumCalculator: ChecksumCalculator,
 ) : ImageStorage {
-
     override suspend fun saveImage(imageConfiguration: ImageConfiguration): ImageReference {
         val imageId = generateImageId()
         return saveImageWithId(imageConfiguration, imageId)
@@ -24,12 +23,13 @@ internal class DataReferenceSeparatedImageStorage constructor(
 
     private suspend fun saveImageWithId(
         imageConfiguration: ImageConfiguration,
-        imageId: ImageId
+        imageId: ImageId,
     ): ImageReference {
         val newImageChecksum = checksumCalculator.calculate(imageConfiguration.toImageByteArray())
         return if (imageReferenceRepository.isImageAlreadySaved(newImageChecksum)) {
             Timber.d("Image is already stored in the storage, added new owner to it.")
-            imageReferenceRepository.addOwnerToImage(newImageChecksum, imageConfiguration.ownerId)
+            imageReferenceRepository
+                .addOwnerToImage(newImageChecksum, imageConfiguration.ownerId)
                 .toImageReference()
         } else {
             val image = createImage(imageConfiguration, imageId)
@@ -41,14 +41,13 @@ internal class DataReferenceSeparatedImageStorage constructor(
 
     private fun handleImageReferenceSavingResult(
         imageId: ImageId?,
-        imageReference: DomainImageReference
-    ): ImageReference {
-        return if (imageId != null) {
+        imageReference: DomainImageReference,
+    ): ImageReference =
+        if (imageId != null) {
             ImageReference(imageId, imageReference.path)
         } else {
             throw ImageSaveFailedException(imageReference.imageId)
         }
-    }
 
     override suspend fun readImage(imageId: ImageId): Image {
         val imageReference = imageReferenceRepository.read(imageId)
@@ -61,7 +60,10 @@ internal class DataReferenceSeparatedImageStorage constructor(
         return domainImageReference?.toImageReference()
     }
 
-    override suspend fun deleteImage(imageId: ImageId, ownerId: UUID): Boolean {
+    override suspend fun deleteImage(
+        imageId: ImageId,
+        ownerId: UUID,
+    ): Boolean {
         val imageReference =
             imageReferenceRepository.readByOwnerId(ownerId) ?: throw ImageNotFoundException(imageId)
         val deletedReference = imageReferenceRepository.delete(imageReference)
@@ -75,23 +77,23 @@ internal class DataReferenceSeparatedImageStorage constructor(
         return deletedReference && isImageDeleted
     }
 
-    private suspend fun doesAnyReferenceExist(imageId: ImageId): Boolean {
-        return imageReferenceRepository.read(imageId) != null
-    }
+    private suspend fun doesAnyReferenceExist(imageId: ImageId): Boolean = imageReferenceRepository.read(imageId) != null
 
     override suspend fun updateImage(
         imageId: ImageId,
-        newImageConfiguration: ImageConfiguration
+        newImageConfiguration: ImageConfiguration,
     ): ImageReference {
-        val oldImageReference = imageReferenceRepository.read(imageId)
-            ?: return saveImageWithId(newImageConfiguration, imageId)
+        val oldImageReference =
+            imageReferenceRepository.read(imageId)
+                ?: return saveImageWithId(newImageConfiguration, imageId)
         val newImage = createImage(newImageConfiguration)
         return if (imageReferenceRepository.isImageAlreadySaved(newImage.checksum)) {
             deleteImage(imageId, newImageConfiguration.ownerId)
-            imageReferenceRepository.addOwnerToImage(
-                newImage.checksum,
-                newImageConfiguration.ownerId
-            ).toImageReference()
+            imageReferenceRepository
+                .addOwnerToImage(
+                    newImage.checksum,
+                    newImageConfiguration.ownerId,
+                ).toImageReference()
         } else {
             val newImageReference = imageRepository.save(newImage)
             val newImageId = imageReferenceRepository.update(newImageReference, oldImageReference)
@@ -101,14 +103,13 @@ internal class DataReferenceSeparatedImageStorage constructor(
 
     private fun createImage(
         imageConfiguration: ImageConfiguration,
-        imageId: ImageId = generateImageId()
-    ) =
-        DomainImage(
-            imageId,
-            listOf(imageConfiguration.ownerId),
-            imageConfiguration.data,
-            checksumCalculator.calculate(ImageByteArray(imageConfiguration.data))
-        )
+        imageId: ImageId = generateImageId(),
+    ) = DomainImage(
+        imageId,
+        listOf(imageConfiguration.ownerId),
+        imageConfiguration.data,
+        checksumCalculator.calculate(ImageByteArray(imageConfiguration.data)),
+    )
 
     private fun generateImageId() = ImageId.create()
 }

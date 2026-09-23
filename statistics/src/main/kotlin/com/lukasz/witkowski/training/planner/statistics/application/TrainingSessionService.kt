@@ -22,9 +22,8 @@ class TrainingSessionService(
     private val timer: Timer,
     private val trainingStatisticsService: TrainingStatisticsService,
     private val trainingSetsStrategy: TrainingSetsPolicy = CircuitSetsPolicy(),
-    private val backgroundDispatcher: CoroutineDispatcher = Dispatchers.Default
+    private val backgroundDispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) {
-
     private lateinit var trainingSession: TrainingSession
     private val scope = CoroutineScope(backgroundDispatcher)
 
@@ -141,11 +140,12 @@ class TrainingSessionService(
     }
 
     private val TrainingSessionState.time: Time?
-        get() = when (this) {
-            is TrainingSessionState.RestTimeState -> restTime
-            is TrainingSessionState.ExerciseState -> exercise?.time
-            else -> null
-        }
+        get() =
+            when (this) {
+                is TrainingSessionState.RestTimeState -> restTime
+                is TrainingSessionState.ExerciseState -> exercise?.time
+                else -> null
+            }
 
     private fun configureTimer(value: TrainingSessionState) {
         stopTimer()

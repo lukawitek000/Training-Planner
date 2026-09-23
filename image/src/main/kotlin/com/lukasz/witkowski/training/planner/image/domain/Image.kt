@@ -7,7 +7,7 @@ internal class Image(
     val imageId: ImageId,
     val ownersIds: List<UUID>,
     val data: ByteArray,
-    val checksum: Long
+    val checksum: Long,
 ) {
     val imageName: String
         get() = imageId.toString() + IMAGE_NAME_SUFFIX

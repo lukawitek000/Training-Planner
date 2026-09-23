@@ -19,7 +19,10 @@ internal interface ImageRepository {
      * @throws [Exception] if updating the [ImageReference] fails.
      * @return [ImageReference] with path to the new image.
      */
-    suspend fun update(image: Image, oldImageReference: ImageReference): ImageReference
+    suspend fun update(
+        image: Image,
+        oldImageReference: ImageReference,
+    ): ImageReference
 
     /**
      * Read image from the storage based on the [ImageReference].

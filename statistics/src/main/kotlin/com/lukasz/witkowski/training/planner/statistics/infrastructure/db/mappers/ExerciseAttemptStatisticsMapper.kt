@@ -8,24 +8,22 @@ import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 
 internal fun ExerciseAttemptStatistics.toDbExerciseAttemptStatistics(
-    exerciseStatisticsId: ExerciseStatisticsId
-): DbExerciseAttemptStatistics {
-    return DbExerciseAttemptStatistics(
+    exerciseStatisticsId: ExerciseStatisticsId,
+): DbExerciseAttemptStatistics =
+    DbExerciseAttemptStatistics(
         id = id.toString(),
         exerciseStatisticsId = exerciseStatisticsId.toString(),
         trainingExerciseId = trainingExerciseId.toString(),
         time = time.timeInMillis,
         set = set,
-        completed = completed
+        completed = completed,
     )
-}
 
-internal fun DbExerciseAttemptStatistics.toExerciseAttemptStatistics(): ExerciseAttemptStatistics {
-    return ExerciseAttemptStatistics(
+internal fun DbExerciseAttemptStatistics.toExerciseAttemptStatistics(): ExerciseAttemptStatistics =
+    ExerciseAttemptStatistics(
         id = ExerciseAttemptStatisticsId(id),
         trainingExerciseId = TrainingExerciseId(id),
         time = Time(time),
         set = set,
-        completed = completed
+        completed = completed,
     )
-}

@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room3.Entity
+import androidx.room3.PrimaryKey
 
 @Entity(tableName = "TrainingStatistics")
 data class DbTrainingStatistics(
@@ -9,5 +9,5 @@ data class DbTrainingStatistics(
     val id: String,
     val trainingPlanId: String,
     val totalTime: Long,
-    val date: Long
+    val date: Long,
 )

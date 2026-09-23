@@ -1,6 +1,5 @@
 plugins {
     id("com.android.application")
-    kotlin("android")
 }
 
 android {
@@ -23,14 +22,6 @@ android {
                 "proguard-rules.pro"
             )
         }
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs += listOf(
-            "-Xextended-compiler-checks"
-        )
-
     }
 
     buildFeatures {

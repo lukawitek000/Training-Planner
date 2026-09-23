@@ -19,9 +19,8 @@ import java.io.OutputStream
 class WearableChannelClientSender<T, K>(
     private val context: Context,
     private val path: String,
-    private val getId: T.() -> K
+    private val getId: T.() -> K,
 ) {
-
     private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(context) }
     private lateinit var inputStream: InputStream
     private lateinit var outputStream: OutputStream
@@ -30,10 +29,11 @@ class WearableChannelClientSender<T, K>(
      * If sending data has failed the [SynchronizationStatus.Failure] is emitted,
      * otherwise the [SynchronizationStatus.Successful] with id of the successfully synchronized object
      */
-    fun sendData(data: List<T>): Flow<SynchronizationStatus<K>> = flow {
-        val nodesIds = getConnectedNodesIds()
-        sendDataToEachNode(nodesIds, data)
-    }
+    fun sendData(data: List<T>): Flow<SynchronizationStatus<K>> =
+        flow {
+            val nodesIds = getConnectedNodesIds()
+            sendDataToEachNode(nodesIds, data)
+        }
 
     private suspend fun getConnectedNodesIds(): List<String> {
         val nodeClient = Wearable.getNodeClient(context)
@@ -43,7 +43,7 @@ class WearableChannelClientSender<T, K>(
 
     private suspend fun FlowCollector<SynchronizationStatus<K>>.sendDataToEachNode(
         nodesIds: List<String>,
-        data: List<T>
+        data: List<T>,
     ) {
         for (nodeId in nodesIds) {
             val channel = openChannel(nodeId)
@@ -61,9 +61,7 @@ class WearableChannelClientSender<T, K>(
         outputStream.writeByteSuspending(data.size)
     }
 
-    private suspend fun FlowCollector<SynchronizationStatus<K>>.sendObjectsList(
-        dataList: List<T>
-    ) {
+    private suspend fun FlowCollector<SynchronizationStatus<K>>.sendObjectsList(dataList: List<T>) {
         for (data in dataList) {
             val byteArray = serializeData(data)
             sendBufferSize(byteArray)
@@ -81,9 +79,9 @@ class WearableChannelClientSender<T, K>(
 
     private suspend fun sendObjectAndWaitForAcknowledge(
         byteArray: ByteArray,
-        id: K
-    ): SynchronizationStatus<K> {
-        return try {
+        id: K,
+    ): SynchronizationStatus<K> =
+        try {
             outputStream.writeSuspending(byteArray)
             receiveAcknowledge(id)
         } catch (exception: IOException) {
@@ -93,7 +91,6 @@ class WearableChannelClientSender<T, K>(
             Timber.w("Sending error: ${exception.message}")
             SynchronizationStatus.Failure(id, exception)
         }
-    }
 
     private suspend fun receiveAcknowledge(id: K): SynchronizationStatus.Successful<K> {
         val response = inputStream.readByteSuspending()
@@ -101,13 +98,12 @@ class WearableChannelClientSender<T, K>(
             SynchronizationStatus.Successful(id)
         } else {
             throw SynchronizationSavingException(
-                message = "Client has failed to save data"
+                message = "Client has failed to save data",
             )
         }
     }
 
-    private suspend fun openChannel(nodeId: String): ChannelClient.Channel =
-        channelClient.openChannel(nodeId, path).await()
+    private suspend fun openChannel(nodeId: String): ChannelClient.Channel = channelClient.openChannel(nodeId, path).await()
 
     private suspend fun openStreams(channel: ChannelClient.Channel) {
         outputStream = channelClient.getOutputStream(channel).await()
@@ -126,6 +122,6 @@ class WearableChannelClientSender<T, K>(
     private fun IOException.toSynchronizationSendingException() =
         SynchronizationSendingException(
             message,
-            cause
+            cause,
         )
 }

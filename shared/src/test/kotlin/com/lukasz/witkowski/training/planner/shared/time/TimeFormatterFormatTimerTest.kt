@@ -9,9 +9,8 @@ import org.junit.runners.Parameterized
 class TimeFormatterFormatTimerTest(
     private val time: Time,
     private val includeTenthSecond: Boolean,
-    private val expectedString: String
+    private val expectedString: String,
 ) {
-
     private val resourcesProvider = TestResourcesProvider()
     private val timeFormatter = TimeFormatter(resourcesProvider)
 
@@ -24,8 +23,8 @@ class TimeFormatterFormatTimerTest(
     companion object {
         @JvmStatic
         @Parameterized.Parameters
-        fun data(): Collection<Array<Any>> {
-            return listOf(
+        fun data(): Collection<Array<Any>> =
+            listOf(
                 arrayOf(Time(minutes = 10, seconds = 1), false, "10:01"),
                 arrayOf(Time(minutes = 10, seconds = 1), true, "10:01.0"),
                 arrayOf(Time(minutes = 10, seconds = 11), true, "10:11.0"),
@@ -35,8 +34,7 @@ class TimeFormatterFormatTimerTest(
                 arrayOf(Time(minutes = 0, seconds = 23), false, "23"),
                 arrayOf(Time(123_300), true, "2:03.3"),
                 arrayOf(Time(123_457), true, "2:03.4"),
-                arrayOf(Time(123_499), true, "2:03.4")
+                arrayOf(Time(123_499), true, "2:03.4"),
             )
-        }
     }
 }

@@ -9,9 +9,8 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 
 internal class TrainingSessionController(
     private val context: Context,
-    private val onSessionFinished: () -> Unit
+    private val onSessionFinished: () -> Unit,
 ) : SessionFinishedListener {
-
     private val statisticsContainer: StatisticsContainer by lazy {
         StatisticsContainer.getInstance(context)
     }
@@ -21,9 +20,10 @@ internal class TrainingSessionController(
     }
 
     val trainingPlan: TrainingPlan
-        get() = checkNotNull(trainingSessionService.trainingPlan) {
-            "TrainingSession was not started, the training plan is null"
-        }
+        get() =
+            checkNotNull(trainingSessionService.trainingPlan) {
+                "TrainingSession was not started, the training plan is null"
+            }
 
     override fun onSessionFinished(trainingStatisticsId: TrainingStatisticsId) {
         onSessionFinished()
