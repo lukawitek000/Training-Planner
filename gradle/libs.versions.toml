@@ -22,7 +22,7 @@ gradlePlugin-detekt = { module = "io.gitlab.arturbosch.detekt:detekt-gradle-plug
 gradlePlugin-ktlint = { module = "org.jlleitschuh.gradle:ktlint-gradle", version.ref = "ktlint" }
 
 # Google
-google-playServicesWearable = { module = "com.google.android.gms:play-services-wearable", version = "18.1.0" }
+google-playServicesWearable = { module = "com.google.android.gms:play-services-wearable", version = "20.0.1" }
 google-gson = { module = "com.google.code.gson:gson", version = "2.10.1" }
 google-material = { module = "com.google.android.material:material", version = "1.10.0" }
 
