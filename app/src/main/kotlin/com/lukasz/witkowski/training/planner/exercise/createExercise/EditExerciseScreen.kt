@@ -8,7 +8,7 @@ import com.lukasz.witkowski.training.planner.SnackbarState
 
 @Composable
 fun EditExerciseScreen(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     viewModel: EditExerciseViewModel,
     snackbarState: SnackbarState,
     navigateUp: () -> Unit

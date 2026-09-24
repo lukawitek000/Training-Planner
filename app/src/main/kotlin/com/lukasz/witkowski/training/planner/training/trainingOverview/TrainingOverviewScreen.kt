@@ -53,7 +53,7 @@ import me.bytebeats.views.charts.line.render.yaxis.SimpleYAxisDrawer
 
 @Composable
 fun TrainingOverviewScreen(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     viewModel: TrainingOverviewViewModel,
     navigateBack: () -> Unit
 ) {

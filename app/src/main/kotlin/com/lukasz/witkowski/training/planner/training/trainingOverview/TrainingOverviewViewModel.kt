@@ -3,6 +3,8 @@ package com.lukasz.witkowski.training.planner.training.trainingOverview
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.lukasz.witkowski.training.planner.navigation.TrainingOverview
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
@@ -21,10 +23,7 @@ class TrainingOverviewViewModel(
     trainingStatisticsService: TrainingStatisticsService,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-
-    private val _trainingId = savedStateHandle.get<String>("trainingId") ?: ""
-    private val trainingPlanId: TrainingPlanId
-        get() = TrainingPlanId(_trainingId)
+    private val trainingPlanId = savedStateHandle.toRoute<TrainingOverview>().trainingPlanId
 
     private val _trainingPlan = MutableStateFlow<ResultHandler<TrainingPlan>>(ResultHandler.Idle)
     val trainingPlan: StateFlow<ResultHandler<TrainingPlan>>

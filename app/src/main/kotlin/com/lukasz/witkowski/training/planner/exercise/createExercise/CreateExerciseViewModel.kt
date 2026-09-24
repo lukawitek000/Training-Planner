@@ -4,15 +4,14 @@ import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseConfiguration
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toExerciseCategory
 import com.lukasz.witkowski.training.planner.image.ImageBitmap
 import com.lukasz.witkowski.training.planner.image.toImageByteArray
+import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -26,9 +25,6 @@ open class CreateExerciseViewModel(
     private val categoriesCollection: CategoriesCollection,
     savedStateHandle: SavedStateHandle
 ) : ViewModel(), CategoriesCollection by categoriesCollection {
-
-    private val _exerciseId = savedStateHandle.get<String>("exerciseId")
-    protected open val exerciseId = _exerciseId?.let { ExerciseId(it) }
 
     private val _name = MutableStateFlow("")
     val name: StateFlow<String> = _name

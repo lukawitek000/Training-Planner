@@ -3,6 +3,8 @@ package com.lukasz.witkowski.training.planner.training.trainingSession
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import com.lukasz.witkowski.training.planner.navigation.TrainingSession
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
@@ -23,9 +25,7 @@ class TrainingSessionViewModel(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _trainingId = savedStateHandle.get<String>("trainingId")
-        ?: throw Exception("Training plan id was not provided")
-    private val trainingId = TrainingPlanId(_trainingId)
+    private val trainingId = savedStateHandle.toRoute<TrainingSession>().trainingPlanId
 
     val trainingSessionState: StateFlow<TrainingSessionState>
         get() = trainingSessionService.trainingSessionState.map {

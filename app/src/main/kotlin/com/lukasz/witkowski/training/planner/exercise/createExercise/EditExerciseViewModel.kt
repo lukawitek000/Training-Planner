@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.exercise.createExercise
 import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseConfiguration
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
@@ -11,6 +12,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exerci
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.toBitmapImage
+import com.lukasz.witkowski.training.planner.navigation.EditExercise
 import kotlinx.coroutines.launch
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 
@@ -21,10 +23,7 @@ class EditExerciseViewModel(
 ) : CreateExerciseViewModel(exerciseService, categoriesCollection, savedStateHandle) {
 
     private lateinit var initialExercise: Exercise
-
-    override val exerciseId: ExerciseId
-        get() = super.exerciseId
-            ?: throw IllegalArgumentException("ExerciseId was to provided to edit screen")
+    private val exerciseId = savedStateHandle.toRoute<EditExercise>().exerciseId
 
     init {
         viewModelScope.launch {

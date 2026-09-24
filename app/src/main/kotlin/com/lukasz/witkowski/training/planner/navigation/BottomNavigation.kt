@@ -15,24 +15,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+
+class BottomBarItem(
+    val icon: Int,
+    val title: String,
+    val selected: Boolean,
+    val onClick: () -> Unit,
+)
 
 @Composable
 fun BottomNavigationBar(
-    currentRoute: String?,
-    onItemClick: (NavItem) -> Unit,
+    items: List<BottomBarItem>,
     modifier: Modifier = Modifier,
-    items: List<NavItem> = NavItem.BottomNavItems.list,
 ) {
     NavigationBar(
         modifier = modifier,
     ) {
         items.forEach { item ->
-            if (item.icon == null) return@forEach
-            val selected = item.route == currentRoute
             NavigationBarItem(
-                selected = selected,
-                onClick = { onItemClick(item) },
+                selected = item.selected,
+                onClick = { item.onClick() },
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
                     selectedTextColor = MaterialTheme.colorScheme.primary,
@@ -55,8 +59,7 @@ fun BottomNavigationBar(
 }
 
 @Composable
-private fun NavigationIcon(item: NavItem) {
-    if (item.icon == null) return
+private fun NavigationIcon(item: BottomBarItem) {
     Icon(
         painter = painterResource(id = item.icon),
         contentDescription = item.title,
@@ -70,8 +73,20 @@ private fun BottomNavigationBarPreview() {
     TrainingPlannerTheme {
         BottomNavigationBar(
             modifier = Modifier.fillMaxWidth(),
-            currentRoute = NavItem.BottomNavItems.list.first().route,
-            onItemClick = {}
+            items = listOf(
+                BottomBarItem(
+                    icon = R.drawable.trainings_icon,
+                    title = "Training Plans",
+                    selected = true,
+                    onClick = { }
+                ),
+                BottomBarItem(
+                    icon = R.drawable.exercises_icon,
+                    title = "Exercises",
+                    selected = false,
+                    onClick = { }
+                ),
+            ),
         )
     }
 }

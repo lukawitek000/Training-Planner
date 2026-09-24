@@ -80,7 +80,7 @@ androidx-lifecycle-livedataKtx = { module = "androidx.lifecycle:lifecycle-liveda
 timber = { module = "com.jakewharton.timber:timber", version = "5.0.1" }
 coil = { module = "com.github.skydoves:landscapist-coil", version = "2.13.2" }
 bytebeats-charts = { module = "io.github.bytebeats:compose-charts", version = "0.2.1" }
-androidx-compose-navigation = { module = "androidx.navigation:navigation-compose", version = "2.10.1" }
+androidx-compose-navigation = { module = "androidx.navigation:navigation-compose", version = "2.10.2" }
 androidx-compose-lifecycleViewmodelCompose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version = "2.6.2" }
 
 # Koin BOM

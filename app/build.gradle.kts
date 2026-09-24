@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {
@@ -63,12 +64,17 @@ dependencies {
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material.icons.extended)
 
-    implementation(libs.androidx.compose.navigation)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.lifecycleViewmodelCompose)
 
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.paging.common)
+
+    // navigation3 libraries
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.androidx.compose.navigation)
+    implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
     // Needed for the themes.xml
     implementation(libs.google.material)
