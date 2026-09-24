@@ -85,7 +85,7 @@ private fun RestTimeScreenPreview() {
                     ExerciseId.create(),
                     name = "Next exercise name",
                     description = "Next exercise description",
-                    category = Category(0, R.string.category_back),
+                    categories = listOf(Category(0, R.string.category_back)),
                     null
                 ),
                 repetitions = 15,

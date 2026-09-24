@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.exercise.exercisesList
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,10 +55,18 @@ fun ExerciseInfoAlertDialog(
                     modifier = Modifier
                 )
             }
-            CategoryChip(
-                modifier = Modifier.padding(top = 16.dp),
-                category = exercise.category
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                exercise.categories.forEach {
+                    CategoryChip(
+                        modifier = Modifier,
+                        category = it
+                    )
+                }
+            }
+
         }
     }
 }

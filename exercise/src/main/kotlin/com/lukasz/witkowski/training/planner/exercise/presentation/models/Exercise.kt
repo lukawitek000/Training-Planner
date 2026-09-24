@@ -7,6 +7,6 @@ data class Exercise(
     val id: ExerciseId,
     val name: String,
     val description: String,
-    val category: Category,
+    val categories: List<Category>,
     val image: ImageReference? = null,
 )

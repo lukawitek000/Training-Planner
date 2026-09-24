@@ -175,9 +175,9 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, trainingExercise: Trai
             Spacer(modifier = Modifier.height(16.dp))
             CategoryChip(
                 modifier = Modifier.fillMaxWidth(),
-                category = trainingExercise.exercise.category
+                category = trainingExercise.exercise.categories.first() // TODO
             )
-            if (!trainingExercise.exercise.category.isNone()) {
+            if (!trainingExercise.exercise.categories.first().isNone()) { // TODO
                 Spacer(modifier = Modifier.height(16.dp))
             }
             TrainingExerciseRepsSetsTimeOverviewRow(exercise = trainingExercise)
@@ -293,7 +293,7 @@ fun SingleExercisePrev() {
             Exercise(
                 ExerciseId.create(), name = "Super exercise",
                 description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
-                category = Category(), null
+                categories = listOf(Category()), null
             ),
             sets = 10,
             repetitions = 100,

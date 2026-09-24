@@ -174,13 +174,15 @@ private fun CreateTrainingScreenContent(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        item { TrainingAndDescriptionInputs(
-            modifier = Modifier.padding(bottom = 16.dp),
-            title = title,
-            description = description,
-            onTitleChanged = onTitleChanged,
-            onDescriptionChanged = onDescriptionChanged
-        ) }
+        item {
+            TrainingAndDescriptionInputs(
+                modifier = Modifier.padding(bottom = 16.dp),
+                title = title,
+                description = description,
+                onTitleChanged = onTitleChanged,
+                onDescriptionChanged = onDescriptionChanged
+            )
+        }
         item {
             AddExercisesButton(
                 modifier = Modifier.padding(bottom = 16.dp),
@@ -365,7 +367,11 @@ private fun TrainingExerciseInfo(
             modifier = Modifier,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "${index + 1}.", fontSize = 32.sp, color = MaterialTheme.colorScheme.primary)
+            Text(
+                text = "${index + 1}.",
+                fontSize = 32.sp,
+                color = MaterialTheme.colorScheme.primary
+            )
             Spacer(modifier = Modifier.width(16.dp))
             Column(
                 modifier = Modifier
@@ -435,7 +441,7 @@ fun TrainingExerciseListItemPreview() {
         trainingExercise = TrainingExercise(
             id = TrainingExerciseId(""),
             exercise = Exercise(
-                ExerciseId.create(), "New exercise", "", Category(), null
+                ExerciseId.create(), "New exercise", "", listOf(Category()), null
             ),
             repetitions = 10,
             sets = 5,
@@ -453,7 +459,7 @@ fun RestTimeDialogPreview() {
     SetTrainingExerciseRestTimeDialog(
         trainingExercise = TrainingExercise(
             exercise = Exercise(
-                ExerciseId.create(), "New exercise", "", Category(), null
+                ExerciseId.create(), "New exercise", "", listOf(Category()), null
             ),
             id = TrainingExerciseId("")
         ),

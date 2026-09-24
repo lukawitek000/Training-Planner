@@ -12,7 +12,7 @@ data class TrainingPlan(
 ) {
     fun getCategories(): List<Category> =
         exercises
-            .map { trainingExercise -> trainingExercise.exercise.category }
+            .flatMap { trainingExercise -> trainingExercise.exercise.categories }
             .filter { category -> !category.isNone() }
             .distinct()
 }

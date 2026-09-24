@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -219,7 +220,6 @@ fun ExerciseListItemContent(
     exercise: Exercise
 ) {
     val imageDescription = stringResource(id = R.string.image_description, exercise.name)
-    val category = exercise.category
 
     Row(
         modifier = modifier,
@@ -233,7 +233,7 @@ fun ExerciseListItemContent(
         ExerciseInformation(
             modifier = Modifier,
             exercise = exercise,
-            category = category
+            categories = exercise.categories
         )
     }
 }
@@ -242,7 +242,7 @@ fun ExerciseListItemContent(
 private fun ExerciseInformation(
     modifier: Modifier = Modifier,
     exercise: Exercise,
-    category: Category
+    categories: List<Category>
 ) {
     Column(
         modifier = modifier,
@@ -252,14 +252,18 @@ private fun ExerciseInformation(
             text = exercise.name,
             fontSize = 28.sp
         )
-        if (!category.isNone()) {
+        if (!categories.isEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
         }
-        CategoryChip(
-            modifier = Modifier,
-            category = category,
-            fontSize = 14.sp
-        )
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            categories.forEach { category ->
+                CategoryChip(
+                    modifier = Modifier,
+                    category = category,
+                    fontSize = 14.sp
+                )
+            }
+        }
     }
 }
 

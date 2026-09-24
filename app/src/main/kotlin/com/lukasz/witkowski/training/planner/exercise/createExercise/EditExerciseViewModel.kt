@@ -41,7 +41,7 @@ class EditExerciseViewModel(
     }
 
     private fun setExerciseCategory() {
-        val index = allCategories.indexOf(initialExercise.category)
+        val index = allCategories.indexOf(initialExercise.categories.first()) // TODO
         if (index >= 0) {
             onCategorySelected(index)
         }
