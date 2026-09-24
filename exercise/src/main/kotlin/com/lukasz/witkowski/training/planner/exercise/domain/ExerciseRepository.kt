@@ -1,11 +1,12 @@
 package com.lukasz.witkowski.training.planner.exercise.domain
 
+import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 
 interface ExerciseRepository {
     suspend fun getById(id: ExerciseId): Exercise
 
-    fun queryExercises(query: ExerciseQuery): Flow<List<Exercise>>
+    fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise>>
 
     /**
      * Returns true when the insertion has finished

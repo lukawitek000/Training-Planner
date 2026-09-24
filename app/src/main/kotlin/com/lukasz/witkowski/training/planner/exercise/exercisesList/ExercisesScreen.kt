@@ -34,6 +34,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.PagingData
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import com.lukasz.witkowski.training.planner.DialogState
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.SnackbarState
@@ -51,6 +55,8 @@ import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 @Composable
@@ -65,7 +71,7 @@ fun ExercisesScreen(
     val deletedString = stringResource(id = R.string.deleted)
     val exerciseDeletedActionLabel = stringResource(id = R.string.undo)
 
-    val exercisesList by viewModel.exercises.collectAsState(emptyList())
+    val exercisesList = viewModel.exercises.collectAsLazyPagingItems()
     val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
     val searchQuery by viewModel.searchQuery.collectAsState()
     Scaffold(
@@ -105,7 +111,7 @@ fun ExercisesScreen(
 @Composable
 fun ExercisesScreenContent(
     modifier: Modifier = Modifier,
-    exercisesList: List<Exercise>,
+    exercisesList: LazyPagingItems<Exercise>,
     selectedCategoriesList: List<Category>,
     categoriesWithoutNone: List<Category>,
     selectCategory: (Category) -> Unit = {},
@@ -156,7 +162,7 @@ fun ExercisesScreenContent(
             selectedCategories = selectedCategoriesList,
             selectCategory = { selectCategory(it) }
         )
-        if (exercisesList.isNotEmpty()) {
+        if (exercisesList.itemCount != 0) {
             ExercisesList(
                 exercisesList = exercisesList,
                 onExerciseClicked = {
@@ -188,26 +194,32 @@ fun ExercisesScreenContent(
 @Composable
 private fun ExercisesList(
     modifier: Modifier = Modifier,
-    exercisesList: List<Exercise>,
+    exercisesList: LazyPagingItems<Exercise>,
     onExerciseClicked: (Exercise) -> Unit,
     onExerciseLongClicked: (Exercise) -> Unit,
     pickedExercisesId: List<ExerciseId> = emptyList()
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         LazyColumn {
-            items(exercisesList) { exercise ->
-                ListCardItem(
-                    onCardClicked = {
-                        onExerciseClicked(exercise)
-                    },
-                    onCardLongClicked = {
-                        onExerciseLongClicked(exercise)
-                    },
-                    markedSelected = pickedExercisesId.contains(exercise.id)
-                ) {
-                    ExerciseListItemContent(
-                        exercise = exercise
-                    )
+            items(
+                count = exercisesList.itemCount,
+                key = exercisesList.itemKey { it.id.value.toString() }
+            ) { index ->
+                val exercise = exercisesList[index]
+                if (exercise != null) {
+                    ListCardItem(
+                        onCardClicked = {
+                            onExerciseClicked(exercise)
+                        },
+                        onCardLongClicked = {
+                            onExerciseLongClicked(exercise)
+                        },
+                        markedSelected = pickedExercisesId.contains(exercise.id)
+                    ) {
+                        ExerciseListItemContent(
+                            exercise = exercise
+                        )
+                    }
                 }
             }
         }
@@ -290,12 +302,15 @@ private fun ImageWithDefaultPlaceholder(
     }
 }
 
+fun <T : Any> List<T>.asPreviewPagerFlow(): Flow<PagingData<T>> {
+    return flowOf(PagingData.from(this))
+}
 @Preview
 @Composable
 private fun ExercisesScreenContentPreview() {
     TrainingPlannerTheme {
         ExercisesScreenContent(
-            exercisesList = emptyList(),
+            exercisesList = emptyList<Exercise>().asPreviewPagerFlow().collectAsLazyPagingItems(),
             selectedCategoriesList = emptyList(),
             categoriesWithoutNone = DefaultCategoriesCollection().allCategories,
 

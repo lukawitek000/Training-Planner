@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreenContent
@@ -53,7 +54,7 @@ fun PickExerciseScreen(
     var openExerciseAlreadyAddedDialog by remember { mutableStateOf(false) }
     val pickedTrainingExercise by createTrainingViewModel.pickedExercise.collectAsState()
 
-    val exercisesList by viewModel.exercises.collectAsState(emptyList())
+    val exercisesList = viewModel.exercises.collectAsLazyPagingItems()
     val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
     Scaffold(
         modifier = modifier,

@@ -1,5 +1,10 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import androidx.paging.map
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
@@ -21,8 +26,24 @@ internal class DbExerciseRepository(
             dbExercise.toExercise()
         }
 
-    override fun queryExercises(query: ExerciseQuery): Flow<List<Exercise>> {
-        val flow = if (query.categories.isEmpty()) {
+    override fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise>> {
+        val pagingSource = pagingSource(query)
+        return Pager(
+            config = PagingConfig(
+                pageSize = 10,
+                prefetchDistance = 10
+            ),
+            pagingSourceFactory = { pagingSource }
+        ).flow.map { pagingData ->
+            pagingData.map { dbExercise ->
+                Timber.d("Fetched exercise: ${dbExercise.exercise.name}")
+                dbExercise.toExercise()
+            }
+        }
+    }
+
+    private fun pagingSource(query: ExerciseQuery): PagingSource<Int, DbExerciseWithCategories> {
+        return if (query.categories.isEmpty()) {
             exerciseDao.getExercisesWithCategories(query.query)
         } else {
             exerciseDao
@@ -30,10 +51,6 @@ internal class DbExerciseRepository(
                     query = query.query,
                     categoriesNames = query.categories.map { it.name },
                 )
-        }
-        return flow.map { list ->
-            Timber.i("Exercises list size: ${list.size} for $query")
-            list.map { it.toExercise() }
         }
     }
 

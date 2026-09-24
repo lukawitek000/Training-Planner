@@ -1,15 +1,18 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
+import androidx.paging.PagingSource
 import androidx.room3.Dao
+import androidx.room3.DaoReturnTypeConverters
 import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
 import androidx.room3.Query
 import androidx.room3.Transaction
 import androidx.room3.Update
-import androidx.room3.Upsert
+import androidx.room3.paging.PagingSourceDaoReturnTypeConverter
 import kotlinx.coroutines.flow.Flow
 
 @Dao
+@DaoReturnTypeConverters(PagingSourceDaoReturnTypeConverter::class)
 internal interface ExerciseDao {
     @Query("SELECT * FROM Exercise")
     fun getAll(): Flow<List<DbExercise>>
@@ -21,33 +24,31 @@ internal interface ExerciseDao {
         FROM Exercise
         WHERE LOWER(name) LIKE LOWER('%' || :query || '%')
            OR LOWER(description) LIKE LOWER('%' || :query || '%')
-        ORDER BY name
+        ORDER BY name ASC
     """
     )
-    fun getExercisesWithCategories(query: String): Flow<List<DbExerciseWithCategories>>
+    fun getExercisesWithCategories(query: String): PagingSource<Int, DbExerciseWithCategories>
 
     @Transaction
     @Query(
         """
-        SELECT 
-            e.*,
-            COUNT(*) AS matched_cat
-        FROM Exercise e
-        JOIN ExerciseCategoryCrossRef r
-            ON e.exerciseId = r.exerciseId
-        WHERE (r.categoryName IN (:categoriesNames))
-            AND (
-              LOWER(e.name) LIKE LOWER('%' || :query || '%')
-              OR LOWER(e.description) LIKE LOWER('%' || :query || '%')
-            )
-        GROUP BY e.exerciseId
-        ORDER BY matched_cat DESC
-    """
+            SELECT e.*
+            FROM Exercise e
+            JOIN ExerciseCategoryCrossRef r
+                ON e.exerciseId = r.exerciseId
+            WHERE r.categoryName IN (:categoriesNames)
+              AND (
+                  LOWER(e.name) LIKE LOWER('%' || :query || '%')
+                  OR LOWER(e.description) LIKE LOWER('%' || :query || '%')
+              )
+            GROUP BY e.exerciseId
+            ORDER BY COUNT(*) DESC, e.name ASC
+        """
     )
     fun getExercisesWithCategories(
         query: String,
         categoriesNames: List<String>,
-    ): Flow<List<DbExerciseWithCategories>>
+    ): PagingSource<Int, DbExerciseWithCategories>
 
     @Query("SELECT * FROM Exercise WHERE :id == exerciseId")
     suspend fun getById(id: String): DbExerciseWithCategories

@@ -2,6 +2,8 @@ package com.lukasz.witkowski.training.planner.exercise.exercisesList
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
@@ -38,14 +40,10 @@ class ExercisesListViewModel(
             query = query,
             categories = categories.map { it.toExerciseCategory() }
         )
-    }.flatMapLatest {
-        exerciseService.queryExercises(it)
+    }.flatMapLatest { exerciseQuery ->
+        exerciseService.queryExercises(exerciseQuery)
             .map { it.map { exercise -> exercise.toPresentationExercise(null) } }
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000L),
-        initialValue = emptyList()
-    )
+    }.cachedIn(viewModelScope)
 
     fun deleteExercise(exercise: Exercise) {
         viewModelScope.launch {
