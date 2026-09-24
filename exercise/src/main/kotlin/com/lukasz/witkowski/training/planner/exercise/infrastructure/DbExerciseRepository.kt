@@ -21,17 +21,21 @@ internal class DbExerciseRepository(
             dbExercise.toExercise()
         }
 
-    override fun queryExercises(query: ExerciseQuery): Flow<List<Exercise>> =
-        exerciseDao
-            .getExercisesWithCategories(
-                query = query.query,
-                categoriesNames = query.categories.map { it.name },
-                filterByCategories = query.categories.isNotEmpty()
-            )
-            .map { list ->
-                Timber.i("Exercises list size: ${list.size} for $query")
-                list.map { it.toExercise() }
-            }
+    override fun queryExercises(query: ExerciseQuery): Flow<List<Exercise>> {
+        val flow = if (query.categories.isEmpty()) {
+            exerciseDao.getExercisesWithCategories(query.query)
+        } else {
+            exerciseDao
+                .getExercisesWithCategories(
+                    query = query.query,
+                    categoriesNames = query.categories.map { it.name },
+                )
+        }
+        return flow.map { list ->
+            Timber.i("Exercises list size: ${list.size} for $query")
+            list.map { it.toExercise() }
+        }
+    }
 
     override suspend fun insert(exercise: Exercise): Boolean =
         withContext(ioDispatcher) {
