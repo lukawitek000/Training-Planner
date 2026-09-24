@@ -25,8 +25,10 @@ internal abstract class ExerciseDatabase : RoomDatabase() {
                             .databaseBuilder(
                                 context,
                                 ExerciseDatabase::class.java,
-                                "Exercise Database",
-                            ).fallbackToDestructiveMigration(true)
+                                "ExerciseDb",
+                            )
+                            .createFromAsset("database/exercises.db")
+                            .fallbackToDestructiveMigration(true)
                             .build()
                 }
                 instance!!
