@@ -67,6 +67,9 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.lifecycleViewmodelCompose)
 
+    implementation(libs.androidx.paging.compose)
+    implementation(libs.androidx.paging.common)
+// TODO should be removed????
     implementation(libs.google.material)
 
     // Without this dependency there is a build error

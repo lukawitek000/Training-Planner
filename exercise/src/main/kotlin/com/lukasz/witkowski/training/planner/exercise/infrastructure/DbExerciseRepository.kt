@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -19,15 +20,18 @@ internal class DbExerciseRepository(
             dbExercise.toExercise()
         }
 
-    override fun getAll(): Flow<List<Exercise>> =
+    override fun queryExercises(query: ExerciseQuery): Flow<List<Exercise>> =
         exerciseDao
-            .getAll()
-            .map { it.map { dbExercise -> dbExercise.toExercise() } }
+            .getExercisesWithCategories(
+                query = query.query,
+                categoriesNames = query.categories.map { it.name }
+            )
+            .map { list ->  list.map { it.toExercise() } }
 
     override suspend fun insert(exercise: Exercise): Boolean =
         withContext(ioDispatcher) {
-            val exerciseWithImage = exercise.toDbExercise()
-            exerciseDao.insert(exerciseWithImage) == ONE_ROW.toLong()
+            val exerciseWithCategories = exercise.toDbExerciseWithCategories()
+            exerciseDao.insertExerciseWithCategories(exerciseWithCategories)
         }
 
     override suspend fun delete(exercise: Exercise) =
@@ -37,8 +41,9 @@ internal class DbExerciseRepository(
 
     override suspend fun updateExercise(updatedExercise: Exercise): Boolean =
         withContext(ioDispatcher) {
-            val dbExercise = updatedExercise.toDbExercise()
-            exerciseDao.update(dbExercise) == ONE_ROW
+            false
+//            val dbExercise = updatedExercise.toDbExerciseWithCategories()
+//            exerciseDao.update(dbExercise) == ONE_ROW
         }
 
     private companion object {

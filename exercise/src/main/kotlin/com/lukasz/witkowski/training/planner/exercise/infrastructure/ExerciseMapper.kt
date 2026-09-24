@@ -7,18 +7,27 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 
 internal fun Exercise.toDbExercise(): DbExercise =
     DbExercise(
-        id = id.toString(),
+        exerciseId = id.toString(),
         name = name,
         description = description,
-        categoryId = category.ordinal,
         imageId = imageId?.toString(),
     )
 
-internal fun DbExercise.toExercise(): Exercise =
-    Exercise(
-        id = ExerciseId(id),
-        name = name,
-        description = description,
-        category = ExerciseCategory.values()[categoryId],
-        imageId = imageId?.let { ImageId(it) },
+internal fun Exercise.toDbExerciseWithCategories(): DbExerciseWithCategories {
+    return DbExerciseWithCategories(
+        exercise = this.toDbExercise(),
+        categories = categories.map { it.toDbExerciseCategory() }
     )
+}
+
+
+
+internal fun DbExerciseWithCategories.toExercise(): Exercise =
+    Exercise(
+        id = ExerciseId(exercise.exerciseId),
+        name = exercise.name,
+        description = exercise.description,
+        categories = categories.map { it.toExerciseCategory() },
+        imageId = exercise.imageId?.let { ImageId(it) },
+    )
+

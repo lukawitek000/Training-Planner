@@ -21,6 +21,7 @@ ktlint = "14.2.0"
 room = "3.0.3"
 coroutines = "1.11.0"
 lifecycle = "2.11.0"
+paging = "3.4.2"
 
 [libraries]
 
@@ -42,6 +43,8 @@ androidx-wear = { module = "androidx.wear:wear", version = "1.3.0" }
 androidx-wearOngoing = { module = "androidx.wear:wear-ongoing", version = "1.0.0" }
 androidx-activityKtx = { module = "androidx.activity:activity-ktx", version = "1.8.0" }
 androidx-fragmentKtx = { module = "androidx.fragment:fragment-ktx", version = "1.6.1" }
+androidx-paging-common = { module = "androidx.paging:paging-common", version.ref = "paging" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 
 compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
 compose-ui = { module = "androidx.compose.ui:ui" }

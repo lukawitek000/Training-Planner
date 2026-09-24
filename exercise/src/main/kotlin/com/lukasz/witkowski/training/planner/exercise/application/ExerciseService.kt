@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.exercise.application
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.image.Image
 import com.lukasz.witkowski.training.planner.image.ImageByteArray
@@ -39,12 +40,8 @@ class ExerciseService(
         imageStorage.deleteImage(imageId, exerciseId.value)
     }
 
-    fun getExercisesFromCategories(categories: List<ExerciseCategory>): Flow<List<Exercise>> =
-        exerciseRepository.getAll().map {
-            it.filter { exercise ->
-                categories.contains(exercise.category) || categories.isEmpty()
-            }
-        }
+    fun queryExercises(exerciseQuery: ExerciseQuery): Flow<List<Exercise>> =
+        exerciseRepository.queryExercises(exerciseQuery)
 
     suspend fun deleteExercise(exercise: Exercise) {
         exerciseRepository.delete(exercise)

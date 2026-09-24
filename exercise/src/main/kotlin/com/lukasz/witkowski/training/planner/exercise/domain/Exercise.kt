@@ -5,7 +5,7 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 data class Exercise(
     val id: ExerciseId,
     val name: String,
-    val description: String = "",
-    val category: ExerciseCategory = ExerciseCategory.NONE,
+    val description: String,
+    val categories: List<ExerciseCategory>,
     val imageId: ImageId? = null,
 )
