@@ -17,11 +17,11 @@ internal interface ExerciseDao {
     @Transaction
     @Query("SELECT * FROM Exercise")
     fun getExercisesWithCategories(
-        query: String,
-        categoriesNames: List<String>
+//        query: String,
+//        categoriesNames: List<String>
     ): Flow<List<DbExerciseWithCategories>>
 
-    @Query("SELECT * FROM Exercise WHERE :id == id")
+    @Query("SELECT * FROM Exercise WHERE :id == exerciseId")
     suspend fun getById(id: String): DbExerciseWithCategories
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -49,7 +49,7 @@ internal interface ExerciseDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertExerciseCategoryCrossRefs(crossRefs: List<ExerciseCategoryCrossRef>): List<Long>
 
-    @Query("DELETE FROM Exercise WHERE :id == id")
+    @Query("DELETE FROM Exercise WHERE :id == exerciseId")
     suspend fun deleteExerciseById(id: String): Int
 
     @Update

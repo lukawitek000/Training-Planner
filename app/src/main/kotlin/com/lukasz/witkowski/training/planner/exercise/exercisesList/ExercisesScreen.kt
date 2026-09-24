@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,6 +37,7 @@ import com.lukasz.witkowski.training.planner.DialogState
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.SnackbarState
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.image.ImageReference
@@ -46,6 +48,8 @@ import com.lukasz.witkowski.training.planner.ui.components.Image
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
+import com.lukasz.witkowski.training.planner.ui.components.TextField
+import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import kotlinx.coroutines.launch
 
 @Composable
@@ -59,6 +63,10 @@ fun ExercisesScreen(
     val exerciseString = stringResource(id = R.string.exercise)
     val deletedString = stringResource(id = R.string.deleted)
     val exerciseDeletedActionLabel = stringResource(id = R.string.undo)
+
+    val exercisesList by viewModel.exercises.collectAsState(emptyList())
+    val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState()
     Scaffold(
         modifier = modifier.fillMaxSize(),
         floatingActionButton = {
@@ -69,7 +77,6 @@ fun ExercisesScreen(
     ) {
         ExercisesScreenContent(
             modifier = Modifier.padding(it),
-            viewModel = viewModel,
             onExerciseDeleted = {
                 // TODO If this screen is popped up from backstack the snack bar results are not handled (https://developer.android.com/jetpack/compose/state#viewmodels-source-of-truth)
                 snackbarState.scope.launch {
@@ -83,7 +90,13 @@ fun ExercisesScreen(
             },
             onExerciseEditedClicked = {
                 navigateToExerciseEditScreen(it.id)
-            }
+            },
+            exercisesList = exercisesList,
+            selectedCategoriesList = selectedCategoriesList,
+            categoriesWithoutNone = viewModel.categoriesWithoutNone,
+            selectCategory = { viewModel.selectCategory(it) },
+            searchQuery = searchQuery,
+            onSearchQueryChanged = viewModel::onSearchQueryChange
         )
     }
 }
@@ -91,15 +104,18 @@ fun ExercisesScreen(
 @Composable
 fun ExercisesScreenContent(
     modifier: Modifier = Modifier,
-    viewModel: ExercisesListViewModel,
+    exercisesList: List<Exercise>,
+    selectedCategoriesList: List<Category>,
+    categoriesWithoutNone: List<Category>,
+    selectCategory: (Category) -> Unit = {},
+    searchQuery: String = "",
+    onSearchQueryChanged: (String) -> Unit = {},
     isPickingExerciseMode: Boolean = false,
     onExerciseClicked: (Exercise) -> Unit = {},
     onExerciseDeleted: (Exercise) -> Unit = {},
     onExerciseEditedClicked: (Exercise) -> Unit = {},
     pickedExercisesId: List<ExerciseId> = emptyList()
 ) {
-    val exercisesList by viewModel.exercises.collectAsState(emptyList())
-    val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
     var exerciseDetailsDialogState by remember {
         mutableStateOf<DialogState<Exercise>>(DialogState.Closed())
     }
@@ -129,10 +145,15 @@ fun ExercisesScreenContent(
     }
 
     Column(modifier = modifier) {
+        TextField(
+            text = searchQuery,
+            onTextChange = onSearchQueryChanged,
+            label = "Search exercises"
+        )
         CategoryFilters(
-            categories = viewModel.categoriesWithoutNone,
+            categories = categoriesWithoutNone,
             selectedCategories = selectedCategoriesList,
-            selectCategory = { viewModel.selectCategory(it) }
+            selectCategory = { selectCategory(it) }
         )
         if (exercisesList.isNotEmpty()) {
             ExercisesList(
@@ -261,6 +282,19 @@ private fun ImageWithDefaultPlaceholder(
             imageReference = imageReference,
             defaultImage = R.drawable.exercise_default,
             contentDescriptor = imageDescription
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ExercisesScreenContentPreview() {
+    TrainingPlannerTheme {
+        ExercisesScreenContent(
+            exercisesList = emptyList(),
+            selectedCategoriesList = emptyList(),
+            categoriesWithoutNone = DefaultCategoriesCollection().allCategories,
+
         )
     }
 }

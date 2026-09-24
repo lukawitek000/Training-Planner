@@ -14,7 +14,7 @@ internal object ExerciseFactory {
             exerciseId,
             exerciseConfiguration.name,
             exerciseConfiguration.description,
-            exerciseConfiguration.category,
+            listOf(exerciseConfiguration.category),
             imageId,
         )
 }

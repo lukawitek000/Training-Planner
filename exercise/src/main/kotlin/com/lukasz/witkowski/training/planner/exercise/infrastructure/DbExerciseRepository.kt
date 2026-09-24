@@ -23,8 +23,8 @@ internal class DbExerciseRepository(
     override fun queryExercises(query: ExerciseQuery): Flow<List<Exercise>> =
         exerciseDao
             .getExercisesWithCategories(
-                query = query.query,
-                categoriesNames = query.categories.map { it.name }
+//                query = query.query,
+//                categoriesNames = query.categories.map { it.name }
             )
             .map { list ->  list.map { it.toExercise() } }
 

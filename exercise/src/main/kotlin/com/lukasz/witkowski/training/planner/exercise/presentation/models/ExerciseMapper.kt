@@ -8,7 +8,7 @@ fun Exercise.toDomainExercise(): DomainExercise =
         id = id,
         name = name,
         description = description,
-        category = category.toExerciseCategory(),
+        categories = listOf(category.toExerciseCategory()),
         imageId = image?.imageId,
     )
 
@@ -17,6 +17,6 @@ fun DomainExercise.toPresentationExercise(imageReference: ImageReference?): Exer
         id = id,
         name = name,
         description = description,
-        category = category.toCategory(),
+        category = categories.first().toCategory(),
         image = imageReference,
     )

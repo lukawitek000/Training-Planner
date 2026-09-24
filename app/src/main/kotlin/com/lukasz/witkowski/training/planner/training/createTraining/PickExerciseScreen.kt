@@ -53,6 +53,8 @@ fun PickExerciseScreen(
     var openExerciseAlreadyAddedDialog by remember { mutableStateOf(false) }
     val pickedTrainingExercise by createTrainingViewModel.pickedExercise.collectAsState()
 
+    val exercisesList by viewModel.exercises.collectAsState(emptyList())
+    val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
     Scaffold(
         modifier = modifier,
         floatingActionButton = {
@@ -61,7 +63,6 @@ fun PickExerciseScreen(
     ) {
         ExercisesScreenContent(
             modifier = Modifier.padding(it),
-            viewModel = viewModel,
             isPickingExerciseMode = true,
             onExerciseClicked = { pickedExercise ->
                 val isExerciseInTrainingPlan = createTrainingViewModel.pickExercise(pickedExercise)
@@ -71,7 +72,11 @@ fun PickExerciseScreen(
                     openTrainingExerciseConfigurationDialog = true
                 }
             },
-            pickedExercisesId = createTrainingViewModel.pickedExercisesIds
+            pickedExercisesId = createTrainingViewModel.pickedExercisesIds,
+            exercisesList = exercisesList,
+            selectedCategoriesList = selectedCategoriesList,
+            categoriesWithoutNone = viewModel.categoriesWithoutNone,
+            selectCategory = { viewModel.selectCategory(it) }
         )
         if (openExerciseAlreadyAddedDialog) {
             ExerciseAlreadyAddedDialog(

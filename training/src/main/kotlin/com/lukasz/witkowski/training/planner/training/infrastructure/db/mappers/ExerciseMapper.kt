@@ -36,7 +36,7 @@ private fun toDbExercise(exercise: Exercise): DbExercise =
         exercise.id.toString(),
         exercise.name,
         exercise.description,
-        exercise.category.ordinal,
+        exercise.categories.first().ordinal,
         null,
     )
 
@@ -45,5 +45,5 @@ private fun toExercise(dbExercise: DbExercise): Exercise =
         ExerciseId(dbExercise.exerciseId),
         dbExercise.name,
         dbExercise.description,
-        ExerciseCategory.values()[dbExercise.category],
+        listOf(ExerciseCategory.entries[dbExercise.category]),
     )

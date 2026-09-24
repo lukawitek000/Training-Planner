@@ -32,7 +32,7 @@ private fun toDomainExercise(exercise: Exercise): DomainExercise =
         exercise.id,
         exercise.name,
         exercise.description,
-        exercise.category.toExerciseCategory(),
+        listOf(exercise.category.toExerciseCategory()),
         null,
     )
 
@@ -41,6 +41,6 @@ private fun toPresentationExercise(exercise: DomainExercise): Exercise =
         exercise.id,
         exercise.name,
         exercise.description,
-        exercise.category.toCategory(),
+        exercise.categories.first().toCategory(),
         null,
     )

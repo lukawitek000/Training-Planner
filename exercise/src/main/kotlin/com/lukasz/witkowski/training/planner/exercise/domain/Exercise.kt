@@ -8,4 +8,10 @@ data class Exercise(
     val description: String,
     val categories: List<ExerciseCategory>,
     val imageId: ImageId? = null,
-)
+) {
+    init {
+        require(categories.isNotEmpty()) {
+            "Exercise should have at least one category"
+        }
+    }
+}

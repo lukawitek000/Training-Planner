@@ -5,7 +5,11 @@ import androidx.room3.Database
 import androidx.room3.Room
 import androidx.room3.RoomDatabase
 
-@Database(entities = [DbExercise::class], version = 6, exportSchema = false)
+@Database(
+    entities = [DbExercise::class, DbExerciseCategory::class, ExerciseCategoryCrossRef::class],
+    version = 6,
+    exportSchema = false
+)
 internal abstract class ExerciseDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
 
