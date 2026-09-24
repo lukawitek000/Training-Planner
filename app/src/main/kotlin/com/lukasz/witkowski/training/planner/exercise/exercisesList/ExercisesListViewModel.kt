@@ -42,7 +42,8 @@ class ExercisesListViewModel(
         )
     }.flatMapLatest { exerciseQuery ->
         exerciseService.queryExercises(exerciseQuery)
-            .map { it.map { exercise -> exercise.toPresentationExercise(null) } }
+    }.map { pagingData ->
+        pagingData.map { exercise -> exercise.toPresentationExercise(null) }
     }.cachedIn(viewModelScope)
 
     fun deleteExercise(exercise: Exercise) {
