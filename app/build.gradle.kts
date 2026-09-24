@@ -69,7 +69,8 @@ dependencies {
 
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.paging.common)
-// TODO should be removed????
+
+    // Needed for the themes.xml
     implementation(libs.google.material)
 
     // Without this dependency there is a build error
