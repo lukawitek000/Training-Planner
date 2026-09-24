@@ -15,10 +15,25 @@ internal interface ExerciseDao {
     fun getAll(): Flow<List<DbExercise>>
 
     @Transaction
-    @Query("SELECT * FROM Exercise")
+    @Query("""
+        SELECT 
+            e.*,
+            COUNT(*) AS matched_cat
+        FROM Exercise e
+        JOIN ExerciseCategoryCrossRef r
+            ON e.exerciseId = r.exerciseId
+        WHERE (:filterByCategories = 0 OR r.categoryName IN (:categoriesNames))
+            AND (
+              LOWER(e.name) LIKE LOWER('%' || :query || '%')
+              OR LOWER(e.description) LIKE LOWER('%' || :query || '%')
+            )
+        GROUP BY e.exerciseId
+        ORDER BY matched_cat DESC
+    """)
     fun getExercisesWithCategories(
-//        query: String,
-//        categoriesNames: List<String>
+        query: String,
+        categoriesNames: List<String>,
+        filterByCategories: Boolean,
     ): Flow<List<DbExerciseWithCategories>>
 
     @Query("SELECT * FROM Exercise WHERE :id == exerciseId")

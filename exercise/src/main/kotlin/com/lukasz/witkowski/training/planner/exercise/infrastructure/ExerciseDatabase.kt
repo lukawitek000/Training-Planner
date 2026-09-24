@@ -28,7 +28,7 @@ internal abstract class ExerciseDatabase : RoomDatabase() {
                                 "ExerciseDb",
                             )
                             .createFromAsset("database/exercises.db")
-                            .fallbackToDestructiveMigration(true)
+//                            .fallbackToDestructiveMigration(true)
                             .build()
                 }
                 instance!!

@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 
 internal class DbExerciseRepository(
@@ -23,10 +24,14 @@ internal class DbExerciseRepository(
     override fun queryExercises(query: ExerciseQuery): Flow<List<Exercise>> =
         exerciseDao
             .getExercisesWithCategories(
-//                query = query.query,
-//                categoriesNames = query.categories.map { it.name }
+                query = query.query,
+                categoriesNames = query.categories.map { it.name },
+                filterByCategories = query.categories.isNotEmpty()
             )
-            .map { list ->  list.map { it.toExercise() } }
+            .map { list ->
+                Timber.i("Exercises list size: ${list.size} for $query")
+                list.map { it.toExercise() }
+            }
 
     override suspend fun insert(exercise: Exercise): Boolean =
         withContext(ioDispatcher) {
