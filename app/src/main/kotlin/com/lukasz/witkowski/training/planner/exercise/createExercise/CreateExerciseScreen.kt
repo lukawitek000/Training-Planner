@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.exercise.createExercise
 
 import android.graphics.Bitmap
+import android.graphics.Bitmap.createBitmap
+import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -8,134 +10,182 @@ import android.provider.MediaStore
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Image
 import androidx.compose.material3.Button
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.SnackbarState
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.image.ImageBitmap
-import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.ui.components.CategoryFilters
 import com.lukasz.witkowski.training.planner.ui.components.DropDownInput
+import com.lukasz.witkowski.training.planner.ui.components.FormFieldLabel
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
-import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
+import com.lukasz.witkowski.training.planner.ui.components.PREVIEW_CATEGORIES
 import com.lukasz.witkowski.training.planner.ui.components.TextField
+import com.lukasz.witkowski.training.planner.ui.theme.Dimens
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
-import com.skydoves.landscapist.coil.CoilImage
-import kotlinx.coroutines.launch
 
 @Composable
 fun CreateExerciseScreen(
     modifier: Modifier = Modifier,
-    viewModel: CreateExerciseViewModel,
-    snackbarState: SnackbarState,
+    viewModel: ExerciseEditorViewModel,
     navigateUp: () -> Unit,
-    successMessage: String = stringResource(id = R.string.exercise_saved),
-    failMessage: String = stringResource(id = R.string.exercise_saving_failed)
 ) {
-    val image by viewModel.image.collectAsState()
-    val name: String by viewModel.name.collectAsState()
-    val description by viewModel.description.collectAsState()
-    val selectedCategory by viewModel.category.collectAsState()
-    val savingState by viewModel.savingState.collectAsState()
+    val state by viewModel.editingState.collectAsState()
+    CreateExerciseScreenContent(
+        modifier = modifier.fillMaxSize(),
+        state = state,
+    )
+    /*
+        val image by viewModel.image.collectAsState()
+        val name: String by viewModel.name.collectAsState()
+        val description by viewModel.description.collectAsState()
+        val selectedCategory by viewModel.category.collectAsState()
+        val savingState by viewModel.savingState.collectAsState()
 
-    Scaffold(
-        modifier = modifier,
-        floatingActionButton = {
-            CreateExerciseFloatingActionButton(
-                isVisible = savingState is ResultHandler.Idle || savingState is ResultHandler.Error,
-                name = name,
-                createExercise = { viewModel.createExercise() },
-                showSnackbar = {
-                    snackbarState.scope.launch {
-                        snackbarState.show(it)
+        Scaffold(
+            modifier = modifier,
+        ) {
+            when (savingState) {
+                is ResultHandler.Idle, is ResultHandler.Error -> {
+                    CreateExerciseForm(
+                        image = image,
+                        name = name,
+                        description = description,
+                        allCategories = viewModel.allCategories,
+                        selectedCategory = selectedCategory,
+                        onImageChange = { viewModel.onImageChange(it) },
+                        onExerciseNameChanged = { viewModel.onExerciseNameChange(it) },
+                        onExerciseDescriptionChanged = { viewModel.onExerciseDescriptionChange(it) },
+                        onCategorySelected = { viewModel.onCategorySelected(it) }
+                    )
+                }
+                is ResultHandler.Success -> {
+                    LaunchedEffect(Unit) {
+                        navigateUp()
                     }
                 }
-            )
+                else -> {
+                    LoadingScreen(
+                        modifier = Modifier.fillMaxSize().padding(it),
+                        message = stringResource(id = R.string.saving_exercise, name)
+                    )
+                }
+            }
         }
+
+     */
+}
+
+@Composable
+private fun CreateExerciseScreenContent(
+    state: ExerciseEditingState,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.padding(Dimens.normal),
+        verticalArrangement = Arrangement.spacedBy(Dimens.large)
     ) {
-        when (savingState) {
-            is ResultHandler.Idle, is ResultHandler.Error -> {
-                LaunchedEffect(Unit) {
-                    snackbarState.scope.launch {
-                        if (savingState is ResultHandler.Error) snackbarState.show(failMessage)
-                    }
-                }
-                CreateExerciseForm(
-                    image = image,
-                    name = name,
-                    description = description,
-                    allCategories = viewModel.allCategories,
-                    selectedCategory = selectedCategory,
-                    onImageChange = { viewModel.onImageChange(it) },
-                    onExerciseNameChanged = { viewModel.onExerciseNameChange(it) },
-                    onExerciseDescriptionChanged = { viewModel.onExerciseDescriptionChange(it) },
-                    onCategorySelected = { viewModel.onCategorySelected(it) }
-                )
-            }
-            is ResultHandler.Success -> {
-                LaunchedEffect(Unit) {
-                    snackbarState.scope.launch {
-                        snackbarState.show(successMessage)
-                    }
-                    navigateUp()
-                }
-            }
-            else -> {
-                LoadingScreen(
-                    modifier = Modifier.fillMaxSize().padding(it),
-                    message = stringResource(id = R.string.saving_exercise, name)
-                )
-            }
-        }
+        ImageInputForm(
+            images = state.images,
+            previewImage = state.previewImage
+        )
+        TextInputForm(
+            name = state.name,
+            description = state.description,
+            onUserInputChange = {},
+        )
+        CategorySelectionPanel(
+            categories = state.categories,
+            toggleCategory = {},
+        )
     }
 }
 
 @Composable
-private fun CreateExerciseFloatingActionButton(
-    modifier: Modifier = Modifier,
-    isVisible: Boolean,
+private fun TextInputForm(
     name: String,
-    createExercise: () -> Unit,
-    showSnackbar: (String) -> Unit
+    description: String,
+    onUserInputChange: (ExerciseEditingEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val text = stringResource(id = R.string.exercise_name_is_required)
-    if (isVisible) {
-        FloatingActionButton(
-            modifier = modifier,
-            onClick = {
-                if (name.isNotEmpty()) {
-                    createExercise()
-                } else {
-                    showSnackbar(text)
-                }
-            },
-        ) {
-            Icon(imageVector = Icons.Default.Create, contentDescription = "Create exercise")
-        }
+    Column(modifier = modifier.fillMaxWidth()) {
+        FormFieldLabel(
+            text = stringResource(R.string.exercise_name_label),
+            modifier = Modifier.padding(bottom = Dimens.normal)
+        )
+        TextField(
+            text = name,
+            onTextChange = { onUserInputChange(ExerciseEditingEvent.NameChanged(it)) },
+            label = stringResource(R.string.enter_exercise_name)
+        )
+        Spacer(Modifier.height(Dimens.large))
+        FormFieldLabel(
+            text = stringResource(R.string.exercise_description_label),
+            modifier = Modifier.padding(bottom = Dimens.normal)
+        )
+        TextField(
+            text = description,
+            onTextChange = { onUserInputChange(ExerciseEditingEvent.DescriptionChanged(it)) },
+            label = stringResource(R.string.enter_exercise_description),
+            minLines = 3,
+            maxLines = 5
+        )
     }
+}
+
+@Composable
+private fun CategorySelectionPanel(
+    categories: List<FilterCategory>,
+    toggleCategory: (ExerciseCategory) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier) {
+        FormFieldLabel(
+            text = stringResource(R.string.target_muscles),
+            modifier = Modifier.padding(bottom = Dimens.normal)
+        )
+        CategoryFilters(
+            categories = categories,
+            toggleCategory = toggleCategory
+        )
+    }
+    
 }
 
 @Composable
@@ -198,11 +248,12 @@ fun UploadImageLayout(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         ImageContainer {
-            CoilImage(
-                imageModel = { image ?: placeholder },
-                modifier = Modifier
-                    .width(200.dp)
-                    .height(200.dp)
+            AsyncImage(
+                model = image ?: placeholder,
+                contentDescription = null,
+//                modifier = Modifier
+//                    .width(200.dp)
+//                    .height(200.dp)
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
@@ -240,6 +291,15 @@ private fun imageActivityResultLauncher(
 @Composable
 fun CreateExerciseScreenPreview() {
     TrainingPlannerTheme {
-        // CreateExerciseScreen()
+        val bitmaps = remember { createPreviewBitmaps() }
+        val state = ExerciseEditingState(
+            images = bitmaps,
+            previewImage = bitmaps.first(),
+            categories = PREVIEW_CATEGORIES
+        )
+        CreateExerciseScreenContent(
+            modifier = Modifier.fillMaxSize(),
+            state = state
+        )
     }
 }

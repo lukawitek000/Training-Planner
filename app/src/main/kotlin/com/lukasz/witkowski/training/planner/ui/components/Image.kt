@@ -7,9 +7,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import com.lukasz.witkowski.training.planner.image.ImageReference
-import com.skydoves.landscapist.ImageOptions
-import com.skydoves.landscapist.coil.CoilImage
 import java.io.File
 
 @Composable
@@ -20,16 +20,17 @@ fun Image(
     modifier: Modifier = Modifier
 ) {
     val imgModel = imageReference?.let { File(it.path) } ?: defaultImage
-    CoilImage(
+    AsyncImage(
         modifier = modifier,
-        imageModel = { imgModel },
-        imageOptions = ImageOptions(contentDescription = contentDescriptor, contentScale = ContentScale.Fit),
-        loading = {
-            Box(modifier = Modifier.matchParentSize()) {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
-        }
+        model = imgModel,
+        contentDescription = contentDescriptor,
+        contentScale = ContentScale.Fit,
+//        loading = {
+//            Box(modifier = Modifier.matchParentSize()) {
+//                CircularProgressIndicator(
+//                    modifier = Modifier.align(Alignment.Center)
+//                )
+//            }
+//        }
     )
 }

@@ -54,7 +54,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodelKtx)
     implementation(libs.androidx.activityKtx)
     implementation(libs.timber)
-    implementation(libs.coil)
+    implementation(libs.coil.compose)
     implementation(libs.bytebeats.charts)
 
     implementation(platform(libs.compose.bom))

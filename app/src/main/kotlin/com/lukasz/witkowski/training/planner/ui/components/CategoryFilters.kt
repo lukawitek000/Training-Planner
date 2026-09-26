@@ -20,9 +20,9 @@ import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 
 @Composable
 fun CategoryFilters(
-    modifier: Modifier = Modifier,
     categories: List<FilterCategory>,
-    toggleCategory: (ExerciseCategory) -> Unit
+    toggleCategory: (ExerciseCategory) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     LazyRow(
         modifier = modifier.fillMaxWidth(),

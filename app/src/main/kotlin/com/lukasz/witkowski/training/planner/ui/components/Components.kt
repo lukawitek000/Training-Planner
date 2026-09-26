@@ -81,6 +81,18 @@ fun ImageContainer(
     }
 }
 
+@Composable
+fun FormFieldLabel(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurface,
+        modifier = modifier,
+    )
+}
 
 @Composable
 fun TextField(
@@ -90,7 +102,8 @@ fun TextField(
     label: String,
     imeAction: ImeAction = ImeAction.Default,
     keyboardType: KeyboardType = KeyboardType.Text,
-    maxLines: Int = 1
+    maxLines: Int = 1,
+    minLines: Int = 1,
 ) {
     val keyboardController = LocalFocusManager.current
     val fr = FocusRequester.Default
@@ -105,6 +118,7 @@ fun TextField(
         },
         textStyle = TextStyle(color = MaterialTheme.colorScheme.primary),
         maxLines = maxLines,
+        minLines = minLines,
         keyboardOptions = KeyboardOptions(imeAction = imeAction, keyboardType = keyboardType),
         keyboardActions = KeyboardActions(
             onNext = { fr.requestFocus() },

@@ -8,4 +8,7 @@ object Dimens {
     val normal = 8.dp
     val large = 16.dp
     val xlarge = 32.dp
+
+    val imagePlaceholderSize = 64.dp
+    val border = xsmall
 }

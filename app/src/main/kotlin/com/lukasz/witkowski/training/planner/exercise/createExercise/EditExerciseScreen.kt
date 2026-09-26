@@ -15,12 +15,12 @@ fun EditExerciseScreen(
 ) {
     val successMessage = stringResource(id = R.string.exercise_updated)
     val failMessage = stringResource(id = R.string.exercise_update_failed)
-    CreateExerciseScreen(
-        modifier = modifier,
-        viewModel = viewModel,
-        snackbarState = snackbarState,
-        navigateUp = navigateUp,
-        successMessage = successMessage,
-        failMessage = failMessage
-    )
+//    CreateExerciseScreen(
+//        modifier = modifier,
+//        viewModel = viewModel,
+//        snackbarState = snackbarState,
+//        navigateUp = navigateUp,
+//        successMessage = successMessage,
+//        failMessage = failMessage
+//    )
 }

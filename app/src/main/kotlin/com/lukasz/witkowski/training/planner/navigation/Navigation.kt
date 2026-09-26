@@ -20,6 +20,7 @@ import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerc
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseViewModel
+import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEditorViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingScreen
@@ -68,10 +69,10 @@ fun Navigation(
             }
 
             entry<CreateExercise> {
-                val viewModel: CreateExerciseViewModel = trainingPlannerViewModel()
+                val viewModel: ExerciseEditorViewModel = trainingPlannerViewModel()
                 CreateExerciseScreen(
                     viewModel = viewModel,
-                    snackbarState = snackbarState,
+//                    snackbarState = snackbarState,
                     navigateUp = { backStack.removeLastOrNull() }
                 )
             }
