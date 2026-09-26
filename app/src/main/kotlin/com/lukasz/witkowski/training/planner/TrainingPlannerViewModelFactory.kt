@@ -20,7 +20,7 @@ class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
                 val exerciseContainer = exerciseContainer(extras)
                 ExercisesListViewModel(
                     exerciseContainer.service,
-                    exerciseContainer.categoryController
+                    exerciseContainer.categoryController2
                 )
             }
             CreateExerciseViewModel::class.java -> {

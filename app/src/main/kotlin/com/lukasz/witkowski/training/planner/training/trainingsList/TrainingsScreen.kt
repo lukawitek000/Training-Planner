@@ -54,11 +54,11 @@ fun TrainingsScreen(
         }
     ) {
         Column(modifier = Modifier.padding(it)) {
-            CategoryFilters(
-                categories = viewModel.categoriesWithoutNone,
-                selectedCategories = selectedCategoriesList,
-                selectCategory = { viewModel.selectCategory(it) }
-            )
+//            CategoryFilters(
+//                categories = viewModel.categoriesWithoutNone,
+//                selectedCategories = selectedCategoriesList,
+//                selectCategory = { viewModel.selectCategory(it) }
+//            )
             if (trainings.isNotEmpty()) {
                 TrainingsList(
                     trainings = trainings,
@@ -162,7 +162,6 @@ private fun CategoriesRow(
             CategoryChip(
                 modifier = Modifier.padding(end = 8.dp),
                 category = item,
-                fontSize = 14.sp
             )
         }
     }

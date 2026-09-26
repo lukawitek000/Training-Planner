@@ -9,12 +9,14 @@ import com.lukasz.witkowski.training.planner.exercise.application.ExerciseServic
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.toBitmapImage
 import com.lukasz.witkowski.training.planner.navigation.EditExercise
 import kotlinx.coroutines.launch
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2 as DomainExercise
 
 class EditExerciseViewModel(
     private val exerciseService: ExerciseService,
@@ -22,7 +24,7 @@ class EditExerciseViewModel(
     savedStateHandle: SavedStateHandle
 ) : CreateExerciseViewModel(exerciseService, categoriesCollection, savedStateHandle) {
 
-    private lateinit var initialExercise: Exercise
+    private lateinit var initialExercise: Exercise2
     private val exerciseId = savedStateHandle.toRoute<EditExercise>().exerciseId
 
     init {
@@ -40,17 +42,17 @@ class EditExerciseViewModel(
     }
 
     private fun setExerciseCategory() {
-        val index = allCategories.indexOf(initialExercise.categories.first()) // TODO
-        if (index >= 0) {
-            onCategorySelected(index)
-        }
+//        val index = allCategories.indexOf(initialExercise.categories.first()) // TODO
+//        if (index >= 0) {
+//            onCategorySelected(index)
+//        }
     }
 
-    private suspend fun mapToPresentationExercise(domainExercise: DomainExercise): Exercise {
+    private suspend fun mapToPresentationExercise(domainExercise: DomainExercise): Exercise2 {
         val imageReference = domainExercise.imageId?.let {
             exerciseService.readImageReference(it)
         }
-        return domainExercise.toPresentationExercise(imageReference)
+        return domainExercise.toPresentationExercise2(imageReference)
     }
 
     private suspend fun loadBitmap(imageId: ImageId): Bitmap {

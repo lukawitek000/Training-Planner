@@ -6,6 +6,20 @@ data class Exercise(
     val id: ExerciseId,
     val name: String,
     val description: String,
+    val categories: List<ExerciseCategoryLegacy>,
+    val imageId: ImageId? = null,
+) {
+    init {
+        require(categories.isNotEmpty()) {
+            "Exercise should have at least one category"
+        }
+    }
+}
+
+data class Exercise2(
+    val id: ExerciseId,
+    val name: String,
+    val description: String,
     val categories: List<ExerciseCategory>,
     val imageId: ImageId? = null,
 ) {

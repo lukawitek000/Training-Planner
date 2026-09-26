@@ -9,6 +9,10 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -21,6 +25,7 @@ import androidx.navigation3.runtime.NavBackStack
 import com.lukasz.witkowski.training.planner.navigation.BottomBarItem
 import com.lukasz.witkowski.training.planner.navigation.BottomNavItems
 import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
+import com.lukasz.witkowski.training.planner.navigation.CreateExercise
 import com.lukasz.witkowski.training.planner.navigation.ExercisesList
 import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
@@ -81,13 +86,20 @@ fun TrainingPlannerApp() {
             }
         },
         topBar = {
-            TopBar(title = "", showBackArrow = false) {
+            TopBar(title = backStack.lastOrNull().toString(), showBackArrow = false) {
                 backStack.removeLastOrNull()
             }
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { data ->
                 CustomSnackbar(snackbarData = data)
+            }
+        },
+        floatingActionButton = {
+            if (backStack.lastOrNull() == ExercisesList) {
+                FloatingActionButton(onClick = { backStack.add(CreateExercise) }) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "Create Exercise")
+                }
             }
         }
     ) {

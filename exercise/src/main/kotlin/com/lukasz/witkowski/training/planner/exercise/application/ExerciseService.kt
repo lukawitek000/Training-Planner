@@ -2,7 +2,7 @@ package com.lukasz.witkowski.training.planner.exercise.application
 
 import androidx.paging.PagingData
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
@@ -13,7 +13,6 @@ import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageStorage
 import com.lukasz.witkowski.training.planner.image.toImageConfiguration
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 
 class ExerciseService(
     private val exerciseRepository: ExerciseRepository,
@@ -41,7 +40,7 @@ class ExerciseService(
         imageStorage.deleteImage(imageId, exerciseId.value)
     }
 
-    fun queryExercises(exerciseQuery: ExerciseQuery): Flow<PagingData<Exercise>> =
+    fun queryExercises(exerciseQuery: ExerciseQuery): Flow<PagingData<Exercise2>> =
         exerciseRepository.queryExercises(exerciseQuery)
 
     suspend fun deleteExercise(exercise: Exercise) {
@@ -49,7 +48,7 @@ class ExerciseService(
         exercise.imageId?.let { deleteImage(it, exercise.id) }
     }
 
-    suspend fun getExerciseById(id: ExerciseId): Exercise = exerciseRepository.getById(id)
+    suspend fun getExerciseById(id: ExerciseId): Exercise2 = exerciseRepository.getById(id)
 
     suspend fun updateExercise(
         exerciseId: ExerciseId,

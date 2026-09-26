@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.mappers
 
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategoryLegacy
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -29,7 +29,7 @@ internal fun ExerciseJsonModel.toTrainingExercise(): TrainingExercise =
                 ExerciseId(exerciseId),
                 name,
                 description,
-                listOf(ExerciseCategory.entries[category]),
+                listOf(ExerciseCategoryLegacy.entries[category]),
             ),
         repetitions = repetitions,
         sets = sets,

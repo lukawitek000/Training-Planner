@@ -12,6 +12,7 @@ import androidx.room3.RoomDatabase
 )
 internal abstract class ExerciseDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
+    abstract fun categoryDao(): ExerciseCategoryDao
 
     companion object {
         @Volatile

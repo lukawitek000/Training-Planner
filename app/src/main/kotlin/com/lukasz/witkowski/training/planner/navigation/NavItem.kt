@@ -22,6 +22,13 @@ data object ExercisesList : TrainingPlannerNavKey {
 data object CreateExercise: TrainingPlannerNavKey
 
 @Serializable
+data class ExerciseDetails(
+    @Serializable(with = ExerciseIdSerializer::class)
+    val exerciseId: ExerciseId
+): TrainingPlannerNavKey
+
+
+@Serializable
 data class EditExercise(
     @Serializable(with = ExerciseIdSerializer::class)
     val exerciseId: ExerciseId

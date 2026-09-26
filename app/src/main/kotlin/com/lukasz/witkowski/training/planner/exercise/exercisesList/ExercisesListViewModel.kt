@@ -5,16 +5,16 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
 import androidx.paging.map
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
-import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
+import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController2
+import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toDomainExercise
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.toExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -26,24 +26,32 @@ import kotlin.time.Duration.Companion.milliseconds
 
 class ExercisesListViewModel(
     private val exerciseService: ExerciseService,
-    categoryController: CategoryController
-) : ViewModel(), CategoryController by categoryController {
+    private val categoryController2: CategoryController2,
+) : ViewModel() {
+    private val searchQuery = MutableStateFlow("")
 
-    val searchQuery: StateFlow<String>
-        field = MutableStateFlow("")
-
-    val exercises = combine(
-        searchQuery.debounce(300.milliseconds).distinctUntilChanged(),
-        selectedCategories
-    ) { query, categories ->
-        ExerciseQuery(
-            query = query,
-            categories = categories.map { it.toExerciseCategory() }
+    val filteringState =
+        combine(
+            searchQuery.debounce(300.milliseconds).distinctUntilChanged(),
+            categoryController2.filterCategories
+        ) { query, categories ->
+            FilteringState(
+                searchQuery = query,
+                categories = categories
+            )
+        }.stateIn(
+            viewModelScope,
+            initialValue = FilteringState(
+                searchQuery = searchQuery.value,
+                categories = emptyList()
+            ),
+            started = SharingStarted.WhileSubscribed(5_000L)
         )
-    }.flatMapLatest { exerciseQuery ->
-        exerciseService.queryExercises(exerciseQuery)
+
+    val exercises = filteringState.flatMapLatest { state ->
+        exerciseService.queryExercises(state.toExerciseQuery())
     }.map { pagingData ->
-        pagingData.map { exercise -> exercise.toPresentationExercise(null) }
+        pagingData.map { exercise -> exercise.toPresentationExercise2(null) }
     }.cachedIn(viewModelScope)
 
     fun deleteExercise(exercise: Exercise) {
@@ -52,24 +60,26 @@ class ExercisesListViewModel(
         }
     }
 
-    fun removeExerciseFromView(exercise: Exercise) {
-        viewModelScope.launch {
-//            val allExercises = _exercises.value.toMutableList()
-//            allExercises.remove(exercise)
-//            _exercises.emit(allExercises)
-        }
-    }
-
-    fun undoDeleting(exercise: Exercise) {
-        viewModelScope.launch {
-//            val allExercises = _exercises.value.toMutableSet()
-//            if (allExercises.add(exercise)) {
-//                _exercises.emit(allExercises.toList())
-//            }
-        }
-    }
-
     fun onSearchQueryChange(new: String) {
         searchQuery.value = new
+    }
+
+    fun toggleCategory(category: ExerciseCategory) {
+        categoryController2.toggleCategory(category)
+    }
+}
+
+data class FilteringState(
+    val searchQuery: String,
+    val categories: List<FilterCategory>
+) {
+    val isAnyCategorySelected = categories.any { it.isSelected }
+
+    fun toExerciseQuery(): ExerciseQuery {
+        val selectedCategories = categories.filter { it.isSelected }.map { it.category }
+        return ExerciseQuery(
+            query = searchQuery,
+            categories = selectedCategories
+        )
     }
 }

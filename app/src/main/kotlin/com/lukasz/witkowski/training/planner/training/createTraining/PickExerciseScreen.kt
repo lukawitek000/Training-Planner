@@ -17,10 +17,8 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,10 +32,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreenContent
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.TextField
@@ -50,6 +46,7 @@ fun PickExerciseScreen(
     createTrainingViewModel: CreateTrainingViewModel,
     navigateBack: () -> Unit
 ) {
+    /*
     var openTrainingExerciseConfigurationDialog by remember { mutableStateOf(false) }
     var openExerciseAlreadyAddedDialog by remember { mutableStateOf(false) }
     val pickedTrainingExercise by createTrainingViewModel.pickedExercise.collectAsState()
@@ -102,6 +99,7 @@ fun PickExerciseScreen(
             )
         }
     }
+     */
 
 }
 

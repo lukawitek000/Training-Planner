@@ -61,12 +61,8 @@ fun Navigation(
                 val viewModel: ExercisesListViewModel = trainingPlannerViewModel()
                 ExercisesScreen(
                     viewModel = viewModel,
-                    snackbarState = snackbarState,
-                    navigateToExerciseCreateScreen = {
-                        backStack.add(CreateExercise)
-                    },
-                    navigateToExerciseEditScreen = {
-                        backStack.add(EditExercise(it))
+                    onExerciseClicked = {
+                        backStack.add(ExerciseDetails(it))
                     }
                 )
             }

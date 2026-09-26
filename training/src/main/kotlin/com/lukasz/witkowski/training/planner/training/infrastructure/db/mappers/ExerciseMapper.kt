@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.db.mappers
 
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategoryLegacy
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -45,5 +45,5 @@ private fun toExercise(dbExercise: DbExercise): Exercise =
         ExerciseId(dbExercise.exerciseId),
         dbExercise.name,
         dbExercise.description,
-        listOf(ExerciseCategory.entries[dbExercise.category]),
+        listOf(ExerciseCategoryLegacy.entries[dbExercise.category]),
     )

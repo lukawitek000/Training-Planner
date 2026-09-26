@@ -4,9 +4,9 @@ import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 
 interface ExerciseRepository {
-    suspend fun getById(id: ExerciseId): Exercise
+    suspend fun getById(id: ExerciseId): Exercise2
 
-    fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise>>
+    fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise2>>
 
     /**
      * Returns true when the insertion has finished

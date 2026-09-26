@@ -1,13 +1,13 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation.models
 
 import com.lukasz.witkowski.training.planner.exercise.R
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategoryLegacy
 
 data class Category constructor(
     val id: Int,
     val res: Int = R.string.category_none,
 ) {
-    constructor() : this(id = ExerciseCategory.NONE.ordinal, res = R.string.category_none)
+    constructor() : this(id = ExerciseCategoryLegacy.NONE.ordinal, res = R.string.category_none)
 
-    fun isNone() = id == ExerciseCategory.NONE.ordinal
+    fun isNone() = id == ExerciseCategoryLegacy.NONE.ordinal
 }

@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.image.ImageId
 
@@ -22,8 +22,8 @@ internal fun Exercise.toDbExerciseWithCategories(): DbExerciseWithCategories {
 
 
 
-internal fun DbExerciseWithCategories.toExercise(): Exercise =
-    Exercise(
+internal fun DbExerciseWithCategories.toExercise(): Exercise2 =
+    Exercise2(
         id = ExerciseId(exercise.exerciseId),
         name = exercise.name,
         description = exercise.description,
