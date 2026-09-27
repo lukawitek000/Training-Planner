@@ -29,7 +29,7 @@ class DefaultCategoryController2(
                     category = it,
                     isSelected = selected.contains(it)
                 )
-            }
+            }.sortedByDescending { it.isSelected }
         }
 
     override fun toggleCategory(category: ExerciseCategory) {

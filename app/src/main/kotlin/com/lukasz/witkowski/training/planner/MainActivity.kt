@@ -86,7 +86,7 @@ fun TrainingPlannerApp() {
             }
         },
         topBar = {
-            TopBar(title = backStack.lastOrNull().toString(), showBackArrow = false) {
+            TopBar(title = backStack.lastOrNull().toString(), showBackArrow = backStack.size > 1) {
                 backStack.removeLastOrNull()
             }
         },

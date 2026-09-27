@@ -337,7 +337,7 @@ fun SetTrainingExerciseRestTimeDialog(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = stringResource(id = R.string.rest_time_title),
+                text = stringResource(id = R.string.rest_time),
                 fontSize = 32.sp,
                 color = MaterialTheme.colorScheme.primary
             )

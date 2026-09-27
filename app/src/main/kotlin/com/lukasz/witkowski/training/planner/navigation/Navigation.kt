@@ -72,8 +72,6 @@ fun Navigation(
                 val viewModel: ExerciseEditorViewModel = trainingPlannerViewModel()
                 CreateExerciseScreen(
                     viewModel = viewModel,
-//                    snackbarState = snackbarState,
-                    navigateUp = { backStack.removeLastOrNull() }
                 )
             }
             entry<EditExercise> {

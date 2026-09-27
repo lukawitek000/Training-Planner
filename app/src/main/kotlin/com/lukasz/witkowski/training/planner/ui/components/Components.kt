@@ -12,8 +12,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -107,7 +107,7 @@ fun TextField(
 ) {
     val keyboardController = LocalFocusManager.current
     val fr = FocusRequester.Default
-    TextField(
+    OutlinedTextField(
         value = text,
         onValueChange = onTextChange,
         modifier = modifier
