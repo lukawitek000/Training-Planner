@@ -8,6 +8,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEditorViewModel
+import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.training.trainingOverview.TrainingOverviewViewModel
@@ -30,6 +31,14 @@ class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
                 ExerciseEditorViewModel(
                     exerciseContainer.service,
                     exerciseContainer.categoryController2,
+                    savedStateHandle
+                )
+            }
+            ExerciseDetailsViewModel::class.java -> {
+                val exerciseContainer = exerciseContainer(extras)
+                val savedStateHandle = extras.createSavedStateHandle()
+                ExerciseDetailsViewModel(
+                    exerciseContainer.service,
                     savedStateHandle
                 )
             }

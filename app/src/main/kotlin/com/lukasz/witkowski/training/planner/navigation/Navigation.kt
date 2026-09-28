@@ -21,6 +21,8 @@ import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerc
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEditorViewModel
+import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsScreen
+import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingScreen
@@ -72,6 +74,13 @@ fun Navigation(
                 val viewModel: ExerciseEditorViewModel = trainingPlannerViewModel()
                 CreateExerciseScreen(
                     viewModel = viewModel,
+                )
+            }
+
+            entry<ExerciseDetails> {
+                val viewModel: ExerciseDetailsViewModel = trainingPlannerViewModel()
+                ExerciseDetailsScreen(
+                    viewModel = viewModel
                 )
             }
             entry<EditExercise> {

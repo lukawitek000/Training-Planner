@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -43,7 +45,29 @@ import com.lukasz.witkowski.training.planner.ui.components.FormFieldLabel
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.theme.Dimens
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+
+@Composable
+fun RecommendedParametersOverview(
+    recommendations: List<Recommendation>,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(Dimens.normal)
+    ) {
+        recommendations.forEach {
+            RecommendedParametersCard(
+                recommendation = it,
+                extendedCardContent = {
+                    RecommendedParametersExtendedSummary(it.parameters)
+                }
+            )
+        }
+    }
+}
+
 
 @Composable
 fun RecommendedParametersForm(
@@ -64,7 +88,12 @@ fun RecommendedParametersForm(
         recommendations.forEach {
             RecommendedParametersCard(
                 recommendation = it,
-                onRecommendationChange = onRecommendationChange
+                extendedCardContent = {
+                    RecommendedParametersInputFields(
+                        it,
+                        onRecommendationChange
+                    )
+                }
             )
         }
 
@@ -74,7 +103,7 @@ fun RecommendedParametersForm(
 @Composable
 private fun RecommendedParametersCard(
     recommendation: Recommendation,
-    onRecommendationChange: (ExerciseEditingEvent) -> Unit,
+    extendedCardContent: @Composable () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
@@ -91,61 +120,70 @@ private fun RecommendedParametersCard(
             AnimatedVisibility(
                 visible = isExpanded
             ) {
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.normal),
-                ) {
-                    val params = recommendation.parameters
-                    val level = recommendation.level
-                    buildAnnotatedString {
-                        append(stringResource(R.string.sets))
-                        append(" *")
-                    }
-                    ParameterInputField(
-                        value = params.sets,
-                        onValueChange = {
-                            onRecommendationChange(
-                                ExerciseEditingEvent.RecommendedSetsChanged(it, level)
-                            )
-                        },
-                        label = buildRequiredString(stringResource(R.string.sets)),
-                        modifier = Modifier.weight(1f)
-                    )
-                    ParameterInputField(
-                        value = params.reps,
-                        onValueChange = {
-                            onRecommendationChange(
-                                ExerciseEditingEvent.RecommendedRepsChanged(it, level)
-                            )
-                        },
-                        label = buildRequiredString(stringResource(R.string.reps)),
-                        modifier = Modifier.weight(1f)
-                    )
-                    ParameterInputField(
-                        value = params.restTime?.inWholeSeconds?.toInt(),
-                        onValueChange = {
-                            onRecommendationChange(
-                                ExerciseEditingEvent.RecommendedRestTimeChanged(it.seconds, level)
-                            )
-                        },
-                        label = buildRequiredString(stringResource(R.string.rest_time)),
-                        unit = stringResource(R.string.second_abbrv),
-                        modifier = Modifier.weight(1f)
-                    )
-                    ParameterInputField(
-                        value = params.weightInKg,
-                        onValueChange = {
-                            onRecommendationChange(
-                                ExerciseEditingEvent.RecommendedWeightChanged(it, level)
-                            )
-                        },
-                        label = stringResource(R.string.weight),
-                        unit = stringResource(R.string.kg),
-                        modifier = Modifier.weight(1f)
-                    )
-                }
+                extendedCardContent()
             }
         }
+    }
+}
+
+@Composable
+private fun RecommendedParametersInputFields(
+    recommendation: Recommendation,
+    onRecommendationChange: (ExerciseEditingEvent) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.normal),
+    ) {
+        val params = recommendation.parameters
+        val level = recommendation.level
+        buildAnnotatedString {
+            append(stringResource(R.string.sets))
+            append(" *")
+        }
+        ParameterInputField(
+            value = params.sets,
+            onValueChange = {
+                onRecommendationChange(
+                    ExerciseEditingEvent.RecommendedSetsChanged(it, level)
+                )
+            },
+            label = buildRequiredString(stringResource(R.string.sets)),
+            modifier = Modifier.weight(1f)
+        )
+        ParameterInputField(
+            value = params.reps,
+            onValueChange = {
+                onRecommendationChange(
+                    ExerciseEditingEvent.RecommendedRepsChanged(it, level)
+                )
+            },
+            label = buildRequiredString(stringResource(R.string.reps)),
+            modifier = Modifier.weight(1f)
+        )
+        ParameterInputField(
+            value = params.restTime?.inWholeSeconds?.toInt(),
+            onValueChange = {
+                onRecommendationChange(
+                    ExerciseEditingEvent.RecommendedRestTimeChanged(it.seconds, level)
+                )
+            },
+            label = buildRequiredString(stringResource(R.string.rest_time)),
+            unit = stringResource(R.string.second_abbrv),
+            modifier = Modifier.weight(1f)
+        )
+        ParameterInputField(
+            value = params.weightInKg,
+            onValueChange = {
+                onRecommendationChange(
+                    ExerciseEditingEvent.RecommendedWeightChanged(it, level)
+                )
+            },
+            label = stringResource(R.string.weight),
+            unit = stringResource(R.string.kg),
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 
@@ -256,7 +294,55 @@ private fun ParameterInputField(
             suffix = { Text(unit) }
         )
     }
+}
 
+@Composable
+private fun RecommendedParametersExtendedSummary(
+    params: RecommendedParameters,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        ParameterOverview(
+            value = params.sets,
+            label = "Sets:"
+        )
+        ParameterOverview(
+            value = params.reps,
+            label = "Reps:"
+        )
+        ParameterOverview(
+            value = params.restTime?.inWholeSeconds?.toInt(),
+            label = "Rest time:",
+            unit = stringResource(R.string.second_abbrv)
+        )
+        ParameterOverview(
+            value = params.weightInKg,
+            label = "Weight:",
+            unit = stringResource(R.string.kg)
+        )
+
+    }
+}
+
+@Composable
+private fun ParameterOverview(
+    value: Int?,
+    label: String,
+    modifier: Modifier = Modifier,
+    unit: String = "",
+) {
+    if (value == null) return
+    Row(
+        modifier,
+    ) {
+        Text(text = label)
+        Spacer(Modifier.width(Dimens.small))
+        Text(text = value.toString())
+        Text(text = unit)
+    }
 }
 
 @Preview
@@ -270,10 +356,28 @@ private fun RecommendedParametersFormPreview() {
     }
 }
 
+@Preview
+@Composable
+private fun RecommendedParametersOverviewPreview() {
+    TrainingPlannerTheme {
+        RecommendedParametersOverview(
+            recommendations = PREVIEW_RECOMMENDED_PARAMETERS,
+            modifier = Modifier,
+        )
+    }
+}
+
 val PREVIEW_RECOMMENDED_PARAMETERS = listOf(
-    Recommendation(RecommendationLevel.BEGINNER, parameters = RecommendedParameters()),
+    Recommendation(RecommendationLevel.BEGINNER, parameters = RecommendedParameters(
+        sets = 3,
+        reps = 10,
+        restTime = 3.minutes
+    )),
     Recommendation(
         RecommendationLevel.INTERMEDIATE, parameters = RecommendedParameters(
+            sets = 3,
+            reps = 10,
+            restTime = 1.minutes,
             weightInKg = 30
         )
     ),

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.lukasz.witkowski.training.planner.R
@@ -42,6 +44,25 @@ fun ImageInputForm(
     previewImage: ImageBitmap?,
     modifier: Modifier = Modifier,
 ) {
+    Column(modifier = modifier) {
+        ImagePlaceholder(previewImage = previewImage)
+        if (images.isEmpty()) return
+        ImageSelectionPanel(
+            images = images,
+            previewImage = previewImage,
+            addImageItem = { addImageCardItem(it) },
+            modifier = Modifier.padding(top = Dimens.normal)
+        )
+    }
+}
+
+@Composable
+fun ImagesPreview(
+    images: List<ImageBitmap>,
+    previewImage: ImageBitmap?,
+    modifier: Modifier = Modifier,
+) {
+    if (images.isEmpty() && previewImage == null) return
     Column(modifier = modifier) {
         ImagePlaceholder(previewImage = previewImage)
         if (images.isEmpty()) return
@@ -111,6 +132,7 @@ private fun ImageSelectionPanel(
     images: List<ImageBitmap>,
     previewImage: ImageBitmap?,
     modifier: Modifier = Modifier,
+    addImageItem: (LazyListScope.(Dp) -> Unit)? = null,
 ) {
     val itemSize = 64.dp
     LazyRow(
@@ -135,18 +157,27 @@ private fun ImageSelectionPanel(
                 )
             }
         }
-        item {
-            Card(
-                modifier = Modifier.size(itemSize),
-                border = BorderStroke(width = Dimens.border, color = MaterialTheme.colorScheme.onSurface)
+        addImageItem?.invoke(this, itemSize)
+    }
+}
+
+private fun LazyListScope.addImageCardItem(itemSize: Dp) {
+    item {
+        Card(
+            modifier = Modifier.size(itemSize),
+            border = BorderStroke(
+                width = Dimens.border,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(Dimens.normal),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize().padding(Dimens.normal),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
-                    Text(stringResource(R.string.add))
-                }
+                Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                Text(stringResource(R.string.add))
             }
         }
     }
