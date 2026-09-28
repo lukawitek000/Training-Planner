@@ -18,7 +18,7 @@
     <string name="recommended_parameters_description">Suggested sets, reps, rest time and weight for different experience level. These are default recommendations.</string>
     <string name="not_set">Not set</string>
     <string name="recommendation_overview">%1$d x %2$d &#183; %3$d s &#183; %4$d kg</string>
-    <string name="recommendation_no_weight">%1$d x %2$d &#183; %3$d</string>
+    <string name="recommendation_no_weight">%1$d x %2$d &#183; %3$d s</string>
 
     <!-- Common -->
     <string name="reps">Reps</string>
