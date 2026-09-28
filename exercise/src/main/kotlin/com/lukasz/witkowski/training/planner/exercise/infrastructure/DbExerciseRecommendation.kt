@@ -1,8 +1,24 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
 import androidx.room3.Entity
+import androidx.room3.ForeignKey
+import androidx.room3.Index
 
-@Entity("exercise_recommendation", primaryKeys = ["exerciseId", "level"])
+@Entity(
+    tableName = "exercise_recommendation",
+    primaryKeys = ["exerciseId", "level"],
+    foreignKeys = [
+        ForeignKey(
+            entity = DbExercise::class,
+            parentColumns = ["exerciseId"],
+            childColumns = ["exerciseId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [
+        Index("exerciseId")
+    ]
+)
 class DbExerciseRecommendation(
     val exerciseId: String,
     val level: RecommendationLevel,
