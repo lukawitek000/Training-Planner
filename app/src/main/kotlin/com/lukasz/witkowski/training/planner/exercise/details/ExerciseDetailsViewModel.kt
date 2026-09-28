@@ -1,22 +1,19 @@
 package com.lukasz.witkowski.training.planner.exercise.details
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
-import com.lukasz.witkowski.training.planner.navigation.ExerciseDetails
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ExerciseDetailsViewModel(
     private val service: ExerciseService,
-    savedStateHandle: SavedStateHandle,
+    private val exerciseId: ExerciseId,
 ): ViewModel() {
-    private val exerciseId = savedStateHandle.toRoute<ExerciseDetails>().exerciseId
     val state : StateFlow<ExerciseDetailsState>
         field = MutableStateFlow<ExerciseDetailsState>(ExerciseDetailsState.Loading)
 

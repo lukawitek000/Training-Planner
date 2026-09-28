@@ -9,13 +9,16 @@ import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerc
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEditorViewModel
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsViewModel
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.training.trainingOverview.TrainingOverviewViewModel
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
 
-class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
+class TrainingPlannerViewModelFactory(
+    private val exerciseId: ExerciseId? = null
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         return when (modelClass) {
             ExercisesListViewModel::class.java -> {
@@ -36,10 +39,10 @@ class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
             }
             ExerciseDetailsViewModel::class.java -> {
                 val exerciseContainer = exerciseContainer(extras)
-                val savedStateHandle = extras.createSavedStateHandle()
+                val id = checkNotNull(exerciseId) { "exerciseId must be provided to create ExerciseDetailsViewModel" }
                 ExerciseDetailsViewModel(
                     exerciseContainer.service,
-                    savedStateHandle
+                    id
                 )
             }
             CreateExerciseViewModel::class.java -> {

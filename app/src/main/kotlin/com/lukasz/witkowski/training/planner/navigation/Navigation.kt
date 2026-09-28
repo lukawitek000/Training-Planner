@@ -5,6 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -77,8 +78,10 @@ fun Navigation(
                 )
             }
 
-            entry<ExerciseDetails> {
-                val viewModel: ExerciseDetailsViewModel = trainingPlannerViewModel()
+            entry<ExerciseDetails> { key ->
+                val viewModel: ExerciseDetailsViewModel = trainingPlannerViewModel(
+                    factory = remember(key) { TrainingPlannerViewModelFactory(exerciseId = key.exerciseId) }
+                )
                 ExerciseDetailsScreen(
                     viewModel = viewModel
                 )
@@ -144,13 +147,13 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.trainingGraph(
 
 @Composable
 private inline fun <reified VM : ViewModel> trainingPlannerViewModel(
+    factory: ViewModelProvider.Factory = remember { TrainingPlannerViewModelFactory() },
     viewModelStoreOwner: ViewModelStoreOwner = checkNotNull(
         LocalViewModelStoreOwner.current
     ) {
         "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
     }
 ): VM {
-    val factory = remember { TrainingPlannerViewModelFactory() }
     return viewModel(viewModelStoreOwner, factory = factory)
 }
 
