@@ -18,9 +18,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.lukasz.witkowski.training.planner.SnackbarState
 import com.lukasz.witkowski.training.planner.TrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
-import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
-import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEditorViewModel
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsScreen
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsViewModel
@@ -75,6 +73,10 @@ fun Navigation(
                 val viewModel: ExerciseEditorViewModel = trainingPlannerViewModel()
                 CreateExerciseScreen(
                     viewModel = viewModel,
+                    navigateToDetails = {
+                        backStack.removeLastOrNull()
+                        backStack.add(ExerciseDetails(it))
+                    }
                 )
             }
 
@@ -87,9 +89,7 @@ fun Navigation(
                 )
             }
             entry<EditExercise> {
-                val viewModel: EditExerciseViewModel = trainingPlannerViewModel()
                 EditExerciseScreen(
-                    viewModel = viewModel,
                     snackbarState = snackbarState,
                     navigateUp = { backStack.removeLastOrNull() }
                 )

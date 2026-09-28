@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExerciseDetails
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -20,7 +20,7 @@ class ExerciseDetailsViewModel(
     init {
         viewModelScope.launch {
             try {
-                val exercise = service.getExerciseById(exerciseId).toPresentationExercise2(null)
+                val exercise = service.getExerciseDetailsById(exerciseId).toPresentationExerciseDetails()
                 state.value = ExerciseDetailsState.Success(exercise)
             } catch (e: RuntimeException) {
                 state.value = ExerciseDetailsState.Failure(e.message ?: "Unknown failure")
@@ -31,6 +31,6 @@ class ExerciseDetailsViewModel(
 
 sealed interface ExerciseDetailsState {
     data object Loading: ExerciseDetailsState
-    data class Success(val exercise: Exercise2): ExerciseDetailsState
+    data class Success(val details: ExerciseDetails): ExerciseDetailsState
     data class Failure(val message: String): ExerciseDetailsState
 }

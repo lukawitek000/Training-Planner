@@ -50,27 +50,33 @@ internal interface ExerciseDao {
         categoriesNames: List<String>,
     ): PagingSource<Int, DbExerciseWithCategories>
 
+    @Transaction
     @Query("SELECT * FROM Exercise WHERE :id == exerciseId")
-    suspend fun getById(id: String): DbExerciseWithCategories
+    suspend fun getExerciseDetailsById(id: String): DbExerciseDetails
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(dbExercise: DbExercise): Long
 
     @Transaction
-    suspend fun insertExerciseWithCategories(exerciseWithCategories: DbExerciseWithCategories): Boolean {
-        val exRow = insert(exerciseWithCategories.exercise)
+    suspend fun insertExerciseDetails(details: DbExerciseDetails): Boolean {
+        val exRow = insert(details.exercise)
         if (exRow == -1L) return false
-        exerciseWithCategories.categories.forEach {
+        details.categories.forEach {
             insert(it)
         }
-        val crossRefs = exerciseWithCategories.categories.map {
-            ExerciseCategoryCrossRef(exerciseWithCategories.exercise.exerciseId, it.categoryName)
+        val crossRefs = details.categories.map {
+            ExerciseCategoryCrossRef(details.exercise.exerciseId, it.categoryName)
         }
         val insertedRowIds = insertExerciseCategoryCrossRefs(crossRefs)
-        return insertedRowIds.all {
+        if (insertedRowIds.any { it == -1L }) return false
+        val insertedRecRowIds = insert(details.recommendations)
+        return insertedRecRowIds.all {
             it != -1L
         }
     }
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(recommendations: List<DbExerciseRecommendation>): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(category: DbExerciseCategory)

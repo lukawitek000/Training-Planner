@@ -14,9 +14,6 @@
     <string name="loading_exercise_details">Loading exercise details.</string>
     <string name="failed_load_exercise_details">Failed to load exercise details</string>
     <!-- Recommendations -->
-    <string name="beginner">Beginner</string>
-    <string name="intermediate">Intermediate</string>
-    <string name="advanced">Advance</string>
     <string name="recommended_parameters">Recommended parameters *</string>
     <string name="recommended_parameters_description">Suggested sets, reps, rest time and weight for different experience level. These are default recommendations.</string>
     <string name="not_set">Not set</string>

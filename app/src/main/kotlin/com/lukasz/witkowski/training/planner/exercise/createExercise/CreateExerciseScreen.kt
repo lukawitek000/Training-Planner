@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.createExercise
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,17 +13,21 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.ui.components.CategoryFilters
 import com.lukasz.witkowski.training.planner.ui.components.FormFieldLabel
+import com.lukasz.witkowski.training.planner.ui.components.OverlayLoading
 import com.lukasz.witkowski.training.planner.ui.components.PREVIEW_CATEGORIES
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.theme.Dimens
@@ -32,17 +37,56 @@ import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 fun CreateExerciseScreen(
     modifier: Modifier = Modifier,
     viewModel: ExerciseEditorViewModel,
+    navigateToDetails: (ExerciseId) -> Unit
 ) {
-    val state by viewModel.editingState.collectAsState()
+    val state by viewModel.uiState.collectAsState()
     CreateExerciseScreenContent(
         modifier = modifier.fillMaxSize(),
-        state = state,
-        onUserInputChange = viewModel::onEvent
+        uiState = state,
+        onUserInputChange = viewModel::onEvent,
+        onExerciseSaved = navigateToDetails
     )
 }
 
 @Composable
 private fun CreateExerciseScreenContent(
+    uiState: ExerciseEditingUiState,
+    onUserInputChange: (ExerciseEditingEvent) -> Unit,
+    onExerciseSaved: (ExerciseId) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val context = LocalContext.current
+    when (uiState) {
+        is ExerciseEditingUiState.Saving -> OverlayLoading(Modifier.fillMaxSize()) {
+            ExerciseForm(
+                state = uiState.exerciseEditingState,
+                modifier = modifier,
+                onUserInputChange = onUserInputChange
+            )
+        }
+        is ExerciseEditingUiState.Editing -> ExerciseForm(
+            state = uiState.exerciseEditingState,
+            modifier = modifier,
+            onUserInputChange = onUserInputChange
+        )
+        is ExerciseEditingUiState.Failure -> {
+            LaunchedEffect(uiState) {
+                Toast.makeText(context, "Failed exercise save: ${uiState.message}", Toast.LENGTH_SHORT).show()
+            }
+            ExerciseForm(
+                state = uiState.exerciseEditingState,
+                modifier = modifier,
+                onUserInputChange = onUserInputChange
+            )
+        }
+        is ExerciseEditingUiState.Saved -> LaunchedEffect(uiState) {
+            onExerciseSaved(uiState.exerciseId)
+        }
+    }
+}
+
+@Composable
+private fun ExerciseForm(
     state: ExerciseEditingState,
     onUserInputChange: (ExerciseEditingEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -142,8 +186,28 @@ fun CreateExerciseScreenPreview() {
         )
         CreateExerciseScreenContent(
             modifier = Modifier.fillMaxSize(),
-            state = state,
-            onUserInputChange = {}
+            uiState = ExerciseEditingUiState.Editing(state),
+            onUserInputChange = {},
+            onExerciseSaved = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CreateExerciseScreenSavingPreview() {
+    TrainingPlannerTheme {
+        val bitmaps = remember { createPreviewBitmaps() }
+        val state = ExerciseEditingState(
+            images = bitmaps,
+            previewImage = bitmaps.first(),
+            categories = PREVIEW_CATEGORIES
+        )
+        CreateExerciseScreenContent(
+            modifier = Modifier.fillMaxSize(),
+            uiState = ExerciseEditingUiState.Saving(state),
+            onUserInputChange = {},
+            onExerciseSaved = {}
         )
     }
 }

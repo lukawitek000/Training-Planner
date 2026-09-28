@@ -7,6 +7,7 @@ import androidx.paging.PagingSource
 import androidx.paging.map
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
@@ -21,10 +22,10 @@ internal class DbExerciseRepository(
     private val exerciseDao: ExerciseDao,
     private val ioDispatcher: CoroutineContext = Dispatchers.IO,
 ) : ExerciseRepository {
-    override suspend fun getById(id: ExerciseId): Exercise2 =
+    override suspend fun getExerciseDetailsById(id: ExerciseId): ExerciseDetails =
         withContext(ioDispatcher) {
-            val dbExercise = exerciseDao.getById(id.toString())
-            dbExercise.toExercise()
+            val dbExerciseDetails = exerciseDao.getExerciseDetailsById(id.toString())
+            dbExerciseDetails.toExerciseDetails()
         }
 
     override fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise2>> {
@@ -55,10 +56,10 @@ internal class DbExerciseRepository(
         }
     }
 
-    override suspend fun insert(exercise: Exercise): Boolean =
+    override suspend fun insert(exercise: ExerciseDetails): Boolean =
         withContext(ioDispatcher) {
-            val exerciseWithCategories = exercise.toDbExerciseWithCategories()
-            exerciseDao.insertExerciseWithCategories(exerciseWithCategories)
+            val dbExerciseDetails = exercise.toDbExerciseDetails()
+            exerciseDao.insertExerciseDetails(dbExerciseDetails)
         }
 
     override suspend fun delete(exercise: Exercise) =

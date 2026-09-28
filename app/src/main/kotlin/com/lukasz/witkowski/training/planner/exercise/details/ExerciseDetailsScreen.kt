@@ -15,10 +15,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.createExercise.ImagesPreview
+import com.lukasz.witkowski.training.planner.exercise.createExercise.PREVIEW_RECOMMENDED_PARAMETERS
 import com.lukasz.witkowski.training.planner.exercise.createExercise.RecommendedParametersOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChips
 import com.lukasz.witkowski.training.planner.ui.components.FailureScreen
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
@@ -49,6 +51,7 @@ private fun ExerciseDetailsScreenContent(
                 message = stringResource(R.string.loading_exercise_details)
             )
         }
+
         is ExerciseDetailsState.Failure -> {
             FailureScreen(
                 modifier = modifier,
@@ -56,9 +59,10 @@ private fun ExerciseDetailsScreenContent(
                 message = state.message
             )
         }
+
         is ExerciseDetailsState.Success -> {
             ExerciseDetails(
-                exercise = state.exercise,
+                details = state.details,
                 modifier = modifier
             )
         }
@@ -68,9 +72,10 @@ private fun ExerciseDetailsScreenContent(
 
 @Composable
 private fun ExerciseDetails(
-    exercise: Exercise2,
+    details: ExerciseDetails,
     modifier: Modifier = Modifier
 ) {
+    val exercise = details.exercise
     Column(
         modifier.padding(Dimens.normal),
         verticalArrangement = Arrangement.spacedBy(Dimens.large)
@@ -93,7 +98,7 @@ private fun ExerciseDetails(
             Text(text = exercise.description)
         }
         RecommendedParametersOverview(
-            recommendations = emptyList()
+            recommendations = details.recommendations
         )
     }
 }
@@ -105,12 +110,18 @@ private fun ExerciseDetailsScreenContentPreview() {
         Surface {
             ExerciseDetailsScreenContent(
                 state = ExerciseDetailsState.Success(
-                    exercise = Exercise2(
-                        id = ExerciseId.create(),
-                        name = "Push ups",
-                        description = "Some long description in here",
-                        categories = listOf(ExerciseCategory("Chest"), ExerciseCategory("Shoulder"))
-                    )
+                    details = ExerciseDetails(
+                        exercise = Exercise2(
+                            id = ExerciseId.create(),
+                            name = "Push ups",
+                            description = "Some long description in here",
+                            categories = listOf(
+                                ExerciseCategory("Chest"),
+                                ExerciseCategory("Shoulder")
+                            )
+                        ),
+                        recommendations = PREVIEW_RECOMMENDED_PARAMETERS
+                    ),
                 ),
                 modifier = Modifier.fillMaxSize()
             )

@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.exercise.application
 import androidx.paging.PagingData
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
@@ -12,17 +13,21 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageStorage
 import com.lukasz.witkowski.training.planner.image.toImageConfiguration
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlin.time.Duration.Companion.seconds
 
 class ExerciseService(
     private val exerciseRepository: ExerciseRepository,
     private val imageStorage: ImageStorage,
 ) {
-    suspend fun saveExercise(exerciseConfiguration: ExerciseConfiguration) {
+    suspend fun saveExercise(exerciseConfiguration: ExerciseConfiguration): ExerciseId {
         val exerciseId = ExerciseId.create()
         val imageReference = exerciseConfiguration.image?.let { saveImage(it, exerciseId) }
-        val exercise = ExerciseFactory.create(exerciseConfiguration, imageReference?.imageId, exerciseId)
-        exerciseRepository.insert(exercise)
+        val exerciseDetails = ExerciseFactory.create(exerciseConfiguration, imageReference?.imageId, exerciseId)
+        delay(5.seconds) // TODo remove this delay as it is for testing only
+        exerciseRepository.insert(exerciseDetails)
+        return exerciseId
     }
 
     private suspend fun saveImage(
@@ -48,18 +53,18 @@ class ExerciseService(
         exercise.imageId?.let { deleteImage(it, exercise.id) }
     }
 
-    suspend fun getExerciseById(id: ExerciseId): Exercise2 = exerciseRepository.getById(id)
+    suspend fun getExerciseDetailsById(id: ExerciseId): ExerciseDetails = exerciseRepository.getExerciseDetailsById(id)
 
-    suspend fun updateExercise(
-        exerciseId: ExerciseId,
-        exerciseConfiguration: ExerciseConfiguration,
-        previousImage: Image?,
-    ): Boolean {
-        val updatedImage =
-            updateImage(exerciseConfiguration.image, previousImage?.imageId, exerciseId)
-        val exercise = ExerciseFactory.create(exerciseConfiguration, updatedImage?.imageId, exerciseId)
-        return exerciseRepository.updateExercise(exercise)
-    }
+//    suspend fun updateExercise(
+//        exerciseId: ExerciseId,
+//        exerciseConfiguration: ExerciseConfiguration,
+//        previousImage: Image?,
+//    ): Boolean {
+//        val updatedImage =
+//            updateImage(exerciseConfiguration.image, previousImage?.imageId, exerciseId)
+//        val exercise = ExerciseFactory.create(exerciseConfiguration, updatedImage?.imageId, exerciseId)
+//        return exerciseRepository.updateExercise(exercise)
+//    }
 
     private suspend fun updateImage(
         imageByteArray: ImageByteArray?,

@@ -33,6 +33,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
@@ -41,6 +42,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recommendation
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
 import com.lukasz.witkowski.training.planner.ui.components.FormFieldLabel
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.theme.Dimens
@@ -212,7 +216,7 @@ private fun RecommendedParametersCardHeader(
             Box(
                 modifier = Modifier
                     .size(Dimens.normal)
-                    .background(recommendation.level.color, shape = CircleShape)
+                    .background(recommendation.level.toColor(), shape = CircleShape)
             )
         }
         Text(
@@ -234,6 +238,14 @@ private fun RecommendedParametersCardHeader(
     }
 }
 
+private fun RecommendationLevel.toColor(): Color =
+    when (this) {
+        RecommendationLevel.BEGINNER -> Color.Green
+        RecommendationLevel.INTERMEDIATE -> Color.Yellow
+        RecommendationLevel.ADVANCED -> Color.Red
+    }
+
+
 @Composable
 private fun buildStringOverview(recommendation: Recommendation): String =
     recommendation.parameters.let {
@@ -246,7 +258,7 @@ private fun buildStringOverview(recommendation: Recommendation): String =
                     it.sets!!,
                     it.reps!!,
                     it.restTime!!.inWholeSeconds,
-                    it.weightInKg
+                    it.weightInKg!!
                 )
             } else {
                 stringResource(
@@ -368,11 +380,13 @@ private fun RecommendedParametersOverviewPreview() {
 }
 
 val PREVIEW_RECOMMENDED_PARAMETERS = listOf(
-    Recommendation(RecommendationLevel.BEGINNER, parameters = RecommendedParameters(
-        sets = 3,
-        reps = 10,
-        restTime = 3.minutes
-    )),
+    Recommendation(
+        RecommendationLevel.BEGINNER, parameters = RecommendedParameters(
+            sets = 3,
+            reps = 10,
+            restTime = 3.minutes
+        )
+    ),
     Recommendation(
         RecommendationLevel.INTERMEDIATE, parameters = RecommendedParameters(
             sets = 3,
