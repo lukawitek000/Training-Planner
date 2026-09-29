@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.ui.components.OverlayContent
 import com.lukasz.witkowski.training.planner.ui.components.OverlayLoading
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import kotlinx.coroutines.flow.collectLatest

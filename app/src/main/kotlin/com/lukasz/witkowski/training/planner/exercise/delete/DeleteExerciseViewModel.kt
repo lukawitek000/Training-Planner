@@ -9,10 +9,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import kotlin.time.Duration.Companion.seconds
 
 class DeleteExerciseViewModel(
@@ -21,8 +24,9 @@ class DeleteExerciseViewModel(
 ): ViewModel() {
 
     val state = service.getExerciseDetailsById(exerciseId).map {
-        delay(5.seconds)
         DeleteExerciseUiState.LoadedExercise(it.exercise.name)
+    }.catch {
+        Timber.w("Failed to load exercise details by id: ${it.message}")
     }.stateIn(
         viewModelScope,
         started = SharingStarted.Eagerly,

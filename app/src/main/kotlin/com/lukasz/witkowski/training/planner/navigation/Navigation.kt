@@ -14,6 +14,7 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import com.lukasz.witkowski.training.planner.TrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
@@ -41,6 +42,9 @@ fun Navigation(
     navigator: TrainingPlannerNavigator,
     modifier: Modifier = Modifier,
 ) {
+    val dialogStrategy = remember {
+        DialogSceneStrategy<TrainingPlannerNavKey>()
+    }
     NavDisplay(
         modifier = modifier,
         backStack = navigator.backStack,
@@ -49,6 +53,7 @@ fun Navigation(
             rememberViewModelStoreNavEntryDecorator(),
             rememberLoggingNavDecorator(),
         ),
+        sceneStrategies = listOf(dialogStrategy),
         entryProvider = entryProvider {
             val trainingsListViewModel: TrainingsListViewModel = trainingPlannerViewModel()
             entry<TrainingPlansList> {
@@ -100,7 +105,9 @@ fun Navigation(
                 )
             }
 
-            entry<DeleteExercise> { key ->
+            entry<DeleteExercise>(
+                metadata = DialogSceneStrategy.dialog()
+            ) { key ->
                 val viewModel: DeleteExerciseViewModel = trainingPlannerViewModel(
                     factory = remember(key) { TrainingPlannerViewModelFactory(exerciseId = key.exerciseId) },
                 )
