@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.application
 
 import androidx.paging.PagingData
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
@@ -13,9 +12,7 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageStorage
 import com.lukasz.witkowski.training.planner.image.toImageConfiguration
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlin.time.Duration.Companion.seconds
 
 class ExerciseService(
     private val exerciseRepository: ExerciseRepository,
@@ -32,7 +29,7 @@ class ExerciseService(
 
     suspend fun updateExercise(
         exerciseConfiguration: ExerciseConfiguration,
-        exerciseId: ExerciseId
+        exerciseId: ExerciseId,
     ): ExerciseId {
         val imageReference = exerciseConfiguration.image?.let { saveImage(it, exerciseId) }
         val exerciseDetails =
@@ -56,15 +53,13 @@ class ExerciseService(
         imageStorage.deleteImage(imageId, exerciseId.value)
     }
 
-    fun queryExercises(exerciseQuery: ExerciseQuery): Flow<PagingData<Exercise2>> =
-        exerciseRepository.queryExercises(exerciseQuery)
+    fun queryExercises(exerciseQuery: ExerciseQuery): Flow<PagingData<Exercise2>> = exerciseRepository.queryExercises(exerciseQuery)
 
     suspend fun deleteExercise(exerciseId: ExerciseId) {
         exerciseRepository.delete(exerciseId)
     }
 
-    fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails> =
-        exerciseRepository.getExerciseDetailsById(id)
+    fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails> = exerciseRepository.getExerciseDetailsById(id)
 
     private suspend fun updateImage(
         imageByteArray: ImageByteArray?,
@@ -86,6 +81,5 @@ class ExerciseService(
 
     suspend fun readImage(imageId: ImageId): Image = imageStorage.readImage(imageId)
 
-    suspend fun readImageReference(imageId: ImageId): ImageReference? =
-        imageStorage.readImageReference(imageId)
+    suspend fun readImageReference(imageId: ImageId): ImageReference? = imageStorage.readImageReference(imageId)
 }

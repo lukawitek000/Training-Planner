@@ -12,12 +12,12 @@ import androidx.room3.Index
             entity = DbExercise::class,
             parentColumns = ["exerciseId"],
             childColumns = ["exerciseId"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
     indices = [
-        Index("exerciseId")
-    ]
+        Index("exerciseId"),
+    ],
 )
 class DbExerciseRecommendation(
     val exerciseId: String,
@@ -25,9 +25,11 @@ class DbExerciseRecommendation(
     val sets: Int,
     val reps: Int,
     val restTimeInSeconds: Long,
-    val weightInKg: Int?
+    val weightInKg: Int?,
 )
 
 enum class RecommendationLevel {
-    BEGINNER, INTERMEDIATE, ADVANCED
+    BEGINNER,
+    INTERMEDIATE,
+    ADVANCED,
 }

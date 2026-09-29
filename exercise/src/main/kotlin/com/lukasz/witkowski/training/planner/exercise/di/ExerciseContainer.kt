@@ -34,7 +34,7 @@ class ExerciseContainer(
 
     val categoryController: CategoryController by lazy {
         DefaultCategoryController(
-            categoriesCollection
+            categoriesCollection,
         )
     }
 

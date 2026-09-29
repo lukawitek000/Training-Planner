@@ -7,14 +7,17 @@ import androidx.room3.Room
 import androidx.room3.RoomDatabase
 
 @Database(
-    entities = [DbExercise::class, DbExerciseCategory::class, ExerciseCategoryCrossRef::class,
-        DbExerciseRecommendation::class],
+    entities = [
+        DbExercise::class, DbExerciseCategory::class, ExerciseCategoryCrossRef::class,
+        DbExerciseRecommendation::class,
+    ],
     version = 8,
-    exportSchema = false
+    exportSchema = false,
 )
 @ColumnTypeConverters(Converters::class)
 internal abstract class ExerciseDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
+
     abstract fun categoryDao(): ExerciseCategoryDao
 
     companion object {
@@ -30,8 +33,7 @@ internal abstract class ExerciseDatabase : RoomDatabase() {
                                 context,
                                 ExerciseDatabase::class.java,
                                 "ExerciseDb",
-                            )
-                            .createFromAsset("database/exercises.db") // TODO regenerate default exercises
+                            ).createFromAsset("database/exercises.db") // TODO regenerate default exercises
 //                            .fallbackToDestructiveMigration(true)
                             .build()
                 }

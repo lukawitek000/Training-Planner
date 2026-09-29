@@ -10,12 +10,12 @@ data class DbExerciseDetails(
     @Relation(
         parentColumns = ["exerciseId"],
         entityColumns = ["categoryName"],
-        associateBy = Junction(ExerciseCategoryCrossRef::class)
+        associateBy = Junction(ExerciseCategoryCrossRef::class),
     )
     val categories: List<DbExerciseCategory>,
     @Relation(
         parentColumns = ["exerciseId"],
-        entityColumns = ["exerciseId"]
+        entityColumns = ["exerciseId"],
     )
     val recommendations: List<DbExerciseRecommendation>,
 )

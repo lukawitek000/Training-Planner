@@ -5,7 +5,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import androidx.paging.map
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
@@ -23,27 +22,27 @@ internal class DbExerciseRepository(
     private val ioDispatcher: CoroutineContext = Dispatchers.IO,
 ) : ExerciseRepository {
     override fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails> =
-            exerciseDao.getExerciseDetailsById(id.toString()).map {
-                it.toExerciseDetails()
-            }
+        exerciseDao.getExerciseDetailsById(id.toString()).map {
+            it.toExerciseDetails()
+        }
 
-    override fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise2>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 10,
-                prefetchDistance = 10
-            ),
-            pagingSourceFactory = { pagingSource(query) }
+    override fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise2>> =
+        Pager(
+            config =
+                PagingConfig(
+                    pageSize = 10,
+                    prefetchDistance = 10,
+                ),
+            pagingSourceFactory = { pagingSource(query) },
         ).flow.map { pagingData ->
             pagingData.map { dbExercise ->
                 Timber.d("Fetched exercise: ${dbExercise.exercise.name}")
                 dbExercise.toExercise()
             }
         }
-    }
 
-    private fun pagingSource(query: ExerciseQuery): PagingSource<Int, DbExerciseWithCategories> {
-        return if (query.categories.isEmpty()) {
+    private fun pagingSource(query: ExerciseQuery): PagingSource<Int, DbExerciseWithCategories> =
+        if (query.categories.isEmpty()) {
             exerciseDao.getExercisesWithCategories(query.query)
         } else {
             exerciseDao
@@ -52,7 +51,6 @@ internal class DbExerciseRepository(
                     categoriesNames = query.categories.map { it.name },
                 )
         }
-    }
 
     override suspend fun insert(exercise: ExerciseDetails): Boolean =
         withContext(ioDispatcher) {

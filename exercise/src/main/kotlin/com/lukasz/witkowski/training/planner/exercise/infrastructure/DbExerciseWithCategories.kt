@@ -9,7 +9,7 @@ data class DbExerciseWithCategories(
     @Relation(
         parentColumns = ["exerciseId"],
         entityColumns = ["categoryName"],
-        associateBy = Junction(ExerciseCategoryCrossRef::class)
+        associateBy = Junction(ExerciseCategoryCrossRef::class),
     )
-    val categories: List<DbExerciseCategory>
+    val categories: List<DbExerciseCategory>,
 )

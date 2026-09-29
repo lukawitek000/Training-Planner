@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.exercise.application
 
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
@@ -13,16 +12,16 @@ internal object ExerciseFactory {
         exerciseId: ExerciseId = ExerciseId.create(),
     ): ExerciseDetails =
         ExerciseDetails(
-            exercise = Exercise2(
-                exerciseId,
-                exerciseConfiguration.name,
-                exerciseConfiguration.description,
-                exerciseConfiguration.categories,
-                imageId,
-            ),
+            exercise =
+                Exercise2(
+                    exerciseId,
+                    exerciseConfiguration.name,
+                    exerciseConfiguration.description,
+                    exerciseConfiguration.categories,
+                    imageId,
+                ),
             beginnerRecommendation = exerciseConfiguration.beginnerRecommendation,
             intermediateRecommendation = exerciseConfiguration.intermediateRecommendation,
-            advancedRecommendation = exerciseConfiguration.advancedRecommendation
-
+            advancedRecommendation = exerciseConfiguration.advancedRecommendation,
         )
 }

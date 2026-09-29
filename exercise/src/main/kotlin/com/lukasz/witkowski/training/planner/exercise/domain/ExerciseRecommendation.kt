@@ -6,5 +6,5 @@ data class ExerciseRecommendation(
     val sets: Int,
     val reps: Int,
     val restTime: Duration,
-    val weightInKg: Int?
+    val weightInKg: Int?,
 )

@@ -64,4 +64,5 @@ fun createDummyExercise() =
         ExerciseId.create(),
         "",
         "",
+        categories = emptyList()
     )

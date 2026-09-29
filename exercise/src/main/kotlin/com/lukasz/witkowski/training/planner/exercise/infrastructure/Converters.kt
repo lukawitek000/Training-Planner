@@ -4,12 +4,8 @@ import androidx.room3.ColumnTypeConverter
 
 object Converters {
     @ColumnTypeConverter
-    fun fromRecommendationLevel(level: RecommendationLevel): String {
-        return level.name
-    }
+    fun fromRecommendationLevel(level: RecommendationLevel): String = level.name
 
     @ColumnTypeConverter
-    fun toRecommendationLevel(value: String): RecommendationLevel {
-        return RecommendationLevel.valueOf(value)
-    }
+    fun toRecommendationLevel(value: String): RecommendationLevel = RecommendationLevel.valueOf(value)
 }

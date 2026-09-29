@@ -25,7 +25,7 @@ internal interface ExerciseDao {
         WHERE LOWER(name) LIKE LOWER('%' || :query || '%')
            OR LOWER(description) LIKE LOWER('%' || :query || '%')
         ORDER BY name ASC
-    """
+    """,
     )
     fun getExercisesWithCategories(query: String): PagingSource<Int, DbExerciseWithCategories>
 
@@ -43,7 +43,7 @@ internal interface ExerciseDao {
               )
             GROUP BY e.exerciseId
             ORDER BY COUNT(*) DESC, e.name ASC
-        """
+        """,
     )
     fun getExercisesWithCategories(
         query: String,
@@ -64,9 +64,10 @@ internal interface ExerciseDao {
         details.categories.forEach {
             insert(it)
         }
-        val crossRefs = details.categories.map {
-            ExerciseCategoryCrossRef(details.exercise.exerciseId, it.categoryName)
-        }
+        val crossRefs =
+            details.categories.map {
+                ExerciseCategoryCrossRef(details.exercise.exerciseId, it.categoryName)
+            }
         val insertedRowIds = insertExerciseCategoryCrossRefs(crossRefs)
         if (insertedRowIds.any { it == -1L }) return false
         val insertedRecRowIds = insert(details.recommendations)
@@ -91,7 +92,7 @@ internal interface ExerciseDao {
         """
             DELETE FROM ExerciseCategoryCrossRef
             WHERE exerciseId = :exerciseId
-        """
+        """,
     )
     suspend fun deleteCategoryReferences(exerciseId: String)
 
@@ -106,9 +107,10 @@ internal interface ExerciseDao {
         val updatedRows = update(exerciseDetails.exercise)
         updateRecommendations(exerciseDetails.recommendations)
         deleteCategoryReferences(exerciseDetails.exercise.exerciseId)
-        val crossRefs = exerciseDetails.categories.map {
-            ExerciseCategoryCrossRef(exerciseDetails.exercise.exerciseId, it.categoryName)
-        }
+        val crossRefs =
+            exerciseDetails.categories.map {
+                ExerciseCategoryCrossRef(exerciseDetails.exercise.exerciseId, it.categoryName)
+            }
         insertExerciseCategoryCrossRefs(crossRefs)
         return updatedRows
     }

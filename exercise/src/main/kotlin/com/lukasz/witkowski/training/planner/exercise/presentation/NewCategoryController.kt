@@ -14,7 +14,9 @@ data class FilterCategory(
 
 interface CategoryController2 {
     val filterCategories: Flow<List<FilterCategory>>
+
     fun toggleCategory(category: ExerciseCategory)
+
     fun selectCategories(categories: Set<ExerciseCategory>)
 }
 
@@ -25,12 +27,13 @@ class DefaultCategoryController2(
     private val allCategories: Flow<List<ExerciseCategory>> = categoryService.getAllCategories()
     override val filterCategories: Flow<List<FilterCategory>> =
         combine(allCategories, selectedCategories) { all, selected ->
-            all.map {
-                FilterCategory(
-                    category = it,
-                    isSelected = selected.contains(it)
-                )
-            }.sortedByDescending { it.isSelected }
+            all
+                .map {
+                    FilterCategory(
+                        category = it,
+                        isSelected = selected.contains(it),
+                    )
+                }.sortedByDescending { it.isSelected }
         }
 
     override fun toggleCategory(category: ExerciseCategory) {

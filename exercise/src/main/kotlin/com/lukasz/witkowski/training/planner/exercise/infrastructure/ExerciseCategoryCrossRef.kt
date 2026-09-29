@@ -11,21 +11,21 @@ import androidx.room3.Index
             entity = DbExercise::class,
             parentColumns = ["exerciseId"],
             childColumns = ["exerciseId"],
-            onDelete = ForeignKey.CASCADE
+            onDelete = ForeignKey.CASCADE,
         ),
         ForeignKey(
             entity = DbExerciseCategory::class,
             parentColumns = ["categoryName"],
             childColumns = ["categoryName"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
     indices = [
         Index("categoryName"),
-        Index("exerciseId")
-    ]
+        Index("exerciseId"),
+    ],
 )
 data class ExerciseCategoryCrossRef(
     val exerciseId: String,
-    val categoryName: String
+    val categoryName: String,
 )
