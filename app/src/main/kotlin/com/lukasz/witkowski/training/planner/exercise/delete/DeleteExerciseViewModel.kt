@@ -1,0 +1,55 @@
+package com.lukasz.witkowski.training.planner.exercise.delete
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
+
+class DeleteExerciseViewModel(
+    private val service: ExerciseService,
+    private val exerciseId: ExerciseId
+): ViewModel() {
+
+    val state = service.getExerciseDetailsById(exerciseId).map {
+        delay(5.seconds)
+        DeleteExerciseUiState.LoadedExercise(it.exercise.name)
+    }.stateIn(
+        viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = DeleteExerciseUiState.Loading
+    )
+
+    private val _deletionEvent = Channel<DeletionEvent>()
+    val deletionEvent = _deletionEvent.receiveAsFlow()
+
+    fun deleteExercise() {
+        viewModelScope.launch {
+            runCatching {
+                service.deleteExercise(exerciseId)
+                _deletionEvent.send(DeletionEvent.Success)
+            }.onFailure {
+                _deletionEvent.send(DeletionEvent.Failure)
+            }
+        }
+    }
+}
+
+sealed interface DeletionEvent {
+    data object Success : DeletionEvent
+    data object Failure : DeletionEvent
+}
+
+sealed interface DeleteExerciseUiState {
+    data object Loading: DeleteExerciseUiState
+    data class LoadedExercise(val exerciseName: String): DeleteExerciseUiState
+}

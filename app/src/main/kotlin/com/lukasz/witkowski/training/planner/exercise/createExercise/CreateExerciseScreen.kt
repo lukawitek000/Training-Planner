@@ -37,7 +37,7 @@ import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 @Composable
 fun CreateExerciseScreen(
     viewModel: ExerciseEditorViewModel,
-    navigateToDetails: (ExerciseId, String) -> Unit,
+    navigateToDetails: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -55,7 +55,7 @@ fun CreateExerciseScreen(
 private fun CreateExerciseScreenContent(
     uiState: ExerciseEditingUiState,
     onUserInputChange: (ExerciseEditingEvent) -> Unit,
-    onExerciseSaved: (ExerciseId, String) -> Unit,
+    onExerciseSaved: (ExerciseId) -> Unit,
     isEditMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
@@ -98,7 +98,7 @@ private fun CreateExerciseScreenContent(
         }
 
         is ExerciseEditingUiState.Saved -> LaunchedEffect(uiState) {
-            onExerciseSaved(uiState.exerciseId, uiState.name)
+            onExerciseSaved(uiState.exerciseId)
         }
     }
 }
@@ -224,7 +224,7 @@ fun CreateExerciseScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             uiState = ExerciseEditingUiState.Editing(state),
             onUserInputChange = {},
-            onExerciseSaved = { _, _ -> },
+            onExerciseSaved = {},
             isEditMode = true
         )
     }
@@ -244,7 +244,7 @@ fun CreateExerciseScreenSavingPreview() {
             modifier = Modifier.fillMaxSize(),
             uiState = ExerciseEditingUiState.Saving(state),
             onUserInputChange = {},
-            onExerciseSaved = { _, _ -> },
+            onExerciseSaved = { },
             isEditMode = false
         )
     }

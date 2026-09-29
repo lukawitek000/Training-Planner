@@ -19,11 +19,6 @@ class ExerciseDetailsViewModel(
     private val service: ExerciseService,
     private val exerciseId: ExerciseId,
 ) : ViewModel() {
-
-    init {
-        Timber.i("init ExerciseDetailsViewModel")
-    }
-
     val state: StateFlow<ExerciseDetailsState> = service.getExerciseDetailsById(exerciseId)
         .map<DomainExerciseDetails, ExerciseDetailsState> {
             ExerciseDetailsState.Success(it.toPresentationExerciseDetails())
@@ -35,12 +30,6 @@ class ExerciseDetailsViewModel(
             SharingStarted.WhileSubscribed(5_000L),
             initialValue = ExerciseDetailsState.Loading
         )
-
-    fun deleteExercise() {
-        viewModelScope.launch {
-            service.deleteExercise(exerciseId)
-        }
-    }
 }
 
 sealed interface ExerciseDetailsState {

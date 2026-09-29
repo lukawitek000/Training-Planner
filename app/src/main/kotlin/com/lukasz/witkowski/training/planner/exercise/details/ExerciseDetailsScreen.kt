@@ -30,30 +30,18 @@ import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 @Composable
 fun ExerciseDetailsScreen(
     viewModel: ExerciseDetailsViewModel,
-    showDeleteDialog: Boolean,
-    onHideDialog: () -> Unit,
-    onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     ExerciseDetailsScreenContent(
         state = state,
-        modifier = modifier.fillMaxSize(),
-        showDeleteDialog = showDeleteDialog,
-        onCancelDelete = onHideDialog,
-        onDelete = {
-            viewModel.deleteExercise()
-            onDelete()
-        }
+        modifier = modifier.fillMaxSize()
     )
 }
 
 @Composable
 private fun ExerciseDetailsScreenContent(
     state: ExerciseDetailsState,
-    showDeleteDialog: Boolean,
-    onCancelDelete: () -> Unit,
-    onDelete: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     when (state) {
@@ -77,13 +65,6 @@ private fun ExerciseDetailsScreenContent(
                 details = state.details,
                 modifier = modifier
             )
-            if (showDeleteDialog) {
-                DeleteExerciseDialog(
-                    onCancel = onCancelDelete,
-                    onDelete = onDelete,
-                    exerciseName = state.details.exercise.name,
-                )
-            }
         }
     }
 }
@@ -142,10 +123,7 @@ private fun ExerciseDetailsScreenContentPreview() {
                         recommendations = PREVIEW_RECOMMENDED_PARAMETERS
                     ),
                 ),
-                modifier = Modifier.fillMaxSize(),
-                showDeleteDialog = false,
-                onDelete = {},
-                onCancelDelete = {}
+                modifier = Modifier.fillMaxSize()
             )
         }
     }
@@ -157,10 +135,7 @@ private fun ExerciseDetailsScreenLoadingPreview() {
     TrainingPlannerTheme {
         ExerciseDetailsScreenContent(
             state = ExerciseDetailsState.Loading,
-            modifier = Modifier.fillMaxSize(),
-            showDeleteDialog = false,
-            onDelete = {},
-            onCancelDelete = {}
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
@@ -171,10 +146,7 @@ private fun ExerciseDetailsScreenFailurePreview() {
     TrainingPlannerTheme {
         ExerciseDetailsScreenContent(
             state = ExerciseDetailsState.Failure("No exercise in DB"),
-            modifier = Modifier.fillMaxSize(),
-            showDeleteDialog = false,
-            onDelete = {},
-            onCancelDelete = {}
+            modifier = Modifier.fillMaxSize()
         )
     }
 }

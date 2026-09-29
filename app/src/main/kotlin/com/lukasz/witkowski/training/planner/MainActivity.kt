@@ -17,25 +17,21 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation3.runtime.NavBackStack
-import com.lukasz.witkowski.training.planner.navigation.BottomBarItem
-import com.lukasz.witkowski.training.planner.navigation.BottomNavItems
+import com.lukasz.witkowski.training.planner.navigation.BottomBarConfig
 import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
-import com.lukasz.witkowski.training.planner.navigation.CreateExercise
-import com.lukasz.witkowski.training.planner.navigation.EditExercise
-import com.lukasz.witkowski.training.planner.navigation.ExercisesList
 import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
 import com.lukasz.witkowski.training.planner.navigation.TopBarAction
-import com.lukasz.witkowski.training.planner.navigation.TrainingPlannerNavKey
+import com.lukasz.witkowski.training.planner.navigation.TrainingPlannerNavigator
 import com.lukasz.witkowski.training.planner.navigation.TrainingPlansList
 import com.lukasz.witkowski.training.planner.navigation.rememberTrainingPlannerNavBackStack
-import com.lukasz.witkowski.training.planner.navigation.toTopBarConfig
+import com.lukasz.witkowski.training.planner.navigation.toUiConfig
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 
 class MainActivity : ComponentActivity() {
@@ -54,72 +50,53 @@ class MainActivity : ComponentActivity() {
 fun TrainingPlannerApp() {
     val backStack = rememberTrainingPlannerNavBackStack(TrainingPlansList)
     val context = LocalContext.current
-    var showDialog by rememberSaveable(backStack) { mutableStateOf(false) }
+    val navigator = TrainingPlannerNavigator(backStack)
+    val uiConfig = navigator.toUiConfig(context = context)
     Scaffold(
         bottomBar = {
             AnimatedVisibility(
-                visible = backStack.last() in BottomNavItems,
+                visible = uiConfig.bottomBarConfig != null,
                 enter = slideInVertically(initialOffsetY = { it }),
                 exit = slideOutVertically(targetOffsetY = { it }),
             ) {
-                BottomNavigationBar(
-                    items = listOf(
-                        BottomBarItem(
-                            icon = R.drawable.trainings_icon,
-                            title = "Training Plans",
-                            selected = backStack.lastOrNull() is TrainingPlansList,
-                            onClick = { navigateBottomBar(backStack, TrainingPlansList) }
-                        ),
-                        BottomBarItem(
-                            icon = R.drawable.exercises_icon,
-                            title = "Exercises",
-                            selected = backStack.lastOrNull() is ExercisesList,
-                            onClick = { navigateBottomBar(backStack, ExercisesList) }
-                        ),
-                    ),
-                )
+                uiConfig.bottomBarConfig?.let { config ->
+                    BottomNavigationBar(
+                        items = config.items
+                    )
+                }
             }
         },
         topBar = {
             TopBar(
-                config = backStack.last().toTopBarConfig(context = context),
-                navigateBack = { backStack.removeLastOrNull() },
+                config = uiConfig.topBarConfig,
+                navigateBack = { navigator.goBack() },
                 onAction = {
                     when (it) {
                         is TopBarAction.EditExercise -> {
-                            backStack.add(EditExercise(it.id))
+                            navigator.exerciseEdit(it.id)
                         }
                         is TopBarAction.DeleteExercise -> {
-                            showDialog = true
+                            navigator.showDeleteExerciseDialog(it.id)
                         }
                     }
                 }
             )
         },
         floatingActionButton = {
-            if (backStack.lastOrNull() == ExercisesList) {
-                FloatingActionButton(onClick = { backStack.add(CreateExercise) }) {
-                    Icon(imageVector = Icons.Default.Add, contentDescription = "Create Exercise")
+            uiConfig.fabConfig?.let { fab ->
+                FloatingActionButton(onClick = fab.onClick) {
+                    Icon(
+                        imageVector = fab.icon,
+                        contentDescription = fab.contentDescription
+                    )
                 }
             }
         }
     ) {
         Navigation(
-            backStack = backStack,
-            showDialog = showDialog,
-            hideDialog = { showDialog = false },
+            navigator = navigator,
             modifier = Modifier.padding(it),
         )
-    }
-}
-
-private fun navigateBottomBar(
-    backStack: NavBackStack<TrainingPlannerNavKey>,
-    newDestination: TrainingPlannerNavKey
-) {
-    if (backStack.last() != newDestination) {
-        backStack.removeLastOrNull()
-        backStack.add(newDestination)
     }
 }
 

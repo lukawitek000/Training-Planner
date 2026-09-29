@@ -5,6 +5,7 @@
     <string name="exercises">Exercises</string>
     <string name="create_exercise">Create exercise</string>
     <string name="update_exercise">Update exercise</string>
+    <string name="exercise_details">Exercise details</string>
     <string name="edit_exercise">Edit exercise</string>
     <string name="search_exercise">Search Exercise</string>
     <string name="add_exercise_image">Add exercise image</string>
@@ -20,6 +21,8 @@
     <string name="failed_update_exercise">Failed exercise update: %1$s</string>
     <string name="delete_exercise_dialog_title">Delete exercise %1$s ?</string>
     <string name="delete_exercise_dialog_text">This exercise and all of its data will be permanently deleted. This action cannot be undone.</string>
+    <string name="exercise_deleted">Exercise deleted.</string>
+    <string name="exercise_deletion_failed">Exercise deletion failed.</string>
 
     <!-- Recommendations -->
     <string name="recommended_parameters">Recommended parameters *</string>

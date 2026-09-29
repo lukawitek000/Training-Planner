@@ -2,13 +2,13 @@ package com.lukasz.witkowski.training.planner.navigation
 
 import android.content.Context
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.serialization.KSerializer
@@ -29,11 +29,16 @@ data object ExercisesList : TrainingPlannerNavKey
 data object CreateExercise : TrainingPlannerNavKey
 
 @Serializable
+sealed interface ExerciseIdRoute {
+    val exerciseId: ExerciseId
+}
+
+@Serializable
 data class ExerciseDetails(
     @Serializable(with = ExerciseIdSerializer::class)
-    val exerciseId: ExerciseId,
-    val exerciseName: String,
-) : TrainingPlannerNavKey
+    override val exerciseId: ExerciseId,
+) : TrainingPlannerNavKey, ExerciseIdRoute
+
 
 @Serializable
 data class EditExercise(
@@ -41,6 +46,11 @@ data class EditExercise(
     val exerciseId: ExerciseId
 ) : TrainingPlannerNavKey
 
+@Serializable
+data class DeleteExercise(
+    @Serializable(with = ExerciseIdSerializer::class)
+    override val exerciseId: ExerciseId,
+) : TrainingPlannerNavKey, ExerciseIdRoute
 
 @Serializable
 data object PickExercise : TrainingPlannerNavKey
@@ -64,7 +74,6 @@ data class TrainingSession(
 ) : TrainingPlannerNavKey {}
 
 
-val BottomNavItems = listOf(TrainingPlansList, ExercisesList)
 
 
 object TrainingPlanIdSerializer : KSerializer<TrainingPlanId> {
@@ -103,7 +112,7 @@ data class TopBarConfig(
 
 sealed interface TopBarAction {
     data class EditExercise(val id: ExerciseId) : TopBarAction
-    data object DeleteExercise : TopBarAction
+    data class DeleteExercise(val id: ExerciseId) : TopBarAction
 }
 
 sealed interface TopBarMenuItem {
@@ -120,42 +129,144 @@ sealed interface TopBarMenuItem {
     ): TopBarMenuItem
 }
 
-fun TrainingPlannerNavKey.toTopBarConfig(context: Context): TopBarConfig =
-    when (this) {
-        is ExercisesList -> TopBarConfig(
-            title = context.getString(R.string.exercises),
-            hasBackArrow = false
-        )
+data class FabConfig(
+    val icon: ImageVector,
+    val contentDescription: String? = null,
+    val onClick: () -> Unit,
+)
 
-        is CreateExercise -> TopBarConfig(
-            title = context.getString(R.string.create_exercise),
-            hasBackArrow = true
-        )
+data class BottomBarConfig(
+    val items: List<BottomBarItem>,
+)
 
-        is ExerciseDetails -> TopBarConfig(
-            title = this.exerciseName,
-            hasBackArrow = true,
-            menuItems = listOf<TopBarMenuItem>(
-                TopBarMenuItem.OverflowItem(
-                    icon = Icons.Default.Edit,
-                    text = context.getString(R.string.edit),
-                    action = TopBarAction.EditExercise(this.exerciseId)
-                ),
-                TopBarMenuItem.OverflowItem(
-                    icon = Icons.Default.Delete,
-                    text = context.getString(R.string.delete),
-                    action = TopBarAction.DeleteExercise,
-                    color = Color.Red
-                ),
+data class UiConfig(
+    val topBarConfig: TopBarConfig,
+    val bottomBarConfig: BottomBarConfig? = null,
+    val fabConfig: FabConfig? = null,
+)
+
+private enum class BottomNavigationTab {
+    TRAINING_PLANS,
+    EXERCISES,
+}
+
+private fun TrainingPlannerNavigator.createBottomBarConfig(
+    context: Context,
+    selectedTab: BottomNavigationTab,
+): BottomBarConfig {
+    return BottomBarConfig(
+        items = listOf(
+            BottomBarItem(
+                icon = R.drawable.trainings_icon,
+                title = "Training Plans",
+                selected = selectedTab == BottomNavigationTab.TRAINING_PLANS,
+                onClick = { trainingPlansList() }
+            ),
+            BottomBarItem(
+                icon = R.drawable.exercises_icon,
+                title = context.getString(R.string.exercises),
+                selected = selectedTab == BottomNavigationTab.EXERCISES,
+                onClick = { exerciseList() }
+            )
+        )
+    )
+}
+
+fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
+    when (val key = current()) {
+        is TrainingPlansList -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(R.string.app_name),
+                hasBackArrow = false
+            ),
+            bottomBarConfig = createBottomBarConfig(context, BottomNavigationTab.TRAINING_PLANS),
+            fabConfig = FabConfig(
+                icon = Icons.Default.Add,
+                contentDescription = context.getString(R.string.create_training),
+                onClick = { trainingCreate() }
             )
         )
 
-        is EditExercise -> TopBarConfig(
-            title = context.getString(R.string.edit_exercise),
-            hasBackArrow = true
+        is ExercisesList -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(R.string.exercises),
+                hasBackArrow = false
+            ),
+            bottomBarConfig = createBottomBarConfig(context, BottomNavigationTab.EXERCISES),
+            fabConfig = FabConfig(
+                icon = Icons.Default.Add,
+                contentDescription = context.getString(R.string.create_exercise),
+                onClick = { exerciseCreate() }
+            )
         )
 
-        else -> TopBarConfig(title = "TODO", hasBackArrow = false)
+        is CreateExercise -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(R.string.create_exercise),
+                hasBackArrow = true
+            )
+        )
+
+        is EditExercise -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(R.string.edit_exercise),
+                hasBackArrow = true
+            )
+        )
+
+        is DeleteExercise, is ExerciseDetails -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(R.string.exercise_details),
+                hasBackArrow = true,
+                menuItems = listOf(
+                    TopBarMenuItem.OverflowItem(
+                        icon = Icons.Default.Edit,
+                        text = context.getString(R.string.edit),
+                        action = TopBarAction.EditExercise(key.exerciseId)
+                    ),
+                    TopBarMenuItem.OverflowItem(
+                        icon = Icons.Default.Delete,
+                        text = context.getString(R.string.delete),
+                        action = TopBarAction.DeleteExercise(key.exerciseId),
+                        color = Color.Red
+                    ),
+                )
+            )
+        )
+
+
+
+        is CreateTraining -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(R.string.create_training),
+                hasBackArrow = true
+            )
+        )
+
+        is PickExercise -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(R.string.search_exercise),
+                hasBackArrow = true
+            )
+        )
+
+        is TrainingOverview -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(R.string.training_statistics),
+                hasBackArrow = true
+            )
+        )
+
+        is TrainingSession -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(R.string.start_training_session),
+                hasBackArrow = true
+            )
+        )
+
+        else -> UiConfig(
+            topBarConfig = TopBarConfig(title = "TODO", hasBackArrow = false)
+        )
     }
 
 

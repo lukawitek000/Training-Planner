@@ -55,7 +55,7 @@ import kotlinx.coroutines.flow.flowOf
 fun ExercisesScreen(
     modifier: Modifier = Modifier,
     viewModel: ExercisesListViewModel,
-    onExerciseClicked: (ExerciseId, String) -> Unit
+    onExerciseClicked: (ExerciseId) -> Unit
 ) {
     val exercisesList = viewModel.exercises.collectAsLazyPagingItems()
     val filteringState by viewModel.filteringState.collectAsState()
@@ -75,7 +75,7 @@ private fun ExercisesScreenContent(
     filteringState: FilteringState,
     toggleCategory: (ExerciseCategory) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
-    onExerciseClicked: (ExerciseId, String) -> Unit,
+    onExerciseClicked: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -115,7 +115,7 @@ private fun ExercisesScreenContent(
 private fun ExercisesList(
     modifier: Modifier = Modifier,
     exercisesList: LazyPagingItems<Exercise2>,
-    onExerciseClicked: (ExerciseId, String) -> Unit,
+    onExerciseClicked: (ExerciseId) -> Unit,
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         LazyColumn {
@@ -127,7 +127,7 @@ private fun ExercisesList(
                 if (exercise != null) {
                     ExerciseListItemContent(
                         exercise = exercise,
-                        onClick = { onExerciseClicked(exercise.id, exercise.name) }
+                        onClick = { onExerciseClicked(exercise.id) }
                     )
                 }
             }
@@ -236,7 +236,7 @@ private fun ExercisesScreenContentPreview() {
             ),
             toggleCategory = {},
             onSearchQueryChanged = {},
-            onExerciseClicked = { _, _ -> },
+            onExerciseClicked = { },
         )
     }
 }
