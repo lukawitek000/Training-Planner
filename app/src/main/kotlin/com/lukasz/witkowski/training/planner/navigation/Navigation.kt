@@ -46,7 +46,8 @@ fun Navigation(
         backStack = backStack,
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator()
+            rememberViewModelStoreNavEntryDecorator(),
+            rememberLoggingNavDecorator()
         ),
         entryProvider = entryProvider {
             val trainingsListViewModel: TrainingsListViewModel = trainingPlannerViewModel()
@@ -107,10 +108,10 @@ fun Navigation(
                 )
             }
 
-            trainingGraph(
-                navigateUp = { backStack.removeLastOrNull() },
-                navigateToPickExercise = { backStack.add(PickExercise) }
-            )
+//            trainingGraph(
+//                navigateUp = { backStack.removeLastOrNull() },
+//                navigateToPickExercise = { backStack.add(PickExercise) }
+//            )
             entry<TrainingOverview> {
                 val viewModel: TrainingOverviewViewModel = trainingPlannerViewModel()
                 TrainingOverviewScreen(
