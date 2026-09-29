@@ -20,10 +20,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -33,9 +30,10 @@ import kotlin.time.Duration.Companion.seconds
 class ExerciseEditorViewModel(
     private val exerciseService: ExerciseService,
     private val categoryController: CategoryController2,
-    exerciseId: ExerciseId? = null,
+    private val exerciseId: ExerciseId? = null,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
+    val isEditMode = exerciseId != null
     private val initialState = exerciseId?.let { ExerciseEditingUiState.Loading(it) }
         ?: ExerciseEditingUiState.Editing(ExerciseEditingInput())
     private val filterCategories: StateFlow<List<FilterCategory>> =
@@ -108,7 +106,7 @@ class ExerciseEditorViewModel(
                 )
             }
 
-            is ExerciseEditingEvent.CreateExercise -> {
+            is ExerciseEditingEvent.SaveChangesRequested -> {
                 saveExercise(input = event.input)
             }
         }
@@ -146,9 +144,7 @@ class ExerciseEditorViewModel(
             runCatching {
                 uiState.value = ExerciseEditingUiState.Saving(input)
                 val exerciseConfiguration = input.toExerciseConfiguration()
-                val exerciseId = exerciseService.saveExercise(
-                    exerciseConfiguration = exerciseConfiguration
-                )
+                val exerciseId = saveExercise(exerciseConfiguration)
                 uiState.value = ExerciseEditingUiState.Saved(exerciseId, exerciseConfiguration.name)
             }.onFailure {
                 Timber.w("Failed to save exercise: ${it.message}")
@@ -158,6 +154,11 @@ class ExerciseEditorViewModel(
                 uiState.value = ExerciseEditingUiState.Editing(input)
             }
         }
+    }
+
+    private suspend fun saveExercise(config: ExerciseConfiguration): ExerciseId {
+        return exerciseId?.let { exerciseService.updateExercise(config, it) }
+            ?: exerciseService.saveExercise(config)
     }
 
     private fun loadExercise(exerciseId: ExerciseId) {
@@ -214,19 +215,19 @@ sealed interface ExerciseEditingEvent {
     data class ImageAdded(val bitmap: ImageBitmap) : ExerciseEditingEvent
     data class ImageRemoved(val bitmap: ImageBitmap) : ExerciseEditingEvent
     data class ImagePreviewChanged(val bitmap: ImageBitmap) : ExerciseEditingEvent
-    data class RecommendedSetsChanged(val sets: Int, val level: RecommendationLevel) :
+    data class RecommendedSetsChanged(val sets: Int?, val level: RecommendationLevel) :
         ExerciseEditingEvent
 
-    data class RecommendedRepsChanged(val reps: Int, val level: RecommendationLevel) :
+    data class RecommendedRepsChanged(val reps: Int?, val level: RecommendationLevel) :
         ExerciseEditingEvent
 
-    data class RecommendedRestTimeChanged(val restTime: Duration, val level: RecommendationLevel) :
+    data class RecommendedRestTimeChanged(val restTime: Duration?, val level: RecommendationLevel) :
         ExerciseEditingEvent
 
-    data class RecommendedWeightChanged(val weight: Int, val level: RecommendationLevel) :
+    data class RecommendedWeightChanged(val weight: Int?, val level: RecommendationLevel) :
         ExerciseEditingEvent
 
-    data class CreateExercise(val input: ExerciseEditingInput) : ExerciseEditingEvent
+    data class SaveChangesRequested(val input: ExerciseEditingInput) : ExerciseEditingEvent
 }
 
 sealed interface ExerciseEditingUiState {

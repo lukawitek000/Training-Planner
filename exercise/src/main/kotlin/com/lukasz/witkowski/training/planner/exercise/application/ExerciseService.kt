@@ -24,9 +24,21 @@ class ExerciseService(
     suspend fun saveExercise(exerciseConfiguration: ExerciseConfiguration): ExerciseId {
         val exerciseId = ExerciseId.create()
         val imageReference = exerciseConfiguration.image?.let { saveImage(it, exerciseId) }
-        val exerciseDetails = ExerciseFactory.create(exerciseConfiguration, imageReference?.imageId, exerciseId)
+        val exerciseDetails =
+            ExerciseFactory.create(exerciseConfiguration, imageReference?.imageId, exerciseId)
         delay(5.seconds) // TODo remove this delay as it is for testing only
         exerciseRepository.insert(exerciseDetails)
+        return exerciseId
+    }
+
+    suspend fun updateExercise(
+        exerciseConfiguration: ExerciseConfiguration,
+        exerciseId: ExerciseId
+    ): ExerciseId {
+        val imageReference = exerciseConfiguration.image?.let { saveImage(it, exerciseId) }
+        val exerciseDetails =
+            ExerciseFactory.create(exerciseConfiguration, imageReference?.imageId, exerciseId)
+        exerciseRepository.updateExercise(exerciseDetails)
         return exerciseId
     }
 
@@ -53,7 +65,8 @@ class ExerciseService(
         exercise.imageId?.let { deleteImage(it, exercise.id) }
     }
 
-    suspend fun getExerciseDetailsById(id: ExerciseId): ExerciseDetails = exerciseRepository.getExerciseDetailsById(id)
+    suspend fun getExerciseDetailsById(id: ExerciseId): ExerciseDetails =
+        exerciseRepository.getExerciseDetailsById(id)
 
 //    suspend fun updateExercise(
 //        exerciseId: ExerciseId,
@@ -86,5 +99,6 @@ class ExerciseService(
 
     suspend fun readImage(imageId: ImageId): Image = imageStorage.readImage(imageId)
 
-    suspend fun readImageReference(imageId: ImageId): ImageReference? = imageStorage.readImageReference(imageId)
+    suspend fun readImageReference(imageId: ImageId): ImageReference? =
+        imageStorage.readImageReference(imageId)
 }

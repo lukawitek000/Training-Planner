@@ -87,6 +87,29 @@ internal interface ExerciseDao {
     @Query("DELETE FROM Exercise WHERE :id == exerciseId")
     suspend fun deleteExerciseById(id: String): Int
 
+    @Query(
+        """
+            DELETE FROM ExerciseCategoryCrossRef
+            WHERE exerciseId = :exerciseId
+        """
+    )
+    suspend fun deleteCategoryReferences(exerciseId: String)
+
     @Update
-    suspend fun update(dbExercise: DbExercise): Int // returns number of updated rows
+    suspend fun update(exercise: DbExercise): Int
+
+    @Update
+    suspend fun updateRecommendations(recommendations: List<DbExerciseRecommendation>): Int
+
+    @Transaction
+    suspend fun update(exerciseDetails: DbExerciseDetails): Int {
+        val updatedRows = update(exerciseDetails.exercise)
+        updateRecommendations(exerciseDetails.recommendations)
+        deleteCategoryReferences(exerciseDetails.exercise.exerciseId)
+        val crossRefs = exerciseDetails.categories.map {
+            ExerciseCategoryCrossRef(exerciseDetails.exercise.exerciseId, it.categoryName)
+        }
+        insertExerciseCategoryCrossRefs(crossRefs)
+        return updatedRows
+    }
 }

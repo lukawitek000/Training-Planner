@@ -4,6 +4,7 @@
     <!-- Exercise -->
     <string name="exercises">Exercises</string>
     <string name="create_exercise">Create exercise</string>
+    <string name="update_exercise">Update exercise</string>
     <string name="edit_exercise">Edit exercise</string>
     <string name="search_exercise">Search Exercise</string>
     <string name="add_exercise_image">Add exercise image</string>
@@ -15,6 +16,8 @@
     <string name="target_muscles">Target muscles *</string>
     <string name="loading_exercise_details">Loading exercise details.</string>
     <string name="failed_load_exercise_details">Failed to load exercise details</string>
+    <string name="failed_save_exercise">Failed exercise save: %1$s</string>
+    <string name="failed_update_exercise">Failed exercise update: %1$s</string>
     <!-- Recommendations -->
     <string name="recommended_parameters">Recommended parameters *</string>
     <string name="recommended_parameters_description">Suggested sets, reps, rest time and weight for different experience level. These are default recommendations.</string>

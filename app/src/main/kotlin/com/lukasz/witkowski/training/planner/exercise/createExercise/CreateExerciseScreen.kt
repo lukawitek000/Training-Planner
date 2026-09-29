@@ -41,11 +41,13 @@ fun CreateExerciseScreen(
     modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsState()
+    val isEditMode = viewModel.isEditMode
     CreateExerciseScreenContent(
         modifier = modifier.fillMaxSize(),
         uiState = state,
         onUserInputChange = viewModel::onEvent,
-        onExerciseSaved = navigateToDetails
+        onExerciseSaved = navigateToDetails,
+        isEditMode = isEditMode
     )
 }
 
@@ -54,29 +56,47 @@ private fun CreateExerciseScreenContent(
     uiState: ExerciseEditingUiState,
     onUserInputChange: (ExerciseEditingEvent) -> Unit,
     onExerciseSaved: (ExerciseId, String) -> Unit,
+    isEditMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     when (uiState) {
-        is ExerciseEditingUiState.Saving -> LoadingExerciseForm(uiState.exerciseEditingInput, modifier)
+        is ExerciseEditingUiState.Saving -> LoadingExerciseForm(
+            uiState.exerciseEditingInput,
+            isEditMode = isEditMode,
+            modifier = modifier,
+        )
+
         is ExerciseEditingUiState.Loading -> LoadingScreen(modifier)
         is ExerciseEditingUiState.Editing -> ExerciseForm(
             state = uiState.exerciseEditingInput,
             modifier = modifier,
-            onUserInputChange = onUserInputChange
+            onUserInputChange = onUserInputChange,
+            isEditMode = isEditMode
         )
+
         is ExerciseEditingUiState.Failure -> {
+            val failMessage = if (isEditMode) stringResource(
+                R.string.failed_update_exercise,
+                uiState.message
+            ) else stringResource(R.string.failed_save_exercise, uiState.message)
             LaunchedEffect(uiState) {
-                Toast.makeText(context, "Failed exercise save: ${uiState.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    failMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             uiState.exerciseEditingInput?.let {
                 ExerciseForm(
                     state = it,
                     modifier = modifier,
-                    onUserInputChange = onUserInputChange
+                    onUserInputChange = onUserInputChange,
+                    isEditMode = isEditMode
                 )
             }
         }
+
         is ExerciseEditingUiState.Saved -> LaunchedEffect(uiState) {
             onExerciseSaved(uiState.exerciseId, uiState.name)
         }
@@ -86,12 +106,14 @@ private fun CreateExerciseScreenContent(
 @Composable
 private fun LoadingExerciseForm(
     exerciseEditingInput: ExerciseEditingInput,
+    isEditMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
     OverlayLoading(Modifier.fillMaxSize()) {
         ExerciseForm(
             state = exerciseEditingInput,
             modifier = modifier,
+            isEditMode = isEditMode,
             onUserInputChange = {}
         )
     }
@@ -101,6 +123,7 @@ private fun LoadingExerciseForm(
 private fun ExerciseForm(
     state: ExerciseEditingInput,
     onUserInputChange: (ExerciseEditingEvent) -> Unit,
+    isEditMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -127,11 +150,12 @@ private fun ExerciseForm(
             onRecommendationChange = onUserInputChange
         )
         Button(
-            onClick = { onUserInputChange(ExerciseEditingEvent.CreateExercise(state)) },
+            onClick = { onUserInputChange(ExerciseEditingEvent.SaveChangesRequested(state)) },
             modifier = Modifier.fillMaxWidth(),
             enabled = state.isValidForCreation()
         ) {
-            Text(stringResource(R.string.create_exercise))
+            val stringRes = if (isEditMode) R.string.update_exercise else R.string.create_exercise
+            Text(stringResource(stringRes))
         }
     }
 }
@@ -200,7 +224,8 @@ fun CreateExerciseScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             uiState = ExerciseEditingUiState.Editing(state),
             onUserInputChange = {},
-            onExerciseSaved = {_, _ ->}
+            onExerciseSaved = { _, _ -> },
+            isEditMode = true
         )
     }
 }
@@ -219,7 +244,8 @@ fun CreateExerciseScreenSavingPreview() {
             modifier = Modifier.fillMaxSize(),
             uiState = ExerciseEditingUiState.Saving(state),
             onUserInputChange = {},
-            onExerciseSaved = {_, _ ->}
+            onExerciseSaved = { _, _ -> },
+            isEditMode = false
         )
     }
 }

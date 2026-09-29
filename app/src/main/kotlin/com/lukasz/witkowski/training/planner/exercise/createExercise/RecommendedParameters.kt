@@ -170,7 +170,7 @@ private fun RecommendedParametersInputFields(
             value = params.restTime?.inWholeSeconds?.toInt(),
             onValueChange = {
                 onRecommendationChange(
-                    ExerciseEditingEvent.RecommendedRestTimeChanged(it.seconds, level)
+                    ExerciseEditingEvent.RecommendedRestTimeChanged(it?.seconds, level)
                 )
             },
             label = buildRequiredString(stringResource(R.string.rest_time)),
@@ -274,7 +274,7 @@ private fun buildStringOverview(recommendation: Recommendation): String =
 @Composable
 private fun ParameterInputField(
     value: Int?,
-    onValueChange: (Int) -> Unit,
+    onValueChange: (Int?) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
     unit: String = "",
@@ -291,12 +291,12 @@ private fun ParameterInputField(
             value = value?.toString() ?: "",
             onValueChange = { newValue ->
                 val filtered = newValue.filter { it.isDigit() }
-                val sanitized = if (filtered.length > 1 && filtered.startsWith('0')) {
-                    filtered.trimStart('0').ifEmpty { "0" }
+                val sanitized = if (filtered.startsWith('0')) {
+                    filtered.trimStart('0')
                 } else {
                     filtered
                 }
-                onValueChange(sanitized.toIntOrNull() ?: 0)
+                onValueChange(sanitized.toIntOrNull())
             },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number

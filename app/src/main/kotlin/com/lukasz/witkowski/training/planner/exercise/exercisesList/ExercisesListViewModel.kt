@@ -56,12 +56,6 @@ class ExercisesListViewModel(
         pagingData.map { exercise -> exercise.toPresentationExercise2(null) }
     }.cachedIn(viewModelScope)
 
-    fun deleteExercise(exercise: Exercise) {
-        viewModelScope.launch {
-            exerciseService.deleteExercise(exercise.toDomainExercise())
-        }
-    }
-
     fun onSearchQueryChange(new: String) {
         searchQuery.value = new
     }

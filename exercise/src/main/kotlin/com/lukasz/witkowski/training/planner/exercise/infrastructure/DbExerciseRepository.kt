@@ -67,11 +67,10 @@ internal class DbExerciseRepository(
             exerciseDao.deleteExerciseById(exercise.id.toString()) == ONE_ROW
         }
 
-    override suspend fun updateExercise(updatedExercise: Exercise): Boolean =
+    override suspend fun updateExercise(exercise: ExerciseDetails): Boolean =
         withContext(ioDispatcher) {
-            false
-//            val dbExercise = updatedExercise.toDbExerciseWithCategories()
-//            exerciseDao.update(dbExercise) == ONE_ROW
+            val dbExercise = exercise.toDbExerciseDetails()
+            exerciseDao.update(dbExercise) == ONE_ROW
         }
 
     private companion object {
