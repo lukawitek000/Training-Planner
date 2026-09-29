@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import kotlin.time.Duration.Companion.milliseconds
 
 class ExercisesListViewModel(
@@ -32,9 +33,10 @@ class ExercisesListViewModel(
 
     val filteringState =
         combine(
-            searchQuery.debounce(300.milliseconds).distinctUntilChanged(),
+            searchQuery,
             categoryController2.filterCategories
         ) { query, categories ->
+            Timber.i("Query: $query, categories: $categories")
             FilteringState(
                 searchQuery = query,
                 categories = categories
@@ -48,7 +50,7 @@ class ExercisesListViewModel(
             started = SharingStarted.WhileSubscribed(5_000L)
         )
 
-    val exercises = filteringState.flatMapLatest { state ->
+    val exercises = filteringState.debounce(300.milliseconds).flatMapLatest { state ->
         exerciseService.queryExercises(state.toExerciseQuery())
     }.map { pagingData ->
         pagingData.map { exercise -> exercise.toPresentationExercise2(null) }
