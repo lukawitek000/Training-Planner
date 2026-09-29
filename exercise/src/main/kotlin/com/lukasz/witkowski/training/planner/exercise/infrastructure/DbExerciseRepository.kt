@@ -60,9 +60,9 @@ internal class DbExerciseRepository(
             exerciseDao.insertExerciseDetails(dbExerciseDetails)
         }
 
-    override suspend fun delete(exercise: Exercise) =
+    override suspend fun delete(exerciseId: ExerciseId) =
         withContext(ioDispatcher) {
-            exerciseDao.deleteExerciseById(exercise.id.toString()) == ONE_ROW
+            exerciseDao.deleteExerciseById(exerciseId.toString()) == ONE_ROW
         }
 
     override suspend fun updateExercise(exercise: ExerciseDetails): Boolean =

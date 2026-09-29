@@ -11,12 +11,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 
 @Composable
-fun OverlayLoading(
+fun OverlayContent(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+    backgroundContent: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     Box(modifier = modifier) {
-        content()
+        backgroundContent()
         Box(
             modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.5f)) // Dims out the background
                 .clickable(
@@ -25,7 +26,20 @@ fun OverlayLoading(
                 ),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator()
+            content()
         }
+    }
+}
+
+@Composable
+fun OverlayLoading(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
+    OverlayContent(
+        modifier = modifier,
+        backgroundContent = content,
+    ) {
+        CircularProgressIndicator()
     }
 }

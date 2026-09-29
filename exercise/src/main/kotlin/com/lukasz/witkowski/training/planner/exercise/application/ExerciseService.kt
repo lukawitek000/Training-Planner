@@ -59,9 +59,8 @@ class ExerciseService(
     fun queryExercises(exerciseQuery: ExerciseQuery): Flow<PagingData<Exercise2>> =
         exerciseRepository.queryExercises(exerciseQuery)
 
-    suspend fun deleteExercise(exercise: Exercise) {
-        exerciseRepository.delete(exercise)
-        exercise.imageId?.let { deleteImage(it, exercise.id) }
+    suspend fun deleteExercise(exerciseId: ExerciseId) {
+        exerciseRepository.delete(exerciseId)
     }
 
     fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails> =

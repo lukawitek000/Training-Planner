@@ -41,6 +41,7 @@ data class EditExercise(
     val exerciseId: ExerciseId
 ) : TrainingPlannerNavKey
 
+
 @Serializable
 data object PickExercise : TrainingPlannerNavKey
 
@@ -102,7 +103,7 @@ data class TopBarConfig(
 
 sealed interface TopBarAction {
     data class EditExercise(val id: ExerciseId) : TopBarAction
-    data class DeleteExercise(val id: ExerciseId) : TopBarAction
+    data object DeleteExercise : TopBarAction
 }
 
 sealed interface TopBarMenuItem {
@@ -143,7 +144,7 @@ fun TrainingPlannerNavKey.toTopBarConfig(context: Context): TopBarConfig =
                 TopBarMenuItem.OverflowItem(
                     icon = Icons.Default.Delete,
                     text = context.getString(R.string.delete),
-                    action = TopBarAction.DeleteExercise(this.exerciseId),
+                    action = TopBarAction.DeleteExercise,
                     color = Color.Red
                 ),
             )

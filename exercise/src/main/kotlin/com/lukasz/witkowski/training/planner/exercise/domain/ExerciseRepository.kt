@@ -13,7 +13,7 @@ interface ExerciseRepository {
      */
     suspend fun insert(exercise: ExerciseDetails): Boolean
 
-    suspend fun delete(exercise: Exercise): Boolean
+    suspend fun delete(exerciseId: ExerciseId): Boolean
 
     /**
      * Returns _true_ if the update was successful

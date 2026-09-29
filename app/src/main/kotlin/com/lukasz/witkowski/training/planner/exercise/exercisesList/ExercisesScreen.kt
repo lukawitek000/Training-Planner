@@ -241,7 +241,7 @@ private fun ExercisesScreenContentPreview() {
     }
 }
 
-private val PREVIEW_EXERCISES = listOf(
+val PREVIEW_EXERCISES = listOf(
     Exercise2(
         id = ExerciseId.create(),
         name = "Push ups",

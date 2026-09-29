@@ -15,7 +15,6 @@ import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import com.lukasz.witkowski.training.planner.SnackbarState
 import com.lukasz.witkowski.training.planner.TrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
@@ -38,6 +37,8 @@ import kotlinx.serialization.serializer
 @Composable
 fun Navigation(
     backStack: NavBackStack<TrainingPlannerNavKey>,
+    showDialog: Boolean,
+    hideDialog: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavDisplay(
@@ -96,7 +97,13 @@ fun Navigation(
                     factory = remember(key) { TrainingPlannerViewModelFactory(exerciseId = key.exerciseId) }
                 )
                 ExerciseDetailsScreen(
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    showDeleteDialog = showDialog,
+                    onHideDialog = hideDialog,
+                    onDelete = {
+                        hideDialog()
+                        backStack.removeLastOrNull()
+                    }
                 )
             }
 

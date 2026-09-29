@@ -14,11 +14,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,7 +36,6 @@ import com.lukasz.witkowski.training.planner.navigation.TrainingPlannerNavKey
 import com.lukasz.witkowski.training.planner.navigation.TrainingPlansList
 import com.lukasz.witkowski.training.planner.navigation.rememberTrainingPlannerNavBackStack
 import com.lukasz.witkowski.training.planner.navigation.toTopBarConfig
-import com.lukasz.witkowski.training.planner.ui.components.CustomSnackbar
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 
 class MainActivity : ComponentActivity() {
@@ -55,6 +54,7 @@ class MainActivity : ComponentActivity() {
 fun TrainingPlannerApp() {
     val backStack = rememberTrainingPlannerNavBackStack(TrainingPlansList)
     val context = LocalContext.current
+    var showDialog by rememberSaveable(backStack) { mutableStateOf(false) }
     Scaffold(
         bottomBar = {
             AnimatedVisibility(
@@ -90,7 +90,7 @@ fun TrainingPlannerApp() {
                             backStack.add(EditExercise(it.id))
                         }
                         is TopBarAction.DeleteExercise -> {
-
+                            showDialog = true
                         }
                     }
                 }
@@ -106,6 +106,8 @@ fun TrainingPlannerApp() {
     ) {
         Navigation(
             backStack = backStack,
+            showDialog = showDialog,
+            hideDialog = { showDialog = false },
             modifier = Modifier.padding(it),
         )
     }

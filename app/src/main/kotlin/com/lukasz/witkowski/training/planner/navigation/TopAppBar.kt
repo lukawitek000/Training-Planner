@@ -134,7 +134,7 @@ private fun TopBarPreview() {
                     TopBarMenuItem.OverflowItem(
                         icon = Icons.Default.Delete,
                         text = stringResource(R.string.delete),
-                        action = TopBarAction.DeleteExercise(ExerciseId.create())
+                        action = TopBarAction.DeleteExercise
                     ),
                 )
             )
