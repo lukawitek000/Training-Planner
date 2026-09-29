@@ -20,6 +20,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -164,7 +166,7 @@ class ExerciseEditorViewModel(
     private fun loadExercise(exerciseId: ExerciseId) {
         viewModelScope.launch {
             runCatching {
-                val exerciseDetails = exerciseService.getExerciseDetailsById(exerciseId)
+                val exerciseDetails = exerciseService.getExerciseDetailsById(exerciseId).first()
                 uiState.value = ExerciseEditingUiState.Editing(
                     exerciseDetails.toExerciseEditingState()
                 )
@@ -172,7 +174,7 @@ class ExerciseEditorViewModel(
             }.onFailure {
                 Timber.w("Failed to load exercise: ${it.message}")
                 uiState.value =
-                    ExerciseEditingUiState.Failure(null, it.message ?: "Uknown failure")
+                    ExerciseEditingUiState.Failure(null, it.message ?: "Unknown failure")
                 delay(1.seconds)
                 uiState.value = ExerciseEditingUiState.Editing(ExerciseEditingInput())
             }

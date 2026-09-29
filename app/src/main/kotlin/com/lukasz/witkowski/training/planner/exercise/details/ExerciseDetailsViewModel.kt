@@ -6,31 +6,32 @@ import com.lukasz.witkowski.training.planner.exercise.application.ExerciseServic
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExerciseDetails
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails as DomainExerciseDetails
 
 class ExerciseDetailsViewModel(
     private val service: ExerciseService,
     private val exerciseId: ExerciseId,
-): ViewModel() {
-    val state : StateFlow<ExerciseDetailsState>
-        field = MutableStateFlow<ExerciseDetailsState>(ExerciseDetailsState.Loading)
-
-    init {
-        viewModelScope.launch {
-            try {
-                val exercise = service.getExerciseDetailsById(exerciseId).toPresentationExerciseDetails()
-                state.value = ExerciseDetailsState.Success(exercise)
-            } catch (e: RuntimeException) {
-                state.value = ExerciseDetailsState.Failure(e.message ?: "Unknown failure")
-            }
+) : ViewModel() {
+    val state: StateFlow<ExerciseDetailsState> = service.getExerciseDetailsById(exerciseId)
+        .map<DomainExerciseDetails, ExerciseDetailsState> {
+            ExerciseDetailsState.Success(it.toPresentationExerciseDetails())
         }
-    }
+        .catch {
+            emit(ExerciseDetailsState.Failure(it.message ?: "Unknown failure"))
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5_000L),
+            initialValue = ExerciseDetailsState.Loading
+        )
 }
 
 sealed interface ExerciseDetailsState {
-    data object Loading: ExerciseDetailsState
-    data class Success(val details: ExerciseDetails): ExerciseDetailsState
-    data class Failure(val message: String): ExerciseDetailsState
+    data object Loading : ExerciseDetailsState
+    data class Success(val details: ExerciseDetails) : ExerciseDetailsState
+    data class Failure(val message: String) : ExerciseDetailsState
 }

@@ -22,20 +22,18 @@ internal class DbExerciseRepository(
     private val exerciseDao: ExerciseDao,
     private val ioDispatcher: CoroutineContext = Dispatchers.IO,
 ) : ExerciseRepository {
-    override suspend fun getExerciseDetailsById(id: ExerciseId): ExerciseDetails =
-        withContext(ioDispatcher) {
-            val dbExerciseDetails = exerciseDao.getExerciseDetailsById(id.toString())
-            dbExerciseDetails.toExerciseDetails()
-        }
+    override fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails> =
+            exerciseDao.getExerciseDetailsById(id.toString()).map {
+                it.toExerciseDetails()
+            }
 
     override fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise2>> {
-        val pagingSource = pagingSource(query)
         return Pager(
             config = PagingConfig(
                 pageSize = 10,
                 prefetchDistance = 10
             ),
-            pagingSourceFactory = { pagingSource }
+            pagingSourceFactory = { pagingSource(query) }
         ).flow.map { pagingData ->
             pagingData.map { dbExercise ->
                 Timber.d("Fetched exercise: ${dbExercise.exercise.name}")

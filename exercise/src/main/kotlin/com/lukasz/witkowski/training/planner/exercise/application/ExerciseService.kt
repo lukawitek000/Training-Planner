@@ -26,7 +26,6 @@ class ExerciseService(
         val imageReference = exerciseConfiguration.image?.let { saveImage(it, exerciseId) }
         val exerciseDetails =
             ExerciseFactory.create(exerciseConfiguration, imageReference?.imageId, exerciseId)
-        delay(5.seconds) // TODo remove this delay as it is for testing only
         exerciseRepository.insert(exerciseDetails)
         return exerciseId
     }
@@ -65,19 +64,8 @@ class ExerciseService(
         exercise.imageId?.let { deleteImage(it, exercise.id) }
     }
 
-    suspend fun getExerciseDetailsById(id: ExerciseId): ExerciseDetails =
+    fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails> =
         exerciseRepository.getExerciseDetailsById(id)
-
-//    suspend fun updateExercise(
-//        exerciseId: ExerciseId,
-//        exerciseConfiguration: ExerciseConfiguration,
-//        previousImage: Image?,
-//    ): Boolean {
-//        val updatedImage =
-//            updateImage(exerciseConfiguration.image, previousImage?.imageId, exerciseId)
-//        val exercise = ExerciseFactory.create(exerciseConfiguration, updatedImage?.imageId, exerciseId)
-//        return exerciseRepository.updateExercise(exercise)
-//    }
 
     private suspend fun updateImage(
         imageByteArray: ImageByteArray?,

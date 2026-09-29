@@ -52,7 +52,7 @@ internal interface ExerciseDao {
 
     @Transaction
     @Query("SELECT * FROM Exercise WHERE :id == exerciseId")
-    suspend fun getExerciseDetailsById(id: String): DbExerciseDetails
+    fun getExerciseDetailsById(id: String): Flow<DbExerciseDetails>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(dbExercise: DbExercise): Long
