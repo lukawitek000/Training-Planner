@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.application
 
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategoryLegacy
 import com.lukasz.witkowski.training.planner.synchronization.SynchronizationStatus
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
@@ -19,7 +19,7 @@ class TrainingPlanService(
         trainingPlanRepository.save(trainingPlan)
     }
 
-    fun getTrainingPlansFromCategories(categories: List<ExerciseCategory> = emptyList()): Flow<List<TrainingPlan>> =
+    fun getTrainingPlansFromCategories(categories: List<ExerciseCategoryLegacy> = emptyList()): Flow<List<TrainingPlan>> =
         trainingPlanRepository.getAll().map {
             it.filter { trainingPlan ->
                 categories.isEmpty() ||

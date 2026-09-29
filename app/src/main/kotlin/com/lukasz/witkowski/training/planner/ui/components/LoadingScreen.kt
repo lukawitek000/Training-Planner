@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.lukasz.witkowski.training.planner.ui.theme.Dimens
 
 @Composable
 fun LoadingScreen(
@@ -23,7 +24,7 @@ fun LoadingScreen(
     ) {
         CircularProgressIndicator()
         if(message.isNotEmpty()){
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens.large))
             Text(message)
         }
 

@@ -11,6 +11,8 @@ dependencies {
 
     // Kotlin reflection - Used to get subclasses of Category sealed class
     implementation(libs.kotlinReflect)
+    implementation(libs.androidx.paging.common)
+    implementation(libs.androidx.roomPaging)
 
     implementation(libs.timber)
     implementation(libs.androidx.roomRuntime)

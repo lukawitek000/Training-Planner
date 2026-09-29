@@ -5,40 +5,43 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseViewModel
-import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseViewModel
+import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEditorViewModel
+import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsViewModel
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.training.trainingOverview.TrainingOverviewViewModel
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
 
-class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
+class TrainingPlannerViewModelFactory(
+    private val exerciseId: ExerciseId? = null
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         return when (modelClass) {
             ExercisesListViewModel::class.java -> {
                 val exerciseContainer = exerciseContainer(extras)
                 ExercisesListViewModel(
                     exerciseContainer.service,
-                    exerciseContainer.categoryController
+                    exerciseContainer.categoryController2
                 )
             }
-            CreateExerciseViewModel::class.java -> {
+            ExerciseEditorViewModel::class.java -> {
                 val exerciseContainer = exerciseContainer(extras)
                 val savedStateHandle = extras.createSavedStateHandle()
-                CreateExerciseViewModel(
+                ExerciseEditorViewModel(
                     exerciseContainer.service,
-                    exerciseContainer.categoriesCollection,
+                    exerciseContainer.categoryController2,
+                    exerciseId,
                     savedStateHandle
                 )
             }
-            EditExerciseViewModel::class.java -> {
+            ExerciseDetailsViewModel::class.java -> {
                 val exerciseContainer = exerciseContainer(extras)
-                val savedStateHandle = extras.createSavedStateHandle()
-                EditExerciseViewModel(
+                val id = checkNotNull(exerciseId) { "exerciseId must be provided to create ExerciseDetailsViewModel" }
+                ExerciseDetailsViewModel(
                     exerciseContainer.service,
-                    exerciseContainer.categoriesCollection,
-                    savedStateHandle
+                    id
                 )
             }
             TrainingsListViewModel::class.java -> {

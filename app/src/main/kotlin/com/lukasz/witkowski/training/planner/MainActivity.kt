@@ -8,27 +8,37 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavBackStack
+import com.lukasz.witkowski.training.planner.navigation.BottomBarItem
+import com.lukasz.witkowski.training.planner.navigation.BottomNavItems
 import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
-import com.lukasz.witkowski.training.planner.navigation.NavItem
+import com.lukasz.witkowski.training.planner.navigation.CreateExercise
+import com.lukasz.witkowski.training.planner.navigation.EditExercise
+import com.lukasz.witkowski.training.planner.navigation.ExercisesList
 import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
-import com.lukasz.witkowski.training.planner.ui.components.CustomSnackbar
+import com.lukasz.witkowski.training.planner.navigation.TopBarAction
+import com.lukasz.witkowski.training.planner.navigation.TrainingPlannerNavKey
+import com.lukasz.witkowski.training.planner.navigation.TrainingPlansList
+import com.lukasz.witkowski.training.planner.navigation.rememberTrainingPlannerNavBackStack
+import com.lukasz.witkowski.training.planner.navigation.toTopBarConfig
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -42,72 +52,76 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun TrainingPlannerApp() {
-    val navController = rememberNavController()
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentScreen = NavItem.Items.list.find {
-        val destinationRoute = backStackEntry?.destination?.route
-        it.route == destinationRoute?.substringBefore('/')
-    } ?: NavItem.Trainings
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    val scope = rememberCoroutineScope()
-    val snackbarState = remember(scope) {
-        SnackbarState(
-            scope = scope,
-            show = { message, actionLabel ->
-                snackbarHostState.showSnackbar(message, actionLabel = actionLabel)
-            }
-        )
-    }
-
+    val backStack = rememberTrainingPlannerNavBackStack(TrainingPlansList)
+    val context = LocalContext.current
+    var showDialog by rememberSaveable(backStack) { mutableStateOf(false) }
     Scaffold(
         bottomBar = {
             AnimatedVisibility(
-                NavItem.BottomNavItems.list.contains(currentScreen),
+                visible = backStack.last() in BottomNavItems,
                 enter = slideInVertically(initialOffsetY = { it }),
                 exit = slideOutVertically(targetOffsetY = { it }),
             ) {
                 BottomNavigationBar(
-                    currentRoute = backStackEntry?.destination?.route,
-                    onItemClick = {
-                        handleBottomMenuItemClicked(navController, it)
-                    })
+                    items = listOf(
+                        BottomBarItem(
+                            icon = R.drawable.trainings_icon,
+                            title = "Training Plans",
+                            selected = backStack.lastOrNull() is TrainingPlansList,
+                            onClick = { navigateBottomBar(backStack, TrainingPlansList) }
+                        ),
+                        BottomBarItem(
+                            icon = R.drawable.exercises_icon,
+                            title = "Exercises",
+                            selected = backStack.lastOrNull() is ExercisesList,
+                            onClick = { navigateBottomBar(backStack, ExercisesList) }
+                        ),
+                    ),
+                )
             }
         },
         topBar = {
-            TopBar(title = currentScreen.title, showBackArrow = currentScreen.isBackArrow) {
-                navController.navigateUp()
-            }
+            TopBar(
+                config = backStack.last().toTopBarConfig(context = context),
+                navigateBack = { backStack.removeLastOrNull() },
+                onAction = {
+                    when (it) {
+                        is TopBarAction.EditExercise -> {
+                            backStack.add(EditExercise(it.id))
+                        }
+                        is TopBarAction.DeleteExercise -> {
+                            showDialog = true
+                        }
+                    }
+                }
+            )
         },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) { data ->
-                CustomSnackbar(snackbarData = data)
+        floatingActionButton = {
+            if (backStack.lastOrNull() == ExercisesList) {
+                FloatingActionButton(onClick = { backStack.add(CreateExercise) }) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "Create Exercise")
+                }
             }
         }
     ) {
-        Navigation(navController = navController, innerPadding = it, snackbarState = snackbarState)
+        Navigation(
+            backStack = backStack,
+            showDialog = showDialog,
+            hideDialog = { showDialog = false },
+            modifier = Modifier.padding(it),
+        )
     }
 }
 
-
-private fun handleBottomMenuItemClicked(
-    navController: NavHostController,
-    it: NavItem
+private fun navigateBottomBar(
+    backStack: NavBackStack<TrainingPlannerNavKey>,
+    newDestination: TrainingPlannerNavKey
 ) {
-    navController.navigate(it.route) {
-        // Pop up to the start destination of the graph to
-        // avoid building up a large stack of destinations
-        // on the back stack as users select items
-        popUpTo(navController.graph.findStartDestination().id) {
-            saveState = true
-        }
-        // Avoid multiple copies of the same destination when reselecting the same item
-        launchSingleTop = true
-        // Restore state when reselecting a previously selected item
-        restoreState = true
+    if (backStack.last() != newDestination) {
+        backStack.removeLastOrNull()
+        backStack.add(newDestination)
     }
 }
-
 
 @ExperimentalAnimationApi
 @Preview(showBackground = true)

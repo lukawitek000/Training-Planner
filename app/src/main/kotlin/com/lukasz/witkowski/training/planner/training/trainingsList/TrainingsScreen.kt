@@ -39,7 +39,6 @@ import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
 
 @Composable
 fun TrainingsScreen(
-    innerPadding: PaddingValues = PaddingValues(),
     viewModel: TrainingsListViewModel,
     onCreateTrainingFabClicked: () -> Unit = {},
     navigateToTrainingOverview: (TrainingPlanId) -> Unit,
@@ -49,17 +48,17 @@ fun TrainingsScreen(
     val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
 
     Scaffold(
-        modifier = Modifier.padding(innerPadding),
+        modifier = Modifier.padding(),
         floatingActionButton = {
             CreateTrainingFab(onClicked = onCreateTrainingFabClicked)
         }
     ) {
         Column(modifier = Modifier.padding(it)) {
-            CategoryFilters(
-                categories = viewModel.categoriesWithoutNone,
-                selectedCategories = selectedCategoriesList,
-                selectCategory = { viewModel.selectCategory(it) }
-            )
+//            CategoryFilters(
+//                categories = viewModel.categoriesWithoutNone,
+//                selectedCategories = selectedCategoriesList,
+//                selectCategory = { viewModel.selectCategory(it) }
+//            )
             if (trainings.isNotEmpty()) {
                 TrainingsList(
                     trainings = trainings,
@@ -163,7 +162,6 @@ private fun CategoriesRow(
             CategoryChip(
                 modifier = Modifier.padding(end = 8.dp),
                 category = item,
-                fontSize = 14.sp
             )
         }
     }

@@ -1,43 +1,71 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import androidx.paging.map
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 
 internal class DbExerciseRepository(
     private val exerciseDao: ExerciseDao,
     private val ioDispatcher: CoroutineContext = Dispatchers.IO,
 ) : ExerciseRepository {
-    override suspend fun getById(id: ExerciseId): Exercise =
-        withContext(ioDispatcher) {
-            val dbExercise = exerciseDao.getById(id.toString())
-            dbExercise.toExercise()
+    override fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails> =
+        exerciseDao.getExerciseDetailsById(id.toString()).map {
+            it.toExerciseDetails()
         }
 
-    override fun getAll(): Flow<List<Exercise>> =
-        exerciseDao
-            .getAll()
-            .map { it.map { dbExercise -> dbExercise.toExercise() } }
-
-    override suspend fun insert(exercise: Exercise): Boolean =
-        withContext(ioDispatcher) {
-            val exerciseWithImage = exercise.toDbExercise()
-            exerciseDao.insert(exerciseWithImage) == ONE_ROW.toLong()
+    override fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise2>> =
+        Pager(
+            config =
+                PagingConfig(
+                    pageSize = 10,
+                    prefetchDistance = 10,
+                ),
+            pagingSourceFactory = { pagingSource(query) },
+        ).flow.map { pagingData ->
+            pagingData.map { dbExercise ->
+                Timber.d("Fetched exercise: ${dbExercise.exercise.name}")
+                dbExercise.toExercise()
+            }
         }
 
-    override suspend fun delete(exercise: Exercise) =
-        withContext(ioDispatcher) {
-            exerciseDao.deleteExerciseById(exercise.id.toString()) == ONE_ROW
+    private fun pagingSource(query: ExerciseQuery): PagingSource<Int, DbExerciseWithCategories> =
+        if (query.categories.isEmpty()) {
+            exerciseDao.getExercisesWithCategories(query.query)
+        } else {
+            exerciseDao
+                .getExercisesWithCategories(
+                    query = query.query,
+                    categoriesNames = query.categories.map { it.name },
+                )
         }
 
-    override suspend fun updateExercise(updatedExercise: Exercise): Boolean =
+    override suspend fun insert(exercise: ExerciseDetails): Boolean =
         withContext(ioDispatcher) {
-            val dbExercise = updatedExercise.toDbExercise()
+            val dbExerciseDetails = exercise.toDbExerciseDetails()
+            exerciseDao.insertExerciseDetails(dbExerciseDetails)
+        }
+
+    override suspend fun delete(exerciseId: ExerciseId) =
+        withContext(ioDispatcher) {
+            exerciseDao.deleteExerciseById(exerciseId.toString()) == ONE_ROW
+        }
+
+    override suspend fun updateExercise(exercise: ExerciseDetails): Boolean =
+        withContext(ioDispatcher) {
+            val dbExercise = exercise.toDbExerciseDetails()
             exerciseDao.update(dbExercise) == ONE_ROW
         }
 

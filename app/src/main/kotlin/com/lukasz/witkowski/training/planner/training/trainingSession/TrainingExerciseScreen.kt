@@ -195,7 +195,7 @@ private fun TrainingExerciseScreenPreview() {
                     ExerciseId.create(),
                     name = "Test exercise",
                     description = "Test exercise description",
-                    category = Category(0, R.string.category_back),
+                    categories = listOf(Category(0, R.string.category_back)),
                     null
                 ),
                 repetitions = 15,

@@ -10,4 +10,9 @@
     <string name="category_abs">ABS</string>
     <string name="category_stretching">Stretching</string>
     <string name="category_chest">Chest</string>
+
+
+    <string name="beginner">Beginner</string>
+    <string name="intermediate">Intermediate</string>
+    <string name="advanced">Advance</string>
 </resources>
