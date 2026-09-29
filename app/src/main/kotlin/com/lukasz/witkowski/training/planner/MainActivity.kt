@@ -20,18 +20,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.NavBackStack
 import com.lukasz.witkowski.training.planner.navigation.BottomBarItem
 import com.lukasz.witkowski.training.planner.navigation.BottomNavItems
 import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
 import com.lukasz.witkowski.training.planner.navigation.CreateExercise
+import com.lukasz.witkowski.training.planner.navigation.EditExercise
 import com.lukasz.witkowski.training.planner.navigation.ExercisesList
 import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
+import com.lukasz.witkowski.training.planner.navigation.TopBarAction
 import com.lukasz.witkowski.training.planner.navigation.TrainingPlannerNavKey
 import com.lukasz.witkowski.training.planner.navigation.TrainingPlansList
 import com.lukasz.witkowski.training.planner.navigation.rememberTrainingPlannerNavBackStack
+import com.lukasz.witkowski.training.planner.navigation.toTopBarConfig
 import com.lukasz.witkowski.training.planner.ui.components.CustomSnackbar
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 
@@ -50,16 +54,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun TrainingPlannerApp() {
     val backStack = rememberTrainingPlannerNavBackStack(TrainingPlansList)
-    val snackbarHostState = remember { SnackbarHostState() }
-    val scope = rememberCoroutineScope()
-    val snackbarState = remember(scope) {
-        SnackbarState(
-            scope = scope,
-            show = { message, actionLabel ->
-                snackbarHostState.showSnackbar(message, actionLabel = actionLabel)
-            }
-        )
-    }
+    val context = LocalContext.current
     Scaffold(
         bottomBar = {
             AnimatedVisibility(
@@ -73,27 +68,33 @@ fun TrainingPlannerApp() {
                             icon = R.drawable.trainings_icon,
                             title = "Training Plans",
                             selected = backStack.lastOrNull() is TrainingPlansList,
-                            onClick = { navigateBottomBar(backStack, TrainingPlansList)}
+                            onClick = { navigateBottomBar(backStack, TrainingPlansList) }
                         ),
                         BottomBarItem(
                             icon = R.drawable.exercises_icon,
                             title = "Exercises",
                             selected = backStack.lastOrNull() is ExercisesList,
-                            onClick = { navigateBottomBar(backStack, ExercisesList)}
+                            onClick = { navigateBottomBar(backStack, ExercisesList) }
                         ),
                     ),
                 )
             }
         },
         topBar = {
-            TopBar(title = backStack.lastOrNull().toString(), showBackArrow = backStack.size > 1) {
-                backStack.removeLastOrNull()
-            }
-        },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState) { data ->
-                CustomSnackbar(snackbarData = data)
-            }
+            TopBar(
+                config = backStack.last().toTopBarConfig(context = context),
+                navigateBack = { backStack.removeLastOrNull() },
+                onAction = {
+                    when (it) {
+                        is TopBarAction.EditExercise -> {
+                            backStack.add(EditExercise(it.id))
+                        }
+                        is TopBarAction.DeleteExercise -> {
+
+                        }
+                    }
+                }
+            )
         },
         floatingActionButton = {
             if (backStack.lastOrNull() == ExercisesList) {
@@ -106,7 +107,6 @@ fun TrainingPlannerApp() {
         Navigation(
             backStack = backStack,
             modifier = Modifier.padding(it),
-            snackbarState = snackbarState
         )
     }
 }

@@ -15,6 +15,7 @@ data class FilterCategory(
 interface CategoryController2 {
     val filterCategories: Flow<List<FilterCategory>>
     fun toggleCategory(category: ExerciseCategory)
+    fun selectCategories(categories: Set<ExerciseCategory>)
 }
 
 class DefaultCategoryController2(
@@ -40,5 +41,9 @@ class DefaultCategoryController2(
                 set + category
             }
         }
+    }
+
+    override fun selectCategories(categories: Set<ExerciseCategory>) {
+        selectedCategories.value = categories
     }
 }

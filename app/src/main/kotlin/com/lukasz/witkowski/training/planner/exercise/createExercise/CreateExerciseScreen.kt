@@ -27,6 +27,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.ui.components.CategoryFilters
 import com.lukasz.witkowski.training.planner.ui.components.FormFieldLabel
+import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 import com.lukasz.witkowski.training.planner.ui.components.OverlayLoading
 import com.lukasz.witkowski.training.planner.ui.components.PREVIEW_CATEGORIES
 import com.lukasz.witkowski.training.planner.ui.components.TextField
@@ -35,9 +36,9 @@ import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 
 @Composable
 fun CreateExerciseScreen(
-    modifier: Modifier = Modifier,
     viewModel: ExerciseEditorViewModel,
-    navigateToDetails: (ExerciseId) -> Unit
+    navigateToDetails: (ExerciseId, String) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val state by viewModel.uiState.collectAsState()
     CreateExerciseScreenContent(
@@ -52,20 +53,15 @@ fun CreateExerciseScreen(
 private fun CreateExerciseScreenContent(
     uiState: ExerciseEditingUiState,
     onUserInputChange: (ExerciseEditingEvent) -> Unit,
-    onExerciseSaved: (ExerciseId) -> Unit,
+    onExerciseSaved: (ExerciseId, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
     when (uiState) {
-        is ExerciseEditingUiState.Saving -> OverlayLoading(Modifier.fillMaxSize()) {
-            ExerciseForm(
-                state = uiState.exerciseEditingState,
-                modifier = modifier,
-                onUserInputChange = onUserInputChange
-            )
-        }
+        is ExerciseEditingUiState.Saving -> LoadingExerciseForm(uiState.exerciseEditingInput, modifier)
+        is ExerciseEditingUiState.Loading -> LoadingScreen(modifier)
         is ExerciseEditingUiState.Editing -> ExerciseForm(
-            state = uiState.exerciseEditingState,
+            state = uiState.exerciseEditingInput,
             modifier = modifier,
             onUserInputChange = onUserInputChange
         )
@@ -73,21 +69,37 @@ private fun CreateExerciseScreenContent(
             LaunchedEffect(uiState) {
                 Toast.makeText(context, "Failed exercise save: ${uiState.message}", Toast.LENGTH_SHORT).show()
             }
-            ExerciseForm(
-                state = uiState.exerciseEditingState,
-                modifier = modifier,
-                onUserInputChange = onUserInputChange
-            )
+            uiState.exerciseEditingInput?.let {
+                ExerciseForm(
+                    state = it,
+                    modifier = modifier,
+                    onUserInputChange = onUserInputChange
+                )
+            }
         }
         is ExerciseEditingUiState.Saved -> LaunchedEffect(uiState) {
-            onExerciseSaved(uiState.exerciseId)
+            onExerciseSaved(uiState.exerciseId, uiState.name)
         }
     }
 }
 
 @Composable
+private fun LoadingExerciseForm(
+    exerciseEditingInput: ExerciseEditingInput,
+    modifier: Modifier = Modifier,
+) {
+    OverlayLoading(Modifier.fillMaxSize()) {
+        ExerciseForm(
+            state = exerciseEditingInput,
+            modifier = modifier,
+            onUserInputChange = {}
+        )
+    }
+}
+
+@Composable
 private fun ExerciseForm(
-    state: ExerciseEditingState,
+    state: ExerciseEditingInput,
     onUserInputChange: (ExerciseEditingEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -115,7 +127,7 @@ private fun ExerciseForm(
             onRecommendationChange = onUserInputChange
         )
         Button(
-            onClick = { onUserInputChange(ExerciseEditingEvent.CreateExercise) },
+            onClick = { onUserInputChange(ExerciseEditingEvent.CreateExercise(state)) },
             modifier = Modifier.fillMaxWidth(),
             enabled = state.isValidForCreation()
         ) {
@@ -179,7 +191,7 @@ private fun CategorySelectionPanel(
 fun CreateExerciseScreenPreview() {
     TrainingPlannerTheme {
         val bitmaps = remember { createPreviewBitmaps() }
-        val state = ExerciseEditingState(
+        val state = ExerciseEditingInput(
             images = bitmaps,
             previewImage = bitmaps.first(),
             categories = PREVIEW_CATEGORIES
@@ -188,7 +200,7 @@ fun CreateExerciseScreenPreview() {
             modifier = Modifier.fillMaxSize(),
             uiState = ExerciseEditingUiState.Editing(state),
             onUserInputChange = {},
-            onExerciseSaved = {}
+            onExerciseSaved = {_, _ ->}
         )
     }
 }
@@ -198,7 +210,7 @@ fun CreateExerciseScreenPreview() {
 fun CreateExerciseScreenSavingPreview() {
     TrainingPlannerTheme {
         val bitmaps = remember { createPreviewBitmaps() }
-        val state = ExerciseEditingState(
+        val state = ExerciseEditingInput(
             images = bitmaps,
             previewImage = bitmaps.first(),
             categories = PREVIEW_CATEGORIES
@@ -207,7 +219,7 @@ fun CreateExerciseScreenSavingPreview() {
             modifier = Modifier.fillMaxSize(),
             uiState = ExerciseEditingUiState.Saving(state),
             onUserInputChange = {},
-            onExerciseSaved = {}
+            onExerciseSaved = {_, _ ->}
         )
     }
 }

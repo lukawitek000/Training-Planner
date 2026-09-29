@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseConfiguration
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController2
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
@@ -13,6 +14,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recomm
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toExerciseRecommendation
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toRecommendation
 import com.lukasz.witkowski.training.planner.image.ImageBitmap
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +23,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -30,49 +33,35 @@ import kotlin.time.Duration.Companion.seconds
 class ExerciseEditorViewModel(
     private val exerciseService: ExerciseService,
     private val categoryController: CategoryController2,
+    exerciseId: ExerciseId? = null,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val editingState = MutableStateFlow(ExerciseEditingState())
-    private val operatingMode = MutableStateFlow<OperatingMode>(OperatingMode.Editing)
-
-    val uiState = combine(
-        editingState,
-        operatingMode,
+    private val initialState = exerciseId?.let { ExerciseEditingUiState.Loading(it) }
+        ?: ExerciseEditingUiState.Editing(ExerciseEditingInput())
+    private val filterCategories: StateFlow<List<FilterCategory>> =
         categoryController.filterCategories
-    ) { editingState, mode, categories ->
-        when (mode) {
-            OperatingMode.Editing -> ExerciseEditingUiState.Editing(
-                editingState.copy(categories = categories)
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.Eagerly,
+                initialValue = emptyList()
             )
-
-            OperatingMode.Saving -> ExerciseEditingUiState.Saving(
-                editingState.copy(categories = categories)
-            )
-            is OperatingMode.Failure ->  ExerciseEditingUiState.Failure(
-                editingState.copy(categories = categories),
-                mode.message
-            )
-            is OperatingMode.Saved -> ExerciseEditingUiState.Saved(mode.exerciseId)
-        }
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(5_000L),
-        initialValue = ExerciseEditingUiState.Editing(editingState.value)
-    )
+    val uiState: StateFlow<ExerciseEditingUiState>
+        field = MutableStateFlow(initialState)
 
     init {
         viewModelScope.launch {
-            categoryController.filterCategories.collectLatest { newCategories ->
-                editingState.update { it.copy(categories = newCategories) }
+            filterCategories.collect { newCategories ->
+                uiState.updateInput { it.copy(categories = newCategories) }
             }
         }
+        exerciseId?.let { loadExercise(it) }
     }
 
     fun onEvent(event: ExerciseEditingEvent) {
         when (event) {
-            is ExerciseEditingEvent.NameChanged -> editingState.update { it.copy(name = event.name) }
+            is ExerciseEditingEvent.NameChanged -> uiState.updateInput { it.copy(name = event.name) }
             is ExerciseEditingEvent.DescriptionChanged -> {
-                editingState.update { it.copy(description = event.description) }
+                uiState.updateInput { it.copy(description = event.description) }
             }
 
             is ExerciseEditingEvent.CategoryToggled -> {
@@ -84,7 +73,7 @@ class ExerciseEditorViewModel(
             is ExerciseEditingEvent.ImagePreviewChanged -> {}
 
             is ExerciseEditingEvent.RecommendedSetsChanged -> {
-                editingState.updateRecommendationParam(
+                uiState.updateRecommendationParam(
                     level = event.level,
                     updateParameters = { currentParams ->
                         currentParams.copy(sets = event.sets)
@@ -93,7 +82,7 @@ class ExerciseEditorViewModel(
             }
 
             is ExerciseEditingEvent.RecommendedRepsChanged -> {
-                editingState.updateRecommendationParam(
+                uiState.updateRecommendationParam(
                     level = event.level,
                     updateParameters = { currentParams ->
                         currentParams.copy(reps = event.reps)
@@ -102,7 +91,7 @@ class ExerciseEditorViewModel(
             }
 
             is ExerciseEditingEvent.RecommendedRestTimeChanged -> {
-                editingState.updateRecommendationParam(
+                uiState.updateRecommendationParam(
                     level = event.level,
                     updateParameters = { currentParams ->
                         currentParams.copy(restTime = event.restTime)
@@ -111,7 +100,7 @@ class ExerciseEditorViewModel(
             }
 
             is ExerciseEditingEvent.RecommendedWeightChanged -> {
-                editingState.updateRecommendationParam(
+                uiState.updateRecommendationParam(
                     level = event.level,
                     updateParameters = { currentParams ->
                         currentParams.copy(weightInKg = event.weight)
@@ -120,18 +109,30 @@ class ExerciseEditorViewModel(
             }
 
             is ExerciseEditingEvent.CreateExercise -> {
-                saveExercise()
+                saveExercise(input = event.input)
             }
         }
     }
 
-    private fun MutableStateFlow<ExerciseEditingState>.updateRecommendationParam(
+    private fun MutableStateFlow<ExerciseEditingUiState>.updateInput(
+        transform: (ExerciseEditingInput) -> ExerciseEditingInput,
+    ) {
+        update {
+            if (it is ExerciseEditingUiState.Editing) {
+                ExerciseEditingUiState.Editing(transform(it.exerciseEditingInput))
+            } else {
+                it
+            }
+        }
+    }
+
+    private fun MutableStateFlow<ExerciseEditingUiState>.updateRecommendationParam(
         level: RecommendationLevel,
         updateParameters: (RecommendedParameters) -> RecommendedParameters,
     ) {
-        update {
+        updateInput {
             val index = it.recommendations.indexOfFirst { it.level == level }
-            if (index < 0) return@update it
+            if (index < 0) return@updateInput it
             val recommendation = it.recommendations[index]
             val params = updateParameters(recommendation.parameters)
             val newRecommendations = it.recommendations.toMutableList()
@@ -140,24 +141,44 @@ class ExerciseEditorViewModel(
         }
     }
 
-    private fun saveExercise() {
+    private fun saveExercise(input: ExerciseEditingInput) {
         viewModelScope.launch {
             runCatching {
-                operatingMode.value = OperatingMode.Saving
+                uiState.value = ExerciseEditingUiState.Saving(input)
+                val exerciseConfiguration = input.toExerciseConfiguration()
                 val exerciseId = exerciseService.saveExercise(
-                    exerciseConfiguration = editingState.value.toExerciseConfiguration()
+                    exerciseConfiguration = exerciseConfiguration
                 )
-                operatingMode.value = OperatingMode.Saved(exerciseId)
+                uiState.value = ExerciseEditingUiState.Saved(exerciseId, exerciseConfiguration.name)
             }.onFailure {
                 Timber.w("Failed to save exercise: ${it.message}")
-                operatingMode.value = OperatingMode.Failure(it.message ?: "Uknown failure")
+                uiState.value =
+                    ExerciseEditingUiState.Failure(input, it.message ?: "Uknown failure")
                 delay(1.seconds)
-                operatingMode.value = OperatingMode.Editing
+                uiState.value = ExerciseEditingUiState.Editing(input)
             }
         }
     }
 
-    private fun ExerciseEditingState.toExerciseConfiguration(): ExerciseConfiguration {
+    private fun loadExercise(exerciseId: ExerciseId) {
+        viewModelScope.launch {
+            runCatching {
+                val exerciseDetails = exerciseService.getExerciseDetailsById(exerciseId)
+                uiState.value = ExerciseEditingUiState.Editing(
+                    exerciseDetails.toExerciseEditingState()
+                )
+                categoryController.selectCategories(exerciseDetails.exercise.categories.toSet())
+            }.onFailure {
+                Timber.w("Failed to load exercise: ${it.message}")
+                uiState.value =
+                    ExerciseEditingUiState.Failure(null, it.message ?: "Uknown failure")
+                delay(1.seconds)
+                uiState.value = ExerciseEditingUiState.Editing(ExerciseEditingInput())
+            }
+        }
+    }
+
+    private fun ExerciseEditingInput.toExerciseConfiguration(): ExerciseConfiguration {
         return ExerciseConfiguration(
             name = name,
             description = description,
@@ -170,6 +191,20 @@ class ExerciseEditorViewModel(
             advancedRecommendation = recommendations.toExerciseRecommendation(RecommendationLevel.ADVANCED),
         )
     }
+
+    private fun ExerciseDetails.toExerciseEditingState(): ExerciseEditingInput {
+        return ExerciseEditingInput(
+            name = exercise.name,
+            description = exercise.description,
+            categories = filterCategories.value,
+            recommendations = listOf(
+                beginnerRecommendation.toRecommendation(RecommendationLevel.BEGINNER),
+                intermediateRecommendation.toRecommendation(RecommendationLevel.INTERMEDIATE),
+                advancedRecommendation.toRecommendation(RecommendationLevel.ADVANCED),
+            )
+        )
+    }
+
 }
 
 sealed interface ExerciseEditingEvent {
@@ -191,34 +226,32 @@ sealed interface ExerciseEditingEvent {
     data class RecommendedWeightChanged(val weight: Int, val level: RecommendationLevel) :
         ExerciseEditingEvent
 
-    data object CreateExercise : ExerciseEditingEvent
+    data class CreateExercise(val input: ExerciseEditingInput) : ExerciseEditingEvent
 }
 
 sealed interface ExerciseEditingUiState {
-    data class Saving(val exerciseEditingState: ExerciseEditingState) :
+    data class Loading(
+        val exerciseId: ExerciseId,
+    ) : ExerciseEditingUiState
+
+    data class Saving(val exerciseEditingInput: ExerciseEditingInput) :
         ExerciseEditingUiState
 
-    data class Editing(val exerciseEditingState: ExerciseEditingState) :
+    data class Editing(val exerciseEditingInput: ExerciseEditingInput) :
         ExerciseEditingUiState
 
     data class Failure(
-        val exerciseEditingState: ExerciseEditingState,
+        val exerciseEditingInput: ExerciseEditingInput?,
         val message: String
     ) : ExerciseEditingUiState
 
     data class Saved(
         val exerciseId: ExerciseId,
-    ): ExerciseEditingUiState
+        val name: String,
+    ) : ExerciseEditingUiState
 }
 
-private sealed interface OperatingMode {
-    data object Editing : OperatingMode
-    data object Saving : OperatingMode
-    data class Failure(val message: String) : OperatingMode
-    data class Saved(val exerciseId: ExerciseId): OperatingMode
-}
-
-data class ExerciseEditingState(
+data class ExerciseEditingInput(
     val name: String = "",
     val description: String = "",
     val categories: List<FilterCategory> = emptyList(),

@@ -55,7 +55,7 @@ import kotlinx.coroutines.flow.flowOf
 fun ExercisesScreen(
     modifier: Modifier = Modifier,
     viewModel: ExercisesListViewModel,
-    onExerciseClicked: (ExerciseId) -> Unit
+    onExerciseClicked: (ExerciseId, String) -> Unit
 ) {
     val exercisesList = viewModel.exercises.collectAsLazyPagingItems()
     val filteringState by viewModel.filteringState.collectAsState()
@@ -75,7 +75,7 @@ private fun ExercisesScreenContent(
     filteringState: FilteringState,
     toggleCategory: (ExerciseCategory) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
-    onExerciseClicked: (ExerciseId) -> Unit,
+    onExerciseClicked: (ExerciseId, String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
@@ -97,7 +97,7 @@ private fun ExercisesScreenContent(
         if (exercisesList.itemCount != 0) {
             ExercisesList(
                 exercisesList = exercisesList,
-                onExerciseClicked = { onExerciseClicked(it) },
+                onExerciseClicked = onExerciseClicked,
             )
         } else {
             NoDataMessage(
@@ -115,7 +115,7 @@ private fun ExercisesScreenContent(
 private fun ExercisesList(
     modifier: Modifier = Modifier,
     exercisesList: LazyPagingItems<Exercise2>,
-    onExerciseClicked: (ExerciseId) -> Unit,
+    onExerciseClicked: (ExerciseId, String) -> Unit,
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         LazyColumn {
@@ -127,7 +127,7 @@ private fun ExercisesList(
                 if (exercise != null) {
                     ExerciseListItemContent(
                         exercise = exercise,
-                        onClick = { onExerciseClicked(exercise.id) }
+                        onClick = { onExerciseClicked(exercise.id, exercise.name) }
                     )
                 }
             }
@@ -236,7 +236,7 @@ private fun ExercisesScreenContentPreview() {
             ),
             toggleCategory = {},
             onSearchQueryChanged = {},
-            onExerciseClicked = {},
+            onExerciseClicked = { _, _ -> },
         )
     }
 }

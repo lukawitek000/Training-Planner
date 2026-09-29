@@ -38,7 +38,6 @@ import kotlinx.serialization.serializer
 @Composable
 fun Navigation(
     backStack: NavBackStack<TrainingPlannerNavKey>,
-    snackbarState: SnackbarState,
     modifier: Modifier = Modifier,
 ) {
     NavDisplay(
@@ -63,8 +62,8 @@ fun Navigation(
                 val viewModel: ExercisesListViewModel = trainingPlannerViewModel()
                 ExercisesScreen(
                     viewModel = viewModel,
-                    onExerciseClicked = {
-                        backStack.add(ExerciseDetails(it))
+                    onExerciseClicked = { id, name ->
+                        backStack.add(ExerciseDetails(id, name))
                     }
                 )
             }
@@ -73,9 +72,21 @@ fun Navigation(
                 val viewModel: ExerciseEditorViewModel = trainingPlannerViewModel()
                 CreateExerciseScreen(
                     viewModel = viewModel,
-                    navigateToDetails = {
+                    navigateToDetails = { id, name ->
                         backStack.removeLastOrNull()
-                        backStack.add(ExerciseDetails(it))
+                        backStack.add(ExerciseDetails(id, name))
+                    }
+                )
+            }
+
+            entry<EditExercise> { key ->
+                val viewModel: ExerciseEditorViewModel = trainingPlannerViewModel(
+                    factory = remember(key) { TrainingPlannerViewModelFactory(exerciseId = key.exerciseId) }
+                )
+                EditExerciseScreen(
+                    viewModel = viewModel,
+                    navigateToDetails = { id, name ->
+                        backStack.removeLastOrNull()
                     }
                 )
             }
@@ -88,12 +99,7 @@ fun Navigation(
                     viewModel = viewModel
                 )
             }
-            entry<EditExercise> {
-                EditExerciseScreen(
-                    snackbarState = snackbarState,
-                    navigateUp = { backStack.removeLastOrNull() }
-                )
-            }
+
             trainingGraph(
                 navigateUp = { backStack.removeLastOrNull() },
                 navigateToPickExercise = { backStack.add(PickExercise) }

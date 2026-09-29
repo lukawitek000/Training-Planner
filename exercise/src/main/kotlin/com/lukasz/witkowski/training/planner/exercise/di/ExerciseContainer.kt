@@ -32,7 +32,11 @@ class ExerciseContainer(
 
     val categoriesCollection: CategoriesCollection by lazy { DefaultCategoriesCollection() }
 
-    val categoryController: CategoryController by lazy { DefaultCategoryController(categoriesCollection) }
+    val categoryController: CategoryController by lazy {
+        DefaultCategoryController(
+            categoriesCollection
+        )
+    }
 
     private val categoryRepository: ExerciseCategoryRepository by lazy {
         val exerciseDb = ExerciseDatabase.getInstance(context)
@@ -41,5 +45,6 @@ class ExerciseContainer(
     private val categoryService by lazy {
         ExerciseCategoriesService(categoryRepository)
     }
-    val categoryController2: CategoryController2 by lazy { DefaultCategoryController2(categoryService) }
+    val categoryController2: CategoryController2
+        get() = DefaultCategoryController2(categoryService)
 }

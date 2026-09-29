@@ -32,6 +32,7 @@ class TrainingPlannerViewModelFactory(
                 ExerciseEditorViewModel(
                     exerciseContainer.service,
                     exerciseContainer.categoryController2,
+                    exerciseId,
                     savedStateHandle
                 )
             }

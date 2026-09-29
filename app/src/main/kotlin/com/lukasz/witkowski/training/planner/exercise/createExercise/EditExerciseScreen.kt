@@ -5,21 +5,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.SnackbarState
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 
 @Composable
 fun EditExerciseScreen(
+    viewModel: ExerciseEditorViewModel,
+    navigateToDetails: (ExerciseId, String) -> Unit,
     modifier: Modifier = Modifier,
-    snackbarState: SnackbarState,
-    navigateUp: () -> Unit
 ) {
-    val successMessage = stringResource(id = R.string.exercise_updated)
-    val failMessage = stringResource(id = R.string.exercise_update_failed)
-//    CreateExerciseScreen(
-//        modifier = modifier,
-//        viewModel = viewModel,
-//        snackbarState = snackbarState,
-//        navigateUp = navigateUp,
-//        successMessage = successMessage,
-//        failMessage = failMessage
-//    )
+    CreateExerciseScreen(
+        viewModel = viewModel,
+        navigateToDetails = navigateToDetails,
+        modifier = modifier
+    )
 }

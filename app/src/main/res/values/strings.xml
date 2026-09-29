@@ -2,9 +2,11 @@
     <string name="app_name">Training Planner</string>
 
     <!-- Exercise -->
+    <string name="exercises">Exercises</string>
+    <string name="create_exercise">Create exercise</string>
+    <string name="edit_exercise">Edit exercise</string>
     <string name="search_exercise">Search Exercise</string>
     <string name="add_exercise_image">Add exercise image</string>
-    <string name="create_exercise">Create exercise</string>
     <string name="can_add_multiple_img">You can add multiple images</string>
     <string name="exercise_name_label">Exercise name *</string>
     <string name="enter_exercise_name">Enter exercise name</string>
@@ -21,6 +23,9 @@
     <string name="recommendation_no_weight">%1$d x %2$d &#183; %3$d s</string>
 
     <!-- Common -->
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+
     <string name="reps">Reps</string>
     <string name="sets">Sets</string>
     <string name="rest_time">Rest time</string>
