@@ -15,14 +15,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.io.InputStream
 import java.io.OutputStream
 
 class TrainingPlanReceiverService : WearableListenerService() {
-    private val trainingPlanService: TrainingPlanService by lazy {
-        TrainingContainer.getInstance(applicationContext).service
-    }
+    private val trainingPlanService: TrainingPlanService by inject<TrainingPlanService>()
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
 
     private val channelClient: ChannelClient by lazy { Wearable.getChannelClient(this) }

@@ -4,7 +4,6 @@ import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEdi
 import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsViewModel
 import com.lukasz.witkowski.training.planner.exercise.di.exerciseModule
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
@@ -16,7 +15,6 @@ import com.lukasz.witkowski.training.planner.training.di.trainingModule
 import com.lukasz.witkowski.training.planner.training.trainingOverview.TrainingOverviewViewModel
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
-import org.koin.core.context.GlobalContext.get
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.viewModel
