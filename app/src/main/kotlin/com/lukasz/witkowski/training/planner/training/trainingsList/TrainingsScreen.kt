@@ -40,56 +40,26 @@ import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
 @Composable
 fun TrainingsScreen(
     viewModel: TrainingsListViewModel,
-    onCreateTrainingFabClicked: () -> Unit = {},
     navigateToTrainingOverview: (TrainingPlanId) -> Unit,
-    navigateToTrainingSession: (TrainingPlanId) -> Unit
+    navigateToTrainingSession: (TrainingPlanId) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val trainings by viewModel.trainingPlans.collectAsState(emptyList())
-    val selectedCategoriesList by viewModel.selectedCategories.collectAsState()
 
-    Scaffold(
-        modifier = Modifier.padding(),
-        floatingActionButton = {
-            CreateTrainingFab(onClicked = onCreateTrainingFabClicked)
+    Column(modifier = modifier) {
+        if (trainings.isNotEmpty()) {
+            TrainingsList(
+                trainings = trainings,
+                navigateToTrainingOverview = {
+                    navigateToTrainingOverview(it)
+                },
+                startTrainingSession = { navigateToTrainingSession(it.id) }
+            )
+        } else {
+            NoDataMessage(
+                text = stringResource(id = R.string.no_trainings_info)
+            )
         }
-    ) {
-        Column(modifier = Modifier.padding(it)) {
-//            CategoryFilters(
-//                categories = viewModel.categoriesWithoutNone,
-//                selectedCategories = selectedCategoriesList,
-//                selectCategory = { viewModel.selectCategory(it) }
-//            )
-            if (trainings.isNotEmpty()) {
-                TrainingsList(
-                    trainings = trainings,
-                    navigateToTrainingOverview =  {
-                        navigateToTrainingOverview(it)
-//                          viewModel.sendTrainingPlan(it)// TODO for testing purposes
-                                                  },
-                    startTrainingSession = { navigateToTrainingSession(it.id) }
-                )
-            } else {
-                NoDataMessage(
-                    text = stringResource(id = R.string.no_trainings_info)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun CreateTrainingFab(
-    modifier: Modifier = Modifier,
-    onClicked: () -> Unit
-) {
-    FloatingActionButton(
-        modifier = modifier,
-        onClick = { onClicked() }
-    ) {
-        Icon(
-            imageVector = Icons.Default.Add,
-            contentDescription = stringResource(id = R.string.create_training)
-        )
     }
 }
 

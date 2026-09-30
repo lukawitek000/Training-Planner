@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEditorViewModel
+import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsViewModel
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
@@ -40,6 +41,14 @@ class TrainingPlannerViewModelFactory(
                 val exerciseContainer = exerciseContainer(extras)
                 val id = checkNotNull(exerciseId) { "exerciseId must be provided to create ExerciseDetailsViewModel" }
                 ExerciseDetailsViewModel(
+                    exerciseContainer.service,
+                    id
+                )
+            }
+            DeleteExerciseViewModel::class.java -> {
+                val exerciseContainer = exerciseContainer(extras)
+                val id = checkNotNull(exerciseId) { "exerciseId must be provided to create DeleteExerciseViewModel" }
+                DeleteExerciseViewModel(
                     exerciseContainer.service,
                     id
                 )

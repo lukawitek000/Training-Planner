@@ -14,11 +14,14 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import com.lukasz.witkowski.training.planner.TrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEditorViewModel
+import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseScreen
+import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsScreen
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
@@ -36,26 +39,28 @@ import kotlinx.serialization.serializer
 
 @Composable
 fun Navigation(
-    backStack: NavBackStack<TrainingPlannerNavKey>,
-    showDialog: Boolean,
-    hideDialog: () -> Unit,
+    navigator: TrainingPlannerNavigator,
     modifier: Modifier = Modifier,
 ) {
+    val dialogStrategy = remember {
+        DialogSceneStrategy<TrainingPlannerNavKey>()
+    }
     NavDisplay(
         modifier = modifier,
-        backStack = backStack,
+        backStack = navigator.backStack,
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
-            rememberViewModelStoreNavEntryDecorator()
+            rememberViewModelStoreNavEntryDecorator(),
+            rememberLoggingNavDecorator(),
         ),
+        sceneStrategies = listOf(dialogStrategy),
         entryProvider = entryProvider {
             val trainingsListViewModel: TrainingsListViewModel = trainingPlannerViewModel()
             entry<TrainingPlansList> {
                 TrainingsScreen(
                     viewModel = trainingsListViewModel,
-                    onCreateTrainingFabClicked = { backStack.add(CreateTraining) },
-                    navigateToTrainingOverview = { backStack.add(TrainingOverview(it)) },
-                    navigateToTrainingSession = { backStack.add(TrainingSession(it)) }
+                    navigateToTrainingOverview = { navigator.trainingOverview(it) },
+                    navigateToTrainingSession = { navigator.trainingSession(it) }
                 )
             }
 
@@ -63,8 +68,8 @@ fun Navigation(
                 val viewModel: ExercisesListViewModel = trainingPlannerViewModel()
                 ExercisesScreen(
                     viewModel = viewModel,
-                    onExerciseClicked = { id, name ->
-                        backStack.add(ExerciseDetails(id, name))
+                    onExerciseClicked = { id ->
+                        navigator.exerciseDetails(id)
                     }
                 )
             }
@@ -73,9 +78,8 @@ fun Navigation(
                 val viewModel: ExerciseEditorViewModel = trainingPlannerViewModel()
                 CreateExerciseScreen(
                     viewModel = viewModel,
-                    navigateToDetails = { id, name ->
-                        backStack.removeLastOrNull()
-                        backStack.add(ExerciseDetails(id, name))
+                    navigateToDetails = { id ->
+                        navigator.exerciseCreated(id)
                     }
                 )
             }
@@ -86,43 +90,54 @@ fun Navigation(
                 )
                 EditExerciseScreen(
                     viewModel = viewModel,
-                    navigateToDetails = { id, name ->
-                        backStack.removeLastOrNull()
+                    navigateToDetails = { _ ->
+                        navigator.goBack()
                     }
                 )
             }
 
-            entry<ExerciseDetails> { key ->
+            entry<ExerciseDetails>{ key ->
                 val viewModel: ExerciseDetailsViewModel = trainingPlannerViewModel(
-                    factory = remember(key) { TrainingPlannerViewModelFactory(exerciseId = key.exerciseId) }
+                    factory = remember(key) { TrainingPlannerViewModelFactory(exerciseId = key.exerciseId) },
                 )
                 ExerciseDetailsScreen(
+                    viewModel = viewModel
+                )
+            }
+
+            entry<DeleteExercise>(
+                metadata = DialogSceneStrategy.dialog()
+            ) { key ->
+                val viewModel: DeleteExerciseViewModel = trainingPlannerViewModel(
+                    factory = remember(key) { TrainingPlannerViewModelFactory(exerciseId = key.exerciseId) },
+                )
+                DeleteExerciseScreen(
                     viewModel = viewModel,
-                    showDeleteDialog = showDialog,
-                    onHideDialog = hideDialog,
                     onDelete = {
-                        hideDialog()
-                        backStack.removeLastOrNull()
+                        navigator.exerciseDeleted()
+                    },
+                    onCancel = {
+                        navigator.goBack()
                     }
                 )
             }
 
-            trainingGraph(
-                navigateUp = { backStack.removeLastOrNull() },
-                navigateToPickExercise = { backStack.add(PickExercise) }
-            )
+//            trainingGraph(
+//                navigateUp = { backStack.removeLastOrNull() },
+//                navigateToPickExercise = { backStack.add(PickExercise) }
+//            )
             entry<TrainingOverview> {
                 val viewModel: TrainingOverviewViewModel = trainingPlannerViewModel()
                 TrainingOverviewScreen(
                     viewModel = viewModel,
-                    navigateBack = { backStack.removeLastOrNull() }
+                    navigateBack = { navigator.goBack() }
                 )
             }
             entry<TrainingSession> {
                 val viewModel: TrainingSessionViewModel = trainingPlannerViewModel()
                 TrainingSessionScreen(
                     viewModel = viewModel,
-                    navigateBack = { backStack.removeLastOrNull() }
+                    navigateBack = { navigator.goBack() }
                 )
             }
         }

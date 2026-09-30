@@ -10,7 +10,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 @Composable
 fun EditExerciseScreen(
     viewModel: ExerciseEditorViewModel,
-    navigateToDetails: (ExerciseId, String) -> Unit,
+    navigateToDetails: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     CreateExerciseScreen(
