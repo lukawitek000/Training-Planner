@@ -17,54 +17,51 @@ import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsLis
 class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         return when (modelClass) {
-            TrainingsListViewModel::class.java -> {
-                val trainingContainer = trainingContainer(extras)
-                val categoriesCollection: CategoriesCollection by lazy { DefaultCategoriesCollection() }
-                val categoryController: CategoryController by lazy {
-                    DefaultCategoryController(
-                        categoriesCollection,
-                    )
-                }
-                TrainingsListViewModel(
-                    trainingContainer.service,
-                    categoryController
-                )
-            }
-
-            CreateTrainingViewModel::class.java -> {
-                val trainingContainer = trainingContainer(extras)
-                CreateTrainingViewModel(trainingContainer.service)
-            }
-
-            TrainingOverviewViewModel::class.java -> {
-                val trainingContainer = trainingContainer(extras)
-                val statisticsContainer = statisticsContainer(extras)
-                val savedStateHandle = extras.createSavedStateHandle()
-                TrainingOverviewViewModel(
-                    trainingContainer.service,
-                    statisticsContainer.trainingStatisticsService,
-                    savedStateHandle
-                )
-            }
-
-            TrainingSessionViewModel::class.java -> {
-                val trainingContainer = trainingContainer(extras)
-                val statisticsContainer = statisticsContainer(extras)
-                val savedStateHandle = extras.createSavedStateHandle()
-                TrainingSessionViewModel(
-                    trainingContainer.service,
-                    statisticsContainer.trainingSessionService,
-                    statisticsContainer.trainingStatisticsService,
-                    savedStateHandle
-                )
-            }
+//            TrainingsListViewModel::class.java -> {
+//                val trainingContainer = trainingContainer(extras)
+//                val categoriesCollection: CategoriesCollection by lazy { DefaultCategoriesCollection() }
+//                val categoryController: CategoryController by lazy {
+//                    DefaultCategoryController(
+//                        categoriesCollection,
+//                    )
+//                }
+//                TrainingsListViewModel(
+//                    trainingContainer.service,
+//                    categoryController
+//                )
+//            }
+//
+//            CreateTrainingViewModel::class.java -> {
+//                val trainingContainer = trainingContainer(extras)
+//                CreateTrainingViewModel(trainingContainer.service)
+//            }
+//
+//            TrainingOverviewViewModel::class.java -> {
+//                val trainingContainer = trainingContainer(extras)
+//                val statisticsContainer = statisticsContainer(extras)
+//                val savedStateHandle = extras.createSavedStateHandle()
+//                TrainingOverviewViewModel(
+//                    trainingContainer.service,
+//                    statisticsContainer.trainingStatisticsService,
+//                    savedStateHandle
+//                )
+//            }
+//
+//            TrainingSessionViewModel::class.java -> {
+//                val trainingContainer = trainingContainer(extras)
+//                val statisticsContainer = statisticsContainer(extras)
+//                val savedStateHandle = extras.createSavedStateHandle()
+//                TrainingSessionViewModel(
+//                    trainingContainer.service,
+//                    statisticsContainer.trainingSessionService,
+//                    statisticsContainer.trainingStatisticsService,
+//                    savedStateHandle
+//                )
+//            }
 
             else -> throw IllegalStateException("Unknown class $modelClass")
         } as T
     }
-
-    private fun trainingContainer(extras: CreationExtras) =
-        trainingPlannerApplication(extras).appContainer.trainingContainer
 
     private fun statisticsContainer(extras: CreationExtras) =
         trainingPlannerApplication(extras).appContainer.statisticsContainer

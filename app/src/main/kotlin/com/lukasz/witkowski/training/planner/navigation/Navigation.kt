@@ -4,11 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
@@ -16,7 +11,6 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
-import com.lukasz.witkowski.training.planner.TrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseScreen
@@ -27,10 +21,7 @@ import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrain
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.training.createTraining.PickExerciseScreen
 import com.lukasz.witkowski.training.planner.training.trainingOverview.TrainingOverviewScreen
-import com.lukasz.witkowski.training.planner.training.trainingOverview.TrainingOverviewViewModel
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionScreen
-import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionViewModel
-import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsScreen
 import kotlinx.serialization.serializer
 import org.koin.compose.viewmodel.koinViewModel
@@ -54,10 +45,9 @@ fun Navigation(
         ),
         sceneStrategies = listOf(dialogStrategy),
         entryProvider = entryProvider {
-            val trainingsListViewModel: TrainingsListViewModel = trainingPlannerViewModel()
             entry<TrainingPlansList> {
                 TrainingsScreen(
-                    viewModel = trainingsListViewModel,
+                    viewModel = koinViewModel(),
                     navigateToTrainingOverview = { navigator.trainingOverview(it) },
                     navigateToTrainingSession = { navigator.trainingSession(it) }
                 )
@@ -115,16 +105,14 @@ fun Navigation(
 //                navigateToPickExercise = { backStack.add(PickExercise) }
 //            )
             entry<TrainingOverview> {
-                val viewModel: TrainingOverviewViewModel = trainingPlannerViewModel()
                 TrainingOverviewScreen(
-                    viewModel = viewModel,
+                    viewModel = koinViewModel(),
                     navigateBack = { navigator.goBack() }
                 )
             }
             entry<TrainingSession> {
-                val viewModel: TrainingSessionViewModel = trainingPlannerViewModel()
                 TrainingSessionScreen(
-                    viewModel = viewModel,
+                    viewModel = koinViewModel(),
                     navigateBack = { navigator.goBack() }
                 )
             }
@@ -138,7 +126,7 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.trainingGraph(
 ) {
     // TODO avoid destroying VMs
     entry<CreateTraining> {
-        val createTrainingViewModel: CreateTrainingViewModel = trainingPlannerViewModel()
+        val createTrainingViewModel: CreateTrainingViewModel = koinViewModel()
         CreateTrainingScreen(
             modifier = Modifier,
             viewModel = createTrainingViewModel,
@@ -149,8 +137,8 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.trainingGraph(
     }
 
     entry<PickExercise> {
-        val viewModel: ExercisesListViewModel = trainingPlannerViewModel()
-        val createTrainingViewModel: CreateTrainingViewModel = trainingPlannerViewModel()
+        val viewModel: ExercisesListViewModel = koinViewModel()
+        val createTrainingViewModel: CreateTrainingViewModel = koinViewModel()
         PickExerciseScreen(
             modifier = Modifier,
             viewModel = viewModel,
@@ -159,18 +147,6 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.trainingGraph(
         )
     }
 
-}
-
-@Composable
-private inline fun <reified VM : ViewModel> trainingPlannerViewModel(
-    factory: ViewModelProvider.Factory = remember { TrainingPlannerViewModelFactory() },
-    viewModelStoreOwner: ViewModelStoreOwner = checkNotNull(
-        LocalViewModelStoreOwner.current
-    ) {
-        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
-    }
-): VM {
-    return viewModel(viewModelStoreOwner, factory = factory)
 }
 
 @Composable
