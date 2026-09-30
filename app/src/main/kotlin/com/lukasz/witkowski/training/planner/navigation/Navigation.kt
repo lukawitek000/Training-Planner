@@ -19,11 +19,8 @@ import androidx.navigation3.ui.NavDisplay
 import com.lukasz.witkowski.training.planner.TrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
-import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEditorViewModel
 import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseScreen
-import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseViewModel
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsScreen
-import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingScreen

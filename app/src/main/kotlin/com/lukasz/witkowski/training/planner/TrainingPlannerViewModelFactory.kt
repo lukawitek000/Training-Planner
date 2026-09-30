@@ -5,64 +5,37 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEditorViewModel
-import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseViewModel
-import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsViewModel
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
+import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
+import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
+import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoriesCollection
+import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoryController
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.training.trainingOverview.TrainingOverviewViewModel
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
 
-class TrainingPlannerViewModelFactory(
-    private val exerciseId: ExerciseId? = null
-) : ViewModelProvider.Factory {
+class TrainingPlannerViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         return when (modelClass) {
-            ExercisesListViewModel::class.java -> {
-                val exerciseContainer = exerciseContainer(extras)
-                ExercisesListViewModel(
-                    exerciseContainer.service,
-                    exerciseContainer.categoryController2
-                )
-            }
-            ExerciseEditorViewModel::class.java -> {
-                val exerciseContainer = exerciseContainer(extras)
-                ExerciseEditorViewModel(
-                    exerciseContainer.service,
-                    exerciseContainer.categoryController2,
-                    exerciseId,
-                )
-            }
-            ExerciseDetailsViewModel::class.java -> {
-                val exerciseContainer = exerciseContainer(extras)
-                val id = checkNotNull(exerciseId) { "exerciseId must be provided to create ExerciseDetailsViewModel" }
-                ExerciseDetailsViewModel(
-                    exerciseContainer.service,
-                    id
-                )
-            }
-            DeleteExerciseViewModel::class.java -> {
-                val exerciseContainer = exerciseContainer(extras)
-                val id = checkNotNull(exerciseId) { "exerciseId must be provided to create DeleteExerciseViewModel" }
-                DeleteExerciseViewModel(
-                    exerciseContainer.service,
-                    id
-                )
-            }
             TrainingsListViewModel::class.java -> {
                 val trainingContainer = trainingContainer(extras)
-                val exerciseContainer = exerciseContainer(extras)
+                val categoriesCollection: CategoriesCollection by lazy { DefaultCategoriesCollection() }
+                val categoryController: CategoryController by lazy {
+                    DefaultCategoryController(
+                        categoriesCollection,
+                    )
+                }
                 TrainingsListViewModel(
                     trainingContainer.service,
-                    exerciseContainer.categoryController
+                    categoryController
                 )
             }
+
             CreateTrainingViewModel::class.java -> {
                 val trainingContainer = trainingContainer(extras)
                 CreateTrainingViewModel(trainingContainer.service)
             }
+
             TrainingOverviewViewModel::class.java -> {
                 val trainingContainer = trainingContainer(extras)
                 val statisticsContainer = statisticsContainer(extras)
@@ -73,6 +46,7 @@ class TrainingPlannerViewModelFactory(
                     savedStateHandle
                 )
             }
+
             TrainingSessionViewModel::class.java -> {
                 val trainingContainer = trainingContainer(extras)
                 val statisticsContainer = statisticsContainer(extras)
@@ -84,12 +58,10 @@ class TrainingPlannerViewModelFactory(
                     savedStateHandle
                 )
             }
+
             else -> throw IllegalStateException("Unknown class $modelClass")
         } as T
     }
-
-    private fun exerciseContainer(extras: CreationExtras) =
-        trainingPlannerApplication(extras).appContainer.exerciseContainer
 
     private fun trainingContainer(extras: CreationExtras) =
         trainingPlannerApplication(extras).appContainer.trainingContainer
