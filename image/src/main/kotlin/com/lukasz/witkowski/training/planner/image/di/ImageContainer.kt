@@ -10,18 +10,19 @@ import com.lukasz.witkowski.training.planner.image.infrastructure.Adler32Checksu
 import com.lukasz.witkowski.training.planner.image.infrastructure.DbImageReferenceRepository
 import com.lukasz.witkowski.training.planner.image.infrastructure.InternalStorageImageRepository
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageReferenceDatabase
+import kotlinx.coroutines.Dispatchers
 
 class ImageContainer(
     context: Context,
     directoryName: String,
 ) {
     private val imageRepository: ImageRepository by lazy {
-        InternalStorageImageRepository(context, directoryName)
+        InternalStorageImageRepository(context, directoryName, Dispatchers.IO)
     }
 
     private val imageReferenceRepository: ImageReferenceRepository by lazy {
         val database = ImageReferenceDatabase.getInstance(context)
-        DbImageReferenceRepository(database.imageReferenceDao())
+        DbImageReferenceRepository(database.imageReferenceDao(), Dispatchers.IO)
     }
 
     private val checksumCalculator: ChecksumCalculator by lazy {

@@ -29,12 +29,10 @@ class TrainingPlannerViewModelFactory(
             }
             ExerciseEditorViewModel::class.java -> {
                 val exerciseContainer = exerciseContainer(extras)
-                val savedStateHandle = extras.createSavedStateHandle()
                 ExerciseEditorViewModel(
                     exerciseContainer.service,
                     exerciseContainer.categoryController2,
                     exerciseId,
-                    savedStateHandle
                 )
             }
             ExerciseDetailsViewModel::class.java -> {

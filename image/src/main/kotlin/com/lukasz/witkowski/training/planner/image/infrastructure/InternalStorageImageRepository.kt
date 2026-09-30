@@ -17,7 +17,7 @@ import java.io.IOException
 internal class InternalStorageImageRepository(
     private val context: Context,
     private val directoryName: String,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ImageRepository {
     private val directoryPath = context.getDir(directoryName, Context.MODE_PRIVATE)
 

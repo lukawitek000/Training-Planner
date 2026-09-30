@@ -1,6 +1,10 @@
 package com.lukasz.witkowski.training.planner
 
 import android.app.Application
+import com.lukasz.witkowski.training.planner.di.appModule
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.core.context.startKoin
 import timber.log.Timber
 
 class TrainingPlannerApplication : Application() {
@@ -12,6 +16,10 @@ class TrainingPlannerApplication : Application() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
+        }
+        startKoin {
+            androidContext(this@TrainingPlannerApplication)
+            modules(appModule)
         }
         appContainer = AppContainer(this)
     }

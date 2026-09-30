@@ -13,10 +13,16 @@ android {
 }
 
 dependencies {
+    implementation(projects.shared)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.timber)
     implementation(libs.androidx.roomRuntime)
     ksp(libs.androidx.roomCompiler)
+
+    // koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
 
     testImplementation(libs.junit)
     testImplementation(libs.roboelectric)

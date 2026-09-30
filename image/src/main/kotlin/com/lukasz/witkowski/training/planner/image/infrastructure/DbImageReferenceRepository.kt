@@ -14,7 +14,7 @@ import java.util.UUID
 
 internal class DbImageReferenceRepository(
     private val imageReferenceDao: ImageReferenceDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ImageReferenceRepository {
     override suspend fun save(imageReference: ImageReference): ImageId =
         withContext(ioDispatcher) {

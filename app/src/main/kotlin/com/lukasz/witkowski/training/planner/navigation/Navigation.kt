@@ -36,6 +36,8 @@ import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSe
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
 import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsScreen
 import kotlinx.serialization.serializer
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun Navigation(
@@ -65,9 +67,8 @@ fun Navigation(
             }
 
             entry<ExercisesList> {
-                val viewModel: ExercisesListViewModel = trainingPlannerViewModel()
                 ExercisesScreen(
-                    viewModel = viewModel,
+                    viewModel = koinViewModel(),
                     onExerciseClicked = { id ->
                         navigator.exerciseDetails(id)
                     }
@@ -75,9 +76,8 @@ fun Navigation(
             }
 
             entry<CreateExercise> {
-                val viewModel: ExerciseEditorViewModel = trainingPlannerViewModel()
                 CreateExerciseScreen(
-                    viewModel = viewModel,
+                    viewModel = koinViewModel(),
                     navigateToDetails = { id ->
                         navigator.exerciseCreated(id)
                     }
@@ -85,11 +85,8 @@ fun Navigation(
             }
 
             entry<EditExercise> { key ->
-                val viewModel: ExerciseEditorViewModel = trainingPlannerViewModel(
-                    factory = remember(key) { TrainingPlannerViewModelFactory(exerciseId = key.exerciseId) }
-                )
                 EditExerciseScreen(
-                    viewModel = viewModel,
+                    viewModel = koinViewModel { parametersOf(key.exerciseId) },
                     navigateToDetails = { _ ->
                         navigator.goBack()
                     }
@@ -97,22 +94,16 @@ fun Navigation(
             }
 
             entry<ExerciseDetails>{ key ->
-                val viewModel: ExerciseDetailsViewModel = trainingPlannerViewModel(
-                    factory = remember(key) { TrainingPlannerViewModelFactory(exerciseId = key.exerciseId) },
-                )
                 ExerciseDetailsScreen(
-                    viewModel = viewModel
+                    viewModel = koinViewModel { parametersOf(key.exerciseId) }
                 )
             }
 
             entry<DeleteExercise>(
                 metadata = DialogSceneStrategy.dialog()
             ) { key ->
-                val viewModel: DeleteExerciseViewModel = trainingPlannerViewModel(
-                    factory = remember(key) { TrainingPlannerViewModelFactory(exerciseId = key.exerciseId) },
-                )
                 DeleteExerciseScreen(
-                    viewModel = viewModel,
+                    viewModel = koinViewModel { parametersOf(key.exerciseId) },
                     onDelete = {
                         navigator.exerciseDeleted()
                     },
