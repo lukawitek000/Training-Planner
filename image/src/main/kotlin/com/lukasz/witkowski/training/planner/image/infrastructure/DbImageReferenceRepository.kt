@@ -8,7 +8,6 @@ import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageRefere
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.toDbImageReferenceWithOwners
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.toImageReference
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID
 

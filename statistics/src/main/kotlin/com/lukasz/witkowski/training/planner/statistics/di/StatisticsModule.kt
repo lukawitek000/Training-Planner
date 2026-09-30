@@ -16,21 +16,21 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.single
 
-val statisticsModule = module {
-    includes(dispatchersModule)
-    single { StatisticsDatabase.getInstance(androidContext()) }
-    single { get<StatisticsDatabase>().statisticsDao() }
+val statisticsModule =
+    module {
+        includes(dispatchersModule)
+        single { StatisticsDatabase.getInstance(androidContext()) }
+        single { get<StatisticsDatabase>().statisticsDao() }
 
-    single<DbStatisticsRepository>() bind StatisticsRepository::class
-    single<TrainingStatisticsService>()
-    single {
-        TrainingSessionService(
-            timeProvider = SystemTimeProvider(),
-            timer = Timer(),
-            trainingStatisticsService = get(),
-            trainingSetsStrategy = CircuitSetsPolicy(),
-            backgroundDispatcher = get(named(CoroutineDispatcherQualifiers.DEFAULT))
-        )
-
+        single<DbStatisticsRepository>() bind StatisticsRepository::class
+        single<TrainingStatisticsService>()
+        single {
+            TrainingSessionService(
+                timeProvider = SystemTimeProvider(),
+                timer = Timer(),
+                trainingStatisticsService = get(),
+                trainingSetsStrategy = CircuitSetsPolicy(),
+                backgroundDispatcher = get(named(CoroutineDispatcherQualifiers.DEFAULT)),
+            )
+        }
     }
-}

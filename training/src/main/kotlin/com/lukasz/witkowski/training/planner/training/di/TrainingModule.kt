@@ -11,11 +11,12 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.single
 
-val trainingModule = module {
-    single { TrainingPlanDatabase.getInstance(androidContext()) }
-    single { get<TrainingPlanDatabase>().trainingPlanDao() }
+val trainingModule =
+    module {
+        single { TrainingPlanDatabase.getInstance(androidContext()) }
+        single { get<TrainingPlanDatabase>().trainingPlanDao() }
 
-    single<DbTrainingPlanRepository>() bind TrainingPlanRepository::class
-    single<WearableTrainingPlanSender>() bind TrainingPlanSender::class
-    single<TrainingPlanService>()
-}
+        single<DbTrainingPlanRepository>() bind TrainingPlanRepository::class
+        single<WearableTrainingPlanSender>() bind TrainingPlanSender::class
+        single<TrainingPlanService>()
+    }

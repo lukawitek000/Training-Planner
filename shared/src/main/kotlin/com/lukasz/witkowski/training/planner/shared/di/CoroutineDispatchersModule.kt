@@ -11,17 +11,18 @@ object CoroutineDispatcherQualifiers {
     const val MAIN = "main"
 }
 
-val dispatchersModule = module {
-    single<CoroutineDispatcher>(named(CoroutineDispatcherQualifiers.IO)) {
-        Dispatchers.IO
+val dispatchersModule =
+    module {
+        single<CoroutineDispatcher>(named(CoroutineDispatcherQualifiers.IO)) {
+            Dispatchers.IO
+        }
+        single<CoroutineDispatcher>(named(CoroutineDispatcherQualifiers.DEFAULT)) {
+            Dispatchers.Default
+        }
+        single<CoroutineDispatcher>(named(CoroutineDispatcherQualifiers.MAIN)) {
+            Dispatchers.Main.immediate
+        }
+        single<CoroutineDispatcher> {
+            Dispatchers.IO
+        }
     }
-    single<CoroutineDispatcher>(named(CoroutineDispatcherQualifiers.DEFAULT)) {
-        Dispatchers.Default
-    }
-    single<CoroutineDispatcher>(named(CoroutineDispatcherQualifiers.MAIN)) {
-        Dispatchers.Main.immediate
-    }
-    single<CoroutineDispatcher> {
-        Dispatchers.IO
-    }
-}

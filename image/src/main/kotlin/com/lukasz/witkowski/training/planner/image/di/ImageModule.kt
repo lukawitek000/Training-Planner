@@ -17,26 +17,27 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.single
 
-val imageModule = module {
-    includes(dispatchersModule)
-    val directoryName = "TrainingPlannerImageStorage"
-    single {
-        InternalStorageImageRepository(
-            context = androidContext(),
-            directoryName = directoryName,
-            ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
-        )
-    } bind ImageRepository::class
+val imageModule =
+    module {
+        includes(dispatchersModule)
+        val directoryName = "TrainingPlannerImageStorage"
+        single {
+            InternalStorageImageRepository(
+                context = androidContext(),
+                directoryName = directoryName,
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
+            )
+        } bind ImageRepository::class
 
-    single { ImageReferenceDatabase.getInstance(androidContext()) }
-    single { get<ImageReferenceDatabase>().imageReferenceDao() }
-    single {
-        DbImageReferenceRepository(
-            imageReferenceDao = get(),
-            ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
-        )
-    } bind ImageReferenceRepository::class
+        single { ImageReferenceDatabase.getInstance(androidContext()) }
+        single { get<ImageReferenceDatabase>().imageReferenceDao() }
+        single {
+            DbImageReferenceRepository(
+                imageReferenceDao = get(),
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
+            )
+        } bind ImageReferenceRepository::class
 
-    single<Adler32ChecksumCalculator>() bind ChecksumCalculator::class
-    single<DataReferenceSeparatedImageStorage>() bind ImageStorage::class
-}
+        single<Adler32ChecksumCalculator>() bind ChecksumCalculator::class
+        single<DataReferenceSeparatedImageStorage>() bind ImageStorage::class
+    }

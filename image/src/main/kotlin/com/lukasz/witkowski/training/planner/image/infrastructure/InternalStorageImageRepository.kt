@@ -6,7 +6,6 @@ import com.lukasz.witkowski.training.planner.image.domain.Image
 import com.lukasz.witkowski.training.planner.image.domain.ImageReference
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.Closeable

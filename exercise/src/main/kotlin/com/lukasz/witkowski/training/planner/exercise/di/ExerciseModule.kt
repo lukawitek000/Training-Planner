@@ -21,22 +21,23 @@ import org.koin.dsl.module
 import org.koin.plugin.module.dsl.factory
 import org.koin.plugin.module.dsl.single
 
-val exerciseModule = module {
-    includes(dispatchersModule, imageModule)
+val exerciseModule =
+    module {
+        includes(dispatchersModule, imageModule)
 
-    single<ExerciseDatabase> { ExerciseDatabase.getInstance(androidContext()) }
+        single<ExerciseDatabase> { ExerciseDatabase.getInstance(androidContext()) }
 
-    single<ExerciseDao> { get<ExerciseDatabase>().exerciseDao() }
-    single {
-        DbExerciseRepository(
-            exerciseDao = get(),
-            ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
-        )
-    } bind ExerciseRepository::class
-    single<ExerciseService>()
+        single<ExerciseDao> { get<ExerciseDatabase>().exerciseDao() }
+        single {
+            DbExerciseRepository(
+                exerciseDao = get(),
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
+            )
+        } bind ExerciseRepository::class
+        single<ExerciseService>()
 
-    single<ExerciseCategoryDao> { get<ExerciseDatabase>().categoryDao() }
-    single<DbExerciseCategoryRepository>() bind ExerciseCategoryRepository::class
-    single<ExerciseCategoriesService>()
-    factory<DefaultCategoryController2>() bind CategoryController2::class
-}
+        single<ExerciseCategoryDao> { get<ExerciseDatabase>().categoryDao() }
+        single<DbExerciseCategoryRepository>() bind ExerciseCategoryRepository::class
+        single<ExerciseCategoriesService>()
+        factory<DefaultCategoryController2>() bind CategoryController2::class
+    }
