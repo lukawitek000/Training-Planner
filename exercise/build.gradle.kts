@@ -9,6 +9,10 @@ android {
 dependencies {
     api(projects.image)
 
+    // Koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+
     // Kotlin reflection - Used to get subclasses of Category sealed class
     implementation(libs.kotlinReflect)
     implementation(libs.androidx.paging.common)

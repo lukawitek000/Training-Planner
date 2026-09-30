@@ -9,6 +9,7 @@ plugins {
     id("com.android.library")
     id("com.google.devtools.ksp")
     id("org.jlleitschuh.gradle.ktlint")
+    id("io.insert-koin.compiler.plugin")
 }
 
 extensions.configure<LibraryExtension> {

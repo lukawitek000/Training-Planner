@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.serialization)
+    id("io.insert-koin.compiler.plugin")
 }
 
 android {
@@ -75,6 +76,10 @@ dependencies {
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.compose.navigation)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+
+    // koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.android)
 
     // Needed for the themes.xml
     implementation(libs.google.material)
