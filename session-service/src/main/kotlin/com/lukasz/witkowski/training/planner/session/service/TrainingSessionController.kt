@@ -3,7 +3,6 @@ package com.lukasz.witkowski.training.planner.session.service
 import android.content.Context
 import com.lukasz.witkowski.training.planner.statistics.application.SessionFinishedListener
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
-import com.lukasz.witkowski.training.planner.statistics.di.StatisticsContainer
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 

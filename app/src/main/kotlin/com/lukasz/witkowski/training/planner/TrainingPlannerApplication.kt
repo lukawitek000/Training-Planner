@@ -8,10 +8,6 @@ import org.koin.core.context.startKoin
 import timber.log.Timber
 
 class TrainingPlannerApplication : Application() {
-
-    lateinit var appContainer: AppContainer
-        private set
-
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
@@ -21,6 +17,5 @@ class TrainingPlannerApplication : Application() {
             androidContext(this@TrainingPlannerApplication)
             modules(appModule)
         }
-        appContainer = AppContainer(this)
     }
 }
