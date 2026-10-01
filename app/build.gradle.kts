@@ -88,4 +88,10 @@ dependencies {
 
     // Without this dependency there is a build error
     implementation(libs.google.playServicesWearable)
+
+    testImplementation(libs.kotlinTestJunit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockk)
+    testImplementation(libs.turbine)
+    testImplementation(libs.androidx.paging.testing)
 }

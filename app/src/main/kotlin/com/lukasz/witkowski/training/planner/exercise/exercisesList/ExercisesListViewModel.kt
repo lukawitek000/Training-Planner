@@ -9,19 +9,14 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController2
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.toDomainExercise
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.time.Duration.Companion.milliseconds
 
