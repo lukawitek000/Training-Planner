@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.exercise.createExercise
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseConfiguration
@@ -21,7 +20,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,7 +31,6 @@ class ExerciseEditorViewModel(
     private val exerciseService: ExerciseService,
     private val categoryController: CategoryController2,
     private val exerciseId: ExerciseId? = null,
-    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     val isEditMode = exerciseId != null
     private val initialState = exerciseId?.let { ExerciseEditingUiState.Loading(it) }

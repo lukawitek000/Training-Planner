@@ -13,4 +13,8 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.timber)
+
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
 }

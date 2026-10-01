@@ -4,22 +4,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.ComponentActivity
-import androidx.activity.viewModels
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSummaryBinding
 import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.traininglist.TrainingsListActivity
 import com.lukasz.witkowski.training.planner.utils.launchInStartedState
 import kotlinx.coroutines.flow.collectLatest
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TrainingSummaryActivity : ComponentActivity() {
 
     private lateinit var binding: ActivityTrainingSummaryBinding
-    private val viewModel by viewModels<TrainingSummaryViewModel>(factoryProducer = {
-        WearableTrainingPlannerViewModelFactory()
-    })
+    private val viewModel: TrainingSummaryViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.TrainingPlannerTheme)

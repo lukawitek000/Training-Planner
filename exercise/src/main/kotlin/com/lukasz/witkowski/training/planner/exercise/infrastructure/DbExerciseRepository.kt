@@ -10,16 +10,15 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import kotlin.coroutines.CoroutineContext
 
 internal class DbExerciseRepository(
     private val exerciseDao: ExerciseDao,
-    private val ioDispatcher: CoroutineContext = Dispatchers.IO,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ExerciseRepository {
     override fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails> =
         exerciseDao.getExerciseDetailsById(id.toString()).map {

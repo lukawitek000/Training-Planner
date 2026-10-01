@@ -8,6 +8,12 @@ android {
 
 dependencies {
     api(projects.image)
+    implementation(projects.shared)
+
+    // Koin
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
 
     // Kotlin reflection - Used to get subclasses of Category sealed class
     implementation(libs.kotlinReflect)

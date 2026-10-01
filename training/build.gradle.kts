@@ -16,4 +16,8 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.androidx.roomRuntime)
     ksp(libs.androidx.roomCompiler)
+
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
 }

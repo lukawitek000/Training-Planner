@@ -8,13 +8,12 @@ import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageRefere
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.toDbImageReferenceWithOwners
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.toImageReference
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID
 
 internal class DbImageReferenceRepository(
     private val imageReferenceDao: ImageReferenceDao,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ImageReferenceRepository {
     override suspend fun save(imageReference: ImageReference): ImageId =
         withContext(ioDispatcher) {

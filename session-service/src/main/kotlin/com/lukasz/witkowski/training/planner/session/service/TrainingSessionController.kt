@@ -3,21 +3,17 @@ package com.lukasz.witkowski.training.planner.session.service
 import android.content.Context
 import com.lukasz.witkowski.training.planner.statistics.application.SessionFinishedListener
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
-import com.lukasz.witkowski.training.planner.statistics.di.StatisticsContainer
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 internal class TrainingSessionController(
     private val context: Context,
     private val onSessionFinished: () -> Unit,
-) : SessionFinishedListener {
-    private val statisticsContainer: StatisticsContainer by lazy {
-        StatisticsContainer.getInstance(context)
-    }
-
-    private val trainingSessionService: TrainingSessionService by lazy {
-        statisticsContainer.trainingSessionService
-    }
+) : SessionFinishedListener,
+    KoinComponent {
+    private val trainingSessionService: TrainingSessionService by inject()
 
     val trainingPlan: TrainingPlan
         get() =

@@ -6,7 +6,6 @@ import com.lukasz.witkowski.training.planner.image.domain.Image
 import com.lukasz.witkowski.training.planner.image.domain.ImageReference
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.Closeable
@@ -17,7 +16,7 @@ import java.io.IOException
 internal class InternalStorageImageRepository(
     private val context: Context,
     private val directoryName: String,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ImageRepository {
     private val directoryPath = context.getDir(directoryName, Context.MODE_PRIVATE)
 

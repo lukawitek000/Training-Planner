@@ -1,5 +1,6 @@
 plugins {
     id("com.android.application")
+    id("io.insert-koin.compiler.plugin")
 }
 
 android {
@@ -43,4 +44,8 @@ dependencies {
     implementation(libs.androidx.fragmentKtx)
     implementation(libs.androidx.lifecycle.livedataKtx)
     implementation(libs.timber)
+
+    implementation(platform(libs.koin.bom))
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
 }

@@ -8,6 +8,7 @@ import com.lukasz.witkowski.training.planner.image.infrastructure.DbImageReferen
 import com.lukasz.witkowski.training.planner.image.infrastructure.InternalStorageImageRepository
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageReferenceDao
 import com.lukasz.witkowski.training.planner.image.infrastructure.db.ImageReferenceDatabase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
@@ -31,14 +32,19 @@ class ImageStorageTest {
     @Before
     fun setUp() {
         val applicationContext: Context = ApplicationProvider.getApplicationContext()
-        val imgRepository = InternalStorageImageRepository(applicationContext, "testing_images")
+        val imgRepository =
+            InternalStorageImageRepository(
+                applicationContext,
+                "testing_images",
+                Dispatchers.IO,
+            )
         imgReferenceDatabase =
             Room
                 .inMemoryDatabaseBuilder(applicationContext, ImageReferenceDatabase::class.java)
                 .allowMainThreadQueries()
                 .build()
         imageReferencedDao = imgReferenceDatabase.imageReferenceDao()
-        val imgRefRepository = DbImageReferenceRepository(imageReferencedDao)
+        val imgRefRepository = DbImageReferenceRepository(imageReferencedDao, Dispatchers.IO)
         val checksumCalculator = Adler32ChecksumCalculator()
         imageStorage = DataReferenceSeparatedImageStorage(imgRepository, imgRefRepository, checksumCalculator)
     }

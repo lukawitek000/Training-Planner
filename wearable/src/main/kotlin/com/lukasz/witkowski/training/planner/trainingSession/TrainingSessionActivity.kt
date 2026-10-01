@@ -3,27 +3,24 @@ package com.lukasz.witkowski.training.planner.trainingSession
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.commit
 import androidx.wear.widget.SwipeDismissFrameLayout
-import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.WearableTrainingPlannerViewModelFactory
 import com.lukasz.witkowski.training.planner.databinding.ActivityTrainingSessionBinding
 import com.lukasz.witkowski.training.planner.session.service.SessionServiceConnector
+import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.summary.TrainingSummaryActivity
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TrainingSessionActivity : FragmentActivity() {
 
     private lateinit var binding: ActivityTrainingSessionBinding
-    private val viewModel by viewModels<TrainingSessionViewModel>(factoryProducer = {
-        WearableTrainingPlannerViewModelFactory()
-    })
+    private val viewModel: TrainingSessionViewModel by viewModel()
 
     private lateinit var sessionServiceConnector: SessionServiceConnector
 
