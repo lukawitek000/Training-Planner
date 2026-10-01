@@ -169,7 +169,6 @@ class ExerciseEditorViewModel(
                         exerciseDetails.toExerciseEditingState()
                     )
                     categoryController.selectCategories(exerciseDetails.exercise.categories.toSet())
-
                 } else {
                     uiState.value = ExerciseEditingUiState.Failure(null, "Exercise not found")
                 }
