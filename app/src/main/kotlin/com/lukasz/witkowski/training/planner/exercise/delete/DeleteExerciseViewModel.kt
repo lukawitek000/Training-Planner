@@ -34,7 +34,7 @@ class DeleteExerciseViewModel(
         Timber.w("Failed to load exercise details by id: ${it.message}")
     }.stateIn(
         viewModelScope,
-        started = SharingStarted.Eagerly,
+        started = SharingStarted.WhileSubscribed(5_000L),
         initialValue = DeleteExerciseUiState.Loading
     )
 
