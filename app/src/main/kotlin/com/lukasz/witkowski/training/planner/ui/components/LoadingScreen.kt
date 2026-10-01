@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import com.lukasz.witkowski.training.planner.ui.theme.Dimens
 
@@ -22,7 +23,9 @@ fun LoadingScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(
+            modifier = Modifier.testTag("loading")
+        )
         if(message.isNotEmpty()){
             Spacer(modifier = Modifier.height(Dimens.large))
             Text(message)

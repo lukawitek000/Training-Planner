@@ -41,7 +41,7 @@ fun ExerciseDetailsScreen(
 }
 
 @Composable
-private fun ExerciseDetailsScreenContent(
+fun ExerciseDetailsScreenContent(
     state: ExerciseDetailsState,
     modifier: Modifier = Modifier
 ) {
