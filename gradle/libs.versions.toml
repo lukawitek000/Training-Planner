@@ -96,6 +96,7 @@ kotlinTestJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.r
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 mockk = { module = "io.mockk:mockk", version = "1.14.11" }
 turbine = { module = "app.cash.turbine:turbine", version = "1.2.1" }
+androidx-paging-testing = { module = "androidx.paging:paging-testing", version.ref = "paging" }
 
 
 [plugins]

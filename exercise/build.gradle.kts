@@ -28,4 +28,5 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.roboelectric)
     testImplementation(libs.mockk)
+    testImplementation(libs.androidx.paging.testing)
 }

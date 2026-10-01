@@ -30,7 +30,7 @@ fun DomainExercise2.toPresentationExercise2(imageReference: ImageReference?): Ex
         id = id,
         name = name,
         description = description,
-        categories = categories,
+        categories = categories.toList(),
         image = imageReference,
     )
 

@@ -36,12 +36,6 @@ class FakeExerciseRepository: ExerciseRepository {
     }
 
     override suspend fun updateExercise(exercise: ExerciseDetails): Boolean {
-        val index = _exercises.indexOfFirst { it.exercise.id == exercise.exercise.id }
-        if (index != -1) {
-            _exercises[index] = exercise
-        } else {
-            _exercises.add(exercise)
-        }
         return true
     }
 }

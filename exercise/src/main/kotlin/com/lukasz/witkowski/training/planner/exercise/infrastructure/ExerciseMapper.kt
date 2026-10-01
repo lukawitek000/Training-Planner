@@ -21,7 +21,7 @@ internal fun DbExercise.toExercise(categories: List<ExerciseCategory>): Exercise
         id = ExerciseId(exerciseId),
         name = name,
         description = description,
-        categories = categories,
+        categories = categories.toSet(),
         imageId = imageId?.let { ImageId(it) },
     )
 
@@ -30,7 +30,7 @@ internal fun DbExerciseWithCategories.toExercise(): Exercise2 =
         id = ExerciseId(exercise.exerciseId),
         name = exercise.name,
         description = exercise.description,
-        categories = categories.map { it.toExerciseCategory() },
+        categories = categories.map { it.toExerciseCategory() }.toSet(),
         imageId = exercise.imageId?.let { ImageId(it) },
     )
 

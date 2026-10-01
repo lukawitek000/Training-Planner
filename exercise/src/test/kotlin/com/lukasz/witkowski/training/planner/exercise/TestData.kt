@@ -81,8 +81,8 @@ object TestData {
     val PUSH_UPS_EXERCISE = createExercise2(
         id = EXERCISE_ID_1,
         name = "Push-up",
-        description = "Standard push-up focusing on chest and triceps",
-        categories = listOf(CATEGORY_CHEST, CATEGORY_TRICEPS),
+        description = "Standard push-up focusing on chest and triceps, BODYWEIGHT",
+        categories = listOf(CATEGORY_CHEST, CATEGORY_TRICEPS, CATEGORY_BICEPS),
         imageId = IMAGE_ID_1,
     )
 
@@ -176,7 +176,7 @@ object TestData {
     val PUSH_UPS_CONFIGURATION = createExerciseConfiguration(
         name = PUSH_UPS_EXERCISE.name,
         description = PUSH_UPS_EXERCISE.description,
-        categories = PUSH_UPS_EXERCISE.categories,
+        categories = PUSH_UPS_EXERCISE.categories.toList(),
         image = SAMPLE_IMAGE_BYTE_ARRAY,
         beginnerRecommendation = BEGINNER_RECOMMENDATION,
         intermediateRecommendation = INTERMEDIATE_RECOMMENDATION,
@@ -186,7 +186,7 @@ object TestData {
     val SQUATS_CONFIGURATION = createExerciseConfiguration(
         name = SQUATS_EXERCISE.name,
         description = SQUATS_EXERCISE.description,
-        categories = SQUATS_EXERCISE.categories,
+        categories = SQUATS_EXERCISE.categories.toList(),
         beginnerRecommendation = BEGINNER_RECOMMENDATION.copy(reps = 12),
         intermediateRecommendation = INTERMEDIATE_RECOMMENDATION.copy(reps = 15, weightInKg = 20),
         advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 20, weightInKg = 40),
@@ -251,7 +251,7 @@ object TestData {
         id = id,
         name = name,
         description = description,
-        categories = categories,
+        categories = categories.toSet(),
         imageId = imageId,
     )
 

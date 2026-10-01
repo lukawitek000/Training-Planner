@@ -59,7 +59,7 @@ class ExerciseService(
         exerciseRepository.delete(exerciseId)
     }
 
-    fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails> = exerciseRepository.getExerciseDetailsById(id)
+    fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails?> = exerciseRepository.getExerciseDetailsById(id)
 
     private suspend fun updateImage(
         imageByteArray: ImageByteArray?,

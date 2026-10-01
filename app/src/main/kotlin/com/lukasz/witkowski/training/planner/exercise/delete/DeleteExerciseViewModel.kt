@@ -24,7 +24,12 @@ class DeleteExerciseViewModel(
 ): ViewModel() {
 
     val state = service.getExerciseDetailsById(exerciseId).map {
-        DeleteExerciseUiState.LoadedExercise(it.exercise.name)
+        if (it == null) {
+            _deletionEvent.send(DeletionEvent.Failure)
+            DeleteExerciseUiState.Loading
+        } else {
+            DeleteExerciseUiState.LoadedExercise(it.exercise.name)
+        }
     }.catch {
         Timber.w("Failed to load exercise details by id: ${it.message}")
     }.stateIn(
