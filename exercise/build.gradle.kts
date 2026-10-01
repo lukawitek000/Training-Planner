@@ -24,7 +24,8 @@ dependencies {
     implementation(libs.androidx.roomRuntime)
     ksp(libs.androidx.roomCompiler)
 
+    testImplementation(libs.kotlinTestJunit)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.kotlin.test)
     testImplementation(libs.roboelectric)
+    testImplementation(libs.mockk)
 }
