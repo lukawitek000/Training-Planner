@@ -29,5 +29,9 @@ class FakeExerciseRepository : ExerciseRepository {
 
     override suspend fun delete(exerciseId: ExerciseId): Boolean = false
 
-    override suspend fun updateExercise(exercise: ExerciseDetails): Boolean = true
+    override suspend fun updateExercise(exercise: ExerciseDetails): Boolean {
+        _exercises.removeAll { it.exercise.id == exercise.exercise.id }
+        _exercises.add(exercise)
+        return true
+    }
 }
