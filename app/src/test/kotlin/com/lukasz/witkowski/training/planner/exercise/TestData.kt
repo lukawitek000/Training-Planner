@@ -222,9 +222,9 @@ object TestData {
         PresentationExercise2(
             id = EXERCISE_ID_1,
             name = "Push-up",
-            description = "Standard push-up focusing on chest and triceps",
-            categories = listOf(CATEGORY_CHEST, CATEGORY_TRICEPS),
-            image = SAMPLE_IMAGE_REFERENCE,
+            description = "Standard push-up focusing on chest and triceps, BODYWEIGHT",
+            categories = listOf(CATEGORY_CHEST, CATEGORY_TRICEPS, CATEGORY_BICEPS),
+            image = null, // images not yet supported
         )
 
     val PRESENTATION_PUSH_UPS_DETAILS =
