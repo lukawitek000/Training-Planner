@@ -23,4 +23,8 @@ dependencies {
     implementation(libs.timber)
     implementation(libs.androidx.roomRuntime)
     ksp(libs.androidx.roomCompiler)
+
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.kotlin.test)
+    testImplementation(libs.roboelectric)
 }

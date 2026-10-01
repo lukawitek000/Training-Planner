@@ -33,7 +33,6 @@ google-material = { module = "com.google.android.material:material", version = "
 # KotlinX
 kotlinx-coroutines-playServices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
 # AndroidX
 androidx-core = { module = "androidx.core:core", version = "1.19.0" }
@@ -89,11 +88,14 @@ koin-android = { module = "io.insert-koin:koin-android" }
 koin-compose = { module = "io.insert-koin:koin-compose" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 
-
+# Tests
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 roboelectric = { module = "org.robolectric:robolectric", version = "4.17" }
 androidx-testCore = { module = "androidx.test:core", version = "1.7.0" }
 kotlinTestJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 mockk = { module = "io.mockk:mockk", version = "1.14.11" }
+turbine = { module = "app.cash.turbine:turbine", version = "1.2.1" }
 
 
 [plugins]
