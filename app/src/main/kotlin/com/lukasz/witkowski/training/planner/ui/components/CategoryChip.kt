@@ -14,7 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.R
@@ -76,7 +79,11 @@ fun CategoryChip(
         modifier = modifier
             .clip(shape = MaterialTheme.shapes.medium)
             .background(background)
-            .then(if (isClickable) Modifier.clickable { onClick() } else Modifier),
+            .then(if (isClickable) Modifier.clickable { onClick() } else Modifier)
+            .semantics {
+                selected = isSelected
+            }
+            .testTag("Chip${category.name}, isClickable=$isClickable"),
     ) {
         Text(
             text = category.name,

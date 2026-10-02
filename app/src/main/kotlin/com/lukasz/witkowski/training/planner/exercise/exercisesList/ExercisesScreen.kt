@@ -21,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -70,7 +71,7 @@ fun ExercisesScreen(
 }
 
 @Composable
-private fun ExercisesScreenContent(
+fun ExercisesScreenContent(
     exercisesList: LazyPagingItems<Exercise2>,
     filteringState: FilteringState,
     toggleCategory: (ExerciseCategory) -> Unit,
@@ -83,7 +84,9 @@ private fun ExercisesScreenContent(
             text = filteringState.searchQuery,
             onTextChange = onSearchQueryChanged,
             label = stringResource(R.string.search_exercise),
-            modifier = Modifier.padding(Dimens.normal)
+            modifier = Modifier
+                .padding(Dimens.normal)
+                .testTag("SearchField")
         )
         CategoryFilters(
             modifier = Modifier.padding(
@@ -105,7 +108,8 @@ private fun ExercisesScreenContent(
                     stringResource(id = R.string.no_exercises_for_categories)
                 } else {
                     stringResource(id = R.string.no_exercises)
-                }
+                },
+                modifier = Modifier.testTag("NoDataMessage")
             )
         }
     }
@@ -127,7 +131,8 @@ private fun ExercisesList(
                 if (exercise != null) {
                     ExerciseListItemContent(
                         exercise = exercise,
-                        onClick = { onExerciseClicked(exercise.id) }
+                        onClick = { onExerciseClicked(exercise.id) },
+                        modifier = Modifier.testTag("ExerciseItem")
                     )
                 }
             }
