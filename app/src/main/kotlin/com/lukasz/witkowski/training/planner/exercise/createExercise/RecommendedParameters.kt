@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.exercise.createExercise
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +34,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
@@ -120,6 +122,7 @@ private fun RecommendedParametersCard(
                 isExpanded = isExpanded,
                 toggleExpansion = { isExpanded = !isExpanded },
                 recommendation = recommendation,
+                modifier = Modifier.testTag("${recommendation.level.name}_CardHeader")
             )
             AnimatedVisibility(
                 visible = isExpanded
@@ -154,7 +157,8 @@ private fun RecommendedParametersInputFields(
                 )
             },
             label = buildRequiredString(stringResource(R.string.sets)),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            testTag = "${level.name}_SetsField"
         )
         ParameterInputField(
             value = params.reps,
@@ -164,7 +168,8 @@ private fun RecommendedParametersInputFields(
                 )
             },
             label = buildRequiredString(stringResource(R.string.reps)),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            testTag = "${level.name}_RepsField"
         )
         ParameterInputField(
             value = params.restTime?.inWholeSeconds?.toInt(),
@@ -175,7 +180,8 @@ private fun RecommendedParametersInputFields(
             },
             label = buildRequiredString(stringResource(R.string.rest_time)),
             unit = stringResource(R.string.second_abbrv),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            testTag = "${level.name}_RestTimeField"
         )
         ParameterInputField(
             value = params.weightInKg,
@@ -186,7 +192,8 @@ private fun RecommendedParametersInputFields(
             },
             label = stringResource(R.string.weight),
             unit = stringResource(R.string.kg),
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            testTag = "${level.name}_WeightField"
         )
     }
 }
@@ -208,6 +215,7 @@ private fun RecommendedParametersCardHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clickable { toggleExpansion() }
             .padding(start = Dimens.normal),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Dimens.normal)
@@ -278,6 +286,7 @@ private fun ParameterInputField(
     label: String,
     modifier: Modifier = Modifier,
     unit: String = "",
+    testTag: String = "",
 ) {
     Column(modifier = modifier) {
         Text(
@@ -302,7 +311,9 @@ private fun ParameterInputField(
                 keyboardType = KeyboardType.Number
             ),
             singleLine = true,
-            modifier = Modifier.defaultMinSize(minWidth = 40.dp),
+            modifier = Modifier
+                .defaultMinSize(minWidth = 40.dp)
+                .testTag(testTag),
             suffix = { Text(unit) }
         )
     }

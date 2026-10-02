@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.R
@@ -52,7 +53,7 @@ fun CreateExerciseScreen(
 }
 
 @Composable
-private fun CreateExerciseScreenContent(
+fun CreateExerciseScreenContent(
     uiState: ExerciseEditingUiState,
     onUserInputChange: (ExerciseEditingEvent) -> Unit,
     onExerciseSaved: (ExerciseId) -> Unit,
@@ -129,7 +130,8 @@ private fun ExerciseForm(
     Column(
         modifier = modifier
             .padding(Dimens.normal)
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .testTag("ExerciseForm"),
         verticalArrangement = Arrangement.spacedBy(Dimens.large)
     ) {
         ImageInputForm(
@@ -151,7 +153,9 @@ private fun ExerciseForm(
         )
         Button(
             onClick = { onUserInputChange(ExerciseEditingEvent.SaveChangesRequested(state)) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("SaveButton"),
             enabled = state.isValidForCreation()
         ) {
             val stringRes = if (isEditMode) R.string.update_exercise else R.string.create_exercise
@@ -175,7 +179,8 @@ private fun TextInputForm(
         TextField(
             text = name,
             onTextChange = { onUserInputChange(ExerciseEditingEvent.NameChanged(it)) },
-            label = stringResource(R.string.enter_exercise_name)
+            label = stringResource(R.string.enter_exercise_name),
+            modifier = Modifier.testTag("NameField")
         )
         Spacer(Modifier.height(Dimens.large))
         FormFieldLabel(
@@ -187,7 +192,8 @@ private fun TextInputForm(
             onTextChange = { onUserInputChange(ExerciseEditingEvent.DescriptionChanged(it)) },
             label = stringResource(R.string.enter_exercise_description),
             minLines = 3,
-            maxLines = 5
+            maxLines = 5,
+            modifier = Modifier.testTag("DescriptionField")
         )
     }
 }
