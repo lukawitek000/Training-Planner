@@ -23,6 +23,7 @@ lifecycle = "2.11.0"
 paging = "3.4.2"
 androidx-compose-ui-test = "1.12.1"
 androidx-test-espresso = "3.7.0"
+mockk = "1.14.11"
 
 
 [libraries]
@@ -96,7 +97,8 @@ roboelectric = { module = "org.robolectric:robolectric", version = "4.17" }
 androidx-testCore = { module = "androidx.test:core", version = "1.7.0" }
 kotlinTestJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
-mockk = { module = "io.mockk:mockk", version = "1.14.11" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 turbine = { module = "app.cash.turbine:turbine", version = "1.2.1" }
 androidx-paging-testing = { module = "androidx.paging:paging-testing", version.ref = "paging" }
 androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-compose-ui-test" }

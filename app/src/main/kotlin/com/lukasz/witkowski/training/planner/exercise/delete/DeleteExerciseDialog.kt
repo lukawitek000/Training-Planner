@@ -14,7 +14,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.R
@@ -66,13 +68,14 @@ private fun DeleteExerciseDialog(
     modifier: Modifier = Modifier
 ) {
     AlertDialog(
-        modifier = modifier,
+        modifier = modifier.testTag("DeleteExerciseDialog"),
         onDismissRequest = onCancel,
         title = {
             Text(
                 text = stringResource(R.string.delete_exercise_dialog_title, exerciseName),
                 style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.testTag("DeleteExerciseTitle")
             )
         },
         text = {
@@ -84,6 +87,7 @@ private fun DeleteExerciseDialog(
         dismissButton = {
             Button(
                 onClick = onCancel,
+                modifier = Modifier.testTag("dismissButton")
             ) {
                 Text(stringResource(R.string.cancel))
             }
@@ -94,7 +98,8 @@ private fun DeleteExerciseDialog(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.errorContainer,
                     contentColor = MaterialTheme.colorScheme.onErrorContainer
-                )
+                ),
+                modifier = Modifier.testTag("confirmButton")
             ) {
                 Text(stringResource(R.string.delete))
             }
