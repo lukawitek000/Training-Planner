@@ -4,11 +4,15 @@ import android.content.Context
 import androidx.room3.Room
 import com.lukasz.witkowski.training.planner.training.TestData
 import com.lukasz.witkowski.training.planner.training.TestData.CARDIO_ENDURANCE_TRAINING_PLAN
+import com.lukasz.witkowski.training.planner.training.TestData.CATEGORY_LEGS
 import com.lukasz.witkowski.training.planner.training.TestData.FULL_BODY_TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.training.TestData.PLANK_SNAPSHOT
 import com.lukasz.witkowski.training.planner.training.TestData.RUNNING_SNAPSHOT
 import com.lukasz.witkowski.training.planner.training.TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN
+import com.lukasz.witkowski.training.planner.training.domain.SortDirection
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
+import com.lukasz.witkowski.training.planner.training.domain.TrainingSortBy
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -55,7 +59,7 @@ class DbTrainingPlanRepositoryTest {
     fun `TrainingPlans are saved, and read from DB the overviews is successful`() = runTest {
         givenSaveTrainingPlansList()
 
-        val actual = repository.getAll().last()
+        val actual = repository.getAll(TrainingQuery.DEFAULT).last()
 
         assertEquals(
             TestData.TRAINING_PLAN_OVERVIEWS_LIST,
@@ -63,6 +67,138 @@ class DbTrainingPlanRepositoryTest {
         )
     }
 
+    @Test
+    fun `TrainingPlans are properly filtered by query`() = runTest {
+        givenSaveTrainingPlansList()
+        val query = TrainingQuery(
+            searchQuery = "Full",
+            selectedCategories = emptySet(),
+            sortBy = TrainingSortBy.Modified(SortDirection.ASCENDING)
+        )
+
+        val actual = repository.getAll(query).last()
+
+        assertEquals(1, actual.size)
+        assertEquals(listOf(TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW), actual)
+    }
+
+
+    @Test
+    fun `TrainingPlans are properly filtered by categories`() = runTest {
+        givenSaveTrainingPlansList()
+        val query = TrainingQuery(
+            searchQuery = "",
+            selectedCategories = setOf(
+                TestData.CATEGORY_CHEST, TestData.CATEGORY_ARMS
+            ),
+            sortBy = TrainingSortBy.Modified(SortDirection.ASCENDING)
+        )
+
+        val actual = repository.getAll(query).last()
+
+        assertEquals(2, actual.size)
+        assertEquals(
+            listOf(
+                TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW,
+                TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN_OVERVIEW
+            ),
+            actual
+        )
+    }
+
+    @Test
+    fun `TrainingPlans are properly filtered by query and categories`() = runTest {
+        givenSaveTrainingPlansList()
+        val query = TrainingQuery(
+            searchQuery = "Body",
+            selectedCategories = setOf(CATEGORY_LEGS),
+            sortBy = TrainingSortBy.Modified(SortDirection.ASCENDING)
+        )
+
+        val actual = repository.getAll(query).last()
+
+        assertEquals(1, actual.size)
+        assertEquals(
+            listOf(
+                TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW,
+            ),
+            actual
+        )
+    }
+
+    @Test
+    fun `TrainingPlans are properly sorted by last modification ascending`() = runTest {
+        givenSaveTrainingPlansList()
+        val query = TrainingQuery(
+            searchQuery = "",
+            selectedCategories = setOf(),
+            sortBy = TrainingSortBy.Modified(SortDirection.ASCENDING)
+        )
+
+        val actual = repository.getAll(query).last()
+
+        assertEquals(3, actual.size)
+        assertEquals(TestData.TRAINING_PLAN_OVERVIEWS_LIST, actual)
+    }
+
+    @Test
+    fun `TrainingPlans are properly sorted by last modification descending`() = runTest {
+        givenSaveTrainingPlansList()
+        val query = TrainingQuery(
+            searchQuery = "",
+            selectedCategories = setOf(),
+            sortBy = TrainingSortBy.Modified(SortDirection.DESCENDING)
+        )
+
+        val actual = repository.getAll(query).last()
+
+        assertEquals(3, actual.size)
+        assertEquals(TestData.TRAINING_PLAN_OVERVIEWS_LIST.reversed(), actual)
+    }
+
+    @Test
+    fun `TrainingPlans are properly sorted by last usage ascending`() = runTest {
+        givenSaveTrainingPlansList()
+        val query = TrainingQuery(
+            searchQuery = "",
+            selectedCategories = setOf(),
+            sortBy = TrainingSortBy.Used(SortDirection.ASCENDING)
+        )
+
+        val actual = repository.getAll(query).last()
+
+        assertEquals(3, actual.size)
+        assertEquals(
+            listOf(
+                TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN_OVERVIEW,
+                TestData.CARDIO_ENDURANCE_TRAINING_PLAN_OVERVIEW,
+                TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW
+            ),
+            actual
+        )
+    }
+
+    @Test
+    fun `TrainingPlans are properly sorted by last usage descending`() = runTest {
+        givenSaveTrainingPlansList()
+        val query = TrainingQuery(
+            searchQuery = "",
+            selectedCategories = setOf(),
+            sortBy = TrainingSortBy.Used(SortDirection.DESCENDING)
+        )
+
+        val actual = repository.getAll(query).last()
+
+        assertEquals(3, actual.size)
+        assertEquals(
+            listOf(
+                TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN_OVERVIEW,
+                TestData.CARDIO_ENDURANCE_TRAINING_PLAN_OVERVIEW,
+                TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW
+            ).asReversed(),
+            actual
+        )
+    }
 
     @Test
     fun `TrainingPlan is properly updated`() = runTest {

@@ -4,6 +4,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanOverview
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
+import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toDbTrainingPlanWithExercises
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toTrainingPlan
 import kotlinx.coroutines.CoroutineDispatcher
@@ -20,7 +21,7 @@ internal class DbTrainingPlanRepository(
         trainingPlanDao.insertTrainingWithTrainingExercises(trainingPlanWithExercise)
     }
 
-    override fun getAll(): Flow<List<TrainingPlanOverview>> =
+    override fun getAll(trainingQuery: TrainingQuery): Flow<List<TrainingPlanOverview>> =
         trainingPlanDao.getAll().map {
             it.map { dbTrainingPlanWithExercises ->
                 dbTrainingPlanWithExercises.toTrainingPlan()

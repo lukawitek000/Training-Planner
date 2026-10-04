@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.models
 
-data class DbExercise(
+data class DbExerciseSnapshot(
     val exerciseId: String,
     val name: String,
     val description: String,

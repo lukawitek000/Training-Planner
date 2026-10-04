@@ -12,6 +12,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanOvervie
 import java.util.UUID
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 object TestData {
     // --- IDs ---
@@ -145,6 +146,8 @@ object TestData {
                 PLANK_SNAPSHOT,
             ),
             restTime = 60.seconds,
+            lastModification = Instant.parse("2026-09-04T12:00:00Z"),
+            lastSession = Instant.parse("2026-09-10T12:00:00Z"),
         )
 
     val CARDIO_ENDURANCE_TRAINING_PLAN =
@@ -156,6 +159,8 @@ object TestData {
                 RUNNING_SNAPSHOT,
             ),
             restTime = 30.seconds,
+            lastModification = Instant.parse("2026-09-05T15:00:00Z"),
+            lastSession = Instant.parse("2026-09-09T12:00:00Z"),
         )
 
     val UPPER_BODY_STRENGTH_TRAINING_PLAN =
@@ -168,6 +173,8 @@ object TestData {
                 PULL_UPS_SNAPSHOT,
             ),
             restTime = 90.seconds,
+            lastModification = Instant.parse("2026-09-10T20:00:00Z"),
+            lastSession = null,
         )
 
     val TRAINING_PLANS_LIST =
@@ -216,6 +223,8 @@ object TestData {
         description: String = "Test Description",
         exercises: List<ExerciseSnapshot> = listOf(PUSH_UPS_SNAPSHOT, SQUATS_SNAPSHOT),
         restTime: Duration = 60.seconds,
+        lastModification: Instant = Instant.parse("2026-09-04T12:00:00Z"),
+        lastSession: Instant? = null
     ): TrainingPlan =
         TrainingPlan(
             id = id,
@@ -223,6 +232,8 @@ object TestData {
             description = description,
             exercises = exercises,
             restTime = restTime,
+            lastModification = lastModification,
+            lastSession = lastSession
         )
 
     fun createExerciseSnapshot(

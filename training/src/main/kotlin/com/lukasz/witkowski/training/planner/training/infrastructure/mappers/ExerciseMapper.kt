@@ -7,7 +7,7 @@ import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbExercise
+import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingExercise
 
 internal fun TrainingExercise.toDbTrainingExercise(trainingId: TrainingPlanId): DbTrainingExercise =
@@ -31,8 +31,8 @@ internal fun DbTrainingExercise.toTrainingExercise(): TrainingExercise =
         restTime = Time(restTime),
     )
 
-private fun toDbExercise(exercise: Exercise): DbExercise =
-    DbExercise(
+private fun toDbExercise(exercise: Exercise): DbExerciseSnapshot =
+    DbExerciseSnapshot(
         exercise.id.toString(),
         exercise.name,
         exercise.description,
@@ -40,10 +40,10 @@ private fun toDbExercise(exercise: Exercise): DbExercise =
         null,
     )
 
-private fun toExercise(dbExercise: DbExercise): Exercise =
+private fun toExercise(dbExerciseSnapshot: DbExerciseSnapshot): Exercise =
     Exercise(
-        ExerciseId(dbExercise.exerciseId),
-        dbExercise.name,
-        dbExercise.description,
-        listOf(ExerciseCategoryLegacy.entries[dbExercise.category]),
+        ExerciseId(dbExerciseSnapshot.exerciseId),
+        dbExerciseSnapshot.name,
+        dbExerciseSnapshot.description,
+        listOf(ExerciseCategoryLegacy.entries[dbExerciseSnapshot.category]),
     )
