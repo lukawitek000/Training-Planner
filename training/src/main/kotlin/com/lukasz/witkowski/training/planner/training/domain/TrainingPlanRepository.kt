@@ -3,13 +3,13 @@ package com.lukasz.witkowski.training.planner.training.domain
 import kotlinx.coroutines.flow.Flow
 
 interface TrainingPlanRepository {
-    suspend fun save(trainingPlan: TrainingPlan)
+    suspend fun save(trainingPlan: TrainingPlan): Result<TrainingPlanId>
 
-    suspend fun setTrainingPlanAsSynchronized(id: TrainingPlanId)
+    fun getAll(): Flow<List<TrainingPlanOverview>>
 
-    fun getAll(): Flow<List<TrainingPlan>>
+    suspend fun delete(trainingPlanId: TrainingPlanId): Result<Unit>
 
-    suspend fun delete(trainingPlan: TrainingPlan)
+    suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan>
 
-    suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): TrainingPlan
+    suspend fun update(trainingPlan: TrainingPlan) : Result<TrainingPlanId>
 }
