@@ -1,18 +1,16 @@
 package com.lukasz.witkowski.training.planner.training.domain
 
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategoryLegacy
-
 data class TrainingPlan(
     val id: TrainingPlanId,
     val title: String,
     val description: String = "",
-    val exercises: List<TrainingExercise>,
+    val exercises: List<ExerciseSnapshot>,
     val isSynchronized: Boolean = false,
 ) {
-    fun hasCategories(categories: List<ExerciseCategoryLegacy>): Boolean = getAllCategories().containsAll(categories)
+    fun hasCategories(categories: List<ExerciseCategoryName>): Boolean =
+        getAllCategories().containsAll(categories)
 
-    private fun getAllCategories(): List<ExerciseCategoryLegacy> =
+    private fun getAllCategories(): List<ExerciseCategoryName> =
         exercises
-            .map { trainingExercise -> trainingExercise.exercise.categories.first() }
-            .filter { category -> !category.isNone() }
+            .flatMap { trainingExercise -> trainingExercise.categories }
 }

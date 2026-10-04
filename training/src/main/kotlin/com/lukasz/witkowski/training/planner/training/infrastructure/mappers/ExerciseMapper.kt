@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure.db.mappers
+package com.lukasz.witkowski.training.planner.training.infrastructure.mappers
 
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategoryLegacy
@@ -7,8 +7,8 @@ import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbExercise
-import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingExercise
+import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbExercise
+import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingExercise
 
 internal fun TrainingExercise.toDbTrainingExercise(trainingId: TrainingPlanId): DbTrainingExercise =
     DbTrainingExercise(

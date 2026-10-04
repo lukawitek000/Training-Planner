@@ -5,11 +5,11 @@ import com.lukasz.witkowski.training.planner.shared.time.Time
 
 /**
  * Class describing exercise in the training.
- * I contains a [Exercise] snapshot and saves it to database to avoid mess with updating and deleting [Exercise]
+ * It contains a [Exercise] snapshot and saves it to database to detach plan from exercise.
  */
 data class TrainingExercise(
     val id: TrainingExerciseId,
-    val exercise: Exercise,
+    val exercise: ExerciseSnapshot,
     val repetitions: Int = 1,
     val sets: Int = 1,
     val time: Time = Time.ZERO,

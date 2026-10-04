@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure.db.models
+package com.lukasz.witkowski.training.planner.training.infrastructure.models
 
 import androidx.room3.Embedded
 import androidx.room3.Entity

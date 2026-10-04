@@ -1,11 +1,11 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure.db
+package com.lukasz.witkowski.training.planner.training.infrastructure
 
 import android.content.Context
 import androidx.room3.Database
 import androidx.room3.Room
 import androidx.room3.RoomDatabase
-import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingExercise
-import com.lukasz.witkowski.training.planner.training.infrastructure.db.models.DbTrainingPlan
+import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingExercise
+import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlan
 
 @Database(
     entities = [DbTrainingPlan::class, DbTrainingExercise::class],

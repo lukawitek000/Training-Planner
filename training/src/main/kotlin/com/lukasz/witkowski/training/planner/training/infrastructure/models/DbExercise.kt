@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure.db.models
+package com.lukasz.witkowski.training.planner.training.infrastructure.models
 
 data class DbExercise(
     val exerciseId: String,
