@@ -3,7 +3,6 @@ agp = "9.3.3"
 coreKtx = "1.19.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
-espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.11.0"
 activityCompose = "1.13.0"
 kotlin = "2.4.10"
@@ -22,6 +21,10 @@ room = "3.0.3"
 coroutines = "1.11.0"
 lifecycle = "2.11.0"
 paging = "3.4.2"
+androidx-compose-ui-test = "1.12.1"
+androidx-test-espresso = "3.7.0"
+mockk = "1.14.11"
+
 
 [libraries]
 
@@ -33,7 +36,6 @@ google-material = { module = "com.google.android.material:material", version = "
 # KotlinX
 kotlinx-coroutines-playServices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
-kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 
 # AndroidX
 androidx-core = { module = "androidx.core:core", version = "1.19.0" }
@@ -89,12 +91,19 @@ koin-android = { module = "io.insert-koin:koin-android" }
 koin-compose = { module = "io.insert-koin:koin-compose" }
 koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 
-
+# Tests
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "coroutines" }
 roboelectric = { module = "org.robolectric:robolectric", version = "4.17" }
 androidx-testCore = { module = "androidx.test:core", version = "1.7.0" }
 kotlinTestJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
-mockk = { module = "io.mockk:mockk", version = "1.14.11" }
-
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
+turbine = { module = "app.cash.turbine:turbine", version = "1.2.1" }
+androidx-paging-testing = { module = "androidx.paging:paging-testing", version.ref = "paging" }
+androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-compose-ui-test" }
+androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-compose-ui-test" }
+androidx-test-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-test-espresso" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

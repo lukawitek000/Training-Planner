@@ -20,9 +20,9 @@ internal class DbExerciseRepository(
     private val exerciseDao: ExerciseDao,
     private val ioDispatcher: CoroutineDispatcher,
 ) : ExerciseRepository {
-    override fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails> =
+    override fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails?> =
         exerciseDao.getExerciseDetailsById(id.toString()).map {
-            it.toExerciseDetails()
+            it?.toExerciseDetails()
         }
 
     override fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise2>> =

@@ -52,7 +52,7 @@ internal interface ExerciseDao {
 
     @Transaction
     @Query("SELECT * FROM Exercise WHERE :id == exerciseId")
-    fun getExerciseDetailsById(id: String): Flow<DbExerciseDetails>
+    fun getExerciseDetailsById(id: String): Flow<DbExerciseDetails?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(dbExercise: DbExercise): Long
@@ -105,6 +105,7 @@ internal interface ExerciseDao {
     @Transaction
     suspend fun update(exerciseDetails: DbExerciseDetails): Int {
         val updatedRows = update(exerciseDetails.exercise)
+        if (updatedRows == 0) return 0
         updateRecommendations(exerciseDetails.recommendations)
         deleteCategoryReferences(exerciseDetails.exercise.exerciseId)
         val crossRefs =

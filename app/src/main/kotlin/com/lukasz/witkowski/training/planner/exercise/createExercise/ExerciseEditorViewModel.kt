@@ -164,10 +164,14 @@ class ExerciseEditorViewModel(
         viewModelScope.launch {
             runCatching {
                 val exerciseDetails = exerciseService.getExerciseDetailsById(exerciseId).first()
-                uiState.value = ExerciseEditingUiState.Editing(
-                    exerciseDetails.toExerciseEditingState()
-                )
-                categoryController.selectCategories(exerciseDetails.exercise.categories.toSet())
+                if (exerciseDetails != null) {
+                    uiState.value = ExerciseEditingUiState.Editing(
+                        exerciseDetails.toExerciseEditingState()
+                    )
+                    categoryController.selectCategories(exerciseDetails.exercise.categories.toSet())
+                } else {
+                    uiState.value = ExerciseEditingUiState.Failure(null, "Exercise not found")
+                }
             }.onFailure {
                 Timber.w("Failed to load exercise: ${it.message}")
                 uiState.value =

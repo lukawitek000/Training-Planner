@@ -17,7 +17,7 @@ internal object ExerciseFactory {
                     exerciseId,
                     exerciseConfiguration.name,
                     exerciseConfiguration.description,
-                    exerciseConfiguration.categories,
+                    exerciseConfiguration.categories.toSet(),
                     imageId,
                 ),
             beginnerRecommendation = exerciseConfiguration.beginnerRecommendation,

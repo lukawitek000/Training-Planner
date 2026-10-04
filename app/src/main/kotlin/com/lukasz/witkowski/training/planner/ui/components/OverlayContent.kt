@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 
 @Composable
 fun OverlayContent(
@@ -37,9 +38,11 @@ fun OverlayLoading(
     content: @Composable () -> Unit,
 ) {
     OverlayContent(
-        modifier = modifier,
+        modifier = modifier.testTag("OverlayContent"),
         backgroundContent = content,
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator(
+            modifier = Modifier.testTag("Loading")
+        )
     }
 }

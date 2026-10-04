@@ -20,8 +20,12 @@ class ExerciseDetailsViewModel(
     private val exerciseId: ExerciseId,
 ) : ViewModel() {
     val state: StateFlow<ExerciseDetailsState> = service.getExerciseDetailsById(exerciseId)
-        .map<DomainExerciseDetails, ExerciseDetailsState> {
-            ExerciseDetailsState.Success(it.toPresentationExerciseDetails())
+        .map {
+            if (it == null) {
+                ExerciseDetailsState.Failure("Exercise not found")
+            } else {
+                ExerciseDetailsState.Success(it.toPresentationExerciseDetails())
+            }
         }
         .catch {
             emit(ExerciseDetailsState.Failure(it.message ?: "Unknown failure"))

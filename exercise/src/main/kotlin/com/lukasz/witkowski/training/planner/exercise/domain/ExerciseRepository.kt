@@ -4,7 +4,7 @@ import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 
 interface ExerciseRepository {
-    fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails>
+    fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails?>
 
     fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise2>>
 

@@ -20,7 +20,7 @@ data class Exercise2(
     val id: ExerciseId,
     val name: String,
     val description: String,
-    val categories: List<ExerciseCategory>,
+    val categories: Set<ExerciseCategory>,
     val imageId: ImageId? = null,
 ) {
     init {
