@@ -1,11 +1,13 @@
 package com.lukasz.witkowski.training.planner.training.domain
 
+import kotlin.time.Duration
+
 data class TrainingPlan(
     val id: TrainingPlanId,
     val title: String,
     val description: String = "",
     val exercises: List<ExerciseSnapshot>,
-    val isSynchronized: Boolean = false,
+    val restTime: Duration
 ) {
     fun hasCategories(categories: List<ExerciseCategoryName>): Boolean =
         getAllCategories().containsAll(categories)

@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.training.application
 
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategoryLegacy
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
