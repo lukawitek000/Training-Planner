@@ -31,5 +31,5 @@ jobs:
         with:
           api-level: 35
           arch: x86_64
-          profile: Pixel_8
+          profile: pixel_8
           script: ./gradlew :app:connectedDebugAndroidTest
