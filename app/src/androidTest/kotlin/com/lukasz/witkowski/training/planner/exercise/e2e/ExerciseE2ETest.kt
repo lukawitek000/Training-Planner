@@ -3,14 +3,11 @@ package com.lukasz.witkowski.training.planner.exercise.e2e
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
-import androidx.compose.ui.test.SemanticsNodeInteractionsProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
-import androidx.compose.ui.test.hasTextExactly
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
@@ -20,22 +17,17 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.printToLog
 import com.lukasz.witkowski.training.planner.MainActivity
-import com.lukasz.witkowski.training.planner.exercise.TestData
-import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
-class ExerciseRealE2ETest {
+class ExerciseE2ETest {
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-    private val thirdExerciseName = "Arch Body Hold"
+    private val firstExerciseName = "90° Hold"
+    private val secondExerciseName = "90° Push-Up"
     private val legExerciseName = "Bodyweight Squat"
     private val plankExerciseName = "Plank"
     private val exerciseItemMatcher = SemanticsMatcher("TestTag contains 'ExerciseItem-'") {
@@ -110,8 +102,8 @@ class ExerciseRealE2ETest {
 
     @Test
     fun testExerciseEditRealE2E() {
-        val originalName = thirdExerciseName
-        val updatedName = "$thirdExerciseName Updated"
+        val originalName = firstExerciseName
+        val updatedName = "$firstExerciseName Updated"
 
         whenGoToExerciseDetails(originalName)
 
@@ -149,7 +141,7 @@ class ExerciseRealE2ETest {
 
     @Test
     fun testExerciseDeleteRealE2E() {
-        whenGoToExerciseDetails(thirdExerciseName)
+        whenGoToExerciseDetails(secondExerciseName)
 
         // Open overflow menu and click Delete
         composeTestRule.onNodeWithTag("OverflowMenuButton").performClick()
@@ -163,11 +155,11 @@ class ExerciseRealE2ETest {
         composeTestRule.onNodeWithTag("ExercisesList").assertIsDisplayed()
         composeTestRule.waitUntil(timeoutMillis = 10000) {
             composeTestRule
-                .onAllNodesWithTag(givenExerciseItemTag(thirdExerciseName))
+                .onAllNodesWithTag(givenExerciseItemTag(secondExerciseName))
                 .fetchSemanticsNodes()
                 .isEmpty()
         }
-        composeTestRule.onNodeWithTag(givenExerciseItemNameTag(thirdExerciseName))
+        composeTestRule.onNodeWithTag(givenExerciseItemNameTag(secondExerciseName))
             .assertDoesNotExist()
     }
 
