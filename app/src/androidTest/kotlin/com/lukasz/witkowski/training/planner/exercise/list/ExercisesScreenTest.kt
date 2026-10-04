@@ -14,9 +14,11 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.lukasz.witkowski.training.planner.exercise.TestData
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.exerciseItemMatcher
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreenContent
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.FilteringState
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.asPreviewPagerFlow
+import com.lukasz.witkowski.training.planner.exercise.givenExerciseItemTag
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import org.junit.Rule
@@ -58,7 +60,7 @@ class ExercisesScreenTest {
         }
 
         composeTestRule
-            .onNodeWithTag("ExerciseItem")
+            .onNodeWithTag(givenExerciseItemTag(exercisesList.first().name))
             .performClick()
 
         assertEquals(exercisesList.first().id, exerciseClickedId)
@@ -121,7 +123,7 @@ class ExercisesScreenTest {
             .assertDoesNotExist()
 
         composeTestRule
-            .onAllNodesWithTag("ExerciseItem")
+            .onAllNodes(matcher = exerciseItemMatcher)
             .assertCountEquals(1)
     }
 

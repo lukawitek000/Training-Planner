@@ -17,6 +17,8 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.printToLog
 import com.lukasz.witkowski.training.planner.MainActivity
+import com.lukasz.witkowski.training.planner.exercise.exerciseItemMatcher
+import com.lukasz.witkowski.training.planner.exercise.givenExerciseItemTag
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
 import org.junit.Before
 import org.junit.Rule
@@ -30,10 +32,6 @@ class ExerciseE2ETest {
     private val secondExerciseName = "90° Push-Up"
     private val legExerciseName = "Bodyweight Squat"
     private val plankExerciseName = "Plank"
-    private val exerciseItemMatcher = SemanticsMatcher("TestTag contains 'ExerciseItem-'") {
-        it.config.getOrNull(SemanticsProperties.TestTag)
-            ?.contains("ExerciseItem-") == true
-    }
     private val createExerciseMatcher = hasContentDescription("Create exercise")
     private val legsCategoryName = "LEGS"
     private val chipLegsTag = "Chip$legsCategoryName, isClickable=true"
@@ -221,6 +219,5 @@ class ExerciseE2ETest {
         composeTestRule.waitForIdle()
     }
 
-    private fun givenExerciseItemTag(exerciseName: String) = "ExerciseItem-$exerciseName"
     private fun givenExerciseItemNameTag(exerciseName: String) = "ExerciseItemName-$exerciseName"
 }
