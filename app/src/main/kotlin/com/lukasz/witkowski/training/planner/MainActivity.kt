@@ -29,7 +29,9 @@ import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
 import com.lukasz.witkowski.training.planner.navigation.TopBarAction
 import com.lukasz.witkowski.training.planner.navigation.TrainingPlannerNavigator
+import com.lukasz.witkowski.training.planner.navigation.TrainingPlannerNavKey
 import com.lukasz.witkowski.training.planner.navigation.TrainingPlansList
+import com.lukasz.witkowski.training.planner.navigation.ExercisesList
 import com.lukasz.witkowski.training.planner.navigation.rememberTrainingPlannerNavBackStack
 import com.lukasz.witkowski.training.planner.navigation.toUiConfig
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
@@ -40,15 +42,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TrainingPlannerTheme {
-                TrainingPlannerApp()
+                TrainingPlannerApp(ExercisesList)
             }
         }
     }
 }
 
 @Composable
-fun TrainingPlannerApp() {
-    val backStack = rememberTrainingPlannerNavBackStack(TrainingPlansList)
+fun TrainingPlannerApp(initialKey: TrainingPlannerNavKey = TrainingPlansList) {
+    val backStack = rememberTrainingPlannerNavBackStack(initialKey)
     val context = LocalContext.current
     val navigator = TrainingPlannerNavigator(backStack)
     val uiConfig = navigator.toUiConfig(context = context)

@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -78,8 +79,8 @@ private fun ExerciseDetails(
 ) {
     val exercise = details.exercise
     Column(
-        modifier.padding(Dimens.normal),
-        verticalArrangement = Arrangement.spacedBy(Dimens.large)
+        modifier.padding(Dimens.normal).testTag("ExerciseDetails"),
+        verticalArrangement = Arrangement.spacedBy(Dimens.large),
     ) {
         ImagesPreview(
             images = emptyList(),

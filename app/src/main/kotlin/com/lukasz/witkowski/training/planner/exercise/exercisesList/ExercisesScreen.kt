@@ -122,7 +122,9 @@ private fun ExercisesList(
     onExerciseClicked: (ExerciseId) -> Unit,
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.testTag("ExercisesList")
+        ) {
             items(
                 count = exercisesList.itemCount,
                 key = exercisesList.itemKey { it.id.value.toString() }
@@ -132,7 +134,7 @@ private fun ExercisesList(
                     ExerciseListItemContent(
                         exercise = exercise,
                         onClick = { onExerciseClicked(exercise.id) },
-                        modifier = Modifier.testTag("ExerciseItem")
+                        modifier = Modifier.testTag("ExerciseItem-${exercise.name}")
                     )
                 }
             }
@@ -181,7 +183,8 @@ private fun ExerciseInformation(
     ) {
         Text(
             text = exercise.name,
-            style = MaterialTheme.typography.titleLarge
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.testTag("ExerciseItemName-${exercise.name}")
         )
         Row(
             modifier = Modifier.fillMaxWidth(),

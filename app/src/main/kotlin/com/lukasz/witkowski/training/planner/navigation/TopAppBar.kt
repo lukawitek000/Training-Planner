@@ -18,16 +18,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.ui.theme.LightGrey
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -88,7 +86,10 @@ private fun OverflowMenu(
 ) {
     var showMenu by rememberSaveable(overflowItem) { mutableStateOf(false) }
     Box {
-        IconButton(onClick = { showMenu = true }) {
+        IconButton(
+            onClick = { showMenu = true },
+            modifier = Modifier.testTag("OverflowMenuButton")
+        ) {
             Icon(
                 imageVector = Icons.Default.MoreVert,
                 contentDescription = null
@@ -105,6 +106,7 @@ private fun OverflowMenu(
                     leadingIcon = {
                         Icon(imageVector = item.icon, contentDescription = null, tint = color)
                     },
+                    modifier = Modifier.testTag("MenuItem_${item.text}"),
                     onClick = {
                         showMenu = false
                         onAction(item.action)
