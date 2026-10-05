@@ -43,8 +43,13 @@ internal interface TrainingPlanDao {
          lastModified as lastModification,
          lastUsed as lastSession
          FROM TrainingPlan
+         WHERE LOWER(name) LIKE LOWER('%' || :query || '%')
+           OR LOWER(description) LIKE LOWER('%' || :query || '%')
+         ORDER BY name ASC
         """)
-    fun getAllTrainingOverviews(): Flow<List<DbTrainingOverview>>
+    fun getAllTrainingOverviews(
+        query: String,
+    ): Flow<List<DbTrainingOverview>>
 
     @Transaction
     suspend fun deleteTrainingPlanWithExercises(dbTrainingPlanWithExercises: DbTrainingPlanWithExercises) {

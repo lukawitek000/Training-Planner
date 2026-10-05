@@ -8,6 +8,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanOverview
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
+import com.lukasz.witkowski.training.planner.training.domain.TrainingSortBy
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toDbTrainingPlanWithExercises
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toTrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toTrainingPlanOverview
@@ -38,8 +39,18 @@ internal class DbTrainingPlanRepository(
     }
 
     override fun getAll(trainingQuery: TrainingQuery): Flow<List<TrainingPlanOverview>> =
-        trainingPlanDao.getAllTrainingOverviews().map { list ->
+        trainingPlanDao.getAllTrainingOverviews(trainingQuery.searchQuery).map { list ->
             list.map { it.toTrainingPlanOverview() }
+                .sortedBy {
+                    when (trainingQuery.sortBy) {
+                        is TrainingSortBy.Used -> {
+                            it.lastSession
+                        }
+                        is TrainingSortBy.Modified -> {
+                            it.lastModification
+                        }
+                    }
+                }
         }
 
     override suspend fun delete(trainingPlanId: TrainingPlanId): Result<Unit> {

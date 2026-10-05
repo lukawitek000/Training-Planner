@@ -13,8 +13,8 @@ data class TrainingQuery(
     }
 }
 
-enum class SortDirection {
-    ASCENDING, DESCENDING
+enum class SortDirection(val multiplication: Int) {
+    ASCENDING(1), DESCENDING(-1)
 }
 
 sealed interface TrainingSortBy {

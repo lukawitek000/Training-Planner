@@ -99,6 +99,8 @@ class DbTrainingPlanRepositoryTest {
 
     @Test
     fun `TrainingPlans are properly filtered by query`() = runTest {
+        val expectedModification = Instant.parse("2026-09-15T09:00:00Z")
+        testTimeProvider.instant = expectedModification
         givenSaveTrainingPlansList()
         val query = TrainingQuery(
             searchQuery = "Full",
@@ -109,7 +111,15 @@ class DbTrainingPlanRepositoryTest {
         val actual = repository.getAll(query).first()
 
         assertEquals(1, actual.size)
-        assertEquals(listOf(TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW), actual)
+        assertEquals(
+            listOf(
+                TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW.copy(
+                    lastModification = expectedModification,
+                    lastSession = null
+                )
+            ),
+            actual
+        )
     }
 
 
