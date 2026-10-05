@@ -6,8 +6,9 @@ import androidx.room3.Relation
 data class DbTrainingPlanWithExercises(
     @Embedded val trainingPlan: DbTrainingPlan,
     @Relation(
+        entity = DbTrainingExercise::class,
         parentColumns = ["id"],
         entityColumns = ["trainingId"],
     )
-    val exercises: List<DbTrainingExercise>,
+    val exercises: List<DbTrainingExerciseWithCategories>,
 )

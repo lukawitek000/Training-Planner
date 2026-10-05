@@ -11,7 +11,9 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toT
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import kotlin.collections.map
+import kotlin.time.Clock
 
 internal class DbTrainingPlanRepository(
     private val trainingPlanDao: TrainingPlanDao,
@@ -20,9 +22,12 @@ internal class DbTrainingPlanRepository(
     override suspend fun save(
         trainingPlanConfiguration: TrainingPlanConfiguration,
         id: TrainingPlanId
-    ): Result<TrainingPlanId> {
-        val trainingPlanWithExercise = trainingPlan.toDbTrainingPlanWithExercises()
-        trainingPlanDao.insertTrainingWithTrainingExercises(trainingPlanWithExercise)
+    ): Result<TrainingPlanId> = withContext(dispatcher) {
+        val trainingPlanWithExercise = trainingPlanConfiguration.toDbTrainingPlanWithExercises(
+            id = id,
+            currentInstant = Clock.System.now()
+        )
+//        trainingPlanDao.insertTrainingWithTrainingExercises(trainingPlanWithExercise)
     }
 
     override fun getAll(trainingQuery: TrainingQuery): Flow<List<TrainingPlanOverview>> =
