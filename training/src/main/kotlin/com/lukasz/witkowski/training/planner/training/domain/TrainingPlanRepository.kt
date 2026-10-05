@@ -18,4 +18,6 @@ interface TrainingPlanRepository {
         trainingPlanConfiguration: TrainingPlanConfiguration,
         id: TrainingPlanId
     ): Result<TrainingPlanId>
+
+    suspend fun useTrainingPlan(trainingPlanId: TrainingPlanId): Result<TrainingPlan>
 }

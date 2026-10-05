@@ -5,12 +5,14 @@ import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
 import androidx.room3.Query
 import androidx.room3.Transaction
+import androidx.room3.Upsert
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbExerciseCategory
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingExercise
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingOverview
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlanWithExercises
 import kotlinx.coroutines.flow.Flow
+import kotlin.time.Instant
 
 @Dao
 internal interface TrainingPlanDao {
@@ -35,7 +37,8 @@ internal interface TrainingPlanDao {
     suspend fun insertCategory(category: DbExerciseCategory)
 
     @Transaction
-    @Query("""
+    @Query(
+        """
         SELECT 
          id as trainingPlanId, 
          name as title,
@@ -46,7 +49,8 @@ internal interface TrainingPlanDao {
          WHERE LOWER(name) LIKE LOWER('%' || :query || '%')
            OR LOWER(description) LIKE LOWER('%' || :query || '%')
          ORDER BY name ASC
-        """)
+        """
+    )
     fun getAllTrainingOverviews(
         query: String,
     ): Flow<List<DbTrainingOverview>>
@@ -67,5 +71,22 @@ internal interface TrainingPlanDao {
 
     @Transaction
     @Query("SELECT * FROM TrainingPlan WHERE id=:id")
-    fun getTrainingPlanById(id: String): Flow<DbTrainingPlanWithExercises>
+    fun getFlowTrainingPlanById(id: String): Flow<DbTrainingPlanWithExercises>
+
+    @Transaction
+    @Query("SELECT * FROM TrainingPlan WHERE id=:id")
+    fun getTrainingPlanById(id: String): DbTrainingPlanWithExercises
+
+    @Upsert
+    fun updateTrainingPlan(plan: DbTrainingPlan)
+
+    @Transaction
+    fun useTrainingPlanById(id: String, currentInstant: Instant): DbTrainingPlanWithExercises {
+        val result = getTrainingPlanById(id)
+        val updatedPlan = result.trainingPlan.copy(
+            lastUsed = currentInstant
+        )
+        updateTrainingPlan(updatedPlan)
+        return result
+    }
 }

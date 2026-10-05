@@ -8,16 +8,14 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanOverview
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
-import com.lukasz.witkowski.training.planner.training.domain.TrainingSortBy
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toDbTrainingPlanWithExercises
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toTrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toTrainingPlanOverview
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
-import kotlin.collections.map
-import kotlin.time.Clock
 
 internal class DbTrainingPlanRepository(
     private val trainingPlanDao: TrainingPlanDao,
@@ -41,15 +39,8 @@ internal class DbTrainingPlanRepository(
     override fun getAll(trainingQuery: TrainingQuery): Flow<List<TrainingPlanOverview>> =
         trainingPlanDao.getAllTrainingOverviews(trainingQuery.searchQuery).map { list ->
             list.map { it.toTrainingPlanOverview() }
-                .sortedBy {
-                    when (trainingQuery.sortBy) {
-                        is TrainingSortBy.Used -> {
-                            it.lastSession
-                        }
-                        is TrainingSortBy.Modified -> {
-                            it.lastModification
-                        }
-                    }
+                .sortedByDescending {
+                    it.lastSession ?: it.lastModification
                 }
         }
 
@@ -64,7 +55,7 @@ internal class DbTrainingPlanRepository(
 
     override suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan> {
         val id = trainingPlanId.toString()
-        return trainingPlanDao.getTrainingPlanById(id).map {
+        return trainingPlanDao.getFlowTrainingPlanById(id).map {
             it.toTrainingPlan()
         }
     }
@@ -75,4 +66,14 @@ internal class DbTrainingPlanRepository(
     ): Result<TrainingPlanId> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun useTrainingPlan(trainingPlanId: TrainingPlanId): Result<TrainingPlan> =
+        withContext(Dispatchers.IO) {
+            runCatchingCancellable {
+                trainingPlanDao.useTrainingPlanById(
+                    trainingPlanId.toString(),
+                    timeProvider.currentInstant()
+                ).toTrainingPlan()
+            }
+        }
 }

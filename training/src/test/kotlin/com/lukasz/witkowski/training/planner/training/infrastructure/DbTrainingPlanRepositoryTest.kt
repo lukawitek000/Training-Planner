@@ -10,10 +10,8 @@ import com.lukasz.witkowski.training.planner.training.TestData.FULL_BODY_TRAININ
 import com.lukasz.witkowski.training.planner.training.TestData.PLANK_SNAPSHOT
 import com.lukasz.witkowski.training.planner.training.TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.training.TestData.toTrainingPlanConfiguration
-import com.lukasz.witkowski.training.planner.training.domain.SortDirection
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
-import com.lukasz.witkowski.training.planner.training.domain.TrainingSortBy
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -22,7 +20,6 @@ import org.junit.Before
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
-import kotlin.math.exp
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -99,27 +96,22 @@ class DbTrainingPlanRepositoryTest {
 
     @Test
     fun `TrainingPlans are properly filtered by query`() = runTest {
-        val expectedModification = Instant.parse("2026-09-15T09:00:00Z")
-        testTimeProvider.instant = expectedModification
+
+        val expectedLastModification = Instant.parse("2026-09-10T12:00:00Z")
+        testTimeProvider.instant = expectedLastModification
         givenSaveTrainingPlansList()
-        val query = TrainingQuery(
-            searchQuery = "Full",
-            selectedCategories = emptySet(),
-            sortBy = TrainingSortBy.Modified(SortDirection.ASCENDING)
-        )
 
-        val actual = repository.getAll(query).first()
-
-        assertEquals(1, actual.size)
-        assertEquals(
-            listOf(
-                TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW.copy(
-                    lastModification = expectedModification,
-                    lastSession = null
-                )
-            ),
-            actual
-        )
+        TestData.TRAINING_PLANS_LIST.forEach {
+            val actual = repository.getTrainingPlanById(it.id).first()
+            assertEquals(
+                it.copy(
+                    lastModification = expectedLastModification,
+                    lastSession = null,
+                ),
+                actual,
+                "Failed read for ${it.title}"
+            )
+        }
     }
 
 
@@ -131,7 +123,6 @@ class DbTrainingPlanRepositoryTest {
             selectedCategories = setOf(
                 TestData.CATEGORY_CHEST, TestData.CATEGORY_ARMS
             ),
-            sortBy = TrainingSortBy.Modified(SortDirection.ASCENDING)
         )
 
         val actual = repository.getAll(query).first()
@@ -152,7 +143,6 @@ class DbTrainingPlanRepositoryTest {
         val query = TrainingQuery(
             searchQuery = "Body",
             selectedCategories = setOf(CATEGORY_LEGS),
-            sortBy = TrainingSortBy.Modified(SortDirection.ASCENDING)
         )
 
         val actual = repository.getAll(query).first()
@@ -167,77 +157,50 @@ class DbTrainingPlanRepositoryTest {
     }
 
     @Test
-    fun `TrainingPlans are properly sorted by last modification ascending`() = runTest {
-        givenSaveTrainingPlansList()
-        val query = TrainingQuery(
-            searchQuery = "",
-            selectedCategories = setOf(),
-            sortBy = TrainingSortBy.Modified(SortDirection.ASCENDING)
+    fun `TrainingPlans are properly sorted by last modification, most recent first`() = runTest {
+        givenSaveTrainingPlansList(
+            preSave = {
+                testTimeProvider.instant = it.lastModification
+            }
         )
 
-        val actual = repository.getAll(query).first()
+        val result = repository.getAll(TrainingQuery.DEFAULT).first()
 
-        assertEquals(3, actual.size)
-        assertEquals(TestData.TRAINING_PLAN_OVERVIEWS_LIST, actual)
+        assertEquals(3, result.size)
+        listOf(
+            TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN_OVERVIEW,
+            TestData.CARDIO_ENDURANCE_TRAINING_PLAN_OVERVIEW,
+            TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW,
+        ).zip(result).forEach { (expected, actual) ->
+            assertEquals(expected.copy(lastSession = null), actual)
+        }
     }
 
     @Test
-    fun `TrainingPlans are properly sorted by last modification descending`() = runTest {
-        givenSaveTrainingPlansList()
-        val query = TrainingQuery(
-            searchQuery = "",
-            selectedCategories = setOf(),
-            sortBy = TrainingSortBy.Modified(SortDirection.DESCENDING)
+    fun `TrainingPlans are properly sorted by last session with fallback to last modification`() = runTest {
+        givenSaveTrainingPlansList(
+            preSave = {
+                testTimeProvider.instant = it.lastModification
+            }
         )
+        val useInstant = Instant.parse("2026-10-04T12:00:00Z")
+        testTimeProvider.instant = useInstant
+        val resultPlan = repository.useTrainingPlan(TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW.id)
+        assertTrue(resultPlan.isSuccess, "Failed to use TrainingPlan ${resultPlan.exceptionOrNull()?.message}")
+        assertEquals(FULL_BODY_TRAINING_PLAN.copy(
+            lastSession = null
+        ), resultPlan.getOrThrow())
 
-        val actual = repository.getAll(query).first()
+        val result = repository.getAll(TrainingQuery.DEFAULT).first()
 
-        assertEquals(3, actual.size)
-        assertEquals(TestData.TRAINING_PLAN_OVERVIEWS_LIST.reversed(), actual)
-    }
-
-    @Test
-    fun `TrainingPlans are properly sorted by last usage ascending`() = runTest {
-        givenSaveTrainingPlansList()
-        val query = TrainingQuery(
-            searchQuery = "",
-            selectedCategories = setOf(),
-            sortBy = TrainingSortBy.Used(SortDirection.ASCENDING)
-        )
-
-        val actual = repository.getAll(query).first()
-
-        assertEquals(3, actual.size)
-        assertEquals(
-            listOf(
-                TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN_OVERVIEW,
-                TestData.CARDIO_ENDURANCE_TRAINING_PLAN_OVERVIEW,
-                TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW
-            ),
-            actual
-        )
-    }
-
-    @Test
-    fun `TrainingPlans are properly sorted by last usage descending`() = runTest {
-        givenSaveTrainingPlansList()
-        val query = TrainingQuery(
-            searchQuery = "",
-            selectedCategories = setOf(),
-            sortBy = TrainingSortBy.Used(SortDirection.DESCENDING)
-        )
-
-        val actual = repository.getAll(query).first()
-
-        assertEquals(3, actual.size)
-        assertEquals(
-            listOf(
-                TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN_OVERVIEW,
-                TestData.CARDIO_ENDURANCE_TRAINING_PLAN_OVERVIEW,
-                TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW
-            ).asReversed(),
-            actual
-        )
+        assertEquals(3, result.size)
+        listOf(
+            TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW.copy(lastSession = useInstant),
+            TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN_OVERVIEW.copy(lastSession = null),
+            TestData.CARDIO_ENDURANCE_TRAINING_PLAN_OVERVIEW.copy(lastSession = null),
+        ).zip(result).forEach { (expected, actual) ->
+            assertEquals(expected, actual)
+        }
     }
 
     @Test
@@ -282,8 +245,11 @@ class DbTrainingPlanRepositoryTest {
         )
     }
 
-    private suspend fun givenSaveTrainingPlansList() {
+    private suspend fun givenSaveTrainingPlansList(
+        preSave: (TrainingPlan) -> Unit = {}
+    ) {
         TestData.TRAINING_PLANS_LIST.forEach {
+            preSave(it)
             val result = repository.save(it.toTrainingPlanConfiguration(), it.id)
             assertTrue(result.isSuccess, message = "Failed save for ${it.title}")
             assertEquals(it.id, result.getOrThrow())
