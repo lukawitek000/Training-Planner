@@ -5,7 +5,9 @@ import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
 import androidx.room3.Query
 import androidx.room3.Transaction
+import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbExerciseCategory
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingExercise
+import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingOverview
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlanWithExercises
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +18,10 @@ internal interface TrainingPlanDao {
     suspend fun insertTrainingWithTrainingExercises(dbTrainingPlanWithExercises: DbTrainingPlanWithExercises) {
         insertTraining(dbTrainingPlanWithExercises.trainingPlan)
         for (dbExercise in dbTrainingPlanWithExercises.exercises) {
-            insertExercise(dbExercise)
+            insertExercise(dbExercise.trainingExercise)
+            for (category in dbExercise.categories) {
+                insertCategory(category)
+            }
         }
     }
 
@@ -26,28 +31,34 @@ internal interface TrainingPlanDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExercise(dbExercise: DbTrainingExercise)
 
-    @Transaction
-    @Query("SELECT * FROM TrainingPlan")
-    fun getAll(): Flow<List<DbTrainingPlanWithExercises>>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCategory(category: DbExerciseCategory)
 
-    @Query("UPDATE TrainingPlan SET isSynchronized=1 WHERE id=:id")
-    fun setTrainingPlanAsSynchronized(id: String)
+    @Transaction
+    @Query("""
+        SELECT 
+         id as trainingPlanId, 
+         name as title,
+         description
+         FROM TrainingPlan
+        """)
+    fun getAllTrainingOverviews(): Flow<List<DbTrainingOverview>>
 
     @Transaction
     suspend fun deleteTrainingPlanWithExercises(dbTrainingPlanWithExercises: DbTrainingPlanWithExercises) {
-        deleteTrainingPlanById(dbTrainingPlanWithExercises.trainingPlan.id)
-        for (dbExercise in dbTrainingPlanWithExercises.exercises) {
-            deleteExerciseById(dbExercise.id)
-        }
+//        deleteTrainingPlanById(dbTrainingPlanWithExercises.trainingPlan.id)
+//        for (dbExercise in dbTrainingPlanWithExercises.exercises) {
+//            deleteExerciseById(dbExercise.exerciseId)
+//        }
     }
 
     @Query("DELETE FROM TrainingPlan WHERE id=:id")
     suspend fun deleteTrainingPlanById(id: String)
 
-    @Query("DELETE FROM Exercise WHERE id=:id")
+    @Query("DELETE FROM TrainingExercise WHERE exerciseId=:id")
     suspend fun deleteExerciseById(id: String)
 
     @Transaction
     @Query("SELECT * FROM TrainingPlan WHERE id=:id")
-    suspend fun getTrainingPlanById(id: String): DbTrainingPlanWithExercises
+    fun getTrainingPlanById(id: String): Flow<DbTrainingPlanWithExercises>
 }

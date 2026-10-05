@@ -7,7 +7,6 @@ import com.lukasz.witkowski.training.planner.training.TestData.CARDIO_ENDURANCE_
 import com.lukasz.witkowski.training.planner.training.TestData.CATEGORY_LEGS
 import com.lukasz.witkowski.training.planner.training.TestData.FULL_BODY_TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.training.TestData.PLANK_SNAPSHOT
-import com.lukasz.witkowski.training.planner.training.TestData.RUNNING_SNAPSHOT
 import com.lukasz.witkowski.training.planner.training.TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.training.TestData.toTrainingPlanConfiguration
 import com.lukasz.witkowski.training.planner.training.domain.SortDirection
@@ -207,12 +206,14 @@ class DbTrainingPlanRepositoryTest {
         val expectedPlan = FULL_BODY_TRAINING_PLAN.copy(
             title = "Update title",
             description = "Updated description",
-            exercises = (FULL_BODY_TRAINING_PLAN.exercises - PLANK_SNAPSHOT).map {
+            exercises = FULL_BODY_TRAINING_PLAN.exercises.filter { it.exercise != PLANK_SNAPSHOT }.map {
                 it.copy(
-                    description = "Updated: ${it.description}",
-                    categories = it.categories + TestData.CATEGORY_SHOULDERS
+                    exercise = it.exercise.copy(
+                        description = "Updated: ${it.exercise.description}",
+                        categories = it.exercise.categories + TestData.CATEGORY_SHOULDERS
+                    )
                 )
-            } + RUNNING_SNAPSHOT
+            } + TestData.TRAINING_EXERCISE_RUNNING
         )
 
         val result = repository.update(expectedPlan.toTrainingPlanConfiguration(), expectedPlan.id)

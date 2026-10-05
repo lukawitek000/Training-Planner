@@ -3,8 +3,10 @@ package com.lukasz.witkowski.training.planner.training.infrastructure.models
 import androidx.room3.Entity
 import androidx.room3.PrimaryKey
 
-@Entity(tableName = "TrainingExercise", primaryKeys = ["position", "trainingId", "exerciseId"])
+@Entity(tableName = "TrainingExercise")
 data class DbTrainingExercise(
+    @PrimaryKey
+    val id: String,
     val trainingId: String,
     val exerciseId: String,
     val position: Int,

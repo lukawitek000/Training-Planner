@@ -134,6 +134,16 @@ object TestData {
             weightInKg = null,
         )
 
+    val TRAINING_EXERCISE_RUNNING =
+        TrainingExercise(
+            id = TrainingExerciseId.create(),
+            exercise = RUNNING_SNAPSHOT,
+            repetitions = 1,
+            sets = 1,
+            restTime = 30.seconds,
+            weightInKg = null,
+        )
+
     // --- Training Plans (Different kinds, multiple exercises, different categories) ---
     val FULL_BODY_TRAINING_PLAN =
         TrainingPlan(
@@ -141,10 +151,10 @@ object TestData {
             title = "Full Body Workout",
             description = "A comprehensive full body routine covering chest, legs, back, and core.",
             exercises = listOf(
-                PUSH_UPS_SNAPSHOT,
-                SQUATS_SNAPSHOT,
-                PULL_UPS_SNAPSHOT,
-                PLANK_SNAPSHOT,
+                TRAINING_EXERCISE_PUSH_UPS,
+                TRAINING_EXERCISE_SQUATS,
+                TRAINING_EXERCISE_PULL_UPS,
+                TRAINING_EXERCISE_PLANK,
             ),
             restTime = 60.seconds,
             lastModification = Instant.parse("2026-09-04T12:00:00Z"),
@@ -157,7 +167,7 @@ object TestData {
             title = "Cardio Endurance",
             description = "High energy cardio and stamina workout.",
             exercises = listOf(
-                RUNNING_SNAPSHOT,
+                TRAINING_EXERCISE_RUNNING,
             ),
             restTime = 30.seconds,
             lastModification = Instant.parse("2026-09-05T15:00:00Z"),
@@ -170,8 +180,8 @@ object TestData {
             title = "Upper Body Strength",
             description = "Focused upper body training emphasizing chest, back, and arms.",
             exercises = listOf(
-                PUSH_UPS_SNAPSHOT,
-                PULL_UPS_SNAPSHOT,
+                TRAINING_EXERCISE_PUSH_UPS,
+                TRAINING_EXERCISE_PULL_UPS,
             ),
             restTime = 90.seconds,
             lastModification = Instant.parse("2026-09-10T20:00:00Z"),
@@ -191,7 +201,7 @@ object TestData {
             id = FULL_BODY_TRAINING_PLAN.id,
             title = FULL_BODY_TRAINING_PLAN.title,
             description = FULL_BODY_TRAINING_PLAN.description,
-            categories = FULL_BODY_TRAINING_PLAN.exercises.flatMap { it.categories }.toSet(),
+            categories = FULL_BODY_TRAINING_PLAN.exercises.flatMap { it.exercise.categories }.toSet(),
         )
 
     val CARDIO_ENDURANCE_TRAINING_PLAN_OVERVIEW =
@@ -199,7 +209,7 @@ object TestData {
             id = CARDIO_ENDURANCE_TRAINING_PLAN.id,
             title = CARDIO_ENDURANCE_TRAINING_PLAN.title,
             description = CARDIO_ENDURANCE_TRAINING_PLAN.description,
-            categories = CARDIO_ENDURANCE_TRAINING_PLAN.exercises.flatMap { it.categories }.toSet(),
+            categories = CARDIO_ENDURANCE_TRAINING_PLAN.exercises.flatMap { it.exercise.categories }.toSet(),
         )
 
     val UPPER_BODY_STRENGTH_TRAINING_PLAN_OVERVIEW =
@@ -207,7 +217,7 @@ object TestData {
             id = UPPER_BODY_STRENGTH_TRAINING_PLAN.id,
             title = UPPER_BODY_STRENGTH_TRAINING_PLAN.title,
             description = UPPER_BODY_STRENGTH_TRAINING_PLAN.description,
-            categories = UPPER_BODY_STRENGTH_TRAINING_PLAN.exercises.flatMap { it.categories }.toSet(),
+            categories = UPPER_BODY_STRENGTH_TRAINING_PLAN.exercises.flatMap { it.exercise.categories }.toSet(),
         )
 
     val TRAINING_PLAN_OVERVIEWS_LIST =
@@ -222,7 +232,7 @@ object TestData {
         id: TrainingPlanId = TrainingPlanId.create(),
         title: String = "Test Training Plan",
         description: String = "Test Description",
-        exercises: List<ExerciseSnapshot> = listOf(PUSH_UPS_SNAPSHOT, SQUATS_SNAPSHOT),
+        exercises: List<TrainingExercise> = listOf(TRAINING_EXERCISE_PUSH_UPS, TRAINING_EXERCISE_SQUATS),
         restTime: Duration = 60.seconds,
         lastModification: Instant = Instant.parse("2026-09-04T12:00:00Z"),
         lastSession: Instant? = null

@@ -6,41 +6,41 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.toExer
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise as DomainTrainingExercise
-
-fun TrainingExercise.toDomainTrainingExercise(): DomainTrainingExercise =
-    DomainTrainingExercise(
-        id = id,
-        exercise = toDomainExercise(exercise),
-        repetitions = repetitions,
-        sets = sets,
-        time = time,
-        restTime = restTime,
-    )
-
-fun DomainTrainingExercise.toPresentationTrainingExercise(): TrainingExercise =
-    TrainingExercise(
-        id = id,
-        exercise = toPresentationExercise(exercise),
-        repetitions = repetitions,
-        sets = sets,
-        time = time,
-        restTime = restTime,
-    )
-
-private fun toDomainExercise(exercise: Exercise): DomainExercise =
-    DomainExercise(
-        exercise.id,
-        exercise.name,
-        exercise.description,
-        exercise.categories.map { it.toExerciseCategory() },
-        null,
-    )
-
-private fun toPresentationExercise(exercise: DomainExercise): Exercise =
-    Exercise(
-        exercise.id,
-        exercise.name,
-        exercise.description,
-        exercise.categories.map { it.toCategory() },
-        null,
-    )
+//
+//fun TrainingExercise.toDomainTrainingExercise(): DomainTrainingExercise =
+//    DomainTrainingExercise(
+//        id = id,
+//        exercise = toDomainExercise(exercise),
+//        repetitions = repetitions,
+//        sets = sets,
+//        time = time,
+//        restTime = restTime,
+//    )
+//
+//fun DomainTrainingExercise.toPresentationTrainingExercise(): TrainingExercise =
+//    TrainingExercise(
+//        id = id,
+//        exercise = toPresentationExercise(exercise),
+//        repetitions = repetitions,
+//        sets = sets,
+//        time = time,
+//        restTime = restTime,
+//    )
+//
+//private fun toDomainExercise(exercise: Exercise): DomainExercise =
+//    DomainExercise(
+//        exercise.id,
+//        exercise.name,
+//        exercise.description,
+//        exercise.categories.map { it.toExerciseCategory() },
+//        null,
+//    )
+//
+//private fun toPresentationExercise(exercise: DomainExercise): Exercise =
+//    Exercise(
+//        exercise.id,
+//        exercise.name,
+//        exercise.description,
+//        exercise.categories.map { it.toCategory() },
+//        null,
+//    )

@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure
 
+import com.lukasz.witkowski.training.planner.shared.utils.runCatchingCancellable
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
@@ -8,6 +9,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanReposit
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toDbTrainingPlanWithExercises
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toTrainingPlan
+import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toTrainingPlanOverview
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -23,18 +25,19 @@ internal class DbTrainingPlanRepository(
         trainingPlanConfiguration: TrainingPlanConfiguration,
         id: TrainingPlanId
     ): Result<TrainingPlanId> = withContext(dispatcher) {
-        val trainingPlanWithExercise = trainingPlanConfiguration.toDbTrainingPlanWithExercises(
-            id = id,
-            currentInstant = Clock.System.now()
-        )
-//        trainingPlanDao.insertTrainingWithTrainingExercises(trainingPlanWithExercise)
+        runCatchingCancellable {
+            val trainingPlanWithExercise = trainingPlanConfiguration.toDbTrainingPlanWithExercises(
+                id = id,
+                currentInstant = Clock.System.now()
+            )
+            trainingPlanDao.insertTrainingWithTrainingExercises(trainingPlanWithExercise)
+            id
+        }
     }
 
     override fun getAll(trainingQuery: TrainingQuery): Flow<List<TrainingPlanOverview>> =
-        trainingPlanDao.getAll().map {
-            it.map { dbTrainingPlanWithExercises ->
-                dbTrainingPlanWithExercises.toTrainingPlan()
-            }
+        trainingPlanDao.getAllTrainingOverviews().map { list ->
+            list.map { it.toTrainingPlanOverview() }
         }
 
     override suspend fun delete(trainingPlanId: TrainingPlanId): Result<Unit> {
@@ -48,8 +51,9 @@ internal class DbTrainingPlanRepository(
 
     override suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan> {
         val id = trainingPlanId.toString()
-        val dbTrainingPlanWithExercises = trainingPlanDao.getTrainingPlanById(id)
-        return dbTrainingPlanWithExercises.toTrainingPlan()
+        return trainingPlanDao.getTrainingPlanById(id).map {
+            it.toTrainingPlan()
+        }
     }
 
     override suspend fun update(
