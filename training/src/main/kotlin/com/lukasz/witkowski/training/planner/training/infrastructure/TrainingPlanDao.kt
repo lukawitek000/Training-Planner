@@ -18,10 +18,8 @@ internal interface TrainingPlanDao {
     suspend fun insertTrainingWithTrainingExercises(dbTrainingPlanWithExercises: DbTrainingPlanWithExercises) {
         insertTraining(dbTrainingPlanWithExercises.trainingPlan)
         for (dbExercise in dbTrainingPlanWithExercises.exercises) {
-            println("Insert exercise ${dbExercise.trainingExercise.id}")
             insertExercise(dbExercise.trainingExercise)
             for (category in dbExercise.categories) {
-                println("Insert category ${category.trainingExerciseId}, ${category.name}")
                 insertCategory(category)
             }
         }
@@ -41,7 +39,9 @@ internal interface TrainingPlanDao {
         SELECT 
          id as trainingPlanId, 
          name as title,
-         description
+         description,
+         lastModified as lastModification,
+         lastUsed as lastSession
          FROM TrainingPlan
         """)
     fun getAllTrainingOverviews(): Flow<List<DbTrainingOverview>>

@@ -21,11 +21,6 @@ object TestData {
     val TRAINING_PLAN_ID_2 = TrainingPlanId(UUID.fromString("22222222-2222-2222-2222-222222222222"))
     val TRAINING_PLAN_ID_3 = TrainingPlanId(UUID.fromString("33333333-3333-3333-3333-333333333333"))
 
-    val TRAINING_EXERCISE_ID_1 = TrainingExerciseId(UUID.fromString("44444444-4444-4444-4444-444444444444"))
-    val TRAINING_EXERCISE_ID_2 = TrainingExerciseId(UUID.fromString("55555555-5555-5555-5555-555555555555"))
-    val TRAINING_EXERCISE_ID_3 = TrainingExerciseId(UUID.fromString("66666666-6666-6666-6666-666666666666"))
-    val TRAINING_EXERCISE_ID_4 = TrainingExerciseId(UUID.fromString("77777777-7777-7777-7777-777777777777"))
-
     val EXERCISE_ID_1 = ExerciseId(UUID.fromString("88888888-8888-8888-8888-888888888888"))
     val EXERCISE_ID_2 = ExerciseId(UUID.fromString("99999999-9999-9999-9999-999999999999"))
     val EXERCISE_ID_3 = ExerciseId(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
@@ -90,9 +85,9 @@ object TestData {
         )
 
     // --- Training Exercises ---
-    val TRAINING_EXERCISE_PUSH_UPS =
-        TrainingExercise(
-            id = TRAINING_EXERCISE_ID_1,
+    val TRAINING_EXERCISE_PUSH_UPS
+        get() = TrainingExercise(
+            id = TrainingExerciseId.create(),
             exercise = PUSH_UPS_SNAPSHOT,
             repetitions = 12,
             sets = 3,
@@ -100,9 +95,9 @@ object TestData {
             weightInKg = null,
         )
 
-    val TRAINING_EXERCISE_SQUATS =
-        TrainingExercise(
-            id = TRAINING_EXERCISE_ID_2,
+    val TRAINING_EXERCISE_SQUATS
+        get() = TrainingExercise(
+            id = TrainingExerciseId.create(),
             exercise = SQUATS_SNAPSHOT,
             repetitions = 15,
             sets = 4,
@@ -110,9 +105,9 @@ object TestData {
             weightInKg = 20,
         )
 
-    val TRAINING_EXERCISE_PULL_UPS =
-        TrainingExercise(
-            id = TRAINING_EXERCISE_ID_3,
+    val TRAINING_EXERCISE_PULL_UPS
+        get() = TrainingExercise(
+            id = TrainingExerciseId.create(),
             exercise = PULL_UPS_SNAPSHOT,
             repetitions = 8,
             sets = 3,
@@ -120,9 +115,9 @@ object TestData {
             weightInKg = null,
         )
 
-    val TRAINING_EXERCISE_PLANK =
-        TrainingExercise(
-            id = TRAINING_EXERCISE_ID_4,
+    val TRAINING_EXERCISE_PLANK
+        get() = TrainingExercise(
+            id = TrainingExerciseId.create(),
             exercise = PLANK_SNAPSHOT,
             repetitions = 1,
             sets = 3,
@@ -130,8 +125,8 @@ object TestData {
             weightInKg = null,
         )
 
-    val TRAINING_EXERCISE_RUNNING =
-        TrainingExercise(
+    val TRAINING_EXERCISE_RUNNING
+        get() = TrainingExercise(
             id = TrainingExerciseId.create(),
             exercise = RUNNING_SNAPSHOT,
             repetitions = 1,
@@ -187,8 +182,8 @@ object TestData {
     val TRAINING_PLANS_LIST =
         listOf(
             FULL_BODY_TRAINING_PLAN,
-//            CARDIO_ENDURANCE_TRAINING_PLAN,
-//            UPPER_BODY_STRENGTH_TRAINING_PLAN,
+            CARDIO_ENDURANCE_TRAINING_PLAN,
+            UPPER_BODY_STRENGTH_TRAINING_PLAN,
         )
 
     // --- Training Plan Overviews ---
@@ -198,6 +193,8 @@ object TestData {
             title = FULL_BODY_TRAINING_PLAN.title,
             description = FULL_BODY_TRAINING_PLAN.description,
             categories = FULL_BODY_TRAINING_PLAN.exercises.flatMap { it.exercise.categories }.toSet(),
+            lastModification = FULL_BODY_TRAINING_PLAN.lastModification,
+            lastSession = FULL_BODY_TRAINING_PLAN.lastSession,
         )
 
     val CARDIO_ENDURANCE_TRAINING_PLAN_OVERVIEW =
@@ -206,6 +203,8 @@ object TestData {
             title = CARDIO_ENDURANCE_TRAINING_PLAN.title,
             description = CARDIO_ENDURANCE_TRAINING_PLAN.description,
             categories = CARDIO_ENDURANCE_TRAINING_PLAN.exercises.flatMap { it.exercise.categories }.toSet(),
+            lastModification = CARDIO_ENDURANCE_TRAINING_PLAN.lastModification,
+            lastSession = CARDIO_ENDURANCE_TRAINING_PLAN.lastSession,
         )
 
     val UPPER_BODY_STRENGTH_TRAINING_PLAN_OVERVIEW =
@@ -214,6 +213,8 @@ object TestData {
             title = UPPER_BODY_STRENGTH_TRAINING_PLAN.title,
             description = UPPER_BODY_STRENGTH_TRAINING_PLAN.description,
             categories = UPPER_BODY_STRENGTH_TRAINING_PLAN.exercises.flatMap { it.exercise.categories }.toSet(),
+            lastModification = UPPER_BODY_STRENGTH_TRAINING_PLAN.lastModification,
+            lastSession = UPPER_BODY_STRENGTH_TRAINING_PLAN.lastSession,
         )
 
     val TRAINING_PLAN_OVERVIEWS_LIST =

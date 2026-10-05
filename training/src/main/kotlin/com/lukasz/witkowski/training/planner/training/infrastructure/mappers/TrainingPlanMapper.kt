@@ -55,5 +55,7 @@ internal fun DbTrainingOverview.toTrainingPlanOverview() = TrainingPlanOverview(
     id = TrainingPlanId(header.trainingPlanId),
     title = header.title,
     description = header.description,
-    categories = categories.map { it.toExerciseCategoryName() }.toSet()
+    categories = categories.map { it.toExerciseCategoryName() }.toSet(),
+    lastModification = header.lastModification,
+    lastSession = header.lastSession
 )

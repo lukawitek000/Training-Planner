@@ -15,7 +15,6 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
 import com.lukasz.witkowski.training.planner.training.domain.TrainingSortBy
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -23,6 +22,7 @@ import org.junit.Before
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
+import kotlin.math.exp
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -80,14 +80,21 @@ class DbTrainingPlanRepositoryTest {
 
     @Test
     fun `TrainingPlans are saved, and read from DB the overviews is successful`() = runTest {
+        val expectedLastModification = Instant.parse("2026-09-12T14:00:00Z")
+        testTimeProvider.instant = expectedLastModification
         givenSaveTrainingPlansList()
 
-        val actual = repository.getAll(TrainingQuery.DEFAULT).last()
+        val result = repository.getAll(TrainingQuery.DEFAULT).first()
 
-        assertEquals(
-            TestData.TRAINING_PLAN_OVERVIEWS_LIST,
-            actual,
-        )
+        TestData.TRAINING_PLAN_OVERVIEWS_LIST.zip(result).forEach { (expected, actual) ->
+            assertEquals(
+                expected.copy(
+                    lastModification = expectedLastModification,
+                    lastSession = null,
+                ),
+                actual
+            )
+        }
     }
 
     @Test
@@ -99,7 +106,7 @@ class DbTrainingPlanRepositoryTest {
             sortBy = TrainingSortBy.Modified(SortDirection.ASCENDING)
         )
 
-        val actual = repository.getAll(query).last()
+        val actual = repository.getAll(query).first()
 
         assertEquals(1, actual.size)
         assertEquals(listOf(TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW), actual)
@@ -117,7 +124,7 @@ class DbTrainingPlanRepositoryTest {
             sortBy = TrainingSortBy.Modified(SortDirection.ASCENDING)
         )
 
-        val actual = repository.getAll(query).last()
+        val actual = repository.getAll(query).first()
 
         assertEquals(2, actual.size)
         assertEquals(
@@ -138,7 +145,7 @@ class DbTrainingPlanRepositoryTest {
             sortBy = TrainingSortBy.Modified(SortDirection.ASCENDING)
         )
 
-        val actual = repository.getAll(query).last()
+        val actual = repository.getAll(query).first()
 
         assertEquals(1, actual.size)
         assertEquals(
@@ -158,7 +165,7 @@ class DbTrainingPlanRepositoryTest {
             sortBy = TrainingSortBy.Modified(SortDirection.ASCENDING)
         )
 
-        val actual = repository.getAll(query).last()
+        val actual = repository.getAll(query).first()
 
         assertEquals(3, actual.size)
         assertEquals(TestData.TRAINING_PLAN_OVERVIEWS_LIST, actual)
@@ -173,7 +180,7 @@ class DbTrainingPlanRepositoryTest {
             sortBy = TrainingSortBy.Modified(SortDirection.DESCENDING)
         )
 
-        val actual = repository.getAll(query).last()
+        val actual = repository.getAll(query).first()
 
         assertEquals(3, actual.size)
         assertEquals(TestData.TRAINING_PLAN_OVERVIEWS_LIST.reversed(), actual)
@@ -188,7 +195,7 @@ class DbTrainingPlanRepositoryTest {
             sortBy = TrainingSortBy.Used(SortDirection.ASCENDING)
         )
 
-        val actual = repository.getAll(query).last()
+        val actual = repository.getAll(query).first()
 
         assertEquals(3, actual.size)
         assertEquals(
@@ -210,7 +217,7 @@ class DbTrainingPlanRepositoryTest {
             sortBy = TrainingSortBy.Used(SortDirection.DESCENDING)
         )
 
-        val actual = repository.getAll(query).last()
+        val actual = repository.getAll(query).first()
 
         assertEquals(3, actual.size)
         assertEquals(
