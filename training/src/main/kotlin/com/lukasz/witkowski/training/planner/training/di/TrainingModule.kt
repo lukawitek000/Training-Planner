@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.training.di
 
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
+import com.lukasz.witkowski.training.planner.shared.time.SystemTimeProvider
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.infrastructure.DbTrainingPlanRepository
@@ -22,6 +23,7 @@ val trainingModule =
         single {
             DbTrainingPlanRepository(
                 trainingPlanDao = get(),
+                timeProvider = SystemTimeProvider(),
                 dispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
             )
         } bind TrainingPlanRepository::class

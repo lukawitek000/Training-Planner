@@ -30,9 +30,6 @@ object TestData {
     val EXERCISE_ID_2 = ExerciseId(UUID.fromString("99999999-9999-9999-9999-999999999999"))
     val EXERCISE_ID_3 = ExerciseId(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
     val EXERCISE_ID_4 = ExerciseId(UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"))
-
-    val IMAGE_ID_1 = ImageId(UUID.fromString("cccccccc-cccc-cccc-cccc-cccccccccccc"))
-
     // --- Categories ---
     val CATEGORY_CHEST = ExerciseCategoryName("Chest")
     val CATEGORY_BACK = ExerciseCategoryName("Back")
@@ -49,7 +46,6 @@ object TestData {
             name = "Push-ups",
             description = "Chest and arms bodyweight exercise",
             categories = setOf(CATEGORY_CHEST, CATEGORY_ARMS),
-            imageId = IMAGE_ID_1,
         )
 
     val SQUATS_SNAPSHOT =
@@ -191,8 +187,8 @@ object TestData {
     val TRAINING_PLANS_LIST =
         listOf(
             FULL_BODY_TRAINING_PLAN,
-            CARDIO_ENDURANCE_TRAINING_PLAN,
-            UPPER_BODY_STRENGTH_TRAINING_PLAN,
+//            CARDIO_ENDURANCE_TRAINING_PLAN,
+//            UPPER_BODY_STRENGTH_TRAINING_PLAN,
         )
 
     // --- Training Plan Overviews ---

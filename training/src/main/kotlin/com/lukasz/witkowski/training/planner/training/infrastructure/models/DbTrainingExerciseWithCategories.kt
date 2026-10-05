@@ -7,8 +7,8 @@ class DbTrainingExerciseWithCategories(
     @Embedded
     val trainingExercise: DbTrainingExercise,
     @Relation(
-        parentColumns = ["trainingId", "exerciseId", "position"],
-        entityColumns = ["exerciseId", "trainingPlanId", "position"],
+        parentColumns = ["id"],
+        entityColumns = ["trainingExerciseId"],
     )
     val categories: List<DbExerciseCategory>
 )

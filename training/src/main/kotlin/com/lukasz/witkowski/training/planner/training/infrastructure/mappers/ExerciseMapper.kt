@@ -19,9 +19,8 @@ internal fun TrainingExercise.toDbTrainingExerciseWithCategories(
     trainingExercise = this.toDbTrainingExercise(trainingPlanId, position),
     categories = this.exercise.categories.map {
         it.toDbExerciseCategory(
-            exerciseId = exercise.id,
-            trainingPlanId = trainingPlanId,
-            position = position
+            trainingExerciseId = this.id,
+            trainingPlanId = trainingPlanId
         )
     }
 )
@@ -39,30 +38,30 @@ private fun TrainingExercise.toDbTrainingExercise(
     imagePath = null,
     repetitions = repetitions,
     sets = sets,
-    restTime = restTime.inWholeSeconds
+    restTime = restTime.inWholeSeconds,
+    weightInKg = weightInKg
 )
 
-internal fun ExerciseCategoryName.toDbExerciseCategory(
-    exerciseId: ExerciseId,
+private fun ExerciseCategoryName.toDbExerciseCategory(
+    trainingExerciseId: TrainingExerciseId,
     trainingPlanId: TrainingPlanId,
-    position: Int
 ) =
     DbExerciseCategory(
-        exerciseId = exerciseId.toString(),
+        trainingExerciseId = trainingExerciseId.toString(),
         trainingPlanId = trainingPlanId.toString(),
-        position = position,
         name = this.name
     )
 
 
 internal fun DbTrainingExerciseWithCategories.toTrainingExercise() =
     TrainingExercise(
-        id = TrainingExerciseId.create(),
+        id = TrainingExerciseId(trainingExercise.id),
         exercise = trainingExercise.toExerciseSnapshot(
             categories = this.categories
         ),
         repetitions = trainingExercise.repetitions,
         sets = trainingExercise.sets,
+        weightInKg = trainingExercise.weightInKg,
         restTime = trainingExercise.restTime.seconds,
     )
 

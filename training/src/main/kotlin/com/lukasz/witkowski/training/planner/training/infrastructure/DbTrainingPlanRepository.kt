@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure
 
+import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
 import com.lukasz.witkowski.training.planner.shared.utils.runCatchingCancellable
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
@@ -19,6 +20,7 @@ import kotlin.time.Clock
 
 internal class DbTrainingPlanRepository(
     private val trainingPlanDao: TrainingPlanDao,
+    private val timeProvider: TimeProvider,
     private val dispatcher: CoroutineDispatcher,
 ) : TrainingPlanRepository {
     override suspend fun save(
@@ -28,7 +30,7 @@ internal class DbTrainingPlanRepository(
         runCatchingCancellable {
             val trainingPlanWithExercise = trainingPlanConfiguration.toDbTrainingPlanWithExercises(
                 id = id,
-                currentInstant = Clock.System.now()
+                currentInstant = timeProvider.currentInstant()
             )
             trainingPlanDao.insertTrainingWithTrainingExercises(trainingPlanWithExercise)
             id

@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.training.infrastructure
 
 import android.content.Context
 import androidx.room3.Room
+import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.training.TestData
 import com.lukasz.witkowski.training.planner.training.TestData.CARDIO_ENDURANCE_TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.training.TestData.CATEGORY_LEGS
@@ -13,9 +14,11 @@ import com.lukasz.witkowski.training.planner.training.domain.SortDirection
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
 import com.lukasz.witkowski.training.planner.training.domain.TrainingSortBy
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import org.junit.After
 import org.junit.Before
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -24,6 +27,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.time.Instant
 
 @RunWith(RobolectricTestRunner::class)
 class DbTrainingPlanRepositoryTest {
@@ -31,6 +35,7 @@ class DbTrainingPlanRepositoryTest {
     private lateinit var db: TrainingPlanDatabase
     private lateinit var repository: DbTrainingPlanRepository
     private val ioDispatcher = UnconfinedTestDispatcher()
+    private val testTimeProvider = TestTimeProvider()
 
     @Before
     fun setUp() {
@@ -44,15 +49,33 @@ class DbTrainingPlanRepositoryTest {
         repository =
             DbTrainingPlanRepository(
                 trainingPlanDao = dao,
+                timeProvider = testTimeProvider,
                 dispatcher = ioDispatcher
             )
     }
 
+    @After
+    fun tearDown() {
+        db.close()
+    }
+
     @Test
     fun `TrainingPlan is saved, and read from DB`() = runTest {
+        val expectedLastModification = Instant.parse("2026-09-10T12:00:00Z")
+        testTimeProvider.instant = expectedLastModification
         givenSaveTrainingPlansList()
 
-        assertTrainingPlanList()
+        TestData.TRAINING_PLANS_LIST.forEach {
+            val actual = repository.getTrainingPlanById(it.id).first()
+            assertEquals(
+                it.copy(
+                    lastModification = expectedLastModification,
+                    lastSession = null,
+                ),
+                actual,
+                "Failed read for ${it.title}"
+            )
+        }
     }
 
     @Test
@@ -206,14 +229,15 @@ class DbTrainingPlanRepositoryTest {
         val expectedPlan = FULL_BODY_TRAINING_PLAN.copy(
             title = "Update title",
             description = "Updated description",
-            exercises = FULL_BODY_TRAINING_PLAN.exercises.filter { it.exercise != PLANK_SNAPSHOT }.map {
-                it.copy(
-                    exercise = it.exercise.copy(
-                        description = "Updated: ${it.exercise.description}",
-                        categories = it.exercise.categories + TestData.CATEGORY_SHOULDERS
+            exercises = FULL_BODY_TRAINING_PLAN.exercises.filter { it.exercise != PLANK_SNAPSHOT }
+                .map {
+                    it.copy(
+                        exercise = it.exercise.copy(
+                            description = "Updated: ${it.exercise.description}",
+                            categories = it.exercise.categories + TestData.CATEGORY_SHOULDERS
+                        )
                     )
-                )
-            } + TestData.TRAINING_EXERCISE_RUNNING
+                } + TestData.TRAINING_EXERCISE_RUNNING
         )
 
         val result = repository.update(expectedPlan.toTrainingPlanConfiguration(), expectedPlan.id)
@@ -251,7 +275,7 @@ class DbTrainingPlanRepositoryTest {
 
     private suspend fun assertTrainingPlanList(expected: List<TrainingPlan> = TestData.TRAINING_PLANS_LIST) {
         expected.forEach {
-            val actual = repository.getTrainingPlanById(it.id).last()
+            val actual = repository.getTrainingPlanById(it.id).first()
             assertEquals(it, actual, "Failed read for ${it.title}")
         }
     }

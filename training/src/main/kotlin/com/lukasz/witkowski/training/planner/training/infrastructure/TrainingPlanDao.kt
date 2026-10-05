@@ -18,8 +18,10 @@ internal interface TrainingPlanDao {
     suspend fun insertTrainingWithTrainingExercises(dbTrainingPlanWithExercises: DbTrainingPlanWithExercises) {
         insertTraining(dbTrainingPlanWithExercises.trainingPlan)
         for (dbExercise in dbTrainingPlanWithExercises.exercises) {
+            println("Insert exercise ${dbExercise.trainingExercise.id}")
             insertExercise(dbExercise.trainingExercise)
             for (category in dbExercise.categories) {
+                println("Insert category ${category.trainingExerciseId}, ${category.name}")
                 insertCategory(category)
             }
         }
