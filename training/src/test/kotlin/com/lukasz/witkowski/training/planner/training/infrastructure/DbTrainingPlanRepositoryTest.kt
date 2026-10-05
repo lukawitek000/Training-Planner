@@ -9,6 +9,7 @@ import com.lukasz.witkowski.training.planner.training.TestData.FULL_BODY_TRAININ
 import com.lukasz.witkowski.training.planner.training.TestData.PLANK_SNAPSHOT
 import com.lukasz.witkowski.training.planner.training.TestData.RUNNING_SNAPSHOT
 import com.lukasz.witkowski.training.planner.training.TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN
+import com.lukasz.witkowski.training.planner.training.TestData.toTrainingPlanConfiguration
 import com.lukasz.witkowski.training.planner.training.domain.SortDirection
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
@@ -214,7 +215,7 @@ class DbTrainingPlanRepositoryTest {
             } + RUNNING_SNAPSHOT
         )
 
-        val result = repository.update(expectedPlan)
+        val result = repository.update(expectedPlan.toTrainingPlanConfiguration(), expectedPlan.id)
         assertTrue(result.isSuccess, message = "Failed to update TrainingPlan")
 
         assertTrainingPlanList(
@@ -241,7 +242,7 @@ class DbTrainingPlanRepositoryTest {
 
     private suspend fun givenSaveTrainingPlansList() {
         TestData.TRAINING_PLANS_LIST.forEach {
-            val result = repository.save(trainingPlan = it)
+            val result = repository.save(it.toTrainingPlanConfiguration(), it.id)
             assertTrue(result.isSuccess, message = "Failed save for ${it.title}")
             assertEquals(it.id, result.getOrThrow())
         }

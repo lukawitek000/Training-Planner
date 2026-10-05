@@ -7,6 +7,7 @@ import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanOverview
 import java.util.UUID
@@ -266,5 +267,13 @@ object TestData {
             sets = sets,
             restTime = restTime,
             weightInKg = weightInKg,
+        )
+
+    fun TrainingPlan.toTrainingPlanConfiguration() =
+        TrainingPlanConfiguration(
+            title = title,
+            description = description,
+            exercises = exercises,
+            restTime = restTime
         )
 }

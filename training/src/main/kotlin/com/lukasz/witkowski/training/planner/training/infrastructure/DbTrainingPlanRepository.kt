@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure
 
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanOverview
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
@@ -16,7 +17,10 @@ internal class DbTrainingPlanRepository(
     private val trainingPlanDao: TrainingPlanDao,
     private val dispatcher: CoroutineDispatcher,
 ) : TrainingPlanRepository {
-    override suspend fun save(trainingPlan: TrainingPlan): Result<TrainingPlanId> {
+    override suspend fun save(
+        trainingPlanConfiguration: TrainingPlanConfiguration,
+        id: TrainingPlanId
+    ): Result<TrainingPlanId> {
         val trainingPlanWithExercise = trainingPlan.toDbTrainingPlanWithExercises()
         trainingPlanDao.insertTrainingWithTrainingExercises(trainingPlanWithExercise)
     }
@@ -43,7 +47,10 @@ internal class DbTrainingPlanRepository(
         return dbTrainingPlanWithExercises.toTrainingPlan()
     }
 
-    override suspend fun update(trainingPlan: TrainingPlan): Result<TrainingPlanId> {
+    override suspend fun update(
+        trainingPlanConfiguration: TrainingPlanConfiguration,
+        id: TrainingPlanId
+    ): Result<TrainingPlanId> {
         TODO("Not yet implemented")
     }
 }
