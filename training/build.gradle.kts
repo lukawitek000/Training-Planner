@@ -20,4 +20,8 @@ dependencies {
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.core)
     implementation(libs.koin.android)
+
+    testImplementation(libs.kotlinTestJunit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.roboelectric)
 }

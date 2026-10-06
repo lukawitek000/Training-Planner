@@ -1,18 +1,19 @@
 package com.lukasz.witkowski.training.planner.training.domain
 
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategoryLegacy
+import kotlin.time.Duration
+import kotlin.time.Instant
 
 data class TrainingPlan(
     val id: TrainingPlanId,
     val title: String,
     val description: String = "",
     val exercises: List<TrainingExercise>,
-    val isSynchronized: Boolean = false,
+    val restTime: Duration,
+    val lastModification: Instant,
+    val lastSession: Instant?,
 ) {
-    fun hasCategories(categories: List<ExerciseCategoryLegacy>): Boolean = getAllCategories().containsAll(categories)
-
-    private fun getAllCategories(): List<ExerciseCategoryLegacy> =
+    val categories =
         exercises
-            .map { trainingExercise -> trainingExercise.exercise.categories.first() }
-            .filter { category -> !category.isNone() }
+            .flatMap { trainingExercise -> trainingExercise.exercise.categories }
+            .toSet()
 }

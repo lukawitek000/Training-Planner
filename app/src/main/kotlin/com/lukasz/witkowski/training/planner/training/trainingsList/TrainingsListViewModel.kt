@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toExerciseCategory
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
-import com.lukasz.witkowski.training.planner.training.presentation.mappers.toDomainTrainingPlan
-import com.lukasz.witkowski.training.planner.training.presentation.mappers.toPresentationTrainingPlans
+//import com.lukasz.witkowski.training.planner.training.presentation.mappers.toDomainTrainingPlan
+//import com.lukasz.witkowski.training.planner.training.presentation.mappers.toPresentationTrainingPlans
 import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,16 +39,16 @@ class TrainingsListViewModel(
     private fun fetchExercises() {
         viewModelScope.launch {
             val categories = selectedCategories.value.map { it.toExerciseCategory() }
-            trainingPlanService.getTrainingPlansFromCategories(categories).collectLatest {
-                _trainingPlans.emit(it.toPresentationTrainingPlans())
-            }
+//            trainingPlanService.getTrainingPlansFromCategories(categories).collectLatest {
+//                _trainingPlans.emit(it.toPresentationTrainingPlans())
+//            }
         }
     }
 
     fun sendTrainingPlan(id: String) {
         viewModelScope.launch {
             _trainingPlans.value.firstOrNull { it.id.toString() == id }?.let {
-                trainingPlanService.sendTrainingPlan(it.toDomainTrainingPlan())
+//                trainingPlanService.sendTrainingPlan(it.toDomainTrainingPlan())
             }
         }
     }

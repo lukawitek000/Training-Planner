@@ -9,7 +9,7 @@ internal class ExerciseSession(
     private val startTime: Time,
     private val set: Int,
 ) {
-    fun hasRestTime() = exercise.restTime.isNotZero()
+    fun hasRestTime() = exercise.restTime.isPositive()
 
     fun stop(
         isCompleted: Boolean,

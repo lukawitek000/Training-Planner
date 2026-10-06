@@ -1,22 +1,31 @@
 package com.lukasz.witkowski.training.planner.training.di
 
+import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
+import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
+import com.lukasz.witkowski.training.planner.shared.time.SystemTimeProvider
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanSender
-import com.lukasz.witkowski.training.planner.training.infrastructure.db.DbTrainingPlanRepository
-import com.lukasz.witkowski.training.planner.training.infrastructure.db.TrainingPlanDatabase
-import com.lukasz.witkowski.training.planner.training.infrastructure.wearableApi.WearableTrainingPlanSender
+import com.lukasz.witkowski.training.planner.training.infrastructure.DbTrainingPlanRepository
+import com.lukasz.witkowski.training.planner.training.infrastructure.TrainingPlanDatabase
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.single
 
 val trainingModule =
     module {
+        includes(dispatchersModule)
+
         single { TrainingPlanDatabase.getInstance(androidContext()) }
         single { get<TrainingPlanDatabase>().trainingPlanDao() }
 
-        single<DbTrainingPlanRepository>() bind TrainingPlanRepository::class
-        single<WearableTrainingPlanSender>() bind TrainingPlanSender::class
+        single {
+            DbTrainingPlanRepository(
+                trainingPlanDao = get(),
+                timeProvider = SystemTimeProvider(),
+                dispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
+            )
+        } bind TrainingPlanRepository::class
         single<TrainingPlanService>()
     }

@@ -1,7 +1,8 @@
-package com.lukasz.witkowski.training.planner.training.infrastructure.db.models
+package com.lukasz.witkowski.training.planner.training.infrastructure.models
 
 import androidx.room3.Entity
 import androidx.room3.PrimaryKey
+import kotlin.time.Instant
 
 @Entity(tableName = "TrainingPlan")
 data class DbTrainingPlan(
@@ -9,5 +10,7 @@ data class DbTrainingPlan(
     val id: String,
     val name: String,
     val description: String,
-    val isSynchronized: Boolean,
+    val restTime: Long,
+    val lastModified: Instant,
+    val lastUsed: Instant?,
 )

@@ -58,7 +58,7 @@ internal class TrainingSession(
             }
             isExerciseState() && exerciseSession.hasRestTime() -> {
                 val nextExercise = getNextExerciseOverview()
-                TrainingSessionState.RestTimeState(nextExercise, currentExercise.restTime)
+                TrainingSessionState.RestTimeState(nextExercise, Time.ZERO)
             }
             isRestTimeState() || (isExerciseState() && !exerciseSession.hasRestTime()) -> {
                 val currentExercise = loadExercise()

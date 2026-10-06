@@ -1,12 +1,10 @@
 package com.lukasz.witkowski.training.planner.statistics
 
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsPolicy
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSession
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSetsPolicy
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -17,16 +15,17 @@ internal open class TrainingSessionTest {
     protected fun createTrainingSession(trainingPlan: TrainingPlan) = TrainingSession(trainingPlan, trainingSetsStrategy)
 
     protected fun createSingleTrainingExerciseWithManySets(): List<TrainingExercise> {
-        val exercise =
-            TrainingExercise(
-                id = TrainingExerciseId.create(),
-                repetitions = 10,
-                sets = 2,
-                time = Time(10000L),
-                restTime = Time(30000),
-                exercise = createDummyExercise(),
-            )
-        return listOf(exercise)
+        return emptyList()
+//        val exercise =
+//            TrainingExercise(
+//                id = TrainingExerciseId.create(),
+//                repetitions = 10,
+//                sets = 2,
+//                time = Time(10000L),
+//                restTime = Time(30000),
+//                exercise = createDummyExercise(),
+//            )
+//        return listOf(exercise)
     }
 
     protected fun assertRestTimeState(

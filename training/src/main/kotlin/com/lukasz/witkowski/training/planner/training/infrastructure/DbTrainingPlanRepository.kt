@@ -1,0 +1,118 @@
+package com.lukasz.witkowski.training.planner.training.infrastructure
+
+import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
+import com.lukasz.witkowski.training.planner.shared.utils.runCatchingCancellable
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanOverview
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
+import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
+import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toDbTrainingExerciseWithCategories
+import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toDbTrainingPlanWithExercises
+import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toTrainingPlan
+import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toTrainingPlanOverview
+import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlan
+import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlanWithExercises
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
+
+internal class DbTrainingPlanRepository(
+    private val trainingPlanDao: TrainingPlanDao,
+    private val timeProvider: TimeProvider,
+    private val dispatcher: CoroutineDispatcher,
+) : TrainingPlanRepository {
+    override suspend fun save(
+        trainingPlanConfiguration: TrainingPlanConfiguration,
+        id: TrainingPlanId,
+    ): Result<TrainingPlanId> =
+        withContext(dispatcher) {
+            runCatchingCancellable {
+                val trainingPlanWithExercise =
+                    trainingPlanConfiguration.toDbTrainingPlanWithExercises(
+                        id = id,
+                        currentInstant = timeProvider.currentInstant(),
+                    )
+                trainingPlanDao.insertTrainingWithTrainingExercises(trainingPlanWithExercise)
+                id
+            }
+        }
+
+    override fun getAll(trainingQuery: TrainingQuery): Flow<List<TrainingPlanOverview>> {
+        val dbTrainingOverviews =
+            if (trainingQuery.selectedCategories.isEmpty()) {
+                trainingPlanDao.getAllTrainingOverviews(trainingQuery.searchQuery)
+            } else {
+                trainingPlanDao.getAllTrainingOverviews(
+                    query = trainingQuery.searchQuery,
+                    categoriesNames = trainingQuery.selectedCategories.map { it.name },
+                )
+            }
+        return dbTrainingOverviews.map { list ->
+            list
+                .map { it.toTrainingPlanOverview() }
+                .sortedByDescending {
+                    it.lastSession ?: it.lastModification
+                }
+        }
+    }
+
+    override suspend fun delete(trainingPlanId: TrainingPlanId): Result<Unit> =
+        withContext(dispatcher) {
+            runCatchingCancellable {
+                trainingPlanDao.deleteTrainingPlanById(trainingPlanId.toString())
+            }
+        }
+
+    override fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan?> {
+        val id = trainingPlanId.toString()
+        return trainingPlanDao.getFlowTrainingPlanById(id).map {
+            it?.toTrainingPlan()
+        }
+    }
+
+    override suspend fun update(
+        trainingPlanConfiguration: TrainingPlanConfiguration,
+        id: TrainingPlanId,
+    ): Result<TrainingPlanId> =
+        withContext(dispatcher) {
+            runCatchingCancellable {
+                val existing =
+                    trainingPlanDao.getTrainingPlanById(id.toString())
+                        ?: throw NoSuchElementException("Training plan with id $id not found")
+                val currentInstant = timeProvider.currentInstant()
+                val updatedDbPlan =
+                    DbTrainingPlan(
+                        id = id.toString(),
+                        name = trainingPlanConfiguration.title,
+                        description = trainingPlanConfiguration.description,
+                        restTime = trainingPlanConfiguration.restTime.inWholeSeconds,
+                        lastModified = currentInstant,
+                        lastUsed = existing.trainingPlan.lastUsed,
+                    )
+                val dbPlanWithExercises =
+                    DbTrainingPlanWithExercises(
+                        trainingPlan = updatedDbPlan,
+                        exercises =
+                            trainingPlanConfiguration.exercises.mapIndexed { index, exercise ->
+                                exercise.toDbTrainingExerciseWithCategories(id, index)
+                            },
+                    )
+                trainingPlanDao.updateTrainingWithTrainingExercises(dbPlanWithExercises)
+                id
+            }
+        }
+
+    override suspend fun useTrainingPlan(trainingPlanId: TrainingPlanId): Result<TrainingPlan> =
+        withContext(dispatcher) {
+            runCatchingCancellable {
+                trainingPlanDao
+                    .useTrainingPlanById(
+                        trainingPlanId.toString(),
+                        timeProvider.currentInstant(),
+                    ).toTrainingPlan()
+            }
+        }
+}

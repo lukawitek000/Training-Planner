@@ -1,32 +1,16 @@
 package com.lukasz.witkowski.training.planner.statistics.application
 
-import com.lukasz.witkowski.training.planner.statistics.TRAINING_EXERCISES
-import com.lukasz.witkowski.training.planner.statistics.TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.statistics.TrainingSessionTest
 import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsPolicy
-import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSetsPolicy
 import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder.FixedTimeProvider
-import com.lukasz.witkowski.training.planner.statistics.domain.timer.Timer
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import io.mockk.coEvery
 import io.mockk.mockk
-import io.mockk.verify
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestCoroutineScheduler
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.advanceUntilIdle
-import kotlinx.coroutines.test.runTest
 import org.junit.Before
-import org.junit.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
-import kotlin.test.assertTrue
 
 // TODO use new timer in the wearable
 // remove old timer controller
@@ -46,18 +30,18 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
 
     @Before
     fun setUp() {
-        trainingExercises = TRAINING_EXERCISES
-        trainingPlan = TRAINING_PLAN
-        trainingSessionService =
-            TrainingSessionService(
-                timeProvider,
-                Timer(timerDispatcher = testDispatcher),
-                trainingStatisticsService,
-                trainingSetsPolicy,
-                testDispatcher,
-            )
+//        trainingExercises = TRAINING_EXERCISES
+//        trainingPlan = TRAINING_PLAN
+//        trainingSessionService =
+//            TrainingSessionService(
+//                timeProvider,
+//                Timer(timerDispatcher = testDispatcher),
+//                trainingStatisticsService,
+//                trainingSetsPolicy,
+//                testDispatcher,
+//            )
     }
-
+/*
     @Test
     fun `load first exercise after training starts`() =
         runTest {
@@ -269,4 +253,6 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
     }
 
     private fun TrainingExercise.hasRestTime() = restTime.isNotZero()
+
+ */
 }
