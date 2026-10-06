@@ -81,20 +81,45 @@ internal interface TrainingPlanDao {
         categoriesNames: List<String>,
     ): Flow<List<DbTrainingOverview>>
 
-
-    @Transaction
-    suspend fun deleteTrainingPlanWithExercises(dbTrainingPlanWithExercises: DbTrainingPlanWithExercises) {
-//        deleteTrainingPlanById(dbTrainingPlanWithExercises.trainingPlan.id)
-//        for (dbExercise in dbTrainingPlanWithExercises.exercises) {
-//            deleteExerciseById(dbExercise.exerciseId)
-//        }
-    }
-
     @Query("DELETE FROM TrainingPlan WHERE id=:id")
     suspend fun deleteTrainingPlanById(id: String)
 
-    @Query("DELETE FROM TrainingExercise WHERE exerciseId=:id")
-    suspend fun deleteExerciseById(id: String)
+    @Transaction
+    @Query("SELECT * FROM TrainingPlan WHERE id=:id")
+    fun getFlowTrainingPlanById(id: String): Flow<DbTrainingPlanWithExercises?>
+
+    @Transaction
+    @Query("SELECT * FROM TrainingPlan WHERE id=:id")
+    suspend fun getTrainingPlanById(id: String): DbTrainingPlanWithExercises?
+
+    @Query("DELETE FROM TrainingExercise WHERE trainingId = :trainingPlanId")
+    suspend fun deleteTrainingExercisesForPlan(trainingPlanId: String)
+
+    @Upsert
+    fun updateTrainingPlan(plan: DbTrainingPlan)
+
+    @Transaction
+    suspend fun updateTrainingWithTrainingExercises(dbTrainingPlanWithExercises: DbTrainingPlanWithExercises) {
+        deleteTrainingExercisesForPlan(dbTrainingPlanWithExercises.trainingPlan.id)
+        updateTrainingPlan(dbTrainingPlanWithExercises.trainingPlan)
+        for (dbExercise in dbTrainingPlanWithExercises.exercises) {
+            insertExercise(dbExercise.trainingExercise)
+            for (category in dbExercise.categories) {
+                insertCategory(category)
+            }
+        }
+    }
+
+    @Transaction
+    suspend fun useTrainingPlanById(id: String, currentInstant: Instant): DbTrainingPlanWithExercises {
+        val result = getTrainingPlanById(id)
+        checkNotNull(result) { "Training plan was not found" }
+        val updatedPlan = result.trainingPlan.copy(
+            lastUsed = currentInstant
+        )
+        updateTrainingPlan(updatedPlan)
+        return result
+    }
 
     // Testing
     @Query("SELECT COUNT(*) FROM TrainingExercise WHERE trainingId = :trainingPlanId")
@@ -104,25 +129,4 @@ internal interface TrainingPlanDao {
     @Query("SELECT COUNT(*) FROM exercise_categories WHERE trainingPlanId = :trainingPlanId")
     suspend fun getCategoriesCountForTrainingPlan(trainingPlanId: String): Int
 
-    @Transaction
-    @Query("SELECT * FROM TrainingPlan WHERE id=:id")
-    fun getFlowTrainingPlanById(id: String): Flow<DbTrainingPlanWithExercises?>
-
-    @Transaction
-    @Query("SELECT * FROM TrainingPlan WHERE id=:id")
-    fun getTrainingPlanById(id: String): DbTrainingPlanWithExercises?
-
-    @Upsert
-    fun updateTrainingPlan(plan: DbTrainingPlan)
-
-    @Transaction
-    fun useTrainingPlanById(id: String, currentInstant: Instant): DbTrainingPlanWithExercises {
-        val result = getTrainingPlanById(id)
-        checkNotNull(result) { "Training plan was not found" }
-        val updatedPlan = result.trainingPlan.copy(
-            lastUsed = currentInstant
-        )
-        updateTrainingPlan(updatedPlan)
-        return result
-    }
 }

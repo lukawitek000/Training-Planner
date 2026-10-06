@@ -4,13 +4,13 @@ import android.content.Context
 import androidx.room3.Room
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.training.TestData
-import com.lukasz.witkowski.training.planner.training.TestData.CARDIO_ENDURANCE_TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.training.TestData.CATEGORY_LEGS
 import com.lukasz.witkowski.training.planner.training.TestData.FULL_BODY_TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.training.TestData.PLANK_SNAPSHOT
 import com.lukasz.witkowski.training.planner.training.TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.training.TestData.toTrainingPlanConfiguration
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
@@ -215,7 +215,12 @@ class DbTrainingPlanRepositoryTest {
 
     @Test
     fun `TrainingPlan is properly updated`() = runTest {
-        givenSaveTrainingPlansList()
+        givenSaveTrainingPlansList(
+            preSave = { testTimeProvider.instant = it.lastModification }
+        )
+        val updateInstant = Instant.parse("2026-10-06T12:00:00Z")
+        testTimeProvider.instant = updateInstant
+
         val expectedPlan = FULL_BODY_TRAINING_PLAN.copy(
             title = "Update title",
             description = "Updated description",
@@ -227,19 +232,91 @@ class DbTrainingPlanRepositoryTest {
                             categories = it.exercise.categories + TestData.CATEGORY_SHOULDERS
                         )
                     )
-                } + TestData.TRAINING_EXERCISE_RUNNING
+                } + TestData.TRAINING_EXERCISE_RUNNING,
+            lastModification = updateInstant,
+            lastSession = null,
         )
 
         val result = repository.update(expectedPlan.toTrainingPlanConfiguration(), expectedPlan.id)
         assertTrue(result.isSuccess, message = "Failed to update TrainingPlan")
 
-        assertTrainingPlanList(
-            expected = listOf(
-                expectedPlan,
-                CARDIO_ENDURANCE_TRAINING_PLAN,
-                UPPER_BODY_STRENGTH_TRAINING_PLAN,
-            )
+        val actualUpdatedPlan = repository.getTrainingPlanById(expectedPlan.id).first()
+        assertEquals(expectedPlan, actualUpdatedPlan)
+    }
+
+    @Test
+    fun `Exercise order is updated and preserved`() = runTest {
+        givenSaveTrainingPlansList(
+            preSave = { testTimeProvider.instant = it.lastModification }
         )
+        val updateInstant = Instant.parse("2026-10-06T12:00:00Z")
+        testTimeProvider.instant = updateInstant
+
+        val originalPlan = repository.getTrainingPlanById(FULL_BODY_TRAINING_PLAN.id).first()!!
+        val reorderedExercises = originalPlan.exercises.reversed()
+        val reorderedPlanConfig = originalPlan.toTrainingPlanConfiguration().copy(
+            exercises = reorderedExercises
+        )
+
+        val result = repository.update(reorderedPlanConfig, originalPlan.id)
+        assertTrue(result.isSuccess)
+
+        val updatedPlan = repository.getTrainingPlanById(originalPlan.id).first()!!
+        assertEquals(reorderedExercises, updatedPlan.exercises)
+    }
+
+    @Test
+    fun `Exercises details are updated`() = runTest {
+        givenSaveTrainingPlansList(
+            preSave = { testTimeProvider.instant = it.lastModification }
+        )
+        val originalPlan = repository.getTrainingPlanById(FULL_BODY_TRAINING_PLAN.id).first()!!
+        val updatedExercises = originalPlan.exercises.map { exercise ->
+            exercise.copy(
+                repetitions = exercise.repetitions + 5,
+                sets = exercise.sets + 1,
+                weightInKg = (exercise.weightInKg ?: 0) + 10,
+                exercise = exercise.exercise.copy(
+                    description = "Updated description for ${exercise.exercise.name}",
+                    categories = exercise.exercise.categories + TestData.CATEGORY_SHOULDERS
+                )
+            )
+        }
+        val updatedConfig = originalPlan.toTrainingPlanConfiguration().copy(exercises = updatedExercises)
+
+        val result = repository.update(updatedConfig, originalPlan.id)
+        assertTrue(result.isSuccess)
+
+        val updatedPlan = repository.getTrainingPlanById(originalPlan.id).first()!!
+        assertEquals(updatedExercises, updatedPlan.exercises)
+    }
+
+    @Test
+    fun `Modification date is updated on plan update`() = runTest {
+        givenSaveTrainingPlansList(
+            preSave = { testTimeProvider.instant = it.lastModification }
+        )
+        val updateInstant = Instant.parse("2026-10-06T15:30:00Z")
+        testTimeProvider.instant = updateInstant
+
+        val originalPlan = repository.getTrainingPlanById(FULL_BODY_TRAINING_PLAN.id).first()!!
+        val updatedConfig = originalPlan.toTrainingPlanConfiguration().copy(title = "New Title")
+
+        val result = repository.update(updatedConfig, originalPlan.id)
+        assertTrue(result.isSuccess)
+
+        val updatedPlan = repository.getTrainingPlanById(originalPlan.id).first()!!
+        assertEquals(updateInstant, updatedPlan.lastModification)
+    }
+
+    @Test
+    fun `Updating non-existent training plan returns failure`() = runTest {
+        val nonExistentId = TrainingPlanId.create()
+        val config = FULL_BODY_TRAINING_PLAN.toTrainingPlanConfiguration()
+
+        val result = repository.update(config, nonExistentId)
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull() is NoSuchElementException)
     }
 
     @Test

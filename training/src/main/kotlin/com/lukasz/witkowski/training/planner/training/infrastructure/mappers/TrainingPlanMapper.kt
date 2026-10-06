@@ -43,7 +43,7 @@ internal fun DbTrainingPlanWithExercises.toTrainingPlan() =
         id = TrainingPlanId(trainingPlan.id),
         title = trainingPlan.name,
         description = trainingPlan.description,
-        exercises = exercises.map {
+        exercises = exercises.sortedBy { it.trainingExercise.position }.map {
             it.toTrainingExercise()
         },
         restTime = trainingPlan.restTime.seconds,

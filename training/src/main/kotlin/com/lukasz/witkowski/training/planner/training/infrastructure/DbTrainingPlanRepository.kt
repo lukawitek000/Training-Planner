@@ -8,9 +8,12 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanOverview
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
+import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toDbTrainingExerciseWithCategories
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toDbTrainingPlanWithExercises
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toTrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toTrainingPlanOverview
+import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlan
+import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlanWithExercises
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -74,8 +77,28 @@ internal class DbTrainingPlanRepository(
     override suspend fun update(
         trainingPlanConfiguration: TrainingPlanConfiguration,
         id: TrainingPlanId
-    ): Result<TrainingPlanId> {
-        TODO("Not yet implemented")
+    ): Result<TrainingPlanId> = withContext(dispatcher) {
+        runCatchingCancellable {
+            val existing = trainingPlanDao.getTrainingPlanById(id.toString())
+                ?: throw NoSuchElementException("Training plan with id $id not found")
+            val currentInstant = timeProvider.currentInstant()
+            val updatedDbPlan = DbTrainingPlan(
+                id = id.toString(),
+                name = trainingPlanConfiguration.title,
+                description = trainingPlanConfiguration.description,
+                restTime = trainingPlanConfiguration.restTime.inWholeSeconds,
+                lastModified = currentInstant,
+                lastUsed = existing.trainingPlan.lastUsed
+            )
+            val dbPlanWithExercises = DbTrainingPlanWithExercises(
+                trainingPlan = updatedDbPlan,
+                exercises = trainingPlanConfiguration.exercises.mapIndexed { index, exercise ->
+                    exercise.toDbTrainingExerciseWithCategories(id, index)
+                }
+            )
+            trainingPlanDao.updateTrainingWithTrainingExercises(dbPlanWithExercises)
+            id
+        }
     }
 
     override suspend fun useTrainingPlan(trainingPlanId: TrainingPlanId): Result<TrainingPlan> =
