@@ -6,11 +6,11 @@ import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsVie
 import com.lukasz.witkowski.training.planner.exercise.di.exerciseModule
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.statistics.di.statisticsModule
-import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingViewModel
+import com.lukasz.witkowski.training.planner.training.creator.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.training.di.trainingModule
-import com.lukasz.witkowski.training.planner.training.trainingOverview.TrainingOverviewViewModel
+import com.lukasz.witkowski.training.planner.training.details.TrainingPlanDetailsViewModel
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionViewModel
-import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsListViewModel
+import com.lukasz.witkowski.training.planner.training.list.TrainingsListViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.viewModel
@@ -41,6 +41,6 @@ val appModule = module {
 
     viewModel<TrainingsListViewModel>()
     viewModel<CreateTrainingViewModel>()
-    viewModel<TrainingOverviewViewModel>()
+    viewModel<TrainingPlanDetailsViewModel>()
     viewModel<TrainingSessionViewModel>()
 }

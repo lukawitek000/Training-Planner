@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.trainingsList
+package com.lukasz.witkowski.training.planner.training.list
 
 import android.text.format.DateUtils
 import androidx.annotation.StringRes
@@ -298,8 +298,7 @@ private fun TrainingPlanOverviewCardPreview() {
         TrainingPlanOverviewCard(
             trainingOverview = PREVIEW_TRAINING_PLANS_OVERVIEWS.first(),
             onClick = {},
-
-            )
+        )
     }
 }
 

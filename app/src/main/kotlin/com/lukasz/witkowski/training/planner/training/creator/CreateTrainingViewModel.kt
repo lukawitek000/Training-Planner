@@ -1,14 +1,11 @@
-package com.lukasz.witkowski.training.planner.training.createTraining
+package com.lukasz.witkowski.training.planner.training.creator
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

@@ -62,7 +62,7 @@ data object TrainingPlansList : TrainingPlannerNavKey
 data object CreateTraining : TrainingPlannerNavKey
 
 @Serializable
-data class TrainingOverview(
+data class TrainingPlanDetails(
     @Serializable(with = TrainingPlanIdSerializer::class)
     val trainingPlanId: TrainingPlanId
 ) : TrainingPlannerNavKey
@@ -250,7 +250,7 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
             )
         )
 
-        is TrainingOverview -> UiConfig(
+        is TrainingPlanDetails -> UiConfig(
             topBarConfig = TopBarConfig(
                 title = context.getString(R.string.training_statistics),
                 hasBackArrow = true

@@ -57,8 +57,8 @@ class TrainingPlannerNavigator(
         backStack.add(CreateTraining)
     }
 
-    fun trainingOverview(id: TrainingPlanId) {
-        backStack.add(TrainingOverview(id))
+    fun trainingPlanDetails(id: TrainingPlanId) {
+        backStack.add(TrainingPlanDetails(id))
     }
 
     fun trainingSession(id: TrainingPlanId) {

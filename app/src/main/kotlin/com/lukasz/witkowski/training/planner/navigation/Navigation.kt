@@ -17,12 +17,12 @@ import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseScree
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsScreen
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
-import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingScreen
-import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingViewModel
-import com.lukasz.witkowski.training.planner.training.createTraining.PickExerciseScreen
-import com.lukasz.witkowski.training.planner.training.trainingOverview.TrainingOverviewScreen
+import com.lukasz.witkowski.training.planner.training.creator.CreateTrainingScreen
+import com.lukasz.witkowski.training.planner.training.creator.CreateTrainingViewModel
+import com.lukasz.witkowski.training.planner.training.creator.PickExerciseScreen
+import com.lukasz.witkowski.training.planner.training.details.TrainingPlanDetailsScreen
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionScreen
-import com.lukasz.witkowski.training.planner.training.trainingsList.TrainingsScreen
+import com.lukasz.witkowski.training.planner.training.list.TrainingsScreen
 import kotlinx.serialization.serializer
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -48,7 +48,7 @@ fun Navigation(
             entry<TrainingPlansList> {
                 TrainingsScreen(
                     viewModel = koinViewModel(),
-                    onTrainingPlanClicked = { navigator.trainingOverview(it) },
+                    onTrainingPlanClicked = { navigator.trainingPlanDetails(it) },
                 )
             }
 
@@ -103,8 +103,8 @@ fun Navigation(
 //                navigateUp = { backStack.removeLastOrNull() },
 //                navigateToPickExercise = { backStack.add(PickExercise) }
 //            )
-            entry<TrainingOverview> {
-                TrainingOverviewScreen(
+            entry<TrainingPlanDetails> {
+                TrainingPlanDetailsScreen(
                     viewModel = koinViewModel(),
                     navigateBack = { navigator.goBack() }
                 )

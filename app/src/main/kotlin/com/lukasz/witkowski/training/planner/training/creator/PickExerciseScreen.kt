@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.createTraining
+package com.lukasz.witkowski.training.planner.training.creator
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

@@ -1,10 +1,10 @@
-package com.lukasz.witkowski.training.planner.training.trainingOverview
+package com.lukasz.witkowski.training.planner.training.details
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.lukasz.witkowski.training.planner.navigation.TrainingOverview
+import com.lukasz.witkowski.training.planner.navigation.TrainingPlanDetails
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
@@ -16,12 +16,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class TrainingOverviewViewModel(
+class TrainingPlanDetailsViewModel(
     private val trainingPlanService: TrainingPlanService,
     trainingStatisticsService: TrainingStatisticsService,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
-    private val trainingPlanId = savedStateHandle.toRoute<TrainingOverview>().trainingPlanId
+    private val trainingPlanId = savedStateHandle.toRoute<TrainingPlanDetails>().trainingPlanId
 
     private val _trainingPlan = MutableStateFlow<ResultHandler<TrainingPlan>>(ResultHandler.Idle)
     val trainingPlan: StateFlow<ResultHandler<TrainingPlan>>
