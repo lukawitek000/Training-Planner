@@ -35,8 +35,22 @@
     <string name="search_training_plan">Search Training Plan</string>
     <string name="failed_to_load_training_plans">Failed to load training plans</string>
     <string name="no_trainings_info">No trainings. Create your first training</string>
+    <string name="create_training">Create training</string>
     <string name="last_modified">Last modified %1$s</string>
     <string name="last_session">Last session %1$s</string>
+    <string name="training_plan_title_label">Training Plan title *</string>
+    <string name="enter_training_plan_title">Enter Training Plan title</string>
+    <string name="training_plan_description_label">Training Plan description</string>
+    <string name="training_plan_description">Description</string>
+    <string name="save_training_plan">Create Plan</string>
+    <string name="no_exercises_added_yet">No exercises added yet</string>
+    <string name="add_exercises_from_catalogue">Add exercises from the exercise catalogue to build your training plan</string>
+    <string name="add_exercises">Add exercises</string>
+    <string name="plan_categories">Plan categories</string>
+    <string name="plan_categories_caption">Will be derived from selected exercises</string>
+    <string name="no_exercises_yet">No exercises yet</string>
+    <string name="exercises_count">Exercises (%1$d)</string>
+
 
     <!-- Common -->
     <string name="edit">Edit</string>
@@ -63,7 +77,6 @@
     <string name="add_training_exercise_one_more_time_info">The exercise %1$s is already added to the training.\nDo you want to add it one more time?</string>
     <string name="no_statistics">No statistics for this training.</string>
     <string name="heart_rate_plot">Heart rate (BPM)</string>
-    <string name="create_training">Create training</string>
     <string name="exercise_name_is_required">Exercise name is required</string>
     <string name="upload_image">Upload image</string>
     <string name="name">Name</string>
@@ -74,7 +87,6 @@
     <string name="image_description">%1$s image</string>
     <string name="training_plan_no_enough_data_message">Title and exercises are required</string>
     <string name="title">Title</string>
-    <string name="add_exercises">Add Exercises</string>
     <string name="change_rest_time">Change rest time</string>
     <string name="add_rest_time">Add rest time</string>
     <string name="remove_training_exercise">Remove training exercise</string>

@@ -49,6 +49,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recomm
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
 import com.lukasz.witkowski.training.planner.ui.components.FormFieldLabel
 import com.lukasz.witkowski.training.planner.ui.components.TextField
+import com.lukasz.witkowski.training.planner.ui.components.buildStringOverview
 import com.lukasz.witkowski.training.planner.ui.theme.Dimens
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import kotlin.time.Duration.Companion.minutes
@@ -260,22 +261,12 @@ private fun buildStringOverview(recommendation: Recommendation): String =
         if (!it.areValid()) {
             stringResource(R.string.not_set)
         } else {
-            if (it.weightInKg != null) {
-                stringResource(
-                    R.string.recommendation_overview,
-                    it.sets!!,
-                    it.reps!!,
-                    it.restTime!!.inWholeSeconds,
-                    it.weightInKg!!
-                )
-            } else {
-                stringResource(
-                    R.string.recommendation_no_weight,
-                    it.sets!!,
-                    it.reps!!,
-                    it.restTime!!.inWholeSeconds,
-                )
-            }
+            buildStringOverview(
+                sets = it.sets!!,
+                reps = it.reps!!,
+                restTime = it.restTime!!,
+                weightInKg = it.weightInKg
+            )
         }
     }
 

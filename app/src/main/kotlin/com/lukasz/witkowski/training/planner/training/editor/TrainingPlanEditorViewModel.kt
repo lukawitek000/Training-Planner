@@ -1,0 +1,47 @@
+package com.lukasz.witkowski.training.planner.training.editor
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.lukasz.witkowski.training.planner.exercise.createExercise.TrainingConfigurationReducer
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
+import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlin.time.Duration
+
+class TrainingPlanEditorViewModel(
+    private val trainingPlanService: TrainingPlanService
+) : ViewModel() {
+    private val reducer = TrainingConfigurationReducer()
+    private val emptyConfiguration = TrainingPlanConfiguration(
+        title = "",
+        description = "",
+        exercises = emptyList(),
+        restTime = Duration.ZERO
+    )
+
+    val uiState: StateFlow<TrainingPlanConfiguration>
+        field = MutableStateFlow(emptyConfiguration)
+
+    fun processIntent(intent: TrainingPlanEditingIntent) {
+        uiState.update {
+            reducer.reduce(it, intent)
+        }
+    }
+}
+
+sealed interface TrainingPlanEditorUiState {
+    data class Editing(
+        val configuration: TrainingPlanConfiguration,
+    ): TrainingPlanEditorUiState
+}
+
+sealed interface TrainingPlanEditingIntent {
+    data class TitleChanged(val newTitle: String): TrainingPlanEditingIntent
+    data class DescriptionChanged(val newDescription: String): TrainingPlanEditingIntent
+}

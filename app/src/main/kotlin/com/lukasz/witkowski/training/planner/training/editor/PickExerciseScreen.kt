@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.creator
+package com.lukasz.witkowski.training.planner.training.editor
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -43,7 +43,7 @@ import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
 fun PickExerciseScreen(
     modifier: Modifier = Modifier,
     viewModel: ExercisesListViewModel,
-    createTrainingViewModel: CreateTrainingViewModel,
+    trainingPlanEditorViewModel: TrainingPlanEditorViewModel,
     navigateBack: () -> Unit
 ) {
     /*

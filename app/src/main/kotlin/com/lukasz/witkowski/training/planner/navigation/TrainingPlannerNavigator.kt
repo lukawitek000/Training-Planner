@@ -54,7 +54,7 @@ class TrainingPlannerNavigator(
     fun isTrainingPlansList() = backStack.lastOrNull() == TrainingPlansList
 
     fun trainingCreate() {
-        backStack.add(CreateTraining)
+        backStack.add(CreateTrainingPlan)
     }
 
     fun trainingPlanDetails(id: TrainingPlanId) {
@@ -66,4 +66,6 @@ class TrainingPlannerNavigator(
     }
 
     fun isOnMainScreen(): Boolean = isTrainingPlansList() || isExerciseList()
+
+    fun isCreatingOrEditingTrainingPlan() = backStack.contains(CreateTrainingPlan)
 }

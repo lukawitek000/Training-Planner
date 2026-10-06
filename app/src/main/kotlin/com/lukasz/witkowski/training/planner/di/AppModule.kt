@@ -6,7 +6,7 @@ import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsVie
 import com.lukasz.witkowski.training.planner.exercise.di.exerciseModule
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.statistics.di.statisticsModule
-import com.lukasz.witkowski.training.planner.training.creator.CreateTrainingViewModel
+import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorViewModel
 import com.lukasz.witkowski.training.planner.training.di.trainingModule
 import com.lukasz.witkowski.training.planner.training.details.TrainingPlanDetailsViewModel
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionViewModel
@@ -40,7 +40,7 @@ val appModule = module {
     }
 
     viewModel<TrainingsListViewModel>()
-    viewModel<CreateTrainingViewModel>()
+    viewModel<TrainingPlanEditorViewModel>()
     viewModel<TrainingPlanDetailsViewModel>()
     viewModel<TrainingSessionViewModel>()
 }

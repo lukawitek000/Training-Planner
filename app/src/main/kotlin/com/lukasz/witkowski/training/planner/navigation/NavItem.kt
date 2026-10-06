@@ -59,7 +59,7 @@ data object PickExercise : TrainingPlannerNavKey
 data object TrainingPlansList : TrainingPlannerNavKey
 
 @Serializable
-data object CreateTraining : TrainingPlannerNavKey
+data object CreateTrainingPlan : TrainingPlannerNavKey
 
 @Serializable
 data class TrainingPlanDetails(
@@ -236,7 +236,7 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
 
 
 
-        is CreateTraining -> UiConfig(
+        is CreateTrainingPlan -> UiConfig(
             topBarConfig = TopBarConfig(
                 title = context.getString(R.string.create_training),
                 hasBackArrow = true

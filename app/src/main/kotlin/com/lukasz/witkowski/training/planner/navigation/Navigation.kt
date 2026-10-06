@@ -1,9 +1,11 @@
 package com.lukasz.witkowski.training.planner.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
@@ -15,14 +17,12 @@ import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerc
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsScreen
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
-import com.lukasz.witkowski.training.planner.training.creator.CreateTrainingScreen
-import com.lukasz.witkowski.training.planner.training.creator.CreateTrainingViewModel
-import com.lukasz.witkowski.training.planner.training.creator.PickExerciseScreen
 import com.lukasz.witkowski.training.planner.training.details.TrainingPlanDetailsScreen
-import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionScreen
+import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorScreen
+import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorViewModel
 import com.lukasz.witkowski.training.planner.training.list.TrainingsScreen
+import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionScreen
 import kotlinx.serialization.serializer
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -35,6 +35,7 @@ fun Navigation(
     val dialogStrategy = remember {
         DialogSceneStrategy<TrainingPlannerNavKey>()
     }
+    val entryOwnerRegistry = remember { NavEntryOwnerRegistry() }
     NavDisplay(
         modifier = modifier,
         backStack = navigator.backStack,
@@ -52,52 +53,27 @@ fun Navigation(
                 )
             }
 
-            entry<ExercisesList> {
-                ExercisesScreen(
-                    viewModel = koinViewModel(),
-                    onExerciseClicked = { id ->
-                        navigator.exerciseDetails(id)
+            entry<CreateTrainingPlan> { key ->
+                val owner = checkNotNull(LocalViewModelStoreOwner.current)
+                DisposableEffect(key) {
+                    entryOwnerRegistry.register(key, owner)
+                    onDispose {
+                        // Crucial: Only remove if Step1 is actually gone from the backstack!
+                        if (!navigator.isCreatingOrEditingTrainingPlan()) {
+                            entryOwnerRegistry.remove(key)
+                        }
                     }
+                }
+                val trainingPlanEditorViewModel: TrainingPlanEditorViewModel = koinViewModel()
+                TrainingPlanEditorScreen(
+                    viewModel = trainingPlanEditorViewModel,
+                    navigateBack = { navigator.goBack() },
+                    onAddExerciseClicked = { TODO() }
                 )
+
             }
 
-            entry<CreateExercise> {
-                CreateExerciseScreen(
-                    viewModel = koinViewModel(),
-                    navigateToDetails = { id ->
-                        navigator.exerciseCreated(id)
-                    }
-                )
-            }
-
-            entry<EditExercise> { key ->
-                EditExerciseScreen(
-                    viewModel = koinViewModel { parametersOf(key.exerciseId) },
-                    navigateToDetails = { _ ->
-                        navigator.goBack()
-                    }
-                )
-            }
-
-            entry<ExerciseDetails>{ key ->
-                ExerciseDetailsScreen(
-                    viewModel = koinViewModel { parametersOf(key.exerciseId) }
-                )
-            }
-
-            entry<DeleteExercise>(
-                metadata = DialogSceneStrategy.dialog()
-            ) { key ->
-                DeleteExerciseScreen(
-                    viewModel = koinViewModel { parametersOf(key.exerciseId) },
-                    onDelete = {
-                        navigator.exerciseDeleted()
-                    },
-                    onCancel = {
-                        navigator.goBack()
-                    }
-                )
-            }
+            exerciseEntryBuilder(navigator)
 
 //            trainingGraph(
 //                navigateUp = { backStack.removeLastOrNull() },
@@ -119,33 +95,55 @@ fun Navigation(
     )
 }
 
-private fun EntryProviderScope<TrainingPlannerNavKey>.trainingGraph(
-    navigateUp: () -> Unit,
-    navigateToPickExercise: () -> Unit
+private fun EntryProviderScope<TrainingPlannerNavKey>.exerciseEntryBuilder(
+    navigator: TrainingPlannerNavigator
 ) {
-    // TODO avoid destroying VMs
-    entry<CreateTraining> {
-        val createTrainingViewModel: CreateTrainingViewModel = koinViewModel()
-        CreateTrainingScreen(
-            modifier = Modifier,
-            viewModel = createTrainingViewModel,
-            navigateBack = { navigateUp() },
-            onAddExerciseClicked = { navigateToPickExercise() }
-        )
-
-    }
-
-    entry<PickExercise> {
-        val viewModel: ExercisesListViewModel = koinViewModel()
-        val createTrainingViewModel: CreateTrainingViewModel = koinViewModel()
-        PickExerciseScreen(
-            modifier = Modifier,
-            viewModel = viewModel,
-            createTrainingViewModel = createTrainingViewModel,
-            navigateBack = { navigateUp() }
+    entry<ExercisesList> {
+        ExercisesScreen(
+            viewModel = koinViewModel(),
+            onExerciseClicked = { id ->
+                navigator.exerciseDetails(id)
+            }
         )
     }
 
+    entry<CreateExercise> {
+        CreateExerciseScreen(
+            viewModel = koinViewModel(),
+            navigateToDetails = { id ->
+                navigator.exerciseCreated(id)
+            }
+        )
+    }
+
+    entry<EditExercise> { key ->
+        EditExerciseScreen(
+            viewModel = koinViewModel { parametersOf(key.exerciseId) },
+            navigateToDetails = { _ ->
+                navigator.goBack()
+            }
+        )
+    }
+
+    entry<ExerciseDetails> { key ->
+        ExerciseDetailsScreen(
+            viewModel = koinViewModel { parametersOf(key.exerciseId) }
+        )
+    }
+
+    entry<DeleteExercise>(
+        metadata = DialogSceneStrategy.dialog()
+    ) { key ->
+        DeleteExerciseScreen(
+            viewModel = koinViewModel { parametersOf(key.exerciseId) },
+            onDelete = {
+                navigator.exerciseDeleted()
+            },
+            onCancel = {
+                navigator.goBack()
+            }
+        )
+    }
 }
 
 @Composable
