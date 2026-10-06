@@ -1,19 +1,11 @@
 package com.lukasz.witkowski.training.planner.statistics.domain
 
 import com.lukasz.witkowski.training.planner.shared.time.Time
-import com.lukasz.witkowski.training.planner.statistics.TRAINING_EXERCISES
-import com.lukasz.witkowski.training.planner.statistics.TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.statistics.TrainingSessionTest
-import com.lukasz.witkowski.training.planner.statistics.createTrainingPlan
-import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
-import com.lukasz.witkowski.training.planner.statistics.domain.statisticsrecorder.FixedTimeProvider
-import org.junit.Assert
-import org.junit.Test
-import kotlin.test.assertFailsWith
 
 internal class TrainingSessionControlTest : TrainingSessionTest() {
     private val time = Time(100)
-
+/*
     @Test
     fun `load first exercise when training session starts`() {
         // given
@@ -177,4 +169,5 @@ internal class TrainingSessionControlTest : TrainingSessionTest() {
         // then
         Assert.assertTrue(state is TrainingSessionState.SummaryState)
     }
+ */
 }

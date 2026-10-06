@@ -11,18 +11,18 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTr
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingExerciseWithCategories
 import kotlin.time.Duration.Companion.seconds
 
-
 internal fun TrainingExercise.toDbTrainingExerciseWithCategories(
     trainingPlanId: TrainingPlanId,
     position: Int,
 ) = DbTrainingExerciseWithCategories(
     trainingExercise = this.toDbTrainingExercise(trainingPlanId, position),
-    categories = this.exercise.categories.map {
-        it.toDbExerciseCategory(
-            trainingExerciseId = this.id,
-            trainingPlanId = trainingPlanId
-        )
-    }
+    categories =
+        this.exercise.categories.map {
+            it.toDbExerciseCategory(
+                trainingExerciseId = this.id,
+                trainingPlanId = trainingPlanId,
+            )
+        },
 )
 
 private fun TrainingExercise.toDbTrainingExercise(
@@ -39,41 +39,38 @@ private fun TrainingExercise.toDbTrainingExercise(
     repetitions = repetitions,
     sets = sets,
     restTime = restTime.inWholeSeconds,
-    weightInKg = weightInKg
+    weightInKg = weightInKg,
 )
 
 private fun ExerciseCategoryName.toDbExerciseCategory(
     trainingExerciseId: TrainingExerciseId,
     trainingPlanId: TrainingPlanId,
-) =
-    DbExerciseCategory(
-        trainingExerciseId = trainingExerciseId.toString(),
-        trainingPlanId = trainingPlanId.toString(),
-        name = this.name
-    )
-
+) = DbExerciseCategory(
+    trainingExerciseId = trainingExerciseId.toString(),
+    trainingPlanId = trainingPlanId.toString(),
+    name = this.name,
+)
 
 internal fun DbTrainingExerciseWithCategories.toTrainingExercise() =
     TrainingExercise(
         id = TrainingExerciseId(trainingExercise.id),
-        exercise = trainingExercise.toExerciseSnapshot(
-            categories = this.categories
-        ),
+        exercise =
+            trainingExercise.toExerciseSnapshot(
+                categories = this.categories,
+            ),
         repetitions = trainingExercise.repetitions,
         sets = trainingExercise.sets,
         weightInKg = trainingExercise.weightInKg,
         restTime = trainingExercise.restTime.seconds,
     )
 
-private fun DbTrainingExercise.toExerciseSnapshot(
-    categories: List<DbExerciseCategory>
-) =
+private fun DbTrainingExercise.toExerciseSnapshot(categories: List<DbExerciseCategory>) =
     ExerciseSnapshot(
         id = ExerciseId(this.exerciseId),
         name = name,
         description = description,
         imageId = null,
-        categories = categories.map { it.toExerciseCategoryName() }.toSet()
+        categories = categories.map { it.toExerciseCategoryName() }.toSet(),
     )
 
 internal fun DbExerciseCategory.toExerciseCategoryName() = ExerciseCategoryName(name)

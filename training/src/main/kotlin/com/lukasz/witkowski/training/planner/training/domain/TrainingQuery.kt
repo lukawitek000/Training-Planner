@@ -5,8 +5,10 @@ data class TrainingQuery(
     val selectedCategories: Set<ExerciseCategoryName>,
 ) {
     companion object {
-        val DEFAULT = TrainingQuery(
-            "", emptySet(),
-        )
+        val DEFAULT =
+            TrainingQuery(
+                "",
+                emptySet(),
+            )
     }
 }

@@ -8,5 +8,5 @@ data class TrainingPlanOverview(
     val description: String,
     val categories: Set<ExerciseCategoryName>,
     val lastModification: Instant,
-    val lastSession: Instant?
+    val lastSession: Instant?,
 )

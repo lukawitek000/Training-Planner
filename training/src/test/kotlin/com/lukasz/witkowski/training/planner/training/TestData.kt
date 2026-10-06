@@ -25,6 +25,7 @@ object TestData {
     val EXERCISE_ID_2 = ExerciseId(UUID.fromString("99999999-9999-9999-9999-999999999999"))
     val EXERCISE_ID_3 = ExerciseId(UUID.fromString("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"))
     val EXERCISE_ID_4 = ExerciseId(UUID.fromString("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"))
+
     // --- Categories ---
     val CATEGORY_CHEST = ExerciseCategoryName("Chest")
     val CATEGORY_BACK = ExerciseCategoryName("Back")
@@ -86,54 +87,59 @@ object TestData {
 
     // --- Training Exercises ---
     val TRAINING_EXERCISE_PUSH_UPS
-        get() = TrainingExercise(
-            id = TrainingExerciseId.create(),
-            exercise = PUSH_UPS_SNAPSHOT,
-            repetitions = 12,
-            sets = 3,
-            restTime = 60.seconds,
-            weightInKg = null,
-        )
+        get() =
+            TrainingExercise(
+                id = TrainingExerciseId.create(),
+                exercise = PUSH_UPS_SNAPSHOT,
+                repetitions = 12,
+                sets = 3,
+                restTime = 60.seconds,
+                weightInKg = null,
+            )
 
     val TRAINING_EXERCISE_SQUATS
-        get() = TrainingExercise(
-            id = TrainingExerciseId.create(),
-            exercise = SQUATS_SNAPSHOT,
-            repetitions = 15,
-            sets = 4,
-            restTime = 90.seconds,
-            weightInKg = 20,
-        )
+        get() =
+            TrainingExercise(
+                id = TrainingExerciseId.create(),
+                exercise = SQUATS_SNAPSHOT,
+                repetitions = 15,
+                sets = 4,
+                restTime = 90.seconds,
+                weightInKg = 20,
+            )
 
     val TRAINING_EXERCISE_PULL_UPS
-        get() = TrainingExercise(
-            id = TrainingExerciseId.create(),
-            exercise = PULL_UPS_SNAPSHOT,
-            repetitions = 8,
-            sets = 3,
-            restTime = 60.seconds,
-            weightInKg = null,
-        )
+        get() =
+            TrainingExercise(
+                id = TrainingExerciseId.create(),
+                exercise = PULL_UPS_SNAPSHOT,
+                repetitions = 8,
+                sets = 3,
+                restTime = 60.seconds,
+                weightInKg = null,
+            )
 
     val TRAINING_EXERCISE_PLANK
-        get() = TrainingExercise(
-            id = TrainingExerciseId.create(),
-            exercise = PLANK_SNAPSHOT,
-            repetitions = 1,
-            sets = 3,
-            restTime = 45.seconds,
-            weightInKg = null,
-        )
+        get() =
+            TrainingExercise(
+                id = TrainingExerciseId.create(),
+                exercise = PLANK_SNAPSHOT,
+                repetitions = 1,
+                sets = 3,
+                restTime = 45.seconds,
+                weightInKg = null,
+            )
 
     val TRAINING_EXERCISE_RUNNING
-        get() = TrainingExercise(
-            id = TrainingExerciseId.create(),
-            exercise = RUNNING_SNAPSHOT,
-            repetitions = 1,
-            sets = 1,
-            restTime = 30.seconds,
-            weightInKg = null,
-        )
+        get() =
+            TrainingExercise(
+                id = TrainingExerciseId.create(),
+                exercise = RUNNING_SNAPSHOT,
+                repetitions = 1,
+                sets = 1,
+                restTime = 30.seconds,
+                weightInKg = null,
+            )
 
     // --- Training Plans (Different kinds, multiple exercises, different categories) ---
     val FULL_BODY_TRAINING_PLAN =
@@ -141,12 +147,13 @@ object TestData {
             id = TRAINING_PLAN_ID_1,
             title = "Full Body Workout",
             description = "A comprehensive full body routine covering chest, legs, back, and core.",
-            exercises = listOf(
-                TRAINING_EXERCISE_PUSH_UPS,
-                TRAINING_EXERCISE_SQUATS,
-                TRAINING_EXERCISE_PULL_UPS,
-                TRAINING_EXERCISE_PLANK,
-            ),
+            exercises =
+                listOf(
+                    TRAINING_EXERCISE_PUSH_UPS,
+                    TRAINING_EXERCISE_SQUATS,
+                    TRAINING_EXERCISE_PULL_UPS,
+                    TRAINING_EXERCISE_PLANK,
+                ),
             restTime = 60.seconds,
             lastModification = Instant.parse("2026-09-04T12:00:00Z"),
             lastSession = Instant.parse("2026-09-10T12:00:00Z"),
@@ -157,9 +164,10 @@ object TestData {
             id = TRAINING_PLAN_ID_2,
             title = "Cardio Endurance",
             description = "High energy cardio and stamina workout.",
-            exercises = listOf(
-                TRAINING_EXERCISE_RUNNING,
-            ),
+            exercises =
+                listOf(
+                    TRAINING_EXERCISE_RUNNING,
+                ),
             restTime = 30.seconds,
             lastModification = Instant.parse("2026-09-05T15:00:00Z"),
             lastSession = Instant.parse("2026-09-09T12:00:00Z"),
@@ -170,10 +178,11 @@ object TestData {
             id = TRAINING_PLAN_ID_3,
             title = "Upper Body Strength",
             description = "Focused upper body training emphasizing chest, back, and arms.",
-            exercises = listOf(
-                TRAINING_EXERCISE_PUSH_UPS,
-                TRAINING_EXERCISE_PULL_UPS,
-            ),
+            exercises =
+                listOf(
+                    TRAINING_EXERCISE_PUSH_UPS,
+                    TRAINING_EXERCISE_PULL_UPS,
+                ),
             restTime = 90.seconds,
             lastModification = Instant.parse("2026-09-10T20:00:00Z"),
             lastSession = null,
@@ -232,7 +241,7 @@ object TestData {
         exercises: List<TrainingExercise> = listOf(TRAINING_EXERCISE_PUSH_UPS, TRAINING_EXERCISE_SQUATS),
         restTime: Duration = 60.seconds,
         lastModification: Instant = Instant.parse("2026-09-04T12:00:00Z"),
-        lastSession: Instant? = null
+        lastSession: Instant? = null,
     ): TrainingPlan =
         TrainingPlan(
             id = id,
@@ -241,7 +250,7 @@ object TestData {
             exercises = exercises,
             restTime = restTime,
             lastModification = lastModification,
-            lastSession = lastSession
+            lastSession = lastSession,
         )
 
     fun createExerciseSnapshot(
@@ -281,6 +290,6 @@ object TestData {
             title = title,
             description = description,
             exercises = exercises,
-            restTime = restTime
+            restTime = restTime,
         )
 }

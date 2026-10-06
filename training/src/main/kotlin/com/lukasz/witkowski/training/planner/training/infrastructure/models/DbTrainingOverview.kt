@@ -10,9 +10,9 @@ class DbTrainingOverview(
     @Relation(
         entity = DbExerciseCategory::class,
         parentColumns = ["trainingPlanId"],
-        entityColumns = ["trainingPlanId"]
+        entityColumns = ["trainingPlanId"],
     )
-    val categories: List<DbExerciseCategory>
+    val categories: List<DbExerciseCategory>,
 )
 
 class DbTrainingOverviewHeader(
@@ -20,5 +20,5 @@ class DbTrainingOverviewHeader(
     val title: String,
     val description: String,
     val lastModification: Instant,
-    val lastSession: Instant?
+    val lastSession: Instant?,
 )

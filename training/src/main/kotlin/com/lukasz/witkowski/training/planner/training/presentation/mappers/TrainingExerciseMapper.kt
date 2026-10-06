@@ -1,13 +1,13 @@
 package com.lukasz.witkowski.training.planner.training.presentation.mappers
 
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.toCategory
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.toExerciseCategory
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise as DomainTrainingExercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
+
+// TODO implementation will be added later
+fun TrainingExercise.toDomainTrainingExercise() {
+    TODO()
+}
 //
-//fun TrainingExercise.toDomainTrainingExercise(): DomainTrainingExercise =
+// fun TrainingExercise.toDomainTrainingExercise(): DomainTrainingExercise =
 //    DomainTrainingExercise(
 //        id = id,
 //        exercise = toDomainExercise(exercise),
@@ -17,7 +17,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise as
 //        restTime = restTime,
 //    )
 //
-//fun DomainTrainingExercise.toPresentationTrainingExercise(): TrainingExercise =
+// fun DomainTrainingExercise.toPresentationTrainingExercise(): TrainingExercise =
 //    TrainingExercise(
 //        id = id,
 //        exercise = toPresentationExercise(exercise),
@@ -27,7 +27,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise as
 //        restTime = restTime,
 //    )
 //
-//private fun toDomainExercise(exercise: Exercise): DomainExercise =
+// private fun toDomainExercise(exercise: Exercise): DomainExercise =
 //    DomainExercise(
 //        exercise.id,
 //        exercise.name,
@@ -36,7 +36,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise as
 //        null,
 //    )
 //
-//private fun toPresentationExercise(exercise: DomainExercise): Exercise =
+// private fun toPresentationExercise(exercise: DomainExercise): Exercise =
 //    Exercise(
 //        exercise.id,
 //        exercise.name,

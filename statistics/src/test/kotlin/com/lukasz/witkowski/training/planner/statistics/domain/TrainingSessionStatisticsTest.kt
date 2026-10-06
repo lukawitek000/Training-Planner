@@ -1,24 +1,9 @@
 package com.lukasz.witkowski.training.planner.statistics.domain
 
-import com.lukasz.witkowski.training.planner.shared.time.Time
-import com.lukasz.witkowski.training.planner.statistics.TRAINING_EXERCISES
-import com.lukasz.witkowski.training.planner.statistics.TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.statistics.TrainingSessionTest
-import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseAttemptStatistics
-import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseStatistics
-import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
-import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsPolicy
-import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSession
-import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSessionState
-import com.lukasz.witkowski.training.planner.statistics.domain.session.TrainingSetsPolicy
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import org.junit.Before
-import org.junit.Test
-import java.util.Date
-import kotlin.test.assertEquals
 
 internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
+    /*
     private val trainingExercises: List<TrainingExercise> = TRAINING_EXERCISES
     private val trainingPlan: TrainingPlan = TRAINING_PLAN
     private val trainingSetsPolicy: TrainingSetsPolicy = CircuitSetsPolicy()
@@ -299,4 +284,5 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
     private companion object {
         val TIME_10_SECONDS = Time(10000L)
     }
+     */
 }

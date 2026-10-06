@@ -15,4 +15,3 @@ data class TrainingExercise(
     val restTime: Duration = Duration.ZERO,
     val weightInKg: Int? = null,
 )
-

@@ -49,11 +49,9 @@ internal interface TrainingPlanDao {
          WHERE LOWER(name) LIKE LOWER('%' || :query || '%')
            OR LOWER(description) LIKE LOWER('%' || :query || '%')
          ORDER BY name ASC
-        """
+        """,
     )
-    fun getAllTrainingOverviews(
-        query: String,
-    ): Flow<List<DbTrainingOverview>>
+    fun getAllTrainingOverviews(query: String): Flow<List<DbTrainingOverview>>
 
     @Transaction
     @Query(
@@ -111,12 +109,16 @@ internal interface TrainingPlanDao {
     }
 
     @Transaction
-    suspend fun useTrainingPlanById(id: String, currentInstant: Instant): DbTrainingPlanWithExercises {
+    suspend fun useTrainingPlanById(
+        id: String,
+        currentInstant: Instant,
+    ): DbTrainingPlanWithExercises {
         val result = getTrainingPlanById(id)
         checkNotNull(result) { "Training plan was not found" }
-        val updatedPlan = result.trainingPlan.copy(
-            lastUsed = currentInstant
-        )
+        val updatedPlan =
+            result.trainingPlan.copy(
+                lastUsed = currentInstant,
+            )
         updateTrainingPlan(updatedPlan)
         return result
     }
@@ -128,5 +130,4 @@ internal interface TrainingPlanDao {
     // Testing
     @Query("SELECT COUNT(*) FROM exercise_categories WHERE trainingPlanId = :trainingPlanId")
     suspend fun getCategoriesCountForTrainingPlan(trainingPlanId: String): Int
-
 }

@@ -10,5 +10,5 @@ class DbTrainingExerciseWithCategories(
         parentColumns = ["id"],
         entityColumns = ["trainingExerciseId"],
     )
-    val categories: List<DbExerciseCategory>
+    val categories: List<DbExerciseCategory>,
 )

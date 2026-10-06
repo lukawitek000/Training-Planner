@@ -29,5 +29,5 @@ import androidx.room3.Index
 data class DbExerciseCategory(
     val trainingExerciseId: String,
     val trainingPlanId: String,
-    val name: String
+    val name: String,
 )

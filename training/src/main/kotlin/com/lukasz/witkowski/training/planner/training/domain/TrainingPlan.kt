@@ -12,7 +12,8 @@ data class TrainingPlan(
     val lastModification: Instant,
     val lastSession: Instant?,
 ) {
-    val categories = exercises
-        .flatMap { trainingExercise -> trainingExercise.exercise.categories }
-        .toSet()
+    val categories =
+        exercises
+            .flatMap { trainingExercise -> trainingExercise.exercise.categories }
+            .toSet()
 }

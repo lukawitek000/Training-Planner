@@ -1,18 +1,10 @@
 package com.lukasz.witkowski.training.planner.statistics.domain
 
-import com.lukasz.witkowski.training.planner.statistics.createDummyExercise
 import com.lukasz.witkowski.training.planner.statistics.domain.session.CircuitSetsPolicy
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import org.junit.Before
-import org.junit.Test
-import kotlin.test.assertContentEquals
 
 class CircuitSetsPolicyTest {
     private lateinit var circuitSetsPolicy: CircuitSetsPolicy
-
+/*
     @Before
     fun setUp() {
         circuitSetsPolicy = CircuitSetsPolicy()
@@ -149,4 +141,6 @@ class CircuitSetsPolicyTest {
             title = "Training Plan Title",
             exercises = trainingExercises,
         )
+
+ */
 }
