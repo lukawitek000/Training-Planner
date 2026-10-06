@@ -56,6 +56,33 @@ internal interface TrainingPlanDao {
     ): Flow<List<DbTrainingOverview>>
 
     @Transaction
+    @Query(
+        """
+        SELECT 
+            p.id AS trainingPlanId, 
+            p.name AS title,
+            p.description,
+            p.lastModified AS lastModification,
+            p.lastUsed AS lastSession
+        FROM TrainingPlan p
+        JOIN exercise_categories c
+            ON p.id = c.trainingPlanId
+        WHERE c.name IN (:categoriesNames)
+          AND (
+              LOWER(p.name) LIKE LOWER('%' || :query || '%')
+              OR LOWER(p.description) LIKE LOWER('%' || :query || '%')
+          )
+        GROUP BY p.id
+        ORDER BY COUNT(*) DESC, p.name ASC
+        """,
+    )
+    fun getAllTrainingOverviews(
+        query: String,
+        categoriesNames: List<String>,
+    ): Flow<List<DbTrainingOverview>>
+
+
+    @Transaction
     suspend fun deleteTrainingPlanWithExercises(dbTrainingPlanWithExercises: DbTrainingPlanWithExercises) {
 //        deleteTrainingPlanById(dbTrainingPlanWithExercises.trainingPlan.id)
 //        for (dbExercise in dbTrainingPlanWithExercises.exercises) {

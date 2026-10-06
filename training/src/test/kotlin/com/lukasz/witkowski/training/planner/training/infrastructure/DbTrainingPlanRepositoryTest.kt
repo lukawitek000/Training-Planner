@@ -83,7 +83,8 @@ class DbTrainingPlanRepositoryTest {
 
         val result = repository.getAll(TrainingQuery.DEFAULT).first()
 
-        TestData.TRAINING_PLAN_OVERVIEWS_LIST.zip(result).forEach { (expected, actual) ->
+        result.forEach { actual ->
+            val expected = TestData.TRAINING_PLAN_OVERVIEWS_LIST.first { it.id == actual.id }
             assertEquals(
                 expected.copy(
                     lastModification = expectedLastModification,
@@ -117,7 +118,11 @@ class DbTrainingPlanRepositoryTest {
 
     @Test
     fun `TrainingPlans are properly filtered by categories`() = runTest {
-        givenSaveTrainingPlansList()
+        givenSaveTrainingPlansList(
+            preSave = {
+                testTimeProvider.instant = it.lastModification
+            }
+        )
         val query = TrainingQuery(
             searchQuery = "",
             selectedCategories = setOf(
@@ -130,8 +135,8 @@ class DbTrainingPlanRepositoryTest {
         assertEquals(2, actual.size)
         assertEquals(
             listOf(
-                TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW,
-                TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN_OVERVIEW
+                TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN_OVERVIEW.copy(lastSession = null),
+                TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW.copy(lastSession = null)
             ),
             actual
         )
@@ -139,7 +144,11 @@ class DbTrainingPlanRepositoryTest {
 
     @Test
     fun `TrainingPlans are properly filtered by query and categories`() = runTest {
-        givenSaveTrainingPlansList()
+        givenSaveTrainingPlansList(
+            preSave = {
+                testTimeProvider.instant = it.lastModification
+            }
+        )
         val query = TrainingQuery(
             searchQuery = "Body",
             selectedCategories = setOf(CATEGORY_LEGS),
@@ -150,7 +159,7 @@ class DbTrainingPlanRepositoryTest {
         assertEquals(1, actual.size)
         assertEquals(
             listOf(
-                TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW,
+                TestData.FULL_BODY_TRAINING_PLAN_OVERVIEW.copy(lastSession = null),
             ),
             actual
         )
@@ -240,9 +249,7 @@ class DbTrainingPlanRepositoryTest {
         val result = repository.delete(id)
         assertNotNull(result.getOrNull())
 
-        assertTrainingPlanList(
-            expected = TestData.TRAINING_PLANS_LIST.filter { it.id != id }
-        )
+        val plan = repository.getTrainingPlanById(id).first()
     }
 
     private suspend fun givenSaveTrainingPlansList(

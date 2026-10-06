@@ -36,16 +36,25 @@ internal class DbTrainingPlanRepository(
         }
     }
 
-    override fun getAll(trainingQuery: TrainingQuery): Flow<List<TrainingPlanOverview>> =
-        trainingPlanDao.getAllTrainingOverviews(trainingQuery.searchQuery).map { list ->
+    override fun getAll(trainingQuery: TrainingQuery): Flow<List<TrainingPlanOverview>> {
+        val dbTrainingOverviews = if (trainingQuery.selectedCategories.isEmpty()) {
+            trainingPlanDao.getAllTrainingOverviews(trainingQuery.searchQuery)
+        } else {
+            trainingPlanDao.getAllTrainingOverviews(
+                query = trainingQuery.searchQuery,
+                categoriesNames = trainingQuery.selectedCategories.map { it.name }
+            )
+        }
+        return dbTrainingOverviews.map { list ->
             list.map { it.toTrainingPlanOverview() }
                 .sortedByDescending {
                     it.lastSession ?: it.lastModification
                 }
         }
+    }
 
-    override suspend fun delete(trainingPlanId: TrainingPlanId): Result<Unit> {
-        TODO("Not yet implemented")
+    override suspend fun delete(trainingPlanId: TrainingPlanId): Result<Unit> = withContext(dispatcher) {
+
     }
 
 //    override suspend fun delete(trainingPlan: TrainingPlan) {
