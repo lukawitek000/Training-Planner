@@ -65,8 +65,8 @@ fun CategoryChip(
 
 @Composable
 fun CategoryChip(
+    category: String,
     modifier: Modifier = Modifier,
-    category: ExerciseCategory,
     isSelected: Boolean = true,
     onClick: () -> Unit = {},
     isClickable: Boolean = false,
@@ -83,16 +83,33 @@ fun CategoryChip(
             .semantics {
                 selected = isSelected
             }
-            .testTag("Chip${category.name}, isClickable=$isClickable"),
+            .testTag("Chip${category}, isClickable=$isClickable"),
     ) {
         Text(
-            text = category.name,
+            text = category,
             modifier = Modifier.padding(Dimens.normal),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
             color = textColor
         )
     }
+}
+
+@Composable
+fun CategoryChip(
+    modifier: Modifier = Modifier,
+    category: ExerciseCategory,
+    isSelected: Boolean = true,
+    onClick: () -> Unit = {},
+    isClickable: Boolean = false,
+) {
+    CategoryChip(
+        category = category.name,
+        modifier = modifier,
+        isSelected = isSelected,
+        onClick = onClick,
+        isClickable = isClickable,
+    )
 }
 
 

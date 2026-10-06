@@ -35,6 +35,8 @@
     <string name="search_training_plan">Search Training Plan</string>
     <string name="failed_to_load_training_plans">Failed to load training plans</string>
     <string name="no_trainings_info">No trainings. Create your first training</string>
+    <string name="last_modified">Last modified %1$s</string>
+    <string name="last_session">Last session %1$s</string>
 
     <!-- Common -->
     <string name="edit">Edit</string>

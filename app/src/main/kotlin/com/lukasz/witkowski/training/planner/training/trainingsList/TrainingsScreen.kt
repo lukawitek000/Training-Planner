@@ -1,19 +1,21 @@
 package com.lukasz.witkowski.training.planner.training.trainingsList
 
+import android.text.format.DateUtils
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,25 +23,25 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanOverview
-import kotlin.time.Instant
-import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
+import com.lukasz.witkowski.training.planner.ui.components.CategoriesRow
 import com.lukasz.witkowski.training.planner.ui.components.FailureScreen
 import com.lukasz.witkowski.training.planner.ui.components.FilteringState
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
 import com.lukasz.witkowski.training.planner.ui.components.SearchHeader
+import com.lukasz.witkowski.training.planner.ui.theme.Dimens
+import com.lukasz.witkowski.training.planner.ui.theme.MediumGrey
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+import kotlin.time.Instant
 
 @Composable
 fun TrainingsScreen(
@@ -79,11 +81,13 @@ private fun TrainingsScreenContent(
             is TrainingsListUiState.Loading -> LoadingScreen(
                 modifier = Modifier.fillMaxSize(),
             )
+
             is TrainingsListUiState.Failure -> FailureScreen(
                 modifier = Modifier.fillMaxSize(),
                 title = stringResource(R.string.failed_to_load_training_plans),
                 message = uiState.message ?: ""
             )
+
             is TrainingsListUiState.Success -> TrainingPlansOverviews(
                 plans = uiState.plans,
                 onTrainingPlanClicked = onTrainingPlanClicked
@@ -123,64 +127,100 @@ private fun TrainingsList(
         modifier = modifier
     ) {
         items(plans, key = { it.id.toString() }) { trainingOverview ->
-            ListCardItem(modifier = Modifier,
-                onCardClicked = { onTrainingPlanClicked(trainingOverview.id) }) {
-                TrainingListItemContent(
-                    trainingOverview = trainingOverview,
+            TrainingPlanOverviewCard(
+                trainingOverview = trainingOverview,
+                onClick = { onTrainingPlanClicked(trainingOverview.id) }
+            )
+        }
+    }
+}
+
+
+@Composable
+private fun TrainingPlanOverviewCard(
+    trainingOverview: TrainingPlanOverview,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    ListCardItem(
+        modifier = modifier,
+        onCardClicked = onClick
+    ) {
+        Column(
+            modifier = Modifier,
+            verticalArrangement = Arrangement.spacedBy(Dimens.normal)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = trainingOverview.title,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.weight(1f)
+                )
+                IconButton(onClick = {}) {
+                    Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
+                }
+            }
+            trainingOverview.description.takeIf { it.isNotEmpty() }?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+            CategoriesRow(
+                categories = trainingOverview.categories.map { it.name },
+                modifier = Modifier.fillMaxWidth()
+            )
+            TrainingPlanDateInfo(
+                instant = trainingOverview.lastModification,
+                icon = Icons.Default.CalendarMonth,
+                stringRes = R.string.last_modified
+            )
+            trainingOverview.lastSession?.let {
+                TrainingPlanDateInfo(
+                    instant = it,
+                    icon = Icons.Default.PlayArrow,
+                    stringRes = R.string.last_session
                 )
             }
         }
-        item { Spacer(modifier = Modifier.height(74.dp)) }
     }
 }
 
 @Composable
-fun TrainingListItemContent(
+private fun TrainingPlanDateInfo(
+    instant: Instant,
+    icon: ImageVector,
+    @StringRes stringRes: Int,
     modifier: Modifier = Modifier,
-    trainingOverview: TrainingPlanOverview,
 ) {
+    val color = MediumGrey
+    val timeMillis = instant.toEpochMilliseconds()
+    val nowMillis = System.currentTimeMillis()
+    val formattedTime = DateUtils.getRelativeTimeSpanString(
+        timeMillis,
+        nowMillis,
+        DateUtils.MINUTE_IN_MILLIS,
+        DateUtils.FORMAT_ABBREV_RELATIVE
+    )
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(
-            modifier = Modifier
-                .padding(end = 8.dp)
-                .weight(1f)
-        ) {
-            Text(
-                text = trainingOverview.title,
-                fontSize = 28.sp
-            )
-//            CategoriesRow(
-//                modifier = modifier.padding(top = 16.dp),
-//                categories = trainingOverview.getCategories()
-//            )
-        }
         Icon(
-            modifier = Modifier
-                .size(40.dp),
-//                .clickable { startTrainingSession(trainingPlan) },
-            imageVector = Icons.Filled.PlayArrow,
-            contentDescription = stringResource(id = R.string.start_training_session),
-            tint = MaterialTheme.colorScheme.primary,
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.padding(end = Dimens.normal),
+            tint = color
         )
-    }
-}
-
-@Composable
-private fun CategoriesRow(
-    modifier: Modifier = Modifier,
-    categories: List<Category>
-) {
-    LazyRow(modifier = modifier) {
-        items(categories) { item: Category ->
-            CategoryChip(
-                modifier = Modifier.padding(end = 8.dp),
-                category = item,
-            )
-        }
+        Text(
+            text = stringResource(stringRes, formattedTime),
+            color = color,
+            style = MaterialTheme.typography.bodyMedium
+        )
     }
 }
 
@@ -241,7 +281,7 @@ private fun TrainingsScreenSuccessPreview() {
         TrainingsScreenContent(
             uiState = TrainingsListUiState.Success(
                 filteringState = FilteringState("Some query", categories = emptyList()),
-                plans = PREVIEW_TRAINING_PLANS
+                plans = PREVIEW_TRAINING_PLANS_OVERVIEWS
             ),
             onTrainingPlanClicked = {},
             onSearchQueryChanged = {},
@@ -251,7 +291,19 @@ private fun TrainingsScreenSuccessPreview() {
     }
 }
 
-private val PREVIEW_TRAINING_PLANS = listOf(
+@Preview
+@Composable
+private fun TrainingPlanOverviewCardPreview() {
+    TrainingPlannerTheme {
+        TrainingPlanOverviewCard(
+            trainingOverview = PREVIEW_TRAINING_PLANS_OVERVIEWS.first(),
+            onClick = {},
+
+            )
+    }
+}
+
+private val PREVIEW_TRAINING_PLANS_OVERVIEWS = listOf(
     TrainingPlanOverview(
         id = TrainingPlanId.create(),
         title = "Full Body Workout",
@@ -285,8 +337,8 @@ private val PREVIEW_TRAINING_PLANS = listOf(
             ExerciseCategoryName("Cardio"),
             ExerciseCategoryName("Abs")
         ),
-        lastModification = Instant.parse("2026-09-08T08:15:00Z"),
-        lastSession = Instant.parse("2026-09-12T18:00:00Z")
+        lastModification = Instant.parse("2026-10-03T08:15:00Z"),
+        lastSession = Instant.parse("2025-09-12T18:00:00Z")
     )
 )
 

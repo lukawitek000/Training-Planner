@@ -31,6 +31,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.image.ImageReference
+import com.lukasz.witkowski.training.planner.ui.components.CategoriesRow
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.FilteringState
 import com.lukasz.witkowski.training.planner.ui.components.Image
@@ -167,6 +168,10 @@ private fun ExerciseInformation(
             text = exercise.name,
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.testTag("ExerciseItemName-${exercise.name}")
+        )
+        CategoriesRow(
+            categories = categories.map { it.name },
+            modifier = Modifier.fillMaxWidth(),
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
