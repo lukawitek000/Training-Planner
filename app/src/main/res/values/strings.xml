@@ -31,6 +31,11 @@
     <string name="recommendation_overview">%1$d x %2$d &#183; %3$d s &#183; %4$d kg</string>
     <string name="recommendation_no_weight">%1$d x %2$d &#183; %3$d s</string>
 
+    <!-- Training Plan -->
+    <string name="search_training_plan">Search Training Plan</string>
+    <string name="failed_to_load_training_plans">Failed to load training plans</string>
+    <string name="no_trainings_info">No trainings. Create your first training</string>
+
     <!-- Common -->
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
@@ -56,7 +61,6 @@
     <string name="add_training_exercise_one_more_time_info">The exercise %1$s is already added to the training.\nDo you want to add it one more time?</string>
     <string name="no_statistics">No statistics for this training.</string>
     <string name="heart_rate_plot">Heart rate (BPM)</string>
-    <string name="no_trainings_info">No trainings. Create your first training</string>
     <string name="create_training">Create training</string>
     <string name="exercise_name_is_required">Exercise name is required</string>
     <string name="upload_image">Upload image</string>

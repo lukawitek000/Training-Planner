@@ -32,6 +32,7 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.trainingSession.components.TimerWithCircularProgressBar
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
@@ -57,14 +58,14 @@ fun TrainingExerciseScreen(
             exercise = exercise
         )
         Spacer(Modifier.height(24.dp))
-        CurrentExerciseTimer(
-            totalTime = exercise.time,
-            remainingTime = remainingTime,
-            start = start,
-            pause = pause,
-            reset = reset,
-            isTimerRunning = isTimerRunning
-        )
+//        CurrentExerciseTimer(
+//            totalTime = exercise.time,
+//            remainingTime = remainingTime,
+//            start = start,
+//            pause = pause,
+//            reset = reset,
+//            isTimerRunning = isTimerRunning
+//        )
     }
 }
 
@@ -94,19 +95,19 @@ private fun GeneralExerciseInformation(
         modifier = modifier.padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        trainingExercise.exercise.image?.let { image ->
-            ImageContainer(
-                modifier = Modifier
-                    .fillMaxWidth(0.3f)
-                    .aspectRatio(1.0f),
-            ) {
-//                Image(
-//                    bitmap = image.asImageBitmap(),
-//                    contentDescription = stringResource(id = R.string.exercise_image)
-//                )
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-        }
+//        trainingExercise.exercise.image?.let { image ->
+//            ImageContainer(
+//                modifier = Modifier
+//                    .fillMaxWidth(0.3f)
+//                    .aspectRatio(1.0f),
+//            ) {
+////                Image(
+////                    bitmap = image.asImageBitmap(),
+////                    contentDescription = stringResource(id = R.string.exercise_image)
+////                )
+//            }
+//            Spacer(modifier = Modifier.width(8.dp))
+//        }
         Column {
             Text(
                 text = trainingExercise.exercise.name,
@@ -187,26 +188,26 @@ fun TimerControlButtons(
 @Composable
 private fun TrainingExerciseScreenPreview() {
     TrainingPlannerTheme {
-        TrainingExerciseScreen(
-            exercise = TrainingExercise(
-                id = TrainingExerciseId(""),
-                exercise = Exercise(
-                    ExerciseId.create(),
-                    name = "Test exercise",
-                    description = "Test exercise description",
-                    categories = listOf(Category(0, R.string.category_back)),
-                    null
-                ),
-                repetitions = 15,
-                sets = 3,
-                time = Time(30000),
-                restTime = Time(60000)
-            ),
-            remainingTime = Time(1000L),
-            start = {},
-            pause = {},
-            reset = {},
-            isTimerRunning = false
-        )
+//        TrainingExerciseScreen(
+//            exercise = TrainingExercise(
+//                id = TrainingExerciseId(""),
+//                exercise = Exercise(
+//                    ExerciseId.create(),
+//                    name = "Test exercise",
+//                    description = "Test exercise description",
+//                    categories = listOf(Category(0, R.string.category_back)),
+//                    null
+//                ),
+//                repetitions = 15,
+//                sets = 3,
+//                time = Time(30000),
+//                restTime = Time(60000)
+//            ),
+//            remainingTime = Time(1000L),
+//            start = {},
+//            pause = {},
+//            reset = {},
+//            isTimerRunning = false
+//        )
     }
 }

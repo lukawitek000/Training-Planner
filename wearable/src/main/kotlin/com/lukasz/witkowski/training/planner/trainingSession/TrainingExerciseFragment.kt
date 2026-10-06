@@ -13,6 +13,7 @@ import com.lukasz.witkowski.training.planner.session.service.SessionServiceConne
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.utils.launchInStartedState
 import kotlinx.coroutines.flow.collectLatest
 
@@ -46,7 +47,7 @@ class TrainingExerciseFragment : Fragment() {
         sharedViewModel.trainingSessionState.observe(viewLifecycleOwner) {
             if (it is TrainingSessionState.ExerciseState) {
                 populateUi(it.currentExercise)
-                setUpTimer(it.currentExercise.time)
+//                setUpTimer(it.currentExercise.time)
             }
         }
     }

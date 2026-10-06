@@ -6,6 +6,7 @@ import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,14 +60,14 @@ class CreateTrainingViewModel(
         minutes: Int,
         seconds: Int
     ) {
-        val trainingExercise = TrainingExercise(
-            id = TrainingExerciseId.create(),
-            exercise = exercise,
-            repetitions = reps.toIntOrNull() ?: 1,
-            sets = sets.toIntOrNull() ?: 1,
-            time = Time(minutes = minutes, seconds = seconds)
-        )
-        addTrainingExercise(trainingExercise, exercise.id)
+//        val trainingExercise = TrainingExercise(
+//            id = TrainingExerciseId.create(),
+//            exercise = exercise,
+//            repetitions = reps.toIntOrNull() ?: 1,
+//            sets = sets.toIntOrNull() ?: 1,
+//            time = Time(minutes = minutes, seconds = seconds)
+//        )
+//        addTrainingExercise(trainingExercise, exercise.id)
     }
 
     fun setRestTimeToExercise(
@@ -74,12 +75,12 @@ class CreateTrainingViewModel(
         restTimeMinutes: Int,
         restTimeSeconds: Int
     ) {
-        val newRestTime = Time(minutes = restTimeMinutes, seconds = restTimeSeconds)
-        val updatedExercise = exercise.copy(restTime = newRestTime)
-        val exercisesList = _trainingExercises.value.toMutableList()
-        val index = exercisesList.indexOf(exercise)
-        exercisesList[index] = updatedExercise
-        _trainingExercises.value = exercisesList.toList()
+//        val newRestTime = Time(minutes = restTimeMinutes, seconds = restTimeSeconds)
+//        val updatedExercise = exercise.copy(restTime = newRestTime)
+//        val exercisesList = _trainingExercises.value.toMutableList()
+//        val index = exercisesList.indexOf(exercise)
+//        exercisesList[index] = updatedExercise
+//        _trainingExercises.value = exercisesList.toList()
     }
 
     /**
@@ -92,12 +93,12 @@ class CreateTrainingViewModel(
 
     fun createTrainingPlan() {
         viewModelScope.launch {
-            val trainingPlan = TrainingPlan(
-                id = TrainingPlanId.create(),
-                title = title.value,
-                description = description.value,
-                exercises = trainingExercises.value
-            )
+//            val trainingPlan = TrainingPlan(
+//                id = TrainingPlanId.create(),
+//                title = title.value,
+//                description = description.value,
+//                exercises = trainingExercises.value
+//            )
 //            trainingPlanService.saveTrainingPlan(trainingPlan.toDomainTrainingPlan())
         }
     }

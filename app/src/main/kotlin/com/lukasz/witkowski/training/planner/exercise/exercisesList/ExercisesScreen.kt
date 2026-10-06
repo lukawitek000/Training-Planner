@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -33,13 +32,13 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
-import com.lukasz.witkowski.training.planner.ui.components.CategoryFilters
+import com.lukasz.witkowski.training.planner.ui.components.FilteringState
 import com.lukasz.witkowski.training.planner.ui.components.Image
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
 import com.lukasz.witkowski.training.planner.ui.components.PREVIEW_CATEGORIES
-import com.lukasz.witkowski.training.planner.ui.components.TextField
+import com.lukasz.witkowski.training.planner.ui.components.SearchHeader
 import com.lukasz.witkowski.training.planner.ui.theme.Dimens
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import kotlinx.coroutines.flow.Flow
@@ -73,22 +72,12 @@ fun ExercisesScreenContent(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier = modifier) {
-        TextField(
-            text = filteringState.searchQuery,
-            onTextChange = onSearchQueryChanged,
-            label = stringResource(R.string.search_exercise),
-            modifier = Modifier
-                .padding(Dimens.normal)
-                .testTag("SearchField")
-        )
-        CategoryFilters(
-            modifier = Modifier.padding(
-                bottom = Dimens.normal,
-                start = Dimens.normal,
-                end = Dimens.normal
-            ),
+        SearchHeader(
+            query = filteringState.searchQuery,
+            onSearchQueryChanged = onSearchQueryChanged,
             categories = filteringState.categories,
-            toggleCategory = toggleCategory
+            toggleCategory = toggleCategory,
+            label = stringResource(R.string.search_exercise)
         )
         if (exercisesList.itemCount != 0) {
             ExercisesList(

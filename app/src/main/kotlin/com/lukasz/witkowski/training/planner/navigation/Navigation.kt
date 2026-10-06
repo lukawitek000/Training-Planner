@@ -48,8 +48,7 @@ fun Navigation(
             entry<TrainingPlansList> {
                 TrainingsScreen(
                     viewModel = koinViewModel(),
-                    navigateToTrainingOverview = { navigator.trainingOverview(it) },
-                    navigateToTrainingSession = { navigator.trainingSession(it) }
+                    onTrainingPlanClicked = { navigator.trainingOverview(it) },
                 )
             }
 

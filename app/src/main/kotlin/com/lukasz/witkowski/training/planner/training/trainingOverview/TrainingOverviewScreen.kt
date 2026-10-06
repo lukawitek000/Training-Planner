@@ -35,7 +35,9 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Catego
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
 import com.lukasz.witkowski.training.planner.ui.components.ExpandableListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
@@ -171,23 +173,23 @@ fun SingleTrainingExerciseInformation(modifier: Modifier, trainingExercise: Trai
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = trainingExercise.exercise.description, fontSize = 18.sp)
             Spacer(modifier = Modifier.height(16.dp))
-            CategoryChip(
-                modifier = Modifier.fillMaxWidth(),
-                category = trainingExercise.exercise.categories.first() // TODO
-            )
-            if (!trainingExercise.exercise.categories.first().isNone()) { // TODO
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+//            CategoryChip(
+//                modifier = Modifier.fillMaxWidth(),
+//                category = trainingExercise.exercise.categories.first() // TODO
+//            )
+//            if (!trainingExercise.exercise.categories.first().isNone()) { // TODO
+//                Spacer(modifier = Modifier.height(16.dp))
+//            }
             TrainingExerciseRepsSetsTimeOverviewRow(exercise = trainingExercise)
             Spacer(modifier = Modifier.height(16.dp))
-            if (trainingExercise.restTime.isNotZero()) {
+            if (trainingExercise.restTime.isPositive()) {
                 Row(
                     Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Text(text = "Rest time: ")
-                    Text(text = TimeFormatter(LocalContext.current).formatTime(trainingExercise.restTime))
+                    Text(text = "TimeFormatter(LocalContext.current).formatTime(trainingExercise.restTime)")
                 }
             }
         }
@@ -284,21 +286,21 @@ fun HeartRateLineChartPreview() {
 @Preview
 @Composable
 fun SingleExercisePrev() {
-    SingleTrainingExerciseInformation(
-        Modifier,
-        TrainingExercise(
-            id = TrainingExerciseId(""),
-            Exercise(
-                ExerciseId.create(), name = "Super exercise",
-                description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
-                categories = listOf(Category()), null
-            ),
-            sets = 10,
-            repetitions = 100,
-            time = Time(141000),
-            restTime = Time(53988)
-        )
-    )
+//    SingleTrainingExerciseInformation(
+//        Modifier,
+//        TrainingExercise(
+//            id = TrainingExerciseId(""),
+//            Exercise(
+//                ExerciseId.create(), name = "Super exercise",
+//                description = "Bes exercise for back, watch for yoafalkd, s foihfd  s;odfnf piewkj i  lkjevdkjsbf ",
+//                categories = listOf(Category()), null
+//            ),
+//            sets = 10,
+//            repetitions = 100,
+//            time = Time(141000),
+//            restTime = Time(53988)
+//        )
+//    )
 }
 
 

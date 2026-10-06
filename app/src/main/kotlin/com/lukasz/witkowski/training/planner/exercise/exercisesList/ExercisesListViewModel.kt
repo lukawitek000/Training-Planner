@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController2
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
+import com.lukasz.witkowski.training.planner.ui.components.FilteringState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
+import kotlin.collections.map
 import kotlin.time.Duration.Companion.milliseconds
 
 class ExercisesListViewModel(
@@ -58,15 +60,8 @@ class ExercisesListViewModel(
     fun toggleCategory(category: ExerciseCategory) {
         categoryController2.toggleCategory(category)
     }
-}
 
-data class FilteringState(
-    val searchQuery: String,
-    val categories: List<FilterCategory>
-) {
-    val isAnyCategorySelected = categories.any { it.isSelected }
-
-    fun toExerciseQuery(): ExerciseQuery {
+    private fun FilteringState.toExerciseQuery(): ExerciseQuery {
         val selectedCategories = categories.filter { it.isSelected }.map { it.category }
         return ExerciseQuery(
             query = searchQuery,

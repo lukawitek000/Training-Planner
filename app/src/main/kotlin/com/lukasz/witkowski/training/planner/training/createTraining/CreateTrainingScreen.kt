@@ -47,12 +47,14 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
 import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
+import kotlin.collections.isNotEmpty
 
 @Composable
 fun CreateTrainingScreen(
@@ -291,7 +293,7 @@ private fun TrainingExerciseRestTime(
     trainingExercise: TrainingExercise
 ) {
     val restTime = trainingExercise.restTime
-    val buttonText = if (restTime.isNotZero()) {
+    val buttonText = if (restTime.isPositive()) {
         stringResource(id = R.string.change_rest_time)
     } else {
         stringResource(id = R.string.add_rest_time)
@@ -306,9 +308,9 @@ private fun TrainingExerciseRestTime(
         }) {
             Text(text = buttonText)
         }
-        if (restTime.isNotZero()) {
+        if (restTime.isPositive()) {
             Text(
-                text = TimeFormatter(LocalContext.current).formatTime(restTime),
+                text = "TimeFormatter(LocalContext.current).formatTime(restTime)",
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 18.sp
             )
@@ -323,9 +325,9 @@ fun SetTrainingExerciseRestTimeDialog(
     setRestTimeToExercise: (TrainingExercise, Int, Int) -> Unit,
     closeDialog: () -> Unit
 ) {
-    val (currentMinutes, currentSeconds) = trainingExercise.restTime.minutesAndSeconds()
-    var minutes by remember { mutableStateOf(currentMinutes) }
-    var seconds by remember { mutableStateOf(currentSeconds) }
+//    val (currentMinutes, currentSeconds) = trainingExercise.restTime.minutesAndSeconds()
+    var minutes by remember { mutableStateOf(0) }
+    var seconds by remember { mutableStateOf(0) }
 
     DialogContainer(
         closeDialog = closeDialog,
@@ -419,50 +421,50 @@ fun ExerciseSetsRepsTimeInfo(
             modifier = Modifier.weight(1f),
             color = MaterialTheme.colorScheme.secondary
         )
-        if (trainingExercise.time.isNotZero()) {
-            Text(
-                text = stringResource(
-                    id = R.string.time_with_value,
-                    TimeFormatter(LocalContext.current).formatTime(trainingExercise.time)
-                ),
-                color = MaterialTheme.colorScheme.secondary
-            )
-        } else {
-            Spacer(modifier = Modifier.weight(1f))
-        }
+//        if (trainingExercise.time.isNotZero()) {
+//            Text(
+//                text = stringResource(
+//                    id = R.string.time_with_value,
+//                    TimeFormatter(LocalContext.current).formatTime(trainingExercise.time)
+//                ),
+//                color = MaterialTheme.colorScheme.secondary
+//            )
+//        } else {
+//            Spacer(modifier = Modifier.weight(1f))
+//        }
     }
 }
 
 @Preview
 @Composable
 fun TrainingExerciseListItemPreview() {
-    TrainingExerciseListItem(
-        trainingExercise = TrainingExercise(
-            id = TrainingExerciseId(""),
-            exercise = Exercise(
-                ExerciseId.create(), "New exercise", "", listOf(Category()), null
-            ),
-            repetitions = 10,
-            sets = 5,
-            time = Time(1000L),
-            restTime = Time(3000)
-        ),
-        removeTrainingExercise = {},
-        setRestTimeToTrainingExercise = {}
-    )
+//    TrainingExerciseListItem(
+//        trainingExercise = TrainingExercise(
+//            id = TrainingExerciseId(""),
+//            exercise = Exercise(
+//                ExerciseId.create(), "New exercise", "", listOf(Category()), null
+//            ),
+//            repetitions = 10,
+//            sets = 5,
+//            time = Time(1000L),
+//            restTime = Time(3000)
+//        ),
+//        removeTrainingExercise = {},
+//        setRestTimeToTrainingExercise = {}
+//    )
 }
 
 @Preview
 @Composable
 fun RestTimeDialogPreview() {
-    SetTrainingExerciseRestTimeDialog(
-        trainingExercise = TrainingExercise(
-            exercise = Exercise(
-                ExerciseId.create(), "New exercise", "", listOf(Category()), null
-            ),
-            id = TrainingExerciseId("")
-        ),
-        closeDialog = {},
-        setRestTimeToExercise = { trainingExercise, i, i2 -> }
-    )
+//    SetTrainingExerciseRestTimeDialog(
+//        trainingExercise = TrainingExercise(
+//            exercise = Exercise(
+//                ExerciseId.create(), "New exercise", "", listOf(Category()), null
+//            ),
+//            id = TrainingExerciseId("")
+//        ),
+//        closeDialog = {},
+//        setRestTimeToExercise = { trainingExercise, i, i2 -> }
+//    )
 }

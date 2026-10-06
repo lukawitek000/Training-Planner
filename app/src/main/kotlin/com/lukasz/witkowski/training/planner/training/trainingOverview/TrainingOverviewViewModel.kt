@@ -9,6 +9,7 @@ import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
