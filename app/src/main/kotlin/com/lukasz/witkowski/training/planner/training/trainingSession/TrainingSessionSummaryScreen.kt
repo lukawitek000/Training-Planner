@@ -33,8 +33,6 @@ import com.lukasz.witkowski.training.planner.shared.utils.toPercentage
 import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.trainingSession.components.FabTextWithIcon
 import com.lukasz.witkowski.training.planner.ui.components.ExpandableListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem

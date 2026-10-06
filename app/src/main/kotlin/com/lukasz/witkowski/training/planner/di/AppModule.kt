@@ -5,10 +5,6 @@ import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseViewM
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsViewModel
 import com.lukasz.witkowski.training.planner.exercise.di.exerciseModule
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
-import com.lukasz.witkowski.training.planner.exercise.presentation.CategoriesCollection
-import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController
-import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoriesCollection
-import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoryController
 import com.lukasz.witkowski.training.planner.statistics.di.statisticsModule
 import com.lukasz.witkowski.training.planner.training.createTraining.CreateTrainingViewModel
 import com.lukasz.witkowski.training.planner.training.di.trainingModule
@@ -43,18 +39,7 @@ val appModule = module {
         )
     }
 
-    viewModel {
-        val categoriesCollection: CategoriesCollection by lazy { DefaultCategoriesCollection() }
-        val categoryController: CategoryController by lazy {
-            DefaultCategoryController(
-                categoriesCollection,
-            )
-        }
-        TrainingsListViewModel(
-            get(),
-            categoryController
-        )
-    }
+    viewModel<TrainingsListViewModel>()
     viewModel<CreateTrainingViewModel>()
     viewModel<TrainingOverviewViewModel>()
     viewModel<TrainingSessionViewModel>()

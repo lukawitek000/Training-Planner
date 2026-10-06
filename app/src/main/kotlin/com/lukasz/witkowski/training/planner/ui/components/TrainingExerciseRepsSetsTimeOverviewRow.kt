@@ -14,7 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.TextUnit
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 
 @Composable
 fun TrainingExerciseRepsSetsTimeOverviewRow(
