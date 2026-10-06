@@ -143,7 +143,7 @@ class TrainingSessionService(
         get() =
             when (this) {
                 is TrainingSessionState.RestTimeState -> restTime
-                is TrainingSessionState.ExerciseState -> exercise?.time
+//                is TrainingSessionState.ExerciseState -> exercise?.time
                 else -> null
             }
 

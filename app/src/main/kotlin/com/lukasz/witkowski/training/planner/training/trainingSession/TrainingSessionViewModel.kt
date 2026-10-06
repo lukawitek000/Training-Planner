@@ -60,7 +60,7 @@ class TrainingSessionViewModel(
     private fun fetchTrainingPlan() {
         viewModelScope.launch {
             val trainingPlan = trainingPlanService.getTrainingPlanById(trainingId)
-            trainingSessionService.startTraining(trainingPlan)
+//            trainingSessionService.startTraining(trainingPlan)
         }
     }
 
