@@ -54,7 +54,9 @@ internal class DbTrainingPlanRepository(
     }
 
     override suspend fun delete(trainingPlanId: TrainingPlanId): Result<Unit> = withContext(dispatcher) {
-
+        runCatchingCancellable {
+            trainingPlanDao.deleteTrainingPlanById(trainingPlanId.toString())
+        }
     }
 
 //    override suspend fun delete(trainingPlan: TrainingPlan) {
@@ -62,10 +64,10 @@ internal class DbTrainingPlanRepository(
 //        trainingPlanDao.deleteTrainingPlanWithExercises(dbTrainingPlanWithExercises)
 //    }
 
-    override suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan> {
+    override suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan?> {
         val id = trainingPlanId.toString()
         return trainingPlanDao.getFlowTrainingPlanById(id).map {
-            it.toTrainingPlan()
+            it?.toTrainingPlan()
         }
     }
 

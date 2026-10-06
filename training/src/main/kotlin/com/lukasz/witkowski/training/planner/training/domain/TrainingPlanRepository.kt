@@ -12,7 +12,7 @@ interface TrainingPlanRepository {
 
     suspend fun delete(trainingPlanId: TrainingPlanId): Result<Unit>
 
-    suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan>
+    suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan?>
 
     suspend fun update(
         trainingPlanConfiguration: TrainingPlanConfiguration,

@@ -96,13 +96,21 @@ internal interface TrainingPlanDao {
     @Query("DELETE FROM TrainingExercise WHERE exerciseId=:id")
     suspend fun deleteExerciseById(id: String)
 
-    @Transaction
-    @Query("SELECT * FROM TrainingPlan WHERE id=:id")
-    fun getFlowTrainingPlanById(id: String): Flow<DbTrainingPlanWithExercises>
+    // Testing
+    @Query("SELECT COUNT(*) FROM TrainingExercise WHERE trainingId = :trainingPlanId")
+    suspend fun getExercisesCountForTrainingPlan(trainingPlanId: String): Int
+
+    // Testing
+    @Query("SELECT COUNT(*) FROM exercise_categories WHERE trainingPlanId = :trainingPlanId")
+    suspend fun getCategoriesCountForTrainingPlan(trainingPlanId: String): Int
 
     @Transaction
     @Query("SELECT * FROM TrainingPlan WHERE id=:id")
-    fun getTrainingPlanById(id: String): DbTrainingPlanWithExercises
+    fun getFlowTrainingPlanById(id: String): Flow<DbTrainingPlanWithExercises?>
+
+    @Transaction
+    @Query("SELECT * FROM TrainingPlan WHERE id=:id")
+    fun getTrainingPlanById(id: String): DbTrainingPlanWithExercises?
 
     @Upsert
     fun updateTrainingPlan(plan: DbTrainingPlan)
@@ -110,6 +118,7 @@ internal interface TrainingPlanDao {
     @Transaction
     fun useTrainingPlanById(id: String, currentInstant: Instant): DbTrainingPlanWithExercises {
         val result = getTrainingPlanById(id)
+        checkNotNull(result) { "Training plan was not found" }
         val updatedPlan = result.trainingPlan.copy(
             lastUsed = currentInstant
         )

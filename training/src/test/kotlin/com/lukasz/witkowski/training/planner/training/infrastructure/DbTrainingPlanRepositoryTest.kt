@@ -13,6 +13,7 @@ import com.lukasz.witkowski.training.planner.training.TestData.toTrainingPlanCon
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -246,10 +247,18 @@ class DbTrainingPlanRepositoryTest {
         givenSaveTrainingPlansList()
 
         val id = FULL_BODY_TRAINING_PLAN.id
+        val dao = db.trainingPlanDao()
+        assertTrue(dao.getExercisesCountForTrainingPlan(id.toString()) > 0)
+        assertTrue(dao.getCategoriesCountForTrainingPlan(id.toString()) > 0)
+
         val result = repository.delete(id)
         assertNotNull(result.getOrNull())
 
         val plan = repository.getTrainingPlanById(id).first()
+        assertEquals(null, plan)
+
+        assertEquals(0, dao.getExercisesCountForTrainingPlan(id.toString()))
+        assertEquals(0, dao.getCategoriesCountForTrainingPlan(id.toString()))
     }
 
     private suspend fun givenSaveTrainingPlansList(
