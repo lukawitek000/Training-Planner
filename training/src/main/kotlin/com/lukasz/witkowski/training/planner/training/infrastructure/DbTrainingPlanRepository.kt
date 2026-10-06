@@ -15,7 +15,6 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toT
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlanWithExercises
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -62,12 +61,7 @@ internal class DbTrainingPlanRepository(
         }
     }
 
-//    override suspend fun delete(trainingPlan: TrainingPlan) {
-//        val dbTrainingPlanWithExercises = trainingPlan.toDbTrainingPlanWithExercises()
-//        trainingPlanDao.deleteTrainingPlanWithExercises(dbTrainingPlanWithExercises)
-//    }
-
-    override suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan?> {
+    override fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan?> {
         val id = trainingPlanId.toString()
         return trainingPlanDao.getFlowTrainingPlanById(id).map {
             it?.toTrainingPlan()
@@ -102,7 +96,7 @@ internal class DbTrainingPlanRepository(
     }
 
     override suspend fun useTrainingPlan(trainingPlanId: TrainingPlanId): Result<TrainingPlan> =
-        withContext(Dispatchers.IO) {
+        withContext(dispatcher) {
             runCatchingCancellable {
                 trainingPlanDao.useTrainingPlanById(
                     trainingPlanId.toString(),

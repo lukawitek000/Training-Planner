@@ -7,13 +7,12 @@ import com.lukasz.witkowski.training.planner.training.TestData
 import com.lukasz.witkowski.training.planner.training.TestData.CATEGORY_LEGS
 import com.lukasz.witkowski.training.planner.training.TestData.FULL_BODY_TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.training.TestData.PLANK_SNAPSHOT
-import com.lukasz.witkowski.training.planner.training.TestData.UPPER_BODY_STRENGTH_TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.training.TestData.toTrainingPlanConfiguration
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -25,6 +24,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 @RunWith(RobolectricTestRunner::class)
@@ -98,22 +98,35 @@ class DbTrainingPlanRepositoryTest {
 
     @Test
     fun `TrainingPlans are properly filtered by query`() = runTest {
+        givenSaveTrainingPlansList(
+            preSave = { testTimeProvider.instant = it.lastModification }
+        )
+        val query = TrainingQuery(searchQuery = "Cardio", selectedCategories = emptySet())
 
-        val expectedLastModification = Instant.parse("2026-09-10T12:00:00Z")
-        testTimeProvider.instant = expectedLastModification
-        givenSaveTrainingPlansList()
+        val actual = repository.getAll(query).first()
 
-        TestData.TRAINING_PLANS_LIST.forEach {
-            val actual = repository.getTrainingPlanById(it.id).first()
-            assertEquals(
-                it.copy(
-                    lastModification = expectedLastModification,
-                    lastSession = null,
-                ),
-                actual,
-                "Failed read for ${it.title}"
-            )
-        }
+        assertEquals(1, actual.size)
+        assertEquals(
+            listOf(TestData.CARDIO_ENDURANCE_TRAINING_PLAN_OVERVIEW.copy(lastSession = null)),
+            actual
+        )
+    }
+
+    @Test
+    fun `Filtering by query or category returns empty list when no training plan matches`() = runTest {
+        givenSaveTrainingPlansList(
+            preSave = { testTimeProvider.instant = it.lastModification }
+        )
+        val queryNoMatch = TrainingQuery(searchQuery = "NonExistentSearchString", selectedCategories = emptySet())
+        val actualNoMatch = repository.getAll(queryNoMatch).first()
+        assertTrue(actualNoMatch.isEmpty())
+
+        val queryNoCatMatch = TrainingQuery(
+            searchQuery = "",
+            selectedCategories = setOf(TestData.CATEGORY_SHOULDERS)
+        )
+        val actualNoCatMatch = repository.getAll(queryNoCatMatch).first()
+        assertTrue(actualNoCatMatch.isEmpty())
     }
 
 
@@ -336,6 +349,105 @@ class DbTrainingPlanRepositoryTest {
 
         assertEquals(0, dao.getExercisesCountForTrainingPlan(id.toString()))
         assertEquals(0, dao.getCategoriesCountForTrainingPlan(id.toString()))
+    }
+
+    @Test
+    fun `Using non-existent training plan returns failure`() = runTest {
+        val nonExistentId = TrainingPlanId.create()
+        val result = repository.useTrainingPlan(nonExistentId)
+        assertTrue(result.isFailure)
+        assertTrue(result.exceptionOrNull() is IllegalStateException)
+    }
+
+    @Test
+    fun `Deleting non-existent training plan succeeds without error`() = runTest {
+        val nonExistentId = TrainingPlanId.create()
+        val result = repository.delete(nonExistentId)
+        assertTrue(result.isSuccess)
+    }
+
+    @Test
+    fun `getTrainingPlanById emits null for non-existent ID and updates when deleted`() = runTest {
+        val nonExistentId = TrainingPlanId.create()
+        val initial = repository.getTrainingPlanById(nonExistentId).first()
+        assertEquals(null, initial)
+
+        givenSaveTrainingPlansList()
+        val planId = FULL_BODY_TRAINING_PLAN.id
+        val savedPlan = repository.getTrainingPlanById(planId).first()
+        assertNotNull(savedPlan)
+
+        repository.delete(planId)
+        val afterDelete = repository.getTrainingPlanById(planId).first()
+        assertEquals(null, afterDelete)
+    }
+
+    @Test
+    fun `Updating training plan with added or removed exercises`() = runTest {
+        givenSaveTrainingPlansList(
+            preSave = { testTimeProvider.instant = it.lastModification }
+        )
+        val updateInstant = Instant.parse("2026-10-06T14:00:00Z")
+        testTimeProvider.instant = updateInstant
+
+        // 1. Remove exercises except one
+        val planWithSingleExercise = FULL_BODY_TRAINING_PLAN.copy(
+            exercises = listOf(TestData.TRAINING_EXERCISE_PUSH_UPS),
+            lastModification = updateInstant,
+            lastSession = null,
+        )
+        val updateResult1 = repository.update(planWithSingleExercise.toTrainingPlanConfiguration(), planWithSingleExercise.id)
+        assertTrue(updateResult1.isSuccess)
+
+        val actual1 = repository.getTrainingPlanById(planWithSingleExercise.id).first()
+        assertEquals(planWithSingleExercise, actual1)
+
+        // 2. Add multiple exercises back
+        val planWithMoreExercises = planWithSingleExercise.copy(
+            exercises = listOf(
+                TestData.TRAINING_EXERCISE_PUSH_UPS,
+                TestData.TRAINING_EXERCISE_SQUATS,
+                TestData.TRAINING_EXERCISE_RUNNING
+            ),
+            lastModification = updateInstant,
+            lastSession = null,
+        )
+        val updateResult2 = repository.update(planWithMoreExercises.toTrainingPlanConfiguration(), planWithMoreExercises.id)
+        assertTrue(updateResult2.isSuccess)
+
+        val actual2 = repository.getTrainingPlanById(planWithMoreExercises.id).first()
+        assertEquals(planWithMoreExercises, actual2)
+    }
+
+    @Test
+    fun `Training plan with 0 exercises can be saved, read, updated, and deleted`() = runTest {
+        val saveInstant = Instant.parse("2026-10-06T10:00:00Z")
+        testTimeProvider.instant = saveInstant
+
+        val emptyPlanId = TrainingPlanId.create()
+        val emptyPlanConfig = TrainingPlanConfiguration(
+            title = "Empty Plan",
+            description = "No exercises",
+            exercises = emptyList(),
+            restTime = 30.seconds
+        )
+
+        val saveResult = repository.save(emptyPlanConfig, emptyPlanId)
+        assertTrue(saveResult.isSuccess)
+
+        val readPlan = repository.getTrainingPlanById(emptyPlanId).first()
+        assertNotNull(readPlan)
+        assertEquals("Empty Plan", readPlan.title)
+        assertTrue(readPlan.exercises.isEmpty())
+
+        val overviews = repository.getAll(TrainingQuery.DEFAULT).first()
+        assertTrue(overviews.any { it.id == emptyPlanId })
+
+        val deleteResult = repository.delete(emptyPlanId)
+        assertTrue(deleteResult.isSuccess)
+
+        val afterDelete = repository.getTrainingPlanById(emptyPlanId).first()
+        assertEquals(null, afterDelete)
     }
 
     private suspend fun givenSaveTrainingPlansList(

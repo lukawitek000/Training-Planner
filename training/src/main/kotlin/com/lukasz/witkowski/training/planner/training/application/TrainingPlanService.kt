@@ -18,6 +18,6 @@ class TrainingPlanService(
     fun getTrainingPlansFromCategories(categories: List<ExerciseCategoryName> = emptyList()): Flow<List<TrainingPlan>> =
         flow {  }
 
-    suspend fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan?> =
+    fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan?> =
         trainingPlanRepository.getTrainingPlanById(trainingPlanId)
 }
