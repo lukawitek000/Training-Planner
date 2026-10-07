@@ -99,6 +99,7 @@ import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
 import com.lukasz.witkowski.training.planner.ui.theme.LightGrey
 import com.lukasz.witkowski.training.planner.ui.theme.MediumGrey
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+import timber.log.Timber
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
@@ -107,7 +108,6 @@ import kotlin.time.DurationUnit
 fun TrainingPlanEditorScreen(
     modifier: Modifier = Modifier,
     viewModel: TrainingPlanEditorViewModel,
-    navigateBack: () -> Unit,
     onAddExerciseClicked: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -127,39 +127,49 @@ private fun TrainingPlanEditorScreenContent(
     modifier: Modifier = Modifier,
 ) {
     var showRestTimePicker by remember { mutableStateOf(false) }
-    Column(
-        modifier = modifier.verticalScroll(rememberScrollState()).padding(Dimens.normal),
-        verticalArrangement = Arrangement.spacedBy(Dimens.normal)
+    LazyColumn(
+        modifier = modifier.padding(Dimens.normal),
+        verticalArrangement = Arrangement.spacedBy(Dimens.large)
     ) {
-        TextInputForm(
-            title = state.title,
-            description = state.description,
-            onUserInputChange = onIntent
-        )
-        CategoriesOverview(
-            categories = state.categories
-        )
-        if (state.exercises.isEmpty()) {
-            TrainingExercisesListPlaceholder(
-                onAddExerciseClicked = {},
-            )
-        } else {
-            TrainingExercisesList(
-                exercises = state.exercises,
-                modifier = Modifier.fillMaxWidth().weight(0.5f, fill = false),
-                onAddExerciseClicked = onAddExerciseClicked,
-                onExerciseDeleted = {},
+        item {
+            TextInputForm(
+                title = state.title,
+                description = state.description,
+                onUserInputChange = onIntent
             )
         }
-        TrainingPlanRestTime(
-            onShowRestTimePicker = { showRestTimePicker = true },
-            restTime = state.restTime
-        )
-        ConfirmButton(
-            text = stringResource(R.string.save_training_plan),
-            onClick = {},
-            isEnabled = state.isValid
-        )
+        item {
+            CategoriesOverview(
+                categories = state.categories
+            )
+        }
+        if (state.exercises.isEmpty()) {
+            item {
+                TrainingExercisesListPlaceholder(
+                    onAddExerciseClicked = onAddExerciseClicked,
+                )
+            }
+        } else {
+            trainingExercisesItems(
+                exercises = state.exercises,
+                onAddExerciseClicked = onAddExerciseClicked,
+                onIntent = onIntent,
+            )
+        }
+        item {
+            TrainingPlanRestTime(
+                onShowRestTimePicker = { showRestTimePicker = true },
+                restTime = state.restTime
+            )
+        }
+
+        item {
+            ConfirmButton(
+                text = stringResource(R.string.save_training_plan),
+                onClick = {},
+                isEnabled = state.isValid
+            )
+        }
     }
     if (showRestTimePicker) {
         RestTimeBottomSheet(
@@ -285,32 +295,25 @@ private fun TrainingExercisesListPlaceholder(
     }
 }
 
-@Composable
-private fun TrainingExercisesList(
+private fun LazyListScope.trainingExercisesItems(
     exercises: List<TrainingExercise>,
     onAddExerciseClicked: () -> Unit,
-    onExerciseDeleted: (TrainingExercise) -> Unit,
-    modifier: Modifier = Modifier,
+    onIntent: (TrainingPlanEditingIntent) -> Unit,
 ) {
-    LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(Dimens.normal)
-    ) {
-        item {
-            Text(stringResource(R.string.exercises_count, exercises.size))
-        }
-        itemsIndexed(exercises, key = { _, item -> item.id.toString() }) { index, exercise ->
-            TrainingExerciseItemWrapper(
-                exercise = exercise,
-                index = index,
-                onDismiss = { onExerciseDeleted(exercise) }
-            )
-        }
-        item {
-            AddExercisesButton(
-                onAddExerciseClicked = onAddExerciseClicked
-            )
-        }
+    item {
+        Text(stringResource(R.string.exercises_count, exercises.size))
+    }
+    itemsIndexed(exercises, key = { _, item -> item.id.toString() }) { index, exercise ->
+        TrainingExerciseItemWrapper(
+            exercise = exercise,
+            index = index,
+            onDismiss = { onIntent(TrainingPlanEditingIntent.TrainingExerciseRemoved(exercise)) }
+        )
+    }
+    item {
+        AddExercisesButton(
+            onAddExerciseClicked = onAddExerciseClicked
+        )
     }
 }
 
@@ -331,20 +334,7 @@ private fun LazyItemScope.TrainingExerciseItemWrapper(
                 fadeInSpec = tween(300),
                 fadeOutSpec = tween(300),
                 placementSpec = spring()
-            )
-            .pointerInput(Unit) {
-                detectDragGesturesAfterLongPress(
-                    onDragStart = {
-                        draggedExercise = exercise
-                    },
-                    onDrag = { change, _ ->
-                        change.consume()
-                    },
-                    onDragEnd = {
-                        draggedExercise = null
-                    }
-                )
-            },
+            ),
         backgroundContent = {
             Box(
                 modifier = Modifier
@@ -362,7 +352,23 @@ private fun LazyItemScope.TrainingExerciseItemWrapper(
             TrainingExerciseItem(
                 exercise = exercise,
                 index = index,
-                shape = shape
+                shape = shape,
+                dragIconModifier = Modifier.pointerInput(Unit) {
+                    detectDragGesturesAfterLongPress(
+                        onDragStart = {
+                            Timber.i("Drag start ${exercise.exercise.name}")
+                            draggedExercise = exercise
+                        },
+                        onDrag = { change, offset ->
+                            Timber.i("onDrag ${offset}")
+                            change.consume()
+                        },
+                        onDragEnd = {
+                            Timber.i("onDragEnd")
+                            draggedExercise = null
+                        }
+                    )
+                }
             )
         },
         onDismiss = { onDismiss() }
@@ -374,6 +380,7 @@ private fun TrainingExerciseItem(
     exercise: TrainingExercise,
     index: Int,
     shape: Shape,
+    dragIconModifier: Modifier,
     modifier: Modifier = Modifier
 ) {
     Card(modifier = modifier, shape = shape) {
@@ -389,7 +396,11 @@ private fun TrainingExerciseItem(
                 exercise = exercise,
                 modifier = Modifier.weight(1f)
             )
-            Icon(imageVector = Icons.Default.DragHandle, contentDescription = null)
+            Icon(
+                imageVector = Icons.Default.DragHandle,
+                contentDescription = null,
+                modifier = dragIconModifier
+            )
         }
     }
 }
@@ -501,16 +512,26 @@ private fun TrainingPlanRestTime(
             shape = RoundedCornerShape(Dimens.small)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = Dimens.normal),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = Dimens.normal),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(imageVector = Icons.Outlined.Timer, contentDescription = stringResource(R.string.rest_time_picker_icon))
+                Icon(
+                    imageVector = Icons.Outlined.Timer,
+                    contentDescription = stringResource(R.string.rest_time_picker_icon)
+                )
                 Text(
                     text = restTime.toString(),
-                    modifier = Modifier.weight(1f).padding(start = Dimens.large),
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = Dimens.large),
                     style = MaterialTheme.typography.titleLarge
                 )
-                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos, contentDescription = stringResource(R.string.rest_time_picker_icon))
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                    contentDescription = stringResource(R.string.rest_time_picker_icon)
+                )
             }
         }
     }

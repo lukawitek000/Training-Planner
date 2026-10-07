@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import kotlin.time.Duration
 
 class TrainingPlanEditorViewModel(
@@ -30,7 +31,10 @@ class TrainingPlanEditorViewModel(
 
     fun processIntent(intent: TrainingPlanEditingIntent) {
         uiState.update {
-            reducer.reduce(it, intent)
+            reducer.reduce(it, intent).also { result ->
+                Timber.i("Intent: $intent, processed.")
+                Timber.i("UiState: $result")
+            }
         }
     }
 }
@@ -45,4 +49,6 @@ sealed interface TrainingPlanEditingIntent {
     data class TitleChanged(val title: String): TrainingPlanEditingIntent
     data class DescriptionChanged(val description: String): TrainingPlanEditingIntent
     data class RestTimeChanged(val restTime: Duration): TrainingPlanEditingIntent
+    data class TrainingExerciseAdded(val trainingExercise: TrainingExercise): TrainingPlanEditingIntent
+    data class TrainingExerciseRemoved(val trainingExercise: TrainingExercise): TrainingPlanEditingIntent
 }

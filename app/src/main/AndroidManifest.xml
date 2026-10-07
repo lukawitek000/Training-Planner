@@ -9,7 +9,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_logo_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TrainingPlanner">
+        android:theme="@style/Theme.TrainingPlanner"
+        android:allowBackup="false"> <!-- just for the sake of testing on my device -->
 
         <meta-data
             android:name="com.google.android.gms.version"

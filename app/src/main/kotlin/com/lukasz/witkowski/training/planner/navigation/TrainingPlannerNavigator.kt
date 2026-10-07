@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.navigation
 import androidx.navigation3.runtime.NavBackStack
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import timber.log.Timber
 
 class TrainingPlannerNavigator(
     val backStack: NavBackStack<TrainingPlannerNavKey>
@@ -71,6 +72,15 @@ class TrainingPlannerNavigator(
 
     fun addTrainingExercises() {
         backStack.add(AddTrainingExercise)
+    }
+
+    fun returnToCreateTrainingPlan() {
+        while (backStack.last() != CreateTrainingPlan) {
+            backStack.removeLastOrNull() ?: run {
+                Timber.e("Unknown back stack state $backStack")
+                return
+            }
+        }
     }
 
     fun isOnMainScreen(): Boolean = isTrainingPlansList() || isExerciseList()

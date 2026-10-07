@@ -104,15 +104,12 @@ private fun TrainingExerciseParameters(
                 colors = CardDefaults.cardColors(
                     containerColor = if (isSelected) MaterialTheme.colorScheme.secondary else Color.Unspecified
                 ),
-                modifier = Modifier.clickable {
-                    onRecommendationSelected(it.parameters)
-                }
             ) {
                 RecommendedParametersCardHeader(
                     isExpandable = false,
                     isExpanded = false,
                     recommendation = it,
-                    toggleExpansion = {},
+                    toggleExpansion = { onRecommendationSelected(it.parameters) },
                     modifier = Modifier.padding(Dimens.large)
                 )
             }

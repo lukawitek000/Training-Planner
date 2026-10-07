@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TrainingPlannerTheme {
-                TrainingPlannerApp(ExercisesList)
+                TrainingPlannerApp()
             }
         }
     }

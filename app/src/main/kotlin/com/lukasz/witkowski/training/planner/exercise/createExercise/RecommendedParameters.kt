@@ -245,7 +245,7 @@ fun RecommendedParametersCardHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(enabled = isExpandable) { toggleExpansion() }
+            .clickable { toggleExpansion() }
             .padding(start = Dimens.normal),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Dimens.normal)

@@ -11,6 +11,9 @@ import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.runtime.result.LocalResultEventBus
+import androidx.navigation3.runtime.result.ResultEffect
+import androidx.navigation3.runtime.result.rememberResultEventBusNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
@@ -19,8 +22,10 @@ import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseScree
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsScreen
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.training.details.TrainingPlanDetailsScreen
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.editor.AddTrainingExerciseScreen
 import com.lukasz.witkowski.training.planner.training.editor.TrainingExerciseConfigurationScreen
+import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditingIntent
 import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorScreen
 import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorViewModel
 import com.lukasz.witkowski.training.planner.training.list.TrainingsScreen
@@ -28,6 +33,7 @@ import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSe
 import kotlinx.serialization.serializer
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
+import timber.log.Timber
 
 @Composable
 fun Navigation(
@@ -37,7 +43,6 @@ fun Navigation(
     val dialogStrategy = remember {
         DialogSceneStrategy<TrainingPlannerNavKey>()
     }
-    val entryOwnerRegistry = remember { NavEntryOwnerRegistry() }
     NavDisplay(
         modifier = modifier,
         backStack = navigator.backStack,
@@ -45,6 +50,7 @@ fun Navigation(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator(),
             rememberLoggingNavDecorator(),
+            rememberResultEventBusNavEntryDecorator()
         ),
         sceneStrategies = listOf(dialogStrategy),
         entryProvider = entryProvider {
@@ -55,21 +61,16 @@ fun Navigation(
                 )
             }
 
-            entry<CreateTrainingPlan> { key ->
-                val owner = checkNotNull(LocalViewModelStoreOwner.current)
-                DisposableEffect(key) {
-                    entryOwnerRegistry.register(key, owner)
-                    onDispose {
-                        // Crucial: Only remove if Step1 is actually gone from the backstack!
-                        if (!navigator.isCreatingOrEditingTrainingPlan()) {
-                            entryOwnerRegistry.remove(key)
-                        }
-                    }
-                }
+            entry<CreateTrainingPlan> {
                 val trainingPlanEditorViewModel: TrainingPlanEditorViewModel = koinViewModel()
+                ResultEffect<TrainingExercise> { trainingExercise ->
+                    Timber.i("TrainingExercise received $trainingExercise")
+                    trainingPlanEditorViewModel.processIntent(
+                        TrainingPlanEditingIntent.TrainingExerciseAdded(trainingExercise)
+                    )
+                }
                 TrainingPlanEditorScreen(
                     viewModel = trainingPlanEditorViewModel,
-                    navigateBack = { navigator.goBack() },
                     onAddExerciseClicked = { navigator.addTrainingExercises() }
                 )
 
@@ -83,9 +84,14 @@ fun Navigation(
             }
 
             entry<TrainingExerciseConfiguration> { key ->
+                val resultBus = LocalResultEventBus.current
                 TrainingExerciseConfigurationScreen(
                     viewModel = koinViewModel { parametersOf(key.exerciseId) },
-                    onExerciseConfigured = {}
+                    onExerciseConfigured = { trainingExercise ->
+                        Timber.i("TrainingExercise configured $trainingExercise")
+                        resultBus.sendResult(trainingExercise)
+                        navigator.returnToCreateTrainingPlan()
+                    }
                 )
             }
 
