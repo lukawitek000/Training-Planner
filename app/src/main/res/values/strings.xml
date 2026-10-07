@@ -26,6 +26,7 @@
 
     <!-- Recommendations -->
     <string name="recommended_parameters">Recommended parameters *</string>
+    <string name="recommended_parameters_label">Recommended parameters</string>
     <string name="recommended_parameters_description">Suggested sets, reps, rest time and weight for different experience level. These are default recommendations.</string>
     <string name="not_set">Not set</string>
     <string name="recommendation_overview">%1$d x %2$d &#183; %3$d s &#183; %4$d kg</string>
@@ -53,6 +54,9 @@
 
     <!-- Add exercises -->
     <string name="add_exercise_icon">Add exercise to training plan</string>
+    <string name="set_parameters">Set parameters *</string>
+    <string name="set_parameters_description">Set parameters manually, or select one from the recommendations</string>
+    <string name="add_exercise">Add exercise</string>
 
     <!-- Common -->
     <string name="edit">Edit</string>

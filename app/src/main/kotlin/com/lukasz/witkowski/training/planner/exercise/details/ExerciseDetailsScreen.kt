@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.exercise.details
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -44,7 +45,12 @@ fun ExerciseDetailsScreen(
 @Composable
 fun ExerciseDetailsScreenContent(
     state: ExerciseDetailsState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    footer: @Composable ColumnScope.(ExerciseDetails) -> Unit = { details ->
+        RecommendedParametersOverview(
+            recommendations = details.recommendations
+        )
+    }
 ) {
     when (state) {
         ExerciseDetailsState.Loading -> {
@@ -65,6 +71,7 @@ fun ExerciseDetailsScreenContent(
         is ExerciseDetailsState.Success -> {
             ExerciseDetails(
                 details = state.details,
+                footer = footer,
                 modifier = modifier
             )
         }
@@ -75,6 +82,7 @@ fun ExerciseDetailsScreenContent(
 @Composable
 private fun ExerciseDetails(
     details: ExerciseDetails,
+    footer: @Composable ColumnScope.(ExerciseDetails) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val exercise = details.exercise
@@ -99,9 +107,7 @@ private fun ExerciseDetails(
             )
             Text(text = exercise.description)
         }
-        RecommendedParametersOverview(
-            recommendations = details.recommendations
-        )
+        footer(details)
     }
 }
 
