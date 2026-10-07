@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -99,6 +100,9 @@ import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
 import com.lukasz.witkowski.training.planner.ui.theme.LightGrey
 import com.lukasz.witkowski.training.planner.ui.theme.MediumGrey
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.ReorderableLazyListState
+import sh.calvin.reorderable.rememberReorderableLazyListState
 import timber.log.Timber
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -127,8 +131,18 @@ private fun TrainingPlanEditorScreenContent(
     modifier: Modifier = Modifier,
 ) {
     var showRestTimePicker by remember { mutableStateOf(false) }
+    val lazyListState = rememberLazyListState()
+    val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
+        val fromIndex = state.exercises.indexOfFirst { it.id.toString() == from.key }
+        val toIndex = state.exercises.indexOfFirst { it.id.toString() == to.key }
+        if (fromIndex != -1 && toIndex != -1) {
+            onIntent(TrainingPlanEditingIntent.TrainingExercisesReordered(fromIndex, toIndex))
+        }
+    }
+
     LazyColumn(
         modifier = modifier.padding(Dimens.normal),
+        state = lazyListState,
         verticalArrangement = Arrangement.spacedBy(Dimens.large)
     ) {
         item {
@@ -154,6 +168,7 @@ private fun TrainingPlanEditorScreenContent(
                 exercises = state.exercises,
                 onAddExerciseClicked = onAddExerciseClicked,
                 onIntent = onIntent,
+                reorderableState = reorderableState,
             )
         }
         item {
@@ -299,6 +314,7 @@ private fun LazyListScope.trainingExercisesItems(
     exercises: List<TrainingExercise>,
     onAddExerciseClicked: () -> Unit,
     onIntent: (TrainingPlanEditingIntent) -> Unit,
+    reorderableState: ReorderableLazyListState,
 ) {
     item {
         Text(stringResource(R.string.exercises_count, exercises.size))
@@ -307,7 +323,8 @@ private fun LazyListScope.trainingExercisesItems(
         TrainingExerciseItemWrapper(
             exercise = exercise,
             index = index,
-            onDismiss = { onIntent(TrainingPlanEditingIntent.TrainingExerciseRemoved(exercise)) }
+            onDismiss = { onIntent(TrainingPlanEditingIntent.TrainingExerciseRemoved(exercise)) },
+            reorderableState = reorderableState
         )
     }
     item {
@@ -322,57 +339,45 @@ private fun LazyItemScope.TrainingExerciseItemWrapper(
     exercise: TrainingExercise,
     index: Int,
     onDismiss: () -> Unit,
+    reorderableState: ReorderableLazyListState,
     modifier: Modifier = Modifier,
 ) {
-    var draggedExercise by remember { mutableStateOf<TrainingExercise?>(null) }
-    val state = rememberSwipeToDismissBoxState()
-    val shape = RoundedCornerShape(Dimens.large)
-    SwipeToDismissBox(
-        state = state,
-        modifier = modifier
-            .animateItem(
-                fadeInSpec = tween(300),
-                fadeOutSpec = tween(300),
-                placementSpec = spring()
-            ),
-        backgroundContent = {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Red, shape = shape),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = null,
-                )
-            }
-        },
-        content = {
-            TrainingExerciseItem(
-                exercise = exercise,
-                index = index,
-                shape = shape,
-                dragIconModifier = Modifier.pointerInput(Unit) {
-                    detectDragGesturesAfterLongPress(
-                        onDragStart = {
-                            Timber.i("Drag start ${exercise.exercise.name}")
-                            draggedExercise = exercise
-                        },
-                        onDrag = { change, offset ->
-                            Timber.i("onDrag ${offset}")
-                            change.consume()
-                        },
-                        onDragEnd = {
-                            Timber.i("onDragEnd")
-                            draggedExercise = null
-                        }
+    ReorderableItem(reorderableState, key = exercise.id.toString()) {
+        val dragIconModifier = Modifier.draggableHandle()
+        val state = rememberSwipeToDismissBoxState()
+        val shape = RoundedCornerShape(Dimens.large)
+        SwipeToDismissBox(
+            state = state,
+            modifier = modifier
+                .animateItem(
+                    fadeInSpec = tween(300),
+                    fadeOutSpec = tween(300),
+                    placementSpec = spring()
+                ),
+            backgroundContent = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Red, shape = shape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = null,
                     )
                 }
-            )
-        },
-        onDismiss = { onDismiss() }
-    )
+            },
+            content = {
+                TrainingExerciseItem(
+                    exercise = exercise,
+                    index = index,
+                    shape = shape,
+                    dragIconModifier = dragIconModifier
+                )
+            },
+            onDismiss = { onDismiss() }
+        )
+    }
 }
 
 @Composable

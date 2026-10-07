@@ -51,4 +51,5 @@ sealed interface TrainingPlanEditingIntent {
     data class RestTimeChanged(val restTime: Duration): TrainingPlanEditingIntent
     data class TrainingExerciseAdded(val trainingExercise: TrainingExercise): TrainingPlanEditingIntent
     data class TrainingExerciseRemoved(val trainingExercise: TrainingExercise): TrainingPlanEditingIntent
+    data class TrainingExercisesReordered(val fromIndex: Int, val toIndex: Int): TrainingPlanEditingIntent
 }

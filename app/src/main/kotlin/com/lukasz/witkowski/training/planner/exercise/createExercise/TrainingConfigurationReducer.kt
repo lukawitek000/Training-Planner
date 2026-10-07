@@ -23,6 +23,12 @@ class TrainingConfigurationReducer {
             is TrainingPlanEditingIntent.TrainingExerciseRemoved -> currentState.copy(
                 exercises = currentState.exercises - intent.trainingExercise
             )
+            is TrainingPlanEditingIntent.TrainingExercisesReordered -> {
+                val exercises = currentState.exercises.toMutableList()
+                val item = exercises.removeAt(intent.fromIndex)
+                exercises.add(intent.toIndex, item)
+                currentState.copy(exercises = exercises)
+            }
         }
     }
 }
