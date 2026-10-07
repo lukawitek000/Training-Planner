@@ -96,18 +96,19 @@ fun Navigation(
                 )
             }
 
+            entry<TrainingPlanDetails> { key ->
+                TrainingPlanDetailsScreen(
+                    viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
+                )
+            }
+
             exerciseEntryBuilder(navigator)
 
 //            trainingGraph(
 //                navigateUp = { backStack.removeLastOrNull() },
 //                navigateToPickExercise = { backStack.add(PickExercise) }
 //            )
-            entry<TrainingPlanDetails> {
-                TrainingPlanDetailsScreen(
-                    viewModel = koinViewModel(),
-                    navigateBack = { navigator.goBack() }
-                )
-            }
+
             entry<TrainingSession> {
                 TrainingSessionScreen(
                     viewModel = koinViewModel(),

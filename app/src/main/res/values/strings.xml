@@ -53,6 +53,16 @@
     <string name="exercises_count">Exercises (%1$d) *</string>
     <string name="failed_to_save_training_plan">Failed to save training plan. Try again.</string>
 
+
+    <!-- Training Plan Details -->
+    <string name="training_plan_details">Training Plan Details</string>
+    <string name="exercises_tab_title">Exercises</string>
+    <string name="previous_sessions_tab_title">Previous sessions</string>
+    <string name="no_previous_sessions">No previous sessions available yet</string>
+    <string name="training_plan_not_found">Training Plan not found</string>
+    <string name="training_plan_loading_error">Failed to load Training Plan</string>
+    <string name="loading_training_plan">Loading training plan…</string>
+
     <!-- Add exercises -->
     <string name="add_exercise_icon">Add exercise to training plan</string>
     <string name="set_parameters">Set parameters *</string>
@@ -136,5 +146,4 @@
     <string name="undo">Undo</string>
     <string name="exercise">Exercise</string>
     <string name="deleted">deleted</string>
-    <string name="saving_exercise">Saving exercise - %1$s</string>
-</resources>
+    <string name="saving_exercise">Saving exercise - %1$s</string></resources>

@@ -403,7 +403,7 @@ private fun TrainingExerciseItem(
 }
 
 @Composable
-private fun TrainingExercisePosition(
+fun TrainingExercisePosition(
     position: Int,
     modifier: Modifier = Modifier,
 ) {
@@ -432,7 +432,7 @@ private fun TrainingExercisePosition(
 }
 
 @Composable
-private fun TrainingExerciseOverview(
+fun TrainingExerciseOverview(
     exercise: TrainingExercise,
     modifier: Modifier = Modifier,
 ) {

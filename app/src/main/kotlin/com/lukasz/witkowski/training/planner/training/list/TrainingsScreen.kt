@@ -191,7 +191,7 @@ private fun TrainingPlanOverviewCard(
 }
 
 @Composable
-private fun TrainingPlanDateInfo(
+fun TrainingPlanDateInfo(
     instant: Instant,
     icon: ImageVector,
     @StringRes stringRes: Int,

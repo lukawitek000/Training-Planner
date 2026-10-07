@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.ui.components
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -7,13 +8,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.lukasz.witkowski.training.planner.ui.theme.Dimens
 
 @Composable
 fun ConfirmButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isEnabled: Boolean = true
+    isEnabled: Boolean = true,
+    leadingIcon: (@Composable () -> Unit)? = null
 ) {
     Button(
         onClick = onClick,
@@ -22,8 +25,10 @@ fun ConfirmButton(
             containerColor = MaterialTheme.colorScheme.primary,
             contentColor = MaterialTheme.colorScheme.onPrimary,
         ),
-        enabled = isEnabled
+        enabled = isEnabled,
+        contentPadding = PaddingValues(horizontal = Dimens.normal, vertical = Dimens.large)
     ) {
+        leadingIcon?.invoke()
         Text(text)
     }
 

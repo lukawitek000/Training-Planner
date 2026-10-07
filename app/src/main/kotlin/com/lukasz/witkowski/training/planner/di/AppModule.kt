@@ -42,8 +42,13 @@ val appModule = module {
 
     viewModel<TrainingsListViewModel>()
     viewModel<TrainingPlanEditorViewModel>()
-    viewModel<TrainingPlanDetailsViewModel>()
     viewModel<TrainingSessionViewModel>()
+    viewModel { params ->
+        TrainingPlanDetailsViewModel(
+            trainingPlanService = get(),
+            trainingPlanId = params.get()
+        )
+    }
     viewModel { params ->
         TrainingExerciseConfigurationViewModel(
             service = get(),

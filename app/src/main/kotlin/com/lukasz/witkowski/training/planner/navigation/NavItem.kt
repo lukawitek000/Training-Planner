@@ -119,6 +119,8 @@ data class TopBarConfig(
 sealed interface TopBarAction {
     data class EditExercise(val id: ExerciseId) : TopBarAction
     data class DeleteExercise(val id: ExerciseId) : TopBarAction
+    data class EditTrainingPlan(val id: TrainingPlanId) : TopBarAction
+    data class DeleteTrainingPlan(val id: TrainingPlanId) : TopBarAction
 }
 
 sealed interface TopBarMenuItem {
@@ -259,8 +261,21 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
 
         is TrainingPlanDetails -> UiConfig(
             topBarConfig = TopBarConfig(
-                title = context.getString(R.string.training_statistics),
-                hasBackArrow = true
+                title = context.getString(R.string.training_plan_details),
+                hasBackArrow = true,
+                menuItems = listOf(
+                    TopBarMenuItem.OverflowItem(
+                        icon = Icons.Default.Edit,
+                        text = context.getString(R.string.edit),
+                        action = TopBarAction.EditTrainingPlan(key.trainingPlanId)
+                    ),
+                    TopBarMenuItem.OverflowItem(
+                        icon = Icons.Default.Delete,
+                        text = context.getString(R.string.delete),
+                        action = TopBarAction.DeleteTrainingPlan(key.trainingPlanId),
+                        color = Color.Red
+                    )
+                )
             )
         )
 
