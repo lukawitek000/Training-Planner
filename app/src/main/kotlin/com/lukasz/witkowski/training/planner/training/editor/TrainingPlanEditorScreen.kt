@@ -108,13 +108,14 @@ fun TrainingPlanEditorScreen(
     modifier: Modifier = Modifier,
     viewModel: TrainingPlanEditorViewModel,
     navigateBack: () -> Unit,
-    onAddExerciseClicked: () -> Unit
+    onAddExerciseClicked: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
     TrainingPlanEditorScreenContent(
         state = state,
         onIntent = viewModel::processIntent,
-        modifier = modifier
+        onAddExerciseClicked = onAddExerciseClicked,
+        modifier = modifier,
     )
 }
 
@@ -122,6 +123,7 @@ fun TrainingPlanEditorScreen(
 private fun TrainingPlanEditorScreenContent(
     state: TrainingPlanConfiguration,
     onIntent: (TrainingPlanEditingIntent) -> Unit,
+    onAddExerciseClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showRestTimePicker by remember { mutableStateOf(false) }
@@ -145,7 +147,7 @@ private fun TrainingPlanEditorScreenContent(
             TrainingExercisesList(
                 exercises = state.exercises,
                 modifier = Modifier.fillMaxWidth().weight(0.5f, fill = false),
-                onAddExerciseClicked = {},
+                onAddExerciseClicked = onAddExerciseClicked,
                 onExerciseDeleted = {},
             )
         }
@@ -155,7 +157,8 @@ private fun TrainingPlanEditorScreenContent(
         )
         ConfirmButton(
             text = stringResource(R.string.save_training_plan),
-            onClick = {}
+            onClick = {},
+            isEnabled = state.isValid
         )
     }
     if (showRestTimePicker) {
@@ -523,7 +526,8 @@ private fun TrainingPlanEditorScreenContentPreview() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                onIntent = {}
+                onIntent = {},
+                onAddExerciseClicked = {}
             )
         }
     }
@@ -539,7 +543,8 @@ private fun TrainingPlanEditorScreenContentEmptyExercisesPreview() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddingValues),
-                onIntent = {}
+                onIntent = {},
+                onAddExerciseClicked = {}
             )
         }
     }

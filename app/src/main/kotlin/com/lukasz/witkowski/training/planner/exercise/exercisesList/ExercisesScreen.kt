@@ -71,6 +71,7 @@ fun ExercisesScreenContent(
     onSearchQueryChanged: (String) -> Unit,
     onExerciseClicked: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
+    itemTrailingIcon: (@Composable (ExerciseId) -> Unit)? = null
 ) {
     Column(modifier = modifier) {
         SearchHeader(
@@ -84,6 +85,7 @@ fun ExercisesScreenContent(
             ExercisesList(
                 exercisesList = exercisesList,
                 onExerciseClicked = onExerciseClicked,
+                itemTrailingIcon = itemTrailingIcon,
             )
         } else {
             NoDataMessage(
@@ -103,6 +105,7 @@ private fun ExercisesList(
     modifier: Modifier = Modifier,
     exercisesList: LazyPagingItems<Exercise2>,
     onExerciseClicked: (ExerciseId) -> Unit,
+    itemTrailingIcon: (@Composable (ExerciseId) -> Unit)? = null
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         LazyColumn(
@@ -117,6 +120,7 @@ private fun ExercisesList(
                     ExerciseListItemContent(
                         exercise = exercise,
                         onClick = { onExerciseClicked(exercise.id) },
+                        itemTrailingIcon = itemTrailingIcon,
                         modifier = Modifier.testTag("ExerciseItem-${exercise.name}")
                     )
                 }
@@ -130,6 +134,7 @@ fun ExerciseListItemContent(
     exercise: Exercise2,
     onClick: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
+    itemTrailingIcon: (@Composable (ExerciseId) -> Unit)? = null
 ) {
     val imageDescription = stringResource(id = R.string.image_description, exercise.name)
     ListCardItem(
@@ -147,9 +152,12 @@ fun ExerciseListItemContent(
             )
             Spacer(modifier = Modifier.width(Dimens.large))
             ExerciseInformation(
-                modifier = Modifier,
+                modifier = Modifier.weight(1f),
                 exercise = exercise,
             )
+            itemTrailingIcon?.let { icon ->
+                icon(exercise.id)
+            }
         }
     }
 }
@@ -173,17 +181,6 @@ private fun ExerciseInformation(
             categories = categories.map { it.name },
             modifier = Modifier.fillMaxWidth(),
         )
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Dimens.normal)
-        ) {
-            categories.forEach { category ->
-                CategoryChip(
-                    modifier = Modifier,
-                    category = category,
-                )
-            }
-        }
     }
 }
 

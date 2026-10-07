@@ -15,7 +15,7 @@ data class Recommendation(
     val level: RecommendationLevel,
     val parameters: RecommendedParameters = RecommendedParameters(),
 )
-
+// TODO rename to use it not just for recommendation
 data class RecommendedParameters(
     val sets: Int? = null,
     val reps: Int? = null,

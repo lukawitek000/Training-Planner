@@ -9,6 +9,7 @@ import com.lukasz.witkowski.training.planner.statistics.di.statisticsModule
 import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorViewModel
 import com.lukasz.witkowski.training.planner.training.di.trainingModule
 import com.lukasz.witkowski.training.planner.training.details.TrainingPlanDetailsViewModel
+import com.lukasz.witkowski.training.planner.training.editor.TrainingExerciseConfigurationViewModel
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionViewModel
 import com.lukasz.witkowski.training.planner.training.list.TrainingsListViewModel
 import org.koin.core.module.dsl.viewModel
@@ -43,4 +44,10 @@ val appModule = module {
     viewModel<TrainingPlanEditorViewModel>()
     viewModel<TrainingPlanDetailsViewModel>()
     viewModel<TrainingSessionViewModel>()
+    viewModel { params ->
+        TrainingExerciseConfigurationViewModel(
+            service = get(),
+            exerciseId = params.get()
+        )
+    }
 }

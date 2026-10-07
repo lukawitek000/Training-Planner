@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails as DomainExerciseDetails
 
-class ExerciseDetailsViewModel(
+open class ExerciseDetailsViewModel(
     private val service: ExerciseService,
     private val exerciseId: ExerciseId,
 ) : ViewModel() {

@@ -52,14 +52,22 @@ data class DeleteExercise(
     override val exerciseId: ExerciseId,
 ) : TrainingPlannerNavKey, ExerciseIdRoute
 
-@Serializable
-data object PickExercise : TrainingPlannerNavKey
 
 @Serializable
 data object TrainingPlansList : TrainingPlannerNavKey
 
 @Serializable
 data object CreateTrainingPlan : TrainingPlannerNavKey
+
+@Serializable
+data object AddTrainingExercise : TrainingPlannerNavKey
+
+
+@Serializable
+data class TrainingExerciseConfiguration(
+    @Serializable(with = ExerciseIdSerializer::class)
+    override val exerciseId: ExerciseId,
+) : TrainingPlannerNavKey, ExerciseIdRoute
 
 @Serializable
 data class TrainingPlanDetails(
@@ -72,8 +80,6 @@ data class TrainingSession(
     @Serializable(with = TrainingPlanIdSerializer::class)
     val trainingPlanId: TrainingPlanId
 ) : TrainingPlannerNavKey {}
-
-
 
 
 object TrainingPlanIdSerializer : KSerializer<TrainingPlanId> {
@@ -116,17 +122,19 @@ sealed interface TopBarAction {
 }
 
 sealed interface TopBarMenuItem {
-    val action : TopBarAction
+    val action: TopBarAction
+
     data class IconItem(
         val icon: ImageVector,
         override val action: TopBarAction
-    ): TopBarMenuItem
+    ) : TopBarMenuItem
+
     data class OverflowItem(
         val icon: ImageVector,
         val text: String,
         override val action: TopBarAction,
         val color: Color? = null,
-    ): TopBarMenuItem
+    ) : TopBarMenuItem
 }
 
 data class FabConfig(
@@ -235,7 +243,6 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
         )
 
 
-
         is CreateTrainingPlan -> UiConfig(
             topBarConfig = TopBarConfig(
                 title = context.getString(R.string.create_training),
@@ -243,7 +250,7 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
             )
         )
 
-        is PickExercise -> UiConfig(
+        is AddTrainingExercise -> UiConfig(
             topBarConfig = TopBarConfig(
                 title = context.getString(R.string.search_exercise),
                 hasBackArrow = true

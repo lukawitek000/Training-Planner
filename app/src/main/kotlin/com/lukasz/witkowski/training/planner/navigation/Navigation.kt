@@ -19,6 +19,8 @@ import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseScree
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsScreen
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
 import com.lukasz.witkowski.training.planner.training.details.TrainingPlanDetailsScreen
+import com.lukasz.witkowski.training.planner.training.editor.AddTrainingExerciseScreen
+import com.lukasz.witkowski.training.planner.training.editor.TrainingExerciseConfigurationScreen
 import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorScreen
 import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorViewModel
 import com.lukasz.witkowski.training.planner.training.list.TrainingsScreen
@@ -68,9 +70,23 @@ fun Navigation(
                 TrainingPlanEditorScreen(
                     viewModel = trainingPlanEditorViewModel,
                     navigateBack = { navigator.goBack() },
-                    onAddExerciseClicked = { TODO() }
+                    onAddExerciseClicked = { navigator.addTrainingExercises() }
                 )
 
+            }
+
+            entry<AddTrainingExercise> {
+                AddTrainingExerciseScreen(
+                    viewModel = koinViewModel(),
+                    onExerciseSelected = { navigator.configureTrainingExercise(it) }
+                )
+            }
+
+            entry<TrainingExerciseConfiguration> { key ->
+                TrainingExerciseConfigurationScreen(
+                    viewModel = koinViewModel { parametersOf(key.exerciseId) },
+                    onExerciseConfigured = {}
+                )
             }
 
             exerciseEntryBuilder(navigator)

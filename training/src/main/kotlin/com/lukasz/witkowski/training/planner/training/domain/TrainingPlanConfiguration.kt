@@ -11,4 +11,6 @@ data class TrainingPlanConfiguration(
     val categories = exercises.flatMap {
         it.exercise.categories
     }
+
+    val isValid = title.isNotEmpty() && exercises.isNotEmpty()
 }
