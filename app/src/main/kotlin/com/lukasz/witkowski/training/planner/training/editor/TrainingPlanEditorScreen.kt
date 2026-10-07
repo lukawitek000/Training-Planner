@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.editor
 
+import android.widget.Toast
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -40,6 +41,7 @@ import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +53,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -85,7 +88,24 @@ fun TrainingPlanEditorScreen(
     modifier: Modifier = Modifier,
     viewModel: TrainingPlanEditorViewModel,
     onAddExerciseClicked: () -> Unit,
+    navigateBack: () -> Unit
 ) {
+    val context = LocalContext.current
+    val failureMessage = stringResource(R.string.failed_to_save_training_plan)
+    LaunchedEffect(Unit) {
+        viewModel.savingResult.collect { result ->
+            when (result) {
+                is SavingResult.Success -> navigateBack()
+                is SavingResult.Failure -> {
+                    Toast.makeText(
+                        context,
+                        failureMessage,
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
     val state by viewModel.uiState.collectAsState()
     TrainingPlanEditorScreenContent(
         state = state,
@@ -153,7 +173,7 @@ private fun TrainingPlanEditorScreenContent(
         item {
             ConfirmButton(
                 text = stringResource(R.string.save_training_plan),
-                onClick = {},
+                onClick = { onIntent(TrainingPlanEditingIntent.SaveTrainingPlan) },
                 isEnabled = state.isValid
             )
         }

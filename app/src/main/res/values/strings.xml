@@ -51,6 +51,7 @@
     <string name="plan_categories_caption">Will be derived from selected exercises</string>
     <string name="no_exercises_yet">No exercises yet</string>
     <string name="exercises_count">Exercises (%1$d) *</string>
+    <string name="failed_to_save_training_plan">Failed to save training plan. Try again.</string>
 
     <!-- Add exercises -->
     <string name="add_exercise_icon">Add exercise to training plan</string>

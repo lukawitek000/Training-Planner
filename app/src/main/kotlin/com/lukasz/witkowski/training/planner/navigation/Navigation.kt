@@ -71,7 +71,8 @@ fun Navigation(
                 }
                 TrainingPlanEditorScreen(
                     viewModel = trainingPlanEditorViewModel,
-                    onAddExerciseClicked = { navigator.addTrainingExercises() }
+                    onAddExerciseClicked = { navigator.addTrainingExercises() },
+                    navigateBack = { navigator.goBack() }
                 )
 
             }

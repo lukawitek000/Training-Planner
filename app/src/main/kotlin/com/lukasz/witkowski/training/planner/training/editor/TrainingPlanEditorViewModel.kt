@@ -8,8 +8,11 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exerci
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.consumeAsFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -30,27 +33,48 @@ class TrainingPlanEditorViewModel(
     val uiState: StateFlow<TrainingPlanConfiguration>
         field = MutableStateFlow(emptyConfiguration)
 
+    private val _savingResult = Channel<SavingResult>()
+    val savingResult = _savingResult.receiveAsFlow()
+
     fun processIntent(intent: TrainingPlanEditingIntent) {
-        uiState.update {
-            reducer.reduce(it, intent).also { result ->
-                Timber.i("Intent: $intent, processed.")
-                Timber.i("UiState: $result")
-            }
+        if (intent == TrainingPlanEditingIntent.SaveTrainingPlan) {
+            saveTrainingPlan()
+        } else {
+            uiState.update { reducer.reduce(it, intent) }
+        }
+    }
+
+    private fun saveTrainingPlan() {
+        viewModelScope.launch {
+            trainingPlanService.saveTrainingPlan(uiState.value)
+                .onSuccess {
+                    Timber.w("Training plan saved: $it")
+                    _savingResult.send(SavingResult.Success)
+                }.onFailure {
+                    Timber.w("Failed to save training plan: ${it.message}")
+                    _savingResult.send(SavingResult.Failure(it.message))
+                }
         }
     }
 }
 
-sealed interface TrainingPlanEditorUiState {
-    data class Editing(
-        val configuration: TrainingPlanConfiguration,
-    ): TrainingPlanEditorUiState
+sealed interface SavingResult {
+    data object Success : SavingResult
+    data class Failure(val message: String?) : SavingResult
 }
 
 sealed interface TrainingPlanEditingIntent {
-    data class TitleChanged(val title: String): TrainingPlanEditingIntent
-    data class DescriptionChanged(val description: String): TrainingPlanEditingIntent
-    data class RestTimeChanged(val restTime: Duration): TrainingPlanEditingIntent
-    data class TrainingExerciseAdded(val trainingExercise: TrainingExercise): TrainingPlanEditingIntent
-    data class TrainingExerciseRemoved(val trainingExercise: TrainingExercise): TrainingPlanEditingIntent
-    data class TrainingExercisesReordered(val fromIndex: Int, val toIndex: Int): TrainingPlanEditingIntent
+    data class TitleChanged(val title: String) : TrainingPlanEditingIntent
+    data class DescriptionChanged(val description: String) : TrainingPlanEditingIntent
+    data class RestTimeChanged(val restTime: Duration) : TrainingPlanEditingIntent
+    data class TrainingExerciseAdded(val trainingExercise: TrainingExercise) :
+        TrainingPlanEditingIntent
+
+    data class TrainingExerciseRemoved(val trainingExercise: TrainingExercise) :
+        TrainingPlanEditingIntent
+
+    data class TrainingExercisesReordered(val fromIndex: Int, val toIndex: Int) :
+        TrainingPlanEditingIntent
+
+    data object SaveTrainingPlan : TrainingPlanEditingIntent
 }

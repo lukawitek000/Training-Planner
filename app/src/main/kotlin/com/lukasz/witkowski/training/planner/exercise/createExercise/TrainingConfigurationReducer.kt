@@ -29,6 +29,7 @@ class TrainingConfigurationReducer {
                 exercises.add(intent.toIndex, item)
                 currentState.copy(exercises = exercises)
             }
+            else -> throw IllegalStateException("Unexpected intent: $intent")
         }
     }
 }
