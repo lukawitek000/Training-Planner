@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 class TrainingPlanEditorViewModel(
     private val trainingPlanService: TrainingPlanService
@@ -23,7 +24,7 @@ class TrainingPlanEditorViewModel(
         title = "",
         description = "",
         exercises = emptyList(),
-        restTime = Duration.ZERO
+        restTime = 90.seconds
     )
 
     val uiState: StateFlow<TrainingPlanConfiguration>

@@ -42,6 +42,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -58,6 +59,7 @@ import com.lukasz.witkowski.training.planner.ui.theme.Dimens
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import timber.log.Timber
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -239,6 +241,7 @@ private fun CustomTimePicker(
                 initialItem = customRestTime.minutes.intValue,
                 formatText = { "$it" },
                 onItemSelected = {
+                    Timber.i("Minutes item selected $it")
                     customRestTime.minutes.intValue = it
                 }
             )
@@ -252,6 +255,7 @@ private fun CustomTimePicker(
                 initialItem = customRestTime.seconds.intValue,
                 formatText = { "%02d".format(it) },
                 onItemSelected = {
+                    Timber.i("Seconds item selected $it")
                     customRestTime.seconds.intValue = it
                 }
             )
@@ -310,13 +314,13 @@ private fun <T> PickerWheelColumn(
     }
 
     // Emit selection when scrolling halts
+    val currentOnItemSelected by rememberUpdatedState(onItemSelected)
     LaunchedEffect(listState) {
-        snapshotFlow { listState.isScrollInProgress }
-            .filter { !it }
+        snapshotFlow { currentIndex }
             .distinctUntilChanged()
             .collect {
                 if (currentIndex in items.indices) {
-                    onItemSelected(items[currentIndex])
+                    currentOnItemSelected(items[currentIndex])
                 }
             }
     }
