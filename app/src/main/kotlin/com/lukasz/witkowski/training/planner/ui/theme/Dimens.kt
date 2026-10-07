@@ -5,8 +5,10 @@ import androidx.compose.ui.unit.dp
 object Dimens {
     val xsmall = 2.dp
     val small = 4.dp
+    val sligthlySmall = 6.dp
     val normal = 8.dp
     val large = 16.dp
+    val slightlyLarge = 24.dp
     val xlarge = 32.dp
 
     val imagePlaceholderSize = 64.dp

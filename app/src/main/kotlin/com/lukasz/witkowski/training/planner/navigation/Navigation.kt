@@ -21,6 +21,7 @@ import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExercis
 import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsScreen
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
+import com.lukasz.witkowski.training.planner.training.delete.DeleteTrainingPlanScreen
 import com.lukasz.witkowski.training.planner.training.details.TrainingPlanDetailsScreen
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.editor.AddTrainingExerciseScreen
@@ -99,6 +100,20 @@ fun Navigation(
             entry<TrainingPlanDetails> { key ->
                 TrainingPlanDetailsScreen(
                     viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
+                )
+            }
+
+            entry<DeleteTrainingPlan>(
+                metadata = DialogSceneStrategy.dialog()
+            ) { key ->
+                DeleteTrainingPlanScreen(
+                    viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
+                    onDelete = {
+                        navigator.trainingPlanDeleted()
+                    },
+                    onCancel = {
+                        navigator.goBack()
+                    }
                 )
             }
 

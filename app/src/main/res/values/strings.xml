@@ -62,6 +62,11 @@
     <string name="training_plan_not_found">Training Plan not found</string>
     <string name="training_plan_loading_error">Failed to load Training Plan</string>
     <string name="loading_training_plan">Loading training plan…</string>
+    <!-- Delete Training Plan -->
+    <string name="delete_training_plan_dialog_title">Delete training plan?</string>
+    <string name="delete_training_plan_dialog_text">This will permanently delete this training plan and all its configuration. Past training sessions will be kept.</string>
+    <string name="training_plan_deleted">Training plan deleted.</string>
+    <string name="training_plan_deletion_failed">Training plan deletion failed.</string>
 
     <!-- Add exercises -->
     <string name="add_exercise_icon">Add exercise to training plan</string>

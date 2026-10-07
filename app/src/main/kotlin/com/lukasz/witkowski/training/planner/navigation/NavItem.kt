@@ -76,6 +76,12 @@ data class TrainingPlanDetails(
 ) : TrainingPlannerNavKey
 
 @Serializable
+data class DeleteTrainingPlan(
+    @Serializable(with = TrainingPlanIdSerializer::class)
+    val trainingPlanId: TrainingPlanId
+) : TrainingPlannerNavKey
+
+@Serializable
 data class TrainingSession(
     @Serializable(with = TrainingPlanIdSerializer::class)
     val trainingPlanId: TrainingPlanId
@@ -256,6 +262,26 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
             topBarConfig = TopBarConfig(
                 title = context.getString(R.string.search_exercise),
                 hasBackArrow = true
+            )
+        )
+
+        is DeleteTrainingPlan -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(R.string.training_plan_details),
+                hasBackArrow = true,
+                menuItems = listOf(
+                    TopBarMenuItem.OverflowItem(
+                        icon = Icons.Default.Edit,
+                        text = context.getString(R.string.edit),
+                        action = TopBarAction.EditTrainingPlan(key.trainingPlanId)
+                    ),
+                    TopBarMenuItem.OverflowItem(
+                        icon = Icons.Default.Delete,
+                        text = context.getString(R.string.delete),
+                        action = TopBarAction.DeleteTrainingPlan(key.trainingPlanId),
+                        color = Color.Red
+                    )
+                )
             )
         )
 

@@ -62,6 +62,15 @@ class TrainingPlannerNavigator(
         backStack.add(TrainingPlanDetails(id))
     }
 
+    fun showDeleteTrainingPlanDialog(id: TrainingPlanId) {
+        backStack.add(DeleteTrainingPlan(id))
+    }
+
+    fun trainingPlanDeleted() {
+        backStack.clear()
+        backStack.add(TrainingPlansList)
+    }
+
     fun trainingSession(id: TrainingPlanId) {
         backStack.add(TrainingSession(id))
     }

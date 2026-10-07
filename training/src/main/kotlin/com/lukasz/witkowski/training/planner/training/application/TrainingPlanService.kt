@@ -21,4 +21,7 @@ class TrainingPlanService(
 
     fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan?> =
         trainingPlanRepository.getTrainingPlanById(trainingPlanId)
+
+    suspend fun deleteTrainingPlan(trainingPlanId: TrainingPlanId): Result<Unit> =
+        trainingPlanRepository.delete(trainingPlanId)
 }

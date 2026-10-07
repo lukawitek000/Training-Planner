@@ -84,7 +84,7 @@ fun TrainingPlannerApp(initialKey: TrainingPlannerNavKey = TrainingPlansList) {
                             // navigator.trainingPlanEdit(it.id)
                         }
                         is TopBarAction.DeleteTrainingPlan -> {
-                            // navigator.showDeleteTrainingPlanDialog(it.id)
+                            navigator.showDeleteTrainingPlanDialog(it.id)
                         }
                     }
                 }
