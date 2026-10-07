@@ -11,4 +11,8 @@ object Dimens {
 
     val imagePlaceholderSize = 64.dp
     val border = xsmall
+    val thinBorder = 1.dp
+    val dotsSeparatorSize = 6.dp
+    val wheelWidth = 86.dp
+    val wheelItemHeight = 48.dp
 }

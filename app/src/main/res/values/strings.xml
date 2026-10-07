@@ -39,10 +39,10 @@
     <string name="last_modified">Last modified %1$s</string>
     <string name="last_session">Last session %1$s</string>
     <string name="training_plan_title_label">Training Plan title *</string>
-    <string name="enter_training_plan_title">Enter Training Plan title</string>
+    <string name="training_plan_title">Title</string>
     <string name="training_plan_description_label">Training Plan description</string>
     <string name="training_plan_description">Description</string>
-    <string name="save_training_plan">Create Plan</string>
+    <string name="save_training_plan">Create plan</string>
     <string name="no_exercises_added_yet">No exercises added yet</string>
     <string name="add_exercises_from_catalogue">Add exercises from the exercise catalogue to build your training plan</string>
     <string name="add_exercises">Add exercises</string>
@@ -56,15 +56,21 @@
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="rest_time_picker_icon">Rest time picker button icon</string>
+    <string name="rest_time">Rest time</string>
+    <string name="select_rest_time">Select rest time</string>
+    <string name="done">Done</string>
+    <string name="minutes">Minutes</string>
+    <string name="seconds">Seconds</string>
+    <string name="custom">Custom</string>
+    <string name="seconds_suffix">%1$d s</string>
+    <string name="minutes_suffix">%1$d min</string>
 
     <string name="reps">Reps</string>
     <string name="sets">Sets</string>
-    <string name="rest_time">Rest time</string>
     <string name="weight">Weight</string>
     <string name="kg">kg</string>
     <string name="add">Add</string>
-    <string name="minutes">Minutes</string>
-    <string name="seconds">Seconds</string>
     <string name="second_abbrv">s</string>
     <string name="rest_time_info">Set rest time that will be automatically measured after the exercise.\nTo set a rest time between sets, you have to set it to the last exercise in the training.</string>
 

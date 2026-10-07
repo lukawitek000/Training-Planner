@@ -42,6 +42,7 @@ sealed interface TrainingPlanEditorUiState {
 }
 
 sealed interface TrainingPlanEditingIntent {
-    data class TitleChanged(val newTitle: String): TrainingPlanEditingIntent
-    data class DescriptionChanged(val newDescription: String): TrainingPlanEditingIntent
+    data class TitleChanged(val title: String): TrainingPlanEditingIntent
+    data class DescriptionChanged(val description: String): TrainingPlanEditingIntent
+    data class RestTimeChanged(val restTime: Duration): TrainingPlanEditingIntent
 }

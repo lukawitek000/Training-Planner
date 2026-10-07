@@ -1,10 +1,13 @@
 package com.lukasz.witkowski.training.planner.training.editor
 
 import android.widget.Toast
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,22 +17,31 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.DragHandle
+import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material.icons.outlined.Image
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -37,7 +49,9 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -49,6 +63,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -68,9 +85,11 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
 import com.lukasz.witkowski.training.planner.ui.components.CategoriesRow
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
+import com.lukasz.witkowski.training.planner.ui.components.ConfirmButton
 import com.lukasz.witkowski.training.planner.ui.components.DialogContainer
 import com.lukasz.witkowski.training.planner.ui.components.FormFieldLabel
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
+import com.lukasz.witkowski.training.planner.ui.components.RestTimeBottomSheet
 import com.lukasz.witkowski.training.planner.ui.components.TextField
 import com.lukasz.witkowski.training.planner.ui.components.TimerTimePicker
 import com.lukasz.witkowski.training.planner.ui.components.buildStringOverview
@@ -80,7 +99,9 @@ import com.lukasz.witkowski.training.planner.ui.theme.LightDark12
 import com.lukasz.witkowski.training.planner.ui.theme.LightGrey
 import com.lukasz.witkowski.training.planner.ui.theme.MediumGrey
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.DurationUnit
 
 @Composable
 fun TrainingPlanEditorScreen(
@@ -103,8 +124,9 @@ private fun TrainingPlanEditorScreenContent(
     onIntent: (TrainingPlanEditingIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showRestTimePicker by remember { mutableStateOf(false) }
     Column(
-        modifier = modifier,
+        modifier = modifier.verticalScroll(rememberScrollState()).padding(Dimens.normal),
         verticalArrangement = Arrangement.spacedBy(Dimens.normal)
     ) {
         TextInputForm(
@@ -122,15 +144,29 @@ private fun TrainingPlanEditorScreenContent(
         } else {
             TrainingExercisesList(
                 exercises = state.exercises,
-                modifier = Modifier.fillMaxWidth(),
-                onAddExerciseClicked = {}
+                modifier = Modifier.fillMaxWidth().weight(0.5f, fill = false),
+                onAddExerciseClicked = {},
+                onExerciseDeleted = {},
             )
         }
+        TrainingPlanRestTime(
+            onShowRestTimePicker = { showRestTimePicker = true },
+            restTime = state.restTime
+        )
         ConfirmButton(
             text = stringResource(R.string.save_training_plan),
             onClick = {}
         )
-
+    }
+    if (showRestTimePicker) {
+        RestTimeBottomSheet(
+            onDismissRequest = { showRestTimePicker = false },
+            defaultRestTime = state.restTime,
+            onRestTimeConfigured = {
+                onIntent(TrainingPlanEditingIntent.RestTimeChanged(it))
+                showRestTimePicker = false
+            }
+        )
     }
 }
 
@@ -149,7 +185,7 @@ private fun TextInputForm(
         TextField(
             text = title,
             onTextChange = { onUserInputChange(TrainingPlanEditingIntent.TitleChanged(it)) },
-            label = stringResource(R.string.enter_training_plan_title),
+            label = stringResource(R.string.training_plan_title),
             modifier = Modifier.testTag("NameField")
         )
         Spacer(Modifier.height(Dimens.large))
@@ -250,6 +286,7 @@ private fun TrainingExercisesListPlaceholder(
 private fun TrainingExercisesList(
     exercises: List<TrainingExercise>,
     onAddExerciseClicked: () -> Unit,
+    onExerciseDeleted: (TrainingExercise) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(
@@ -259,10 +296,11 @@ private fun TrainingExercisesList(
         item {
             Text(stringResource(R.string.exercises_count, exercises.size))
         }
-        itemsIndexed(exercises) { index, exercise ->
-            TrainingExerciseItem(
+        itemsIndexed(exercises, key = { _, item -> item.id.toString() }) { index, exercise ->
+            TrainingExerciseItemWrapper(
                 exercise = exercise,
-                index = index
+                index = index,
+                onDismiss = { onExerciseDeleted(exercise) }
             )
         }
         item {
@@ -274,14 +312,72 @@ private fun TrainingExercisesList(
 }
 
 @Composable
+private fun LazyItemScope.TrainingExerciseItemWrapper(
+    exercise: TrainingExercise,
+    index: Int,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    var draggedExercise by remember { mutableStateOf<TrainingExercise?>(null) }
+    val state = rememberSwipeToDismissBoxState()
+    val shape = RoundedCornerShape(Dimens.large)
+    SwipeToDismissBox(
+        state = state,
+        modifier = modifier
+            .animateItem(
+                fadeInSpec = tween(300),
+                fadeOutSpec = tween(300),
+                placementSpec = spring()
+            )
+            .pointerInput(Unit) {
+                detectDragGesturesAfterLongPress(
+                    onDragStart = {
+                        draggedExercise = exercise
+                    },
+                    onDrag = { change, _ ->
+                        change.consume()
+                    },
+                    onDragEnd = {
+                        draggedExercise = null
+                    }
+                )
+            },
+        backgroundContent = {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Red, shape = shape),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = null,
+                )
+            }
+        },
+        content = {
+            TrainingExerciseItem(
+                exercise = exercise,
+                index = index,
+                shape = shape
+            )
+        },
+        onDismiss = { onDismiss() }
+    )
+}
+
+@Composable
 private fun TrainingExerciseItem(
     exercise: TrainingExercise,
     index: Int,
+    shape: Shape,
     modifier: Modifier = Modifier
 ) {
-    Card(modifier) {
+    Card(modifier = modifier, shape = shape) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(Dimens.normal),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimens.normal),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimens.large)
         ) {
@@ -352,43 +448,6 @@ private fun TrainingExerciseOverview(
 }
 
 @Composable
-private fun ConfirmButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-        )
-    ) {
-        Text(text)
-    }
-
-}
-
-private fun LazyListScope.trainingExercisesList(
-    trainingExercises: List<TrainingExercise>,
-    removeTrainingExercise: (TrainingExercise) -> Unit,
-    setRestTimeToTrainingExercise: (TrainingExercise) -> Unit
-) {
-    itemsIndexed(trainingExercises) { index, exercise ->
-        TrainingExerciseListItem(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            trainingExercise = exercise,
-            index = index,
-            removeTrainingExercise = removeTrainingExercise,
-            setRestTimeToTrainingExercise = setRestTimeToTrainingExercise
-        )
-    }
-}
-
-@Composable
 private fun AddExercisesButton(
     modifier: Modifier = Modifier,
     onAddExerciseClicked: () -> Unit
@@ -417,177 +476,40 @@ private fun AddExercisesButton(
 }
 
 @Composable
-fun TrainingExerciseListItem(
+private fun TrainingPlanRestTime(
+    onShowRestTimePicker: () -> Unit,
+    restTime: Duration,
     modifier: Modifier = Modifier,
-    trainingExercise: TrainingExercise,
-    index: Int = 0,
-    removeTrainingExercise: (TrainingExercise) -> Unit,
-    setRestTimeToTrainingExercise: (TrainingExercise) -> Unit
 ) {
     Column(
-        modifier = modifier
-            .border(1.dp, LightDark12, RoundedCornerShape(8.dp))
-            .padding(8.dp),
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(Dimens.normal)
     ) {
-        TrainingExerciseInfo(
-            index = index,
-            trainingExercise = trainingExercise,
-            removeTrainingExercise = removeTrainingExercise
+        FormFieldLabel(
+            text = stringResource(R.string.rest_time)
         )
-        Spacer(modifier = Modifier.height(4.dp))
-        TrainingExerciseRestTime(
-            setRestTimeToTrainingExercise = setRestTimeToTrainingExercise,
-            trainingExercise = trainingExercise
-        )
-    }
-}
-
-@Composable
-private fun TrainingExerciseRestTime(
-    modifier: Modifier = Modifier,
-    setRestTimeToTrainingExercise: (TrainingExercise) -> Unit,
-    trainingExercise: TrainingExercise
-) {
-    val restTime = trainingExercise.restTime
-    val buttonText = if (restTime.isPositive()) {
-        stringResource(id = R.string.change_rest_time)
-    } else {
-        stringResource(id = R.string.add_rest_time)
-    }
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
-        Button(onClick = {
-            setRestTimeToTrainingExercise(trainingExercise)
-        }) {
-            Text(text = buttonText)
-        }
-        if (restTime.isPositive()) {
-            Text(
-                text = "TimeFormatter(LocalContext.current).formatTime(restTime)",
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 18.sp
-            )
-        }
-    }
-}
-
-@Composable
-fun SetTrainingExerciseRestTimeDialog(
-    modifier: Modifier = Modifier,
-    trainingExercise: TrainingExercise,
-    setRestTimeToExercise: (TrainingExercise, Int, Int) -> Unit,
-    closeDialog: () -> Unit
-) {
-//    val (currentMinutes, currentSeconds) = trainingExercise.restTime.minutesAndSeconds()
-    var minutes by remember { mutableStateOf(0) }
-    var seconds by remember { mutableStateOf(0) }
-
-    DialogContainer(
-        closeDialog = closeDialog,
-        saveData = { setRestTimeToExercise(trainingExercise, minutes, seconds) }) {
-        Column(
-            modifier = modifier
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+        Button(
+            onClick = onShowRestTimePicker,
+            border = BorderStroke(width = Dimens.xsmall, color = MaterialTheme.colorScheme.primary),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = MaterialTheme.colorScheme.primary
+            ),
+            shape = RoundedCornerShape(Dimens.small)
         ) {
-            Text(
-                text = stringResource(id = R.string.rest_time),
-                fontSize = 32.sp,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(text = stringResource(id = R.string.rest_time_info), textAlign = TextAlign.Center)
-            Spacer(modifier = Modifier.height(16.dp))
-            TimerTimePicker(
-                modifier = Modifier,
-                minutes = minutes,
-                seconds = seconds,
-                onMinutesChange = { minutes = it },
-                onSecondsChange = { seconds = it }
-            )
-        }
-    }
-}
-
-@Composable
-private fun TrainingExerciseInfo(
-    modifier: Modifier = Modifier,
-    index: Int,
-    trainingExercise: TrainingExercise,
-    removeTrainingExercise: (TrainingExercise) -> Unit
-) {
-    ListCardItem(modifier = modifier) {
-        Row(
-            modifier = Modifier,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "${index + 1}.",
-                fontSize = 32.sp,
-                color = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(vertical = Dimens.normal),
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Icon(imageVector = Icons.Outlined.Timer, contentDescription = stringResource(R.string.rest_time_picker_icon))
                 Text(
-                    text = trainingExercise.exercise.name,
-                    fontSize = 24.sp,
-                    color = MaterialTheme.colorScheme.primary
+                    text = restTime.toString(),
+                    modifier = Modifier.weight(1f).padding(start = Dimens.large),
+                    style = MaterialTheme.typography.titleLarge
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                ExerciseSetsRepsTimeInfo(trainingExercise = trainingExercise)
+                Icon(imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos, contentDescription = stringResource(R.string.rest_time_picker_icon))
             }
-            Spacer(modifier = Modifier.width(16.dp))
-            Icon(
-                modifier = Modifier
-                    .size(32.dp)
-                    .clickable {
-                        removeTrainingExercise(trainingExercise)
-                    },
-                imageVector = Icons.Default.Close,
-                contentDescription = stringResource(id = R.string.remove_training_exercise),
-                tint = MaterialTheme.colorScheme.primary
-            )
         }
-    }
-}
-
-@Composable
-fun ExerciseSetsRepsTimeInfo(
-    modifier: Modifier = Modifier,
-    trainingExercise: TrainingExercise
-) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = stringResource(id = R.string.reps_with_value, trainingExercise.repetitions),
-            modifier = Modifier.weight(1f),
-            color = MaterialTheme.colorScheme.secondary
-        )
-        Text(
-            text = stringResource(id = R.string.sets_with_value, trainingExercise.sets),
-            modifier = Modifier.weight(1f),
-            color = MaterialTheme.colorScheme.secondary
-        )
-//        if (trainingExercise.time.isNotZero()) {
-//            Text(
-//                text = stringResource(
-//                    id = R.string.time_with_value,
-//                    TimeFormatter(LocalContext.current).formatTime(trainingExercise.time)
-//                ),
-//                color = MaterialTheme.colorScheme.secondary
-//            )
-//        } else {
-//            Spacer(modifier = Modifier.weight(1f))
-//        }
     }
 }
 
@@ -665,6 +587,6 @@ private val PREVIEW_TRAINING_PLAN_CONFIGURATION = TrainingPlanConfiguration(
             restTime = 60.seconds
         )
     ),
-    restTime = 60.seconds
+    restTime = 90.seconds
 )
 
