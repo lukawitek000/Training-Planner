@@ -95,15 +95,18 @@ class ExerciseService {
             val totalPages = if (totalItems == 0L) 1 else kotlin.math.ceil(totalItems.toDouble() / limit).toInt()
             val offset = ((page - 1) * limit).coerceAtLeast(0)
 
+            val pageRows = allRows.drop(offset).take(limit)
+            val exerciseIds = pageRows.map { it[ExercisesTable.id] }
+            val categoriesMap = getCategoriesForExercises(exerciseIds)
+
             val paginatedExercises =
-                allRows.drop(offset).take(limit).map { row ->
+                pageRows.map { row ->
                     val exerciseId = row[ExercisesTable.id]
-                    val categories = getCategoriesForExercise(exerciseId)
                     ExerciseDto(
                         id = exerciseId,
                         name = row[ExercisesTable.name],
                         description = row[ExercisesTable.description],
-                        categories = categories,
+                        categories = categoriesMap[exerciseId] ?: emptyList(),
                         ownerId = row[ExercisesTable.ownerId],
                     )
                 }
@@ -117,16 +120,23 @@ class ExerciseService {
             )
         }
 
-    suspend fun getExerciseById(id: String): ExerciseDto? =
+    suspend fun getExerciseById(
+        id: String,
+        requesterId: String? = null,
+    ): ExerciseDto? =
         dbQuery {
             val row = ExercisesTable.selectAll().where { ExercisesTable.id eq id }.singleOrNull() ?: return@dbQuery null
+            val ownerId = row[ExercisesTable.ownerId]
+            if (ownerId != null && ownerId != requesterId) {
+                throw SecurityException("You do not have permission to access this exercise.")
+            }
             val categories = getCategoriesForExercise(id)
             ExerciseDto(
                 id = id,
                 name = row[ExercisesTable.name],
                 description = row[ExercisesTable.description],
                 categories = categories,
-                ownerId = row[ExercisesTable.ownerId],
+                ownerId = ownerId,
             )
         }
 
@@ -213,16 +223,36 @@ class ExerciseService {
             ExercisesTable.deleteWhere { ExercisesTable.id eq id } > 0
         }
 
-    private fun getCategoriesForExercise(exerciseId: String): List<CategoryDto> {
-        val categoryIds =
+    private fun getCategoriesForExercise(exerciseId: String): List<CategoryDto> =
+        getCategoriesForExercises(listOf(exerciseId))[exerciseId] ?: emptyList()
+
+    private fun getCategoriesForExercises(exerciseIds: List<String>): Map<String, List<CategoryDto>> {
+        if (exerciseIds.isEmpty()) return emptyMap()
+
+        val categoryLinks =
             ExerciseCategoriesTable
                 .selectAll()
-                .where { ExerciseCategoriesTable.exerciseId eq exerciseId }
-                .map { it[ExerciseCategoriesTable.categoryId] }
+                .where { ExerciseCategoriesTable.exerciseId inList exerciseIds }
+                .map { it[ExerciseCategoriesTable.exerciseId] to it[ExerciseCategoriesTable.categoryId] }
 
-        return CategoriesTable
-            .selectAll()
-            .where { CategoriesTable.id inList categoryIds }
-            .map { CategoryDto(id = it[CategoriesTable.id], name = it[CategoriesTable.name]) }
+        val categoryIds = categoryLinks.map { it.second }.distinct()
+        val categoryMap =
+            if (categoryIds.isNotEmpty()) {
+                CategoriesTable
+                    .selectAll()
+                    .where { CategoriesTable.id inList categoryIds }
+                    .associate { it[CategoriesTable.id] to CategoryDto(id = it[CategoriesTable.id], name = it[CategoriesTable.name]) }
+            } else {
+                emptyMap()
+            }
+
+        val resultMap = mutableMapOf<String, MutableList<CategoryDto>>()
+        categoryLinks.forEach { (exId, catId) ->
+            val catDto = categoryMap[catId]
+            if (catDto != null) {
+                resultMap.getOrPut(exId) { mutableListOf() }.add(catDto)
+            }
+        }
+        return resultMap
     }
 }

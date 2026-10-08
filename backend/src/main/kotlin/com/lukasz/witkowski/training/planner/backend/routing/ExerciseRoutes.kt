@@ -47,8 +47,9 @@ fun Route.exerciseRoutes(exerciseService: ExerciseService) {
                 val id =
                     call.parameters["id"]
                         ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing exercise id.")
+                val principal = call.principal<JWTPrincipal>()
                 val exercise =
-                    exerciseService.getExerciseById(id)
+                    exerciseService.getExerciseById(id, principal?.payload?.subject)
                         ?: return@get call.respond(HttpStatusCode.NotFound, "Exercise not found.")
                 call.respond(HttpStatusCode.OK, exercise)
             }

@@ -40,8 +40,9 @@ fun Route.trainingPlanRoutes(trainingPlanService: TrainingPlanService) {
                 val id =
                     call.parameters["id"]
                         ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing training plan id.")
+                val principal = call.principal<JWTPrincipal>()
                 val plan =
-                    trainingPlanService.getTrainingPlanById(id)
+                    trainingPlanService.getTrainingPlanById(id, principal?.payload?.subject)
                         ?: return@get call.respond(HttpStatusCode.NotFound, "Training plan not found.")
                 call.respond(HttpStatusCode.OK, plan)
             }

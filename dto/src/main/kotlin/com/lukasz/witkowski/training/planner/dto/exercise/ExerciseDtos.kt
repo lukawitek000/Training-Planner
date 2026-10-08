@@ -14,7 +14,6 @@ data class ExerciseDto(
     val name: String,
     val description: String = "",
     val categories: List<CategoryDto> = emptyList(),
-    val imageId: String? = null,
     val ownerId: String? = null,
 )
 
@@ -23,7 +22,6 @@ data class CreateExerciseRequestDto(
     val name: String,
     val description: String = "",
     val categoryIds: List<String> = emptyList(),
-    val imageBase64: String? = null,
 )
 
 @Serializable
@@ -31,5 +29,4 @@ data class UpdateExerciseRequestDto(
     val name: String,
     val description: String = "",
     val categoryIds: List<String> = emptyList(),
-    val imageBase64: String? = null,
 )

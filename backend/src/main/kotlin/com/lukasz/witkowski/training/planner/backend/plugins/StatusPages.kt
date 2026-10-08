@@ -4,8 +4,10 @@ import com.lukasz.witkowski.training.planner.dto.common.ApiErrorDto
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
+import io.ktor.server.plugins.BadRequestException
 import io.ktor.server.plugins.statuspages.StatusPages
 import io.ktor.server.response.respond
+import kotlinx.serialization.SerializationException
 
 fun Application.configureStatusPages() {
     install(StatusPages) {
@@ -13,6 +15,24 @@ fun Application.configureStatusPages() {
             call.respond(
                 HttpStatusCode.BadRequest,
                 ApiErrorDto(statusCode = HttpStatusCode.BadRequest.value, message = cause.message ?: "Bad request"),
+            )
+        }
+        exception<BadRequestException> { call, cause ->
+            call.respond(
+                HttpStatusCode.BadRequest,
+                ApiErrorDto(
+                    statusCode = HttpStatusCode.BadRequest.value,
+                    message = cause.message ?: "Invalid request payload",
+                ),
+            )
+        }
+        exception<SerializationException> { call, cause ->
+            call.respond(
+                HttpStatusCode.BadRequest,
+                ApiErrorDto(
+                    statusCode = HttpStatusCode.BadRequest.value,
+                    message = "Failed to parse request payload: ${cause.message}",
+                ),
             )
         }
         exception<SecurityException> { call, cause ->

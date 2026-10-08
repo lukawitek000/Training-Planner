@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.backend.service
 
+import com.lukasz.witkowski.training.planner.backend.db.CategoriesTable
 import com.lukasz.witkowski.training.planner.backend.db.DatabaseFactory.dbQuery
+import com.lukasz.witkowski.training.planner.backend.db.ExerciseCategoriesTable
 import com.lukasz.witkowski.training.planner.backend.db.TrainingExercisesTable
 import com.lukasz.witkowski.training.planner.backend.db.TrainingPlansTable
 import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
@@ -13,6 +15,7 @@ import org.jetbrains.exposed.v1.core.AndOp
 import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.OrOp
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.core.isNull
 import org.jetbrains.exposed.v1.core.like
 import org.jetbrains.exposed.v1.core.lowerCase
@@ -49,20 +52,47 @@ class TrainingPlanService(
             val totalPages = if (totalItems == 0L) 1 else kotlin.math.ceil(totalItems.toDouble() / limit).toInt()
             val offset = ((page - 1) * limit).coerceAtLeast(0)
 
+            val pageRows = allRows.drop(offset).take(limit)
+            val planIds = pageRows.map { it[TrainingPlansTable.id] }
+
+            val trainingExercisesByPlan =
+                if (planIds.isNotEmpty()) {
+                    TrainingExercisesTable
+                        .selectAll()
+                        .where { TrainingExercisesTable.trainingPlanId inList planIds }
+                        .groupBy { it[TrainingExercisesTable.trainingPlanId] }
+                } else {
+                    emptyMap()
+                }
+
+            val allExerciseIds =
+                trainingExercisesByPlan.values
+                    .flatten()
+                    .map { it[TrainingExercisesTable.exerciseId] }
+                    .distinct()
+
+            val exerciseCategoryNamesMap =
+                if (allExerciseIds.isNotEmpty()) {
+                    getExerciseCategoryNamesForExerciseIds(allExerciseIds)
+                } else {
+                    emptyMap()
+                }
+
             val paginated =
-                allRows.drop(offset).take(limit).map { row ->
+                pageRows.map { row ->
                     val planId = row[TrainingPlansTable.id]
-                    val exerciseCount =
-                        TrainingExercisesTable
-                            .selectAll()
-                            .where { TrainingExercisesTable.trainingPlanId eq planId }
-                            .toList()
-                            .size
+                    val exercisesInPlan = trainingExercisesByPlan[planId] ?: emptyList()
+                    val planCategoryNames =
+                        exercisesInPlan
+                            .flatMap { exRow -> exerciseCategoryNamesMap[exRow[TrainingExercisesTable.exerciseId]] ?: emptyList() }
+                            .distinct()
+
                     TrainingPlanOverviewDto(
                         id = planId,
                         title = row[TrainingPlansTable.title],
                         description = row[TrainingPlansTable.description],
-                        exerciseCount = exerciseCount,
+                        categories = planCategoryNames,
+                        exerciseCount = exercisesInPlan.size,
                         ownerId = row[TrainingPlansTable.ownerId],
                     )
                 }
@@ -76,10 +106,17 @@ class TrainingPlanService(
             )
         }
 
-    suspend fun getTrainingPlanById(id: String): TrainingPlanDto? =
+    suspend fun getTrainingPlanById(
+        id: String,
+        requesterId: String? = null,
+    ): TrainingPlanDto? =
         dbQuery {
             val row = TrainingPlansTable.selectAll().where { TrainingPlansTable.id eq id }.singleOrNull() ?: return@dbQuery null
-            val exercises = getTrainingExercisesForPlan(id)
+            val ownerId = row[TrainingPlansTable.ownerId]
+            if (ownerId != null && ownerId != requesterId) {
+                throw SecurityException("You do not have permission to access this training plan.")
+            }
+            val exercises = getTrainingExercisesForPlan(id, requesterId)
 
             TrainingPlanDto(
                 id = id,
@@ -87,7 +124,7 @@ class TrainingPlanService(
                 description = row[TrainingPlansTable.description],
                 exercises = exercises,
                 restTimeInMillis = row[TrainingPlansTable.restTimeInMillis],
-                ownerId = row[TrainingPlansTable.ownerId],
+                ownerId = ownerId,
             )
         }
 
@@ -118,7 +155,7 @@ class TrainingPlanService(
                 }
             }
 
-            getTrainingPlanById(planId)!!
+            getTrainingPlanById(planId, ownerId)!!
         }
 
     suspend fun updateTrainingPlan(
@@ -155,7 +192,7 @@ class TrainingPlanService(
                 }
             }
 
-            getTrainingPlanById(id)!!
+            getTrainingPlanById(id, ownerId)!!
         }
 
     suspend fun deleteTrainingPlan(
@@ -174,11 +211,14 @@ class TrainingPlanService(
             TrainingPlansTable.deleteWhere { TrainingPlansTable.id eq id } > 0
         }
 
-    private suspend fun getTrainingExercisesForPlan(planId: String): List<TrainingExerciseDto> {
+    private suspend fun getTrainingExercisesForPlan(
+        planId: String,
+        requesterId: String? = null,
+    ): List<TrainingExerciseDto> {
         val rows = TrainingExercisesTable.selectAll().where { TrainingExercisesTable.trainingPlanId eq planId }.toList()
         return rows.mapNotNull { row ->
             val exerciseId = row[TrainingExercisesTable.exerciseId]
-            val exerciseDto = exerciseService.getExerciseById(exerciseId) ?: return@mapNotNull null
+            val exerciseDto = exerciseService.getExerciseById(exerciseId, requesterId) ?: return@mapNotNull null
             TrainingExerciseDto(
                 id = row[TrainingExercisesTable.id],
                 exercise = exerciseDto,
@@ -188,5 +228,35 @@ class TrainingPlanService(
                 weightInKg = row[TrainingExercisesTable.weightInKg],
             )
         }
+    }
+
+    private fun getExerciseCategoryNamesForExerciseIds(exerciseIds: List<String>): Map<String, List<String>> {
+        if (exerciseIds.isEmpty()) return emptyMap()
+
+        val links =
+            ExerciseCategoriesTable
+                .selectAll()
+                .where { ExerciseCategoriesTable.exerciseId inList exerciseIds }
+                .map { it[ExerciseCategoriesTable.exerciseId] to it[ExerciseCategoriesTable.categoryId] }
+
+        val categoryIds = links.map { it.second }.distinct()
+        val categoryNameMap =
+            if (categoryIds.isNotEmpty()) {
+                CategoriesTable
+                    .selectAll()
+                    .where { CategoriesTable.id inList categoryIds }
+                    .associate { it[CategoriesTable.id] to it[CategoriesTable.name] }
+            } else {
+                emptyMap()
+            }
+
+        val resultMap = mutableMapOf<String, MutableList<String>>()
+        links.forEach { (exId, catId) ->
+            val name = categoryNameMap[catId]
+            if (name != null) {
+                resultMap.getOrPut(exId) { mutableListOf() }.add(name)
+            }
+        }
+        return resultMap
     }
 }

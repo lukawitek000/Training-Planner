@@ -63,7 +63,7 @@ class ExerciseRoutesTest {
             assertEquals("Push Up", createdEx.name)
             assertEquals(userA.userId, createdEx.ownerId)
 
-            // 2. Fetch exercise by ID
+            // 2. Fetch exercise by ID by User A -> 200 OK
             val getRes =
                 userA.client.get("/api/v1/exercises/${createdEx.id}") {
                     header(HttpHeaders.Authorization, "Bearer ${userA.token}")
@@ -71,6 +71,13 @@ class ExerciseRoutesTest {
             assertEquals(HttpStatusCode.OK, getRes.status)
             val fetchedEx = getRes.body<ExerciseDto>()
             assertEquals(createdEx.id, fetchedEx.id)
+
+            // 2b. User B attempts to GET User A's private exercise -> 403 Forbidden
+            val forbiddenGetRes =
+                userB.client.get("/api/v1/exercises/${createdEx.id}") {
+                    header(HttpHeaders.Authorization, "Bearer ${userB.token}")
+                }
+            assertEquals(HttpStatusCode.Forbidden, forbiddenGetRes.status)
 
             // 3. User B attempts to UPDATE User A's exercise -> 403 Forbidden
             val updateReq =
@@ -167,5 +174,20 @@ class ExerciseRoutesTest {
             assertEquals(2, paged1.items.size)
             assertEquals(1, paged1.page)
             assertEquals(2, paged1.limit)
+        }
+
+    @Test
+    fun `malformed JSON payload returns 400 Bad Request`() =
+        testApplication {
+            application { module() }
+            val user = createAuthenticatedUser()
+
+            val badJsonRes =
+                user.client.post("/api/v1/exercises") {
+                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                    contentType(ContentType.Application.Json)
+                    setBody("{ invalid_json: ")
+                }
+            assertEquals(HttpStatusCode.BadRequest, badJsonRes.status)
         }
 }
