@@ -25,6 +25,13 @@ androidx-compose-ui-test = "1.12.1"
 androidx-test-espresso = "3.7.0"
 mockk = "1.14.11"
 reorderable = "3.1.0"
+ktor = "3.6.0"
+exposed = "1.5.0"
+hikari = "7.1.0"
+h2 = "2.5.252"
+postgresql = "42.7.14"
+bcrypt = "0.10.2"
+logback = "1.6.5"
 
 [libraries]
 
@@ -36,6 +43,8 @@ google-material = { module = "com.google.android.material:material", version = "
 # KotlinX
 kotlinx-coroutines-playServices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationCore" }
 
 # AndroidX
 androidx-core = { module = "androidx.core:core", version = "1.19.0" }
@@ -67,7 +76,6 @@ androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", vers
 
 # Optional add-on libraries
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
-kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
 androidx-material3-adaptive-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
 
 # 3rd party
@@ -107,6 +115,35 @@ androidx-test-espresso-core = { module = "androidx.test.espresso:espresso-core",
 
 # Reorderable
 calvin-reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
+
+# Ktor Server Framework
+ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" } # Core server pipeline & routing engine
+ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" } # High-performance Netty web server engine
+ktor-server-contentNegotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" } # HTTP Content-Type negotiation plugin
+ktor-serialization-kotlinxJson = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" } # kotlinx.serialization JSON converter for Ktor
+ktor-server-auth = { module = "io.ktor:ktor-server-auth-jvm", version.ref = "ktor" } # Server authentication feature framework
+ktor-server-authJwt = { module = "io.ktor:ktor-server-auth-jwt-jvm", version.ref = "ktor" } # JWT Bearer token authentication provider
+ktor-server-statusPages = { module = "io.ktor:ktor-server-status-pages-jvm", version.ref = "ktor" } # Centralized exception & HTTP status page handling
+ktor-server-websockets = { module = "io.ktor:ktor-server-websockets-jvm", version.ref = "ktor" } # WebSocket protocol support for real-time messaging
+ktor-server-callLogging = { module = "io.ktor:ktor-server-call-logging-jvm", version.ref = "ktor" } # HTTP request and response logging plugin
+ktor-server-testHost = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" } # In-memory server test application engine
+koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" } # Koin Dependency Injection plugin for Ktor
+
+# Ktor Client (for test suite and client integration)
+ktor-client-core = { module = "io.ktor:ktor-client-core-jvm", version.ref = "ktor" } # Core HTTP client engine
+ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation-jvm", version.ref = "ktor" } # Client content negotiation plugin
+ktor-client-websockets = { module = "io.ktor:ktor-client-websockets-jvm", version.ref = "ktor" } # Client WebSocket plugin
+
+# Database & Security
+exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" } # JetBrains Exposed ORM core DSL
+exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" } # Exposed DAO framework
+exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" } # Exposed JDBC driver integration
+exposed-kotlin-datetime = { module = "org.jetbrains.exposed:exposed-kotlin-datetime", version.ref = "exposed" } # kotlinx-datetime support for Exposed tables
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikari" } # High-performance JDBC connection pool
+h2-database = { module = "com.h2database:h2", version.ref = "h2" } # Embedded in-memory SQL database for dev & unit tests
+postgresql = { module = "org.postgresql:postgresql", version.ref = "postgresql" } # PostgreSQL JDBC driver for production DB
+bcrypt = { module = "at.favre.lib:bcrypt", version.ref = "bcrypt" } # BCrypt password hashing & verification library
+logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" } # SLF4J logging backend implementation
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
