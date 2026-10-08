@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.delete
 
 import app.cash.turbine.test
-import app.cash.turbine.turbineScope
 import com.lukasz.witkowski.training.planner.exercise.TestData
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
@@ -26,16 +25,13 @@ class DeleteExerciseViewModelTest {
     }
 
     @Test
-    fun `when exercise does not exist emit failure event`() = runTest {
+    fun `when exercise does not exist emit error state`() = runTest {
         every { service.getExerciseDetailsById(any()) } returns flowOf(null)
         givenVm()
 
-        turbineScope {
-            val events = vm.deletionEvent.testIn(backgroundScope)
-            val state = vm.state.testIn(backgroundScope)
-            // initial state, StateFlow causes no emit of the same value twice
-            assertEquals(DeleteExerciseUiState.Loading, state.awaitItem())
-            assertEquals(DeletionEvent.Failure, events.awaitItem())
+        vm.state.test {
+            assertEquals(DeleteExerciseUiState.Loading, awaitItem())
+            assertEquals(DeleteExerciseUiState.Error("Exercise not found"), awaitItem())
         }
     }
 
