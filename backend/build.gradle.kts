@@ -37,6 +37,7 @@ dependencies {
     testImplementation(libs.ktor.server.testHost)
     testImplementation("io.ktor:ktor-client-core-jvm:${libs.versions.ktor.get()}")
     testImplementation("io.ktor:ktor-client-content-negotiation-jvm:${libs.versions.ktor.get()}")
+    testImplementation("io.ktor:ktor-client-websockets-jvm:${libs.versions.ktor.get()}")
     testImplementation("io.ktor:ktor-serialization-kotlinx-json-jvm:${libs.versions.ktor.get()}")
     testImplementation(libs.kotlin.test)
     testImplementation(libs.junit)
