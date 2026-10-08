@@ -14,8 +14,8 @@ import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_ID_KEY
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity.Companion.TRAINING_TITLE_KEY
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import timber.log.Timber
 

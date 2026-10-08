@@ -24,7 +24,7 @@ paging = "3.4.2"
 androidx-compose-ui-test = "1.12.1"
 androidx-test-espresso = "3.7.0"
 mockk = "1.14.11"
-
+reorderable = "3.1.0"
 
 [libraries]
 
@@ -104,6 +104,9 @@ androidx-paging-testing = { module = "androidx.paging:paging-testing", version.r
 androidx-compose-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "androidx-compose-ui-test" }
 androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "androidx-compose-ui-test" }
 androidx-test-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "androidx-test-espresso" }
+
+# Reorderable
+calvin-reorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "reorderable" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

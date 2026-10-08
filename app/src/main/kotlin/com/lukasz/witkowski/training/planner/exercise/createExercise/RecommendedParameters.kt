@@ -49,8 +49,10 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recomm
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
 import com.lukasz.witkowski.training.planner.ui.components.FormFieldLabel
 import com.lukasz.witkowski.training.planner.ui.components.TextField
+import com.lukasz.witkowski.training.planner.ui.components.buildStringOverview
 import com.lukasz.witkowski.training.planner.ui.theme.Dimens
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -139,63 +141,90 @@ private fun RecommendedParametersInputFields(
     onRecommendationChange: (ExerciseEditingEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    ExerciseParametersInputFields(
+        parameters = recommendation.parameters,
+        testTagPrefix = recommendation.level.name,
+        onParametersIntent = {
+            onRecommendationChange(it.toExerciseEditingEvent(recommendation.level))
+        },
+        modifier = modifier
+    )
+}
+
+@Composable
+fun ExerciseParametersInputFields(
+    parameters: RecommendedParameters,
+    testTagPrefix: String,
+    onParametersIntent: (ExerciseParametersIntent) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Row(
         modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(Dimens.normal),
     ) {
-        val params = recommendation.parameters
-        val level = recommendation.level
         buildAnnotatedString {
             append(stringResource(R.string.sets))
             append(" *")
         }
         ParameterInputField(
-            value = params.sets,
-            onValueChange = {
-                onRecommendationChange(
-                    ExerciseEditingEvent.RecommendedSetsChanged(it, level)
-                )
-            },
+            value = parameters.sets,
+            onValueChange = { onParametersIntent(ExerciseParametersIntent.SetsChanged(it)) },
             label = buildRequiredString(stringResource(R.string.sets)),
             modifier = Modifier.weight(1f),
-            testTag = "${level.name}_SetsField"
+            testTag = "${testTagPrefix}_SetsField"
         )
         ParameterInputField(
-            value = params.reps,
-            onValueChange = {
-                onRecommendationChange(
-                    ExerciseEditingEvent.RecommendedRepsChanged(it, level)
-                )
-            },
+            value = parameters.reps,
+            onValueChange = { onParametersIntent(ExerciseParametersIntent.RepsChanged(it)) },
             label = buildRequiredString(stringResource(R.string.reps)),
             modifier = Modifier.weight(1f),
-            testTag = "${level.name}_RepsField"
+            testTag = "${testTagPrefix}_RepsField"
         )
         ParameterInputField(
-            value = params.restTime?.inWholeSeconds?.toInt(),
-            onValueChange = {
-                onRecommendationChange(
-                    ExerciseEditingEvent.RecommendedRestTimeChanged(it?.seconds, level)
-                )
-            },
+            value = parameters.restTime?.inWholeSeconds?.toInt(),
+            onValueChange = { onParametersIntent(ExerciseParametersIntent.RestTimeChanged(it?.seconds)) },
             label = buildRequiredString(stringResource(R.string.rest_time)),
             unit = stringResource(R.string.second_abbrv),
             modifier = Modifier.weight(1f),
-            testTag = "${level.name}_RestTimeField"
+            testTag = "${testTagPrefix}_RestTimeField"
         )
         ParameterInputField(
-            value = params.weightInKg,
-            onValueChange = {
-                onRecommendationChange(
-                    ExerciseEditingEvent.RecommendedWeightChanged(it, level)
-                )
-            },
+            value = parameters.weightInKg,
+            onValueChange = { onParametersIntent(ExerciseParametersIntent.WeightChanged(it)) },
             label = stringResource(R.string.weight),
             unit = stringResource(R.string.kg),
             modifier = Modifier.weight(1f),
-            testTag = "${level.name}_WeightField"
+            testTag = "${testTagPrefix}_WeightField"
         )
     }
+}
+
+sealed interface ExerciseParametersIntent {
+    fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent
+    data class SetsChanged(val sets: Int?) : ExerciseParametersIntent {
+        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent {
+            return ExerciseEditingEvent.RecommendedSetsChanged(sets, level)
+        }
+    }
+
+    data class RepsChanged(val reps: Int?) : ExerciseParametersIntent {
+        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent {
+            return ExerciseEditingEvent.RecommendedRepsChanged(reps, level)
+        }
+    }
+
+    data class RestTimeChanged(val restTime: Duration?) : ExerciseParametersIntent {
+        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent {
+            return ExerciseEditingEvent.RecommendedRestTimeChanged(restTime, level)
+        }
+    }
+
+    data class WeightChanged(val weight: Int?) : ExerciseParametersIntent {
+        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent {
+            return ExerciseEditingEvent.RecommendedWeightChanged(weight, level)
+        }
+    }
+
 }
 
 private fun buildRequiredString(str: String): String {
@@ -206,11 +235,12 @@ private fun buildRequiredString(str: String): String {
 }
 
 @Composable
-private fun RecommendedParametersCardHeader(
+fun RecommendedParametersCardHeader(
     isExpanded: Boolean,
     toggleExpansion: () -> Unit,
     recommendation: Recommendation,
     modifier: Modifier = Modifier,
+    isExpandable: Boolean = true,
 ) {
     Row(
         modifier = modifier
@@ -235,13 +265,15 @@ private fun RecommendedParametersCardHeader(
             text = if (isExpanded) "" else buildStringOverview(recommendation),
             modifier = Modifier.weight(1f)
         )
-        val icon = if (isExpanded) {
-            Icons.Default.ExpandLess
-        } else {
-            Icons.Default.ExpandMore
-        }
-        IconButton(onClick = toggleExpansion) {
-            Icon(imageVector = icon, contentDescription = null)
+        if (isExpandable) {
+            val icon = if (isExpanded) {
+                Icons.Default.ExpandLess
+            } else {
+                Icons.Default.ExpandMore
+            }
+            IconButton(onClick = toggleExpansion) {
+                Icon(imageVector = icon, contentDescription = null)
+            }
         }
     }
 }
@@ -260,22 +292,12 @@ private fun buildStringOverview(recommendation: Recommendation): String =
         if (!it.areValid()) {
             stringResource(R.string.not_set)
         } else {
-            if (it.weightInKg != null) {
-                stringResource(
-                    R.string.recommendation_overview,
-                    it.sets!!,
-                    it.reps!!,
-                    it.restTime!!.inWholeSeconds,
-                    it.weightInKg!!
-                )
-            } else {
-                stringResource(
-                    R.string.recommendation_no_weight,
-                    it.sets!!,
-                    it.reps!!,
-                    it.restTime!!.inWholeSeconds,
-                )
-            }
+            buildStringOverview(
+                sets = it.sets!!,
+                reps = it.reps!!,
+                restTime = it.restTime!!,
+                weightInKg = it.weightInKg
+            )
         }
     }
 

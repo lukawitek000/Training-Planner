@@ -5,9 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
-import com.lukasz.witkowski.training.planner.dummyTrainingsList
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -20,10 +19,10 @@ class TrainingPlansListViewModel(private val trainingPlanService: TrainingPlanSe
         viewModelScope.launch {
             try {
                 _trainingPlans.value = ResultHandler.Loading
-                trainingPlanService.getTrainingPlansFromCategories().collectLatest {
+//                trainingPlanService.getTrainingPlansFromCategories().collectLatest {
 //                _trainingPlans.value = ResultHandler.Success(TrainingPlanMapper.toPresentationTrainingPlans(it))
-                    _trainingPlans.value = ResultHandler.Success(dummyTrainingsList)
-                }
+//                    _trainingPlans.value = ResultHandler.Success(dummyTrainingsList)
+//                }
             } catch (e: Exception) {
                 _trainingPlans.value = ResultHandler.Error("Training plan fetch failed", e)
             }

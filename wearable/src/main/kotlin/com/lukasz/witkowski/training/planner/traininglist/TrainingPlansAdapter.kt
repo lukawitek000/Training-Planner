@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.lukasz.witkowski.training.planner.databinding.TrainingListItemBinding
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 
 class TrainingPlansAdapter(
     private val context: Context,
@@ -43,10 +43,10 @@ class TrainingPlansAdapter(
         }
 
         private fun setUpCategoriesRecyclerView(trainingPlan: TrainingPlan) {
-            val categories = trainingPlan.getCategories()
-            binding.categoriesRv.adapter = CategoriesAdapter(categories, context)
-            binding.categoriesRv.layoutManager =
-                LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
+//            val categories = trainingPlan.getCategories()
+//            binding.categoriesRv.adapter = CategoriesAdapter(categories, context)
+//            binding.categoriesRv.layoutManager =
+//                LinearLayoutManager(binding.root.context, LinearLayoutManager.HORIZONTAL, false)
         }
     }
 

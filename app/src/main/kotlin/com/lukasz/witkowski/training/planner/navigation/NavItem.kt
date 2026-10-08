@@ -52,17 +52,37 @@ data class DeleteExercise(
     override val exerciseId: ExerciseId,
 ) : TrainingPlannerNavKey, ExerciseIdRoute
 
-@Serializable
-data object PickExercise : TrainingPlannerNavKey
 
 @Serializable
 data object TrainingPlansList : TrainingPlannerNavKey
 
 @Serializable
-data object CreateTraining : TrainingPlannerNavKey
+data object CreateTrainingPlan : TrainingPlannerNavKey
 
 @Serializable
-data class TrainingOverview(
+data class EditTrainingPlan(
+    @Serializable(with = TrainingPlanIdSerializer::class)
+    val trainingPlanId: TrainingPlanId
+) : TrainingPlannerNavKey
+
+@Serializable
+data object AddTrainingExercise : TrainingPlannerNavKey
+
+
+@Serializable
+data class TrainingExerciseConfiguration(
+    @Serializable(with = ExerciseIdSerializer::class)
+    override val exerciseId: ExerciseId,
+) : TrainingPlannerNavKey, ExerciseIdRoute
+
+@Serializable
+data class TrainingPlanDetails(
+    @Serializable(with = TrainingPlanIdSerializer::class)
+    val trainingPlanId: TrainingPlanId
+) : TrainingPlannerNavKey
+
+@Serializable
+data class DeleteTrainingPlan(
     @Serializable(with = TrainingPlanIdSerializer::class)
     val trainingPlanId: TrainingPlanId
 ) : TrainingPlannerNavKey
@@ -72,8 +92,6 @@ data class TrainingSession(
     @Serializable(with = TrainingPlanIdSerializer::class)
     val trainingPlanId: TrainingPlanId
 ) : TrainingPlannerNavKey {}
-
-
 
 
 object TrainingPlanIdSerializer : KSerializer<TrainingPlanId> {
@@ -113,20 +131,24 @@ data class TopBarConfig(
 sealed interface TopBarAction {
     data class EditExercise(val id: ExerciseId) : TopBarAction
     data class DeleteExercise(val id: ExerciseId) : TopBarAction
+    data class EditTrainingPlan(val id: TrainingPlanId) : TopBarAction
+    data class DeleteTrainingPlan(val id: TrainingPlanId) : TopBarAction
 }
 
 sealed interface TopBarMenuItem {
-    val action : TopBarAction
+    val action: TopBarAction
+
     data class IconItem(
         val icon: ImageVector,
         override val action: TopBarAction
-    ): TopBarMenuItem
+    ) : TopBarMenuItem
+
     data class OverflowItem(
         val icon: ImageVector,
         val text: String,
         override val action: TopBarAction,
         val color: Color? = null,
-    ): TopBarMenuItem
+    ) : TopBarMenuItem
 }
 
 data class FabConfig(
@@ -235,25 +257,64 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
         )
 
 
-
-        is CreateTraining -> UiConfig(
+        is CreateTrainingPlan -> UiConfig(
             topBarConfig = TopBarConfig(
                 title = context.getString(R.string.create_training),
                 hasBackArrow = true
             )
         )
 
-        is PickExercise -> UiConfig(
+        is EditTrainingPlan -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(R.string.edit_training_plan),
+                hasBackArrow = true
+            )
+        )
+
+        is AddTrainingExercise -> UiConfig(
             topBarConfig = TopBarConfig(
                 title = context.getString(R.string.search_exercise),
                 hasBackArrow = true
             )
         )
 
-        is TrainingOverview -> UiConfig(
+        is DeleteTrainingPlan -> UiConfig(
             topBarConfig = TopBarConfig(
-                title = context.getString(R.string.training_statistics),
-                hasBackArrow = true
+                title = context.getString(R.string.training_plan_details),
+                hasBackArrow = true,
+                menuItems = listOf(
+                    TopBarMenuItem.OverflowItem(
+                        icon = Icons.Default.Edit,
+                        text = context.getString(R.string.edit),
+                        action = TopBarAction.EditTrainingPlan(key.trainingPlanId)
+                    ),
+                    TopBarMenuItem.OverflowItem(
+                        icon = Icons.Default.Delete,
+                        text = context.getString(R.string.delete),
+                        action = TopBarAction.DeleteTrainingPlan(key.trainingPlanId),
+                        color = Color.Red
+                    )
+                )
+            )
+        )
+
+        is TrainingPlanDetails -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(R.string.training_plan_details),
+                hasBackArrow = true,
+                menuItems = listOf(
+                    TopBarMenuItem.OverflowItem(
+                        icon = Icons.Default.Edit,
+                        text = context.getString(R.string.edit),
+                        action = TopBarAction.EditTrainingPlan(key.trainingPlanId)
+                    ),
+                    TopBarMenuItem.OverflowItem(
+                        icon = Icons.Default.Delete,
+                        text = context.getString(R.string.delete),
+                        action = TopBarAction.DeleteTrainingPlan(key.trainingPlanId),
+                        color = Color.Red
+                    )
+                )
             )
         )
 

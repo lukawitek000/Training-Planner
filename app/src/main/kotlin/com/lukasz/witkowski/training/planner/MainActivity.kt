@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             TrainingPlannerTheme {
-                TrainingPlannerApp(ExercisesList)
+                TrainingPlannerApp()
             }
         }
     }
@@ -79,6 +79,12 @@ fun TrainingPlannerApp(initialKey: TrainingPlannerNavKey = TrainingPlansList) {
                         }
                         is TopBarAction.DeleteExercise -> {
                             navigator.showDeleteExerciseDialog(it.id)
+                        }
+                        is TopBarAction.EditTrainingPlan -> {
+                            navigator.trainingPlanEdit(it.id)
+                        }
+                        is TopBarAction.DeleteTrainingPlan -> {
+                            navigator.showDeleteTrainingPlanDialog(it.id)
                         }
                     }
                 }

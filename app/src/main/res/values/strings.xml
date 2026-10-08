@@ -26,24 +26,75 @@
 
     <!-- Recommendations -->
     <string name="recommended_parameters">Recommended parameters *</string>
+    <string name="recommended_parameters_label">Recommended parameters</string>
     <string name="recommended_parameters_description">Suggested sets, reps, rest time and weight for different experience level. These are default recommendations.</string>
     <string name="not_set">Not set</string>
     <string name="recommendation_overview">%1$d x %2$d &#183; %3$d s &#183; %4$d kg</string>
     <string name="recommendation_no_weight">%1$d x %2$d &#183; %3$d s</string>
 
+    <!-- Training Plan -->
+    <string name="search_training_plan">Search Training Plan</string>
+    <string name="edit_training_plan">Edit training plan</string>
+    <string name="failed_to_load_training_plans">Failed to load training plans</string>
+    <string name="no_trainings_info">No trainings. Create your first training</string>
+    <string name="create_training">Create training</string>
+    <string name="last_modified">Last modified %1$s</string>
+    <string name="last_session">Last session %1$s</string>
+    <string name="training_plan_title_label">Training Plan title *</string>
+    <string name="training_plan_title">Title</string>
+    <string name="training_plan_description_label">Training Plan description</string>
+    <string name="training_plan_description">Description</string>
+    <string name="save_training_plan">Create plan</string>
+    <string name="no_exercises_added_yet">No exercises added yet</string>
+    <string name="add_exercises_from_catalogue">Add exercises from the exercise catalogue to build your training plan</string>
+    <string name="add_exercises">Add exercises</string>
+    <string name="plan_categories">Plan categories</string>
+    <string name="plan_categories_caption">Will be derived from selected exercises</string>
+    <string name="no_exercises_yet">No exercises yet</string>
+    <string name="exercises_count">Exercises (%1$d) *</string>
+    <string name="failed_to_save_training_plan">Failed to save training plan. Try again.</string>
+
+
+    <!-- Training Plan Details -->
+    <string name="training_plan_details">Training Plan Details</string>
+    <string name="exercises_tab_title">Exercises</string>
+    <string name="previous_sessions_tab_title">Previous sessions</string>
+    <string name="no_previous_sessions">No previous sessions available yet</string>
+    <string name="training_plan_not_found">Training Plan not found</string>
+    <string name="training_plan_loading_error">Failed to load Training Plan</string>
+    <string name="loading_training_plan">Loading training plan…</string>
+    <!-- Delete Training Plan -->
+    <string name="delete_training_plan_dialog_title">Delete training plan?</string>
+    <string name="delete_training_plan_dialog_text">This will permanently delete this training plan and all its configuration. Past training sessions will be kept.</string>
+    <string name="training_plan_deleted">Training plan deleted.</string>
+    <string name="training_plan_deletion_failed">Training plan deletion failed.</string>
+
+    <!-- Add exercises -->
+    <string name="add_exercise_icon">Add exercise to training plan</string>
+    <string name="set_parameters">Set parameters *</string>
+    <string name="set_parameters_description">Set parameters manually, or select one from the recommendations</string>
+    <string name="add_exercise">Add exercise</string>
+
     <!-- Common -->
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
     <string name="cancel">Cancel</string>
+    <string name="rest_time_picker_icon">Rest time picker button icon</string>
+    <string name="rest_time">Rest time</string>
+    <string name="rest_time_with_value">Rest time: %1$s</string>
+    <string name="select_rest_time">Select rest time</string>
+    <string name="done">Done</string>
+    <string name="minutes">Minutes</string>
+    <string name="seconds">Seconds</string>
+    <string name="custom">Custom</string>
+    <string name="seconds_suffix">%1$d s</string>
+    <string name="minutes_suffix">%1$d min</string>
 
     <string name="reps">Reps</string>
     <string name="sets">Sets</string>
-    <string name="rest_time">Rest time</string>
     <string name="weight">Weight</string>
     <string name="kg">kg</string>
     <string name="add">Add</string>
-    <string name="minutes">Minutes</string>
-    <string name="seconds">Seconds</string>
     <string name="second_abbrv">s</string>
     <string name="rest_time_info">Set rest time that will be automatically measured after the exercise.\nTo set a rest time between sets, you have to set it to the last exercise in the training.</string>
 
@@ -56,8 +107,6 @@
     <string name="add_training_exercise_one_more_time_info">The exercise %1$s is already added to the training.\nDo you want to add it one more time?</string>
     <string name="no_statistics">No statistics for this training.</string>
     <string name="heart_rate_plot">Heart rate (BPM)</string>
-    <string name="no_trainings_info">No trainings. Create your first training</string>
-    <string name="create_training">Create training</string>
     <string name="exercise_name_is_required">Exercise name is required</string>
     <string name="upload_image">Upload image</string>
     <string name="name">Name</string>
@@ -68,7 +117,6 @@
     <string name="image_description">%1$s image</string>
     <string name="training_plan_no_enough_data_message">Title and exercises are required</string>
     <string name="title">Title</string>
-    <string name="add_exercises">Add Exercises</string>
     <string name="change_rest_time">Change rest time</string>
     <string name="add_rest_time">Add rest time</string>
     <string name="remove_training_exercise">Remove training exercise</string>
@@ -105,5 +153,4 @@
     <string name="undo">Undo</string>
     <string name="exercise">Exercise</string>
     <string name="deleted">deleted</string>
-    <string name="saving_exercise">Saving exercise - %1$s</string>
-</resources>
+    <string name="saving_exercise">Saving exercise - %1$s</string></resources>

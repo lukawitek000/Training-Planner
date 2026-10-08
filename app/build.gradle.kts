@@ -67,6 +67,7 @@ dependencies {
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.lifecycleViewmodelCompose)
+    implementation(libs.calvin.reorderable)
 
     implementation(libs.androidx.paging.compose)
     implementation(libs.androidx.paging.common)

@@ -7,12 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -34,19 +29,17 @@ import androidx.paging.compose.itemKey
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoriesCollection
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.image.ImageReference
+import com.lukasz.witkowski.training.planner.ui.components.CategoriesRow
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChip
-import com.lukasz.witkowski.training.planner.ui.components.CategoryFilters
+import com.lukasz.witkowski.training.planner.ui.components.FilteringState
 import com.lukasz.witkowski.training.planner.ui.components.Image
 import com.lukasz.witkowski.training.planner.ui.components.ImageContainer
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
 import com.lukasz.witkowski.training.planner.ui.components.PREVIEW_CATEGORIES
-import com.lukasz.witkowski.training.planner.ui.components.TextField
+import com.lukasz.witkowski.training.planner.ui.components.SearchHeader
 import com.lukasz.witkowski.training.planner.ui.theme.Dimens
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import kotlinx.coroutines.flow.Flow
@@ -78,29 +71,21 @@ fun ExercisesScreenContent(
     onSearchQueryChanged: (String) -> Unit,
     onExerciseClicked: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
+    itemTrailingIcon: (@Composable (ExerciseId) -> Unit)? = null
 ) {
     Column(modifier = modifier) {
-        TextField(
-            text = filteringState.searchQuery,
-            onTextChange = onSearchQueryChanged,
-            label = stringResource(R.string.search_exercise),
-            modifier = Modifier
-                .padding(Dimens.normal)
-                .testTag("SearchField")
-        )
-        CategoryFilters(
-            modifier = Modifier.padding(
-                bottom = Dimens.normal,
-                start = Dimens.normal,
-                end = Dimens.normal
-            ),
+        SearchHeader(
+            query = filteringState.searchQuery,
+            onSearchQueryChanged = onSearchQueryChanged,
             categories = filteringState.categories,
-            toggleCategory = toggleCategory
+            toggleCategory = toggleCategory,
+            label = stringResource(R.string.search_exercise)
         )
         if (exercisesList.itemCount != 0) {
             ExercisesList(
                 exercisesList = exercisesList,
                 onExerciseClicked = onExerciseClicked,
+                itemTrailingIcon = itemTrailingIcon,
             )
         } else {
             NoDataMessage(
@@ -120,6 +105,7 @@ private fun ExercisesList(
     modifier: Modifier = Modifier,
     exercisesList: LazyPagingItems<Exercise2>,
     onExerciseClicked: (ExerciseId) -> Unit,
+    itemTrailingIcon: (@Composable (ExerciseId) -> Unit)? = null
 ) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         LazyColumn(
@@ -134,6 +120,7 @@ private fun ExercisesList(
                     ExerciseListItemContent(
                         exercise = exercise,
                         onClick = { onExerciseClicked(exercise.id) },
+                        itemTrailingIcon = itemTrailingIcon,
                         modifier = Modifier.testTag("ExerciseItem-${exercise.name}")
                     )
                 }
@@ -147,6 +134,7 @@ fun ExerciseListItemContent(
     exercise: Exercise2,
     onClick: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
+    itemTrailingIcon: (@Composable (ExerciseId) -> Unit)? = null
 ) {
     val imageDescription = stringResource(id = R.string.image_description, exercise.name)
     ListCardItem(
@@ -164,9 +152,12 @@ fun ExerciseListItemContent(
             )
             Spacer(modifier = Modifier.width(Dimens.large))
             ExerciseInformation(
-                modifier = Modifier,
+                modifier = Modifier.weight(1f),
                 exercise = exercise,
             )
+            itemTrailingIcon?.let { icon ->
+                icon(exercise.id)
+            }
         }
     }
 }
@@ -186,17 +177,10 @@ private fun ExerciseInformation(
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.testTag("ExerciseItemName-${exercise.name}")
         )
-        Row(
+        CategoriesRow(
+            categories = categories.map { it.name },
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Dimens.normal)
-        ) {
-            categories.forEach { category ->
-                CategoryChip(
-                    modifier = Modifier,
-                    category = category,
-                )
-            }
-        }
+        )
     }
 }
 

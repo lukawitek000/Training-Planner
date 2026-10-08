@@ -6,15 +6,14 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
-import com.lukasz.witkowski.training.planner.dummyTrainingsList
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.startTraining.StartTrainingActivity
 import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.statistics.presentation.toPresentationTrainingSessionState
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -52,8 +51,8 @@ class TrainingSessionViewModel(
         if (trainingSessionService.isTrainingSessionStarted()) return
         viewModelScope.launch {
             _trainingPlan.value = ResultHandler.Loading
-            _trainingPlan.value =
-                ResultHandler.Success(dummyTrainingsList.first { it.id == trainingPlanId })
+//            _trainingPlan.value =
+//                ResultHandler.Success(dummyTrainingsList.first { it.id == trainingPlanId })
         }
     }
 

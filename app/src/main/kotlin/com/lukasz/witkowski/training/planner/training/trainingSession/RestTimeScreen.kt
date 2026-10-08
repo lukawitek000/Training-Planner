@@ -22,8 +22,8 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Category
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.shared.time.Time
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.trainingSession.components.TimerWithCircularProgressBar
 import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
 import com.lukasz.witkowski.training.planner.ui.components.TrainingExerciseRepsSetsTimeOverviewRow
@@ -76,23 +76,23 @@ fun NextExerciseOverview(
 @Composable
 private fun RestTimeScreenPreview() {
     TrainingPlannerTheme {
-        RestTimeScreen(
-            timeLeft = Time(9000),
-            totalTime = Time(10000),
-            nextExercise = TrainingExercise(
-                id = TrainingExerciseId(""),
-                exercise = Exercise(
-                    ExerciseId.create(),
-                    name = "Next exercise name",
-                    description = "Next exercise description",
-                    categories = listOf(Category(0, R.string.category_back)),
-                    null
-                ),
-                repetitions = 15,
-                sets = 3,
-                time = Time(30000),
-                restTime = Time(60000)
-            )
-        )
+//        RestTimeScreen(
+//            timeLeft = Time(9000),
+//            totalTime = Time(10000),
+//            nextExercise = TrainingExercise(
+//                id = TrainingExerciseId(""),
+//                exercise = Exercise(
+//                    ExerciseId.create(),
+//                    name = "Next exercise name",
+//                    description = "Next exercise description",
+//                    categories = listOf(Category(0, R.string.category_back)),
+//                    null
+//                ),
+//                repetitions = 15,
+//                sets = 3,
+//                time = Time(30000),
+//                restTime = Time(60000)
+//            )
+//        )
     }
 }

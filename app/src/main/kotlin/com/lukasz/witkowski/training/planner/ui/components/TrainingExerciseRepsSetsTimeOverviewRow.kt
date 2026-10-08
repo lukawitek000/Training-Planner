@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.TextUnit
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 
 @Composable
 fun TrainingExerciseRepsSetsTimeOverviewRow(
@@ -40,13 +40,13 @@ fun TrainingExerciseRepsSetsTimeOverviewRow(
             Text(text = stringResource(id = R.string.sets), fontSize = fontSize, color = textColor)
             Text(text = exercise.sets.toString(), fontSize = fontSize, color = textColor)
         }
-        if (exercise.time.isNotZero()) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = stringResource(id = R.string.time), fontSize = fontSize, color = textColor)
-                Text(text = TimeFormatter(LocalContext.current).formatTime(exercise.time), fontSize = fontSize, color = textColor)
-            }
-        }
+//        if (exercise.time.isNotZero()) {
+//            Column(
+//                horizontalAlignment = Alignment.CenterHorizontally
+//            ) {
+//                Text(text = stringResource(id = R.string.time), fontSize = fontSize, color = textColor)
+//                Text(text = TimeFormatter(LocalContext.current).formatTime(exercise.time), fontSize = fontSize, color = textColor)
+//            }
+//        }
     }
 }

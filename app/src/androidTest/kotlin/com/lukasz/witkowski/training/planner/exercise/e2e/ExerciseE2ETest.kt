@@ -38,6 +38,7 @@ class ExerciseE2ETest {
 
     @Before
     fun setUp() {
+        composeTestRule.onNodeWithTag("BottomNavItem_1").performClick()
         waitForExercisesLoaded()
     }
 
@@ -192,6 +193,12 @@ class ExerciseE2ETest {
         exerciseDescription: String? = null,
         categories: List<String> = emptyList(),
     ) {
+        composeTestRule.waitUntil(timeoutMillis = 10000) {
+            composeTestRule
+                .onAllNodesWithTag("ExerciseDetails")
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
         composeTestRule.onNodeWithTag("ExerciseDetails").assertIsDisplayed()
         composeTestRule.onNodeWithText(exerciseName).assertIsDisplayed()
         exerciseDescription?.let {

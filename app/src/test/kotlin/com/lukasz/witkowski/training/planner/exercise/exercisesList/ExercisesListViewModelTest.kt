@@ -9,6 +9,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoryController2
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
+import com.lukasz.witkowski.training.planner.ui.components.FilteringState
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

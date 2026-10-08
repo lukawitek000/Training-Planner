@@ -14,7 +14,7 @@ import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.summary.TrainingSummaryActivity
-import com.lukasz.witkowski.training.planner.training.presentation.models.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TrainingSessionActivity : FragmentActivity() {

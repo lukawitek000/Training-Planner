@@ -1,7 +1,6 @@
-package com.lukasz.witkowski.training.planner.exercise.delete
+package com.lukasz.witkowski.training.planner.training.delete
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,21 +11,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.delete.DeletionEvent
 import com.lukasz.witkowski.training.planner.ui.components.ConfirmDeleteDialog
 import com.lukasz.witkowski.training.planner.ui.components.ConfirmDeleteUiState
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun DeleteExerciseScreen(
-    viewModel: DeleteExerciseViewModel,
+fun DeleteTrainingPlanScreen(
+    viewModel: DeleteTrainingPlanViewModel,
     onDelete: () -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val successMessage = stringResource(R.string.exercise_deleted)
-    val failureMessage = stringResource(R.string.exercise_deletion_failed)
+    val successMessage = stringResource(R.string.training_plan_deleted)
+    val failureMessage = stringResource(R.string.training_plan_deletion_failed)
     val context = LocalContext.current
+
     LaunchedEffect(Unit) {
         viewModel.deletionEvent.collectLatest { event ->
             val text = when (event) {
@@ -37,32 +38,33 @@ fun DeleteExerciseScreen(
             onDelete()
         }
     }
+
     val state by viewModel.state.collectAsState()
-    DeleteExerciseDialog(
+    DeleteTrainingPlanDialog(
         state = state,
-        onDelete = { viewModel.deleteExercise() },
+        onDelete = { viewModel.deleteTrainingPlan() },
         onCancel = onCancel,
         modifier = modifier
     )
 }
 
 @Composable
-private fun DeleteExerciseDialog(
-    state: DeleteExerciseUiState,
+private fun DeleteTrainingPlanDialog(
+    state: DeleteTrainingPlanUiState,
     onDelete: () -> Unit,
     onCancel: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val dialogState = when (val current = state) {
-        DeleteExerciseUiState.Loading -> ConfirmDeleteUiState.Loading
-        is DeleteExerciseUiState.LoadedExercise -> ConfirmDeleteUiState.Loaded(
-            title = stringResource(R.string.delete_exercise_dialog_title, current.exerciseName),
-            message = stringResource(R.string.delete_exercise_dialog_text)
+    val dialogState = when (state) {
+        DeleteTrainingPlanUiState.Loading -> ConfirmDeleteUiState.Loading
+        is DeleteTrainingPlanUiState.LoadedTrainingPlan -> ConfirmDeleteUiState.Loaded(
+            title = stringResource(R.string.delete_training_plan_dialog_title),
+            message = stringResource(R.string.delete_training_plan_dialog_text)
         )
 
-        is DeleteExerciseUiState.Error -> ConfirmDeleteUiState.Error(
-            title = stringResource(R.string.exercise_deletion_failed),
-            message = current.message
+        is DeleteTrainingPlanUiState.Error -> ConfirmDeleteUiState.Error(
+            title = stringResource(R.string.training_plan_deletion_failed),
+            message = state.message
         )
     }
 
@@ -71,24 +73,22 @@ private fun DeleteExerciseDialog(
         onDelete = onDelete,
         onCancel = onCancel,
         modifier = modifier,
-        dialogTestTag = "DeleteExerciseDialog",
-        titleTestTag = "DeleteExerciseTitle"
+        dialogTestTag = "DeleteTrainingPlanDialog",
+        titleTestTag = "DeleteTrainingPlanTitle"
     )
 }
 
-
 @Composable
 @Preview
-private fun DeleteExerciseDialogPreview() {
+private fun DeleteTrainingPlanDialogPreview() {
     TrainingPlannerTheme {
         Surface() {
-            DeleteExerciseDialog(
-                state = DeleteExerciseUiState.LoadedExercise(
-                    exerciseName = "Push up"
+            DeleteTrainingPlanDialog(
+                state = DeleteTrainingPlanUiState.LoadedTrainingPlan(
+                    title = "Full Body"
                 ),
                 onDelete = {},
-                onCancel = {},
-                modifier = Modifier
+                onCancel = {}
             )
         }
     }

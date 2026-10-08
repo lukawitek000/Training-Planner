@@ -47,8 +47,8 @@ val DisabledGrey = Color(0xFF616161)
 // Semantic colors
 // -----------------------------------------------------------------------------
 
-val Error = Color(0xFFCF6679)
-val ErrorContainer = Color(0xFF4A1C24)
+val Error = Color(0xFFFF453A)
+val ErrorContainer = Color(0x33FF453A)
 
 val Success = Color(0xFF81C784)
 val SuccessContainer = Color(0xFF1B3A1E)
