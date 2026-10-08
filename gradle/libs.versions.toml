@@ -25,13 +25,13 @@ androidx-compose-ui-test = "1.12.1"
 androidx-test-espresso = "3.7.0"
 mockk = "1.14.11"
 reorderable = "3.1.0"
-ktor = "3.1.1"
-exposed = "0.60.0"
-hikari = "6.2.1"
-h2 = "2.3.232"
-postgresql = "42.7.5"
+ktor = "3.6.0"
+exposed = "1.5.0"
+hikari = "7.1.0"
+h2 = "2.5.252"
+postgresql = "42.7.14"
 bcrypt = "0.10.2"
-logback = "1.5.17"
+logback = "1.6.5"
 
 [libraries]
 
@@ -43,6 +43,8 @@ google-material = { module = "com.google.android.material:material", version = "
 # KotlinX
 kotlinx-coroutines-playServices = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "coroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationCore" }
 
 # AndroidX
 androidx-core = { module = "androidx.core:core", version = "1.19.0" }
@@ -74,7 +76,6 @@ androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", vers
 
 # Optional add-on libraries
 androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
-kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinxSerializationCore" }
 androidx-material3-adaptive-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
 
 # 3rd party
@@ -127,6 +128,11 @@ ktor-server-websockets = { module = "io.ktor:ktor-server-websockets-jvm", versio
 ktor-server-callLogging = { module = "io.ktor:ktor-server-call-logging-jvm", version.ref = "ktor" }
 ktor-server-testHost = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
 koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
+
+# Ktor Client
+ktor-client-core = { module = "io.ktor:ktor-client-core-jvm", version.ref = "ktor" }
+ktor-client-contentNegotiation = { module = "io.ktor:ktor-client-content-negotiation-jvm", version.ref = "ktor" }
+ktor-client-websockets = { module = "io.ktor:ktor-client-websockets-jvm", version.ref = "ktor" }
 
 # Database & Security
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
