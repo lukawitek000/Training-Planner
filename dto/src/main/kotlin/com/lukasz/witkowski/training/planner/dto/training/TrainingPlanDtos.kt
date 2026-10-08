@@ -10,7 +10,7 @@ data class TrainingExerciseDto(
     val repetitions: Int = 1,
     val sets: Int = 1,
     val restTimeInMillis: Long = 0,
-    val weightInKg: Double? = null
+    val weightInKg: Double? = null,
 )
 
 @Serializable
@@ -20,7 +20,7 @@ data class TrainingPlanOverviewDto(
     val description: String = "",
     val categories: List<String> = emptyList(),
     val exerciseCount: Int = 0,
-    val ownerId: String? = null
+    val ownerId: String? = null,
 )
 
 @Serializable
@@ -30,7 +30,7 @@ data class TrainingPlanDto(
     val description: String = "",
     val exercises: List<TrainingExerciseDto> = emptyList(),
     val restTimeInMillis: Long = 0,
-    val ownerId: String? = null
+    val ownerId: String? = null,
 )
 
 @Serializable
@@ -39,7 +39,7 @@ data class CreateTrainingExerciseRequestDto(
     val repetitions: Int = 1,
     val sets: Int = 1,
     val restTimeInMillis: Long = 0,
-    val weightInKg: Double? = null
+    val weightInKg: Double? = null,
 )
 
 @Serializable
@@ -47,7 +47,7 @@ data class CreateTrainingPlanRequestDto(
     val title: String,
     val description: String = "",
     val exercises: List<CreateTrainingExerciseRequestDto> = emptyList(),
-    val restTimeInMillis: Long = 0
+    val restTimeInMillis: Long = 0,
 )
 
 @Serializable
@@ -55,5 +55,5 @@ data class UpdateTrainingPlanRequestDto(
     val title: String,
     val description: String = "",
     val exercises: List<CreateTrainingExerciseRequestDto> = emptyList(),
-    val restTimeInMillis: Long = 0
+    val restTimeInMillis: Long = 0,
 )

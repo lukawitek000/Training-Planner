@@ -26,52 +26,63 @@ fun Route.trainingPlanRoutes(trainingPlanService: TrainingPlanService) {
                 val limit = call.request.queryParameters["limit"]?.toIntOrNull() ?: 20
                 val principal = call.principal<JWTPrincipal>()
 
-                val result = trainingPlanService.getTrainingPlans(
-                    search = search,
-                    ownerId = principal?.payload?.subject,
-                    page = page,
-                    limit = limit
-                )
+                val result =
+                    trainingPlanService.getTrainingPlans(
+                        search = search,
+                        ownerId = principal?.payload?.subject,
+                        page = page,
+                        limit = limit,
+                    )
                 call.respond(HttpStatusCode.OK, result)
             }
 
             get("/{id}") {
-                val id = call.parameters["id"]
-                    ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing training plan id.")
-                val plan = trainingPlanService.getTrainingPlanById(id)
-                    ?: return@get call.respond(HttpStatusCode.NotFound, "Training plan not found.")
+                val id =
+                    call.parameters["id"]
+                        ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing training plan id.")
+                val plan =
+                    trainingPlanService.getTrainingPlanById(id)
+                        ?: return@get call.respond(HttpStatusCode.NotFound, "Training plan not found.")
                 call.respond(HttpStatusCode.OK, plan)
             }
 
             post {
-                val principal = call.principal<JWTPrincipal>()
-                    ?: return@post call.respond(HttpStatusCode.Unauthorized)
-                val userId = principal.payload.subject
-                    ?: return@post call.respond(HttpStatusCode.Unauthorized)
+                val principal =
+                    call.principal<JWTPrincipal>()
+                        ?: return@post call.respond(HttpStatusCode.Unauthorized)
+                val userId =
+                    principal.payload.subject
+                        ?: return@post call.respond(HttpStatusCode.Unauthorized)
                 val request = call.receive<CreateTrainingPlanRequestDto>()
                 val created = trainingPlanService.createTrainingPlan(request, userId)
                 call.respond(HttpStatusCode.Created, created)
             }
 
             put("/{id}") {
-                val id = call.parameters["id"]
-                    ?: return@put call.respond(HttpStatusCode.BadRequest, "Missing training plan id.")
-                val principal = call.principal<JWTPrincipal>()
-                    ?: return@put call.respond(HttpStatusCode.Unauthorized)
-                val userId = principal.payload.subject
-                    ?: return@put call.respond(HttpStatusCode.Unauthorized)
+                val id =
+                    call.parameters["id"]
+                        ?: return@put call.respond(HttpStatusCode.BadRequest, "Missing training plan id.")
+                val principal =
+                    call.principal<JWTPrincipal>()
+                        ?: return@put call.respond(HttpStatusCode.Unauthorized)
+                val userId =
+                    principal.payload.subject
+                        ?: return@put call.respond(HttpStatusCode.Unauthorized)
                 val request = call.receive<UpdateTrainingPlanRequestDto>()
                 val updated = trainingPlanService.updateTrainingPlan(id, request, userId)
                 call.respond(HttpStatusCode.OK, updated)
             }
 
             delete("/{id}") {
-                val id = call.parameters["id"]
-                    ?: return@delete call.respond(HttpStatusCode.BadRequest, "Missing training plan id.")
-                val principal = call.principal<JWTPrincipal>()
-                    ?: return@delete call.respond(HttpStatusCode.Unauthorized)
-                val userId = principal.payload.subject
-                    ?: return@delete call.respond(HttpStatusCode.Unauthorized)
+                val id =
+                    call.parameters["id"]
+                        ?: return@delete call.respond(HttpStatusCode.BadRequest, "Missing training plan id.")
+                val principal =
+                    call.principal<JWTPrincipal>()
+                        ?: return@delete call.respond(HttpStatusCode.Unauthorized)
+                val userId =
+                    principal.payload.subject
+                        ?: return@delete call.respond(HttpStatusCode.Unauthorized)
                 val success = trainingPlanService.deleteTrainingPlan(id, userId)
                 if (success) {
                     call.respond(HttpStatusCode.NoContent)

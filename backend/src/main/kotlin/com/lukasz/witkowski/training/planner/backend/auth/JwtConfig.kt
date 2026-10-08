@@ -16,14 +16,20 @@ object JwtConfig {
 
     private val algorithm = Algorithm.HMAC256(SECRET)
 
-    val verifier: JWTVerifier = JWT
-        .require(algorithm)
-        .withIssuer(ISSUER)
-        .withAudience(AUDIENCE)
-        .build()
+    val verifier: JWTVerifier =
+        JWT
+            .require(algorithm)
+            .withIssuer(ISSUER)
+            .withAudience(AUDIENCE)
+            .build()
 
-    fun generateAccessToken(userId: String, email: String, username: String): String =
-        JWT.create()
+    fun generateAccessToken(
+        userId: String,
+        email: String,
+        username: String,
+    ): String =
+        JWT
+            .create()
             .withSubject(userId)
             .withIssuer(ISSUER)
             .withAudience(AUDIENCE)
@@ -33,7 +39,8 @@ object JwtConfig {
             .sign(algorithm)
 
     fun generateRefreshToken(userId: String): String =
-        JWT.create()
+        JWT
+            .create()
             .withSubject(userId)
             .withIssuer(ISSUER)
             .withAudience(AUDIENCE)

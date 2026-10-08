@@ -7,20 +7,21 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 class DtoSerializationTest {
-
-    private val json = Json {
-        ignoreUnknownKeys = true
-        encodeDefaults = true
-    }
+    private val json =
+        Json {
+            ignoreUnknownKeys = true
+            encodeDefaults = true
+        }
 
     @Test
     fun `exerciseDto serialization and deserialization works correctly`() {
-        val exercise = ExerciseDto(
-            id = "ex-1",
-            name = "Push-up",
-            description = "Standard push-up",
-            categories = listOf(CategoryDto("cat-1", "Chest"))
-        )
+        val exercise =
+            ExerciseDto(
+                id = "ex-1",
+                name = "Push-up",
+                description = "Standard push-up",
+                categories = listOf(CategoryDto("cat-1", "Chest")),
+            )
 
         val encoded = json.encodeToString(ExerciseDto.serializer(), exercise)
         val decoded = json.decodeFromString(ExerciseDto.serializer(), encoded)
@@ -30,7 +31,8 @@ class DtoSerializationTest {
 
     @Test
     fun `deserialization ignores unknown keys for backward compatibility`() {
-        val jsonStringWithExtraField = """
+        val jsonStringWithExtraField =
+            """
             {
                 "id": "ex-1",
                 "name": "Push-up",
@@ -38,7 +40,7 @@ class DtoSerializationTest {
                 "categories": [],
                 "futureField": "some future value"
             }
-        """.trimIndent()
+            """.trimIndent()
 
         val decoded = json.decodeFromString(ExerciseDto.serializer(), jsonStringWithExtraField)
 

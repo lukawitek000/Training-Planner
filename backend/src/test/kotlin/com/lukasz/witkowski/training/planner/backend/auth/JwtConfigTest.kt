@@ -5,7 +5,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class JwtConfigTest {
-
     @Test
     fun `generateAccessToken generates valid JWT with expected claims`() {
         val userId = "user-123"

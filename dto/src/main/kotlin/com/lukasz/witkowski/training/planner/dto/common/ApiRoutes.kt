@@ -14,11 +14,13 @@ object ApiRoutes {
     object Exercises {
         const val BASE = "$BASE_PATH/exercises"
         const val CATEGORIES = "$BASE/categories"
+
         fun byId(id: String) = "$BASE/$id"
     }
 
     object TrainingPlans {
         const val BASE = "$BASE_PATH/training-plans"
+
         fun byId(id: String) = "$BASE/$id"
     }
 

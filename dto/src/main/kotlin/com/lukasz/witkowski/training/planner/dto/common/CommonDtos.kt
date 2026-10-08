@@ -8,12 +8,12 @@ data class PagedResponseDto<T>(
     val page: Int,
     val limit: Int,
     val totalItems: Long,
-    val totalPages: Int
+    val totalPages: Int,
 )
 
 @Serializable
 data class ApiErrorDto(
     val statusCode: Int,
     val message: String,
-    val details: String? = null
+    val details: String? = null,
 )

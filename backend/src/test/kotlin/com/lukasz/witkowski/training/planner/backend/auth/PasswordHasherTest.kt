@@ -6,7 +6,6 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 class PasswordHasherTest {
-
     @Test
     fun `hashPassword produces BCrypt hash that verifies correctly`() {
         val rawPassword = "SecurePassword123!"

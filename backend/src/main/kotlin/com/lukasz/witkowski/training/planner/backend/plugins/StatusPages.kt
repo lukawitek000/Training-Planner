@@ -12,13 +12,13 @@ fun Application.configureStatusPages() {
         exception<IllegalArgumentException> { call, cause ->
             call.respond(
                 HttpStatusCode.BadRequest,
-                ApiErrorDto(statusCode = HttpStatusCode.BadRequest.value, message = cause.message ?: "Bad request")
+                ApiErrorDto(statusCode = HttpStatusCode.BadRequest.value, message = cause.message ?: "Bad request"),
             )
         }
         exception<SecurityException> { call, cause ->
             call.respond(
                 HttpStatusCode.Forbidden,
-                ApiErrorDto(statusCode = HttpStatusCode.Forbidden.value, message = cause.message ?: "Forbidden")
+                ApiErrorDto(statusCode = HttpStatusCode.Forbidden.value, message = cause.message ?: "Forbidden"),
             )
         }
         exception<Throwable> { call, cause ->
@@ -26,8 +26,8 @@ fun Application.configureStatusPages() {
                 HttpStatusCode.InternalServerError,
                 ApiErrorDto(
                     statusCode = HttpStatusCode.InternalServerError.value,
-                    message = "Internal server error: ${cause.localizedMessage}"
-                )
+                    message = "Internal server error: ${cause.localizedMessage}",
+                ),
             )
         }
     }

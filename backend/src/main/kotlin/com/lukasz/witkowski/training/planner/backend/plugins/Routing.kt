@@ -13,7 +13,7 @@ import io.ktor.server.routing.routing
 fun Application.configureRouting(
     authService: AuthService,
     exerciseService: ExerciseService,
-    trainingPlanService: TrainingPlanService
+    trainingPlanService: TrainingPlanService,
 ) {
     routing {
         authRoutes(authService)
