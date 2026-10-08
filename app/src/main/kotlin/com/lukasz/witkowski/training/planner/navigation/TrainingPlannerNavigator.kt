@@ -58,6 +58,10 @@ class TrainingPlannerNavigator(
         backStack.add(CreateTrainingPlan)
     }
 
+    fun trainingPlanEdit(id: TrainingPlanId) {
+        backStack.add(EditTrainingPlan(id))
+    }
+
     fun trainingPlanDetails(id: TrainingPlanId) {
         backStack.add(TrainingPlanDetails(id))
     }
@@ -84,7 +88,7 @@ class TrainingPlannerNavigator(
     }
 
     fun returnToCreateTrainingPlan() {
-        while (backStack.last() != CreateTrainingPlan) {
+        while (backStack.last() !is CreateTrainingPlan && backStack.last() !is EditTrainingPlan) {
             backStack.removeLastOrNull() ?: run {
                 Timber.e("Unknown back stack state $backStack")
                 return
@@ -94,5 +98,5 @@ class TrainingPlannerNavigator(
 
     fun isOnMainScreen(): Boolean = isTrainingPlansList() || isExerciseList()
 
-    fun isCreatingOrEditingTrainingPlan() = backStack.contains(CreateTrainingPlan)
+    fun isCreatingOrEditingTrainingPlan() = backStack.contains(CreateTrainingPlan) || backStack.any { it is EditTrainingPlan }
 }

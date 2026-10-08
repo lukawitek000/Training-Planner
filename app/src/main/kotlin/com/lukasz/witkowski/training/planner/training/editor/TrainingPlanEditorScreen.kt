@@ -109,6 +109,7 @@ fun TrainingPlanEditorScreen(
     val state by viewModel.uiState.collectAsState()
     TrainingPlanEditorScreenContent(
         state = state,
+        isEditMode = viewModel.isEditMode,
         onIntent = viewModel::processIntent,
         onAddExerciseClicked = onAddExerciseClicked,
         modifier = modifier,
@@ -121,6 +122,7 @@ private fun TrainingPlanEditorScreenContent(
     onIntent: (TrainingPlanEditingIntent) -> Unit,
     onAddExerciseClicked: () -> Unit,
     modifier: Modifier = Modifier,
+    isEditMode: Boolean = false,
 ) {
     var showRestTimePicker by remember { mutableStateOf(false) }
     val lazyListState = rememberLazyListState()
@@ -172,7 +174,7 @@ private fun TrainingPlanEditorScreenContent(
 
         item {
             ConfirmButton(
-                text = stringResource(R.string.save_training_plan),
+                text = if (isEditMode) stringResource(R.string.save) else stringResource(R.string.save_training_plan),
                 onClick = { onIntent(TrainingPlanEditingIntent.SaveTrainingPlan) },
                 isEnabled = state.isValid
             )

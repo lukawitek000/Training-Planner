@@ -25,6 +25,7 @@ import com.lukasz.witkowski.training.planner.training.delete.DeleteTrainingPlanS
 import com.lukasz.witkowski.training.planner.training.details.TrainingPlanDetailsScreen
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.editor.AddTrainingExerciseScreen
+import com.lukasz.witkowski.training.planner.training.editor.EditTrainingPlanScreen
 import com.lukasz.witkowski.training.planner.training.editor.TrainingExerciseConfigurationScreen
 import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditingIntent
 import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorScreen
@@ -76,6 +77,21 @@ fun Navigation(
                     navigateBack = { navigator.goBack() }
                 )
 
+            }
+
+            entry<EditTrainingPlan> { key ->
+                val trainingPlanEditorViewModel: TrainingPlanEditorViewModel = koinViewModel { parametersOf(key.trainingPlanId) }
+                ResultEffect<TrainingExercise> { trainingExercise ->
+                    Timber.i("TrainingExercise received $trainingExercise")
+                    trainingPlanEditorViewModel.processIntent(
+                        TrainingPlanEditingIntent.TrainingExerciseAdded(trainingExercise)
+                    )
+                }
+                EditTrainingPlanScreen(
+                    viewModel = trainingPlanEditorViewModel,
+                    onAddExerciseClicked = { navigator.addTrainingExercises() },
+                    navigateBack = { navigator.goBack() }
+                )
             }
 
             entry<AddTrainingExercise> {

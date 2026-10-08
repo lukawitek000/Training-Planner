@@ -60,6 +60,12 @@ data object TrainingPlansList : TrainingPlannerNavKey
 data object CreateTrainingPlan : TrainingPlannerNavKey
 
 @Serializable
+data class EditTrainingPlan(
+    @Serializable(with = TrainingPlanIdSerializer::class)
+    val trainingPlanId: TrainingPlanId
+) : TrainingPlannerNavKey
+
+@Serializable
 data object AddTrainingExercise : TrainingPlannerNavKey
 
 
@@ -254,6 +260,13 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
         is CreateTrainingPlan -> UiConfig(
             topBarConfig = TopBarConfig(
                 title = context.getString(R.string.create_training),
+                hasBackArrow = true
+            )
+        )
+
+        is EditTrainingPlan -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(R.string.edit_training_plan),
                 hasBackArrow = true
             )
         )

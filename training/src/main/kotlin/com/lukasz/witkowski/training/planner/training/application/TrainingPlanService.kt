@@ -17,6 +17,11 @@ class TrainingPlanService(
     suspend fun saveTrainingPlan(trainingPlanConfiguration: TrainingPlanConfiguration) =
         trainingPlanRepository.save(trainingPlanConfiguration, TrainingPlanId.create())
 
+    suspend fun updateTrainingPlan(
+        trainingPlanConfiguration: TrainingPlanConfiguration,
+        trainingPlanId: TrainingPlanId,
+    ) = trainingPlanRepository.update(trainingPlanConfiguration, trainingPlanId)
+
     fun getTrainingPlansFromCategories(categories: List<ExerciseCategoryName> = emptyList()): Flow<List<TrainingPlan>> = flow { }
 
     fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan?> =
