@@ -11,9 +11,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,11 +29,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.shared.time.Time
+import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
@@ -49,7 +52,9 @@ import com.lukasz.witkowski.training.planner.ui.components.ConfirmButton
 import com.lukasz.witkowski.training.planner.ui.components.FailureScreen
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 import com.lukasz.witkowski.training.planner.ui.theme.Dimens
+import com.lukasz.witkowski.training.planner.ui.theme.MediumGrey
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
@@ -150,6 +155,8 @@ private fun TrainingPlanInfoSection(
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
+        TrainingPlanRestTimeInfo(restTime = trainingPlan.restTime)
+
         TrainingPlanDateInfo(
             instant = trainingPlan.lastModification,
             icon = Icons.Default.CalendarMonth,
@@ -164,6 +171,31 @@ private fun TrainingPlanInfoSection(
         }
 
         CategoriesRow(trainingPlan.categories.map { it.name })
+    }
+}
+
+@Composable
+private fun TrainingPlanRestTimeInfo(
+    restTime: Duration,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val formattedRestTime = TimeFormatter(context).formatTime(Time(restTime.inWholeMilliseconds))
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(Dimens.small),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.Timer,
+            contentDescription = null,
+            tint = MediumGrey
+        )
+        Text(
+            text = stringResource(id = R.string.rest_time_with_value, formattedRestTime),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MediumGrey
+        )
     }
 }
 
@@ -220,10 +252,6 @@ private fun ExerciseListItem(
             TrainingExerciseOverview(
                 exercise = exercise,
                 modifier = Modifier.weight(1f)
-            )
-            Icon(
-                imageVector = Icons.AutoMirrored.Default.ArrowForwardIos,
-                contentDescription = null,
             )
         }
     }

@@ -81,6 +81,7 @@
     <string name="cancel">Cancel</string>
     <string name="rest_time_picker_icon">Rest time picker button icon</string>
     <string name="rest_time">Rest time</string>
+    <string name="rest_time_with_value">Rest time: %1$s</string>
     <string name="select_rest_time">Select rest time</string>
     <string name="done">Done</string>
     <string name="minutes">Minutes</string>
