@@ -1,0 +1,34 @@
+package com.lukasz.witkowski.training.planner.backend.plugins
+
+import com.lukasz.witkowski.training.planner.dto.common.ApiErrorDto
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.response.respond
+
+fun Application.configureStatusPages() {
+    install(StatusPages) {
+        exception<IllegalArgumentException> { call, cause ->
+            call.respond(
+                HttpStatusCode.BadRequest,
+                ApiErrorDto(statusCode = HttpStatusCode.BadRequest.value, message = cause.message ?: "Bad request")
+            )
+        }
+        exception<SecurityException> { call, cause ->
+            call.respond(
+                HttpStatusCode.Forbidden,
+                ApiErrorDto(statusCode = HttpStatusCode.Forbidden.value, message = cause.message ?: "Forbidden")
+            )
+        }
+        exception<Throwable> { call, cause ->
+            call.respond(
+                HttpStatusCode.InternalServerError,
+                ApiErrorDto(
+                    statusCode = HttpStatusCode.InternalServerError.value,
+                    message = "Internal server error: ${cause.localizedMessage}"
+                )
+            )
+        }
+    }
+}
