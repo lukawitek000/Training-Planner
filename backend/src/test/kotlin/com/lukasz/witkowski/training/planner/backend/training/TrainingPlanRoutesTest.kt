@@ -37,9 +37,10 @@ class TrainingPlanRoutesTest {
 
             // 1. Create Exercise for Plan
             val categoriesRes =
-                userA.client.get("/api/v1/exercises/categories") {
-                    header(HttpHeaders.Authorization, "Bearer ${userA.token}")
-                }.body<List<CategoryDto>>()
+                userA.client
+                    .get("/api/v1/exercises/categories") {
+                        header(HttpHeaders.Authorization, "Bearer ${userA.token}")
+                    }.body<List<CategoryDto>>()
 
             val exRes =
                 userA.client
@@ -152,9 +153,10 @@ class TrainingPlanRoutesTest {
             val user = createAuthenticatedUser()
 
             val categories =
-                user.client.get("/api/v1/exercises/categories") {
-                    header(HttpHeaders.Authorization, "Bearer ${user.token}")
-                }.body<List<CategoryDto>>()
+                user.client
+                    .get("/api/v1/exercises/categories") {
+                        header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                    }.body<List<CategoryDto>>()
 
             val ex =
                 user.client
