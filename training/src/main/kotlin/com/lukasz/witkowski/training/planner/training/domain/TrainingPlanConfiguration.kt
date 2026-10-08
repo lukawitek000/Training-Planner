@@ -8,9 +8,10 @@ data class TrainingPlanConfiguration(
     val exercises: List<TrainingExercise>,
     val restTime: Duration,
 ) {
-    val categories = exercises.flatMap {
-        it.exercise.categories
-    }
+    val categories =
+        exercises.flatMap {
+            it.exercise.categories
+        }
 
     val isValid = title.isNotEmpty() && exercises.isNotEmpty()
 }
