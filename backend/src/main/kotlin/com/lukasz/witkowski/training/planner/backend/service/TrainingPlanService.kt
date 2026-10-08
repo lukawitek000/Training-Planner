@@ -9,17 +9,8 @@ import com.lukasz.witkowski.training.planner.dto.training.TrainingExerciseDto
 import com.lukasz.witkowski.training.planner.dto.training.TrainingPlanDto
 import com.lukasz.witkowski.training.planner.dto.training.TrainingPlanOverviewDto
 import com.lukasz.witkowski.training.planner.dto.training.UpdateTrainingPlanRequestDto
-import org.jetbrains.exposed.sql.AndOp
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.OrOp
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.lowerCase
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.jdbc.*
 import java.util.UUID
 
 class TrainingPlanService(
@@ -50,7 +41,7 @@ class TrainingPlanService(
 
         val paginated = allRows.drop(offset).take(limit).map { row ->
             val planId = row[TrainingPlansTable.id]
-            val exerciseCount = TrainingExercisesTable.selectAll().where { TrainingExercisesTable.trainingPlanId eq planId }.count().toInt()
+            val exerciseCount = TrainingExercisesTable.selectAll().where { TrainingExercisesTable.trainingPlanId eq planId }.toList().size
             TrainingPlanOverviewDto(
                 id = planId,
                 title = row[TrainingPlansTable.title],

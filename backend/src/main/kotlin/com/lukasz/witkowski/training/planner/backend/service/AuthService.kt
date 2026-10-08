@@ -9,9 +9,8 @@ import com.lukasz.witkowski.training.planner.dto.auth.LoginRequestDto
 import com.lukasz.witkowski.training.planner.dto.auth.RegisterRequestDto
 import com.lukasz.witkowski.training.planner.dto.auth.TokenResponseDto
 import com.lukasz.witkowski.training.planner.dto.auth.UserDto
-import org.jetbrains.exposed.sql.ResultRow
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.jdbc.*
 import java.util.UUID
 
 class AuthService {

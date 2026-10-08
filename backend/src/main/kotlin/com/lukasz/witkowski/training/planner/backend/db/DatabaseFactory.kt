@@ -3,11 +3,11 @@ package com.lukasz.witkowski.training.planner.backend.db
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import kotlinx.coroutines.Dispatchers
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.transactions.TransactionManager
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
+import kotlinx.coroutines.withContext
+import org.jetbrains.exposed.v1.jdbc.*
+import org.jetbrains.exposed.v1.jdbc.transactions.TransactionManager
+import org.jetbrains.exposed.v1.jdbc.transactions.suspendTransaction
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 
 object DatabaseFactory {
 
@@ -45,7 +45,9 @@ object DatabaseFactory {
         return if (currentTransaction != null) {
             block()
         } else {
-            newSuspendedTransaction(Dispatchers.IO) { block() }
+            withContext(Dispatchers.IO) {
+                suspendTransaction { block() }
+            }
         }
     }
 }

@@ -9,17 +9,8 @@ import com.lukasz.witkowski.training.planner.dto.exercise.CategoryDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CreateExerciseRequestDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.UpdateExerciseRequestDto
-import org.jetbrains.exposed.sql.AndOp
-import org.jetbrains.exposed.sql.Op
-import org.jetbrains.exposed.sql.OrOp
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.isNull
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.lowerCase
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.update
+import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.jdbc.*
 import java.util.UUID
 
 class ExerciseService {
