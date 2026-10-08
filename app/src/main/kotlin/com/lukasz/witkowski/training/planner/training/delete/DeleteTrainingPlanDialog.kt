@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.delete
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -14,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.delete.DeletionEvent
 import com.lukasz.witkowski.training.planner.ui.components.ConfirmDeleteDialog
-import com.lukasz.witkowski.training.planner.ui.components.OverlayLoading
+import com.lukasz.witkowski.training.planner.ui.components.ConfirmDeleteUiState
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import kotlinx.coroutines.flow.collectLatest
 
@@ -41,27 +40,36 @@ fun DeleteTrainingPlanScreen(
     }
 
     val state by viewModel.state.collectAsState()
-    when (state) {
-        DeleteTrainingPlanUiState.Loading -> OverlayLoading(modifier.fillMaxSize()) { }
-        is DeleteTrainingPlanUiState.LoadedTrainingPlan -> DeleteTrainingPlanDialog(
-            onDelete = {
-                viewModel.deleteTrainingPlan()
-            },
-            onCancel = onCancel,
-            modifier = modifier
-        )
-    }
+    DeleteTrainingPlanDialog(
+        state = state,
+        onDelete = { viewModel.deleteTrainingPlan() },
+        onCancel = onCancel,
+        modifier = modifier
+    )
 }
 
 @Composable
 private fun DeleteTrainingPlanDialog(
+    state: DeleteTrainingPlanUiState,
     onDelete: () -> Unit,
     onCancel: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
+    val dialogState = when (state) {
+        DeleteTrainingPlanUiState.Loading -> ConfirmDeleteUiState.Loading
+        is DeleteTrainingPlanUiState.LoadedTrainingPlan -> ConfirmDeleteUiState.Loaded(
+            title = stringResource(R.string.delete_training_plan_dialog_title),
+            message = stringResource(R.string.delete_training_plan_dialog_text)
+        )
+
+        is DeleteTrainingPlanUiState.Error -> ConfirmDeleteUiState.Error(
+            title = stringResource(R.string.training_plan_deletion_failed),
+            message = state.message
+        )
+    }
+
     ConfirmDeleteDialog(
-        title = stringResource(R.string.delete_training_plan_dialog_title),
-        message = stringResource(R.string.delete_training_plan_dialog_text),
+        state = dialogState,
         onDelete = onDelete,
         onCancel = onCancel,
         modifier = modifier,
@@ -74,8 +82,11 @@ private fun DeleteTrainingPlanDialog(
 @Preview
 private fun DeleteTrainingPlanDialogPreview() {
     TrainingPlannerTheme {
-        Surface(modifier = Modifier.fillMaxSize()) {
+        Surface() {
             DeleteTrainingPlanDialog(
+                state = DeleteTrainingPlanUiState.LoadedTrainingPlan(
+                    title = "Full Body"
+                ),
                 onDelete = {},
                 onCancel = {}
             )

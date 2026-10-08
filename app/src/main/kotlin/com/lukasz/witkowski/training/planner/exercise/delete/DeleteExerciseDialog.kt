@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.ui.components.ConfirmDeleteDialog
-import com.lukasz.witkowski.training.planner.ui.components.OverlayLoading
+import com.lukasz.witkowski.training.planner.ui.components.ConfirmDeleteUiState
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import kotlinx.coroutines.flow.collectLatest
 
@@ -38,30 +38,36 @@ fun DeleteExerciseScreen(
         }
     }
     val state by viewModel.state.collectAsState()
-    when (state) {
-        DeleteExerciseUiState.Loading -> OverlayLoading(modifier.fillMaxSize()) { }
-        is DeleteExerciseUiState.LoadedExercise -> DeleteExerciseDialog(
-            exerciseName = (state as DeleteExerciseUiState.LoadedExercise).exerciseName,
-            onDelete = {
-                viewModel.deleteExercise()
-            },
-            onCancel = onCancel,
-            modifier = modifier
-        )
-    }
+    DeleteExerciseDialog(
+        state = state,
+        onDelete = { viewModel.deleteExercise() },
+        onCancel = onCancel,
+        modifier = modifier
+    )
 }
-
 
 @Composable
 private fun DeleteExerciseDialog(
-    exerciseName: String,
+    state: DeleteExerciseUiState,
     onDelete: () -> Unit,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val dialogState = when (val current = state) {
+        DeleteExerciseUiState.Loading -> ConfirmDeleteUiState.Loading
+        is DeleteExerciseUiState.LoadedExercise -> ConfirmDeleteUiState.Loaded(
+            title = stringResource(R.string.delete_exercise_dialog_title, current.exerciseName),
+            message = stringResource(R.string.delete_exercise_dialog_text)
+        )
+
+        is DeleteExerciseUiState.Error -> ConfirmDeleteUiState.Error(
+            title = stringResource(R.string.exercise_deletion_failed),
+            message = current.message
+        )
+    }
+
     ConfirmDeleteDialog(
-        title = stringResource(R.string.delete_exercise_dialog_title, exerciseName),
-        message = stringResource(R.string.delete_exercise_dialog_text),
+        state = dialogState,
         onDelete = onDelete,
         onCancel = onCancel,
         modifier = modifier,
@@ -70,15 +76,18 @@ private fun DeleteExerciseDialog(
     )
 }
 
+
 @Composable
 @Preview
 private fun DeleteExerciseDialogPreview() {
     TrainingPlannerTheme {
-        Surface(modifier = Modifier.fillMaxSize()) {
+        Surface() {
             DeleteExerciseDialog(
+                state = DeleteExerciseUiState.LoadedExercise(
+                    exerciseName = "Push up"
+                ),
                 onDelete = {},
                 onCancel = {},
-                exerciseName = "Push ups",
                 modifier = Modifier
             )
         }

@@ -17,4 +17,7 @@ object Dimens {
     val dotsSeparatorSize = 6.dp
     val wheelWidth = 86.dp
     val wheelItemHeight = 48.dp
+    val dialogMinHeight = 180.dp
+    val dialogIconSize = 36.dp
+    val dialogIconBackgroundSize = 72.dp
 }
