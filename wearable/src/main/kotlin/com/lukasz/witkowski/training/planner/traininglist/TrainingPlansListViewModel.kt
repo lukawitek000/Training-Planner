@@ -19,10 +19,10 @@ class TrainingPlansListViewModel(private val trainingPlanService: TrainingPlanSe
         viewModelScope.launch {
             try {
                 _trainingPlans.value = ResultHandler.Loading
-                trainingPlanService.getTrainingPlansFromCategories().collectLatest {
+//                trainingPlanService.getTrainingPlansFromCategories().collectLatest {
 //                _trainingPlans.value = ResultHandler.Success(TrainingPlanMapper.toPresentationTrainingPlans(it))
 //                    _trainingPlans.value = ResultHandler.Success(dummyTrainingsList)
-                }
+//                }
             } catch (e: Exception) {
                 _trainingPlans.value = ResultHandler.Error("Training plan fetch failed", e)
             }

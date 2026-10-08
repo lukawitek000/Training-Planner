@@ -150,20 +150,10 @@ private fun TrainingPlanOverviewCard(
             modifier = Modifier,
             verticalArrangement = Arrangement.spacedBy(Dimens.normal)
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = trainingOverview.title,
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.weight(1f)
-                )
-                IconButton(onClick = {}) {
-                    Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
-                }
-            }
+            Text(
+                text = trainingOverview.title,
+                style = MaterialTheme.typography.headlineMedium,
+            )
             trainingOverview.description.takeIf { it.isNotEmpty() }?.let {
                 Text(
                     text = it,

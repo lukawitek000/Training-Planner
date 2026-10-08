@@ -22,8 +22,6 @@ class TrainingPlanService(
         trainingPlanId: TrainingPlanId,
     ) = trainingPlanRepository.update(trainingPlanConfiguration, trainingPlanId)
 
-    fun getTrainingPlansFromCategories(categories: List<ExerciseCategoryName> = emptyList()): Flow<List<TrainingPlan>> = flow { }
-
     fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan?> =
         trainingPlanRepository.getTrainingPlanById(trainingPlanId)
 
