@@ -47,10 +47,15 @@ object Dimens2 {
     /** Gap between icon and text (medium) - 12dp */
     val spaceGapIconTextMedium: Dp = 12.dp
 
+    /** Icon container size - 56dp */
+    val iconContainerSize: Dp = 56.dp
+
     /** Icon sizes */
+    val iconSize13: Dp = 13.dp
     val iconSize16: Dp = 16.dp
     val iconSize18: Dp = 18.dp
     val inputIconSize: Dp = 20.dp
+    val iconSize30: Dp = 30.dp
 
     /** Gap between label and input field - 6dp */
     val spaceGapLabelInput: Dp = 6.dp
@@ -63,4 +68,7 @@ object Dimens2 {
 
     /** Small shadow / elevation - 2dp */
     val shadowSm: Dp = 2.dp
+
+    /** Large shadow / elevation - 6dp */
+    val shadowLg: Dp = 6.dp
 }
