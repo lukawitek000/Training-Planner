@@ -24,7 +24,22 @@ object RetrofitAuthenticationClient {
             .create(AuthenticationApi::class.java)
     }
 
+    fun createUserApi(
+        baseUrl: String = ApiRoutes.Auth.BASE,
+        json: Json = defaultJson,
+    ): UserApi {
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .build()
+            .create(UserApi::class.java)
+    }
+
     val api: AuthenticationApi by lazy {
         createAuthenticationApi()
+    }
+
+    val userApi: UserApi by lazy {
+        createUserApi()
     }
 }
