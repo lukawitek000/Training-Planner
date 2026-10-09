@@ -10,4 +10,6 @@ interface AuthenticationRepository {
     suspend fun signUp(form: SignUpForm): AuthenticationResult
 
     suspend fun signIn(form: SignInForm): AuthenticationResult
+
+    suspend fun logOut(): AuthenticationResult
 }

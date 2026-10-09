@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.planner.auth.infrastructure.local.TokenStor
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthenticationRemoteDataSource
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import com.lukasz.witkowski.training.planner.shared.utils.fold
+import com.lukasz.witkowski.training.planner.shared.utils.runCatchingCancellable
 
 class DefaultAuthenticationRepository(
     private val tokenStorage: TokenStorage,
@@ -26,6 +27,15 @@ class DefaultAuthenticationRepository(
 
     override suspend fun signIn(form: SignInForm): AuthenticationResult {
         return remoteDataSource.signIn(form).processResult()
+    }
+
+    override suspend fun logOut(): AuthenticationResult {
+        return runCatchingCancellable {
+            tokenStorage.clear()
+        }.fold(
+            onSuccess = { AuthenticationResult.Success },
+            onFailure = { AuthenticationResult.Failure(AuthenticationFailure.UnknownFailure) }
+        )
     }
 
     private suspend fun AppResult<AuthTokens, AuthenticationFailure>.processResult(): AuthenticationResult =
