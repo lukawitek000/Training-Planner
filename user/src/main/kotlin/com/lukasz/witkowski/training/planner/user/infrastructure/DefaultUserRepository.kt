@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.user.infrastructure
 
+import com.lukasz.witkowski.training.planner.network.TokenStorage
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import com.lukasz.witkowski.training.planner.user.domain.UserRepository
 import com.lukasz.witkowski.training.planner.user.domain.model.User
@@ -10,11 +11,16 @@ import com.lukasz.witkowski.training.planner.user.infrastructure.remote.UserRemo
 import kotlinx.coroutines.flow.Flow
 
 class DefaultUserRepository(
+    private val tokenStorage: TokenStorage,
     private val userRemoteDataSource: UserRemoteDataSource,
     private val userPreferencesStorage: UserPreferencesStorage,
 ) : UserRepository {
 
     override suspend fun getUserProfile(): AppResult<User, UserFailure> {
+        val refreshToken = tokenStorage.getTokens()?.refreshToken
+        if (refreshToken.isNullOrBlank()) {
+            return AppResult.Error(UserFailure.Unauthorized)
+        }
         return userRemoteDataSource.getUserProfile()
     }
 

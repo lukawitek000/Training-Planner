@@ -34,6 +34,7 @@ val userModule = module {
 
     single {
         DefaultUserRepository(
+            tokenStorage = get(),
             userRemoteDataSource = get(),
             userPreferencesStorage = get(),
         )
