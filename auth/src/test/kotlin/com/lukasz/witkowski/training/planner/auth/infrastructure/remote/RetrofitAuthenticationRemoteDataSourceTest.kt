@@ -52,7 +52,7 @@ class RetrofitAuthenticationRemoteDataSourceTest {
             val result = dataSource.signIn(SignInForm("test@example.com", "password"))
 
             assertTrue(result is AppResult.Success)
-            assertEquals("access-123", result.value.accessToken.token)
+            assertEquals("access-123", result.value.accessToken?.token)
             assertEquals("refresh-123", result.value.refreshToken)
         }
 
