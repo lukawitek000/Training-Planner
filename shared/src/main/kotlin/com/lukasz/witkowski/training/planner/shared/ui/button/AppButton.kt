@@ -24,10 +24,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
  * Common base button composable that handles leading and trailing icons, colors, text style, borders, and elevation.
@@ -148,7 +148,7 @@ fun AppButton(
     )
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF1A120A)
+@AppPreview
 @Composable
 private fun AppButtonPreview() {
     TrainingPlannerTheme2 {

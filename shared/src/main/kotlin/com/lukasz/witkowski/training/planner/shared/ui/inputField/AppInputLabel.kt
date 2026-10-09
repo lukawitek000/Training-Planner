@@ -6,8 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
  * Form field label composable styled according to design specification.
@@ -27,7 +27,7 @@ fun AppInputLabel(
     )
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF1A120A)
+@AppPreview
 @Composable
 private fun AppInputLabelPreview() {
     TrainingPlannerTheme2 {

@@ -15,9 +15,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
  * Combined label and text input field composable styled according to design specification.
@@ -97,7 +97,7 @@ fun AppLabeledTextField(
     }
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF1A120A)
+@AppPreview
 @Composable
 private fun AppLabeledTextFieldPreview() {
     TrainingPlannerTheme2 {

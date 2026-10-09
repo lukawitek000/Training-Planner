@@ -25,11 +25,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.lukasz.witkowski.training.planner.shared.theme.DarkGrey
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
  * Text input field composable styled according to design specification using Material 3 [OutlinedTextFieldDefaults.DecorationBox].
@@ -164,7 +164,7 @@ fun AppTextField(
     )
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF1A120A)
+@AppPreview
 @Composable
 private fun AppTextFieldPreview() {
     TrainingPlannerTheme2 {

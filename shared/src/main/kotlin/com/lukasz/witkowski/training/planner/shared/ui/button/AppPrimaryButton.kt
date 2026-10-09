@@ -8,9 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
  * Primary action button composable styled according to design specification.
@@ -75,7 +75,7 @@ fun AppPrimaryButton(
     )
 }
 
-@Preview(showBackground = true, backgroundColor = 0xFF1A120A)
+@AppPreview
 @Composable
 private fun AppPrimaryButtonPreview() {
     TrainingPlannerTheme2 {

@@ -29,9 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
  * Item specification for [AppSegmentedControl].
@@ -144,7 +144,7 @@ fun <T> AppSegmentedControl(
 
 private enum class AuthModePreview { SIGN_IN, SIGN_UP }
 
-@Preview(showBackground = true, backgroundColor = 0xFF1A120A)
+@AppPreview
 @Composable
 private fun AppSegmentedControlPreview() {
     var selectedMode by remember { mutableStateOf(AuthModePreview.SIGN_UP) }
