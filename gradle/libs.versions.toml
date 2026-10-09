@@ -32,8 +32,8 @@ h2 = "2.5.252"
 postgresql = "42.7.14"
 bcrypt = "0.10.2"
 logback = "1.6.5"
-retrofit = "2.11.0"
-okhttp = "4.12.0"
+retrofit = "3.0.0"
+okhttp = "5.5.0"
 datastore = "1.1.2"
 
 [libraries]
