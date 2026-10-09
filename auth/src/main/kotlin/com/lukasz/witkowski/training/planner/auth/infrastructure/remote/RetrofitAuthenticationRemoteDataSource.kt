@@ -31,7 +31,8 @@ class RetrofitAuthenticationRemoteDataSource(
             runCatchingCancellable(
                 mapError = { exception -> exception.toAuthenticationFailure(json) },
             ) {
-                api.login(signInForm.toLoginRequestDto()).toAuthTokens(timeProvider.currentInstant())
+                api.login(signInForm.toLoginRequestDto())
+                    .toAuthTokens(timeProvider.currentInstant())
             }
         }
 
@@ -40,7 +41,18 @@ class RetrofitAuthenticationRemoteDataSource(
             runCatchingCancellable(
                 mapError = { exception -> exception.toAuthenticationFailure(json) },
             ) {
-                api.register(signUpForm.toRegisterRequestDto()).toAuthTokens(timeProvider.currentInstant())
+                api.register(signUpForm.toRegisterRequestDto())
+                    .toAuthTokens(timeProvider.currentInstant())
+            }
+        }
+
+    override suspend fun refreshTokens(authTokens: AuthTokens): AppResult<AuthTokens, AuthenticationFailure> =
+        withContext(ioDispatcher) {
+            runCatchingCancellable(
+                mapError = { exception -> exception.toAuthenticationFailure(json) }
+            ) {
+                api.refresh(authTokens.toRefreshTokenRequestDto())
+                    .toAuthTokens(timeProvider.currentInstant())
             }
         }
 

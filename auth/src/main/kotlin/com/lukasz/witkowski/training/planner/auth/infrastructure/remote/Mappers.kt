@@ -5,7 +5,9 @@ import com.lukasz.witkowski.training.planner.auth.domain.model.SignInForm
 import com.lukasz.witkowski.training.planner.auth.domain.model.SignUpForm
 import com.lukasz.witkowski.training.planner.dto.auth.AuthResponseDto
 import com.lukasz.witkowski.training.planner.dto.auth.LoginRequestDto
+import com.lukasz.witkowski.training.planner.dto.auth.RefreshTokenRequestDto
 import com.lukasz.witkowski.training.planner.dto.auth.RegisterRequestDto
+import com.lukasz.witkowski.training.planner.dto.auth.TokenResponseDto
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant
 
@@ -25,9 +27,17 @@ internal fun SignInForm.toLoginRequestDto() : LoginRequestDto {
 }
 
 internal fun AuthResponseDto.toAuthTokens(currentInstant: Instant): AuthTokens {
+    return tokens.toAuthTokens(currentInstant)
+}
+
+internal fun TokenResponseDto.toAuthTokens(currentInstant: Instant) : AuthTokens {
     return AuthTokens(
-        accessToken = tokens.accessToken,
-        refreshToken = tokens.refreshToken,
-        accessTokenExpiresAt = currentInstant + tokens.expiresInMs.milliseconds
+        accessToken = accessToken,
+        refreshToken = refreshToken,
+        accessTokenExpiresAt = currentInstant + expiresInMs.milliseconds
     )
+}
+
+internal fun AuthTokens.toRefreshTokenRequestDto(): RefreshTokenRequestDto {
+    return RefreshTokenRequestDto(refreshToken = refreshToken)
 }
