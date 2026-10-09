@@ -1,0 +1,12 @@
+{
+  "user": {
+    "id": "user-123",
+    "email": "test@example.com",
+    "username": "TestUser"
+  },
+  "tokens": {
+    "accessToken": "access_token_123",
+    "refreshToken": "refresh_token_xyz",
+    "expiresInMs": 3600000
+  }
+}

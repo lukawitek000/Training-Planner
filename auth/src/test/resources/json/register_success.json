@@ -1,0 +1,12 @@
+{
+  "user": {
+    "id": "user-456",
+    "email": "newuser@example.com",
+    "username": "NewUser"
+  },
+  "tokens": {
+    "accessToken": "access_token_456",
+    "refreshToken": "refresh_token_abc",
+    "expiresInMs": 3600000
+  }
+}

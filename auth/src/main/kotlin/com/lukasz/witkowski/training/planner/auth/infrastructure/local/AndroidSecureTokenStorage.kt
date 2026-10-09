@@ -16,29 +16,23 @@ internal class AndroidSecureTokenStorage(
     private val refreshToken = DataStoreEntity(stringPreferencesKey(REFRESH_TOKEN_KEY))
 
     inner class DataStoreEntity(private val key: Preferences.Key<String>) {
-        private var value: String? = null
         suspend fun get(): String? {
-            if (value == null) {
-                val prefs = context.authDataStore.data.first()
-                val encrypted = prefs[key]
-                val decrypted = encrypted?.let { encryptor.decrypt(it) }
-                value = decrypted
-            }
-            return value
+            val prefs = context.authDataStore.data.first()
+            val encrypted = prefs[key] ?: return null
+            return runCatching { encryptor.decrypt(encrypted) }.getOrNull()
         }
 
         suspend fun set(input: String) {
+            val encrypted = encryptor.encrypt(input)
             context.authDataStore.edit { mutablePreferences ->
-                mutablePreferences[key] = encryptor.encrypt(input)
+                mutablePreferences[key] = encrypted
             }
-            value = input
         }
 
         suspend fun clear() {
             context.authDataStore.edit { mutablePreferences ->
                 mutablePreferences.remove(key)
             }
-            value = null
         }
     }
 

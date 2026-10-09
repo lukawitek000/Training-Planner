@@ -7,19 +7,24 @@ import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 object RetrofitAuthenticationClient {
-    // TODO possible a single json to use across the app
-    private val json = Json {
+    val defaultJson = Json {
         ignoreUnknownKeys = true
         explicitNulls = true
     }
     private val contentType = "application/json".toMediaType()
 
-    private const val BASE_URL = "${ApiRoutes.Auth.BASE}" // TODO somehow inject the URL
-    val api: AuthenticationApi by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
+    fun createAuthenticationApi(
+        baseUrl: String = ApiRoutes.Auth.BASE,
+        json: Json = defaultJson,
+    ): AuthenticationApi {
+        return Retrofit.Builder()
+            .baseUrl(baseUrl)
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()
             .create(AuthenticationApi::class.java)
+    }
+
+    val api: AuthenticationApi by lazy {
+        createAuthenticationApi()
     }
 }

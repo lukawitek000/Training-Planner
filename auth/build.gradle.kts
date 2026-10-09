@@ -42,4 +42,14 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)
+    testImplementation(libs.okhttp.mockwebserver)
+
+    androidTestImplementation(libs.kotlinTestJunit)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
+    androidTestImplementation(libs.mockk.android)
+    androidTestImplementation(libs.okhttp.mockwebserver)
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.androidx.testCore)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
