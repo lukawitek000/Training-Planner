@@ -49,7 +49,7 @@ class RetrofitAuthenticationRemoteDataSource(
     override suspend fun refreshTokens(authTokens: AuthTokens): AppResult<AuthTokens, AuthenticationFailure> =
         withContext(ioDispatcher) {
             runCatchingCancellable(
-                mapError = { exception -> exception.toAuthenticationFailure(json) }
+                mapError = { exception -> exception.toAuthenticationFailure(json) },
             ) {
                 api.refresh(authTokens.toRefreshTokenRequestDto())
                     .toAuthTokens(timeProvider.currentInstant())

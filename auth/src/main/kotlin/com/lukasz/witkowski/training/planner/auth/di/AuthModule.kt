@@ -2,7 +2,7 @@ package com.lukasz.witkowski.training.planner.auth.di
 
 import com.lukasz.witkowski.training.planner.auth.domain.AuthenticationRepository
 import com.lukasz.witkowski.training.planner.auth.infrastructure.DefaultAuthenticationRepository
-import com.lukasz.witkowski.training.planner.auth.infrastructure.local.AndroidKeystoreTokenStorage
+import com.lukasz.witkowski.training.planner.auth.infrastructure.local.DefaultTokenStorage
 import com.lukasz.witkowski.training.planner.auth.infrastructure.local.TokenStorage
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthenticationRemoteDataSource
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitAuthenticationClient
@@ -26,7 +26,7 @@ val authModule = module {
             ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
         )
     } bind AuthenticationRemoteDataSource::class
-    single<AndroidKeystoreTokenStorage>() bind TokenStorage::class
+    single<DefaultTokenStorage>() bind TokenStorage::class
     single {
         DefaultAuthenticationRepository(
             tokenStorage = get(),

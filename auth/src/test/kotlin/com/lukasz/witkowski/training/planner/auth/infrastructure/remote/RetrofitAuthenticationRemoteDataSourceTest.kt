@@ -1,9 +1,13 @@
 package com.lukasz.witkowski.training.planner.auth.infrastructure.remote
 
+import com.lukasz.witkowski.training.planner.auth.domain.model.AccessToken
+import com.lukasz.witkowski.training.planner.auth.domain.model.AuthTokens
 import com.lukasz.witkowski.training.planner.auth.domain.model.AuthenticationFailure
 import com.lukasz.witkowski.training.planner.auth.domain.model.SignInForm
 import com.lukasz.witkowski.training.planner.auth.domain.model.SignUpForm
 import com.lukasz.witkowski.training.planner.dto.auth.AuthResponseDto
+import com.lukasz.witkowski.training.planner.dto.auth.TokenResponseDto
+import com.lukasz.witkowski.training.planner.dto.auth.UserDto
 import com.lukasz.witkowski.training.planner.shared.network.NetworkFailure
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
@@ -22,6 +26,7 @@ import java.net.UnknownHostException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class RetrofitAuthenticationRemoteDataSourceTest {
@@ -36,6 +41,20 @@ class RetrofitAuthenticationRemoteDataSourceTest {
             timeProvider = timeProvider,
             ioDispatcher = testDispatcher,
         )
+
+    @Test
+    fun `signIn returns success with AuthTokens and AccessToken when API call succeeds`() =
+        runTest {
+            val tokenResponse = TokenResponseDto("access-123", "refresh-123", 3600000)
+            val authResponse = AuthResponseDto(UserDto("user-1", "test@example.com", "TestUser"), tokenResponse)
+            coEvery { api.login(any()) } returns authResponse
+
+            val result = dataSource.signIn(SignInForm("test@example.com", "password"))
+
+            assertTrue(result is AppResult.Success)
+            assertEquals("access-123", result.value.accessToken.token)
+            assertEquals("refresh-123", result.value.refreshToken)
+        }
 
     @Test
     fun `signIn maps duplicate email error code to UserAlreadyExists failure`() =
@@ -121,5 +140,23 @@ class RetrofitAuthenticationRemoteDataSourceTest {
             val result = dataSource.signUp(SignUpForm("test@example.com", "username", "password"))
 
             assertEquals(AppResult.Error(AuthenticationFailure.UserAlreadyExists), result)
+        }
+
+    @Test
+    fun `refreshTokens maps invalid refresh token error code to InvalidRefreshToken failure`() =
+        runTest {
+            val jsonError = """{"statusCode":401,"message":"Invalid or expired refresh token","errorCode":"INVALID_REFRESH_TOKEN"}"""
+            val responseBody = jsonError.toResponseBody("application/json".toMediaType())
+            val httpException = HttpException(Response.error<TokenResponseDto>(401, responseBody))
+
+            coEvery { api.refresh(any()) } throws httpException
+
+            val authTokens = AuthTokens(
+                accessToken = AccessToken("expired-access", timeProvider.currentInstant()),
+                refreshToken = "invalid-refresh",
+            )
+            val result = dataSource.refreshTokens(authTokens)
+
+            assertEquals(AppResult.Error(AuthenticationFailure.InvalidRefreshToken), result)
         }
 }
