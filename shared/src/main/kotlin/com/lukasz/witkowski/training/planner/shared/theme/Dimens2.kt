@@ -7,6 +7,9 @@ import androidx.compose.ui.unit.dp
  * Dimension and spacing constants taken from the theme configuration and UI components.
  */
 object Dimens2 {
+    /** Zero Dimension - 0dp */
+    val zeroDp: Dp = 0.dp
+
     /** Extra Small Spacing - 4dp */
     val spaceXs: Dp = 4.dp
 
@@ -28,8 +31,9 @@ object Dimens2 {
     /** Default grid/column gutter spacing - 16dp */
     val gutter: Dp = 16.dp
 
-    /** Input field container height - 48dp */
+    /** Input field and button container height - 48dp */
     val inputFieldHeight: Dp = 48.dp
+    val buttonHeight: Dp = 48.dp
 
     /** Input field horizontal content padding - 14dp */
     val inputHorizontalPadding: Dp = 14.dp
@@ -37,7 +41,11 @@ object Dimens2 {
     /** Spacing between leading icon and text - 10dp */
     val inputIconSpacing: Dp = 10.dp
 
-    /** Input field icon size - 20dp */
+    /** Gap between icon and text (medium) - 12dp */
+    val spaceGapIconTextMedium: Dp = 12.dp
+
+    /** Icon sizes */
+    val iconSize16: Dp = 16.dp
     val inputIconSize: Dp = 20.dp
 
     /** Gap between label and input field - 6dp */
@@ -45,4 +53,7 @@ object Dimens2 {
 
     /** Thin border width - 1dp */
     val thinBorder: Dp = 1.dp
+
+    /** Button default elevation - 4dp */
+    val buttonElevation: Dp = 4.dp
 }
