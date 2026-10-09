@@ -5,16 +5,17 @@ import com.lukasz.witkowski.training.planner.dto.auth.LoginRequestDto
 import com.lukasz.witkowski.training.planner.dto.auth.RefreshTokenRequestDto
 import com.lukasz.witkowski.training.planner.dto.auth.RegisterRequestDto
 import com.lukasz.witkowski.training.planner.dto.auth.TokenResponseDto
+import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AuthenticationApi {
 
     @POST("/register")
-    suspend fun register(registerRequestDto: RegisterRequestDto): AuthResponseDto
+    suspend fun register(@Body registerRequestDto: RegisterRequestDto): AuthResponseDto
 
     @POST("/login")
-    suspend fun login(loginRequestDto: LoginRequestDto): AuthResponseDto
+    suspend fun login(@Body loginRequestDto: LoginRequestDto): AuthResponseDto
 
     @POST("/refresh")
-    suspend fun refresh(refreshTokenRequestDto: RefreshTokenRequestDto): TokenResponseDto
+    suspend fun refresh(@Body refreshTokenRequestDto: RefreshTokenRequestDto): TokenResponseDto
 }
