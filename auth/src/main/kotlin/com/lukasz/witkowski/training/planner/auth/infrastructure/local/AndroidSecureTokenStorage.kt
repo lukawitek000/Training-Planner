@@ -19,7 +19,10 @@ internal class AndroidSecureTokenStorage(
         suspend fun get(): String? {
             val prefs = context.authDataStore.data.first()
             val encrypted = prefs[key] ?: return null
-            return runCatching { encryptor.decrypt(encrypted) }.getOrNull()
+            return runCatching { encryptor.decrypt(encrypted) }.getOrElse {
+                clear()
+                null
+            }
         }
 
         suspend fun set(input: String) {

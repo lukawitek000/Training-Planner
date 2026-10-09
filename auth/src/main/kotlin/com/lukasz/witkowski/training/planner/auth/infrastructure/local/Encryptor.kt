@@ -31,7 +31,7 @@ internal class Encryptor {
 
     fun encrypt(plainText: String): String {
         val cipher = Cipher.getInstance(TRANSFORMATION)
-        cipher.init(Cipher.ENCRYPT_MODE, getOrCreateSecretKey()) // TODO secret key
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
         val iv = cipher.iv
         val encryptedBytes = cipher.doFinal(plainText.toByteArray(Charsets.UTF_8))
 

@@ -6,6 +6,7 @@ import com.lukasz.witkowski.training.planner.auth.domain.model.AuthTokens
 class DefaultTokenStorage(
     private val secureTokenStorage: SecureTokenStorage,
 ): TokenStorage {
+    @Volatile
     private var accessToken: AccessToken? = null
     override suspend fun getTokens(): AuthTokens? {
         return secureTokenStorage.getRefreshToken()?.let { refreshToken ->
