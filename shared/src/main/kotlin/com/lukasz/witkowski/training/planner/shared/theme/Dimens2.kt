@@ -41,11 +41,15 @@ object Dimens2 {
     /** Spacing between leading icon and text - 10dp */
     val inputIconSpacing: Dp = 10.dp
 
+    /** Segmented control vertical padding - 10dp */
+    val segmentVerticalPadding: Dp = 10.dp
+
     /** Gap between icon and text (medium) - 12dp */
     val spaceGapIconTextMedium: Dp = 12.dp
 
     /** Icon sizes */
     val iconSize16: Dp = 16.dp
+    val iconSize18: Dp = 18.dp
     val inputIconSize: Dp = 20.dp
 
     /** Gap between label and input field - 6dp */
@@ -56,4 +60,7 @@ object Dimens2 {
 
     /** Button default elevation - 4dp */
     val buttonElevation: Dp = 4.dp
+
+    /** Small shadow / elevation - 2dp */
+    val shadowSm: Dp = 2.dp
 }
