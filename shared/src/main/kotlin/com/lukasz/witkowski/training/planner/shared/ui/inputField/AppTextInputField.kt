@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.shared.ui
+package com.lukasz.witkowski.training.planner.shared.ui.inputField
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement

@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.shared.ui
+package com.lukasz.witkowski.training.planner.shared.ui.inputField
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
