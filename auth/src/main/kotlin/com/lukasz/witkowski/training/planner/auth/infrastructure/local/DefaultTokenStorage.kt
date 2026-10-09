@@ -8,6 +8,11 @@ class DefaultTokenStorage(
 ): TokenStorage {
     @Volatile
     private var accessToken: AccessToken? = null
+
+    override fun accessToken(): AccessToken? {
+        return accessToken
+    }
+
     override suspend fun getTokens(): AuthTokens? {
         return secureTokenStorage.getRefreshToken()?.let { refreshToken ->
             AuthTokens(

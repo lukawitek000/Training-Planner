@@ -11,21 +11,11 @@ import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.Authenti
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import com.lukasz.witkowski.training.planner.shared.utils.fold
 import com.lukasz.witkowski.training.planner.shared.utils.runCatchingCancellable
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 
 class DefaultAuthenticationRepository(
     private val tokenStorage: TokenStorage,
     private val remoteDataSource: AuthenticationRemoteDataSource,
 ) : AuthenticationRepository {
-
-    private val refreshMutex = Mutex()
-
-    override suspend fun refreshAccessToken(): AuthenticationResult = refreshMutex.withLock {
-        val tokens = tokenStorage.getTokens()
-            ?: return AuthenticationResult.Failure(AuthenticationFailure.RefreshTokenNotAvailable)
-        remoteDataSource.refreshTokens(tokens).processResult()
-    }
 
     override suspend fun signUp(form: SignUpForm): AuthenticationResult {
         return remoteDataSource.signUp(form).processResult()

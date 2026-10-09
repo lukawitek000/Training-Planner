@@ -1,7 +1,5 @@
 package com.lukasz.witkowski.training.planner.auth.infrastructure.remote
 
-import com.lukasz.witkowski.training.planner.auth.domain.model.AccessToken
-import com.lukasz.witkowski.training.planner.auth.domain.model.AuthTokens
 import com.lukasz.witkowski.training.planner.auth.domain.model.AuthenticationFailure
 import com.lukasz.witkowski.training.planner.auth.domain.model.SignInForm
 import com.lukasz.witkowski.training.planner.auth.domain.model.SignUpForm
@@ -140,23 +138,5 @@ class RetrofitAuthenticationRemoteDataSourceTest {
             val result = dataSource.signUp(SignUpForm("test@example.com", "username", "password"))
 
             assertEquals(AppResult.Error(AuthenticationFailure.UserAlreadyExists), result)
-        }
-
-    @Test
-    fun `refreshTokens maps invalid refresh token error code to InvalidRefreshToken failure`() =
-        runTest {
-            val jsonError = """{"statusCode":401,"message":"Invalid or expired refresh token","errorCode":"INVALID_REFRESH_TOKEN"}"""
-            val responseBody = jsonError.toResponseBody("application/json".toMediaType())
-            val httpException = HttpException(Response.error<TokenResponseDto>(401, responseBody))
-
-            coEvery { api.refresh(any()) } throws httpException
-
-            val authTokens = AuthTokens(
-                accessToken = AccessToken("expired-access", timeProvider.currentInstant()),
-                refreshToken = "invalid-refresh",
-            )
-            val result = dataSource.refreshTokens(authTokens)
-
-            assertEquals(AppResult.Error(AuthenticationFailure.InvalidRefreshToken), result)
         }
 }

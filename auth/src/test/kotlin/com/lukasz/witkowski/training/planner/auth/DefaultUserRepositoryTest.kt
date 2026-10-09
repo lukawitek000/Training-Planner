@@ -13,11 +13,13 @@ import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
+import org.junit.Before
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -26,14 +28,20 @@ class DefaultUserRepositoryTest {
 
     private val mockTokenStorage = mockk<TokenStorage>()
     private val mockUserRemoteDataSource = mockk<UserRemoteDataSource>()
-    private val mockUserPreferencesStorage = mockk<UserPreferencesStorage>()
+    private val mockUserPreferencesStorage = mockk<UserPreferencesStorage>(relaxed = true)
     private val timeProvider = TestTimeProvider()
 
-    private val repository = DefaultUserRepository(
-        tokenStorage = mockTokenStorage,
-        userRemoteDataSource = mockUserRemoteDataSource,
-        userPreferencesStorage = mockUserPreferencesStorage,
-    )
+    private lateinit var repository: DefaultUserRepository
+
+    @Before
+    fun setUp() {
+        every { mockUserPreferencesStorage.weightUnit } returns flowOf(WeightUnit.KG)
+        repository = DefaultUserRepository(
+            tokenStorage = mockTokenStorage,
+            userRemoteDataSource = mockUserRemoteDataSource,
+            userPreferencesStorage = mockUserPreferencesStorage,
+        )
+    }
 
     @Test
     fun `getUserProfile returns Unauthorized when token storage has no tokens`() = runTest {
@@ -62,7 +70,7 @@ class DefaultUserRepositoryTest {
 
     @Test
     fun `weightUnit emits values from UserPreferencesStorage`() = runTest {
-        coEvery { mockUserPreferencesStorage.weightUnit } returns flowOf(WeightUnit.KG, WeightUnit.LBS)
+        every { mockUserPreferencesStorage.weightUnit } returns flowOf(WeightUnit.KG, WeightUnit.LBS)
 
         val currentUnit = repository.weightUnit.first()
 

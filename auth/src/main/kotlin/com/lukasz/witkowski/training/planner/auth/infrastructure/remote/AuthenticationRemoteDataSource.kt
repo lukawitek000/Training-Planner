@@ -9,5 +9,4 @@ import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 interface AuthenticationRemoteDataSource {
     suspend fun signIn(signInForm: SignInForm): AppResult<AuthTokens, AuthenticationFailure>
     suspend fun signUp(signUpForm: SignUpForm): AppResult<AuthTokens, AuthenticationFailure>
-    suspend fun refreshTokens(authTokens: AuthTokens): AppResult<AuthTokens, AuthenticationFailure>
 }

@@ -2,8 +2,7 @@ package com.lukasz.witkowski.training.planner.auth.infrastructure.remote
 
 import com.lukasz.witkowski.training.planner.auth.domain.model.AuthTokens
 import com.lukasz.witkowski.training.planner.auth.domain.model.AuthenticationFailure
-import com.lukasz.witkowski.training.planner.auth.domain.model.SignInForm
-import com.lukasz.witkowski.training.planner.auth.domain.model.SignUpForm
+import com.lukasz.witkowski.training.planner.dto.auth.RefreshTokenRequestDto
 import com.lukasz.witkowski.training.planner.dto.common.ApiErrorDto
 import com.lukasz.witkowski.training.planner.shared.network.NetworkFailure
 import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
@@ -19,29 +18,19 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-class RetrofitAuthenticationRemoteDataSource(
+class RetrofitTokenRefreshRemoteDataSource(
     private val api: AuthenticationApi,
     private val timeProvider: TimeProvider,
     private val ioDispatcher: CoroutineDispatcher,
     private val json: Json = defaultJson,
-) : AuthenticationRemoteDataSource {
+) : TokenRefreshRemoteDataSource {
 
-    override suspend fun signIn(signInForm: SignInForm): AppResult<AuthTokens, AuthenticationFailure> =
+    override suspend fun refreshTokens(refreshToken: String): AppResult<AuthTokens, AuthenticationFailure> =
         withContext(ioDispatcher) {
             runCatchingCancellable(
                 mapError = { exception -> exception.toAuthenticationFailure(json) },
             ) {
-                api.login(signInForm.toLoginRequestDto())
-                    .toAuthTokens(timeProvider.currentInstant())
-            }
-        }
-
-    override suspend fun signUp(signUpForm: SignUpForm): AppResult<AuthTokens, AuthenticationFailure> =
-        withContext(ioDispatcher) {
-            runCatchingCancellable(
-                mapError = { exception -> exception.toAuthenticationFailure(json) },
-            ) {
-                api.register(signUpForm.toRegisterRequestDto())
+                api.refresh(RefreshTokenRequestDto(refreshToken))
                     .toAuthTokens(timeProvider.currentInstant())
             }
         }
@@ -66,15 +55,10 @@ private fun Throwable.toAuthenticationFailure(json: Json): AuthenticationFailure
                 }
             }
             when (apiError?.errorCode) {
-                "USER_ALREADY_EXISTS" -> AuthenticationFailure.UserAlreadyExists
-                "USER_NOT_FOUND" -> AuthenticationFailure.UserNotFound
-                "INCORRECT_PASSWORD" -> AuthenticationFailure.IncorrectPassword
                 "INVALID_REFRESH_TOKEN" -> AuthenticationFailure.InvalidRefreshToken
                 else -> {
                     when (val statusCode = code()) {
-                        409 -> AuthenticationFailure.UserAlreadyExists
-                        404 -> AuthenticationFailure.UserNotFound
-                        401 -> AuthenticationFailure.IncorrectPassword
+                        401 -> AuthenticationFailure.InvalidRefreshToken
                         else -> AuthenticationFailure.NetworkError(
                             NetworkFailure.HttpError(
                                 statusCode = statusCode,

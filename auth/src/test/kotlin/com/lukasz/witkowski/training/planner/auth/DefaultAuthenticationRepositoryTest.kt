@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.auth
 
-import com.lukasz.witkowski.training.planner.auth.domain.model.AuthTokens
 import com.lukasz.witkowski.training.planner.auth.domain.model.AuthenticationFailure
 import com.lukasz.witkowski.training.planner.auth.domain.model.AuthenticationResult
 import com.lukasz.witkowski.training.planner.auth.domain.model.SignInForm
@@ -23,7 +22,6 @@ import org.junit.After
 import org.junit.Before
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultAuthenticationRepositoryTest {
@@ -119,44 +117,6 @@ class DefaultAuthenticationRepositoryTest {
         val result = repository.signUp(SignUpForm("ExistingUser", "existing@example.com", "password123"))
 
         assertEquals(AuthenticationResult.Failure(AuthenticationFailure.UserAlreadyExists), result)
-    }
-
-    @Test
-    fun `refreshAccessToken returns RefreshTokenNotAvailable when token storage is empty`() = runTest {
-        coEvery { mockSecureTokenStorage.getRefreshToken() } returns null
-
-        val result = repository.refreshAccessToken()
-
-        assertEquals(AuthenticationResult.Failure(AuthenticationFailure.RefreshTokenNotAvailable), result)
-        assertEquals(0, mockWebServer.requestCount)
-    }
-
-    @Test
-    fun `refreshAccessToken returns Success when server returns 200 OK`() = runTest {
-        coEvery { mockSecureTokenStorage.getRefreshToken() } returns "current_refresh_token"
-
-        val jsonResponse = TestResourceReader.readJson("refresh_success.json")
-        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
-
-        val result = repository.refreshAccessToken()
-
-        assertEquals(AuthenticationResult.Success, result)
-        coVerify { mockSecureTokenStorage.saveRefreshToken("new_refresh_token_999") }
-
-        val request = mockWebServer.takeRequest()
-        assertEquals("/refresh", request.path)
-    }
-
-    @Test
-    fun `refreshAccessToken returns InvalidRefreshToken when server returns 401`() = runTest {
-        coEvery { mockSecureTokenStorage.getRefreshToken() } returns "expired_refresh_token"
-
-        val jsonResponse = TestResourceReader.readJson("error_invalid_refresh_token.json")
-        mockWebServer.enqueue(MockResponse().setResponseCode(401).setBody(jsonResponse))
-
-        val result = repository.refreshAccessToken()
-
-        assertEquals(AuthenticationResult.Failure(AuthenticationFailure.InvalidRefreshToken), result)
     }
 
     @Test

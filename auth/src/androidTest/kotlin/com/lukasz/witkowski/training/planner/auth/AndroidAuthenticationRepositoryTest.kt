@@ -78,21 +78,6 @@ class AndroidAuthenticationRepositoryTest {
     }
 
     @Test
-    fun refreshAccessTokenRetrievesPersistedTokenFromRealDataStoreAndUpdatesIt() = runTest {
-        realSecureTokenStorage.saveRefreshToken("old_refresh_token_xyz")
-
-        val jsonResponse = TestResourceReader.readJson("refresh_success.json")
-        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
-
-        val result = repository.refreshAccessToken()
-
-        assertEquals(AuthenticationResult.Success, result)
-
-        val updatedRefreshToken = realSecureTokenStorage.getRefreshToken()
-        assertEquals("new_refresh_token_999", updatedRefreshToken)
-    }
-
-    @Test
     fun logOutClearsRefreshTokenFromRealDataStore() = runTest {
         realSecureTokenStorage.saveRefreshToken("test_refresh_token")
 
@@ -100,29 +85,5 @@ class AndroidAuthenticationRepositoryTest {
 
         assertEquals(AuthenticationResult.Success, result)
         assertNull(realSecureTokenStorage.getRefreshToken())
-    }
-
-    @Test
-    fun processDeathRecoveryRefreshesTokensUsingPersistedRefreshToken() = runTest {
-        realSecureTokenStorage.saveRefreshToken("persisted_refresh_token")
-
-        // Re-instantiate repository to simulate app restart with empty in-memory access token
-        val newStorage = DefaultTokenStorage(realSecureTokenStorage)
-        val baseUrl = mockWebServer.url("/").toString()
-        val api = RetrofitAuthenticationClient.createAuthenticationApi(baseUrl = baseUrl)
-        val remoteDataSource = RetrofitAuthenticationRemoteDataSource(
-            api = api,
-            timeProvider = timeProvider,
-            ioDispatcher = Dispatchers.IO,
-        )
-        val newRepository = DefaultAuthenticationRepository(newStorage, remoteDataSource)
-
-        val jsonResponse = TestResourceReader.readJson("refresh_success.json")
-        mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
-
-        val result = newRepository.refreshAccessToken()
-
-        assertEquals(AuthenticationResult.Success, result)
-        assertEquals("new_refresh_token_999", realSecureTokenStorage.getRefreshToken())
     }
 }
