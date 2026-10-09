@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.backend.plugins
 
+import com.lukasz.witkowski.training.planner.backend.exception.AuthException
 import com.lukasz.witkowski.training.planner.dto.common.ApiErrorDto
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -11,6 +12,16 @@ import kotlinx.serialization.SerializationException
 
 fun Application.configureStatusPages() {
     install(StatusPages) {
+        exception<AuthException> { call, cause ->
+            call.respond(
+                cause.statusCode,
+                ApiErrorDto(
+                    statusCode = cause.statusCode.value,
+                    message = cause.message ?: "Authentication failed.",
+                    errorCode = cause.errorCode,
+                ),
+            )
+        }
         exception<IllegalArgumentException> { call, cause ->
             call.respond(
                 HttpStatusCode.BadRequest,

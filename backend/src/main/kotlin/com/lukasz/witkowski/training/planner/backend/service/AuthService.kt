@@ -4,6 +4,7 @@ import com.lukasz.witkowski.training.planner.backend.auth.JwtConfig
 import com.lukasz.witkowski.training.planner.backend.auth.PasswordHasher
 import com.lukasz.witkowski.training.planner.backend.db.DatabaseFactory.dbQuery
 import com.lukasz.witkowski.training.planner.backend.db.UsersTable
+import com.lukasz.witkowski.training.planner.backend.exception.AuthException
 import com.lukasz.witkowski.training.planner.dto.auth.AuthResponseDto
 import com.lukasz.witkowski.training.planner.dto.auth.LoginRequestDto
 import com.lukasz.witkowski.training.planner.dto.auth.RegisterRequestDto
@@ -20,7 +21,7 @@ class AuthService {
         dbQuery {
             val existingUser = UsersTable.selectAll().where { UsersTable.email eq request.email }.singleOrNull()
             if (existingUser != null) {
-                throw IllegalArgumentException("User with email ${request.email} already exists.")
+                throw AuthException.UserAlreadyExists(request.email)
             }
 
             val userId = UUID.randomUUID().toString()
@@ -42,11 +43,11 @@ class AuthService {
         dbQuery {
             val row =
                 UsersTable.selectAll().where { UsersTable.email eq request.email }.singleOrNull()
-                    ?: throw IllegalArgumentException("Invalid email or password.")
+                    ?: throw AuthException.UserNotFound("User with email ${request.email} not found.")
 
             val hashedPassword = row[UsersTable.passwordHash]
             if (!PasswordHasher.verifyPassword(request.password, hashedPassword)) {
-                throw IllegalArgumentException("Invalid email or password.")
+                throw AuthException.IncorrectPassword()
             }
 
             val userId = row[UsersTable.id]
@@ -62,14 +63,14 @@ class AuthService {
             val decoded =
                 try {
                     JwtConfig.verifier.verify(refreshToken)
-                } catch (e: Exception) {
-                    throw IllegalArgumentException("Invalid or expired refresh token.")
+                } catch (_: Exception) {
+                    throw AuthException.InvalidRefreshToken()
                 }
 
-            val userId = decoded.subject ?: throw IllegalArgumentException("Invalid token subject.")
+            val userId = decoded.subject ?: throw AuthException.InvalidRefreshToken("Invalid token subject.")
             val row =
                 UsersTable.selectAll().where { UsersTable.id eq userId }.singleOrNull()
-                    ?: throw IllegalArgumentException("User not found.")
+                    ?: throw AuthException.UserNotFound("User with ID $userId not found.")
 
             generateTokens(userId, row[UsersTable.email], row[UsersTable.username])
         }

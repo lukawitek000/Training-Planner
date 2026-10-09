@@ -16,4 +16,5 @@ data class ApiErrorDto(
     val statusCode: Int,
     val message: String,
     val details: String? = null,
+    val errorCode: String? = null,
 )

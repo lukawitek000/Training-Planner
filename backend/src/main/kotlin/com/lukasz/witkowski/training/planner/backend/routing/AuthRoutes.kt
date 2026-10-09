@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.backend.routing
 
+import com.lukasz.witkowski.training.planner.backend.exception.AuthException
 import com.lukasz.witkowski.training.planner.backend.service.AuthService
 import com.lukasz.witkowski.training.planner.dto.auth.LoginRequestDto
 import com.lukasz.witkowski.training.planner.dto.auth.RefreshTokenRequestDto
@@ -46,7 +47,7 @@ fun Route.authRoutes(authService: AuthService) {
                         ?: return@get call.respond(HttpStatusCode.Unauthorized)
                 val user =
                     authService.getUserById(userId)
-                        ?: return@get call.respond(HttpStatusCode.NotFound)
+                        ?: throw AuthException.UserNotFound("User with ID $userId not found.")
                 call.respond(HttpStatusCode.OK, user)
             }
         }

@@ -56,9 +56,10 @@ class AuthRoutesTest {
                     contentType(ContentType.Application.Json)
                     setBody(registerReq)
                 }
-            assertEquals(HttpStatusCode.BadRequest, duplicateResponse.status)
+            assertEquals(HttpStatusCode.Conflict, duplicateResponse.status)
             val error = duplicateResponse.body<ApiErrorDto>()
-            assertEquals(400, error.statusCode)
+            assertEquals(409, error.statusCode)
+            assertEquals("USER_ALREADY_EXISTS", error.errorCode)
         }
 
     @Test
@@ -90,7 +91,10 @@ class AuthRoutesTest {
                     contentType(ContentType.Application.Json)
                     setBody(LoginRequestDto(email = email, password = "WrongPassword"))
                 }
-            assertEquals(HttpStatusCode.BadRequest, wrongPassResponse.status)
+            assertEquals(HttpStatusCode.Unauthorized, wrongPassResponse.status)
+            val wrongPassError = wrongPassResponse.body<ApiErrorDto>()
+            assertEquals(401, wrongPassError.statusCode)
+            assertEquals("INCORRECT_PASSWORD", wrongPassError.errorCode)
 
             // Login unknown email failure
             val unknownUserResponse =
@@ -98,7 +102,10 @@ class AuthRoutesTest {
                     contentType(ContentType.Application.Json)
                     setBody(LoginRequestDto(email = "nobody@example.com", password = password))
                 }
-            assertEquals(HttpStatusCode.BadRequest, unknownUserResponse.status)
+            assertEquals(HttpStatusCode.NotFound, unknownUserResponse.status)
+            val unknownUserError = unknownUserResponse.body<ApiErrorDto>()
+            assertEquals(404, unknownUserError.statusCode)
+            assertEquals("USER_NOT_FOUND", unknownUserError.errorCode)
         }
 
     @Test
@@ -129,7 +136,10 @@ class AuthRoutesTest {
                     contentType(ContentType.Application.Json)
                     setBody(RefreshTokenRequestDto(refreshToken = "invalid-token-string"))
                 }
-            assertEquals(HttpStatusCode.BadRequest, invalidResponse.status)
+            assertEquals(HttpStatusCode.Unauthorized, invalidResponse.status)
+            val invalidError = invalidResponse.body<ApiErrorDto>()
+            assertEquals(401, invalidError.statusCode)
+            assertEquals("INVALID_REFRESH_TOKEN", invalidError.errorCode)
         }
 
     @Test
