@@ -1,13 +1,13 @@
 package com.lukasz.witkowski.training.planner.auth.infrastructure
 
 import com.lukasz.witkowski.training.planner.auth.domain.AuthenticationRepository
-import com.lukasz.witkowski.training.planner.auth.domain.model.AuthTokens
 import com.lukasz.witkowski.training.planner.auth.domain.model.AuthenticationFailure
 import com.lukasz.witkowski.training.planner.auth.domain.model.AuthenticationResult
 import com.lukasz.witkowski.training.planner.auth.domain.model.SignInForm
 import com.lukasz.witkowski.training.planner.auth.domain.model.SignUpForm
-import com.lukasz.witkowski.training.planner.auth.infrastructure.local.TokenStorage
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthenticationRemoteDataSource
+import com.lukasz.witkowski.training.planner.network.AuthTokens
+import com.lukasz.witkowski.training.planner.network.TokenStorage
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import com.lukasz.witkowski.training.planner.shared.utils.fold
 import com.lukasz.witkowski.training.planner.shared.utils.runCatchingCancellable

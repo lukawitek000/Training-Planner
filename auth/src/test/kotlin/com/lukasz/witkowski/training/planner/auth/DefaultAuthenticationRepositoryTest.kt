@@ -7,8 +7,8 @@ import com.lukasz.witkowski.training.planner.auth.domain.model.SignUpForm
 import com.lukasz.witkowski.training.planner.auth.infrastructure.DefaultAuthenticationRepository
 import com.lukasz.witkowski.training.planner.auth.infrastructure.local.DefaultTokenStorage
 import com.lukasz.witkowski.training.planner.auth.infrastructure.local.SecureTokenStorage
-import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitAuthenticationClient
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitAuthenticationRemoteDataSource
+import com.lukasz.witkowski.training.planner.network.NetworkConfig
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -39,7 +39,12 @@ class DefaultAuthenticationRepositoryTest {
         mockWebServer.start()
 
         val baseUrl = mockWebServer.url("/").toString()
-        val api = RetrofitAuthenticationClient.createAuthenticationApi(baseUrl = baseUrl)
+        val unauthenticatedClient = NetworkConfig.createUnauthenticatedOkHttpClient()
+        val api = NetworkConfig.createRetrofit(
+            baseUrl = baseUrl,
+            okHttpClient = unauthenticatedClient,
+        ).create(com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthenticationApi::class.java)
+
         val remoteDataSource = RetrofitAuthenticationRemoteDataSource(
             api = api,
             timeProvider = timeProvider,

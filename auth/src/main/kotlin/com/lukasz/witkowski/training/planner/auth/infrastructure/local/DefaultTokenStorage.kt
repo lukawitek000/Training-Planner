@@ -1,7 +1,8 @@
 package com.lukasz.witkowski.training.planner.auth.infrastructure.local
 
-import com.lukasz.witkowski.training.planner.auth.domain.model.AccessToken
-import com.lukasz.witkowski.training.planner.auth.domain.model.AuthTokens
+import com.lukasz.witkowski.training.planner.network.AccessToken
+import com.lukasz.witkowski.training.planner.network.AuthTokens
+import com.lukasz.witkowski.training.planner.network.TokenStorage
 
 class DefaultTokenStorage(
     private val secureTokenStorage: SecureTokenStorage,

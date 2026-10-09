@@ -1,7 +1,5 @@
 package com.lukasz.witkowski.training.planner.auth.infrastructure.remote
 
-import com.lukasz.witkowski.training.planner.auth.domain.model.AccessToken
-import com.lukasz.witkowski.training.planner.auth.domain.model.AuthTokens
 import com.lukasz.witkowski.training.planner.auth.domain.model.SignInForm
 import com.lukasz.witkowski.training.planner.auth.domain.model.SignUpForm
 import com.lukasz.witkowski.training.planner.dto.auth.AuthResponseDto
@@ -9,6 +7,8 @@ import com.lukasz.witkowski.training.planner.dto.auth.LoginRequestDto
 import com.lukasz.witkowski.training.planner.dto.auth.RefreshTokenRequestDto
 import com.lukasz.witkowski.training.planner.dto.auth.RegisterRequestDto
 import com.lukasz.witkowski.training.planner.dto.auth.TokenResponseDto
+import com.lukasz.witkowski.training.planner.network.AccessToken
+import com.lukasz.witkowski.training.planner.network.AuthTokens
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant
 

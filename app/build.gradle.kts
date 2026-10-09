@@ -51,6 +51,8 @@ dependencies {
     implementation(projects.training)
     implementation(projects.statistics)
     implementation(projects.auth)
+    implementation(projects.user)
+    implementation(projects.network)
 
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.viewmodelKtx)

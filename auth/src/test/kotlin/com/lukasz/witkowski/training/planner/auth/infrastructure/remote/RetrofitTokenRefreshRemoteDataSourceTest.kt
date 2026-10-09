@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.auth.infrastructure.remote
 
-import com.lukasz.witkowski.training.planner.auth.domain.model.AuthenticationFailure
 import com.lukasz.witkowski.training.planner.dto.auth.TokenResponseDto
+import com.lukasz.witkowski.training.planner.network.TokenRefreshFailure
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import io.mockk.coEvery
@@ -52,6 +52,6 @@ class RetrofitTokenRefreshRemoteDataSourceTest {
 
         val result = dataSource.refreshTokens("invalid-refresh-token")
 
-        assertEquals(AppResult.Error(AuthenticationFailure.InvalidRefreshToken), result)
+        assertEquals(AppResult.Error(TokenRefreshFailure.InvalidRefreshToken), result)
     }
 }

@@ -1,24 +1,18 @@
 package com.lukasz.witkowski.training.planner.auth.di
 
 import com.lukasz.witkowski.training.planner.auth.domain.AuthenticationRepository
-import com.lukasz.witkowski.training.planner.auth.domain.UserRepository
 import com.lukasz.witkowski.training.planner.auth.infrastructure.DefaultAuthenticationRepository
-import com.lukasz.witkowski.training.planner.auth.infrastructure.DefaultUserRepository
 import com.lukasz.witkowski.training.planner.auth.infrastructure.local.AndroidSecureTokenStorage
-import com.lukasz.witkowski.training.planner.auth.infrastructure.local.AndroidUserPreferencesStorage
 import com.lukasz.witkowski.training.planner.auth.infrastructure.local.DefaultTokenStorage
 import com.lukasz.witkowski.training.planner.auth.infrastructure.local.SecureTokenStorage
-import com.lukasz.witkowski.training.planner.auth.infrastructure.local.TokenStorage
-import com.lukasz.witkowski.training.planner.auth.infrastructure.local.UserPreferencesStorage
-import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthInterceptor
+import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthenticationApi
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthenticationRemoteDataSource
-import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitAuthenticationClient
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitAuthenticationRemoteDataSource
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitTokenRefreshRemoteDataSource
-import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitUserRemoteDataSource
-import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.TokenAuthenticator
-import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.TokenRefreshRemoteDataSource
-import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.UserRemoteDataSource
+import com.lukasz.witkowski.training.planner.network.NetworkQualifiers
+import com.lukasz.witkowski.training.planner.network.TokenRefreshRemoteDataSource
+import com.lukasz.witkowski.training.planner.network.TokenStorage
+import com.lukasz.witkowski.training.planner.network.networkModule
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
 import com.lukasz.witkowski.training.planner.shared.time.SystemTimeProvider
@@ -26,11 +20,14 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import retrofit2.Retrofit
 
 val authModule = module {
-    includes(dispatchersModule)
+    includes(dispatchersModule, networkModule)
 
-    single { RetrofitAuthenticationClient.createAuthenticationApi() }
+    single {
+        get<Retrofit>(NetworkQualifiers.UNAUTHENTICATED).create(AuthenticationApi::class.java)
+    }
 
     single {
         RetrofitAuthenticationRemoteDataSource(
@@ -48,32 +45,8 @@ val authModule = module {
         )
     } bind TokenRefreshRemoteDataSource::class
 
-    single { AuthInterceptor(tokenStorage = get()) }
-    single {
-        TokenAuthenticator(
-            tokenStorage = get(),
-            tokenRefreshRemoteDataSource = get(),
-        )
-    }
-
-    single {
-        RetrofitAuthenticationClient(
-            authInterceptor = get(),
-            tokenAuthenticator = get(),
-        )
-    }
-    single { get<RetrofitAuthenticationClient>().userApi }
-
-    single {
-        RetrofitUserRemoteDataSource(
-            api = get(),
-            ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
-        )
-    } bind UserRemoteDataSource::class
-
     single { AndroidSecureTokenStorage(androidContext()) } bind SecureTokenStorage::class
     single { DefaultTokenStorage(secureTokenStorage = get()) } bind TokenStorage::class
-    single { AndroidUserPreferencesStorage(androidContext()) } bind UserPreferencesStorage::class
 
     single {
         DefaultAuthenticationRepository(
@@ -81,12 +54,4 @@ val authModule = module {
             remoteDataSource = get(),
         )
     } bind AuthenticationRepository::class
-
-    single {
-        DefaultUserRepository(
-            tokenStorage = get(),
-            userRemoteDataSource = get(),
-            userPreferencesStorage = get(),
-        )
-    } bind UserRepository::class
 }

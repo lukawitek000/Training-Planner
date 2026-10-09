@@ -11,6 +11,7 @@ android {
 dependencies {
     api(projects.shared)
     api(projects.dto)
+    api(projects.network)
 
     // Retrofit & OkHttp
     implementation(libs.retrofit)

@@ -1,9 +1,10 @@
 package com.lukasz.witkowski.training.planner.auth.infrastructure.remote
 
-import com.lukasz.witkowski.training.planner.auth.domain.model.AuthTokens
-import com.lukasz.witkowski.training.planner.auth.domain.model.AuthenticationFailure
 import com.lukasz.witkowski.training.planner.dto.auth.RefreshTokenRequestDto
 import com.lukasz.witkowski.training.planner.dto.common.ApiErrorDto
+import com.lukasz.witkowski.training.planner.network.AuthTokens
+import com.lukasz.witkowski.training.planner.network.TokenRefreshFailure
+import com.lukasz.witkowski.training.planner.network.TokenRefreshRemoteDataSource
 import com.lukasz.witkowski.training.planner.shared.network.NetworkFailure
 import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
@@ -25,10 +26,10 @@ class RetrofitTokenRefreshRemoteDataSource(
     private val json: Json = defaultJson,
 ) : TokenRefreshRemoteDataSource {
 
-    override suspend fun refreshTokens(refreshToken: String): AppResult<AuthTokens, AuthenticationFailure> =
+    override suspend fun refreshTokens(refreshToken: String): AppResult<AuthTokens, TokenRefreshFailure> =
         withContext(ioDispatcher) {
             runCatchingCancellable(
-                mapError = { exception -> exception.toAuthenticationFailure(json) },
+                mapError = { exception -> exception.toTokenRefreshFailure(json) },
             ) {
                 api.refresh(RefreshTokenRequestDto(refreshToken))
                     .toAuthTokens(timeProvider.currentInstant())
@@ -43,7 +44,7 @@ class RetrofitTokenRefreshRemoteDataSource(
     }
 }
 
-private fun Throwable.toAuthenticationFailure(json: Json): AuthenticationFailure {
+private fun Throwable.toTokenRefreshFailure(json: Json): TokenRefreshFailure {
     return when (this) {
         is HttpException -> {
             val errorBody = response()?.errorBody()?.string()
@@ -55,11 +56,13 @@ private fun Throwable.toAuthenticationFailure(json: Json): AuthenticationFailure
                 }
             }
             when (apiError?.errorCode) {
-                "INVALID_REFRESH_TOKEN" -> AuthenticationFailure.InvalidRefreshToken
+                "INVALID_REFRESH_TOKEN" -> TokenRefreshFailure.InvalidRefreshToken
+                "USER_NOT_FOUND" -> TokenRefreshFailure.UserNotFound
                 else -> {
                     when (val statusCode = code()) {
-                        401 -> AuthenticationFailure.InvalidRefreshToken
-                        else -> AuthenticationFailure.NetworkError(
+                        401 -> TokenRefreshFailure.InvalidRefreshToken
+                        404 -> TokenRefreshFailure.UserNotFound
+                        else -> TokenRefreshFailure.NetworkError(
                             NetworkFailure.HttpError(
                                 statusCode = statusCode,
                                 message = apiError?.message ?: message(),
@@ -72,21 +75,21 @@ private fun Throwable.toAuthenticationFailure(json: Json): AuthenticationFailure
         }
 
         is UnknownHostException, is ConnectException -> {
-            AuthenticationFailure.NetworkError(NetworkFailure.NoInternet)
+            TokenRefreshFailure.NetworkError(NetworkFailure.NoInternet)
         }
 
         is SocketTimeoutException -> {
-            AuthenticationFailure.NetworkError(NetworkFailure.Timeout)
+            TokenRefreshFailure.NetworkError(NetworkFailure.Timeout)
         }
 
         is SerializationException -> {
-            AuthenticationFailure.NetworkError(NetworkFailure.SerializationError(message))
+            TokenRefreshFailure.NetworkError(NetworkFailure.SerializationError(message))
         }
 
         is IOException -> {
-            AuthenticationFailure.NetworkError(NetworkFailure.Unknown)
+            TokenRefreshFailure.NetworkError(NetworkFailure.Unknown)
         }
 
-        else -> AuthenticationFailure.UnknownFailure
+        else -> TokenRefreshFailure.UnknownFailure
     }
 }

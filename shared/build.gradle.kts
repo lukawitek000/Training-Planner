@@ -1,6 +1,7 @@
 plugins {
     id(BuildPlugins.commonLibraryPlugin)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {
@@ -12,12 +13,20 @@ android {
 }
 
 dependencies {
+    api(projects.dto)
+
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons.extended)
     implementation(libs.compose.ui.tooling.preview)
     debugImplementation(libs.compose.ui.tooling)
+
+    // Retrofit & Serialization
+    api(libs.retrofit)
+    api(libs.retrofit.converter.kotlinxSerialization)
+    api(libs.okhttp)
+    api(libs.kotlinx.serialization.json)
 
     implementation(libs.timber)
     implementation(libs.androidx.annotation)
@@ -28,4 +37,3 @@ dependencies {
 
     testImplementation(libs.junit)
 }
-

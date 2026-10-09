@@ -1,10 +1,10 @@
 package com.lukasz.witkowski.training.planner.auth.infrastructure.remote
 
-import com.lukasz.witkowski.training.planner.auth.domain.model.AuthTokens
 import com.lukasz.witkowski.training.planner.auth.domain.model.AuthenticationFailure
 import com.lukasz.witkowski.training.planner.auth.domain.model.SignInForm
 import com.lukasz.witkowski.training.planner.auth.domain.model.SignUpForm
 import com.lukasz.witkowski.training.planner.dto.common.ApiErrorDto
+import com.lukasz.witkowski.training.planner.network.AuthTokens
 import com.lukasz.witkowski.training.planner.shared.network.NetworkFailure
 import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
