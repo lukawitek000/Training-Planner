@@ -7,11 +7,13 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import timber.log.Timber
 import kotlin.time.Duration.Companion.seconds
 
 object NetworkQualifiers {
     val AUTHENTICATED = named("authenticated")
     val UNAUTHENTICATED = named("unauthenticated")
+    val BASE_URL = named("baseUrl")
 }
 
 object NetworkConfig {
@@ -48,6 +50,7 @@ object NetworkConfig {
         okHttpClient: OkHttpClient,
         json: Json = defaultJson,
     ): Retrofit {
+        Timber.i("Creating Retrofit instance with baseUrl: %s", baseUrl)
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(okHttpClient)
@@ -65,7 +68,7 @@ val networkModule = module {
 
     single(NetworkQualifiers.UNAUTHENTICATED) {
         NetworkConfig.createRetrofit(
-            baseUrl = NetworkConfig.DEFAULT_BASE_URL,
+            baseUrl = getOrNull(NetworkQualifiers.BASE_URL) ?: NetworkConfig.DEFAULT_BASE_URL,
             okHttpClient = get(NetworkQualifiers.UNAUTHENTICATED),
             json = get(),
         )
@@ -88,7 +91,7 @@ val networkModule = module {
 
     single(NetworkQualifiers.AUTHENTICATED) {
         NetworkConfig.createRetrofit(
-            baseUrl = NetworkConfig.DEFAULT_BASE_URL,
+            baseUrl = getOrNull(NetworkQualifiers.BASE_URL) ?: NetworkConfig.DEFAULT_BASE_URL,
             okHttpClient = get(NetworkQualifiers.AUTHENTICATED),
             json = get(),
         )

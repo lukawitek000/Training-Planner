@@ -23,9 +23,15 @@ android {
     }
 
     buildTypes {
+        getByName("debug") {
+            // Local Ktor backend server for Emulator
+            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8080/\"")
+        }
         getByName("release") {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Production server URL (replace with actual production endpoint in the future)
+            buildConfigField("String", "BASE_URL", "\"https://api.trainingplanner.com/\"")
         }
     }
 
