@@ -92,9 +92,7 @@ private fun UserProfileScreenContent(
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(Dimens2.margin),
+        modifier = modifier.fillMaxSize(),
     ) {
         when (uiState) {
             ProfileUiState.Loading -> {
@@ -122,6 +120,7 @@ private fun UserProfileScreenContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
+                        .padding(Dimens2.margin)
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd),
                 ) {
