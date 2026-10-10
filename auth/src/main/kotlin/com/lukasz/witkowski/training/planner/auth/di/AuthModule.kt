@@ -18,10 +18,10 @@ import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualif
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
 import com.lukasz.witkowski.training.planner.shared.time.SystemTimeProvider
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
-import org.koin.plugin.module.dsl.viewModel
 import retrofit2.Retrofit
 
 val authModule = module {
@@ -57,5 +57,9 @@ val authModule = module {
         )
     } bind AuthenticationRepository::class
 
-    viewModel<AuthenticationViewModel>()
+    viewModel {
+        AuthenticationViewModel(
+            authenticationRepository = get(),
+        )
+    }
 }

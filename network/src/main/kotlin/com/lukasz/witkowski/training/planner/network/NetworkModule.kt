@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.network
 
-import com.lukasz.witkowski.training.planner.dto.common.ApiRoutes
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -16,6 +15,8 @@ object NetworkQualifiers {
 }
 
 object NetworkConfig {
+    const val DEFAULT_BASE_URL = "http://10.0.2.2:8080/"
+
     val defaultJson: Json = Json {
         ignoreUnknownKeys = true
         explicitNulls = true
@@ -43,7 +44,7 @@ object NetworkConfig {
     }
 
     fun createRetrofit(
-        baseUrl: String = ApiRoutes.BASE_PATH,
+        baseUrl: String = DEFAULT_BASE_URL,
         okHttpClient: OkHttpClient,
         json: Json = defaultJson,
     ): Retrofit {
@@ -64,7 +65,7 @@ val networkModule = module {
 
     single(NetworkQualifiers.UNAUTHENTICATED) {
         NetworkConfig.createRetrofit(
-            baseUrl = ApiRoutes.Auth.BASE,
+            baseUrl = NetworkConfig.DEFAULT_BASE_URL,
             okHttpClient = get(NetworkQualifiers.UNAUTHENTICATED),
             json = get(),
         )
@@ -87,7 +88,7 @@ val networkModule = module {
 
     single(NetworkQualifiers.AUTHENTICATED) {
         NetworkConfig.createRetrofit(
-            baseUrl = ApiRoutes.BASE_PATH,
+            baseUrl = NetworkConfig.DEFAULT_BASE_URL,
             okHttpClient = get(NetworkQualifiers.AUTHENTICATED),
             json = get(),
         )

@@ -8,6 +8,7 @@ import com.lukasz.witkowski.training.planner.auth.infrastructure.DefaultAuthenti
 import com.lukasz.witkowski.training.planner.auth.infrastructure.local.DefaultTokenStorage
 import com.lukasz.witkowski.training.planner.auth.infrastructure.local.SecureTokenStorage
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitAuthenticationRemoteDataSource
+import com.lukasz.witkowski.training.planner.dto.common.ApiRoutes
 import com.lukasz.witkowski.training.planner.network.NetworkConfig
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import io.mockk.coEvery
@@ -76,7 +77,7 @@ class DefaultAuthenticationRepositoryTest {
         coVerify { mockSecureTokenStorage.saveRefreshToken("refresh_token_xyz") }
 
         val request = mockWebServer.takeRequest()
-        assertEquals("/login", request.path)
+        assertEquals(ApiRoutes.Auth.LOGIN, request.path)
     }
 
     @Test
@@ -111,7 +112,7 @@ class DefaultAuthenticationRepositoryTest {
         coVerify { mockSecureTokenStorage.saveRefreshToken("refresh_token_abc") }
 
         val request = mockWebServer.takeRequest()
-        assertEquals("/register", request.path)
+        assertEquals(ApiRoutes.Auth.REGISTER, request.path)
     }
 
     @Test

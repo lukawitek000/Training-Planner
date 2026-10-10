@@ -20,6 +20,7 @@ import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExercis
 import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsScreen
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
 import com.lukasz.witkowski.training.planner.training.delete.DeleteTrainingPlanScreen
 import com.lukasz.witkowski.training.planner.training.details.TrainingPlanDetailsScreen
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -64,18 +65,22 @@ fun Navigation(
             }
 
             entry<UserProfile> {
-                UserProfileScreen(
-                    viewModel = koinViewModel(),
-                    onSignInClick = { navigator.authentication() },
-                )
+                TrainingPlannerTheme2 {
+                    UserProfileScreen(
+                        viewModel = koinViewModel(),
+                        onSignInClick = { navigator.authentication() },
+                    )
+                }
             }
 
             entry<Authentication> {
-                AuthenticationScreen(
-                    viewModel = koinViewModel(),
-                    onContinueAsGuestClick = { navigator.goBack() },
-                    onAuthSuccess = { navigator.goBack() },
-                )
+                TrainingPlannerTheme2 {
+                    AuthenticationScreen(
+                        viewModel = koinViewModel(),
+                        onContinueAsGuestClick = { navigator.goBack() },
+                        onAuthSuccess = { navigator.goBack() },
+                    )
+                }
             }
 
             entry<CreateTrainingPlan> {
