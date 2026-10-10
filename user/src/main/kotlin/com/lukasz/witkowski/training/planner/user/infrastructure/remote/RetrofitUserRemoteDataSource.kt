@@ -13,6 +13,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import retrofit2.HttpException
+import timber.log.Timber
 import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
@@ -26,8 +27,12 @@ class RetrofitUserRemoteDataSource(
 
     override suspend fun getUserProfile(): AppResult<User, UserFailure> =
         withContext(ioDispatcher) {
+            Timber.d("RemoteDataSource executing getUserProfile")
             runCatchingCancellable(
-                mapError = { exception -> exception.toUserFailure(json) },
+                mapError = { exception ->
+                    Timber.w(exception, "getUserProfile RemoteDataSource error")
+                    exception.toUserFailure(json)
+                },
             ) {
                 api.me().toUser()
             }

@@ -16,22 +16,28 @@ import io.ktor.server.routing.Route
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
+import org.slf4j.LoggerFactory
+
+private val logger = LoggerFactory.getLogger("AuthRoutes")
 
 fun Route.authRoutes(authService: AuthService) {
     route(ApiRoutes.Auth.BASE) {
         post("/register") {
             val request = call.receive<RegisterRequestDto>()
+            logger.info("POST /register request received for email: {}", request.email)
             val result = authService.register(request)
             call.respond(HttpStatusCode.Created, result)
         }
 
         post("/login") {
             val request = call.receive<LoginRequestDto>()
+            logger.info("POST /login request received for email: {}", request.email)
             val result = authService.login(request)
             call.respond(HttpStatusCode.OK, result)
         }
 
         post("/refresh") {
+            logger.info("POST /refresh request received")
             val request = call.receive<RefreshTokenRequestDto>()
             val result = authService.refreshToken(request.refreshToken)
             call.respond(HttpStatusCode.OK, result)
@@ -41,10 +47,17 @@ fun Route.authRoutes(authService: AuthService) {
             get("/me") {
                 val principal =
                     call.principal<JWTPrincipal>()
-                        ?: return@get call.respond(HttpStatusCode.Unauthorized)
+                        ?: run {
+                            logger.warn("GET /me request rejected: missing JWTPrincipal")
+                            return@get call.respond(HttpStatusCode.Unauthorized)
+                        }
                 val userId =
                     principal.payload.subject
-                        ?: return@get call.respond(HttpStatusCode.Unauthorized)
+                        ?: run {
+                            logger.warn("GET /me request rejected: missing subject claim")
+                            return@get call.respond(HttpStatusCode.Unauthorized)
+                        }
+                logger.info("GET /me request received for userId: {}", userId)
                 val user =
                     authService.getUserById(userId)
                         ?: throw AuthException.UserNotFound("User with ID $userId not found.")

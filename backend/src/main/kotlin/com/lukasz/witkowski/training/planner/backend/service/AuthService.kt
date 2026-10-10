@@ -14,13 +14,18 @@ import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
+import org.slf4j.LoggerFactory
 import java.util.UUID
 
 class AuthService {
-    suspend fun register(request: RegisterRequestDto): AuthResponseDto =
-        dbQuery {
+    private val logger = LoggerFactory.getLogger(AuthService::class.java)
+
+    suspend fun register(request: RegisterRequestDto): AuthResponseDto {
+        logger.info("Register attempt for email: {}, username: {}", request.email, request.username)
+        return dbQuery {
             val existingUser = UsersTable.selectAll().where { UsersTable.email eq request.email }.singleOrNull()
             if (existingUser != null) {
+                logger.warn("Register failed: User already exists for email: {}", request.email)
                 throw AuthException.UserAlreadyExists(request.email)
             }
 
@@ -34,55 +39,76 @@ class AuthService {
                 it[passwordHash] = hashedPassword
             }
 
+            logger.info("User registered successfully with userId: {}", userId)
             val userDto = UserDto(id = userId, email = request.email, username = request.username)
             val tokens = generateTokens(userId, request.email, request.username)
             AuthResponseDto(user = userDto, tokens = tokens)
         }
+    }
 
-    suspend fun login(request: LoginRequestDto): AuthResponseDto =
-        dbQuery {
+    suspend fun login(request: LoginRequestDto): AuthResponseDto {
+        logger.info("Login attempt for email: {}", request.email)
+        return dbQuery {
             val row =
                 UsersTable.selectAll().where { UsersTable.email eq request.email }.singleOrNull()
-                    ?: throw AuthException.UserNotFound("User with email ${request.email} not found.")
+                    ?: run {
+                        logger.warn("Login failed: User not found for email: {}", request.email)
+                        throw AuthException.UserNotFound("User with email ${request.email} not found.")
+                    }
 
             val hashedPassword = row[UsersTable.passwordHash]
             if (!PasswordHasher.verifyPassword(request.password, hashedPassword)) {
+                logger.warn("Login failed: Incorrect password for email: {}", request.email)
                 throw AuthException.IncorrectPassword()
             }
 
             val userId = row[UsersTable.id]
             val username = row[UsersTable.username]
+            logger.info("Login successful for userId: {}", userId)
             val userDto = UserDto(id = userId, email = request.email, username = username)
             val tokens = generateTokens(userId, request.email, username)
 
             AuthResponseDto(user = userDto, tokens = tokens)
         }
+    }
 
-    suspend fun refreshToken(refreshToken: String): TokenResponseDto =
-        dbQuery {
+    suspend fun refreshToken(refreshToken: String): TokenResponseDto {
+        logger.info("Token refresh attempt")
+        return dbQuery {
             val decoded =
                 try {
                     JwtConfig.verifier.verify(refreshToken)
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    logger.warn("Token refresh failed: Invalid token - {}", e.message)
                     throw AuthException.InvalidRefreshToken()
                 }
 
-            val userId = decoded.subject ?: throw AuthException.InvalidRefreshToken("Invalid token subject.")
+            val userId = decoded.subject ?: run {
+                logger.warn("Token refresh failed: Missing subject claim in token")
+                throw AuthException.InvalidRefreshToken("Invalid token subject.")
+            }
             val row =
                 UsersTable.selectAll().where { UsersTable.id eq userId }.singleOrNull()
-                    ?: throw AuthException.UserNotFound("User with ID $userId not found.")
+                    ?: run {
+                        logger.warn("Token refresh failed: User not found for userId: {}", userId)
+                        throw AuthException.UserNotFound("User with ID $userId not found.")
+                    }
 
+            logger.info("Token refreshed successfully for userId: {}", userId)
             generateTokens(userId, row[UsersTable.email], row[UsersTable.username])
         }
+    }
 
-    suspend fun getUserById(userId: String): UserDto? =
-        dbQuery {
+    suspend fun getUserById(userId: String): UserDto? {
+        logger.info("Fetching user profile for userId: {}", userId)
+        return dbQuery {
             UsersTable
                 .selectAll()
                 .where { UsersTable.id eq userId }
                 .singleOrNull()
                 ?.toUserDto()
         }
+    }
 
     private fun generateTokens(
         userId: String,

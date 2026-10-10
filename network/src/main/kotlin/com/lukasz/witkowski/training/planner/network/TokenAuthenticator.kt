@@ -8,6 +8,7 @@ import okhttp3.Authenticator
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
+import timber.log.Timber
 
 class TokenAuthenticator(
     private val tokenStorage: TokenStorage,
@@ -16,7 +17,10 @@ class TokenAuthenticator(
     private val mutex = Mutex()
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        if (responseCount(response) >= RESPONSE_COUNT_LIMIT) return null
+        if (responseCount(response) >= RESPONSE_COUNT_LIMIT) {
+            Timber.w("TokenAuthenticator response count limit reached for %s", response.request.url)
+            return null
+        }
 
         return runBlocking {
             mutex.withLock {
@@ -26,17 +30,24 @@ class TokenAuthenticator(
 
                 val tokenToUse =
                     if (currentAccessToken != null && currentAccessToken != requestAccessToken) {
+                        Timber.d("TokenAuthenticator: Using updated access token from storage")
                         currentAccessToken
                     } else {
                         val refreshToken =
-                            tokenStorage.getTokens()?.refreshToken ?: return@runBlocking null
+                            tokenStorage.getTokens()?.refreshToken ?: run {
+                                Timber.w("TokenAuthenticator: No refresh token in storage")
+                                return@runBlocking null
+                            }
 
+                        Timber.i("TokenAuthenticator: Refreshing tokens for 401 on %s", response.request.url)
                         tokenRefreshRemoteDataSource.refreshTokens(refreshToken).fold(
                             onSuccess = { tokens ->
+                                Timber.i("TokenAuthenticator: Token refresh succeeded")
                                 tokenStorage.saveTokens(tokens)
                                 tokens.accessToken?.token ?: tokens.refreshToken
                             },
-                            onError = {
+                            onError = { failure ->
+                                Timber.w("TokenAuthenticator: Token refresh failed: %s - clearing token storage", failure)
                                 tokenStorage.clear()
                                 return@runBlocking null
                             },

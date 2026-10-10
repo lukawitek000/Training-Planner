@@ -14,6 +14,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import retrofit2.HttpException
+import timber.log.Timber
 import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
@@ -28,8 +29,12 @@ class RetrofitTokenRefreshRemoteDataSource(
 
     override suspend fun refreshTokens(refreshToken: String): AppResult<AuthTokens, TokenRefreshFailure> =
         withContext(ioDispatcher) {
+            Timber.d("RemoteDataSource executing refreshTokens")
             runCatchingCancellable(
-                mapError = { exception -> exception.toTokenRefreshFailure(json) },
+                mapError = { exception ->
+                    Timber.w(exception, "refreshTokens RemoteDataSource failed")
+                    exception.toTokenRefreshFailure(json)
+                },
             ) {
                 api.refresh(RefreshTokenRequestDto(refreshToken))
                     .toAuthTokens(timeProvider.currentInstant())

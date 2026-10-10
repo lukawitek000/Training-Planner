@@ -14,6 +14,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import retrofit2.HttpException
+import timber.log.Timber
 import java.io.IOException
 import java.net.ConnectException
 import java.net.SocketTimeoutException
@@ -28,8 +29,12 @@ class RetrofitAuthenticationRemoteDataSource(
 
     override suspend fun signIn(signInForm: SignInForm): AppResult<AuthTokens, AuthenticationFailure> =
         withContext(ioDispatcher) {
+            Timber.d("RemoteDataSource executing signIn for email: %s", signInForm.email)
             runCatchingCancellable(
-                mapError = { exception -> exception.toAuthenticationFailure(json) },
+                mapError = { exception ->
+                    Timber.w(exception, "signIn RemoteDataSource error for email: %s", signInForm.email)
+                    exception.toAuthenticationFailure(json)
+                },
             ) {
                 api.login(signInForm.toLoginRequestDto())
                     .toAuthTokens(timeProvider.currentInstant())
@@ -38,8 +43,12 @@ class RetrofitAuthenticationRemoteDataSource(
 
     override suspend fun signUp(signUpForm: SignUpForm): AppResult<AuthTokens, AuthenticationFailure> =
         withContext(ioDispatcher) {
+            Timber.d("RemoteDataSource executing signUp for email: %s", signUpForm.email)
             runCatchingCancellable(
-                mapError = { exception -> exception.toAuthenticationFailure(json) },
+                mapError = { exception ->
+                    Timber.w(exception, "signUp RemoteDataSource error for email: %s", signUpForm.email)
+                    exception.toAuthenticationFailure(json)
+                },
             ) {
                 api.register(signUpForm.toRegisterRequestDto())
                     .toAuthTokens(timeProvider.currentInstant())

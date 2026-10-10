@@ -9,6 +9,7 @@ import com.lukasz.witkowski.training.planner.user.domain.model.WeightUnit
 import com.lukasz.witkowski.training.planner.user.infrastructure.local.UserPreferencesStorage
 import com.lukasz.witkowski.training.planner.user.infrastructure.remote.UserRemoteDataSource
 import kotlinx.coroutines.flow.Flow
+import timber.log.Timber
 
 class DefaultUserRepository(
     private val tokenStorage: TokenStorage,
@@ -19,18 +20,22 @@ class DefaultUserRepository(
     override suspend fun getUserProfile(): AppResult<User, UserFailure> {
         val refreshToken = tokenStorage.getTokens()?.refreshToken
         if (refreshToken.isNullOrBlank()) {
+            Timber.i("getUserProfile: No refresh token present, returning NotSignedIn")
             return AppResult.Error(UserFailure.NotSignedIn)
         }
+        Timber.d("getUserProfile: Fetching remote profile")
         return userRemoteDataSource.getUserProfile()
     }
 
     override val weightUnit: Flow<WeightUnit> = userPreferencesStorage.weightUnit
 
     override suspend fun setWeightUnit(weightUnit: WeightUnit) {
+        Timber.d("setWeightUnit: Setting preferred weight unit to %s", weightUnit)
         userPreferencesStorage.setWeightUnit(weightUnit)
     }
 
     override suspend fun signOut() {
+        Timber.i("signOut: Clearing user tokens")
         tokenStorage.clear()
     }
 }

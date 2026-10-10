@@ -7,6 +7,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.lukasz.witkowski.training.planner.user.domain.model.WeightUnit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 
 private val Context.userPreferencesDataStore by preferencesDataStore("user_preferences")
 
@@ -23,6 +24,7 @@ class AndroidUserPreferencesStorage(
     }
 
     override suspend fun setWeightUnit(weightUnit: WeightUnit) {
+        Timber.d("Updating preferred weight unit in DataStore to: %s", weightUnit)
         context.userPreferencesDataStore.edit { preferences ->
             preferences[weightUnitKey] = weightUnit.name
         }
