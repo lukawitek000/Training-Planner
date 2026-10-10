@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Authentication Common -->
+    <string name="auth_title">Authentication</string>
+    <string name="auth_welcome_back_heading">Welcome back</string>
+    <string name="auth_welcome_back_subtext">Sign in to sync your routines and access community training plans.</string>
+    <string name="auth_create_account_heading">Create Account</string>
+    <string name="auth_create_account_subtext">Join Training Planner to back up workouts, track progression, and share plans.</string>
+
+    <string name="auth_sign_in_tab">Sign In</string>
+    <string name="auth_sign_up_tab">Sign Up</string>
+
+    <!-- Inputs -->
+    <string name="auth_email_label">Email Address *</string>
+    <string name="auth_email_placeholder">athlete@trainingplanner.app</string>
+    <string name="auth_password_label">Password *</string>
+    <string name="auth_password_placeholder">••••••••••••</string>
+    <string name="auth_username_label">Username / Athlete Handle *</string>
+    <string name="auth_username_placeholder">e.g. alex_iron</string>
+
+    <!-- Password Strength -->
+    <string name="auth_password_weak">Weak</string>
+    <string name="auth_password_medium">Medium</string>
+    <string name="auth_password_strong">Strong</string>
+
+    <!-- Actions & Buttons -->
+    <string name="auth_sign_in_button">Sign In</string>
+    <string name="auth_create_account_button">Create Account</string>
+    <string name="auth_continue_as_guest">Continue as Guest (Offline Mode)</string>
+    <string name="auth_or_continue_with">Or continue with</string>
+
+    <!-- Toggle Bottom Prompt -->
+    <string name="auth_dont_have_account_prompt">Don\'t have an account?</string>
+    <string name="auth_already_have_account_prompt">Already have an account?</string>
+
+    <!-- Failures -->
+    <string name="auth_failure_banner_title">Authentication Failed</string>
+    <string name="auth_failure_user_not_found">Account with this email does not exist. Check spelling or create an account.</string>
+    <string name="auth_failure_incorrect_password">Incorrect password. Please verify your credentials and try again.</string>
+    <string name="auth_failure_user_already_exists">An account with this email address already exists. Try signing in instead.</string>
+    <string name="auth_failure_network_error">Unable to connect to the server. Please check your internet connection.</string>
+    <string name="auth_failure_unknown">Authentication failed. Please verify your input and try again.</string>
+</resources>

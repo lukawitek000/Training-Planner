@@ -42,6 +42,7 @@ fun AppTextField(
     modifier: Modifier = Modifier,
     placeholder: String = "",
     leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
     enabled: Boolean = true,
     readOnly: Boolean = false,
     singleLine: Boolean = true,
@@ -64,6 +65,8 @@ fun AppTextField(
         cursorColor = MaterialTheme.colorScheme.primary,
         focusedLeadingIconColor = MaterialTheme.colorScheme.secondary,
         unfocusedLeadingIconColor = MaterialTheme.colorScheme.secondary,
+        focusedTrailingIconColor = MaterialTheme.colorScheme.secondary,
+        unfocusedTrailingIconColor = MaterialTheme.colorScheme.secondary,
     )
 
     BasicTextField(
@@ -99,6 +102,7 @@ fun AppTextField(
                     }
                 } else null,
                 leadingIcon = leadingIcon,
+                trailingIcon = trailingIcon,
                 colors = textFieldColors,
                 contentPadding = PaddingValues(
                     horizontal = Dimens2.inputHorizontalPadding,
@@ -129,6 +133,7 @@ fun AppTextField(
     placeholder: String = "",
     leadingIcon: ImageVector? = null,
     leadingIconContentDescription: String? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
     enabled: Boolean = true,
     readOnly: Boolean = false,
     singleLine: Boolean = true,
@@ -154,6 +159,7 @@ fun AppTextField(
         modifier = modifier,
         placeholder = placeholder,
         leadingIcon = iconComposable,
+        trailingIcon = trailingIcon,
         enabled = enabled,
         readOnly = readOnly,
         singleLine = singleLine,

@@ -6,6 +6,10 @@ plugins {
 
 android {
     namespace = "com.lukasz.witkowski.training.planner.auth"
+
+    buildFeatures {
+        compose = true
+    }
 }
 
 dependencies {
@@ -37,6 +41,7 @@ dependencies {
     implementation(libs.compose.material3)
     implementation(libs.androidx.navigation3.runtime)
     implementation(libs.androidx.navigation3.ui)
+    implementation(libs.compose.material.icons.extended)
 
     // Testing
     testImplementation(libs.kotlinTestJunit)

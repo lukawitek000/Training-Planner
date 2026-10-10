@@ -12,6 +12,7 @@ import androidx.navigation3.runtime.NavKey
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import com.lukasz.witkowski.training.planner.auth.R as AuthR
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -93,6 +94,9 @@ data class TrainingSession(
 
 @Serializable
 data object UserProfile : TrainingPlannerNavKey
+
+@Serializable
+data object Authentication : TrainingPlannerNavKey
 
 object TrainingPlanIdSerializer : KSerializer<TrainingPlanId> {
     override val descriptor: SerialDescriptor =
@@ -238,6 +242,13 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
         is UserProfile -> UiConfig(
             topBarConfig = TopBarConfig(
                 title = context.getString(R.string.profile),
+                hasBackArrow = true,
+            )
+        )
+
+        is Authentication -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(AuthR.string.auth_title),
                 hasBackArrow = true,
             )
         )

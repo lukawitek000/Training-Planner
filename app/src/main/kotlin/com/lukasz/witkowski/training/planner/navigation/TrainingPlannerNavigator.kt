@@ -18,6 +18,10 @@ class TrainingPlannerNavigator(
         backStack.add(UserProfile)
     }
 
+    fun authentication() {
+        backStack.add(Authentication)
+    }
+
     fun exerciseList() {
         backStack.clear()
         backStack.add(ExercisesList)

@@ -9,6 +9,7 @@ import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.Authenti
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthenticationRemoteDataSource
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitAuthenticationRemoteDataSource
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitTokenRefreshRemoteDataSource
+import com.lukasz.witkowski.training.planner.auth.presentation.auth.AuthenticationViewModel
 import com.lukasz.witkowski.training.planner.network.NetworkQualifiers
 import com.lukasz.witkowski.training.planner.network.TokenRefreshRemoteDataSource
 import com.lukasz.witkowski.training.planner.network.TokenStorage
@@ -20,6 +21,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.koin.plugin.module.dsl.viewModel
 import retrofit2.Retrofit
 
 val authModule = module {
@@ -54,4 +56,6 @@ val authModule = module {
             remoteDataSource = get(),
         )
     } bind AuthenticationRepository::class
+
+    viewModel<AuthenticationViewModel>()
 }
