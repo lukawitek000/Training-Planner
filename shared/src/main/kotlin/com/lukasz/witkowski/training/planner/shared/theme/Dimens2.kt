@@ -50,12 +50,39 @@ object Dimens2 {
     /** Icon container size - 56dp */
     val iconContainerSize: Dp = 56.dp
 
+    /** Loading spinner container size - 112dp */
+    val spinnerSize: Dp = 112.dp
+
+    /** Loading spinner inner icon container size - 64dp */
+    val spinnerIconContainerSize: Dp = 64.dp
+
+    /** Loading spinner stroke width - 4dp */
+    val spinnerStrokeWidth: Dp = 4.dp
+
+    /** Max subtitle width - 280dp */
+    val maxSubtitleWidth: Dp = 280.dp
+
+    /** Action icon box size - 36dp */
+    val actionIconBoxSize: Dp = 36.dp
+
+    /** Avatar size - 80dp */
+    val avatarSize: Dp = 80.dp
+
+    /** Avatar status badge size - 28dp */
+    val avatarBadgeSize: Dp = 28.dp
+
     /** Icon sizes */
     val iconSize13: Dp = 13.dp
+    val iconSize14: Dp = 14.dp
+    val iconSize15: Dp = 15.dp
     val iconSize16: Dp = 16.dp
     val iconSize18: Dp = 18.dp
     val inputIconSize: Dp = 20.dp
+    val iconSize22: Dp = 22.dp
+    val iconSize24: Dp = 24.dp
     val iconSize30: Dp = 30.dp
+    val iconSize40: Dp = 40.dp
+    val iconSize42: Dp = 42.dp
 
     /** Gap between label and input field - 6dp */
     val spaceGapLabelInput: Dp = 6.dp

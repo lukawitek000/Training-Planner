@@ -44,12 +44,12 @@ class DefaultUserRepositoryTest {
     }
 
     @Test
-    fun `getUserProfile returns Unauthorized when no refresh token is stored without calling remote data source`() = runTest {
+    fun `getUserProfile returns NotSignedIn when no refresh token is stored without calling remote data source`() = runTest {
         coEvery { mockTokenStorage.getTokens() } returns null
 
         val result = repository.getUserProfile()
 
-        assertEquals(AppResult.Error(UserFailure.Unauthorized), result)
+        assertEquals(AppResult.Error(UserFailure.NotSignedIn), result)
         coVerify(exactly = 0) { mockUserRemoteDataSource.getUserProfile() }
     }
 

@@ -19,7 +19,7 @@ class DefaultUserRepository(
     override suspend fun getUserProfile(): AppResult<User, UserFailure> {
         val refreshToken = tokenStorage.getTokens()?.refreshToken
         if (refreshToken.isNullOrBlank()) {
-            return AppResult.Error(UserFailure.Unauthorized)
+            return AppResult.Error(UserFailure.NotSignedIn)
         }
         return userRemoteDataSource.getUserProfile()
     }

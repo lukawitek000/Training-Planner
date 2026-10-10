@@ -10,10 +10,12 @@ import com.lukasz.witkowski.training.planner.user.infrastructure.local.UserPrefe
 import com.lukasz.witkowski.training.planner.user.infrastructure.remote.RetrofitUserRemoteDataSource
 import com.lukasz.witkowski.training.planner.user.infrastructure.remote.UserApi
 import com.lukasz.witkowski.training.planner.user.infrastructure.remote.UserRemoteDataSource
+import com.lukasz.witkowski.training.planner.user.presentation.UserProfileViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.koin.plugin.module.dsl.viewModel
 import retrofit2.Retrofit
 
 val userModule = module {
@@ -39,4 +41,6 @@ val userModule = module {
             userPreferencesStorage = get(),
         )
     } bind UserRepository::class
+
+    viewModel<UserProfileViewModel>()
 }

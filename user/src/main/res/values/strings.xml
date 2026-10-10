@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen Titles & Identity Header -->
+    <string name="user_profile_title_online">Profile</string>
+    <string name="user_profile_title_offline">Profile (Offline)</string>
+    <string name="user_profile_guest_athlete">Guest Athlete</string>
+    <string name="user_profile_local_only_database">Using local-only database • Not signed in</string>
+    <string name="user_profile_tag_cloud_synced">Cloud Synced</string>
+    <string name="user_profile_tag_local_first">Local-First</string>
+    <string name="user_profile_sync_failed_pill">Sync Failed • Reauth Required</string>
+
+    <!-- Cloud Sync CTA Card -->
+    <string name="user_profile_cta_title">Unlock Cloud Sync &amp; Global Chat</string>
+    <string name="user_profile_cta_subtitle">Sync routines across all your athletic devices, access community training templates, and participate in coach discussions.</string>
+    <string name="user_profile_cta_button">Sign In or Register</string>
+
+    <!-- Offline Preferences Card -->
+    <string name="user_profile_preferences_title">Offline Preferences</string>
+    <string name="user_profile_preferences_stored_on_device">Stored on device</string>
+    <string name="user_profile_measurement_units_title">Measurement Units</string>
+    <string name="user_profile_measurement_units_subtitle">Default weight increments</string>
+    <string name="unit_kg">KG</string>
+    <string name="unit_lbs">LBS</string>
+
+    <!-- Engine Footnote -->
+    <string name="user_profile_engine_footnote_build">Training Planner Engine • Build TODO</string>
+
+    <!-- Failure General Messages -->
+    <string name="user_failure_unauthorized">Session expired. Please sign in again.</string>
+    <string name="user_failure_user_not_found">User profile not found.</string>
+    <string name="user_failure_network_error">Unable to connect to the server. Please check your internet connection.</string>
+    <string name="user_failure_unknown">Something went wrong. Please try again.</string>
+
+    <!-- Re-authentication Sheet Messages -->
+    <string name="reauth_required_title">Re-authentication Required</string>
+    <string name="reauth_unauthorized_message">We encountered an issue reading your profile from the cloud. Your local workout sessions remain safe on this device, but you need to sign in again to resume cloud sync.</string>
+    <string name="reauth_user_not_found_message">Your user account could not be found in the cloud. Please sign in with a valid account to continue syncing.</string>
+    <string name="reauth_network_error_message">We could not reach the cloud server. Check your connection or continue using local offline mode.</string>
+    <string name="reauth_unknown_error_message">An unexpected error occurred while syncing your profile. Please try signing in again.</string>
+    <string name="reauth_sign_in_to_reconnect">Sign In to Reconnect</string>
+    <string name="reauth_stay_in_offline_mode">Stay in Offline Mode</string>
+</resources>
