@@ -15,7 +15,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.automirrored.filled.Login
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CloudDone
 import androidx.compose.material.icons.filled.CloudOff
@@ -51,7 +53,6 @@ import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingState
 import com.lukasz.witkowski.training.planner.shared.ui.segmentedControl.AppSegmentedControl
 import com.lukasz.witkowski.training.planner.shared.ui.segmentedControl.AppSegmentedControlItem
 import com.lukasz.witkowski.training.planner.user.R
-import com.lukasz.witkowski.training.planner.user.domain.model.User
 import com.lukasz.witkowski.training.planner.user.domain.model.UserFailure
 import com.lukasz.witkowski.training.planner.user.domain.model.WeightUnit
 
@@ -60,6 +61,7 @@ fun UserProfileScreen(
     viewModel: UserProfileViewModel,
     modifier: Modifier = Modifier,
     onSignInClick: () -> Unit = {},
+    onSignOutClick: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -67,6 +69,10 @@ fun UserProfileScreen(
         uiState = uiState,
         onWeightUnitChanged = viewModel::onWeightUnitChanged,
         onSignInClick = onSignInClick,
+        onSignOutClick = {
+            viewModel.signOut()
+            onSignOutClick()
+        },
         modifier = modifier,
     )
 }
@@ -76,6 +82,7 @@ private fun UserProfileScreenContent(
     uiState: ProfileUiState,
     onWeightUnitChanged: (WeightUnit) -> Unit,
     onSignInClick: () -> Unit,
+    onSignOutClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -120,7 +127,11 @@ private fun UserProfileScreenContent(
                         onReauthPillClick = { showReauthSheet = true },
                     )
 
-                    if (!isOnline) {
+                    if (isOnline) {
+                        SignOutCard(
+                            onSignOutClick = onSignOutClick,
+                        )
+                    } else {
                         CloudSyncCtaCard(
                             onSignInClick = onSignInClick,
                         )
@@ -134,7 +145,7 @@ private fun UserProfileScreenContent(
                     EngineFootnote()
                 }
 
-                if (!isOnline && (failure != null) && showReauthSheet) {
+                if ((!isOnline) && (failure != null) && showReauthSheet) {
                     ReauthBottomSheet(
                         onSignInClick = {
                             showReauthSheet = false
@@ -277,6 +288,70 @@ private fun UserIdentitySection(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = Dimens2.spaceXs),
         )
+    }
+}
+
+@Composable
+private fun SignOutCard(
+    onSignOutClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AppCard(modifier = modifier) {
+        Surface(
+            onClick = onSignOutClick,
+            color = MaterialTheme.colorScheme.surfaceContainer,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Dimens2.spaceMd),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm),
+                    modifier = Modifier.weight(1f),
+                ) {
+                    Surface(
+                        modifier = Modifier.size(Dimens2.iconSize40),
+                        shape = MaterialTheme.shapes.medium,
+                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Logout,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.size(Dimens2.inputIconSize),
+                            )
+                        }
+                    }
+
+                    Column {
+                        Text(
+                            text = stringResource(id = R.string.user_profile_sign_out_title),
+                            style = MaterialTheme.typography.titleSmall,
+                            color = MaterialTheme.colorScheme.error,
+                            fontWeight = FontWeight.Medium,
+                        )
+                        Text(
+                            text = stringResource(id = R.string.user_profile_sign_out_subtitle),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(Dimens2.inputIconSize),
+                )
+            }
+        }
     }
 }
 
@@ -463,10 +538,10 @@ private fun UserProfileLoadingPreview() {
             uiState = ProfileUiState.Loading,
             onWeightUnitChanged = {},
             onSignInClick = {},
+            onSignOutClick = {},
         )
     }
 }
-
 
 @AppPreview
 @Composable
@@ -478,10 +553,10 @@ private fun UserProfileScreenOfflinePreview() {
             ),
             onWeightUnitChanged = {},
             onSignInClick = {},
+            onSignOutClick = {},
         )
     }
 }
-
 
 @AppPreview
 @Composable
@@ -490,10 +565,11 @@ private fun UserProfileScreenOfflineFailurePreview() {
         UserProfileScreenContent(
             uiState = ProfileUiState.OfflineProfileLoaded(
                 weightUnit = WeightUnit.KG,
-                failure = UserFailure.NetworkError(networkFailure = NetworkFailure.NoInternet)
+                failure = UserFailure.NetworkError(networkFailure = NetworkFailure.NoInternet),
             ),
             onWeightUnitChanged = {},
             onSignInClick = {},
+            onSignOutClick = {},
         )
     }
 }
@@ -510,6 +586,7 @@ private fun UserProfileScreenOnlinePreview() {
             ),
             onWeightUnitChanged = {},
             onSignInClick = {},
+            onSignOutClick = {},
         )
     }
 }

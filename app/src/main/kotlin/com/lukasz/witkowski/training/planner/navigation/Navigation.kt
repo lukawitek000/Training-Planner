@@ -1,11 +1,9 @@
 package com.lukasz.witkowski.training.planner.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
@@ -32,6 +30,7 @@ import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorS
 import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorViewModel
 import com.lukasz.witkowski.training.planner.training.list.TrainingsScreen
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionScreen
+import com.lukasz.witkowski.training.planner.user.presentation.UserProfileScreen
 import kotlinx.serialization.serializer
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -60,6 +59,12 @@ fun Navigation(
                 TrainingsScreen(
                     viewModel = koinViewModel(),
                     onTrainingPlanClicked = { navigator.trainingPlanDetails(it) },
+                )
+            }
+
+            entry<UserProfile> {
+                UserProfileScreen(
+                    viewModel = koinViewModel(),
                 )
             }
 
@@ -209,4 +214,3 @@ fun rememberTrainingPlannerNavBackStack(
         NavBackStack(*elements)
     }
 }
-

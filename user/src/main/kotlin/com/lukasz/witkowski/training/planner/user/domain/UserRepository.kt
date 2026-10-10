@@ -12,4 +12,6 @@ interface UserRepository {
     val weightUnit: Flow<WeightUnit>
 
     suspend fun setWeightUnit(weightUnit: WeightUnit)
+
+    suspend fun signOut()
 }

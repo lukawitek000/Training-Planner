@@ -14,6 +14,10 @@
     <string name="user_profile_cta_subtitle">Sync routines across all your athletic devices, access community training templates, and participate in coach discussions.</string>
     <string name="user_profile_cta_button">Sign In or Register</string>
 
+    <!-- Sign Out Card -->
+    <string name="user_profile_sign_out_title">Sign Out</string>
+    <string name="user_profile_sign_out_subtitle">Preserves encrypted local database</string>
+
     <!-- Offline Preferences Card -->
     <string name="user_profile_preferences_title">Offline Preferences</string>
     <string name="user_profile_preferences_stored_on_device">Stored on device</string>

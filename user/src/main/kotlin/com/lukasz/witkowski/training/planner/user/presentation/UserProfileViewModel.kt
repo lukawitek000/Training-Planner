@@ -68,6 +68,13 @@ class UserProfileViewModel(
             userRepository.setWeightUnit(weightUnit)
         }
     }
+
+    fun signOut() {
+        viewModelScope.launch {
+            userRepository.signOut()
+            loadUserProfile()
+        }
+    }
 }
 
 sealed interface ProfileUiState {

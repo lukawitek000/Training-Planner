@@ -29,4 +29,8 @@ class DefaultUserRepository(
     override suspend fun setWeightUnit(weightUnit: WeightUnit) {
         userPreferencesStorage.setWeightUnit(weightUnit)
     }
+
+    override suspend fun signOut() {
+        tokenStorage.clear()
+    }
 }

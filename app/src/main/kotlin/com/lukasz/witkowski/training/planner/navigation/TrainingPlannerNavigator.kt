@@ -14,6 +14,10 @@ class TrainingPlannerNavigator(
         backStack.removeLastOrNull()
     }
 
+    fun userProfile() {
+        backStack.add(UserProfile)
+    }
+
     fun exerciseList() {
         backStack.clear()
         backStack.add(ExercisesList)
