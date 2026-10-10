@@ -56,6 +56,8 @@ import com.lukasz.witkowski.training.planner.user.R
 import com.lukasz.witkowski.training.planner.user.domain.model.UserFailure
 import com.lukasz.witkowski.training.planner.user.domain.model.WeightUnit
 
+import androidx.compose.runtime.LaunchedEffect
+
 @Composable
 fun UserProfileScreen(
     viewModel: UserProfileViewModel,
@@ -64,6 +66,10 @@ fun UserProfileScreen(
     onSignOutClick: () -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.loadUserProfile()
+    }
 
     UserProfileScreenContent(
         uiState = uiState,

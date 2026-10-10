@@ -61,10 +61,6 @@ class UserProfileViewModel(
         initialValue = ProfileUiState.Loading,
     )
 
-    init {
-        loadUserProfile()
-    }
-
     fun loadUserProfile() {
         Timber.d("Loading user profile...")
         viewModelScope.launch {

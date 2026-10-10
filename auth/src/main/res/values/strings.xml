@@ -26,6 +26,10 @@
     <!-- Actions & Buttons -->
     <string name="auth_sign_in_button">Sign In</string>
     <string name="auth_create_account_button">Create Account</string>
+    <string name="auth_signing_in_loading">Signing in…</string>
+    <string name="auth_signing_up_loading">Creating account…</string>
+    <string name="auth_loading_in_progress">Action in progress…</string>
+    <string name="auth_loading_taking_longer">Connecting to server. Please wait a moment…</string>
     <string name="auth_continue_as_guest">Continue as Guest (Offline Mode)</string>
     <string name="auth_or_continue_with">Or continue with</string>
 

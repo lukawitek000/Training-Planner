@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.auth.presentation.auth
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,7 +39,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -47,6 +51,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import kotlinx.coroutines.delay
 import com.lukasz.witkowski.training.planner.auth.R
 import com.lukasz.witkowski.training.planner.auth.domain.model.AuthenticationFailure
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
@@ -61,6 +66,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.inputField.AppLabeledTextField
 import com.lukasz.witkowski.training.planner.shared.ui.segmentedControl.AppSegmentedControl
 import com.lukasz.witkowski.training.planner.shared.ui.segmentedControl.AppSegmentedControlItem
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun AuthenticationScreen(
@@ -116,6 +122,10 @@ private fun AuthenticationScreenContent(
                     failure = uiState.failure,
                     onDismiss = { onIntent(AuthIntent.DismissFailure) },
                 )
+            }
+
+            if (uiState.isLoading) {
+                AuthLoadingBanner()
             }
 
             // Forms
@@ -326,6 +336,54 @@ private fun AuthFailureBanner(
 }
 
 @Composable
+private fun AuthLoadingBanner(
+    modifier: Modifier = Modifier,
+) {
+    var isTakingLonger by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        delay(2.seconds)
+        isTakingLonger = true
+    }
+
+    AppCard(
+        modifier = modifier.fillMaxWidth(),
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimens2.spaceMd),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm),
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(Dimens2.inputIconSize),
+                color = MaterialTheme.colorScheme.primary,
+                strokeWidth = Dimens2.thinBorder,
+            )
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(id = R.string.auth_loading_in_progress),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.Bold,
+                )
+                AnimatedVisibility(visible = isTakingLonger) {
+                    Text(
+                        text = stringResource(id = R.string.auth_loading_taking_longer),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(top = Dimens2.spaceXs),
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun SignInFormContent(
     email: String,
     password: String,
@@ -347,6 +405,7 @@ private fun SignInFormContent(
             onValueChange = onEmailChanged,
             placeholder = stringResource(id = R.string.auth_email_placeholder),
             leadingIcon = Icons.Default.Mail,
+            enabled = !isLoading,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
@@ -359,8 +418,12 @@ private fun SignInFormContent(
             onValueChange = onPasswordChanged,
             placeholder = stringResource(id = R.string.auth_password_placeholder),
             leadingIcon = Icons.Default.Lock,
+            enabled = !isLoading,
             trailingIcon = {
-                IconButton(onClick = onTogglePasswordVisibility) {
+                IconButton(
+                    onClick = onTogglePasswordVisibility,
+                    enabled = !isLoading,
+                ) {
                     Icon(
                         imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                         contentDescription = "Toggle password visibility",
@@ -376,11 +439,35 @@ private fun SignInFormContent(
             ),
         )
 
+        val buttonText = if (isLoading) {
+            stringResource(id = R.string.auth_signing_in_loading)
+        } else {
+            stringResource(id = R.string.auth_sign_in_button)
+        }
+
+        val trailingIconComposable: @Composable () -> Unit = if (isLoading) {
+            @Composable {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(Dimens2.inputIconSize),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = Dimens2.thinBorder,
+                )
+            }
+        } else {
+            @Composable {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = null,
+                    modifier = Modifier.size(Dimens2.inputIconSize),
+                )
+            }
+        }
+
         AppPrimaryButton(
-            text = stringResource(id = R.string.auth_sign_in_button),
+            text = buttonText,
             onClick = onSubmit,
             enabled = !isLoading,
-            trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
+            trailingIcon = trailingIconComposable,
             modifier = Modifier.fillMaxWidth(),
         )
     }
@@ -411,6 +498,7 @@ private fun SignUpFormContent(
             onValueChange = onUsernameChanged,
             placeholder = stringResource(id = R.string.auth_username_placeholder),
             leadingIcon = Icons.Default.Person,
+            enabled = !isLoading,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next,
@@ -423,6 +511,7 @@ private fun SignUpFormContent(
             onValueChange = onEmailChanged,
             placeholder = stringResource(id = R.string.auth_email_placeholder),
             leadingIcon = Icons.Default.Mail,
+            enabled = !isLoading,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next,
@@ -436,8 +525,12 @@ private fun SignUpFormContent(
                 onValueChange = onPasswordChanged,
                 placeholder = stringResource(id = R.string.auth_password_placeholder),
                 leadingIcon = Icons.Default.Lock,
+                enabled = !isLoading,
                 trailingIcon = {
-                    IconButton(onClick = onTogglePasswordVisibility) {
+                    IconButton(
+                        onClick = onTogglePasswordVisibility,
+                        enabled = !isLoading,
+                    ) {
                         Icon(
                             imageVector = if (isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                             contentDescription = "Toggle password visibility",
@@ -458,11 +551,35 @@ private fun SignUpFormContent(
             }
         }
 
+        val buttonText = if (isLoading) {
+            stringResource(id = R.string.auth_signing_up_loading)
+        } else {
+            stringResource(id = R.string.auth_create_account_button)
+        }
+
+        val trailingIconComposable: @Composable () -> Unit = if (isLoading) {
+            @Composable {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(Dimens2.inputIconSize),
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    strokeWidth = Dimens2.thinBorder,
+                )
+            }
+        } else {
+            @Composable {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                    contentDescription = null,
+                    modifier = Modifier.size(Dimens2.inputIconSize),
+                )
+            }
+        }
+
         AppPrimaryButton(
-            text = stringResource(id = R.string.auth_create_account_button),
+            text = buttonText,
             onClick = onSubmit,
             enabled = !isLoading,
-            trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
+            trailingIcon = trailingIconComposable,
             modifier = Modifier.fillMaxWidth(),
         )
     }
@@ -581,6 +698,22 @@ private fun AuthenticationFailurePreview() {
                 mode = AuthMode.SIGN_IN,
                 signInEmail = "alex.athlete@trainingplanner.app",
                 failure = AuthenticationFailure.IncorrectPassword,
+            ),
+            onIntent = {},
+            onContinueAsGuestClick = {},
+        )
+    }
+}
+
+@AppPreview
+@Composable
+private fun AuthenticationLoadingPreview() {
+    TrainingPlannerTheme2 {
+        AuthenticationScreenContent(
+            uiState = AuthUiState(
+                mode = AuthMode.SIGN_IN,
+                signInEmail = "alex.athlete@trainingplanner.app",
+                isLoading = true,
             ),
             onIntent = {},
             onContinueAsGuestClick = {},
