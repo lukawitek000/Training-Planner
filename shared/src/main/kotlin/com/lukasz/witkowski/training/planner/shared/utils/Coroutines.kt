@@ -24,7 +24,7 @@ inline fun <T> runCatchingCancellable(block: () -> T): Result<T> {
 @OptIn(ExperimentalContracts::class)
 inline fun <T, E> runCatchingCancellable(
     mapError: (Throwable) -> E,
-    block: () -> T,
+    block: () -> T
 ): AppResult<T, E> {
     contract {
         callsInPlace(block, InvocationKind.AT_MOST_ONCE)

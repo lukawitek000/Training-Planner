@@ -17,13 +17,13 @@ fun AppInputLabel(
     text: String,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
-    style: TextStyle = MaterialTheme.typography.labelMedium,
+    style: TextStyle = MaterialTheme.typography.labelMedium
 ) {
     Text(
         text = text,
         modifier = modifier,
         color = color,
-        style = style,
+        style = style
     )
 }
 

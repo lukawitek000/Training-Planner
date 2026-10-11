@@ -1,8 +1,8 @@
 package com.lukasz.witkowski.training.planner.backend.auth
 
-import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import org.junit.Test
 
 class JwtConfigTest {
     @Test

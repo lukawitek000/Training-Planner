@@ -24,7 +24,7 @@ val trainingModule =
             DbTrainingPlanRepository(
                 trainingPlanDao = get(),
                 timeProvider = SystemTimeProvider(),
-                dispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
+                dispatcher = get(named(CoroutineDispatcherQualifiers.IO))
             )
         } bind TrainingPlanRepository::class
         single<TrainingPlanService>()

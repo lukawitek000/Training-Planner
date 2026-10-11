@@ -15,17 +15,17 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@Suppress("ktlint:standard:max-line-length")
 class DefaultUserRepositoryTest {
-
     private val mockTokenStorage = mockk<TokenStorage>()
     private val mockUserRemoteDataSource = mockk<UserRemoteDataSource>()
     private val mockUserPreferencesStorage = mockk<UserPreferencesStorage>(relaxed = true)
@@ -36,43 +36,49 @@ class DefaultUserRepositoryTest {
     @Before
     fun setUp() {
         every { mockUserPreferencesStorage.weightUnit } returns flowOf(WeightUnit.KG)
-        repository = DefaultUserRepository(
-            tokenStorage = mockTokenStorage,
-            userRemoteDataSource = mockUserRemoteDataSource,
-            userPreferencesStorage = mockUserPreferencesStorage,
-        )
+        repository =
+            DefaultUserRepository(
+                tokenStorage = mockTokenStorage,
+                userRemoteDataSource = mockUserRemoteDataSource,
+                userPreferencesStorage = mockUserPreferencesStorage
+            )
     }
 
     @Test
-    fun `getUserProfile returns NotSignedIn when no refresh token is stored without calling remote data source`() = runTest {
-        coEvery { mockTokenStorage.getTokens() } returns null
+    fun `getUserProfile returns NotSignedIn when no refresh token is stored without calling remote data source`() =
+        runTest {
+            coEvery { mockTokenStorage.getTokens() } returns null
 
-        val result = repository.getUserProfile()
+            val result = repository.getUserProfile()
 
-        assertEquals(AppResult.Error(UserFailure.NotSignedIn), result)
-        coVerify(exactly = 0) { mockUserRemoteDataSource.getUserProfile() }
-    }
+            assertEquals(AppResult.Error(UserFailure.NotSignedIn), result)
+            coVerify(exactly = 0) { mockUserRemoteDataSource.getUserProfile() }
+        }
 
     @Test
-    fun `getUserProfile fetches profile from remote data source when refresh token is stored`() = runTest {
-        val tokens = AuthTokens(
-            accessToken = AccessToken("valid-access-token", timeProvider.currentInstant()),
-            refreshToken = "valid-refresh-token",
-        )
-        val expectedUser = User("user-1", "test@example.com", "TestUser")
+    fun `getUserProfile fetches profile from remote data source when refresh token is stored`() =
+        runTest {
+            val tokens =
+                AuthTokens(
+                    accessToken = AccessToken("valid-access-token", timeProvider.currentInstant()),
+                    refreshToken = "valid-refresh-token"
+                )
+            val expectedUser = User("user-1", "test@example.com", "TestUser")
 
-        coEvery { mockTokenStorage.getTokens() } returns tokens
-        coEvery { mockUserRemoteDataSource.getUserProfile() } returns AppResult.Success(expectedUser)
+            coEvery { mockTokenStorage.getTokens() } returns tokens
+            coEvery { mockUserRemoteDataSource.getUserProfile() } returns
+                AppResult.Success(expectedUser)
 
-        val result = repository.getUserProfile()
+            val result = repository.getUserProfile()
 
-        assertEquals(AppResult.Success(expectedUser), result)
-        coVerify { mockUserRemoteDataSource.getUserProfile() }
-    }
+            assertEquals(AppResult.Success(expectedUser), result)
+            coVerify { mockUserRemoteDataSource.getUserProfile() }
+        }
 
     @Test
     fun `weightUnit emits values from UserPreferencesStorage`() = runTest {
-        every { mockUserPreferencesStorage.weightUnit } returns flowOf(WeightUnit.KG, WeightUnit.LBS)
+        every { mockUserPreferencesStorage.weightUnit } returns
+            flowOf(WeightUnit.KG, WeightUnit.LBS)
 
         val currentUnit = repository.weightUnit.first()
 

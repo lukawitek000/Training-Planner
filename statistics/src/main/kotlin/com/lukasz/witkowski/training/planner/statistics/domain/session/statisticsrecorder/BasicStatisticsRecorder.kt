@@ -15,9 +15,7 @@ import java.util.Date
  *  * Training session date
  *  * Completeness rate of exercises
  */
-class BasicStatisticsRecorder(
-    private val trainingPlanId: TrainingPlanId,
-) {
+class BasicStatisticsRecorder(private val trainingPlanId: TrainingPlanId) {
     private var startTrainingTime = Time.ZERO
     private var exercisesAttemptsStatistics = mutableListOf<ExerciseAttemptStatistics>()
     private var currentExerciseStartTime = Time.ZERO
@@ -34,26 +32,19 @@ class BasicStatisticsRecorder(
         return trainingStatistics
     }
 
-    fun startRecordingExercise(
-        trainingExerciseId: TrainingExerciseId,
-        set: Int,
-        startTime: Time,
-    ) {
+    fun startRecordingExercise(trainingExerciseId: TrainingExerciseId, set: Int, startTime: Time) {
         currentExerciseStartTime = startTime
         currentExerciseId = trainingExerciseId
         currentExerciseSet = set
     }
 
-    fun stopRecordingExercise(
-        isCompleted: Boolean,
-        stopTime: Time,
-    ) {
+    fun stopRecordingExercise(isCompleted: Boolean, stopTime: Time) {
         val exerciseAttemptStatistics =
             ExerciseAttemptStatistics(
                 trainingExerciseId = currentExerciseId!!,
                 time = stopTime - currentExerciseStartTime,
                 set = currentExerciseSet,
-                completed = isCompleted,
+                completed = isCompleted
             )
         exercisesAttemptsStatistics.add(exerciseAttemptStatistics)
     }
@@ -64,14 +55,14 @@ class BasicStatisticsRecorder(
             exercisesStatisticsMap.map { (exerciseId, attemptsStatistics) ->
                 ExerciseStatistics(
                     trainingExerciseId = exerciseId,
-                    attemptsStatistics = attemptsStatistics,
+                    attemptsStatistics = attemptsStatistics
                 )
             }
         return TrainingStatistics(
             trainingPlanId = trainingPlanId,
             totalTime = time - startTrainingTime,
             date = Date(), // TODO how to provide a date
-            exercisesStatistics = exercisesStatistics,
+            exercisesStatistics = exercisesStatistics
         )
     }
 }

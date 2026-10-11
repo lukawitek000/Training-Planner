@@ -10,12 +10,12 @@ import com.lukasz.witkowski.training.planner.dto.auth.LoginRequestDto
 import com.lukasz.witkowski.training.planner.dto.auth.RegisterRequestDto
 import com.lukasz.witkowski.training.planner.dto.auth.TokenResponseDto
 import com.lukasz.witkowski.training.planner.dto.auth.UserDto
+import java.util.UUID
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.slf4j.LoggerFactory
-import java.util.UUID
 
 class AuthService {
     private val logger = LoggerFactory.getLogger(AuthService::class.java)
@@ -23,7 +23,9 @@ class AuthService {
     suspend fun register(request: RegisterRequestDto): AuthResponseDto {
         logger.info("Register attempt for email: {}, username: {}", request.email, request.username)
         return dbQuery {
-            val existingUser = UsersTable.selectAll().where { UsersTable.email eq request.email }.singleOrNull()
+            val existingUser = UsersTable.selectAll().where {
+                UsersTable.email eq request.email
+            }.singleOrNull()
             if (existingUser != null) {
                 logger.warn("Register failed: User already exists for email: {}", request.email)
                 throw AuthException.UserAlreadyExists(request.email)
@@ -53,7 +55,9 @@ class AuthService {
                 UsersTable.selectAll().where { UsersTable.email eq request.email }.singleOrNull()
                     ?: run {
                         logger.warn("Login failed: User not found for email: {}", request.email)
-                        throw AuthException.UserNotFound("User with email ${request.email} not found.")
+                        throw AuthException.UserNotFound(
+                            "User with email ${request.email} not found."
+                        )
                     }
 
             val hashedPassword = row[UsersTable.passwordHash]
@@ -83,10 +87,11 @@ class AuthService {
                     throw AuthException.InvalidRefreshToken()
                 }
 
-            val userId = decoded.subject ?: run {
-                logger.warn("Token refresh failed: Missing subject claim in token")
-                throw AuthException.InvalidRefreshToken("Invalid token subject.")
-            }
+            val userId =
+                decoded.subject ?: run {
+                    logger.warn("Token refresh failed: Missing subject claim in token")
+                    throw AuthException.InvalidRefreshToken("Invalid token subject.")
+                }
             val row =
                 UsersTable.selectAll().where { UsersTable.id eq userId }.singleOrNull()
                     ?: run {
@@ -110,24 +115,19 @@ class AuthService {
         }
     }
 
-    private fun generateTokens(
-        userId: String,
-        email: String,
-        username: String,
-    ): TokenResponseDto {
+    private fun generateTokens(userId: String, email: String, username: String): TokenResponseDto {
         val accessToken = JwtConfig.generateAccessToken(userId, email, username)
         val refreshToken = JwtConfig.generateRefreshToken(userId)
         return TokenResponseDto(
             accessToken = accessToken,
             refreshToken = refreshToken,
-            expiresInMs = JwtConfig.ACCESS_TOKEN_EXPIRATION_MS,
+            expiresInMs = JwtConfig.ACCESS_TOKEN_EXPIRATION_MS
         )
     }
 
-    private fun ResultRow.toUserDto(): UserDto =
-        UserDto(
-            id = this[UsersTable.id],
-            email = this[UsersTable.email],
-            username = this[UsersTable.username],
-        )
+    private fun ResultRow.toUserDto(): UserDto = UserDto(
+        id = this[UsersTable.id],
+        email = this[UsersTable.email],
+        username = this[UsersTable.username]
+    )
 }

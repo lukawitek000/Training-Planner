@@ -9,19 +9,18 @@ internal object ExerciseFactory {
     fun create(
         exerciseConfiguration: ExerciseConfiguration,
         imageId: ImageId?,
-        exerciseId: ExerciseId = ExerciseId.create(),
-    ): ExerciseDetails =
-        ExerciseDetails(
-            exercise =
-                Exercise2(
-                    exerciseId,
-                    exerciseConfiguration.name,
-                    exerciseConfiguration.description,
-                    exerciseConfiguration.categories.toSet(),
-                    imageId,
-                ),
-            beginnerRecommendation = exerciseConfiguration.beginnerRecommendation,
-            intermediateRecommendation = exerciseConfiguration.intermediateRecommendation,
-            advancedRecommendation = exerciseConfiguration.advancedRecommendation,
-        )
+        exerciseId: ExerciseId = ExerciseId.create()
+    ): ExerciseDetails = ExerciseDetails(
+        exercise =
+        Exercise2(
+            exerciseId,
+            exerciseConfiguration.name,
+            exerciseConfiguration.description,
+            exerciseConfiguration.categories.toSet(),
+            imageId
+        ),
+        beginnerRecommendation = exerciseConfiguration.beginnerRecommendation,
+        intermediateRecommendation = exerciseConfiguration.intermediateRecommendation,
+        advancedRecommendation = exerciseConfiguration.advancedRecommendation
+    )
 }

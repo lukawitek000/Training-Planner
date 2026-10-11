@@ -42,51 +42,53 @@ fun AppIconBox(
     mainIconTint: Color = MaterialTheme.colorScheme.primaryContainer,
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     badgeContainerColor: Color = MaterialTheme.colorScheme.primaryContainer,
-    badgeIconTint: Color = MaterialTheme.colorScheme.onPrimary,
+    badgeIconTint: Color = MaterialTheme.colorScheme.onPrimary
 ) {
     Box(
         modifier = modifier,
-        contentAlignment = Alignment.BottomEnd,
+        contentAlignment = Alignment.BottomEnd
     ) {
         Surface(
             modifier = Modifier.size(Dimens2.iconContainerSize),
             shape = MaterialTheme.shapes.large,
             color = containerColor,
-            border = BorderStroke(
+            border =
+            BorderStroke(
                 width = Dimens2.thinBorder,
-                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
             ),
-            shadowElevation = Dimens2.shadowLg,
+            shadowElevation = Dimens2.shadowLg
         ) {
             Box(
-                contentAlignment = Alignment.Center,
+                contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = mainIcon,
                     contentDescription = mainIconContentDescription,
                     tint = mainIconTint,
-                    modifier = Modifier.size(Dimens2.iconSize30),
+                    modifier = Modifier.size(Dimens2.iconSize30)
                 )
             }
         }
 
         if (isPremium) {
             Surface(
-                modifier = Modifier
+                modifier =
+                Modifier
                     .size(Dimens2.inputIconSize)
                     .offset(x = Dimens2.spaceXs, y = Dimens2.spaceXs),
                 shape = CircleShape,
                 color = badgeContainerColor,
-                shadowElevation = Dimens2.shadowSm,
+                shadowElevation = Dimens2.shadowSm
             ) {
                 Box(
-                    contentAlignment = Alignment.Center,
+                    contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = badgeIcon,
                         contentDescription = badgeIconContentDescription,
                         tint = badgeIconTint,
-                        modifier = Modifier.size(Dimens2.iconSize13),
+                        modifier = Modifier.size(Dimens2.iconSize13)
                     )
                 }
             }
@@ -100,19 +102,19 @@ private fun AppIconBoxPreview() {
     TrainingPlannerTheme2 {
         Row(
             modifier = Modifier.padding(Dimens2.spaceMd),
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceLg),
+            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceLg)
         ) {
             // Normal Icon Box
             AppIconBox(
                 mainIcon = Icons.Default.FitnessCenter,
-                isPremium = false,
+                isPremium = false
             )
 
             // Premium Icon Box (with bolt badge)
             AppIconBox(
                 mainIcon = Icons.Default.FitnessCenter,
                 isPremium = true,
-                badgeIcon = Icons.Default.Bolt,
+                badgeIcon = Icons.Default.Bolt
             )
         }
     }

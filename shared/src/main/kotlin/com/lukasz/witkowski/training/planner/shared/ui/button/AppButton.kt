@@ -42,24 +42,29 @@ fun AppButton(
     trailingIcon: @Composable (() -> Unit)? = null,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
-    textStyle: TextStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+    textStyle: TextStyle = MaterialTheme.typography.titleMedium.copy(
+        fontWeight = FontWeight.SemiBold
+    ),
     border: BorderStroke? = null,
     elevation: Dp = Dimens2.zeroDp,
-    iconTextGap: Dp = Dimens2.spaceSm,
+    iconTextGap: Dp = Dimens2.spaceSm
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier
+        modifier =
+        modifier
             .fillMaxWidth()
             .height(Dimens2.buttonHeight),
         enabled = enabled,
         shape = MaterialTheme.shapes.medium,
-        colors = ButtonDefaults.buttonColors(
+        colors =
+        ButtonDefaults.buttonColors(
             containerColor = containerColor,
-            contentColor = contentColor,
+            contentColor = contentColor
         ),
         border = border,
-        elevation = if (elevation > Dimens2.zeroDp) {
+        elevation =
+        if (elevation > Dimens2.zeroDp) {
             ButtonDefaults.buttonElevation(defaultElevation = elevation)
         } else {
             ButtonDefaults.buttonElevation(
@@ -67,13 +72,13 @@ fun AppButton(
                 pressedElevation = Dimens2.zeroDp,
                 focusedElevation = Dimens2.zeroDp,
                 hoveredElevation = Dimens2.zeroDp,
-                disabledElevation = Dimens2.zeroDp,
+                disabledElevation = Dimens2.zeroDp
             )
-        },
+        }
     ) {
         Row(
             horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             if (leadingIcon != null) {
                 leadingIcon()
@@ -81,7 +86,7 @@ fun AppButton(
             }
             Text(
                 text = text,
-                style = textStyle,
+                style = textStyle
             )
             if (trailingIcon != null) {
                 Spacer(modifier = Modifier.width(iconTextGap))
@@ -106,31 +111,39 @@ fun AppButton(
     trailingIconContentDescription: String? = null,
     containerColor: Color = MaterialTheme.colorScheme.primaryContainer,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
-    textStyle: TextStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
+    textStyle: TextStyle = MaterialTheme.typography.titleMedium.copy(
+        fontWeight = FontWeight.SemiBold
+    ),
     border: BorderStroke? = null,
     elevation: Dp = Dimens2.zeroDp,
     iconTextGap: Dp = Dimens2.spaceSm,
-    iconSize: Dp = Dimens2.inputIconSize,
+    iconSize: Dp = Dimens2.inputIconSize
 ) {
-    val leadingIconComposable: @Composable (() -> Unit)? = if (leadingIcon != null) {
-        {
-            Icon(
-                imageVector = leadingIcon,
-                contentDescription = leadingIconContentDescription,
-                modifier = Modifier.size(iconSize),
-            )
+    val leadingIconComposable: @Composable (() -> Unit)? =
+        if (leadingIcon != null) {
+            {
+                Icon(
+                    imageVector = leadingIcon,
+                    contentDescription = leadingIconContentDescription,
+                    modifier = Modifier.size(iconSize)
+                )
+            }
+        } else {
+            null
         }
-    } else null
 
-    val trailingIconComposable: @Composable (() -> Unit)? = if (trailingIcon != null) {
-        {
-            Icon(
-                imageVector = trailingIcon,
-                contentDescription = trailingIconContentDescription,
-                modifier = Modifier.size(iconSize),
-            )
+    val trailingIconComposable: @Composable (() -> Unit)? =
+        if (trailingIcon != null) {
+            {
+                Icon(
+                    imageVector = trailingIcon,
+                    contentDescription = trailingIconContentDescription,
+                    modifier = Modifier.size(iconSize)
+                )
+            }
+        } else {
+            null
         }
-    } else null
 
     AppButton(
         text = text,
@@ -144,7 +157,7 @@ fun AppButton(
         textStyle = textStyle,
         border = border,
         elevation = elevation,
-        iconTextGap = iconTextGap,
+        iconTextGap = iconTextGap
     )
 }
 
@@ -158,7 +171,7 @@ private fun AppButtonPreview() {
             modifier = Modifier.padding(Dimens2.spaceMd),
             leadingIcon = Icons.Default.Email,
             trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
-            elevation = Dimens2.buttonElevation,
+            elevation = Dimens2.buttonElevation
         )
     }
 }

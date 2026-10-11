@@ -8,9 +8,13 @@ import com.lukasz.witkowski.training.planner.auth.domain.model.SignInForm
 import com.lukasz.witkowski.training.planner.auth.infrastructure.DefaultAuthenticationRepository
 import com.lukasz.witkowski.training.planner.auth.infrastructure.local.AndroidSecureTokenStorage
 import com.lukasz.witkowski.training.planner.auth.infrastructure.local.DefaultTokenStorage
+import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthenticationApi
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitAuthenticationRemoteDataSource
 import com.lukasz.witkowski.training.planner.network.NetworkConfig
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -19,14 +23,10 @@ import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
 import org.junit.runner.RunWith
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNull
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class AndroidAuthenticationRepositoryTest {
-
     private lateinit var mockWebServer: MockWebServer
     private lateinit var context: Context
     private lateinit var realSecureTokenStorage: AndroidSecureTokenStorage
@@ -45,22 +45,28 @@ class AndroidAuthenticationRepositoryTest {
 
         val baseUrl = mockWebServer.url("/").toString()
         val unauthenticatedClient = NetworkConfig.createUnauthenticatedOkHttpClient()
-        val api = NetworkConfig.createRetrofit(
-            baseUrl = baseUrl,
-            okHttpClient = unauthenticatedClient,
-        ).create(com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthenticationApi::class.java)
+        val api =
+            NetworkConfig
+                .createRetrofit(
+                    baseUrl = baseUrl,
+                    okHttpClient = unauthenticatedClient
+                ).create(
+                    AuthenticationApi::class.java
+                )
 
-        val remoteDataSource = RetrofitAuthenticationRemoteDataSource(
-            api = api,
-            timeProvider = timeProvider,
-            ioDispatcher = Dispatchers.IO,
-        )
+        val remoteDataSource =
+            RetrofitAuthenticationRemoteDataSource(
+                api = api,
+                timeProvider = timeProvider,
+                ioDispatcher = Dispatchers.IO
+            )
         val tokenStorage = DefaultTokenStorage(realSecureTokenStorage)
 
-        repository = DefaultAuthenticationRepository(
-            tokenStorage = tokenStorage,
-            remoteDataSource = remoteDataSource,
-        )
+        repository =
+            DefaultAuthenticationRepository(
+                tokenStorage = tokenStorage,
+                remoteDataSource = remoteDataSource
+            )
     }
 
     @After

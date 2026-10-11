@@ -45,18 +45,18 @@ internal fun ReauthBottomSheet(
     onSignInClick: () -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
-    userFailure: UserFailure = UserFailure.Unauthorized,
+    userFailure: UserFailure = UserFailure.Unauthorized
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         shape = BottomSheetDefaults.ExpandedShape,
-        modifier = modifier,
+        modifier = modifier
     ) {
         ReauthBottomSheetContent(
             onSignInClick = onSignInClick,
             onDismissRequest = onDismissRequest,
-            userFailure = userFailure,
+            userFailure = userFailure
         )
     }
 }
@@ -66,30 +66,32 @@ private fun ReauthBottomSheetContent(
     onSignInClick: () -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
-    userFailure: UserFailure = UserFailure.Unauthorized,
+    userFailure: UserFailure = UserFailure.Unauthorized
 ) {
     Column(
-        modifier = modifier
+        modifier =
+        modifier
             .fillMaxWidth()
             .padding(horizontal = Dimens2.margin)
             .padding(bottom = Dimens2.spaceLg),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Surface(
             modifier = Modifier.size(Dimens2.spinnerIconContainerSize),
             shape = CircleShape,
             color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f),
-            border = BorderStroke(
+            border =
+            BorderStroke(
                 width = Dimens2.thinBorder,
-                color = MaterialTheme.colorScheme.error.copy(alpha = 0.3f),
-            ),
+                color = MaterialTheme.colorScheme.error.copy(alpha = 0.3f)
+            )
         ) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = Icons.Default.SyncProblem,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(Dimens2.iconSize30),
+                    modifier = Modifier.size(Dimens2.iconSize30)
                 )
             }
         }
@@ -101,7 +103,7 @@ private fun ReauthBottomSheetContent(
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.SemiBold,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
         )
 
         Text(
@@ -109,9 +111,10 @@ private fun ReauthBottomSheetContent(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
-            modifier = Modifier
+            modifier =
+            Modifier
                 .widthIn(max = Dimens2.maxSubtitleWidth + Dimens2.spaceXl)
-                .padding(top = Dimens2.spaceXs),
+                .padding(top = Dimens2.spaceXs)
         )
 
         Spacer(modifier = Modifier.height(Dimens2.spaceLg))
@@ -120,7 +123,7 @@ private fun ReauthBottomSheetContent(
             text = stringResource(id = R.string.reauth_sign_in_to_reconnect),
             onClick = onSignInClick,
             leadingIcon = Icons.AutoMirrored.Filled.Login,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(Dimens2.spaceSm))
@@ -128,7 +131,7 @@ private fun ReauthBottomSheetContent(
         AppSecondaryButton(
             text = stringResource(id = R.string.reauth_stay_in_offline_mode),
             onClick = onDismissRequest,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -136,7 +139,7 @@ private fun ReauthBottomSheetContent(
 @StringRes
 internal fun UserFailure.toReauthMessageRes(): Int = when (this) {
     is UserFailure.NotSignedIn,
-    is UserFailure.Unauthorized,
+    is UserFailure.Unauthorized
     -> R.string.reauth_unauthorized_message
     is UserFailure.UserNotFound -> R.string.reauth_user_not_found_message
     is UserFailure.NetworkError -> R.string.reauth_network_error_message
@@ -150,7 +153,7 @@ private fun ReauthBottomSheetContentPreview() {
         Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh) {
             ReauthBottomSheetContent(
                 onSignInClick = {},
-                onDismissRequest = {},
+                onDismissRequest = {}
             )
         }
     }

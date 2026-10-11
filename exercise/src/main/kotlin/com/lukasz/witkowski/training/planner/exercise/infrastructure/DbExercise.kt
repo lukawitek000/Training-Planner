@@ -9,5 +9,5 @@ class DbExercise(
     val exerciseId: String,
     val name: String,
     val description: String,
-    val imageId: String?,
+    val imageId: String?
 )

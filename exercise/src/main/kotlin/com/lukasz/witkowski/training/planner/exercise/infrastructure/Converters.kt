@@ -7,5 +7,6 @@ object Converters {
     fun fromRecommendationLevel(level: RecommendationLevel): String = level.name
 
     @ColumnTypeConverter
-    fun toRecommendationLevel(value: String): RecommendationLevel = RecommendationLevel.valueOf(value)
+    fun toRecommendationLevel(value: String): RecommendationLevel =
+        RecommendationLevel.valueOf(value)
 }

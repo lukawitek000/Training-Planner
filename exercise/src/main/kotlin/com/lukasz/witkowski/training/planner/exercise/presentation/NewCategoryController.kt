@@ -7,10 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 
-data class FilterCategory(
-    val category: ExerciseCategory,
-    val isSelected: Boolean = false,
-)
+data class FilterCategory(val category: ExerciseCategory, val isSelected: Boolean = false)
 
 interface CategoryController2 {
     val filterCategories: Flow<List<FilterCategory>>
@@ -20,9 +17,8 @@ interface CategoryController2 {
     fun selectCategories(categories: Set<ExerciseCategory>)
 }
 
-class DefaultCategoryController2(
-    categoryService: ExerciseCategoriesService,
-) : CategoryController2 {
+class DefaultCategoryController2(categoryService: ExerciseCategoriesService) :
+    CategoryController2 {
     private val selectedCategories = MutableStateFlow(setOf<ExerciseCategory>())
     private val allCategories: Flow<List<ExerciseCategory>> = categoryService.getAllCategories()
     override val filterCategories: Flow<List<FilterCategory>> =
@@ -31,7 +27,7 @@ class DefaultCategoryController2(
                 .map {
                     FilterCategory(
                         category = it,
-                        isSelected = selected.contains(it),
+                        isSelected = selected.contains(it)
                     )
                 }.sortedByDescending { it.isSelected }
         }

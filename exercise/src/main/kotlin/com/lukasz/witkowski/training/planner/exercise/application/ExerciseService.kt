@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.Flow
 
 class ExerciseService(
     private val exerciseRepository: ExerciseRepository,
-    private val imageStorage: ImageStorage,
+    private val imageStorage: ImageStorage
 ) {
     suspend fun saveExercise(exerciseConfiguration: ExerciseConfiguration): ExerciseId {
         val exerciseId = ExerciseId.create()
@@ -29,7 +29,7 @@ class ExerciseService(
 
     suspend fun updateExercise(
         exerciseConfiguration: ExerciseConfiguration,
-        exerciseId: ExerciseId,
+        exerciseId: ExerciseId
     ): ExerciseId {
         val imageReference = exerciseConfiguration.image?.let { saveImage(it, exerciseId) }
         val exerciseDetails =
@@ -40,31 +40,30 @@ class ExerciseService(
 
     private suspend fun saveImage(
         imageByteArray: ImageByteArray,
-        exerciseId: ExerciseId,
+        exerciseId: ExerciseId
     ): ImageReference {
         val imageConfiguration = imageByteArray.toImageConfiguration(exerciseId.value)
         return imageStorage.saveImage(imageConfiguration)
     }
 
-    private suspend fun deleteImage(
-        imageId: ImageId,
-        exerciseId: ExerciseId,
-    ) {
+    private suspend fun deleteImage(imageId: ImageId, exerciseId: ExerciseId) {
         imageStorage.deleteImage(imageId, exerciseId.value)
     }
 
-    fun queryExercises(exerciseQuery: ExerciseQuery): Flow<PagingData<Exercise2>> = exerciseRepository.queryExercises(exerciseQuery)
+    fun queryExercises(exerciseQuery: ExerciseQuery): Flow<PagingData<Exercise2>> =
+        exerciseRepository.queryExercises(exerciseQuery)
 
     suspend fun deleteExercise(exerciseId: ExerciseId) {
         exerciseRepository.delete(exerciseId)
     }
 
-    fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails?> = exerciseRepository.getExerciseDetailsById(id)
+    fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails?> =
+        exerciseRepository.getExerciseDetailsById(id)
 
     private suspend fun updateImage(
         imageByteArray: ImageByteArray?,
         oldImageId: ImageId?,
-        exerciseId: ExerciseId,
+        exerciseId: ExerciseId
     ): ImageReference? {
         val imageConfiguration = imageByteArray?.toImageConfiguration(exerciseId.value)
         return if (oldImageId == null) {
@@ -81,5 +80,6 @@ class ExerciseService(
 
     suspend fun readImage(imageId: ImageId): Image = imageStorage.readImage(imageId)
 
-    suspend fun readImageReference(imageId: ImageId): ImageReference? = imageStorage.readImageReference(imageId)
+    suspend fun readImageReference(imageId: ImageId): ImageReference? =
+        imageStorage.readImageReference(imageId)
 }

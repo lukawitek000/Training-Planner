@@ -6,9 +6,7 @@ import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingSt
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.coroutines.flow.Flow
 
-class TrainingStatisticsService(
-    private val statisticsRepository: StatisticsRepository,
-) {
+class TrainingStatisticsService(private val statisticsRepository: StatisticsRepository) {
     suspend fun save(trainingStatistics: TrainingStatistics) {
         statisticsRepository.save(trainingStatistics)
     }

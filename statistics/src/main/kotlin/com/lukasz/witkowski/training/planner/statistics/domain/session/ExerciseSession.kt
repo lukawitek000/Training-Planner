@@ -7,18 +7,15 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 internal class ExerciseSession(
     private val exercise: TrainingExercise,
     private val startTime: Time,
-    private val set: Int,
+    private val set: Int
 ) {
     fun hasRestTime() = exercise.restTime.isPositive()
 
-    fun stop(
-        isCompleted: Boolean,
-        stopTime: Time,
-    ): ExerciseAttemptStatistics =
+    fun stop(isCompleted: Boolean, stopTime: Time): ExerciseAttemptStatistics =
         ExerciseAttemptStatistics(
             trainingExerciseId = exercise.id,
             time = stopTime - startTime,
             set = set,
-            completed = isCompleted,
+            completed = isCompleted
         )
 }

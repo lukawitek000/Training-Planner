@@ -9,7 +9,7 @@ data class Exercise(
     val name: String,
     val description: String,
     val categories: List<Category>,
-    val image: ImageReference? = null,
+    val image: ImageReference? = null
 )
 
 data class Exercise2(
@@ -17,5 +17,5 @@ data class Exercise2(
     val name: String,
     val description: String,
     val categories: List<ExerciseCategory>,
-    val image: ImageReference? = null,
+    val image: ImageReference? = null
 )

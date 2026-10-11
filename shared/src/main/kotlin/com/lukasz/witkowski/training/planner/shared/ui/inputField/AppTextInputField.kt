@@ -49,30 +49,33 @@ fun AppTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
-    val textStyle = MaterialTheme.typography.bodyLarge.copy(
-        color = MaterialTheme.colorScheme.onSurface,
-    )
+    val textStyle =
+        MaterialTheme.typography.bodyLarge.copy(
+            color = MaterialTheme.colorScheme.onSurface
+        )
 
-    val textFieldColors = OutlinedTextFieldDefaults.colors(
-        focusedContainerColor = MaterialTheme.colorScheme.surfaceBright,
-        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-        focusedBorderColor = MaterialTheme.colorScheme.primaryContainer,
-        unfocusedBorderColor = Color.Transparent,
-        disabledBorderColor = Color.Transparent,
-        cursorColor = MaterialTheme.colorScheme.primary,
-        focusedLeadingIconColor = MaterialTheme.colorScheme.secondary,
-        unfocusedLeadingIconColor = MaterialTheme.colorScheme.secondary,
-        focusedTrailingIconColor = MaterialTheme.colorScheme.secondary,
-        unfocusedTrailingIconColor = MaterialTheme.colorScheme.secondary,
-    )
+    val textFieldColors =
+        OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceBright,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+            focusedBorderColor = MaterialTheme.colorScheme.primaryContainer,
+            unfocusedBorderColor = Color.Transparent,
+            disabledBorderColor = Color.Transparent,
+            cursorColor = MaterialTheme.colorScheme.primary,
+            focusedLeadingIconColor = MaterialTheme.colorScheme.secondary,
+            unfocusedLeadingIconColor = MaterialTheme.colorScheme.secondary,
+            focusedTrailingIconColor = MaterialTheme.colorScheme.secondary,
+            unfocusedTrailingIconColor = MaterialTheme.colorScheme.secondary
+        )
 
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier
+        modifier =
+        modifier
             .fillMaxWidth()
             .height(Dimens2.inputFieldHeight),
         enabled = enabled,
@@ -92,21 +95,25 @@ fun AppTextField(
                 singleLine = singleLine,
                 visualTransformation = visualTransformation,
                 interactionSource = interactionSource,
-                placeholder = if (placeholder.isNotEmpty()) {
+                placeholder =
+                if (placeholder.isNotEmpty()) {
                     {
                         Text(
                             text = placeholder,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = DarkGrey,
+                            color = DarkGrey
                         )
                     }
-                } else null,
+                } else {
+                    null
+                },
                 leadingIcon = leadingIcon,
                 trailingIcon = trailingIcon,
                 colors = textFieldColors,
-                contentPadding = PaddingValues(
+                contentPadding =
+                PaddingValues(
                     horizontal = Dimens2.inputHorizontalPadding,
-                    vertical = 0.dp,
+                    vertical = 0.dp
                 ),
                 container = {
                     OutlinedTextFieldDefaults.Container(
@@ -114,11 +121,11 @@ fun AppTextField(
                         isError = false,
                         interactionSource = interactionSource,
                         colors = textFieldColors,
-                        shape = MaterialTheme.shapes.medium,
+                        shape = MaterialTheme.shapes.medium
                     )
-                },
+                }
             )
-        },
+        }
     )
 }
 
@@ -140,18 +147,21 @@ fun AppTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
-    val iconComposable: @Composable (() -> Unit)? = if (leadingIcon != null) {
-        {
-            Icon(
-                imageVector = leadingIcon,
-                contentDescription = leadingIconContentDescription,
-                tint = MaterialTheme.colorScheme.secondary,
-                modifier = Modifier.size(Dimens2.inputIconSize),
-            )
+    val iconComposable: @Composable (() -> Unit)? =
+        if (leadingIcon != null) {
+            {
+                Icon(
+                    imageVector = leadingIcon,
+                    contentDescription = leadingIconContentDescription,
+                    tint = MaterialTheme.colorScheme.secondary,
+                    modifier = Modifier.size(Dimens2.inputIconSize)
+                )
+            }
+        } else {
+            null
         }
-    } else null
 
     AppTextField(
         value = value,
@@ -166,7 +176,7 @@ fun AppTextField(
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
-        interactionSource = interactionSource,
+        interactionSource = interactionSource
     )
 }
 
@@ -176,19 +186,19 @@ private fun AppTextFieldPreview() {
     TrainingPlannerTheme2 {
         Column(
             modifier = Modifier.padding(Dimens2.spaceMd),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
         ) {
             AppTextField(
                 value = "",
                 onValueChange = {},
                 placeholder = "athlete@ironlog.io",
-                leadingIcon = Icons.Default.Email,
+                leadingIcon = Icons.Default.Email
             )
             AppTextField(
                 value = "user@ironlog.io",
                 onValueChange = {},
                 placeholder = "athlete@ironlog.io",
-                leadingIcon = Icons.Default.Email,
+                leadingIcon = Icons.Default.Email
             )
         }
     }

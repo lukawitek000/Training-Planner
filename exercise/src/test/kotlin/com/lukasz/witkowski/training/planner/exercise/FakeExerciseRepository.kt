@@ -14,14 +14,13 @@ class FakeExerciseRepository : ExerciseRepository {
     val exercises: List<ExerciseDetails>
         get() = _exercises.toList()
 
-    override fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails> =
-        flow {
-            val exerciseDetails =
-                TestData.EXERCISE_DETAILS_LIST.first {
-                    it.exercise.id == id
-                }
-            emit(exerciseDetails)
-        }
+    override fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails> = flow {
+        val exerciseDetails =
+            TestData.EXERCISE_DETAILS_LIST.first {
+                it.exercise.id == id
+            }
+        emit(exerciseDetails)
+    }
 
     override fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise2>> = flow {}
 

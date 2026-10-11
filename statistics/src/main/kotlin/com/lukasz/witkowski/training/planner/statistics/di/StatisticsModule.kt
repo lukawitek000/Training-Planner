@@ -30,7 +30,7 @@ val statisticsModule =
                 timer = Timer(),
                 trainingStatisticsService = get(),
                 trainingSetsStrategy = CircuitSetsPolicy(),
-                backgroundDispatcher = get(named(CoroutineDispatcherQualifiers.DEFAULT)),
+                backgroundDispatcher = get(named(CoroutineDispatcherQualifiers.DEFAULT))
             )
         }
     }

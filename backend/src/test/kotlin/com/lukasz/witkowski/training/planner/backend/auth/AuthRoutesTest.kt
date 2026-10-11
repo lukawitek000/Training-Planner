@@ -19,9 +19,9 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.testing.testApplication
-import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import org.junit.Test
 
 class AuthRoutesTest {
     @Test
@@ -34,7 +34,7 @@ class AuthRoutesTest {
                 RegisterRequestDto(
                     email = "john.doe@example.com",
                     username = "JohnDoe",
-                    password = "Password123!",
+                    password = "Password123!"
                 )
 
             // Register success
@@ -72,7 +72,9 @@ class AuthRoutesTest {
             val password = "MySecretPassword123"
             client.post("/api/v1/auth/register") {
                 contentType(ContentType.Application.Json)
-                setBody(RegisterRequestDto(email = email, username = "LoginUser", password = password))
+                setBody(
+                    RegisterRequestDto(email = email, username = "LoginUser", password = password)
+                )
             }
 
             // Login success
@@ -118,7 +120,13 @@ class AuthRoutesTest {
                 client
                     .post("/api/v1/auth/register") {
                         contentType(ContentType.Application.Json)
-                        setBody(RegisterRequestDto(email = "refresh@example.com", username = "RefreshUser", password = "Password123!"))
+                        setBody(
+                            RegisterRequestDto(
+                                email = "refresh@example.com",
+                                username = "RefreshUser",
+                                password = "Password123!"
+                            )
+                        )
                     }.body<AuthResponseDto>()
 
             val refreshResponse =
@@ -143,30 +151,35 @@ class AuthRoutesTest {
         }
 
     @Test
-    fun `get me returns current profile with valid JWT and 401 without JWT`() =
-        testApplication {
-            application { module() }
-            val client = createJsonClient()
+    fun `get me returns current profile with valid JWT and 401 without JWT`() = testApplication {
+        application { module() }
+        val client = createJsonClient()
 
-            val registerRes =
-                client
-                    .post("/api/v1/auth/register") {
-                        contentType(ContentType.Application.Json)
-                        setBody(RegisterRequestDto(email = "me@example.com", username = "MeUser", password = "Password123!"))
-                    }.body<AuthResponseDto>()
+        val registerRes =
+            client
+                .post("/api/v1/auth/register") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        RegisterRequestDto(
+                            email = "me@example.com",
+                            username = "MeUser",
+                            password = "Password123!"
+                        )
+                    )
+                }.body<AuthResponseDto>()
 
-            // 401 Unauthorized without token
-            val unauthRes = client.get("/api/v1/auth/me")
-            assertEquals(HttpStatusCode.Unauthorized, unauthRes.status)
+        // 401 Unauthorized without token
+        val unauthRes = client.get("/api/v1/auth/me")
+        assertEquals(HttpStatusCode.Unauthorized, unauthRes.status)
 
-            // 200 OK with Bearer token
-            val meRes =
-                client.get("/api/v1/auth/me") {
-                    header(HttpHeaders.Authorization, "Bearer ${registerRes.tokens.accessToken}")
-                }
-            assertEquals(HttpStatusCode.OK, meRes.status)
-            val user = meRes.body<UserDto>()
-            assertEquals("me@example.com", user.email)
-            assertEquals("MeUser", user.username)
-        }
+        // 200 OK with Bearer token
+        val meRes =
+            client.get("/api/v1/auth/me") {
+                header(HttpHeaders.Authorization, "Bearer ${registerRes.tokens.accessToken}")
+            }
+        assertEquals(HttpStatusCode.OK, meRes.status)
+        val user = meRes.body<UserDto>()
+        assertEquals("me@example.com", user.email)
+        assertEquals("MeUser", user.username)
+    }
 }

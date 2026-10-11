@@ -10,7 +10,6 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface AuthenticationApi {
-
     @POST(ApiRoutes.Auth.REGISTER)
     suspend fun register(@Body registerRequestDto: RegisterRequestDto): AuthResponseDto
 

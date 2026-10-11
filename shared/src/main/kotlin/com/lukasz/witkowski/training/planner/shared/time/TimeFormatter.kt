@@ -6,9 +6,7 @@ import com.lukasz.witkowski.training.planner.shared.R
 /**
  * Format [Time] to user friendly string representation based on the provided resources by the [ResourcesProvider].
  */
-class TimeFormatter internal constructor(
-    private val resourcesProvider: ResourcesProvider,
-) {
+class TimeFormatter internal constructor(private val resourcesProvider: ResourcesProvider) {
     constructor(context: Context) : this(SystemResourcesProvider(context))
 
     /**
@@ -28,10 +26,7 @@ class TimeFormatter internal constructor(
     /**
      * Format [Time] to timer representation e.g 10:11, 3:02, 2.3, 2:15.2
      */
-    fun formatTimer(
-        time: Time,
-        includeTenthSecond: Boolean = true,
-    ): String {
+    fun formatTimer(time: Time, includeTenthSecond: Boolean = true): String {
         val (minutes, seconds) = time.minutesAndSeconds()
         return StringBuilder()
             .appendMinutes(minutes)
@@ -41,38 +36,32 @@ class TimeFormatter internal constructor(
                 if (includeTenthSecond) {
                     appendTenthSecond(
                         time,
-                        resourcesProvider.provideString(R.string.seconds_tenth_second_separator),
+                        resourcesProvider.provideString(R.string.seconds_tenth_second_separator)
                     )
                 }
             }.toString()
     }
 
-    private fun StringBuilder.appendMinutes(minutes: Int) =
-        apply {
-            if (minutes > 0) {
-                append(minutes)
-            }
+    private fun StringBuilder.appendMinutes(minutes: Int) = apply {
+        if (minutes > 0) {
+            append(minutes)
         }
+    }
 
-    private fun StringBuilder.appendSeparator(separator: String) =
-        apply {
-            if (isNotBlank()) {
-                append(separator)
-            }
+    private fun StringBuilder.appendSeparator(separator: String) = apply {
+        if (isNotBlank()) {
+            append(separator)
         }
+    }
 
-    private fun StringBuilder.appendSeconds(seconds: Int) =
-        apply {
-            if (isNotBlank() && seconds in DIGIT_RANGE) {
-                append(0)
-            }
-            append(seconds)
+    private fun StringBuilder.appendSeconds(seconds: Int) = apply {
+        if (isNotBlank() && seconds in DIGIT_RANGE) {
+            append(0)
         }
+        append(seconds)
+    }
 
-    private fun StringBuilder.appendTenthSecond(
-        time: Time,
-        separator: String,
-    ) = apply {
+    private fun StringBuilder.appendTenthSecond(time: Time, separator: String) = apply {
         val (minutes, seconds) = time.minutesAndSeconds()
         val millis =
             time.timeInMillis - minutes * MILLIS_IN_MINUTE - seconds * MILLIS_IN_SECOND
@@ -81,29 +70,24 @@ class TimeFormatter internal constructor(
         append(tenthSecond)
     }
 
-    private fun StringBuilder.appendHoursTime(hours: Int) =
-        apply {
-            if (hours > 0) {
-                append(hours)
-                appendSeparator(resourcesProvider.provideString(R.string.hour_shortcut))
-            }
+    private fun StringBuilder.appendHoursTime(hours: Int) = apply {
+        if (hours > 0) {
+            append(hours)
+            appendSeparator(resourcesProvider.provideString(R.string.hour_shortcut))
         }
+    }
 
-    private fun StringBuilder.appendMinutesTime(minutes: Int) =
-        apply {
-            if (minutes > 0) {
-                if (isNotBlank()) {
-                    appendSpace()
-                }
-                append(minutes)
-                appendSeparator(resourcesProvider.provideString(R.string.minutes_shortcut))
+    private fun StringBuilder.appendMinutesTime(minutes: Int) = apply {
+        if (minutes > 0) {
+            if (isNotBlank()) {
+                appendSpace()
             }
+            append(minutes)
+            appendSeparator(resourcesProvider.provideString(R.string.minutes_shortcut))
         }
+    }
 
-    private fun StringBuilder.appendSecondsTime(
-        seconds: Int,
-        hours: Int,
-    ) = apply {
+    private fun StringBuilder.appendSecondsTime(seconds: Int, hours: Int) = apply {
         if ((seconds > 0 && hours <= 0) || isEmpty()) {
             if (isNotBlank()) {
                 appendSpace()
@@ -113,12 +97,11 @@ class TimeFormatter internal constructor(
         }
     }
 
-    private fun StringBuilder.appendSpace() =
-        apply {
-            if (isNotBlank()) {
-                append(" ")
-            }
+    private fun StringBuilder.appendSpace() = apply {
+        if (isNotBlank()) {
+            append(" ")
         }
+    }
 
     companion object {
         private const val SECONDS_IN_MINUTE = 60L

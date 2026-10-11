@@ -11,5 +11,5 @@ data class ExerciseConfiguration(
     val image: ImageByteArray? = null,
     val beginnerRecommendation: ExerciseRecommendation,
     val intermediateRecommendation: ExerciseRecommendation,
-    val advancedRecommendation: ExerciseRecommendation,
+    val advancedRecommendation: ExerciseRecommendation
 )

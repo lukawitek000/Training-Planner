@@ -31,7 +31,7 @@ val exerciseModule =
         single {
             DbExerciseRepository(
                 exerciseDao = get(),
-                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
             )
         } bind ExerciseRepository::class
         single<ExerciseService>()

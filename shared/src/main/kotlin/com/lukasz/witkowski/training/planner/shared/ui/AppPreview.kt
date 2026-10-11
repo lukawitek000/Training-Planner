@@ -12,6 +12,6 @@ import androidx.compose.ui.tooling.preview.Preview
 @Preview(
     name = "App Theme Preview",
     showBackground = true,
-    backgroundColor = 0xFF1A120A,
+    backgroundColor = 0xFF1A120A
 )
 annotation class AppPreview

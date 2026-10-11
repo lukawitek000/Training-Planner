@@ -22,7 +22,7 @@ class TrainingSessionService(
     private val timer: Timer,
     private val trainingStatisticsService: TrainingStatisticsService,
     private val trainingSetsStrategy: TrainingSetsPolicy = CircuitSetsPolicy(),
-    private val backgroundDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val backgroundDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
     private lateinit var trainingSession: TrainingSession
     private val scope = CoroutineScope(backgroundDispatcher)

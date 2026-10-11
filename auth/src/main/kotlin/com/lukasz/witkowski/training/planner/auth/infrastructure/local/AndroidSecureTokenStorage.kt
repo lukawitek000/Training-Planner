@@ -9,9 +9,7 @@ import kotlinx.coroutines.flow.first
 
 private val Context.authDataStore by preferencesDataStore("auth_tokens")
 
-internal class AndroidSecureTokenStorage(
-    private val context: Context,
-) : SecureTokenStorage {
+internal class AndroidSecureTokenStorage(private val context: Context) : SecureTokenStorage {
     private val encryptor = Encryptor()
     private val refreshToken = DataStoreEntity(stringPreferencesKey(REFRESH_TOKEN_KEY))
 
@@ -39,9 +37,7 @@ internal class AndroidSecureTokenStorage(
         }
     }
 
-    override suspend fun getRefreshToken(): String? {
-        return refreshToken.get()
-    }
+    override suspend fun getRefreshToken(): String? = refreshToken.get()
 
     override suspend fun saveRefreshToken(token: String) {
         refreshToken.set(token)

@@ -12,35 +12,28 @@ import com.lukasz.witkowski.training.planner.network.AuthTokens
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Instant
 
-internal fun SignUpForm.toRegisterRequestDto(): RegisterRequestDto {
-    return RegisterRequestDto(
-        email = email,
-        username = username,
-        password = password,
-    )
-}
+internal fun SignUpForm.toRegisterRequestDto(): RegisterRequestDto = RegisterRequestDto(
+    email = email,
+    username = username,
+    password = password
+)
 
-internal fun SignInForm.toLoginRequestDto(): LoginRequestDto {
-    return LoginRequestDto(
-        email = email,
-        password = password,
-    )
-}
+internal fun SignInForm.toLoginRequestDto(): LoginRequestDto = LoginRequestDto(
+    email = email,
+    password = password
+)
 
-internal fun AuthResponseDto.toAuthTokens(currentInstant: Instant): AuthTokens {
-    return tokens.toAuthTokens(currentInstant)
-}
+internal fun AuthResponseDto.toAuthTokens(currentInstant: Instant): AuthTokens =
+    tokens.toAuthTokens(currentInstant)
 
-internal fun TokenResponseDto.toAuthTokens(currentInstant: Instant): AuthTokens {
-    return AuthTokens(
-        accessToken = AccessToken(
-            token = accessToken,
-            expiresAt = currentInstant + expiresInMs.milliseconds,
-        ),
-        refreshToken = refreshToken,
-    )
-}
+internal fun TokenResponseDto.toAuthTokens(currentInstant: Instant): AuthTokens = AuthTokens(
+    accessToken =
+    AccessToken(
+        token = accessToken,
+        expiresAt = currentInstant + expiresInMs.milliseconds
+    ),
+    refreshToken = refreshToken
+)
 
-internal fun AuthTokens.toRefreshTokenRequestDto(): RefreshTokenRequestDto {
-    return RefreshTokenRequestDto(refreshToken = refreshToken)
-}
+internal fun AuthTokens.toRefreshTokenRequestDto(): RefreshTokenRequestDto =
+    RefreshTokenRequestDto(refreshToken = refreshToken)

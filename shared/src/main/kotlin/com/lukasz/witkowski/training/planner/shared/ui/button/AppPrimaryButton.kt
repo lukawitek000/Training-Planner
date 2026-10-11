@@ -22,7 +22,7 @@ fun AppPrimaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null
 ) {
     AppButton(
         text = text,
@@ -33,11 +33,12 @@ fun AppPrimaryButton(
         trailingIcon = trailingIcon,
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.onPrimary,
-        textStyle = MaterialTheme.typography.titleMedium.copy(
-            fontWeight = FontWeight.SemiBold,
+        textStyle =
+        MaterialTheme.typography.titleMedium.copy(
+            fontWeight = FontWeight.SemiBold
         ),
         elevation = Dimens2.buttonElevation,
-        iconTextGap = Dimens2.spaceSm,
+        iconTextGap = Dimens2.spaceSm
     )
 }
 
@@ -53,7 +54,7 @@ fun AppPrimaryButton(
     leadingIcon: ImageVector? = null,
     leadingIconContentDescription: String? = null,
     trailingIcon: ImageVector? = null,
-    trailingIconContentDescription: String? = null,
+    trailingIconContentDescription: String? = null
 ) {
     AppButton(
         text = text,
@@ -66,12 +67,13 @@ fun AppPrimaryButton(
         trailingIconContentDescription = trailingIconContentDescription,
         containerColor = MaterialTheme.colorScheme.primaryContainer,
         contentColor = MaterialTheme.colorScheme.onPrimary,
-        textStyle = MaterialTheme.typography.titleMedium.copy(
-            fontWeight = FontWeight.SemiBold,
+        textStyle =
+        MaterialTheme.typography.titleMedium.copy(
+            fontWeight = FontWeight.SemiBold
         ),
         elevation = Dimens2.buttonElevation,
         iconTextGap = Dimens2.spaceSm,
-        iconSize = Dimens2.inputIconSize,
+        iconSize = Dimens2.inputIconSize
     )
 }
 
@@ -83,7 +85,7 @@ private fun AppPrimaryButtonPreview() {
             text = "Sign In",
             onClick = {},
             modifier = Modifier.padding(Dimens2.spaceMd),
-            trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
+            trailingIcon = Icons.AutoMirrored.Filled.ArrowForward
         )
     }
 }

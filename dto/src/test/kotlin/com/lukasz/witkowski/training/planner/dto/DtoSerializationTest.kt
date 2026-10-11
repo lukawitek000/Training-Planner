@@ -2,9 +2,9 @@ package com.lukasz.witkowski.training.planner.dto
 
 import com.lukasz.witkowski.training.planner.dto.exercise.CategoryDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
+import kotlin.test.assertEquals
 import kotlinx.serialization.json.Json
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class DtoSerializationTest {
     private val json =
@@ -20,7 +20,7 @@ class DtoSerializationTest {
                 id = "ex-1",
                 name = "Push-up",
                 description = "Standard push-up",
-                categories = listOf(CategoryDto("cat-1", "Chest")),
+                categories = listOf(CategoryDto("cat-1", "Chest"))
             )
 
         val encoded = json.encodeToString(ExerciseDto.serializer(), exercise)

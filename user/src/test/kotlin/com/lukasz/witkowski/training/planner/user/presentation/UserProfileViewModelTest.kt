@@ -11,6 +11,8 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,12 +22,10 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
+@Suppress("ktlint:standard:max-line-length")
 class UserProfileViewModelTest {
-
     private val userRepository: UserRepository = mockk(relaxed = true)
     private val testDispatcher = UnconfinedTestDispatcher()
     private val weightUnitFlow = MutableStateFlow(WeightUnit.KG)
@@ -44,76 +44,83 @@ class UserProfileViewModelTest {
     }
 
     @Test
-    fun `when profile loading succeeds, uiState emits OnlineProfileLoaded with weightUnit`() = runTest {
-        val user = User("1", "test@example.com", "testuser")
-        coEvery { userRepository.getUserProfile() } returns AppResult.Success(user)
+    fun `when profile loading succeeds, uiState emits OnlineProfileLoaded with weightUnit`() =
+        runTest {
+            val user = User("1", "test@example.com", "testuser")
+            coEvery { userRepository.getUserProfile() } returns AppResult.Success(user)
 
-        viewModel = UserProfileViewModel(userRepository)
+            viewModel = UserProfileViewModel(userRepository)
 
-        viewModel.uiState.test {
-            assertEquals(
-                ProfileUiState.OnlineProfileLoaded(
-                    email = "test@example.com",
-                    username = "testuser",
-                    weightUnit = WeightUnit.KG,
-                ),
-                awaitItem(),
-            )
+            viewModel.uiState.test {
+                assertEquals(
+                    ProfileUiState.OnlineProfileLoaded(
+                        email = "test@example.com",
+                        username = "testuser",
+                        weightUnit = WeightUnit.KG
+                    ),
+                    awaitItem()
+                )
+            }
         }
-    }
 
     @Test
-    fun `when profile loading fails with NotSignedIn, uiState emits OfflineProfileLoaded with null failure`() = runTest {
-        coEvery { userRepository.getUserProfile() } returns AppResult.Error(UserFailure.NotSignedIn)
+    fun `when profile loading fails with NotSignedIn, uiState emits OfflineProfileLoaded with null failure`() =
+        runTest {
+            coEvery { userRepository.getUserProfile() } returns
+                AppResult.Error(UserFailure.NotSignedIn)
 
-        viewModel = UserProfileViewModel(userRepository)
+            viewModel = UserProfileViewModel(userRepository)
 
-        viewModel.uiState.test {
-            assertEquals(
-                ProfileUiState.OfflineProfileLoaded(
-                    weightUnit = WeightUnit.KG,
-                    failure = null,
-                ),
-                awaitItem(),
-            )
+            viewModel.uiState.test {
+                assertEquals(
+                    ProfileUiState.OfflineProfileLoaded(
+                        weightUnit = WeightUnit.KG,
+                        failure = null
+                    ),
+                    awaitItem()
+                )
+            }
         }
-    }
 
     @Test
-    fun `when profile loading fails with Unauthorized, uiState emits OfflineProfileLoaded with failure`() = runTest {
-        coEvery { userRepository.getUserProfile() } returns AppResult.Error(UserFailure.Unauthorized)
+    fun `when profile loading fails with Unauthorized, uiState emits OfflineProfileLoaded with failure`() =
+        runTest {
+            coEvery { userRepository.getUserProfile() } returns
+                AppResult.Error(UserFailure.Unauthorized)
 
-        viewModel = UserProfileViewModel(userRepository)
+            viewModel = UserProfileViewModel(userRepository)
 
-        viewModel.uiState.test {
-            assertEquals(
-                ProfileUiState.OfflineProfileLoaded(
-                    weightUnit = WeightUnit.KG,
-                    failure = UserFailure.Unauthorized,
-                ),
-                awaitItem(),
-            )
+            viewModel.uiState.test {
+                assertEquals(
+                    ProfileUiState.OfflineProfileLoaded(
+                        weightUnit = WeightUnit.KG,
+                        failure = UserFailure.Unauthorized
+                    ),
+                    awaitItem()
+                )
+            }
         }
-    }
 
     @Test
-    fun `when profile loading fails with NetworkError, uiState emits OfflineProfileLoaded with failure`() = runTest {
-        coEvery { userRepository.getUserProfile() } returns AppResult.Error(
-            UserFailure.NetworkError(NetworkFailure.NoInternet),
-        )
+    fun `when profile loading fails with NetworkError, uiState emits OfflineProfileLoaded with failure`() =
+        runTest {
+            coEvery { userRepository.getUserProfile() } returns
+                AppResult.Error(
+                    UserFailure.NetworkError(NetworkFailure.NoInternet)
+                )
 
-        viewModel = UserProfileViewModel(userRepository)
+            viewModel = UserProfileViewModel(userRepository)
 
-        viewModel.uiState.test {
-            assertEquals(
-                ProfileUiState.OfflineProfileLoaded(
-                    weightUnit = WeightUnit.KG,
-                    failure = UserFailure.NetworkError(NetworkFailure.NoInternet),
-                ),
-                awaitItem(),
-            )
+            viewModel.uiState.test {
+                assertEquals(
+                    ProfileUiState.OfflineProfileLoaded(
+                        weightUnit = WeightUnit.KG,
+                        failure = UserFailure.NetworkError(NetworkFailure.NoInternet)
+                    ),
+                    awaitItem()
+                )
+            }
         }
-    }
 
     @Test
     fun `when weight unit changes in repository, uiState updates with new weight unit`() = runTest {
@@ -127,9 +134,9 @@ class UserProfileViewModelTest {
                 ProfileUiState.OnlineProfileLoaded(
                     email = "test@example.com",
                     username = "testuser",
-                    weightUnit = WeightUnit.KG,
+                    weightUnit = WeightUnit.KG
                 ),
-                awaitItem(),
+                awaitItem()
             )
 
             weightUnitFlow.value = WeightUnit.LBS
@@ -138,16 +145,17 @@ class UserProfileViewModelTest {
                 ProfileUiState.OnlineProfileLoaded(
                     email = "test@example.com",
                     username = "testuser",
-                    weightUnit = WeightUnit.LBS,
+                    weightUnit = WeightUnit.LBS
                 ),
-                awaitItem(),
+                awaitItem()
             )
         }
     }
 
     @Test
     fun `onWeightUnitChanged calls setWeightUnit on repository`() = runTest {
-        coEvery { userRepository.getUserProfile() } returns AppResult.Error(UserFailure.Unauthorized)
+        coEvery { userRepository.getUserProfile() } returns
+            AppResult.Error(UserFailure.Unauthorized)
 
         viewModel = UserProfileViewModel(userRepository)
         viewModel.onWeightUnitChanged(WeightUnit.LBS)

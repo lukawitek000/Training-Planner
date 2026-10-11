@@ -12,5 +12,7 @@ interface StatisticsRepository {
 
     fun getByTrainingPlanId(trainingPlanId: TrainingPlanId): Flow<List<TrainingStatistics>>
 
-    fun getByTrainingStatisticsId(trainingStatisticsId: TrainingStatisticsId): Flow<TrainingStatistics>
+    fun getByTrainingStatisticsId(
+        trainingStatisticsId: TrainingStatisticsId
+    ): Flow<TrainingStatistics>
 }

@@ -18,14 +18,18 @@ fun Application.configureStatusPages() {
                 ApiErrorDto(
                     statusCode = cause.statusCode.value,
                     message = cause.message ?: "Authentication failed.",
-                    errorCode = cause.errorCode,
-                ),
+                    errorCode = cause.errorCode
+                )
             )
         }
         exception<IllegalArgumentException> { call, cause ->
             call.respond(
                 HttpStatusCode.BadRequest,
-                ApiErrorDto(statusCode = HttpStatusCode.BadRequest.value, message = cause.message ?: "Bad request"),
+                ApiErrorDto(
+                    statusCode = HttpStatusCode.BadRequest.value,
+                    message =
+                    cause.message ?: "Bad request"
+                )
             )
         }
         exception<BadRequestException> { call, cause ->
@@ -33,8 +37,8 @@ fun Application.configureStatusPages() {
                 HttpStatusCode.BadRequest,
                 ApiErrorDto(
                     statusCode = HttpStatusCode.BadRequest.value,
-                    message = cause.message ?: "Invalid request payload",
-                ),
+                    message = cause.message ?: "Invalid request payload"
+                )
             )
         }
         exception<SerializationException> { call, cause ->
@@ -42,14 +46,18 @@ fun Application.configureStatusPages() {
                 HttpStatusCode.BadRequest,
                 ApiErrorDto(
                     statusCode = HttpStatusCode.BadRequest.value,
-                    message = "Failed to parse request payload: ${cause.message}",
-                ),
+                    message = "Failed to parse request payload: ${cause.message}"
+                )
             )
         }
         exception<SecurityException> { call, cause ->
             call.respond(
                 HttpStatusCode.Forbidden,
-                ApiErrorDto(statusCode = HttpStatusCode.Forbidden.value, message = cause.message ?: "Forbidden"),
+                ApiErrorDto(
+                    statusCode = HttpStatusCode.Forbidden.value,
+                    message =
+                    cause.message ?: "Forbidden"
+                )
             )
         }
         exception<Throwable> { call, cause ->
@@ -57,8 +65,8 @@ fun Application.configureStatusPages() {
                 HttpStatusCode.InternalServerError,
                 ApiErrorDto(
                     statusCode = HttpStatusCode.InternalServerError.value,
-                    message = "Internal server error: ${cause.localizedMessage}",
-                ),
+                    message = "Internal server error: ${cause.localizedMessage}"
+                )
             )
         }
     }

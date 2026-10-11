@@ -24,6 +24,6 @@ class TimeTest {
             Time(480_000) to Pair(8, 0),
             Time(10_000) to Pair(0, 10),
             Time(0) to Pair(0, 0),
-            Time(60_000) to Pair(1, 0),
+            Time(60_000) to Pair(1, 0)
         )
 }

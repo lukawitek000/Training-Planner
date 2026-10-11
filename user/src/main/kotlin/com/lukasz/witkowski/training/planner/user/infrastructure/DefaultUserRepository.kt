@@ -14,9 +14,8 @@ import timber.log.Timber
 class DefaultUserRepository(
     private val tokenStorage: TokenStorage,
     private val userRemoteDataSource: UserRemoteDataSource,
-    private val userPreferencesStorage: UserPreferencesStorage,
+    private val userPreferencesStorage: UserPreferencesStorage
 ) : UserRepository {
-
     override suspend fun getUserProfile(): AppResult<User, UserFailure> {
         val refreshToken = tokenStorage.getTokens()?.refreshToken
         if (refreshToken.isNullOrBlank()) {

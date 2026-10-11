@@ -7,9 +7,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanReposit
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
 import kotlinx.coroutines.flow.Flow
 
-class TrainingPlanService(
-    private val trainingPlanRepository: TrainingPlanRepository,
-) {
+class TrainingPlanService(private val trainingPlanRepository: TrainingPlanRepository) {
     fun getTrainingPlansOverviews(query: TrainingQuery) = trainingPlanRepository.getAll(query)
 
     suspend fun saveTrainingPlan(trainingPlanConfiguration: TrainingPlanConfiguration) =
@@ -17,11 +15,12 @@ class TrainingPlanService(
 
     suspend fun updateTrainingPlan(
         trainingPlanConfiguration: TrainingPlanConfiguration,
-        trainingPlanId: TrainingPlanId,
+        trainingPlanId: TrainingPlanId
     ) = trainingPlanRepository.update(trainingPlanConfiguration, trainingPlanId)
 
     fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan?> =
         trainingPlanRepository.getTrainingPlanById(trainingPlanId)
 
-    suspend fun deleteTrainingPlan(trainingPlanId: TrainingPlanId): Result<Unit> = trainingPlanRepository.delete(trainingPlanId)
+    suspend fun deleteTrainingPlan(trainingPlanId: TrainingPlanId): Result<Unit> =
+        trainingPlanRepository.delete(trainingPlanId)
 }

@@ -1,0 +1,15 @@
+root = true
+
+[*.{kt,kts}]
+# Use Android Studio code style formatting conventions
+ktlint_code_style = android_studio
+
+# Ignore naming conventions for @Composable functions (allowing PascalCase for Composable UI functions while enforcing camelCase for normal functions)
+ktlint_function_naming_ignore_when_annotated_with = Composable
+
+# Ignore function length and signature constraints for @Composable functions
+ktlint_function_expression_body_ignore_when_annotated_with = Composable
+ktlint_function_signature_ignore_when_annotated_with = Composable
+
+# Ignore parameter list and argument constraints for @Composable functions
+ktlint_parameter_list_wrapping_ignore_when_annotated_with = Composable

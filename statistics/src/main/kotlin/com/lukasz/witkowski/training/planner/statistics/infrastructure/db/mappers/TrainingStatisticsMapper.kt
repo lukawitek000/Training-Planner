@@ -11,13 +11,13 @@ import java.util.Date
 internal fun TrainingStatistics.toDbTrainingStatistics(): DbTrainingWithExercisesStatistics =
     DbTrainingWithExercisesStatistics(
         trainingStatistics =
-            DbTrainingStatistics(
-                id = id.toString(),
-                trainingPlanId = trainingPlanId.toString(),
-                totalTime = totalTime.timeInMillis,
-                date = date.time,
-            ),
-        exercisesStatistics = exercisesStatistics.map { it.toDbExerciseStatistics(id) },
+        DbTrainingStatistics(
+            id = id.toString(),
+            trainingPlanId = trainingPlanId.toString(),
+            totalTime = totalTime.timeInMillis,
+            date = date.time
+        ),
+        exercisesStatistics = exercisesStatistics.map { it.toDbExerciseStatistics(id) }
     )
 
 internal fun DbTrainingWithExercisesStatistics.toTrainingStatistics(): TrainingStatistics =
@@ -26,5 +26,5 @@ internal fun DbTrainingWithExercisesStatistics.toTrainingStatistics(): TrainingS
         trainingPlanId = TrainingPlanId(trainingStatistics.trainingPlanId),
         totalTime = Time(trainingStatistics.totalTime),
         date = Date(trainingStatistics.date),
-        exercisesStatistics = exercisesStatistics.map { it.toExerciseStatistics() },
+        exercisesStatistics = exercisesStatistics.map { it.toExerciseStatistics() }
     )

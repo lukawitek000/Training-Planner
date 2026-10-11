@@ -21,7 +21,7 @@ fun AppSecondaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null
 ) {
     AppButton(
         text = text,
@@ -32,14 +32,16 @@ fun AppSecondaryButton(
         trailingIcon = trailingIcon,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         contentColor = MaterialTheme.colorScheme.onSurface,
-        textStyle = MaterialTheme.typography.titleSmall.copy(
-            fontWeight = FontWeight.Medium,
+        textStyle =
+        MaterialTheme.typography.titleSmall.copy(
+            fontWeight = FontWeight.Medium
         ),
-        border = BorderStroke(
+        border =
+        BorderStroke(
             width = Dimens2.thinBorder,
-            color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.4f),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.4f)
         ),
-        iconTextGap = Dimens2.spaceGapIconTextMedium,
+        iconTextGap = Dimens2.spaceGapIconTextMedium
     )
 }
 
@@ -55,7 +57,7 @@ fun AppSecondaryButton(
     leadingIcon: ImageVector? = null,
     leadingIconContentDescription: String? = null,
     trailingIcon: ImageVector? = null,
-    trailingIconContentDescription: String? = null,
+    trailingIconContentDescription: String? = null
 ) {
     AppButton(
         text = text,
@@ -68,15 +70,17 @@ fun AppSecondaryButton(
         trailingIconContentDescription = trailingIconContentDescription,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
         contentColor = MaterialTheme.colorScheme.onSurface,
-        textStyle = MaterialTheme.typography.titleSmall.copy(
-            fontWeight = FontWeight.Medium,
+        textStyle =
+        MaterialTheme.typography.titleSmall.copy(
+            fontWeight = FontWeight.Medium
         ),
-        border = BorderStroke(
+        border =
+        BorderStroke(
             width = Dimens2.thinBorder,
-            color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.4f),
+            color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.4f)
         ),
         iconTextGap = Dimens2.spaceGapIconTextMedium,
-        iconSize = Dimens2.iconSize16,
+        iconSize = Dimens2.iconSize16
     )
 }
 
@@ -87,7 +91,7 @@ private fun AppSecondaryButtonPreview() {
         AppSecondaryButton(
             text = "Continue with Google",
             onClick = {},
-            modifier = Modifier.padding(Dimens2.spaceMd),
+            modifier = Modifier.padding(Dimens2.spaceMd)
         )
     }
 }

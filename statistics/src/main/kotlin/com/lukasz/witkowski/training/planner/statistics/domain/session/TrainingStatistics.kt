@@ -3,14 +3,11 @@ package com.lukasz.witkowski.training.planner.statistics.domain.session
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseStatistics
+import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics as Statistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import java.util.Date
-import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics as Statistics
 
-class TrainingStatistics(
-    private val trainingPlan: TrainingPlan,
-    private val startTime: Time,
-) {
+class TrainingStatistics(private val trainingPlan: TrainingPlan, private val startTime: Time) {
     private var exercisesAttemptsStatistics = mutableListOf<ExerciseAttemptStatistics>()
 
     fun addExerciseAttemptStatistics(attemptStatistics: ExerciseAttemptStatistics) {
@@ -23,14 +20,14 @@ class TrainingStatistics(
             exercisesStatisticsMap.map { (exerciseId, attemptsStatistics) ->
                 ExerciseStatistics(
                     trainingExerciseId = exerciseId,
-                    attemptsStatistics = attemptsStatistics,
+                    attemptsStatistics = attemptsStatistics
                 )
             }
         return Statistics(
             trainingPlanId = trainingPlan.id,
             totalTime = time - startTime,
             date = Date(), // TODO how to provide a date
-            exercisesStatistics = exercisesStatistics,
+            exercisesStatistics = exercisesStatistics
         )
     }
 }

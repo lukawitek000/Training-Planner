@@ -36,7 +36,7 @@ fun AppLabeledTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
     Column(modifier = modifier) {
         AppInputLabel(text = label)
@@ -52,7 +52,7 @@ fun AppLabeledTextField(
             visualTransformation = visualTransformation,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
-            interactionSource = interactionSource,
+            interactionSource = interactionSource
         )
     }
 }
@@ -76,7 +76,7 @@ fun AppLabeledTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
     Column(modifier = modifier) {
         AppInputLabel(text = label)
@@ -94,7 +94,7 @@ fun AppLabeledTextField(
             visualTransformation = visualTransformation,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
-            interactionSource = interactionSource,
+            interactionSource = interactionSource
         )
     }
 }
@@ -105,21 +105,21 @@ private fun AppLabeledTextFieldPreview() {
     TrainingPlannerTheme2 {
         Column(
             modifier = Modifier.padding(Dimens2.spaceMd),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
         ) {
             AppLabeledTextField(
                 label = "Email Address",
                 value = "",
                 onValueChange = {},
                 placeholder = "athlete@ironlog.io",
-                leadingIcon = Icons.Default.Email,
+                leadingIcon = Icons.Default.Email
             )
             AppLabeledTextField(
                 label = "Email Address",
                 value = "user@ironlog.io",
                 onValueChange = {},
                 placeholder = "athlete@ironlog.io",
-                leadingIcon = Icons.Default.Email,
+                leadingIcon = Icons.Default.Email
             )
         }
     }

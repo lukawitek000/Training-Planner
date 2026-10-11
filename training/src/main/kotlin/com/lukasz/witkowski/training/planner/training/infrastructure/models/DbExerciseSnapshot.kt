@@ -5,5 +5,5 @@ data class DbExerciseSnapshot(
     val name: String,
     val description: String,
     val category: Int,
-    val imagePath: String?,
+    val imagePath: String?
 )

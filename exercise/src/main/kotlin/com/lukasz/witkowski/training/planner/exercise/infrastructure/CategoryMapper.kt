@@ -8,14 +8,13 @@ internal fun DbExerciseCategory.toExerciseCategoryLegacy(): ExerciseCategoryLega
         it.name == this.categoryName
     }
 
-internal fun ExerciseCategoryLegacy.toDbExerciseCategory(): DbExerciseCategory =
-    DbExerciseCategory(
-        categoryName = this.name,
-    )
+internal fun ExerciseCategoryLegacy.toDbExerciseCategory(): DbExerciseCategory = DbExerciseCategory(
+    categoryName = this.name
+)
 
-internal fun DbExerciseCategory.toExerciseCategory(): ExerciseCategory = ExerciseCategory(name = categoryName)
+internal fun DbExerciseCategory.toExerciseCategory(): ExerciseCategory =
+    ExerciseCategory(name = categoryName)
 
-internal fun ExerciseCategory.toDbExerciseCategory(): DbExerciseCategory =
-    DbExerciseCategory(
-        categoryName = this.name,
-    )
+internal fun ExerciseCategory.toDbExerciseCategory(): DbExerciseCategory = DbExerciseCategory(
+    categoryName = this.name
+)

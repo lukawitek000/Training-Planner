@@ -4,5 +4,5 @@ data class ExerciseDetails(
     val exercise: Exercise2,
     val beginnerRecommendation: ExerciseRecommendation,
     val intermediateRecommendation: ExerciseRecommendation,
-    val advancedRecommendation: ExerciseRecommendation,
+    val advancedRecommendation: ExerciseRecommendation
 )

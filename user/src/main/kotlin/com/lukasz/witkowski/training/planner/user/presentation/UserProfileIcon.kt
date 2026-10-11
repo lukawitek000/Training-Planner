@@ -14,18 +14,15 @@ import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
  * TopBar trailing profile icon button composable.
  */
 @Composable
-fun UserProfileIcon(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun UserProfileIcon(onClick: () -> Unit, modifier: Modifier = Modifier) {
     IconButton(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier
     ) {
         Icon(
             imageVector = Icons.Default.AccountCircle,
             contentDescription = "User Profile",
-            tint = MaterialTheme.colorScheme.onSurface,
+            tint = MaterialTheme.colorScheme.onSurface
         )
     }
 }

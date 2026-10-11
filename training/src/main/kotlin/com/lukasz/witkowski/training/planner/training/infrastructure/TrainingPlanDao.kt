@@ -11,13 +11,15 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTr
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingOverview
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlanWithExercises
-import kotlinx.coroutines.flow.Flow
 import kotlin.time.Instant
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface TrainingPlanDao {
     @Transaction
-    suspend fun insertTrainingWithTrainingExercises(dbTrainingPlanWithExercises: DbTrainingPlanWithExercises) {
+    suspend fun insertTrainingWithTrainingExercises(
+        dbTrainingPlanWithExercises: DbTrainingPlanWithExercises
+    ) {
         insertTraining(dbTrainingPlanWithExercises.trainingPlan)
         for (dbExercise in dbTrainingPlanWithExercises.exercises) {
             insertExercise(dbExercise.trainingExercise)
@@ -49,7 +51,7 @@ internal interface TrainingPlanDao {
          WHERE LOWER(name) LIKE LOWER('%' || :query || '%')
            OR LOWER(description) LIKE LOWER('%' || :query || '%')
          ORDER BY name ASC
-        """,
+        """
     )
     fun getAllTrainingOverviews(query: String): Flow<List<DbTrainingOverview>>
 
@@ -72,11 +74,11 @@ internal interface TrainingPlanDao {
           )
         GROUP BY p.id
         ORDER BY COUNT(*) DESC, p.name ASC
-        """,
+        """
     )
     fun getAllTrainingOverviews(
         query: String,
-        categoriesNames: List<String>,
+        categoriesNames: List<String>
     ): Flow<List<DbTrainingOverview>>
 
     @Query("DELETE FROM TrainingPlan WHERE id=:id")
@@ -97,7 +99,9 @@ internal interface TrainingPlanDao {
     fun updateTrainingPlan(plan: DbTrainingPlan)
 
     @Transaction
-    suspend fun updateTrainingWithTrainingExercises(dbTrainingPlanWithExercises: DbTrainingPlanWithExercises) {
+    suspend fun updateTrainingWithTrainingExercises(
+        dbTrainingPlanWithExercises: DbTrainingPlanWithExercises
+    ) {
         deleteTrainingExercisesForPlan(dbTrainingPlanWithExercises.trainingPlan.id)
         updateTrainingPlan(dbTrainingPlanWithExercises.trainingPlan)
         for (dbExercise in dbTrainingPlanWithExercises.exercises) {
@@ -111,13 +115,13 @@ internal interface TrainingPlanDao {
     @Transaction
     suspend fun useTrainingPlanById(
         id: String,
-        currentInstant: Instant,
+        currentInstant: Instant
     ): DbTrainingPlanWithExercises {
         val result = getTrainingPlanById(id)
         checkNotNull(result) { "Training plan was not found" }
         val updatedPlan =
             result.trainingPlan.copy(
-                lastUsed = currentInstant,
+                lastUsed = currentInstant
             )
         updateTrainingPlan(updatedPlan)
         return result

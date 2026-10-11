@@ -13,5 +13,5 @@ data class TrainingExercise(
     val repetitions: Int = 1,
     val sets: Int = 1,
     val restTime: Duration = Duration.ZERO,
-    val weightInKg: Int? = null,
+    val weightInKg: Int? = null
 )

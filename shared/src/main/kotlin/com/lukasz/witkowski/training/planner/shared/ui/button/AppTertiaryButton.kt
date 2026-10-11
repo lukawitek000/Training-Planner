@@ -23,7 +23,7 @@ fun AppTertiaryButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     leadingIcon: @Composable (() -> Unit)? = null,
-    trailingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null
 ) {
     AppButton(
         text = text,
@@ -34,14 +34,16 @@ fun AppTertiaryButton(
         trailingIcon = trailingIcon,
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        textStyle = MaterialTheme.typography.titleSmall.copy(
-            fontWeight = FontWeight.Medium,
+        textStyle =
+        MaterialTheme.typography.titleSmall.copy(
+            fontWeight = FontWeight.Medium
         ),
-        border = BorderStroke(
+        border =
+        BorderStroke(
             width = Dimens2.thinBorder,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f),
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
         ),
-        iconTextGap = Dimens2.spaceSm,
+        iconTextGap = Dimens2.spaceSm
     )
 }
 
@@ -57,7 +59,7 @@ fun AppTertiaryButton(
     leadingIcon: ImageVector? = null,
     leadingIconContentDescription: String? = null,
     trailingIcon: ImageVector? = null,
-    trailingIconContentDescription: String? = null,
+    trailingIconContentDescription: String? = null
 ) {
     AppButton(
         text = text,
@@ -70,15 +72,17 @@ fun AppTertiaryButton(
         trailingIconContentDescription = trailingIconContentDescription,
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        textStyle = MaterialTheme.typography.titleSmall.copy(
-            fontWeight = FontWeight.Medium,
+        textStyle =
+        MaterialTheme.typography.titleSmall.copy(
+            fontWeight = FontWeight.Medium
         ),
-        border = BorderStroke(
+        border =
+        BorderStroke(
             width = Dimens2.thinBorder,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f),
+            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
         ),
         iconTextGap = Dimens2.spaceSm,
-        iconSize = Dimens2.iconSize16,
+        iconSize = Dimens2.iconSize16
     )
 }
 
@@ -90,7 +94,7 @@ private fun AppTertiaryButtonPreview() {
             text = "Continue as Guest (Offline Mode)",
             onClick = {},
             modifier = Modifier.padding(Dimens2.spaceMd),
-            leadingIcon = Icons.Default.CloudOff,
+            leadingIcon = Icons.Default.CloudOff
         )
     }
 }

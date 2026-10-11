@@ -7,6 +7,7 @@ import com.lukasz.witkowski.training.planner.auth.domain.model.SignUpForm
 import com.lukasz.witkowski.training.planner.auth.infrastructure.DefaultAuthenticationRepository
 import com.lukasz.witkowski.training.planner.auth.infrastructure.local.DefaultTokenStorage
 import com.lukasz.witkowski.training.planner.auth.infrastructure.local.SecureTokenStorage
+import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthenticationApi
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitAuthenticationRemoteDataSource
 import com.lukasz.witkowski.training.planner.dto.common.ApiRoutes
 import com.lukasz.witkowski.training.planner.network.NetworkConfig
@@ -14,6 +15,8 @@ import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -21,12 +24,9 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.junit.After
 import org.junit.Before
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultAuthenticationRepositoryTest {
-
     private lateinit var mockWebServer: MockWebServer
     private val mockSecureTokenStorage = mockk<SecureTokenStorage>(relaxed = true)
     private val testDispatcher = UnconfinedTestDispatcher()
@@ -41,22 +41,26 @@ class DefaultAuthenticationRepositoryTest {
 
         val baseUrl = mockWebServer.url("/").toString()
         val unauthenticatedClient = NetworkConfig.createUnauthenticatedOkHttpClient()
-        val api = NetworkConfig.createRetrofit(
-            baseUrl = baseUrl,
-            okHttpClient = unauthenticatedClient,
-        ).create(com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthenticationApi::class.java)
+        val api =
+            NetworkConfig
+                .createRetrofit(
+                    baseUrl = baseUrl,
+                    okHttpClient = unauthenticatedClient
+                ).create(AuthenticationApi::class.java)
 
-        val remoteDataSource = RetrofitAuthenticationRemoteDataSource(
-            api = api,
-            timeProvider = timeProvider,
-            ioDispatcher = testDispatcher,
-        )
+        val remoteDataSource =
+            RetrofitAuthenticationRemoteDataSource(
+                api = api,
+                timeProvider = timeProvider,
+                ioDispatcher = testDispatcher
+            )
         val tokenStorage = DefaultTokenStorage(mockSecureTokenStorage)
 
-        repository = DefaultAuthenticationRepository(
-            tokenStorage = tokenStorage,
-            remoteDataSource = remoteDataSource,
-        )
+        repository =
+            DefaultAuthenticationRepository(
+                tokenStorage = tokenStorage,
+                remoteDataSource = remoteDataSource
+            )
     }
 
     @After
@@ -120,7 +124,9 @@ class DefaultAuthenticationRepositoryTest {
         val jsonResponse = TestResourceReader.readJson("error_user_already_exists.json")
         mockWebServer.enqueue(MockResponse().setResponseCode(409).setBody(jsonResponse))
 
-        val result = repository.signUp(SignUpForm("ExistingUser", "existing@example.com", "password123"))
+        val result = repository.signUp(
+            SignUpForm("ExistingUser", "existing@example.com", "password123")
+        )
 
         assertEquals(AuthenticationResult.Failure(AuthenticationFailure.UserAlreadyExists), result)
     }

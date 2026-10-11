@@ -33,19 +33,21 @@ fun AppCard(
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
     border: BorderStroke? = null,
     elevation: Dp = Dimens2.shadowSm,
-    content: @Composable ColumnScope.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = shape,
-        colors = CardDefaults.cardColors(
-            containerColor = containerColor,
+        colors =
+        CardDefaults.cardColors(
+            containerColor = containerColor
         ),
         border = border,
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = elevation,
+        elevation =
+        CardDefaults.cardElevation(
+            defaultElevation = elevation
         ),
-        content = content,
+        content = content
     )
 }
 
@@ -58,14 +60,14 @@ private fun AppCardPreview() {
                 text = "Card Section 1",
                 modifier = Modifier.padding(Dimens2.spaceMd),
                 style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onSurface
             )
             AppCardDivider()
             Text(
                 text = "Card Section 2",
                 modifier = Modifier.padding(Dimens2.spaceMd),
                 style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }

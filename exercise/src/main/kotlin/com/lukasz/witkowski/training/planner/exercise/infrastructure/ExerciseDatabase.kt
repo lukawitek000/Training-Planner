@@ -9,10 +9,10 @@ import androidx.room3.RoomDatabase
 @Database(
     entities = [
         DbExercise::class, DbExerciseCategory::class, ExerciseCategoryCrossRef::class,
-        DbExerciseRecommendation::class,
+        DbExerciseRecommendation::class
     ],
     version = 8,
-    exportSchema = false,
+    exportSchema = false
 )
 @ColumnTypeConverters(Converters::class)
 internal abstract class ExerciseDatabase : RoomDatabase() {
@@ -24,20 +24,20 @@ internal abstract class ExerciseDatabase : RoomDatabase() {
         @Volatile
         private var instance: ExerciseDatabase? = null
 
-        fun getInstance(context: Context): ExerciseDatabase =
-            synchronized(this) {
-                if (instance == null) {
-                    instance =
-                        Room
-                            .databaseBuilder(
-                                context,
-                                ExerciseDatabase::class.java,
-                                "ExerciseDb",
-                            ).createFromAsset("database/exercises.db") // TODO regenerate default exercises
+        fun getInstance(context: Context): ExerciseDatabase = synchronized(this) {
+            if (instance == null) {
+                instance =
+                    Room
+                        .databaseBuilder(
+                            context,
+                            ExerciseDatabase::class.java,
+                            "ExerciseDb"
+                        ).createFromAsset("database/exercises.db")
+                        // TODO regenerate default exercises
 //                            .fallbackToDestructiveMigration(true)
-                            .build()
-                }
-                instance!!
+                        .build()
             }
+            instance!!
+        }
     }
 }

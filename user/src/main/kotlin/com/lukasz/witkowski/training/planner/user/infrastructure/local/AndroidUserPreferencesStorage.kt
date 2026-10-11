@@ -11,17 +11,15 @@ import timber.log.Timber
 
 private val Context.userPreferencesDataStore by preferencesDataStore("user_preferences")
 
-class AndroidUserPreferencesStorage(
-    private val context: Context,
-) : UserPreferencesStorage {
-
+class AndroidUserPreferencesStorage(private val context: Context) : UserPreferencesStorage {
     private val weightUnitKey = stringPreferencesKey(WEIGHT_UNIT_KEY)
 
-    override val weightUnit: Flow<WeightUnit> = context.userPreferencesDataStore.data.map { preferences ->
-        preferences[weightUnitKey]?.let { name ->
-            runCatching { WeightUnit.valueOf(name) }.getOrNull()
-        } ?: WeightUnit.KG
-    }
+    override val weightUnit: Flow<WeightUnit> =
+        context.userPreferencesDataStore.data.map { preferences ->
+            preferences[weightUnitKey]?.let { name ->
+                runCatching { WeightUnit.valueOf(name) }.getOrNull()
+            } ?: WeightUnit.KG
+        }
 
     override suspend fun setWeightUnit(weightUnit: WeightUnit) {
         Timber.d("Updating preferred weight unit in DataStore to: %s", weightUnit)

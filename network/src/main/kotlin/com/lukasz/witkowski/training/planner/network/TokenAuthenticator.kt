@@ -12,7 +12,7 @@ import timber.log.Timber
 
 class TokenAuthenticator(
     private val tokenStorage: TokenStorage,
-    private val tokenRefreshRemoteDataSource: TokenRefreshRemoteDataSource,
+    private val tokenRefreshRemoteDataSource: TokenRefreshRemoteDataSource
 ) : Authenticator {
     private val mutex = Mutex()
 
@@ -25,8 +25,10 @@ class TokenAuthenticator(
         return runBlocking {
             mutex.withLock {
                 val currentAccessToken = tokenStorage.accessToken()?.token
-                val requestAccessToken = response.request.header("Authorization")
-                    ?.removePrefix("Bearer ")
+                val requestAccessToken =
+                    response.request
+                        .header("Authorization")
+                        ?.removePrefix("Bearer ")
 
                 val tokenToUse =
                     if (currentAccessToken != null && currentAccessToken != requestAccessToken) {
@@ -39,7 +41,10 @@ class TokenAuthenticator(
                                 return@runBlocking null
                             }
 
-                        Timber.i("TokenAuthenticator: Refreshing tokens for 401 on %s", response.request.url)
+                        Timber.i(
+                            "TokenAuthenticator: Refreshing tokens for 401 on %s",
+                            response.request.url
+                        )
                         tokenRefreshRemoteDataSource.refreshTokens(refreshToken).fold(
                             onSuccess = { tokens ->
                                 Timber.i("TokenAuthenticator: Token refresh succeeded")
@@ -47,15 +52,19 @@ class TokenAuthenticator(
                                 tokens.accessToken?.token ?: tokens.refreshToken
                             },
                             onError = { failure ->
-                                Timber.w("TokenAuthenticator: Token refresh failed: %s - clearing token storage", failure)
+                                Timber.w(
+                                    "TokenAuthenticator: Token refresh failed: %s - clearing token storage",
+                                    failure
+                                )
                                 tokenStorage.clear()
                                 return@runBlocking null
-                            },
+                            }
                         )
                     }
 
                 // Retry original request with updated token
-                response.request.newBuilder()
+                response.request
+                    .newBuilder()
                     .header("Authorization", "Bearer $tokenToUse")
                     .build()
             }

@@ -12,7 +12,8 @@ import org.junit.Assert.assertTrue
 internal open class TrainingSessionTest {
     private val trainingSetsStrategy: TrainingSetsPolicy = CircuitSetsPolicy()
 
-    protected fun createTrainingSession(trainingPlan: TrainingPlan) = TrainingSession(trainingPlan, trainingSetsStrategy)
+    protected fun createTrainingSession(trainingPlan: TrainingPlan) =
+        TrainingSession(trainingPlan, trainingSetsStrategy)
 
     protected fun createSingleTrainingExerciseWithManySets(): List<TrainingExercise> {
         return emptyList()
@@ -30,19 +31,19 @@ internal open class TrainingSessionTest {
 
     protected fun assertRestTimeState(
         expectedState: TrainingSessionState,
-        trainingSessionState: TrainingSessionState,
+        trainingSessionState: TrainingSessionState
     ) {
         assertTrue(trainingSessionState is TrainingSessionState.RestTimeState)
         assertEquals(
             (expectedState as TrainingSessionState.RestTimeState).restTime.timeInMillis,
-            (trainingSessionState as TrainingSessionState.RestTimeState).restTime.timeInMillis,
+            (trainingSessionState as TrainingSessionState.RestTimeState).restTime.timeInMillis
         )
         assertEquals(expectedState.exercise, trainingSessionState.exercise)
     }
 
     protected fun assertExerciseState(
         expectedState: TrainingSessionState,
-        trainingSessionState: TrainingSessionState,
+        trainingSessionState: TrainingSessionState
     ) {
         assertTrue(trainingSessionState is TrainingSessionState.ExerciseState)
         assertEquals(expectedState.exercise, trainingSessionState.exercise)

@@ -18,29 +18,31 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
-val userModule = module {
-    includes(dispatchersModule, networkModule)
+val userModule =
+    module {
+        includes(dispatchersModule, networkModule)
 
-    single {
-        get<Retrofit>().create(UserApi::class.java)
+        single {
+            get<Retrofit>().create(UserApi::class.java)
+        }
+        single {
+            RetrofitUserRemoteDataSource(
+                api = get(),
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
+                json = get()
+            )
+        } bind UserRemoteDataSource::class
+
+        single { AndroidUserPreferencesStorage(androidContext()) } bind
+            UserPreferencesStorage::class
+
+        single {
+            DefaultUserRepository(
+                tokenStorage = get(),
+                userRemoteDataSource = get(),
+                userPreferencesStorage = get()
+            )
+        } bind UserRepository::class
+
+        viewModel { UserProfileViewModel(userRepository = get()) }
     }
-    single {
-        RetrofitUserRemoteDataSource(
-            api = get(),
-            ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
-            json = get(),
-        )
-    } bind UserRemoteDataSource::class
-
-    single { AndroidUserPreferencesStorage(androidContext()) } bind UserPreferencesStorage::class
-
-    single {
-        DefaultUserRepository(
-            tokenStorage = get(),
-            userRemoteDataSource = get(),
-            userPreferencesStorage = get(),
-        )
-    } bind UserRepository::class
-
-    viewModel { UserProfileViewModel(userRepository = get()) }
-}

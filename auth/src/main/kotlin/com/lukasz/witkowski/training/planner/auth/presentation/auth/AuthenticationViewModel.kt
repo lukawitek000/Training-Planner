@@ -12,19 +12,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
 import timber.log.Timber
 
 enum class AuthMode {
     SIGN_IN,
-    SIGN_UP,
+    SIGN_UP
 }
 
 enum class PasswordStrength {
     EMPTY,
     WEAK,
     MEDIUM,
-    STRONG;
+    STRONG
+    ;
 
     companion object {
         fun compute(password: String): PasswordStrength = when {
@@ -46,7 +46,7 @@ data class AuthUiState(
     val isPasswordVisible: Boolean = false,
     val isLoading: Boolean = false,
     val failure: AuthenticationFailure? = null,
-    val isSuccess: Boolean = false,
+    val isSuccess: Boolean = false
 ) {
     val passwordStrength: PasswordStrength
         get() = PasswordStrength.compute(signUpPassword)
@@ -54,20 +54,26 @@ data class AuthUiState(
 
 sealed interface AuthIntent {
     data class ModeChanged(val mode: AuthMode) : AuthIntent
+
     data class SignInEmailChanged(val email: String) : AuthIntent
+
     data class SignInPasswordChanged(val password: String) : AuthIntent
+
     data class SignUpUsernameChanged(val username: String) : AuthIntent
+
     data class SignUpEmailChanged(val email: String) : AuthIntent
+
     data class SignUpPasswordChanged(val password: String) : AuthIntent
+
     data object TogglePasswordVisibility : AuthIntent
+
     data object DismissFailure : AuthIntent
+
     data object Submit : AuthIntent
 }
 
-class AuthenticationViewModel(
-    private val authenticationRepository: AuthenticationRepository,
-) : ViewModel() {
-
+class AuthenticationViewModel(private val authenticationRepository: AuthenticationRepository) :
+    ViewModel() {
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
@@ -133,7 +139,11 @@ class AuthenticationViewModel(
             Timber.w("Sign in form invalid for email: %s", state.signInEmail)
             _uiState.update {
                 it.copy(
-                    failure = if (!form.isValidEmail()) AuthenticationFailure.UserNotFound else AuthenticationFailure.IncorrectPassword,
+                    failure = if (!form.isValidEmail()) {
+                        AuthenticationFailure.UserNotFound
+                    } else {
+                        AuthenticationFailure.IncorrectPassword
+                    }
                 )
             }
             return
@@ -148,7 +158,11 @@ class AuthenticationViewModel(
                     _uiState.update { it.copy(isLoading = false, isSuccess = true) }
                 }
                 is AuthenticationResult.Failure -> {
-                    Timber.w("Sign in failed for email: %s, failure: %s", state.signInEmail, result.failure)
+                    Timber.w(
+                        "Sign in failed for email: %s, failure: %s",
+                        state.signInEmail,
+                        result.failure
+                    )
                     _uiState.update { it.copy(isLoading = false, failure = result.failure) }
                 }
             }
@@ -157,14 +171,27 @@ class AuthenticationViewModel(
 
     private fun signUp() {
         val state = _uiState.value
-        val form = SignUpForm(username = state.signUpUsername, email = state.signUpEmail, password = state.signUpPassword)
+        val form =
+            SignUpForm(
+                username = state.signUpUsername,
+                email = state.signUpEmail,
+                password = state.signUpPassword
+            )
         if (!form.isValid()) {
-            Timber.w("Sign up form invalid for email: %s, username: %s", state.signUpEmail, state.signUpUsername)
+            Timber.w(
+                "Sign up form invalid for email: %s, username: %s",
+                state.signUpEmail,
+                state.signUpUsername
+            )
             _uiState.update { it.copy(failure = AuthenticationFailure.UnknownFailure) }
             return
         }
 
-        Timber.i("Submitting sign up for email: %s, username: %s", state.signUpEmail, state.signUpUsername)
+        Timber.i(
+            "Submitting sign up for email: %s, username: %s",
+            state.signUpEmail,
+            state.signUpUsername
+        )
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, failure = null) }
             when (val result = authenticationRepository.signUp(form)) {
@@ -173,7 +200,11 @@ class AuthenticationViewModel(
                     _uiState.update { it.copy(isLoading = false, isSuccess = true) }
                 }
                 is AuthenticationResult.Failure -> {
-                    Timber.w("Sign up failed for email: %s, failure: %s", state.signUpEmail, result.failure)
+                    Timber.w(
+                        "Sign up failed for email: %s, failure: %s",
+                        state.signUpEmail,
+                        result.failure
+                    )
                     _uiState.update { it.copy(isLoading = false, failure = result.failure) }
                 }
             }

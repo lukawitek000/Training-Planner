@@ -40,7 +40,7 @@ data class AppSegmentedControlItem<T>(
     val value: T,
     val label: String,
     val icon: ImageVector? = null,
-    val iconContentDescription: String? = null,
+    val iconContentDescription: String? = null
 )
 
 /**
@@ -57,48 +57,53 @@ fun <T> AppSegmentedControl(
     selectedItem: T,
     onItemSelected: (T) -> Unit,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
+    enabled: Boolean = true
 ) {
     val containerShape = MaterialTheme.shapes.medium
-    val borderStroke = BorderStroke(
-        width = Dimens2.thinBorder,
-        color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.4f),
-    )
+    val borderStroke =
+        BorderStroke(
+            width = Dimens2.thinBorder,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.4f)
+        )
 
     Surface(
-        modifier = modifier
+        modifier =
+        modifier
             .fillMaxWidth()
             .border(border = borderStroke, shape = containerShape),
         shape = containerShape,
-        color = MaterialTheme.colorScheme.surfaceContainerLowest,
+        color = MaterialTheme.colorScheme.surfaceContainerLowest
     ) {
         Row(
-            modifier = Modifier
+            modifier =
+            Modifier
                 .fillMaxWidth()
                 .padding(Dimens2.spaceXs),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             items.forEach { item ->
                 val isSelected = item.value == selectedItem
 
                 val backgroundColor by animateColorAsState(
-                    targetValue = if (isSelected) {
+                    targetValue =
+                    if (isSelected) {
                         MaterialTheme.colorScheme.primaryContainer
                     } else {
                         Color.Transparent
                     },
                     animationSpec = tween(durationMillis = 200),
-                    label = "AppSegmentedControlBackgroundColor",
+                    label = "AppSegmentedControlBackgroundColor"
                 )
 
                 val textColor by animateColorAsState(
-                    targetValue = if (isSelected) {
+                    targetValue =
+                    if (isSelected) {
                         MaterialTheme.colorScheme.onPrimary
                     } else {
                         MaterialTheme.colorScheme.secondary
                     },
                     animationSpec = tween(durationMillis = 200),
-                    label = "AppSegmentedControlTextColor",
+                    label = "AppSegmentedControlTextColor"
                 )
 
                 val segmentShape = MaterialTheme.shapes.small
@@ -110,30 +115,32 @@ fun <T> AppSegmentedControl(
                     enabled = enabled,
                     shape = segmentShape,
                     color = backgroundColor,
-                    shadowElevation = segmentElevation,
+                    shadowElevation = segmentElevation
                 ) {
                     Row(
-                        modifier = Modifier
+                        modifier =
+                        Modifier
                             .fillMaxWidth()
                             .padding(vertical = Dimens2.segmentVerticalPadding),
                         horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         if (item.icon != null) {
                             Icon(
                                 imageVector = item.icon,
                                 contentDescription = item.iconContentDescription,
                                 tint = textColor,
-                                modifier = Modifier.size(Dimens2.iconSize18),
+                                modifier = Modifier.size(Dimens2.iconSize18)
                             )
                             Spacer(modifier = Modifier.width(Dimens2.spaceGapLabelInput))
                         }
                         Text(
                             text = item.label,
                             color = textColor,
-                            style = MaterialTheme.typography.titleSmall.copy(
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                            ),
+                            style =
+                            MaterialTheme.typography.titleSmall.copy(
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            )
                         )
                     }
                 }
@@ -149,25 +156,26 @@ private enum class AuthModePreview { SIGN_IN, SIGN_UP }
 private fun AppSegmentedControlPreview() {
     var selectedMode by remember { mutableStateOf(AuthModePreview.SIGN_UP) }
 
-    val items = listOf(
-        AppSegmentedControlItem(
-            value = AuthModePreview.SIGN_IN,
-            label = "Sign In",
-            icon = Icons.AutoMirrored.Filled.Login,
-        ),
-        AppSegmentedControlItem(
-            value = AuthModePreview.SIGN_UP,
-            label = "Sign Up",
-            icon = Icons.Default.PersonAdd,
-        ),
-    )
+    val items =
+        listOf(
+            AppSegmentedControlItem(
+                value = AuthModePreview.SIGN_IN,
+                label = "Sign In",
+                icon = Icons.AutoMirrored.Filled.Login
+            ),
+            AppSegmentedControlItem(
+                value = AuthModePreview.SIGN_UP,
+                label = "Sign Up",
+                icon = Icons.Default.PersonAdd
+            )
+        )
 
     TrainingPlannerTheme2 {
         Box(modifier = Modifier.padding(Dimens2.spaceMd)) {
             AppSegmentedControl(
                 items = items,
                 selectedItem = selectedMode,
-                onItemSelected = { selectedMode = it },
+                onItemSelected = { selectedMode = it }
             )
         }
     }

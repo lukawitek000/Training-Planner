@@ -5,18 +5,17 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.runner.AndroidJUnit4
 import com.lukasz.witkowski.training.planner.user.domain.model.WeightUnit
 import com.lukasz.witkowski.training.planner.user.infrastructure.local.AndroidUserPreferencesStorage
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.runner.RunWith
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class AndroidUserPreferencesStorageTest {
-
     private lateinit var context: Context
     private lateinit var userPreferencesStorage: AndroidUserPreferencesStorage
 

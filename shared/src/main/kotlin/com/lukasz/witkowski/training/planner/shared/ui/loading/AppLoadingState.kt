@@ -54,69 +54,75 @@ fun AppLoadingState(
     title: String = "Setting up your planner...",
     subtitle: String? = "Preparing your workout routines and local workspace.",
     icon: ImageVector = Icons.Default.FitnessCenter,
-    iconContentDescription: String? = null,
+    iconContentDescription: String? = null
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "AppLoadingStateInfiniteTransition")
 
     val pulseScale by infiniteTransition.animateFloat(
         initialValue = 0.88f,
         targetValue = 1.12f,
-        animationSpec = infiniteRepeatable(
+        animationSpec =
+        infiniteRepeatable(
             animation = tween(durationMillis = 1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse,
+            repeatMode = RepeatMode.Reverse
         ),
-        label = "AppLoadingStatePulseScale",
+        label = "AppLoadingStatePulseScale"
     )
 
     val pulseAlpha by infiniteTransition.animateFloat(
         initialValue = 0.15f,
         targetValue = 0.35f,
-        animationSpec = infiniteRepeatable(
+        animationSpec =
+        infiniteRepeatable(
             animation = tween(durationMillis = 1200, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse,
+            repeatMode = RepeatMode.Reverse
         ),
-        label = "AppLoadingStatePulseAlpha",
+        label = "AppLoadingStatePulseAlpha"
     )
 
     val rotation by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 360f,
-        animationSpec = infiniteRepeatable(
+        animationSpec =
+        infiniteRepeatable(
             animation = tween(durationMillis = 2200, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart,
+            repeatMode = RepeatMode.Restart
         ),
-        label = "AppLoadingStateRotation",
+        label = "AppLoadingStateRotation"
     )
 
     Column(
-        modifier = modifier
+        modifier =
+        modifier
             .fillMaxSize()
             .padding(Dimens2.margin),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center
     ) {
         Box(
             modifier = Modifier.size(Dimens2.spinnerSize),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.Center
         ) {
             // Soft Ambient Pulse Glow
             Surface(
-                modifier = Modifier
+                modifier =
+                Modifier
                     .size(Dimens2.spinnerSize)
                     .scale(pulseScale),
                 shape = CircleShape,
-                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = pulseAlpha),
+                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = pulseAlpha)
             ) {}
 
             // Spinner Ring
             CircularProgressIndicator(
-                modifier = Modifier
+                modifier =
+                Modifier
                     .size(Dimens2.spinnerSize)
                     .rotate(rotation),
                 color = MaterialTheme.colorScheme.primaryContainer,
                 trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                 strokeWidth = Dimens2.spinnerStrokeWidth,
-                strokeCap = StrokeCap.Round,
+                strokeCap = StrokeCap.Round
             )
 
             // Centered Brand Dumbbell Icon Container
@@ -124,18 +130,19 @@ fun AppLoadingState(
                 modifier = Modifier.size(Dimens2.spinnerIconContainerSize),
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                border = BorderStroke(
+                border =
+                BorderStroke(
                     width = Dimens2.thinBorder,
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f),
+                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
                 ),
-                shadowElevation = Dimens2.shadowLg,
+                shadowElevation = Dimens2.shadowLg
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = icon,
                         contentDescription = iconContentDescription,
                         tint = MaterialTheme.colorScheme.primaryContainer,
-                        modifier = Modifier.size(Dimens2.iconSize24),
+                        modifier = Modifier.size(Dimens2.iconSize24)
                     )
                 }
             }
@@ -148,7 +155,7 @@ fun AppLoadingState(
             style = MaterialTheme.typography.headlineSmall,
             color = MaterialTheme.colorScheme.onSurface,
             fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
         )
 
         if (!subtitle.isNullOrBlank()) {
@@ -157,9 +164,10 @@ fun AppLoadingState(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
-                modifier = Modifier
+                modifier =
+                Modifier
                     .widthIn(max = Dimens2.maxSubtitleWidth)
-                    .padding(top = Dimens2.spaceXs),
+                    .padding(top = Dimens2.spaceXs)
             )
         }
     }

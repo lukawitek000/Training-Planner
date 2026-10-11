@@ -14,7 +14,9 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface StatisticsDao {
     @Transaction
-    suspend fun insertAllStatistics(dbTrainingWithExercisesStatistics: DbTrainingWithExercisesStatistics) {
+    suspend fun insertAllStatistics(
+        dbTrainingWithExercisesStatistics: DbTrainingWithExercisesStatistics
+    ) {
         val dbTrainingStatistics = dbTrainingWithExercisesStatistics.trainingStatistics
         insert(dbTrainingStatistics)
         for (exercisesStatistics in dbTrainingWithExercisesStatistics.exercisesStatistics) {
@@ -36,7 +38,9 @@ interface StatisticsDao {
 
     @Transaction
     @Query("SELECT * FROM TrainingStatistics WHERE trainingPlanId=:trainingPlanId")
-    fun getTrainingStatisticsByTrainingPlanId(trainingPlanId: String): Flow<List<DbTrainingWithExercisesStatistics>>
+    fun getTrainingStatisticsByTrainingPlanId(
+        trainingPlanId: String
+    ): Flow<List<DbTrainingWithExercisesStatistics>>
 
     @Transaction
     @Query("SELECT * FROM TrainingStatistics WHERE id=:id")

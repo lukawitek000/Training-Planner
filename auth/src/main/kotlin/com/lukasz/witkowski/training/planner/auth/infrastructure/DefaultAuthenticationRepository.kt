@@ -15,9 +15,8 @@ import timber.log.Timber
 
 class DefaultAuthenticationRepository(
     private val tokenStorage: TokenStorage,
-    private val remoteDataSource: AuthenticationRemoteDataSource,
+    private val remoteDataSource: AuthenticationRemoteDataSource
 ) : AuthenticationRepository {
-
     override suspend fun signUp(form: SignUpForm): AuthenticationResult {
         Timber.i("Repository signUp called for email: %s, username: %s", form.email, form.username)
         return remoteDataSource.signUp(form).processResult()
@@ -40,11 +39,12 @@ class DefaultAuthenticationRepository(
             onFailure = { error ->
                 Timber.e(error, "LogOut failed during token clearing")
                 AuthenticationResult.Failure(AuthenticationFailure.UnknownFailure)
-            },
+            }
         )
     }
 
-    private suspend fun AppResult<AuthTokens, AuthenticationFailure>.processResult(): AuthenticationResult =
+    private suspend fun AppResult<AuthTokens, AuthenticationFailure>.processResult():
+        AuthenticationResult =
         fold(
             onSuccess = { tokens ->
                 Timber.i("Authentication remote call succeeded - saving tokens")
@@ -54,6 +54,6 @@ class DefaultAuthenticationRepository(
             onError = { failure ->
                 Timber.w("Authentication remote call returned failure: %s", failure)
                 AuthenticationResult.Failure(failure)
-            },
+            }
         )
 }

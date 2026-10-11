@@ -11,7 +11,7 @@ import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models
 @Database(
     entities = [DbTrainingStatistics::class, DbExerciseStatistics::class, DbExerciseAttemptStatistics::class],
     version = 1,
-    exportSchema = false,
+    exportSchema = false
 )
 abstract class StatisticsDatabase : RoomDatabase() {
     abstract fun statisticsDao(): StatisticsDao
@@ -20,19 +20,18 @@ abstract class StatisticsDatabase : RoomDatabase() {
         @Volatile
         private var instance: StatisticsDatabase? = null
 
-        fun getInstance(context: Context): StatisticsDatabase =
-            synchronized(this) {
-                if (instance == null) {
-                    instance =
-                        Room
-                            .databaseBuilder(
-                                context,
-                                StatisticsDatabase::class.java,
-                                "Statistics Database",
-                            ).fallbackToDestructiveMigration()
-                            .build()
-                }
-                instance!!
+        fun getInstance(context: Context): StatisticsDatabase = synchronized(this) {
+            if (instance == null) {
+                instance =
+                    Room
+                        .databaseBuilder(
+                            context,
+                            StatisticsDatabase::class.java,
+                            "Statistics Database"
+                        ).fallbackToDestructiveMigration()
+                        .build()
             }
+            instance!!
+        }
     }
 }

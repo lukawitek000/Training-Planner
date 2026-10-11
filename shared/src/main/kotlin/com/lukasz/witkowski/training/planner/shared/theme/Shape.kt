@@ -10,10 +10,11 @@ val ShapeLg = RoundedCornerShape(8.dp)
 val ShapeXl = RoundedCornerShape(12.dp)
 val ShapeFull = CircleShape
 
-val AppShapes = Shapes(
-    extraSmall = ShapeDefault,
-    small = ShapeLg,
-    medium = ShapeXl,
-    large = RoundedCornerShape(16.dp),
-    extraLarge = RoundedCornerShape(28.dp),
-)
+val AppShapes =
+    Shapes(
+        extraSmall = ShapeDefault,
+        small = ShapeLg,
+        medium = ShapeXl,
+        large = RoundedCornerShape(16.dp),
+        extraLarge = RoundedCornerShape(28.dp)
+    )

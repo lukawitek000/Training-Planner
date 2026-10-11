@@ -7,7 +7,7 @@ data class Exercise(
     val name: String,
     val description: String,
     val categories: List<ExerciseCategoryLegacy>,
-    val imageId: ImageId? = null,
+    val imageId: ImageId? = null
 ) {
     init {
         require(categories.isNotEmpty()) {
@@ -21,7 +21,7 @@ data class Exercise2(
     val name: String,
     val description: String,
     val categories: Set<ExerciseCategory>,
-    val imageId: ImageId? = null,
+    val imageId: ImageId? = null
 ) {
     init {
         require(categories.isNotEmpty()) {

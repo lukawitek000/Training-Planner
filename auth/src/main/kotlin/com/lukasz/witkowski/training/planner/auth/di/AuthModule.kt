@@ -24,42 +24,43 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
-val authModule = module {
-    includes(dispatchersModule, networkModule)
+val authModule =
+    module {
+        includes(dispatchersModule, networkModule)
 
-    single {
-        get<Retrofit>(NetworkQualifiers.UNAUTHENTICATED).create(AuthenticationApi::class.java)
+        single {
+            get<Retrofit>(NetworkQualifiers.UNAUTHENTICATED).create(AuthenticationApi::class.java)
+        }
+
+        single {
+            RetrofitAuthenticationRemoteDataSource(
+                api = get(),
+                timeProvider = SystemTimeProvider(),
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
+            )
+        } bind AuthenticationRemoteDataSource::class
+
+        single {
+            RetrofitTokenRefreshRemoteDataSource(
+                api = get(),
+                timeProvider = SystemTimeProvider(),
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
+            )
+        } bind TokenRefreshRemoteDataSource::class
+
+        single { AndroidSecureTokenStorage(androidContext()) } bind SecureTokenStorage::class
+        single { DefaultTokenStorage(secureTokenStorage = get()) } bind TokenStorage::class
+
+        single {
+            DefaultAuthenticationRepository(
+                tokenStorage = get(),
+                remoteDataSource = get()
+            )
+        } bind AuthenticationRepository::class
+
+        viewModel {
+            AuthenticationViewModel(
+                authenticationRepository = get()
+            )
+        }
     }
-
-    single {
-        RetrofitAuthenticationRemoteDataSource(
-            api = get(),
-            timeProvider = SystemTimeProvider(),
-            ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
-        )
-    } bind AuthenticationRemoteDataSource::class
-
-    single {
-        RetrofitTokenRefreshRemoteDataSource(
-            api = get(),
-            timeProvider = SystemTimeProvider(),
-            ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
-        )
-    } bind TokenRefreshRemoteDataSource::class
-
-    single { AndroidSecureTokenStorage(androidContext()) } bind SecureTokenStorage::class
-    single { DefaultTokenStorage(secureTokenStorage = get()) } bind TokenStorage::class
-
-    single {
-        DefaultAuthenticationRepository(
-            tokenStorage = get(),
-            remoteDataSource = get(),
-        )
-    } bind AuthenticationRepository::class
-
-    viewModel {
-        AuthenticationViewModel(
-            authenticationRepository = get(),
-        )
-    }
-}

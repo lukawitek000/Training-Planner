@@ -24,12 +24,12 @@ fun AppCardDivider(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     thickness: Dp = Dimens2.thinBorder,
-    horizontalMargin: Dp = Dimens2.spaceMd,
+    horizontalMargin: Dp = Dimens2.spaceMd
 ) {
     HorizontalDivider(
         modifier = modifier.padding(horizontal = horizontalMargin),
         thickness = thickness,
-        color = color,
+        color = color
     )
 }
 

@@ -10,7 +10,7 @@ data class TrainingPlan(
     val exercises: List<TrainingExercise>,
     val restTime: Duration,
     val lastModification: Instant,
-    val lastSession: Instant?,
+    val lastSession: Instant?
 ) {
     val categories =
         exercises

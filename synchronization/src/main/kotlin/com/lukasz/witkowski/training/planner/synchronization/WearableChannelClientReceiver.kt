@@ -1,21 +1,20 @@
 package com.lukasz.witkowski.training.planner.synchronization
 
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import java.io.InputStream
 import java.io.OutputStream
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class WearableChannelClientReceiver(
     private val inputStream: InputStream,
-    private val outputStream: OutputStream,
+    private val outputStream: OutputStream
 ) {
-    fun <T> receiveData(type: Class<T>): Flow<T> =
-        flow {
-            val numberOfItems = inputStream.readByteSuspending()
-            for (i in 0 until numberOfItems) {
-                emit(receiveSingleTrainingPlan(type))
-            }
+    fun <T> receiveData(type: Class<T>): Flow<T> = flow {
+        val numberOfItems = inputStream.readByteSuspending()
+        for (i in 0 until numberOfItems) {
+            emit(receiveSingleTrainingPlan(type))
         }
+    }
 
     suspend fun sendReceivingConfirmation() {
         outputStream.writeByteSuspending(ACKNOWLEDGE_FLAG)

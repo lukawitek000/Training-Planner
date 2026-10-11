@@ -16,15 +16,19 @@ internal class Encryptor {
         val keystore = KeyStore.getInstance(ANDROID_KEY_STORE).apply { load(null) }
         val existingKey = keystore.getKey(KEY_ALIAS, null) as? SecretKey
         if (existingKey != null) return existingKey
-        val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE)
-        val spec = KeyGenParameterSpec.Builder(
-            KEY_ALIAS,
-            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+        val keyGenerator = KeyGenerator.getInstance(
+            KeyProperties.KEY_ALGORITHM_AES,
+            ANDROID_KEY_STORE
         )
-            .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
-            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
-            .setKeySize(256) // 256-bit AES key
-            .build()
+        val spec =
+            KeyGenParameterSpec
+                .Builder(
+                    KEY_ALIAS,
+                    KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+                ).setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
+                .setKeySize(256) // 256-bit AES key
+                .build()
         keyGenerator.init(spec)
         return keyGenerator.generateKey()
     }
@@ -61,8 +65,10 @@ internal class Encryptor {
         const val KEY_ALIAS = "TrainingPlannerKeyAlias"
         const val ANDROID_KEY_STORE = "AndroidKeyStore"
         const val TRANSFORMATION = "AES/GCM/NoPadding"
+
         // Initialization Vector (IV) size in bytes for GCM mode.
         private const val IV_SIZE = 12
+
         // Authentication Tag size in bits for GCM mode.
         private const val TAG_SIZE = 128
     }
