@@ -10,9 +10,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class DbStatisticsRepository(
-    private val statisticsDao: StatisticsDao,
-) : StatisticsRepository {
+class DbStatisticsRepository(private val statisticsDao: StatisticsDao) : StatisticsRepository {
     override suspend fun save(trainingStatistics: TrainingStatistics) {
         val dbTrainingStatistics = trainingStatistics.toDbTrainingStatistics()
         statisticsDao.insertAllStatistics(dbTrainingStatistics)
@@ -22,14 +20,17 @@ class DbStatisticsRepository(
 //        TODO("Not yet implemented")
     }
 
-    override fun getByTrainingPlanId(trainingPlanId: TrainingPlanId): Flow<List<TrainingStatistics>> =
-        statisticsDao
-            .getTrainingStatisticsByTrainingPlanId(trainingPlanId.toString())
-            .map { statisticsList ->
-                statisticsList.map { it.toTrainingStatistics() }
-            }
+    override fun getByTrainingPlanId(
+        trainingPlanId: TrainingPlanId
+    ): Flow<List<TrainingStatistics>> = statisticsDao
+        .getTrainingStatisticsByTrainingPlanId(trainingPlanId.toString())
+        .map { statisticsList ->
+            statisticsList.map { it.toTrainingStatistics() }
+        }
 
-    override fun getByTrainingStatisticsId(trainingStatisticsId: TrainingStatisticsId): Flow<TrainingStatistics> =
+    override fun getByTrainingStatisticsId(
+        trainingStatisticsId: TrainingStatisticsId
+    ): Flow<TrainingStatistics> =
         statisticsDao.getTrainingStatisticsById(trainingStatisticsId.toString()).map {
             it.toTrainingStatistics()
         }

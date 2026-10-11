@@ -14,7 +14,7 @@ internal object NotificationChannelFactory {
             NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
                 name,
-                NotificationManager.IMPORTANCE_DEFAULT,
+                NotificationManager.IMPORTANCE_DEFAULT
             )
         val notificationManagerCompat = NotificationManagerCompat.from(context)
         notificationManagerCompat.createNotificationChannel(channel)

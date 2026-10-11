@@ -2,10 +2,10 @@ package com.lukasz.witkowski.training.planner.image
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import java.io.ByteArrayOutputStream
-import java.util.UUID
 import com.lukasz.witkowski.training.planner.image.domain.Image as DomainImage
 import com.lukasz.witkowski.training.planner.image.domain.ImageReference as DomainImageReference
+import java.io.ByteArrayOutputStream
+import java.util.UUID
 
 private const val QUALITY_100 = 100
 
@@ -23,7 +23,8 @@ fun ImageByteArray.toBitmapImage(): ImageBitmap {
     return ImageBitmap(bitmap)
 }
 
-fun ImageByteArray.toImageConfiguration(ownerId: UUID): ImageConfiguration = ImageConfiguration(data, ownerId)
+fun ImageByteArray.toImageConfiguration(ownerId: UUID): ImageConfiguration =
+    ImageConfiguration(data, ownerId)
 
 internal fun DomainImage.toImage(): Image = Image(imageId, data)
 

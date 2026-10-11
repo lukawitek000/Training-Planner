@@ -22,23 +22,22 @@ import kotlinx.coroutines.withContext
 internal class DbTrainingPlanRepository(
     private val trainingPlanDao: TrainingPlanDao,
     private val timeProvider: TimeProvider,
-    private val dispatcher: CoroutineDispatcher,
+    private val dispatcher: CoroutineDispatcher
 ) : TrainingPlanRepository {
     override suspend fun save(
         trainingPlanConfiguration: TrainingPlanConfiguration,
-        id: TrainingPlanId,
-    ): Result<TrainingPlanId> =
-        withContext(dispatcher) {
-            runCatchingCancellable {
-                val trainingPlanWithExercise =
-                    trainingPlanConfiguration.toDbTrainingPlanWithExercises(
-                        id = id,
-                        currentInstant = timeProvider.currentInstant(),
-                    )
-                trainingPlanDao.insertTrainingWithTrainingExercises(trainingPlanWithExercise)
-                id
-            }
+        id: TrainingPlanId
+    ): Result<TrainingPlanId> = withContext(dispatcher) {
+        runCatchingCancellable {
+            val trainingPlanWithExercise =
+                trainingPlanConfiguration.toDbTrainingPlanWithExercises(
+                    id = id,
+                    currentInstant = timeProvider.currentInstant()
+                )
+            trainingPlanDao.insertTrainingWithTrainingExercises(trainingPlanWithExercise)
+            id
         }
+    }
 
     override fun getAll(trainingQuery: TrainingQuery): Flow<List<TrainingPlanOverview>> {
         val dbTrainingOverviews =
@@ -47,7 +46,7 @@ internal class DbTrainingPlanRepository(
             } else {
                 trainingPlanDao.getAllTrainingOverviews(
                     query = trainingQuery.searchQuery,
-                    categoriesNames = trainingQuery.selectedCategories.map { it.name },
+                    categoriesNames = trainingQuery.selectedCategories.map { it.name }
                 )
             }
         return dbTrainingOverviews.map { list ->
@@ -75,35 +74,34 @@ internal class DbTrainingPlanRepository(
 
     override suspend fun update(
         trainingPlanConfiguration: TrainingPlanConfiguration,
-        id: TrainingPlanId,
-    ): Result<TrainingPlanId> =
-        withContext(dispatcher) {
-            runCatchingCancellable {
-                val existing =
-                    trainingPlanDao.getTrainingPlanById(id.toString())
-                        ?: throw NoSuchElementException("Training plan with id $id not found")
-                val currentInstant = timeProvider.currentInstant()
-                val updatedDbPlan =
-                    DbTrainingPlan(
-                        id = id.toString(),
-                        name = trainingPlanConfiguration.title,
-                        description = trainingPlanConfiguration.description,
-                        restTime = trainingPlanConfiguration.restTime.inWholeSeconds,
-                        lastModified = currentInstant,
-                        lastUsed = existing.trainingPlan.lastUsed,
-                    )
-                val dbPlanWithExercises =
-                    DbTrainingPlanWithExercises(
-                        trainingPlan = updatedDbPlan,
-                        exercises =
-                            trainingPlanConfiguration.exercises.mapIndexed { index, exercise ->
-                                exercise.toDbTrainingExerciseWithCategories(id, index)
-                            },
-                    )
-                trainingPlanDao.updateTrainingWithTrainingExercises(dbPlanWithExercises)
-                id
-            }
+        id: TrainingPlanId
+    ): Result<TrainingPlanId> = withContext(dispatcher) {
+        runCatchingCancellable {
+            val existing =
+                trainingPlanDao.getTrainingPlanById(id.toString())
+                    ?: throw NoSuchElementException("Training plan with id $id not found")
+            val currentInstant = timeProvider.currentInstant()
+            val updatedDbPlan =
+                DbTrainingPlan(
+                    id = id.toString(),
+                    name = trainingPlanConfiguration.title,
+                    description = trainingPlanConfiguration.description,
+                    restTime = trainingPlanConfiguration.restTime.inWholeSeconds,
+                    lastModified = currentInstant,
+                    lastUsed = existing.trainingPlan.lastUsed
+                )
+            val dbPlanWithExercises =
+                DbTrainingPlanWithExercises(
+                    trainingPlan = updatedDbPlan,
+                    exercises =
+                    trainingPlanConfiguration.exercises.mapIndexed { index, exercise ->
+                        exercise.toDbTrainingExerciseWithCategories(id, index)
+                    }
+                )
+            trainingPlanDao.updateTrainingWithTrainingExercises(dbPlanWithExercises)
+            id
         }
+    }
 
     override suspend fun useTrainingPlan(trainingPlanId: TrainingPlanId): Result<TrainingPlan> =
         withContext(dispatcher) {
@@ -111,7 +109,7 @@ internal class DbTrainingPlanRepository(
                 trainingPlanDao
                     .useTrainingPlanById(
                         trainingPlanId.toString(),
-                        timeProvider.currentInstant(),
+                        timeProvider.currentInstant()
                     ).toTrainingPlan()
             }
         }

@@ -26,15 +26,24 @@ object ExercisesTable : Table("exercises") {
     val id = varchar("id", 36)
     val name = varchar("name", 255)
     val description = text("description").default("")
-    val ownerId = varchar("owner_id", 36).references(UsersTable.id, onDelete = ReferenceOption.SET_NULL).nullable()
+    val ownerId = varchar(
+        "owner_id",
+        36
+    ).references(UsersTable.id, onDelete = ReferenceOption.SET_NULL).nullable()
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
 
     override val primaryKey = PrimaryKey(id)
 }
 
 object ExerciseCategoriesTable : Table("exercise_categories") {
-    val exerciseId = varchar("exercise_id", 36).references(ExercisesTable.id, onDelete = ReferenceOption.CASCADE)
-    val categoryId = varchar("category_id", 36).references(CategoriesTable.id, onDelete = ReferenceOption.CASCADE)
+    val exerciseId = varchar(
+        "exercise_id",
+        36
+    ).references(ExercisesTable.id, onDelete = ReferenceOption.CASCADE)
+    val categoryId = varchar(
+        "category_id",
+        36
+    ).references(CategoriesTable.id, onDelete = ReferenceOption.CASCADE)
 
     override val primaryKey = PrimaryKey(exerciseId, categoryId)
 }
@@ -44,7 +53,10 @@ object TrainingPlansTable : Table("training_plans") {
     val title = varchar("title", 255)
     val description = text("description").default("")
     val restTimeInMillis = long("rest_time_in_millis").default(0)
-    val ownerId = varchar("owner_id", 36).references(UsersTable.id, onDelete = ReferenceOption.SET_NULL).nullable()
+    val ownerId = varchar(
+        "owner_id",
+        36
+    ).references(UsersTable.id, onDelete = ReferenceOption.SET_NULL).nullable()
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
 
     override val primaryKey = PrimaryKey(id)
@@ -52,8 +64,14 @@ object TrainingPlansTable : Table("training_plans") {
 
 object TrainingExercisesTable : Table("training_exercises") {
     val id = varchar("id", 36)
-    val trainingPlanId = varchar("training_plan_id", 36).references(TrainingPlansTable.id, onDelete = ReferenceOption.CASCADE)
-    val exerciseId = varchar("exercise_id", 36).references(ExercisesTable.id, onDelete = ReferenceOption.CASCADE)
+    val trainingPlanId = varchar(
+        "training_plan_id",
+        36
+    ).references(TrainingPlansTable.id, onDelete = ReferenceOption.CASCADE)
+    val exerciseId = varchar(
+        "exercise_id",
+        36
+    ).references(ExercisesTable.id, onDelete = ReferenceOption.CASCADE)
     val repetitions = integer("repetitions").default(1)
     val sets = integer("sets").default(1)
     val restTimeInMillis = long("rest_time_in_millis").default(0)

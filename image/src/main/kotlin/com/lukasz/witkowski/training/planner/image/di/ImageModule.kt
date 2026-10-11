@@ -25,7 +25,7 @@ val imageModule =
             InternalStorageImageRepository(
                 context = androidContext(),
                 directoryName = directoryName,
-                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
             )
         } bind ImageRepository::class
 
@@ -34,7 +34,7 @@ val imageModule =
         single {
             DbImageReferenceRepository(
                 imageReferenceDao = get(),
-                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
             )
         } bind ImageReferenceRepository::class
 

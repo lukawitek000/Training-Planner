@@ -55,10 +55,9 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 //    return listOf(exercise1, exercise2, exercise3, exercise4)
 // }
 
-fun createDummyExercise() =
-    Exercise(
-        ExerciseId.create(),
-        "",
-        "",
-        categories = listOf(ExerciseCategoryLegacy.LEGS),
-    )
+fun createDummyExercise() = Exercise(
+    ExerciseId.create(),
+    "",
+    "",
+    categories = listOf(ExerciseCategoryLegacy.LEGS)
+)

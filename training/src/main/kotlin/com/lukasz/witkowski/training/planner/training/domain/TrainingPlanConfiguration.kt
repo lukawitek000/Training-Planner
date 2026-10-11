@@ -6,7 +6,7 @@ data class TrainingPlanConfiguration(
     val title: String,
     val description: String,
     val exercises: List<TrainingExercise>,
-    val restTime: Duration,
+    val restTime: Duration
 ) {
     val categories =
         exercises.flatMap {

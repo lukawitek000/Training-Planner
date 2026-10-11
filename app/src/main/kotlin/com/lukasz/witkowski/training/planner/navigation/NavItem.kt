@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.navigation
 
 import android.content.Context
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
@@ -11,6 +12,7 @@ import androidx.navigation3.runtime.NavKey
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import com.lukasz.witkowski.training.planner.auth.R as AuthR
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -39,7 +41,6 @@ data class ExerciseDetails(
     override val exerciseId: ExerciseId,
 ) : TrainingPlannerNavKey, ExerciseIdRoute
 
-
 @Serializable
 data class EditExercise(
     @Serializable(with = ExerciseIdSerializer::class)
@@ -51,7 +52,6 @@ data class DeleteExercise(
     @Serializable(with = ExerciseIdSerializer::class)
     override val exerciseId: ExerciseId,
 ) : TrainingPlannerNavKey, ExerciseIdRoute
-
 
 @Serializable
 data object TrainingPlansList : TrainingPlannerNavKey
@@ -67,7 +67,6 @@ data class EditTrainingPlan(
 
 @Serializable
 data object AddTrainingExercise : TrainingPlannerNavKey
-
 
 @Serializable
 data class TrainingExerciseConfiguration(
@@ -93,6 +92,11 @@ data class TrainingSession(
     val trainingPlanId: TrainingPlanId
 ) : TrainingPlannerNavKey {}
 
+@Serializable
+data object UserProfile : TrainingPlannerNavKey
+
+@Serializable
+data object Authentication : TrainingPlannerNavKey
 
 object TrainingPlanIdSerializer : KSerializer<TrainingPlanId> {
     override val descriptor: SerialDescriptor =
@@ -133,6 +137,7 @@ sealed interface TopBarAction {
     data class DeleteExercise(val id: ExerciseId) : TopBarAction
     data class EditTrainingPlan(val id: TrainingPlanId) : TopBarAction
     data class DeleteTrainingPlan(val id: TrainingPlanId) : TopBarAction
+    data object UserProfile : TopBarAction
 }
 
 sealed interface TopBarMenuItem {
@@ -199,7 +204,13 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
         is TrainingPlansList -> UiConfig(
             topBarConfig = TopBarConfig(
                 title = context.getString(R.string.app_name),
-                hasBackArrow = false
+                hasBackArrow = false,
+                menuItems = listOf(
+                    TopBarMenuItem.IconItem(
+                        icon = Icons.Default.AccountCircle,
+                        action = TopBarAction.UserProfile,
+                    ),
+                ),
             ),
             bottomBarConfig = createBottomBarConfig(context, BottomNavigationTab.TRAINING_PLANS),
             fabConfig = FabConfig(
@@ -212,13 +223,33 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
         is ExercisesList -> UiConfig(
             topBarConfig = TopBarConfig(
                 title = context.getString(R.string.exercises),
-                hasBackArrow = false
+                hasBackArrow = false,
+                menuItems = listOf(
+                    TopBarMenuItem.IconItem(
+                        icon = Icons.Default.AccountCircle,
+                        action = TopBarAction.UserProfile,
+                    ),
+                ),
             ),
             bottomBarConfig = createBottomBarConfig(context, BottomNavigationTab.EXERCISES),
             fabConfig = FabConfig(
                 icon = Icons.Default.Add,
                 contentDescription = context.getString(R.string.create_exercise),
                 onClick = { exerciseCreate() }
+            )
+        )
+
+        is UserProfile -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(R.string.profile),
+                hasBackArrow = true,
+            )
+        )
+
+        is Authentication -> UiConfig(
+            topBarConfig = TopBarConfig(
+                title = context.getString(AuthR.string.auth_title),
+                hasBackArrow = true,
             )
         )
 
@@ -255,7 +286,6 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
                 )
             )
         )
-
 
         is CreateTrainingPlan -> UiConfig(
             topBarConfig = TopBarConfig(
@@ -329,5 +359,3 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
             topBarConfig = TopBarConfig(title = "TODO", hasBackArrow = false)
         )
     }
-
-

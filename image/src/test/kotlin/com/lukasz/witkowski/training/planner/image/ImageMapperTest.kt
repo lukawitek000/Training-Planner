@@ -2,10 +2,10 @@ package com.lukasz.witkowski.training.planner.image
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import kotlin.test.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import kotlin.test.assertTrue
 
 @RunWith(RobolectricTestRunner::class)
 class ImageMapperTest {

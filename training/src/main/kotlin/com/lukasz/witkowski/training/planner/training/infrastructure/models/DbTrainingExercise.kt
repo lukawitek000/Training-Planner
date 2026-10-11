@@ -12,12 +12,12 @@ import androidx.room3.PrimaryKey
             entity = DbTrainingPlan::class,
             parentColumns = ["id"],
             childColumns = ["trainingId"],
-            onDelete = ForeignKey.CASCADE,
-        ),
+            onDelete = ForeignKey.CASCADE
+        )
     ],
     indices = [
-        Index("trainingId"),
-    ],
+        Index("trainingId")
+    ]
 )
 data class DbTrainingExercise(
     @PrimaryKey
@@ -31,5 +31,5 @@ data class DbTrainingExercise(
     val repetitions: Int,
     val sets: Int,
     val restTime: Long,
-    val weightInKg: Int?,
+    val weightInKg: Int?
 )

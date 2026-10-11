@@ -1,11 +1,9 @@
 package com.lukasz.witkowski.training.planner.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
@@ -16,11 +14,13 @@ import androidx.navigation3.runtime.result.ResultEffect
 import androidx.navigation3.runtime.result.rememberResultEventBusNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
+import com.lukasz.witkowski.training.planner.auth.presentation.auth.AuthenticationScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsScreen
 import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
 import com.lukasz.witkowski.training.planner.training.delete.DeleteTrainingPlanScreen
 import com.lukasz.witkowski.training.planner.training.details.TrainingPlanDetailsScreen
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -32,6 +32,7 @@ import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorS
 import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorViewModel
 import com.lukasz.witkowski.training.planner.training.list.TrainingsScreen
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionScreen
+import com.lukasz.witkowski.training.planner.user.presentation.UserProfileScreen
 import kotlinx.serialization.serializer
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -61,6 +62,25 @@ fun Navigation(
                     viewModel = koinViewModel(),
                     onTrainingPlanClicked = { navigator.trainingPlanDetails(it) },
                 )
+            }
+
+            entry<UserProfile> {
+                TrainingPlannerTheme2 {
+                    UserProfileScreen(
+                        viewModel = koinViewModel(),
+                        onSignInClick = { navigator.authentication() },
+                    )
+                }
+            }
+
+            entry<Authentication> {
+                TrainingPlannerTheme2 {
+                    AuthenticationScreen(
+                        viewModel = koinViewModel(),
+                        onContinueAsGuestClick = { navigator.goBack() },
+                        onAuthSuccess = { navigator.goBack() },
+                    )
+                }
             }
 
             entry<CreateTrainingPlan> {
@@ -209,4 +229,3 @@ fun rememberTrainingPlannerNavBackStack(
         NavBackStack(*elements)
     }
 }
-

@@ -1,9 +1,9 @@
 package com.lukasz.witkowski.training.planner.backend.auth
 
-import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
+import org.junit.Test
 
 class PasswordHasherTest {
     @Test

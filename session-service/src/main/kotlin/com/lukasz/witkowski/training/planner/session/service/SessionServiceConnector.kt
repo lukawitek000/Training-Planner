@@ -12,10 +12,7 @@ class SessionServiceConnector {
 
     private val connection =
         object : ServiceConnection {
-            override fun onServiceConnected(
-                name: ComponentName,
-                service: IBinder,
-            ) {
+            override fun onServiceConnected(name: ComponentName, service: IBinder) {
                 val binder = service as SessionService.LocalBinder
                 sessionService = binder.getService()
                 serviceConnected = true
@@ -30,7 +27,7 @@ class SessionServiceConnector {
         val intent =
             Intent(
                 context.applicationContext,
-                SessionService::class.java,
+                SessionService::class.java
             )
         context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }

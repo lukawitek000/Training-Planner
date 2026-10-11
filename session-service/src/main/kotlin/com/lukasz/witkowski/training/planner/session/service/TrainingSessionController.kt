@@ -10,7 +10,7 @@ import org.koin.core.component.inject
 
 internal class TrainingSessionController(
     private val context: Context,
-    private val onSessionFinished: () -> Unit,
+    private val onSessionFinished: () -> Unit
 ) : SessionFinishedListener,
     KoinComponent {
     private val trainingSessionService: TrainingSessionService by inject()

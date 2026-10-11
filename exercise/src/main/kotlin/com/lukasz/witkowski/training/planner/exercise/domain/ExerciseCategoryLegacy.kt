@@ -10,7 +10,7 @@ enum class ExerciseCategoryLegacy {
     BACK,
     ABS,
     STRETCHING,
-    CHEST,
+    CHEST
     ;
 
     fun isNone() = this == NONE

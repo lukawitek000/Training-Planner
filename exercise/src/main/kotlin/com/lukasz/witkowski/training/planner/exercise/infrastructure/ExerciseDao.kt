@@ -25,7 +25,7 @@ internal interface ExerciseDao {
         WHERE LOWER(name) LIKE LOWER('%' || :query || '%')
            OR LOWER(description) LIKE LOWER('%' || :query || '%')
         ORDER BY name ASC
-    """,
+    """
     )
     fun getExercisesWithCategories(query: String): PagingSource<Int, DbExerciseWithCategories>
 
@@ -43,11 +43,11 @@ internal interface ExerciseDao {
               )
             GROUP BY e.exerciseId
             ORDER BY COUNT(*) DESC, e.name ASC
-        """,
+        """
     )
     fun getExercisesWithCategories(
         query: String,
-        categoriesNames: List<String>,
+        categoriesNames: List<String>
     ): PagingSource<Int, DbExerciseWithCategories>
 
     @Transaction
@@ -83,7 +83,9 @@ internal interface ExerciseDao {
     suspend fun insert(category: DbExerciseCategory)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertExerciseCategoryCrossRefs(crossRefs: List<ExerciseCategoryCrossRef>): List<Long>
+    suspend fun insertExerciseCategoryCrossRefs(
+        crossRefs: List<ExerciseCategoryCrossRef>
+    ): List<Long>
 
     @Query("DELETE FROM Exercise WHERE :id == exerciseId")
     suspend fun deleteExerciseById(id: String): Int
@@ -92,7 +94,7 @@ internal interface ExerciseDao {
         """
             DELETE FROM ExerciseCategoryCrossRef
             WHERE exerciseId = :exerciseId
-        """,
+        """
     )
     suspend fun deleteCategoryReferences(exerciseId: String)
 

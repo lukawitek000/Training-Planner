@@ -20,7 +20,7 @@ internal interface ImageReferenceRepository {
      */
     suspend fun update(
         newImageReference: ImageReference,
-        oldImageReference: ImageReference,
+        oldImageReference: ImageReference
     ): ImageId?
 
     suspend fun readByOwnerId(ownerId: UUID): ImageReference?
@@ -30,18 +30,12 @@ internal interface ImageReferenceRepository {
     /**
      * Check if the [ownersIds] are all owners of the image identified by [imageId]
      */
-    suspend fun areAllImageOwners(
-        imageId: ImageId,
-        ownersIds: List<UUID>,
-    ): Boolean
+    suspend fun areAllImageOwners(imageId: ImageId, ownersIds: List<UUID>): Boolean
 
     /**
      * Check if the image with the provided [checksum] is already stored.
      */
     suspend fun isImageAlreadySaved(checksum: Long): Boolean
 
-    suspend fun addOwnerToImage(
-        checksum: Long,
-        ownerId: UUID,
-    ): ImageReference
+    suspend fun addOwnerToImage(checksum: Long, ownerId: UUID): ImageReference
 }

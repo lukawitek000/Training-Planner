@@ -9,7 +9,7 @@ data class TrainingStatistics(
     val trainingPlanId: TrainingPlanId,
     val totalTime: Time,
     val date: Date,
-    val exercisesStatistics: List<ExerciseStatistics>,
+    val exercisesStatistics: List<ExerciseStatistics>
 ) {
     val effectiveTime: Time
         get() {

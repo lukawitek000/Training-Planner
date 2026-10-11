@@ -12,22 +12,22 @@ import androidx.room3.Index
             entity = DbTrainingPlan::class,
             parentColumns = ["id"],
             childColumns = ["trainingPlanId"],
-            onDelete = ForeignKey.CASCADE,
+            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = DbTrainingExercise::class,
             parentColumns = ["id"],
             childColumns = ["trainingExerciseId"],
-            onDelete = ForeignKey.CASCADE,
-        ),
+            onDelete = ForeignKey.CASCADE
+        )
     ],
     indices = [
         Index("trainingPlanId"),
-        Index("trainingExerciseId"),
-    ],
+        Index("trainingExerciseId")
+    ]
 )
 data class DbExerciseCategory(
     val trainingExerciseId: String,
     val trainingPlanId: String,
-    val name: String,
+    val name: String
 )

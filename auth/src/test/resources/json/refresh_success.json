@@ -1,0 +1,5 @@
+{
+  "accessToken": "new_access_token_789",
+  "refreshToken": "new_refresh_token_999",
+  "expiresInMs": 3600000
+}

@@ -12,5 +12,5 @@ data class DbTrainingPlan(
     val description: String,
     val restTime: Long,
     val lastModified: Instant,
-    val lastUsed: Instant?,
+    val lastUsed: Instant?
 )

@@ -5,9 +5,5 @@ import android.app.PendingIntent
 import android.content.Context
 
 interface NotificationFactory {
-    fun create(
-        context: Context,
-        channelId: String,
-        pendingIntent: PendingIntent,
-    ): Notification
+    fun create(context: Context, channelId: String, pendingIntent: PendingIntent): Notification
 }

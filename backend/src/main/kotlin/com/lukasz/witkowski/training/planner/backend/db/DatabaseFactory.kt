@@ -13,7 +13,7 @@ import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 object DatabaseFactory {
     fun init(
         jdbcUrl: String = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1",
-        driverClassName: String = "org.h2.Driver",
+        driverClassName: String = "org.h2.Driver"
     ) {
         val database = Database.connect(createHikariDataSource(jdbcUrl, driverClassName))
         transaction(database) {
@@ -23,15 +23,12 @@ object DatabaseFactory {
                 ExercisesTable,
                 ExerciseCategoriesTable,
                 TrainingPlansTable,
-                TrainingExercisesTable,
+                TrainingExercisesTable
             )
         }
     }
 
-    private fun createHikariDataSource(
-        jdbcUrl: String,
-        driverClassName: String,
-    ): HikariDataSource {
+    private fun createHikariDataSource(jdbcUrl: String, driverClassName: String): HikariDataSource {
         val config =
             HikariConfig().apply {
                 this.driverClassName = driverClassName

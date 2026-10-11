@@ -11,8 +11,8 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.testing.ApplicationTestBuilder
-import kotlinx.serialization.json.Json
 import java.util.UUID
+import kotlinx.serialization.json.Json
 
 val testJson =
     Json {
@@ -20,31 +20,30 @@ val testJson =
         encodeDefaults = true
     }
 
-fun ApplicationTestBuilder.createJsonClient(): HttpClient =
-    createClient {
-        install(ContentNegotiation) {
-            json(testJson)
-        }
+fun ApplicationTestBuilder.createJsonClient(): HttpClient = createClient {
+    install(ContentNegotiation) {
+        json(testJson)
     }
+}
 
 data class TestUserContext(
     val client: HttpClient,
     val token: String,
     val userId: String,
     val email: String,
-    val username: String,
+    val username: String
 )
 
 suspend fun ApplicationTestBuilder.createAuthenticatedUser(
     email: String = "user_${UUID.randomUUID().toString().take(8)}@example.com",
-    username: String = "user_${UUID.randomUUID().toString().take(8)}",
+    username: String = "user_${UUID.randomUUID().toString().take(8)}"
 ): TestUserContext {
     val client = createJsonClient()
     val registerRequest =
         RegisterRequestDto(
             email = email,
             username = username,
-            password = "Password123!",
+            password = "Password123!"
         )
     val response =
         client.post("/api/v1/auth/register") {
@@ -58,6 +57,6 @@ suspend fun ApplicationTestBuilder.createAuthenticatedUser(
         token = authResult.tokens.accessToken,
         userId = authResult.user.id,
         email = authResult.user.email,
-        username = authResult.user.username,
+        username = authResult.user.username
     )
 }

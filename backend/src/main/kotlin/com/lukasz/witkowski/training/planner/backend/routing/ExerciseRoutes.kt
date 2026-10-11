@@ -38,7 +38,7 @@ fun Route.exerciseRoutes(exerciseService: ExerciseService) {
                         categoryId = categoryId,
                         ownerId = principal?.payload?.subject,
                         page = page,
-                        limit = limit,
+                        limit = limit
                     )
                 call.respond(HttpStatusCode.OK, result)
             }
@@ -46,7 +46,10 @@ fun Route.exerciseRoutes(exerciseService: ExerciseService) {
             get("/{id}") {
                 val id =
                     call.parameters["id"]
-                        ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing exercise id.")
+                        ?: return@get call.respond(
+                            HttpStatusCode.BadRequest,
+                            "Missing exercise id."
+                        )
                 val principal = call.principal<JWTPrincipal>()
                 val exercise =
                     exerciseService.getExerciseById(id, principal?.payload?.subject)
@@ -69,7 +72,10 @@ fun Route.exerciseRoutes(exerciseService: ExerciseService) {
             put("/{id}") {
                 val id =
                     call.parameters["id"]
-                        ?: return@put call.respond(HttpStatusCode.BadRequest, "Missing exercise id.")
+                        ?: return@put call.respond(
+                            HttpStatusCode.BadRequest,
+                            "Missing exercise id."
+                        )
                 val principal =
                     call.principal<JWTPrincipal>()
                         ?: return@put call.respond(HttpStatusCode.Unauthorized)
@@ -84,7 +90,10 @@ fun Route.exerciseRoutes(exerciseService: ExerciseService) {
             delete("/{id}") {
                 val id =
                     call.parameters["id"]
-                        ?: return@delete call.respond(HttpStatusCode.BadRequest, "Missing exercise id.")
+                        ?: return@delete call.respond(
+                            HttpStatusCode.BadRequest,
+                            "Missing exercise id."
+                        )
                 val principal =
                     call.principal<JWTPrincipal>()
                         ?: return@delete call.respond(HttpStatusCode.Unauthorized)

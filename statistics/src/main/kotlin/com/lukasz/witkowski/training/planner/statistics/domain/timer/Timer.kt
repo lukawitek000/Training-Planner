@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 
 class Timer(
     private val tickDelayInMillis: Long = DELAY_IN_MILLIS,
-    timerDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    timerDispatcher: CoroutineDispatcher = Dispatchers.Default
 ) {
     private val coroutineScope: CoroutineScope =
         CoroutineScope(timerDispatcher + CoroutineName("Timer"))

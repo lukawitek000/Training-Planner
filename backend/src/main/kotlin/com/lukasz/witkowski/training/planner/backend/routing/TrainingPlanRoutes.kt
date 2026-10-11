@@ -31,7 +31,7 @@ fun Route.trainingPlanRoutes(trainingPlanService: TrainingPlanService) {
                         search = search,
                         ownerId = principal?.payload?.subject,
                         page = page,
-                        limit = limit,
+                        limit = limit
                     )
                 call.respond(HttpStatusCode.OK, result)
             }
@@ -39,11 +39,17 @@ fun Route.trainingPlanRoutes(trainingPlanService: TrainingPlanService) {
             get("/{id}") {
                 val id =
                     call.parameters["id"]
-                        ?: return@get call.respond(HttpStatusCode.BadRequest, "Missing training plan id.")
+                        ?: return@get call.respond(
+                            HttpStatusCode.BadRequest,
+                            "Missing training plan id."
+                        )
                 val principal = call.principal<JWTPrincipal>()
                 val plan =
                     trainingPlanService.getTrainingPlanById(id, principal?.payload?.subject)
-                        ?: return@get call.respond(HttpStatusCode.NotFound, "Training plan not found.")
+                        ?: return@get call.respond(
+                            HttpStatusCode.NotFound,
+                            "Training plan not found."
+                        )
                 call.respond(HttpStatusCode.OK, plan)
             }
 
@@ -62,7 +68,10 @@ fun Route.trainingPlanRoutes(trainingPlanService: TrainingPlanService) {
             put("/{id}") {
                 val id =
                     call.parameters["id"]
-                        ?: return@put call.respond(HttpStatusCode.BadRequest, "Missing training plan id.")
+                        ?: return@put call.respond(
+                            HttpStatusCode.BadRequest,
+                            "Missing training plan id."
+                        )
                 val principal =
                     call.principal<JWTPrincipal>()
                         ?: return@put call.respond(HttpStatusCode.Unauthorized)
@@ -77,7 +86,10 @@ fun Route.trainingPlanRoutes(trainingPlanService: TrainingPlanService) {
             delete("/{id}") {
                 val id =
                     call.parameters["id"]
-                        ?: return@delete call.respond(HttpStatusCode.BadRequest, "Missing training plan id.")
+                        ?: return@delete call.respond(
+                            HttpStatusCode.BadRequest,
+                            "Missing training plan id."
+                        )
                 val principal =
                     call.principal<JWTPrincipal>()
                         ?: return@delete call.respond(HttpStatusCode.Unauthorized)

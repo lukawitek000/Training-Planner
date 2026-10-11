@@ -34,16 +34,12 @@ internal class SessionService : Service() {
         fun getService(): SessionService = this@SessionService
     }
 
-    override fun onStartCommand(
-        intent: Intent?,
-        flags: Int,
-        startId: Int,
-    ): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val channelId = NotificationChannelFactory.create(this)
         val pendingIntent =
             trainingSessionPendingIntentFactory.create(
                 this,
-                trainingSessionController.trainingPlan.id,
+                trainingSessionController.trainingPlan.id
             )
         val notification = notificationFactory.create(this, channelId, pendingIntent)
         startForeground(NOTIFICATION_ID, notification)

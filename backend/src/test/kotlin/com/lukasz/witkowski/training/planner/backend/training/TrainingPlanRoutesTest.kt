@@ -23,128 +23,127 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.server.testing.testApplication
-import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import org.junit.Test
 
 class TrainingPlanRoutesTest {
     @Test
-    fun `training plan CRUD lifecycle and authorization boundaries`() =
-        testApplication {
-            application { module() }
-            val userA = createAuthenticatedUser("planA@example.com", "PlanUserA")
-            val userB = createAuthenticatedUser("planB@example.com", "PlanUserB")
+    fun `training plan CRUD lifecycle and authorization boundaries`() = testApplication {
+        application { module() }
+        val userA = createAuthenticatedUser("planA@example.com", "PlanUserA")
+        val userB = createAuthenticatedUser("planB@example.com", "PlanUserB")
 
-            // 1. Create Exercise for Plan
-            val categoriesRes =
-                userA.client
-                    .get("/api/v1/exercises/categories") {
-                        header(HttpHeaders.Authorization, "Bearer ${userA.token}")
-                    }.body<List<CategoryDto>>()
+        // 1. Create Exercise for Plan
+        val categoriesRes =
+            userA.client
+                .get("/api/v1/exercises/categories") {
+                    header(HttpHeaders.Authorization, "Bearer ${userA.token}")
+                }.body<List<CategoryDto>>()
 
-            val exRes =
-                userA.client
-                    .post("/api/v1/exercises") {
-                        header(HttpHeaders.Authorization, "Bearer ${userA.token}")
-                        contentType(ContentType.Application.Json)
-                        setBody(
-                            CreateExerciseRequestDto(
-                                name = "Deadlift",
-                                description = "Back & legs",
-                                categoryIds = listOf(categoriesRes.first().id),
-                            ),
+        val exRes =
+            userA.client
+                .post("/api/v1/exercises") {
+                    header(HttpHeaders.Authorization, "Bearer ${userA.token}")
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        CreateExerciseRequestDto(
+                            name = "Deadlift",
+                            description = "Back & legs",
+                            categoryIds = listOf(categoriesRes.first().id)
                         )
-                    }.body<ExerciseDto>()
+                    )
+                }.body<ExerciseDto>()
 
-            // 2. Create Training Plan by User A
-            val createPlanReq =
-                CreateTrainingPlanRequestDto(
-                    title = "Hypertrophy Upper Body",
-                    description = "Mass building plan",
-                    exercises =
-                        listOf(
-                            CreateTrainingExerciseRequestDto(
-                                exerciseId = exRes.id,
-                                repetitions = 8,
-                                sets = 4,
-                                restTimeInMillis = 120000,
-                                weightInKg = 100.0,
-                            ),
-                        ),
-                    restTimeInMillis = 180000,
-                )
-            val createRes =
-                userA.client.post("/api/v1/training-plans") {
-                    header(HttpHeaders.Authorization, "Bearer ${userA.token}")
-                    contentType(ContentType.Application.Json)
-                    setBody(createPlanReq)
-                }
-            assertEquals(HttpStatusCode.Created, createRes.status)
-            val createdPlan = createRes.body<TrainingPlanDto>()
-            assertEquals("Hypertrophy Upper Body", createdPlan.title)
-            assertEquals(1, createdPlan.exercises.size)
-            assertEquals(userA.userId, createdPlan.ownerId)
+        // 2. Create Training Plan by User A
+        val createPlanReq =
+            CreateTrainingPlanRequestDto(
+                title = "Hypertrophy Upper Body",
+                description = "Mass building plan",
+                exercises =
+                listOf(
+                    CreateTrainingExerciseRequestDto(
+                        exerciseId = exRes.id,
+                        repetitions = 8,
+                        sets = 4,
+                        restTimeInMillis = 120000,
+                        weightInKg = 100.0
+                    )
+                ),
+                restTimeInMillis = 180000
+            )
+        val createRes =
+            userA.client.post("/api/v1/training-plans") {
+                header(HttpHeaders.Authorization, "Bearer ${userA.token}")
+                contentType(ContentType.Application.Json)
+                setBody(createPlanReq)
+            }
+        assertEquals(HttpStatusCode.Created, createRes.status)
+        val createdPlan = createRes.body<TrainingPlanDto>()
+        assertEquals("Hypertrophy Upper Body", createdPlan.title)
+        assertEquals(1, createdPlan.exercises.size)
+        assertEquals(userA.userId, createdPlan.ownerId)
 
-            // 2b. User B attempts to GET User A's private plan -> 403 Forbidden
-            val forbiddenGetRes =
-                userB.client.get("/api/v1/training-plans/${createdPlan.id}") {
-                    header(HttpHeaders.Authorization, "Bearer ${userB.token}")
-                }
-            assertEquals(HttpStatusCode.Forbidden, forbiddenGetRes.status)
+        // 2b. User B attempts to GET User A's private plan -> 403 Forbidden
+        val forbiddenGetRes =
+            userB.client.get("/api/v1/training-plans/${createdPlan.id}") {
+                header(HttpHeaders.Authorization, "Bearer ${userB.token}")
+            }
+        assertEquals(HttpStatusCode.Forbidden, forbiddenGetRes.status)
 
-            // 3. User B attempts to UPDATE User A's plan -> 403 Forbidden
-            val updateReq =
-                UpdateTrainingPlanRequestDto(
-                    title = "Hacked Title",
-                    description = "Hacked description",
-                    exercises = emptyList(),
-                )
-            val forbiddenUpdateRes =
-                userB.client.put("/api/v1/training-plans/${createdPlan.id}") {
-                    header(HttpHeaders.Authorization, "Bearer ${userB.token}")
-                    contentType(ContentType.Application.Json)
-                    setBody(updateReq)
-                }
-            assertEquals(HttpStatusCode.Forbidden, forbiddenUpdateRes.status)
+        // 3. User B attempts to UPDATE User A's plan -> 403 Forbidden
+        val updateReq =
+            UpdateTrainingPlanRequestDto(
+                title = "Hacked Title",
+                description = "Hacked description",
+                exercises = emptyList()
+            )
+        val forbiddenUpdateRes =
+            userB.client.put("/api/v1/training-plans/${createdPlan.id}") {
+                header(HttpHeaders.Authorization, "Bearer ${userB.token}")
+                contentType(ContentType.Application.Json)
+                setBody(updateReq)
+            }
+        assertEquals(HttpStatusCode.Forbidden, forbiddenUpdateRes.status)
 
-            // 4. User A updates own plan -> 200 OK
-            val updateReqA =
-                UpdateTrainingPlanRequestDto(
-                    title = "Hypertrophy Upper Body V2",
-                    description = "Updated mass building plan",
-                    exercises = emptyList(),
-                )
-            val updateRes =
-                userA.client.put("/api/v1/training-plans/${createdPlan.id}") {
-                    header(HttpHeaders.Authorization, "Bearer ${userA.token}")
-                    contentType(ContentType.Application.Json)
-                    setBody(updateReqA)
-                }
-            assertEquals(HttpStatusCode.OK, updateRes.status)
-            val updatedPlan = updateRes.body<TrainingPlanDto>()
-            assertEquals("Hypertrophy Upper Body V2", updatedPlan.title)
+        // 4. User A updates own plan -> 200 OK
+        val updateReqA =
+            UpdateTrainingPlanRequestDto(
+                title = "Hypertrophy Upper Body V2",
+                description = "Updated mass building plan",
+                exercises = emptyList()
+            )
+        val updateRes =
+            userA.client.put("/api/v1/training-plans/${createdPlan.id}") {
+                header(HttpHeaders.Authorization, "Bearer ${userA.token}")
+                contentType(ContentType.Application.Json)
+                setBody(updateReqA)
+            }
+        assertEquals(HttpStatusCode.OK, updateRes.status)
+        val updatedPlan = updateRes.body<TrainingPlanDto>()
+        assertEquals("Hypertrophy Upper Body V2", updatedPlan.title)
 
-            // 5. User B attempts to DELETE User A's plan -> 403 Forbidden
-            val forbiddenDeleteRes =
-                userB.client.delete("/api/v1/training-plans/${createdPlan.id}") {
-                    header(HttpHeaders.Authorization, "Bearer ${userB.token}")
-                }
-            assertEquals(HttpStatusCode.Forbidden, forbiddenDeleteRes.status)
+        // 5. User B attempts to DELETE User A's plan -> 403 Forbidden
+        val forbiddenDeleteRes =
+            userB.client.delete("/api/v1/training-plans/${createdPlan.id}") {
+                header(HttpHeaders.Authorization, "Bearer ${userB.token}")
+            }
+        assertEquals(HttpStatusCode.Forbidden, forbiddenDeleteRes.status)
 
-            // 6. User A deletes own plan -> 204 No Content
-            val deleteRes =
-                userA.client.delete("/api/v1/training-plans/${createdPlan.id}") {
-                    header(HttpHeaders.Authorization, "Bearer ${userA.token}")
-                }
-            assertEquals(HttpStatusCode.NoContent, deleteRes.status)
+        // 6. User A deletes own plan -> 204 No Content
+        val deleteRes =
+            userA.client.delete("/api/v1/training-plans/${createdPlan.id}") {
+                header(HttpHeaders.Authorization, "Bearer ${userA.token}")
+            }
+        assertEquals(HttpStatusCode.NoContent, deleteRes.status)
 
-            // 7. Verify deletion (404 Not Found)
-            val getNotFoundRes =
-                userA.client.get("/api/v1/training-plans/${createdPlan.id}") {
-                    header(HttpHeaders.Authorization, "Bearer ${userA.token}")
-                }
-            assertEquals(HttpStatusCode.NotFound, getNotFoundRes.status)
-        }
+        // 7. Verify deletion (404 Not Found)
+        val getNotFoundRes =
+            userA.client.get("/api/v1/training-plans/${createdPlan.id}") {
+                header(HttpHeaders.Authorization, "Bearer ${userA.token}")
+            }
+        assertEquals(HttpStatusCode.NotFound, getNotFoundRes.status)
+    }
 
     @Test
     fun `training plans overview includes categories from exercises and supports search`() =
@@ -167,8 +166,8 @@ class TrainingPlanRoutesTest {
                             CreateExerciseRequestDto(
                                 name = "Squat",
                                 description = "Legs",
-                                categoryIds = listOf(categories.first().id),
-                            ),
+                                categoryIds = listOf(categories.first().id)
+                            )
                         )
                     }.body<ExerciseDto>()
 
@@ -179,8 +178,8 @@ class TrainingPlanRoutesTest {
                     CreateTrainingPlanRequestDto(
                         title = "Leg Day Destroy",
                         description = "Heavy squats",
-                        exercises = listOf(CreateTrainingExerciseRequestDto(exerciseId = ex.id)),
-                    ),
+                        exercises = listOf(CreateTrainingExerciseRequestDto(exerciseId = ex.id))
+                    )
                 )
             }
 

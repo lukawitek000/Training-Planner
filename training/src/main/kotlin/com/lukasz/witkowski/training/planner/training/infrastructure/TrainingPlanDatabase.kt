@@ -12,7 +12,7 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTr
 @Database(
     entities = [DbTrainingPlan::class, DbTrainingExercise::class, DbExerciseCategory::class],
     version = 6,
-    exportSchema = false,
+    exportSchema = false
 )
 @ColumnTypeConverters(InstantConverters::class)
 internal abstract class TrainingPlanDatabase : RoomDatabase() {
@@ -22,19 +22,18 @@ internal abstract class TrainingPlanDatabase : RoomDatabase() {
         @Volatile
         private var instance: TrainingPlanDatabase? = null
 
-        fun getInstance(context: Context): TrainingPlanDatabase =
-            synchronized(this) {
-                if (instance == null) {
-                    instance =
-                        Room
-                            .databaseBuilder(
-                                context,
-                                TrainingPlanDatabase::class.java,
-                                "Training Plan Database",
-                            ).fallbackToDestructiveMigration()
-                            .build()
-                }
-                instance!!
+        fun getInstance(context: Context): TrainingPlanDatabase = synchronized(this) {
+            if (instance == null) {
+                instance =
+                    Room
+                        .databaseBuilder(
+                            context,
+                            TrainingPlanDatabase::class.java,
+                            "Training Plan Database"
+                        ).fallbackToDestructiveMigration()
+                        .build()
             }
+            instance!!
+        }
     }
 }
