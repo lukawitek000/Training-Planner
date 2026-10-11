@@ -9,9 +9,13 @@ import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseR
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseCategoryDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDatabase
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.ExerciseApi
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.ExerciseRemoteDataSource
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.RetrofitExerciseRemoteDataSource
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController2
 import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoryController2
 import com.lukasz.witkowski.training.planner.image.di.imageModule
+import com.lukasz.witkowski.training.planner.network.networkModule
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
 import org.koin.android.ext.koin.androidContext
@@ -20,10 +24,22 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.factory
 import org.koin.plugin.module.dsl.single
+import retrofit2.Retrofit
 
 val exerciseModule =
     module {
-        includes(dispatchersModule, imageModule)
+        includes(dispatchersModule, imageModule, networkModule)
+
+        single {
+            get<Retrofit>().create(ExerciseApi::class.java)
+        }
+        single {
+            RetrofitExerciseRemoteDataSource(
+                api = get(),
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
+                json = get()
+            )
+        } bind ExerciseRemoteDataSource::class
 
         single<ExerciseDatabase> { ExerciseDatabase.getInstance(androidContext()) }
 

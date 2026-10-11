@@ -11,7 +11,7 @@ import androidx.room3.RoomDatabase
         DbExercise::class, DbExerciseCategory::class, ExerciseCategoryCrossRef::class,
         DbExerciseRecommendation::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = false
 )
 @ColumnTypeConverters(Converters::class)

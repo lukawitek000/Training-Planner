@@ -1,5 +1,6 @@
 plugins {
     id(BuildPlugins.commonLibraryPlugin)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {
@@ -8,7 +9,14 @@ android {
 
 dependencies {
     api(projects.image)
+    api(projects.dto)
+    api(projects.network)
     implementation(projects.shared)
+
+    // Retrofit & Serialization
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.kotlinxSerialization)
+    implementation(libs.kotlinx.serialization.json)
 
     // Koin
     implementation(platform(libs.koin.bom))
@@ -29,4 +37,5 @@ dependencies {
     testImplementation(libs.roboelectric)
     testImplementation(libs.mockk)
     testImplementation(libs.androidx.paging.testing)
+    testImplementation(libs.okhttp.mockwebserver)
 }
