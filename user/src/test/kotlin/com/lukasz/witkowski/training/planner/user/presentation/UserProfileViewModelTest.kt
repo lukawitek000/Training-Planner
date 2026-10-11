@@ -50,6 +50,7 @@ class UserProfileViewModelTest {
             coEvery { userRepository.getUserProfile() } returns AppResult.Success(user)
 
             viewModel = UserProfileViewModel(userRepository)
+            viewModel.loadUserProfile()
 
             viewModel.uiState.test {
                 assertEquals(
@@ -70,6 +71,7 @@ class UserProfileViewModelTest {
                 AppResult.Error(UserFailure.NotSignedIn)
 
             viewModel = UserProfileViewModel(userRepository)
+            viewModel.loadUserProfile()
 
             viewModel.uiState.test {
                 assertEquals(
@@ -89,6 +91,7 @@ class UserProfileViewModelTest {
                 AppResult.Error(UserFailure.Unauthorized)
 
             viewModel = UserProfileViewModel(userRepository)
+            viewModel.loadUserProfile()
 
             viewModel.uiState.test {
                 assertEquals(
@@ -110,6 +113,7 @@ class UserProfileViewModelTest {
                 )
 
             viewModel = UserProfileViewModel(userRepository)
+            viewModel.loadUserProfile()
 
             viewModel.uiState.test {
                 assertEquals(
@@ -128,6 +132,7 @@ class UserProfileViewModelTest {
         coEvery { userRepository.getUserProfile() } returns AppResult.Success(user)
 
         viewModel = UserProfileViewModel(userRepository)
+        viewModel.loadUserProfile()
 
         viewModel.uiState.test {
             assertEquals(

@@ -196,9 +196,19 @@ private fun UserIdentitySection(
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
-                        imageVector = if (isOnline) Icons.Default.AccountCircle else Icons.Default.NoAccounts,
+                        imageVector =
+                        if (isOnline) {
+                            Icons.Default.AccountCircle
+                        } else {
+                            Icons.Default.NoAccounts
+                        },
                         contentDescription = "User Avatar",
-                        tint = if (isOnline) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                        tint =
+                        if (isOnline) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.outline
+                        },
                         modifier = Modifier.size(Dimens2.iconSize42)
                     )
                 }
@@ -250,16 +260,31 @@ private fun UserIdentitySection(
         )
         Surface(
             shape = CircleShape,
-            color = if (isOnline) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest,
+            color =
+            if (isOnline) {
+                MaterialTheme.colorScheme.primaryContainer
+            } else {
+                MaterialTheme.colorScheme.surfaceContainerHighest
+            },
             modifier = Modifier.padding(top = Dimens2.spaceXs)
         ) {
             Text(
                 text =
                 stringResource(
-                    id = if (isOnline) R.string.user_profile_tag_cloud_synced else R.string.user_profile_tag_local_first
+                    id =
+                    if (isOnline) {
+                        R.string.user_profile_tag_cloud_synced
+                    } else {
+                        R.string.user_profile_tag_local_first
+                    }
                 ),
                 style = MaterialTheme.typography.labelSmall,
-                color = if (isOnline) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                color =
+                if (isOnline) {
+                    MaterialTheme.colorScheme.onPrimaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
                 modifier = Modifier.padding(
                     horizontal = Dimens2.spaceSm,
                     vertical = Dimens2.spaceXs

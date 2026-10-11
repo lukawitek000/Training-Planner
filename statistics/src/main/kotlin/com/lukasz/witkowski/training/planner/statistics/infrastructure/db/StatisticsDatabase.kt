@@ -9,7 +9,11 @@ import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models
 import com.lukasz.witkowski.training.planner.statistics.infrastructure.db.models.DbTrainingStatistics
 
 @Database(
-    entities = [DbTrainingStatistics::class, DbExerciseStatistics::class, DbExerciseAttemptStatistics::class],
+    entities = [
+        DbTrainingStatistics::class,
+        DbExerciseStatistics::class,
+        DbExerciseAttemptStatistics::class
+    ],
     version = 1,
     exportSchema = false
 )
