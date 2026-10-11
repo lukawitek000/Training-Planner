@@ -5,6 +5,10 @@ import androidx.paging.testing.asSnapshot
 import androidx.room3.Room
 import com.lukasz.witkowski.training.planner.exercise.TestData
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepositoryConfig
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.RoomExerciseLocalDataSource
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.ExerciseRemoteDataSource
+import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -22,12 +26,12 @@ import org.robolectric.RuntimeEnvironment
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
-class DbExerciseRepositoryTest {
+class DefaultExerciseRepositoryTest {
     private val context: Context by lazy { RuntimeEnvironment.getApplication() }
 
     private lateinit var db: ExerciseDatabase
     private lateinit var exerciseDao: ExerciseDao
-    private lateinit var repository: DbExerciseRepository
+    private lateinit var repository: DefaultExerciseRepository
     private val ioDispatcher = UnconfinedTestDispatcher()
 
     @Before
@@ -39,9 +43,13 @@ class DbExerciseRepositoryTest {
                     klass = ExerciseDatabase::class.java
                 ).build()
         exerciseDao = db.exerciseDao()
+        val localDataSource = RoomExerciseLocalDataSource(exerciseDao = exerciseDao)
+        val remoteDataSource = mockk<ExerciseRemoteDataSource>(relaxed = true)
         repository =
-            DbExerciseRepository(
-                exerciseDao = exerciseDao,
+            DefaultExerciseRepository(
+                localDataSource = localDataSource,
+                remoteDataSource = remoteDataSource,
+                config = ExerciseRepositoryConfig(),
                 ioDispatcher = ioDispatcher
             )
     }
@@ -233,6 +241,16 @@ class DbExerciseRepositoryTest {
         val exercises = repository.queryExercises(query).asSnapshot()
         assertEquals(1, exercises.size)
         assertEquals(TestData.SQUATS_EXERCISE, exercises.first())
+    }
+
+    @Test
+    fun `saveExerciseLocally deliberately inserts exercise into database`() = runTest {
+        val details = TestData.PULL_UPS_DETAILS
+        val success = repository.saveExerciseLocally(details)
+        assertTrue(success)
+
+        val result = repository.getExerciseDetailsById(details.exercise.id).first()
+        assertEquals(details, result)
     }
 
     private suspend fun insertAllTestExercises() {

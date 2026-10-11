@@ -4,11 +4,16 @@ import com.lukasz.witkowski.training.planner.exercise.application.ExerciseCatego
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategoryRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
-import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseCategoryRepository
-import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseRepository
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepositoryConfig
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.DefaultExerciseCategoryRepository
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.DefaultExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseCategoryDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDatabase
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.ExerciseCategoryLocalDataSource
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.ExerciseLocalDataSource
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.RoomExerciseCategoryLocalDataSource
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.RoomExerciseLocalDataSource
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.ExerciseApi
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.ExerciseRemoteDataSource
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.RetrofitExerciseRemoteDataSource
@@ -30,6 +35,8 @@ val exerciseModule =
     module {
         includes(dispatchersModule, imageModule, networkModule)
 
+        single { ExerciseRepositoryConfig() }
+
         single {
             get<Retrofit>().create(ExerciseApi::class.java)
         }
@@ -45,15 +52,32 @@ val exerciseModule =
 
         single<ExerciseDao> { get<ExerciseDatabase>().exerciseDao() }
         single {
-            DbExerciseRepository(
-                exerciseDao = get(),
+            RoomExerciseLocalDataSource(exerciseDao = get())
+        } bind ExerciseLocalDataSource::class
+
+        single {
+            DefaultExerciseRepository(
+                localDataSource = get(),
+                remoteDataSource = get(),
+                config = get(),
                 ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
             )
         } bind ExerciseRepository::class
         single<ExerciseService>()
 
         single<ExerciseCategoryDao> { get<ExerciseDatabase>().categoryDao() }
-        single<DbExerciseCategoryRepository>() bind ExerciseCategoryRepository::class
+        single {
+            RoomExerciseCategoryLocalDataSource(categoryDao = get())
+        } bind ExerciseCategoryLocalDataSource::class
+
+        single {
+            DefaultExerciseCategoryRepository(
+                localDataSource = get(),
+                remoteDataSource = get(),
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
+            )
+        } bind ExerciseCategoryRepository::class
+
         single<ExerciseCategoriesService>()
         factory<DefaultCategoryController2>() bind CategoryController2::class
     }

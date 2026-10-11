@@ -33,4 +33,9 @@ class FakeExerciseRepository : ExerciseRepository {
         _exercises.add(exercise)
         return true
     }
+
+    override suspend fun saveExerciseLocally(exerciseDetails: ExerciseDetails): Boolean {
+        // TODO()
+        return false
+    }
 }

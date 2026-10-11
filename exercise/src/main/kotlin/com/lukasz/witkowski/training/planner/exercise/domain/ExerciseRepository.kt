@@ -19,4 +19,9 @@ interface ExerciseRepository {
      * Returns _true_ if the update was successful
      */
     suspend fun updateExercise(exercise: ExerciseDetails): Boolean
+
+    /**
+     * Deliberately saves a remote exercise to local storage. Returns _true_ if successful.
+     */
+    suspend fun saveExerciseLocally(exerciseDetails: ExerciseDetails): Boolean
 }
