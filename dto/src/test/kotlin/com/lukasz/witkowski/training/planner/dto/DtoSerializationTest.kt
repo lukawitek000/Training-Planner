@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.dto
 
 import com.lukasz.witkowski.training.planner.dto.exercise.CategoryDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
+import com.lukasz.witkowski.training.planner.dto.exercise.OwnerDto
 import kotlin.test.assertEquals
 import kotlinx.serialization.json.Json
 import org.junit.Test
@@ -21,6 +22,23 @@ class DtoSerializationTest {
                 name = "Push-up",
                 description = "Standard push-up",
                 categories = listOf(CategoryDto("cat-1", "Chest"))
+            )
+
+        val encoded = json.encodeToString(ExerciseDto.serializer(), exercise)
+        val decoded = json.decodeFromString(ExerciseDto.serializer(), encoded)
+
+        assertEquals(exercise, decoded)
+    }
+
+    @Test
+    fun `exerciseDto with owner serialization and deserialization works correctly`() {
+        val exercise =
+            ExerciseDto(
+                id = "ex-1",
+                name = "Push-up",
+                description = "Standard push-up",
+                categories = listOf(CategoryDto("cat-1", "Chest")),
+                owner = OwnerDto("user-1", "john_doe")
             )
 
         val encoded = json.encodeToString(ExerciseDto.serializer(), exercise)

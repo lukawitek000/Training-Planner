@@ -31,9 +31,18 @@ data class Exercise2(
     }
 }
 
-data class ExerciseOwner(
-    val value: String
-)
+sealed interface ExerciseOwner {
+    val id: String
+
+    data class Local(
+        override val id: String = "local_user"
+    ) : ExerciseOwner
+
+    data class User(
+        override val id: String,
+        val username: String
+    ) : ExerciseOwner
+}
 
 sealed interface ExerciseOrigin {
     data object Bundled : ExerciseOrigin

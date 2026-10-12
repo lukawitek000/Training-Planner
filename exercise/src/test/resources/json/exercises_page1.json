@@ -8,7 +8,10 @@
         { "id": "cat-1", "name": "Chest" },
         { "id": "cat-5", "name": "Triceps" }
       ],
-      "ownerId": "user-123"
+      "owner": {
+        "id": "user-123",
+        "username": "JohnDoe"
+      }
     },
     {
       "id": "22222222-2222-2222-2222-222222222222",
@@ -17,7 +20,7 @@
       "categories": [
         { "id": "cat-2", "name": "Back" }
       ],
-      "ownerId": null
+      "owner": null
     }
   ],
   "page": 1,

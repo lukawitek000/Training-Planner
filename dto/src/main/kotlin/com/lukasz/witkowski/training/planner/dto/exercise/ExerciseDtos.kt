@@ -6,12 +6,18 @@ import kotlinx.serialization.Serializable
 data class CategoryDto(val id: String, val name: String)
 
 @Serializable
+data class OwnerDto(
+    val id: String,
+    val username: String
+)
+
+@Serializable
 data class ExerciseDto(
     val id: String,
     val name: String,
     val description: String = "",
     val categories: List<CategoryDto> = emptyList(),
-    val ownerId: String? = null
+    val owner: OwnerDto? = null
 )
 
 @Serializable

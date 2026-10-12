@@ -11,17 +11,29 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 import kotlin.time.Duration.Companion.seconds
 
 internal fun Exercise2.toDbExercise(): DbExercise {
-    val (ownerId, originType) = when (val origin = origin) {
+    val (dbOwner, originType) = when (val origin = origin) {
         is ExerciseOrigin.Bundled -> null to DbExercise.ORIGIN_TYPE_BUNDLED
-        is ExerciseOrigin.Community -> origin.owner.value to DbExercise.ORIGIN_TYPE_COMMUNITY
-        is ExerciseOrigin.UserCreated -> origin.owner.value to DbExercise.ORIGIN_TYPE_USER_CREATED
+        is ExerciseOrigin.Community -> {
+            val dbOwner = when (val owner = origin.owner) {
+                is ExerciseOwner.Local -> DbExerciseOwner(owner.id, "Local")
+                is ExerciseOwner.User -> DbExerciseOwner(owner.id, owner.username)
+            }
+            dbOwner to DbExercise.ORIGIN_TYPE_COMMUNITY
+        }
+        is ExerciseOrigin.UserCreated -> {
+            val dbOwner = when (val owner = origin.owner) {
+                is ExerciseOwner.Local -> DbExerciseOwner(owner.id, "Local")
+                is ExerciseOwner.User -> DbExerciseOwner(owner.id, owner.username)
+            }
+            dbOwner to DbExercise.ORIGIN_TYPE_USER_CREATED
+        }
     }
     return DbExercise(
         exerciseId = id.toString(),
         name = name,
         description = description,
         imageId = imageId?.toString(),
-        ownerId = ownerId,
+        owner = dbOwner,
         originType = originType
     )
 }
@@ -51,8 +63,20 @@ internal fun DbExerciseWithCategories.toExercise(): Exercise2 {
 }
 
 private fun DbExercise.toExerciseOrigin(): ExerciseOrigin = when (originType) {
-    DbExercise.ORIGIN_TYPE_COMMUNITY -> ExerciseOrigin.Community(owner = ExerciseOwner(ownerId ?: ""))
-    DbExercise.ORIGIN_TYPE_USER_CREATED -> ExerciseOrigin.UserCreated(owner = ExerciseOwner(ownerId ?: ""))
+    DbExercise.ORIGIN_TYPE_COMMUNITY -> ExerciseOrigin.Community(
+        owner = if (owner == null || owner.ownerName.isBlank() || owner.ownerName == "Local") {
+            ExerciseOwner.Local(id = owner?.ownerId ?: "local_user")
+        } else {
+            ExerciseOwner.User(id = owner.ownerId, username = owner.ownerName)
+        }
+    )
+    DbExercise.ORIGIN_TYPE_USER_CREATED -> ExerciseOrigin.UserCreated(
+        owner = if (owner == null || owner.ownerName.isBlank() || owner.ownerName == "Local") {
+            ExerciseOwner.Local(id = owner?.ownerId ?: "local_user")
+        } else {
+            ExerciseOwner.User(id = owner.ownerId, username = owner.ownerName)
+        }
+    )
     else -> ExerciseOrigin.Bundled
 }
 

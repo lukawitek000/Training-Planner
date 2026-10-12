@@ -4,10 +4,12 @@ import com.lukasz.witkowski.training.planner.backend.db.CategoriesTable
 import com.lukasz.witkowski.training.planner.backend.db.DatabaseFactory.dbQuery
 import com.lukasz.witkowski.training.planner.backend.db.ExerciseCategoriesTable
 import com.lukasz.witkowski.training.planner.backend.db.ExercisesTable
+import com.lukasz.witkowski.training.planner.backend.db.UsersTable
 import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CategoryDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CreateExerciseRequestDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
+import com.lukasz.witkowski.training.planner.dto.exercise.OwnerDto
 import com.lukasz.witkowski.training.planner.dto.exercise.UpdateExerciseRequestDto
 import java.util.UUID
 import org.jetbrains.exposed.v1.core.AndOp
@@ -16,6 +18,7 @@ import org.jetbrains.exposed.v1.core.OrOp
 import org.jetbrains.exposed.v1.core.eq
 import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.core.isNull
+import org.jetbrains.exposed.v1.core.leftJoin
 import org.jetbrains.exposed.v1.core.like
 import org.jetbrains.exposed.v1.core.lowerCase
 import org.jetbrains.exposed.v1.jdbc.deleteWhere
@@ -81,8 +84,9 @@ class ExerciseService {
                     .map { it[ExerciseCategoriesTable.exerciseId] }
         }
 
+        val queryJoin = ExercisesTable.leftJoin(UsersTable, { ExercisesTable.ownerId }, { UsersTable.id })
         val allRows =
-            ExercisesTable
+            queryJoin
                 .selectAll()
                 .where { condition }
                 .toList()
@@ -105,12 +109,17 @@ class ExerciseService {
         val paginatedExercises =
             pageRows.map { row ->
                 val exerciseId = row[ExercisesTable.id]
+                val exerciseOwnerId = row[ExercisesTable.ownerId]
+                val owner = exerciseOwnerId?.let { oId ->
+                    val username = row.getOrNull(UsersTable.username) ?: ""
+                    OwnerDto(id = oId, username = username)
+                }
                 ExerciseDto(
                     id = exerciseId,
                     name = row[ExercisesTable.name],
                     description = row[ExercisesTable.description],
                     categories = categoriesMap[exerciseId] ?: emptyList(),
-                    ownerId = row[ExercisesTable.ownerId]
+                    owner = owner
                 )
             }
 
@@ -124,12 +133,17 @@ class ExerciseService {
     }
 
     suspend fun getExerciseById(id: String, requesterId: String? = null): ExerciseDto? = dbQuery {
+        val queryJoin = ExercisesTable.leftJoin(UsersTable, { ExercisesTable.ownerId }, { UsersTable.id })
         val row =
-            ExercisesTable.selectAll().where { ExercisesTable.id eq id }.singleOrNull()
+            queryJoin.selectAll().where { ExercisesTable.id eq id }.singleOrNull()
                 ?: return@dbQuery null
         val ownerId = row[ExercisesTable.ownerId]
         if (ownerId != null && ownerId != requesterId) {
             throw SecurityException("You do not have permission to access this exercise.")
+        }
+        val owner = ownerId?.let { oId ->
+            val username = row.getOrNull(UsersTable.username) ?: ""
+            OwnerDto(id = oId, username = username)
         }
         val categories = getCategoriesForExercise(id)
         ExerciseDto(
@@ -137,7 +151,7 @@ class ExerciseService {
             name = row[ExercisesTable.name],
             description = row[ExercisesTable.description],
             categories = categories,
-            ownerId = ownerId
+            owner = owner
         )
     }
 
@@ -158,13 +172,15 @@ class ExerciseService {
                 }
             }
 
+            val ownerName = UsersTable.selectAll().where { UsersTable.id eq ownerId }.singleOrNull()?.get(UsersTable.username) ?: ""
+            val owner = OwnerDto(id = ownerId, username = ownerName)
             val categories = getCategoriesForExercise(exerciseId)
             ExerciseDto(
                 id = exerciseId,
                 name = request.name,
                 description = request.description,
                 categories = categories,
-                ownerId = ownerId
+                owner = owner
             )
         }
 
@@ -196,13 +212,15 @@ class ExerciseService {
             }
         }
 
+        val ownerName = UsersTable.selectAll().where { UsersTable.id eq ownerId }.singleOrNull()?.get(UsersTable.username) ?: ""
+        val owner = OwnerDto(id = ownerId, username = ownerName)
         val categories = getCategoriesForExercise(id)
         ExerciseDto(
             id = id,
             name = request.name,
             description = request.description,
             categories = categories,
-            ownerId = existing[ExercisesTable.ownerId]
+            owner = owner
         )
     }
 

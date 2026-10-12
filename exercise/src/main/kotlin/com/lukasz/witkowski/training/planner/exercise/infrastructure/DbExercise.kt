@@ -1,7 +1,13 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
+import androidx.room3.Embedded
 import androidx.room3.Entity
 import androidx.room3.PrimaryKey
+
+data class DbExerciseOwner(
+    val ownerId: String,
+    val ownerName: String
+)
 
 @Entity(tableName = "Exercise")
 class DbExercise(
@@ -10,7 +16,8 @@ class DbExercise(
     val name: String,
     val description: String,
     val imageId: String?,
-    val ownerId: String? = null,
+    @Embedded
+    val owner: DbExerciseOwner? = null,
     val originType: String = ORIGIN_TYPE_BUNDLED
 ) {
     companion object {

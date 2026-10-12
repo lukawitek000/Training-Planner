@@ -14,9 +14,13 @@ internal fun CategoryDto.toExerciseCategory(): ExerciseCategory = ExerciseCatego
 
 internal fun ExerciseDto.toExercise2(currentUserId: String? = null): Exercise2 {
     val origin = when {
-        ownerId.isNullOrBlank() -> ExerciseOrigin.Bundled
-        ownerId == currentUserId -> ExerciseOrigin.UserCreated(owner = ExerciseOwner(ownerId!!))
-        else -> ExerciseOrigin.Community(owner = ExerciseOwner(ownerId!!))
+        owner == null -> ExerciseOrigin.Bundled
+        owner!!.id == currentUserId -> ExerciseOrigin.UserCreated(
+            owner = ExerciseOwner.User(id = owner!!.id, username = owner!!.username)
+        )
+        else -> ExerciseOrigin.Community(
+            owner = ExerciseOwner.User(id = owner!!.id, username = owner!!.username)
+        )
     }
     val categoriesSet = categories.map { it.toExerciseCategory() }.toSet()
     return Exercise2(

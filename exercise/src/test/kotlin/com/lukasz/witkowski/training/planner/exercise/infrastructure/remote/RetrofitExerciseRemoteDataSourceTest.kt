@@ -4,6 +4,7 @@ import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CategoryDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CreateExerciseRequestDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
+import com.lukasz.witkowski.training.planner.dto.exercise.OwnerDto
 import com.lukasz.witkowski.training.planner.dto.exercise.UpdateExerciseRequestDto
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
@@ -65,7 +66,7 @@ class RetrofitExerciseRemoteDataSourceTest {
             name = "Push-ups",
             description = "Chest exercise",
             categories = listOf(CategoryDto("c1", "Chest")),
-            ownerId = "user-123"
+            owner = OwnerDto(id = "user-123", username = "JohnDoe")
         )
         val pagedDto = PagedResponseDto(
             items = listOf(exerciseDto),
@@ -82,7 +83,7 @@ class RetrofitExerciseRemoteDataSourceTest {
         assertEquals(1, result.value.items.size)
         val exercise = result.value.items.first()
         assertEquals("Push-ups", exercise.name)
-        assertEquals(ExerciseOrigin.UserCreated(ExerciseOwner("user-123")), exercise.origin)
+        assertEquals(ExerciseOrigin.UserCreated(ExerciseOwner.User("user-123", "JohnDoe")), exercise.origin)
     }
 
     @Test
@@ -93,7 +94,7 @@ class RetrofitExerciseRemoteDataSourceTest {
             name = "Squats",
             description = "Leg exercise",
             categories = listOf(CategoryDto("c2", "Legs")),
-            ownerId = null
+            owner = null
         )
         coEvery { api.getExerciseById(exerciseId.toString()) } returns exerciseDto
 
@@ -112,14 +113,14 @@ class RetrofitExerciseRemoteDataSourceTest {
             name = "Lunges",
             description = "Legs exercise",
             categories = setOf(ExerciseCategory("Legs")),
-            origin = ExerciseOrigin.UserCreated(ExerciseOwner("user-123"))
+            origin = ExerciseOrigin.UserCreated(ExerciseOwner.User("user-123", "JohnDoe"))
         )
         val returnedDto = ExerciseDto(
             id = exerciseId.toString(),
             name = "Lunges",
             description = "Legs exercise",
             categories = listOf(CategoryDto("c2", "Legs")),
-            ownerId = "user-123"
+            owner = OwnerDto("user-123", "JohnDoe")
         )
         coEvery { api.createExercise(any()) } returns returnedDto
 
@@ -138,14 +139,14 @@ class RetrofitExerciseRemoteDataSourceTest {
             name = "Updated Lunges",
             description = "Legs exercise updated",
             categories = setOf(ExerciseCategory("Legs")),
-            origin = ExerciseOrigin.UserCreated(ExerciseOwner("user-123"))
+            origin = ExerciseOrigin.UserCreated(ExerciseOwner.User("user-123", "JohnDoe"))
         )
         val returnedDto = ExerciseDto(
             id = exerciseId.toString(),
             name = "Updated Lunges",
             description = "Legs exercise updated",
             categories = listOf(CategoryDto("c2", "Legs")),
-            ownerId = "user-123"
+            owner = OwnerDto("user-123", "JohnDoe")
         )
         coEvery { api.updateExercise(exerciseId.toString(), any()) } returns returnedDto
 

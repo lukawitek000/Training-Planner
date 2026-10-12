@@ -59,7 +59,8 @@ class ExerciseRoutesTest {
         assertEquals(HttpStatusCode.Created, createRes.status)
         val createdEx = createRes.body<ExerciseDto>()
         assertEquals("Push Up", createdEx.name)
-        assertEquals(userA.userId, createdEx.ownerId)
+        assertEquals(userA.userId, createdEx.owner?.id)
+        assertEquals("UserA", createdEx.owner?.username)
 
         // 2. Fetch exercise by ID by User A -> 200 OK
         val getRes =
