@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure.remote
 
 import com.lukasz.witkowski.training.planner.dto.common.ApiErrorDto
 import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
+import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseSyncResponseDto
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseFailure
@@ -37,6 +38,21 @@ class RetrofitExerciseRemoteDataSource(
                 }
             ) {
                 api.getCategories().map { it.toExerciseCategory() }
+            }
+        }
+
+    override suspend fun getExerciseChanges(
+        sinceVersion: Long
+    ): AppResult<ExerciseSyncResponseDto, ExerciseFailure> =
+        withContext(ioDispatcher) {
+            Timber.d("RemoteDataSource executing getExerciseChanges for sinceVersion: %d", sinceVersion)
+            runCatchingCancellable(
+                mapError = { exception ->
+                    Timber.w(exception, "getExerciseChanges RemoteDataSource error")
+                    exception.toExerciseFailure(json)
+                }
+            ) {
+                api.getExerciseChanges(sinceVersion)
             }
         }
 

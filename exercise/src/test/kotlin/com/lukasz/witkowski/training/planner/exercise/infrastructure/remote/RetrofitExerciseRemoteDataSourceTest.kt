@@ -10,8 +10,9 @@ import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseFailure
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOrigin
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.shared.network.NetworkFailure
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import io.mockk.coEvery
@@ -83,7 +84,7 @@ class RetrofitExerciseRemoteDataSourceTest {
         assertEquals(1, result.value.items.size)
         val exercise = result.value.items.first()
         assertEquals("Push-ups", exercise.name)
-        assertEquals(ExerciseOrigin.UserCreated(ExerciseOwner.User("user-123", "JohnDoe")), exercise.origin)
+        assertEquals(ExerciseSource.Bundled, exercise.metadata.source)
     }
 
     @Test
@@ -102,7 +103,7 @@ class RetrofitExerciseRemoteDataSourceTest {
 
         assertTrue(result is AppResult.Success)
         assertEquals("Squats", result.value.name)
-        assertEquals(ExerciseOrigin.Bundled, result.value.origin)
+        assertEquals(ExerciseSource.Bundled, result.value.metadata.source)
     }
 
     @Test
@@ -113,7 +114,7 @@ class RetrofitExerciseRemoteDataSourceTest {
             name = "Lunges",
             description = "Legs exercise",
             categories = setOf(ExerciseCategory("Legs")),
-            origin = ExerciseOrigin.UserCreated(ExerciseOwner.User("user-123", "JohnDoe"))
+            metadata = ExerciseMetadata(source = ExerciseSource.UserCreated(ExerciseOwner.User("user-123", "JohnDoe")))
         )
         val returnedDto = ExerciseDto(
             id = exerciseId.toString(),
@@ -139,7 +140,7 @@ class RetrofitExerciseRemoteDataSourceTest {
             name = "Updated Lunges",
             description = "Legs exercise updated",
             categories = setOf(ExerciseCategory("Legs")),
-            origin = ExerciseOrigin.UserCreated(ExerciseOwner.User("user-123", "JohnDoe"))
+            metadata = ExerciseMetadata(source = ExerciseSource.UserCreated(ExerciseOwner.User("user-123", "JohnDoe")))
         )
         val returnedDto = ExerciseDto(
             id = exerciseId.toString(),

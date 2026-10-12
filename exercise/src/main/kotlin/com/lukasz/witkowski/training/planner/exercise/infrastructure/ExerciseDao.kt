@@ -117,4 +117,30 @@ internal interface ExerciseDao {
         insertExerciseCategoryCrossRefs(crossRefs)
         return updatedRows
     }
+
+    @Query("SELECT value FROM SyncMetadata WHERE key = 'exercise_sync_version'")
+    suspend fun getSyncVersion(): Long?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertSyncMetadata(metadata: DbSyncMetadata)
+
+    @Transaction
+    suspend fun applySyncChanges(
+        upserts: List<DbExerciseWithCategories>,
+        deletedIds: List<String>,
+        newVersion: Long
+    ) {
+        upserts.forEach { item ->
+            insert(item.exercise)
+            deleteCategoryReferences(item.exercise.exerciseId)
+            val crossRefs = item.categories.map {
+                ExerciseCategoryCrossRef(item.exercise.exerciseId, it.categoryName)
+            }
+            insertExerciseCategoryCrossRefs(crossRefs)
+        }
+        deletedIds.forEach { id ->
+            deleteExerciseById(id)
+        }
+        insertSyncMetadata(DbSyncMetadata(key = "exercise_sync_version", value = newVersion))
+    }
 }

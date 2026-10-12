@@ -16,19 +16,50 @@ data class Exercise(
     }
 }
 
+data class ExerciseMetadata(
+    val source: ExerciseSource = ExerciseSource.Bundled,
+    val sharing: ExerciseSharing = ExerciseSharing.Private,
+    val revision: Long = 1L,
+    val syncState: ExerciseSyncState = ExerciseSyncState.SYNCED
+)
+
 data class Exercise2(
     val id: ExerciseId,
     val name: String,
     val description: String,
     val categories: Set<ExerciseCategory>,
     val imageId: ImageId? = null,
-    val origin: ExerciseOrigin = ExerciseOrigin.Bundled
+    val metadata: ExerciseMetadata = ExerciseMetadata()
 ) {
     init {
         require(categories.isNotEmpty()) {
             "Exercise should have at least one category"
         }
     }
+}
+
+sealed interface ExerciseSource {
+    data object Bundled : ExerciseSource
+    data class UserCreated(
+        val owner: ExerciseOwner
+    ) : ExerciseSource
+    data object Organization : ExerciseSource
+}
+
+sealed interface ExerciseSharing {
+    data object Private : ExerciseSharing
+    data object Community : ExerciseSharing
+    data class Friends(
+        val selectedUserIds: Set<String> = emptySet()
+    ) : ExerciseSharing
+}
+
+enum class ExerciseSyncState {
+    LOCAL_ONLY,
+    PENDING_UPLOAD,
+    SYNCED,
+    PENDING_DELETE,
+    ERROR
 }
 
 sealed interface ExerciseOwner {
@@ -42,15 +73,4 @@ sealed interface ExerciseOwner {
         override val id: String,
         val username: String
     ) : ExerciseOwner
-}
-
-sealed interface ExerciseOrigin {
-    data object Bundled : ExerciseOrigin
-    data class Community(
-        val owner: ExerciseOwner
-    ) : ExerciseOrigin
-
-    data class UserCreated(
-        val owner: ExerciseOwner
-    ) : ExerciseOrigin
 }

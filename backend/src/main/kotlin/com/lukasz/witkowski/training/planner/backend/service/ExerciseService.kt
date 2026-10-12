@@ -3,12 +3,14 @@ package com.lukasz.witkowski.training.planner.backend.service
 import com.lukasz.witkowski.training.planner.backend.db.CategoriesTable
 import com.lukasz.witkowski.training.planner.backend.db.DatabaseFactory.dbQuery
 import com.lukasz.witkowski.training.planner.backend.db.ExerciseCategoriesTable
+import com.lukasz.witkowski.training.planner.backend.db.ExerciseDeletionsTable
 import com.lukasz.witkowski.training.planner.backend.db.ExercisesTable
 import com.lukasz.witkowski.training.planner.backend.db.UsersTable
 import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CategoryDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CreateExerciseRequestDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
+import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseSyncResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.OwnerDto
 import com.lukasz.witkowski.training.planner.dto.exercise.UpdateExerciseRequestDto
 import java.util.UUID
@@ -16,6 +18,7 @@ import org.jetbrains.exposed.v1.core.AndOp
 import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.OrOp
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.greater
 import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.core.isNull
 import org.jetbrains.exposed.v1.core.leftJoin
@@ -54,6 +57,73 @@ class ExerciseService {
                 }
             }
         }
+    }
+
+    private fun getNextChangeVersion(): Long {
+        val maxEx = ExercisesTable.selectAll().map { it[ExercisesTable.changeVersion] }.maxOrNull() ?: 0L
+        val maxDel = ExerciseDeletionsTable.selectAll().map { it[ExerciseDeletionsTable.changeVersion] }.maxOrNull() ?: 0L
+        return maxOf(maxEx, maxDel) + 1L
+    }
+
+    suspend fun getExerciseChanges(
+        sinceVersion: Long,
+        requesterId: String? = null
+    ): ExerciseSyncResponseDto = dbQuery {
+        val visibilityCondition: Op<Boolean> = if (requesterId != null) {
+            OrOp(listOf(
+                ExercisesTable.ownerId.isNull(),
+                ExercisesTable.ownerId eq requesterId,
+                ExercisesTable.sharing eq "COMMUNITY"
+            ))
+        } else {
+            OrOp(listOf(
+                ExercisesTable.ownerId.isNull(),
+                ExercisesTable.sharing eq "COMMUNITY"
+            ))
+        }
+
+        val condition = AndOp(listOf(
+            ExercisesTable.changeVersion greater sinceVersion,
+            visibilityCondition
+        ))
+
+        val queryJoin = ExercisesTable.leftJoin(UsersTable, { ExercisesTable.ownerId }, { UsersTable.id })
+        val changedRows = queryJoin.selectAll().where { condition }.toList()
+        val exerciseIds = changedRows.map { it[ExercisesTable.id] }
+        val categoriesMap = getCategoriesForExercises(exerciseIds)
+
+        val changedExercises = changedRows.map { row ->
+            val exerciseId = row[ExercisesTable.id]
+            val exerciseOwnerId = row[ExercisesTable.ownerId]
+            val owner = exerciseOwnerId?.let { oId ->
+                val username = row.getOrNull(UsersTable.username) ?: ""
+                OwnerDto(id = oId, username = username)
+            }
+            ExerciseDto(
+                id = exerciseId,
+                name = row[ExercisesTable.name],
+                description = row[ExercisesTable.description],
+                categories = categoriesMap[exerciseId] ?: emptyList(),
+                owner = owner,
+                source = row[ExercisesTable.sourceType],
+                sharing = row[ExercisesTable.sharing],
+                revision = row[ExercisesTable.revision]
+            )
+        }
+
+        val deletedIds = ExerciseDeletionsTable.selectAll()
+            .where { ExerciseDeletionsTable.changeVersion greater sinceVersion }
+            .map { it[ExerciseDeletionsTable.exerciseId] }
+
+        val maxExVersion = ExercisesTable.selectAll().map { it[ExercisesTable.changeVersion] }.maxOrNull() ?: sinceVersion
+        val maxDelVersion = ExerciseDeletionsTable.selectAll().map { it[ExerciseDeletionsTable.changeVersion] }.maxOrNull() ?: sinceVersion
+        val currentVersion = maxOf(sinceVersion, maxExVersion, maxDelVersion)
+
+        ExerciseSyncResponseDto(
+            changes = changedExercises,
+            deletedIds = deletedIds,
+            currentVersion = currentVersion
+        )
     }
 
     suspend fun getExercises(
@@ -119,7 +189,10 @@ class ExerciseService {
                     name = row[ExercisesTable.name],
                     description = row[ExercisesTable.description],
                     categories = categoriesMap[exerciseId] ?: emptyList(),
-                    owner = owner
+                    owner = owner,
+                    source = row[ExercisesTable.sourceType],
+                    sharing = row[ExercisesTable.sharing],
+                    revision = row[ExercisesTable.revision]
                 )
             }
 
@@ -151,18 +224,27 @@ class ExerciseService {
             name = row[ExercisesTable.name],
             description = row[ExercisesTable.description],
             categories = categories,
-            owner = owner
+            owner = owner,
+            source = row[ExercisesTable.sourceType],
+            sharing = row[ExercisesTable.sharing],
+            revision = row[ExercisesTable.revision]
         )
     }
 
     suspend fun createExercise(request: CreateExerciseRequestDto, ownerId: String): ExerciseDto =
         dbQuery {
             val exerciseId = UUID.randomUUID().toString()
+            val version = getNextChangeVersion()
+            val sharingValue = request.sharing.ifBlank { "PRIVATE" }
             ExercisesTable.insert {
                 it[id] = exerciseId
                 it[name] = request.name
                 it[description] = request.description
                 it[ExercisesTable.ownerId] = ownerId
+                it[sourceType] = "USER_CREATED"
+                it[sharing] = sharingValue
+                it[revision] = 1L
+                it[changeVersion] = version
             }
 
             request.categoryIds.forEach { catId ->
@@ -180,7 +262,10 @@ class ExerciseService {
                 name = request.name,
                 description = request.description,
                 categories = categories,
-                owner = owner
+                owner = owner,
+                source = "USER_CREATED",
+                sharing = sharingValue,
+                revision = 1L
             )
         }
 
@@ -199,9 +284,16 @@ class ExerciseService {
             throw SecurityException("You do not have permission to update this exercise.")
         }
 
+        val nextRevision = existing[ExercisesTable.revision] + 1L
+        val version = getNextChangeVersion()
+        val sharingValue = request.sharing.ifBlank { existing[ExercisesTable.sharing] }
+
         ExercisesTable.update({ ExercisesTable.id eq id }) {
             it[name] = request.name
             it[description] = request.description
+            it[sharing] = sharingValue
+            it[revision] = nextRevision
+            it[changeVersion] = version
         }
 
         ExerciseCategoriesTable.deleteWhere { ExerciseCategoriesTable.exerciseId eq id }
@@ -215,12 +307,16 @@ class ExerciseService {
         val ownerName = UsersTable.selectAll().where { UsersTable.id eq ownerId }.singleOrNull()?.get(UsersTable.username) ?: ""
         val owner = OwnerDto(id = ownerId, username = ownerName)
         val categories = getCategoriesForExercise(id)
+        val sourceType = existing[ExercisesTable.sourceType]
         ExerciseDto(
             id = id,
             name = request.name,
             description = request.description,
             categories = categories,
-            owner = owner
+            owner = owner,
+            source = sourceType,
+            sharing = sharingValue,
+            revision = nextRevision
         )
     }
 
@@ -233,6 +329,13 @@ class ExerciseService {
             existing[ExercisesTable.ownerId] != ownerId
         ) {
             throw SecurityException("You do not have permission to delete this exercise.")
+        }
+
+        val version = getNextChangeVersion()
+        ExerciseDeletionsTable.insert {
+            it[ExerciseDeletionsTable.id] = UUID.randomUUID().toString()
+            it[ExerciseDeletionsTable.exerciseId] = id
+            it[ExerciseDeletionsTable.changeVersion] = version
         }
 
         ExercisesTable.deleteWhere { ExercisesTable.id eq id } > 0

@@ -6,6 +6,7 @@ import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CategoryDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CreateExerciseRequestDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
+import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseSyncResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.UpdateExerciseRequestDto
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
@@ -186,5 +187,49 @@ class ExerciseRoutesTest {
                 setBody("{ invalid_json: ")
             }
         assertEquals(HttpStatusCode.BadRequest, badJsonRes.status)
+    }
+
+    @Test
+    fun `get exercise changes returns incremental changes and deletions`() = testApplication {
+        application { module() }
+        val user = createAuthenticatedUser()
+
+        val initialChangesRes = user.client.get("/api/v1/exercises/changes?sinceVersion=0") {
+            header(HttpHeaders.Authorization, "Bearer ${user.token}")
+        }
+        assertEquals(HttpStatusCode.OK, initialChangesRes.status)
+        val initialChanges = initialChangesRes.body<ExerciseSyncResponseDto>()
+        val startVersion = initialChanges.currentVersion
+
+        val createRes = user.client.post("/api/v1/exercises") {
+            header(HttpHeaders.Authorization, "Bearer ${user.token}")
+            contentType(ContentType.Application.Json)
+            setBody(CreateExerciseRequestDto(name = "Sync Bench Press", description = "Chest", sharing = "COMMUNITY"))
+        }
+        assertEquals(HttpStatusCode.Created, createRes.status)
+        val created = createRes.body<ExerciseDto>()
+
+        val newChangesRes = user.client.get("/api/v1/exercises/changes?sinceVersion=$startVersion") {
+            header(HttpHeaders.Authorization, "Bearer ${user.token}")
+        }
+        assertEquals(HttpStatusCode.OK, newChangesRes.status)
+        val newChanges = newChangesRes.body<ExerciseSyncResponseDto>()
+        assertEquals(1, newChanges.changes.size)
+        assertEquals("Sync Bench Press", newChanges.changes.first().name)
+        assertEquals("COMMUNITY", newChanges.changes.first().sharing)
+        assertEquals(user.userId, newChanges.changes.first().owner?.id)
+        assertTrue(newChanges.currentVersion > startVersion)
+
+        val delVersion = newChanges.currentVersion
+        user.client.delete("/api/v1/exercises/${created.id}") {
+            header(HttpHeaders.Authorization, "Bearer ${user.token}")
+        }
+
+        val deleteChangesRes = user.client.get("/api/v1/exercises/changes?sinceVersion=$delVersion") {
+            header(HttpHeaders.Authorization, "Bearer ${user.token}")
+        }
+        assertEquals(HttpStatusCode.OK, deleteChangesRes.status)
+        val deleteChanges = deleteChangesRes.body<ExerciseSyncResponseDto>()
+        assertTrue(created.id in deleteChanges.deletedIds)
     }
 }

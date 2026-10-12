@@ -7,29 +7,47 @@ import com.lukasz.witkowski.training.planner.dto.exercise.UpdateExerciseRequestD
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOrigin
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSharing
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 
 internal fun CategoryDto.toExerciseCategory(): ExerciseCategory = ExerciseCategory(name = name)
 
 internal fun ExerciseDto.toExercise2(currentUserId: String? = null): Exercise2 {
-    val origin = when {
-        owner == null -> ExerciseOrigin.Bundled
-        owner!!.id == currentUserId -> ExerciseOrigin.UserCreated(
-            owner = ExerciseOwner.User(id = owner!!.id, username = owner!!.username)
-        )
-        else -> ExerciseOrigin.Community(
-            owner = ExerciseOwner.User(id = owner!!.id, username = owner!!.username)
-        )
+    val sourceObj = when (source) {
+        "USER_CREATED" -> {
+            val ownerObj = if (owner != null) {
+                ExerciseOwner.User(id = owner!!.id, username = owner!!.username)
+            } else {
+                ExerciseOwner.Local()
+            }
+            ExerciseSource.UserCreated(ownerObj)
+        }
+        "ORGANIZATION" -> ExerciseSource.Organization
+        else -> ExerciseSource.Bundled
+    }
+    val sharingObj = when (sharing) {
+        "COMMUNITY" -> ExerciseSharing.Community
+        "FRIENDS" -> ExerciseSharing.Friends()
+        else -> ExerciseSharing.Private
     }
     val categoriesSet = categories.map { it.toExerciseCategory() }.toSet()
+    val metadataObj = ExerciseMetadata(
+        source = sourceObj,
+        sharing = sharingObj,
+        revision = revision,
+        syncState = ExerciseSyncState.SYNCED
+    )
+
     return Exercise2(
         id = ExerciseId(id),
         name = name,
         description = description,
         categories = if (categoriesSet.isEmpty()) setOf(ExerciseCategory("Other")) else categoriesSet,
         imageId = null,
-        origin = origin
+        metadata = metadataObj
     )
 }
 

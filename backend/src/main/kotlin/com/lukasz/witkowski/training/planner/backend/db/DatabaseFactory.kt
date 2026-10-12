@@ -22,6 +22,7 @@ object DatabaseFactory {
                 CategoriesTable,
                 ExercisesTable,
                 ExerciseCategoriesTable,
+                ExerciseDeletionsTable,
                 TrainingPlansTable,
                 TrainingExercisesTable
             )

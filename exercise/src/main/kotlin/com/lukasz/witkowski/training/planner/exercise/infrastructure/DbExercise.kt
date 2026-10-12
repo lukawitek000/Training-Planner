@@ -18,11 +18,24 @@ class DbExercise(
     val imageId: String?,
     @Embedded
     val owner: DbExerciseOwner? = null,
-    val originType: String = ORIGIN_TYPE_BUNDLED
+    val sourceType: String = SOURCE_TYPE_BUNDLED,
+    val sharing: String = SHARING_PRIVATE,
+    val revision: Long = 1L,
+    val syncState: String = SYNC_STATE_SYNCED
 ) {
     companion object {
-        const val ORIGIN_TYPE_BUNDLED = "BUNDLED"
-        const val ORIGIN_TYPE_COMMUNITY = "COMMUNITY"
-        const val ORIGIN_TYPE_USER_CREATED = "USER_CREATED"
+        const val SOURCE_TYPE_BUNDLED = "BUNDLED"
+        const val SOURCE_TYPE_USER_CREATED = "USER_CREATED"
+        const val SOURCE_TYPE_ORGANIZATION = "ORGANIZATION"
+
+        const val SHARING_PRIVATE = "PRIVATE"
+        const val SHARING_COMMUNITY = "COMMUNITY"
+        const val SHARING_FRIENDS = "FRIENDS"
+
+        const val SYNC_STATE_LOCAL_ONLY = "LOCAL_ONLY"
+        const val SYNC_STATE_PENDING_UPLOAD = "PENDING_UPLOAD"
+        const val SYNC_STATE_SYNCED = "SYNCED"
+        const val SYNC_STATE_PENDING_DELETE = "PENDING_DELETE"
+        const val SYNC_STATE_ERROR = "ERROR"
     }
 }

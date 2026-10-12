@@ -9,9 +9,9 @@ import androidx.room3.RoomDatabase
 @Database(
     entities = [
         DbExercise::class, DbExerciseCategory::class, ExerciseCategoryCrossRef::class,
-        DbExerciseRecommendation::class
+        DbExerciseRecommendation::class, DbSyncMetadata::class
     ],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 @ColumnTypeConverters(Converters::class)
@@ -32,9 +32,10 @@ internal abstract class ExerciseDatabase : RoomDatabase() {
                             context,
                             ExerciseDatabase::class.java,
                             "ExerciseDb"
-                        ).createFromAsset("database/exercises.db")
+                        )
+//                        .createFromAsset("database/exercises.db")
                         // TODO regenerate default exercises
-//                            .fallbackToDestructiveMigration(true)
+                            .fallbackToDestructiveMigration(true)
                         .build()
             }
             instance!!

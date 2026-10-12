@@ -4,80 +4,93 @@ import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOrigin
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRecommendation
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSharing
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.image.ImageId
 import kotlin.time.Duration.Companion.seconds
 
 internal fun Exercise2.toDbExercise(): DbExercise {
-    val (dbOwner, originType) = when (val origin = origin) {
-        is ExerciseOrigin.Bundled -> null to DbExercise.ORIGIN_TYPE_BUNDLED
-        is ExerciseOrigin.Community -> {
-            val dbOwner = when (val owner = origin.owner) {
-                is ExerciseOwner.Local -> DbExerciseOwner(owner.id, "Local")
-                is ExerciseOwner.User -> DbExerciseOwner(owner.id, owner.username)
+    val (sourceTypeStr, dbOwner) = when (val s = metadata.source) {
+        is ExerciseSource.Bundled -> DbExercise.SOURCE_TYPE_BUNDLED to null
+        is ExerciseSource.Organization -> DbExercise.SOURCE_TYPE_ORGANIZATION to null
+        is ExerciseSource.UserCreated -> {
+            val owner = when (val o = s.owner) {
+                is ExerciseOwner.Local -> DbExerciseOwner(o.id, "Local")
+                is ExerciseOwner.User -> DbExerciseOwner(o.id, o.username)
             }
-            dbOwner to DbExercise.ORIGIN_TYPE_COMMUNITY
-        }
-        is ExerciseOrigin.UserCreated -> {
-            val dbOwner = when (val owner = origin.owner) {
-                is ExerciseOwner.Local -> DbExerciseOwner(owner.id, "Local")
-                is ExerciseOwner.User -> DbExerciseOwner(owner.id, owner.username)
-            }
-            dbOwner to DbExercise.ORIGIN_TYPE_USER_CREATED
+            DbExercise.SOURCE_TYPE_USER_CREATED to owner
         }
     }
+    val sharingStr = when (metadata.sharing) {
+        is ExerciseSharing.Private -> DbExercise.SHARING_PRIVATE
+        is ExerciseSharing.Community -> DbExercise.SHARING_COMMUNITY
+        is ExerciseSharing.Friends -> DbExercise.SHARING_FRIENDS
+    }
+    val syncStateStr = metadata.syncState.name
+
     return DbExercise(
         exerciseId = id.toString(),
         name = name,
         description = description,
         imageId = imageId?.toString(),
         owner = dbOwner,
-        originType = originType
+        sourceType = sourceTypeStr,
+        sharing = sharingStr,
+        revision = metadata.revision,
+        syncState = syncStateStr
     )
 }
 
 internal fun DbExercise.toExercise(categories: List<ExerciseCategory>): Exercise2 {
-    val origin = toExerciseOrigin()
+    val sourceObj = toExerciseSource()
+    val sharingObj = toExerciseSharing()
+    val syncStateObj = toExerciseSyncState()
+    val metadataObj = ExerciseMetadata(
+        source = sourceObj,
+        sharing = sharingObj,
+        revision = revision,
+        syncState = syncStateObj
+    )
     return Exercise2(
         id = ExerciseId(exerciseId),
         name = name,
         description = description,
         categories = categories.toSet(),
         imageId = imageId?.let { ImageId(it) },
-        origin = origin
+        metadata = metadataObj
     )
 }
 
-internal fun DbExerciseWithCategories.toExercise(): Exercise2 {
-    val origin = exercise.toExerciseOrigin()
-    return Exercise2(
-        id = ExerciseId(exercise.exerciseId),
-        name = exercise.name,
-        description = exercise.description,
-        categories = categories.map { it.toExerciseCategory() }.toSet(),
-        imageId = exercise.imageId?.let { ImageId(it) },
-        origin = origin
-    )
-}
+internal fun DbExerciseWithCategories.toExercise(): Exercise2 =
+    exercise.toExercise(categories.map { it.toExerciseCategory() })
 
-private fun DbExercise.toExerciseOrigin(): ExerciseOrigin = when (originType) {
-    DbExercise.ORIGIN_TYPE_COMMUNITY -> ExerciseOrigin.Community(
-        owner = if (owner == null || owner.ownerName.isBlank() || owner.ownerName == "Local") {
+private fun DbExercise.toExerciseSource(): ExerciseSource = when (sourceType) {
+    DbExercise.SOURCE_TYPE_USER_CREATED -> {
+        val ownerObj = if (owner == null || owner.ownerName.isBlank() || owner.ownerName == "Local") {
             ExerciseOwner.Local(id = owner?.ownerId ?: "local_user")
         } else {
             ExerciseOwner.User(id = owner.ownerId, username = owner.ownerName)
         }
-    )
-    DbExercise.ORIGIN_TYPE_USER_CREATED -> ExerciseOrigin.UserCreated(
-        owner = if (owner == null || owner.ownerName.isBlank() || owner.ownerName == "Local") {
-            ExerciseOwner.Local(id = owner?.ownerId ?: "local_user")
-        } else {
-            ExerciseOwner.User(id = owner.ownerId, username = owner.ownerName)
-        }
-    )
-    else -> ExerciseOrigin.Bundled
+        ExerciseSource.UserCreated(ownerObj)
+    }
+    DbExercise.SOURCE_TYPE_ORGANIZATION -> ExerciseSource.Organization
+    else -> ExerciseSource.Bundled
+}
+
+private fun DbExercise.toExerciseSharing(): ExerciseSharing = when (sharing) {
+    DbExercise.SHARING_COMMUNITY -> ExerciseSharing.Community
+    DbExercise.SHARING_FRIENDS -> ExerciseSharing.Friends()
+    else -> ExerciseSharing.Private
+}
+
+private fun DbExercise.toExerciseSyncState(): ExerciseSyncState = try {
+    ExerciseSyncState.valueOf(syncState)
+} catch (_: Exception) {
+    ExerciseSyncState.SYNCED
 }
 
 internal fun ExerciseDetails.toDbExerciseDetails(): DbExerciseDetails = DbExerciseDetails(

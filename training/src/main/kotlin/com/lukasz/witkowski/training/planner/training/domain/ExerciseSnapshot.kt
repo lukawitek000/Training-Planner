@@ -13,7 +13,8 @@ data class ExerciseSnapshot(
     val name: String,
     val description: String,
     val categories: Set<ExerciseCategoryName>,
-    val imageId: ImageId? = null
+    val imageId: ImageId? = null,
+    val revision: Long? = 1L
 ) {
     init {
         require(categories.isNotEmpty()) {

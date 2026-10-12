@@ -28,7 +28,8 @@ fun DomainExercise2.toPresentationExercise2(imageReference: ImageReference?): Ex
     name = name,
     description = description,
     categories = categories.toList(),
-    image = imageReference
+    image = imageReference,
+    metadata = metadata
 )
 
 fun DomainExerciseDetails.toPresentationExerciseDetails(): ExerciseDetails = ExerciseDetails(

@@ -14,10 +14,16 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
+import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseSyncResponseDto
 
 interface ExerciseApi {
     @GET(ApiRoutes.Exercises.CATEGORIES)
     suspend fun getCategories(): List<CategoryDto>
+
+    @GET(ApiRoutes.Exercises.CHANGES)
+    suspend fun getExerciseChanges(
+        @Query("sinceVersion") sinceVersion: Long
+    ): ExerciseSyncResponseDto
 
     @GET(ApiRoutes.Exercises.BASE)
     suspend fun getExercises(

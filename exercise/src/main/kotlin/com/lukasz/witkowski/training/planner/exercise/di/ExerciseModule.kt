@@ -30,6 +30,8 @@ import org.koin.dsl.module
 import org.koin.plugin.module.dsl.factory
 import org.koin.plugin.module.dsl.single
 import retrofit2.Retrofit
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncRepository
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.sync.DefaultExerciseSyncRepository
 
 val exerciseModule =
     module {
@@ -63,6 +65,14 @@ val exerciseModule =
                 ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
             )
         } bind ExerciseRepository::class
+
+        single {
+            DefaultExerciseSyncRepository(
+                exerciseDao = get(),
+                remoteDataSource = get(),
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
+            )
+        } bind ExerciseSyncRepository::class
         single<ExerciseService>()
 
         single<ExerciseCategoryDao> { get<ExerciseDatabase>().categoryDao() }

@@ -25,6 +25,16 @@ fun Route.exerciseRoutes(exerciseService: ExerciseService) {
                 call.respond(HttpStatusCode.OK, categories)
             }
 
+            get("/changes") {
+                val sinceVersion = call.request.queryParameters["sinceVersion"]?.toLongOrNull() ?: 0L
+                val principal = call.principal<JWTPrincipal>()
+                val result = exerciseService.getExerciseChanges(
+                    sinceVersion = sinceVersion,
+                    requesterId = principal?.payload?.subject
+                )
+                call.respond(HttpStatusCode.OK, result)
+            }
+
             get {
                 val query = call.request.queryParameters["query"]
                 val categoryId = call.request.queryParameters["category"]

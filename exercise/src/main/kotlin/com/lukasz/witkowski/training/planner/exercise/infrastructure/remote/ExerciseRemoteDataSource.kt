@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure.remote
 
 import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
+import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseSyncResponseDto
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseFailure
@@ -9,6 +10,10 @@ import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 
 interface ExerciseRemoteDataSource {
     suspend fun getCategories(): AppResult<List<ExerciseCategory>, ExerciseFailure>
+
+    suspend fun getExerciseChanges(
+        sinceVersion: Long
+    ): AppResult<ExerciseSyncResponseDto, ExerciseFailure>
 
     suspend fun getExercises(
         query: String? = null,
