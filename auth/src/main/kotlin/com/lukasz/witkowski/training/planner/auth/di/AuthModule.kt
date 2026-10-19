@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.Authenti
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitAuthenticationRemoteDataSource
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitTokenRefreshRemoteDataSource
 import com.lukasz.witkowski.training.planner.auth.presentation.auth.AuthenticationViewModel
+import com.lukasz.witkowski.training.planner.network.AuthSessionProvider
 import com.lukasz.witkowski.training.planner.network.NetworkQualifiers
 import com.lukasz.witkowski.training.planner.network.TokenRefreshRemoteDataSource
 import com.lukasz.witkowski.training.planner.network.TokenStorage
@@ -49,7 +50,9 @@ val authModule =
         } bind TokenRefreshRemoteDataSource::class
 
         single { AndroidSecureTokenStorage(androidContext()) } bind SecureTokenStorage::class
-        single { DefaultTokenStorage(secureTokenStorage = get()) } bind TokenStorage::class
+        single { DefaultTokenStorage(secureTokenStorage = get()) }
+        single<TokenStorage> { get<DefaultTokenStorage>() }
+        single<AuthSessionProvider> { get<DefaultTokenStorage>() }
 
         single {
             DefaultAuthenticationRepository(

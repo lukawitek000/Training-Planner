@@ -7,6 +7,7 @@ import com.lukasz.witkowski.training.planner.auth.domain.model.SignInForm
 import com.lukasz.witkowski.training.planner.auth.domain.model.SignUpForm
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthenticationRemoteDataSource
 import com.lukasz.witkowski.training.planner.network.AuthTokens
+import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.network.TokenStorage
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import com.lukasz.witkowski.training.planner.shared.utils.fold
@@ -15,7 +16,8 @@ import timber.log.Timber
 
 class DefaultAuthenticationRepository(
     private val tokenStorage: TokenStorage,
-    private val remoteDataSource: AuthenticationRemoteDataSource
+    private val remoteDataSource: AuthenticationRemoteDataSource,
+    private val syncScheduler: SyncScheduler? = null
 ) : AuthenticationRepository {
     override suspend fun signUp(form: SignUpForm): AuthenticationResult {
         Timber.i("Repository signUp called for email: %s, username: %s", form.email, form.username)
@@ -31,6 +33,7 @@ class DefaultAuthenticationRepository(
         Timber.i("Repository logOut called - clearing local token storage")
         return runCatchingCancellable {
             tokenStorage.clear()
+            syncScheduler?.cancelMutationSync()
         }.fold(
             onSuccess = {
                 Timber.i("LogOut successful - tokens cleared")
@@ -49,6 +52,7 @@ class DefaultAuthenticationRepository(
             onSuccess = { tokens ->
                 Timber.i("Authentication remote call succeeded - saving tokens")
                 tokenStorage.saveTokens(tokens)
+                syncScheduler?.enqueueMutationSync()
                 AuthenticationResult.Success
             },
             onError = { failure ->

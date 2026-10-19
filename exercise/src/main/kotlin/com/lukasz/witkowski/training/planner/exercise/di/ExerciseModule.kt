@@ -29,12 +29,19 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.factory
 import org.koin.plugin.module.dsl.single
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import retrofit2.Retrofit
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseMutationDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.sync.DefaultExerciseSyncRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.sync.WorkManagerExerciseMutationScheduler
+
+import com.lukasz.witkowski.training.planner.network.AuthSessionProvider
+import com.lukasz.witkowski.training.planner.network.SyncPreferencesStorage
+
+import com.lukasz.witkowski.training.planner.network.SyncScheduler
 
 val exerciseModule =
     module {
@@ -65,7 +72,16 @@ val exerciseModule =
             )
         } bind ExerciseLocalDataSource::class
 
-        single<ExerciseMutationScheduler> { WorkManagerExerciseMutationScheduler(androidContext()) }
+        single {
+            WorkManagerExerciseMutationScheduler(
+                context = androidContext(),
+                authSessionProvider = get(),
+                syncPreferencesStorage = get(),
+                coroutineScope = CoroutineScope(get(named(CoroutineDispatcherQualifiers.IO)))
+            )
+        }
+        single<ExerciseMutationScheduler> { get<WorkManagerExerciseMutationScheduler>() }
+        single<SyncScheduler> { get<WorkManagerExerciseMutationScheduler>() }
 
         single {
             DefaultExerciseRepository(

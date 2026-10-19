@@ -11,6 +11,7 @@ dependencies {
     api(projects.image)
     api(projects.dto)
     api(projects.network)
+    api(projects.user)
     implementation(projects.shared)
 
     // Retrofit & Serialization

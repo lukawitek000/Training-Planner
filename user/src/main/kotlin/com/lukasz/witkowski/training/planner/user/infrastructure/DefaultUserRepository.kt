@@ -33,6 +33,13 @@ class DefaultUserRepository(
         userPreferencesStorage.setWeightUnit(weightUnit)
     }
 
+    override val autoSyncEnabled: Flow<Boolean> = userPreferencesStorage.autoSyncEnabled
+
+    override suspend fun setAutoSyncEnabled(enabled: Boolean) {
+        Timber.d("setAutoSyncEnabled: Setting auto sync enabled to %s", enabled)
+        userPreferencesStorage.setAutoSyncEnabled(enabled)
+    }
+
     override suspend fun signOut() {
         Timber.i("signOut: Clearing user tokens")
         tokenStorage.clear()
