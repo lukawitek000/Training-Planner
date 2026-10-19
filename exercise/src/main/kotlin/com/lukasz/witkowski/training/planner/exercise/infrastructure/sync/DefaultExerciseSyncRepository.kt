@@ -210,19 +210,22 @@ internal class DefaultExerciseSyncRepository(
             sets = mutation.beginnerSets ?: 0,
             reps = mutation.beginnerReps ?: 0,
             restTime = (mutation.beginnerRestTime ?: 0L).milliseconds,
-            weightInKg = mutation.beginnerWeight
+            weightInKg = mutation.beginnerWeight,
+            time = mutation.beginnerTime?.milliseconds
         )
         val intermediateRec = ExerciseRecommendation(
             sets = mutation.intermediateSets ?: 0,
             reps = mutation.intermediateReps ?: 0,
             restTime = (mutation.intermediateRestTime ?: 0L).milliseconds,
-            weightInKg = mutation.intermediateWeight
+            weightInKg = mutation.intermediateWeight,
+            time = mutation.intermediateTime?.milliseconds
         )
         val advancedRec = ExerciseRecommendation(
             sets = mutation.advancedSets ?: 0,
             reps = mutation.advancedReps ?: 0,
             restTime = (mutation.advancedRestTime ?: 0L).milliseconds,
-            weightInKg = mutation.advancedWeight
+            weightInKg = mutation.advancedWeight,
+            time = mutation.advancedTime?.milliseconds
         )
 
         val exerciseDetails = ExerciseDetails(

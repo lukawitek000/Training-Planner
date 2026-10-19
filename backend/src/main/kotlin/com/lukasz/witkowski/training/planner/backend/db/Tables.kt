@@ -78,6 +78,7 @@ object ExerciseRecommendationsTable : Table("exercise_recommendations") {
     val reps = integer("reps")
     val restTimeInMillis = long("rest_time_in_millis")
     val weightInKg = integer("weight_in_kg").nullable()
+    val timeInMillis = long("time_in_millis").nullable()
 
     override val primaryKey = PrimaryKey(id)
 }

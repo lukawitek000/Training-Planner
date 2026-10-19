@@ -8,6 +8,7 @@ import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CategoryDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CreateExerciseRequestDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
+import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseRecommendationDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseSyncResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.UpdateExerciseRequestDto
 import io.ktor.client.call.body
@@ -25,6 +26,7 @@ import io.ktor.server.testing.testApplication
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.junit.Test
@@ -560,5 +562,79 @@ class ExerciseRoutesTest {
         val maxPaged = maxLimitRes.body<PagedResponseDto<ExerciseDto>>()
         assertEquals(1, maxPaged.page)
         assertEquals(100, maxPaged.limit)
+    }
+
+    @Test
+    fun `create and update exercise persists hold time in recommendations`() = testApplication {
+        application { module() }
+        val user = createAuthenticatedUser("timer_user@example.com", "TimerUser")
+
+        val createReq = CreateExerciseRequestDto(
+            name = "Plank Hold",
+            description = "Isometric core exercise",
+            categoryIds = emptyList(),
+            sharing = "PRIVATE",
+            recommendations = listOf(
+                ExerciseRecommendationDto(
+                    level = "BEGINNER",
+                    sets = 3,
+                    reps = 1,
+                    restTimeInMillis = 60_000L,
+                    weightInKg = null,
+                    timeInMillis = 30_000L
+                )
+            )
+        )
+
+        val createRes = user.client.post("/api/v1/exercises") {
+            header(HttpHeaders.Authorization, "Bearer ${user.token}")
+            contentType(ContentType.Application.Json)
+            setBody(createReq)
+        }
+        assertEquals(HttpStatusCode.Created, createRes.status)
+        val created = createRes.body<ExerciseDto>()
+        val begRec = created.recommendations?.firstOrNull { it.level == "BEGINNER" }
+        assertNotNull(begRec)
+        assertEquals(30_000L, begRec.timeInMillis)
+
+        // Update recommendation hold time to 45s
+        val updateReq = UpdateExerciseRequestDto(
+            name = "Plank Hold",
+            description = "Isometric core exercise - updated",
+            categoryIds = emptyList(),
+            sharing = "PRIVATE",
+            expectedVersion = 1L,
+            idempotencyKey = null,
+            recommendations = listOf(
+                ExerciseRecommendationDto(
+                    level = "BEGINNER",
+                    sets = 4,
+                    reps = 1,
+                    restTimeInMillis = 45_000L,
+                    weightInKg = null,
+                    timeInMillis = 45_000L
+                )
+            )
+        )
+        val updateRes = user.client.put("/api/v1/exercises/${created.id}") {
+            header(HttpHeaders.Authorization, "Bearer ${user.token}")
+            contentType(ContentType.Application.Json)
+            setBody(updateReq)
+        }
+        assertEquals(HttpStatusCode.OK, updateRes.status)
+        val updated = updateRes.body<ExerciseDto>()
+        val updatedRec = updated.recommendations?.firstOrNull { it.level == "BEGINNER" }
+        assertNotNull(updatedRec)
+        assertEquals(45_000L, updatedRec.timeInMillis)
+
+        // Verify sync response returns timeInMillis
+        val syncRes = user.client.get("/api/v1/exercises/changes?sinceVersion=0") {
+            header(HttpHeaders.Authorization, "Bearer ${user.token}")
+        }
+        assertEquals(HttpStatusCode.OK, syncRes.status)
+        val syncData = syncRes.body<ExerciseSyncResponseDto>()
+        val syncedExercise = syncData.changes.firstOrNull { it.id == created.id }
+        assertNotNull(syncedExercise)
+        assertEquals(45_000L, syncedExercise.recommendations?.firstOrNull { it.level == "BEGINNER" }?.timeInMillis)
     }
 }

@@ -246,4 +246,49 @@ class DefaultExerciseSyncRepositoryTest {
         }
         coVerify { exerciseDao.updateSyncState(EX_ID_2, DbExercise.SYNC_STATE_PENDING_UPLOAD) }
     }
+
+    @Test
+    fun `processPendingMutations passes hold time to remoteDataSource createExercise`() = runTest {
+        val mutation = DbExerciseMutation(
+            id = "mut-time",
+            exerciseId = EX_ID_CREATE,
+            type = DbExerciseMutation.TYPE_CREATE,
+            idempotencyKey = "key-time",
+            expectedVersion = 1L,
+            name = "Plank",
+            description = "Hold",
+            categoryNames = "Abs",
+            state = "PENDING",
+            beginnerTime = 30000L,
+            intermediateTime = 45000L,
+            advancedTime = 60000L
+        )
+        coEvery { mutationDao.getPendingMutations() } returns listOf(mutation)
+        val createdDto = ExerciseDto(
+            id = EX_ID_CREATE,
+            name = "Plank",
+            description = "Hold",
+            categories = emptyList(),
+            owner = null,
+            source = "USER_CREATED",
+            sharing = "PRIVATE",
+            revision = 1L,
+            recommendations = null
+        )
+        coEvery { remoteDataSource.createExercise(any(), "key-time") } returns AppResult.Success(createdDto)
+
+        val result = repository.processPendingMutations()
+
+        assertTrue(result is AppResult.Success)
+        coVerify {
+            remoteDataSource.createExercise(
+                match {
+                    it.beginnerRecommendation.time?.inWholeSeconds == 30L &&
+                    it.intermediateRecommendation.time?.inWholeSeconds == 45L &&
+                    it.advancedRecommendation.time?.inWholeSeconds == 60L
+                },
+                "key-time"
+            )
+        }
+    }
 }

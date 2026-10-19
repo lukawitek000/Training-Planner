@@ -57,6 +57,12 @@ class TrainingExerciseConfigurationViewModel(
                     weightInKg = intent.weight
                 )
             }
+
+            is ExerciseParametersIntent.TimeChanged -> _parameters.update {
+                it?.copy(time = intent.time) ?: RecommendedParameters(
+                    time = intent.time
+                )
+            }
         }
     }
 

@@ -123,7 +123,8 @@ internal fun ExerciseRecommendation.toDbExerciseRecommendation(
     sets = sets,
     reps = reps,
     restTimeInSeconds = restTime.inWholeSeconds,
-    weightInKg = weightInKg
+    weightInKg = weightInKg,
+    timeInSeconds = time?.inWholeSeconds
 )
 
 internal fun DbExerciseDetails.toExerciseDetails(): ExerciseDetails {
@@ -150,7 +151,8 @@ private fun List<DbExerciseRecommendation>.toExerciseRecommendation(
     sets = 0,
     reps = 0,
     restTime = 0.seconds,
-    weightInKg = null
+    weightInKg = null,
+    time = null
 )
 
 private fun DbExerciseRecommendation.toExerciseRecommendation(): ExerciseRecommendation =
@@ -158,5 +160,6 @@ private fun DbExerciseRecommendation.toExerciseRecommendation(): ExerciseRecomme
         sets = sets,
         reps = reps,
         restTime = restTimeInSeconds.seconds,
-        weightInKg = weightInKg
+        weightInKg = weightInKg,
+        time = timeInSeconds?.seconds
     )

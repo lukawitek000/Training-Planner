@@ -105,6 +105,15 @@ class ExerciseEditorViewModel(
                 )
             }
 
+            is ExerciseEditingEvent.RecommendedTimeChanged -> {
+                uiState.updateRecommendationParam(
+                    level = event.level,
+                    updateParameters = { currentParams ->
+                        currentParams.copy(time = event.time)
+                    }
+                )
+            }
+
             is ExerciseEditingEvent.SaveChangesRequested -> {
                 saveExercise(input = event.input)
             }
@@ -227,6 +236,9 @@ sealed interface ExerciseEditingEvent {
         ExerciseEditingEvent
 
     data class RecommendedWeightChanged(val weight: Int?, val level: RecommendationLevel) :
+        ExerciseEditingEvent
+
+    data class RecommendedTimeChanged(val time: Duration?, val level: RecommendationLevel) :
         ExerciseEditingEvent
 
     data class SaveChangesRequested(val input: ExerciseEditingInput) : ExerciseEditingEvent

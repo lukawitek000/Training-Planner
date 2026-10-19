@@ -254,8 +254,9 @@ private fun ConflictVersionColumn(
             details.recommendations.forEach { rec ->
                 val p = rec.parameters
                 if (p.areValid()) {
+                    val holdText = if (p.time != null && p.time.inWholeSeconds > 0) " · ${p.time.inWholeSeconds}s hold" else ""
                     Text(
-                        text = "${rec.level.name.take(3)}: ${p.sets}x${p.reps} · ${p.restTime?.inWholeSeconds ?: 0}s",
+                        text = "${rec.level.name.take(3)}: ${p.sets}x${p.reps}$holdText · ${p.restTime?.inWholeSeconds ?: 0}s",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

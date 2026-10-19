@@ -19,6 +19,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -173,11 +174,13 @@ fun ExerciseParametersInputFields(
     modifier: Modifier = Modifier,
 ) {
     var showRestTimePicker by rememberSaveable { mutableStateOf(false) }
+    var showHoldTimePicker by rememberSaveable { mutableStateOf(false) }
 
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
     ) {
+        // Row 1: Sets, Reps, Weight
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm),
@@ -195,6 +198,44 @@ fun ExerciseParametersInputFields(
                 label = buildRequiredString(stringResource(R.string.reps)),
                 modifier = Modifier.weight(1f),
                 testTag = "${testTagPrefix}_RepsField"
+            )
+            ParameterInputField(
+                value = parameters.weightInKg,
+                onValueChange = { onParametersIntent(ExerciseParametersIntent.WeightChanged(it)) },
+                label = stringResource(R.string.weight),
+                unit = stringResource(R.string.kg),
+                modifier = Modifier.weight(1f),
+                testTag = "${testTagPrefix}_WeightField"
+            )
+        }
+
+        // Row 2: Hold / Time, Rest time
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm),
+        ) {
+            ParameterInputField(
+                value = parameters.time?.inWholeSeconds?.toInt(),
+                onValueChange = { onParametersIntent(ExerciseParametersIntent.TimeChanged(it?.seconds)) },
+                label = stringResource(R.string.hold_time),
+                unit = stringResource(R.string.second_abbrv),
+                modifier = Modifier.weight(1f),
+                testTag = "${testTagPrefix}_HoldTimeField",
+                trailingIcon = {
+                    IconButton(
+                        onClick = { showHoldTimePicker = true },
+                        modifier = Modifier
+                            .size(Dimens2.inputIconSize)
+                            .testTag("${testTagPrefix}_HoldTimePickerButton")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Timer,
+                            contentDescription = stringResource(R.string.hold_time),
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(Dimens2.iconSize16)
+                        )
+                    }
+                }
             )
             ParameterInputField(
                 value = parameters.restTime?.inWholeSeconds?.toInt(),
@@ -219,20 +260,46 @@ fun ExerciseParametersInputFields(
                     }
                 }
             )
-            ParameterInputField(
-                value = parameters.weightInKg,
-                onValueChange = { onParametersIntent(ExerciseParametersIntent.WeightChanged(it)) },
-                label = stringResource(R.string.weight),
-                unit = stringResource(R.string.kg),
-                modifier = Modifier.weight(1f),
-                testTag = "${testTagPrefix}_WeightField"
+        }
+
+        // Row 3: Helper note
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = Dimens2.spaceXs),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+        ) {
+            Icon(
+                imageVector = Icons.Default.Info,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                modifier = Modifier.size(Dimens2.iconSize16)
+            )
+            Text(
+                text = stringResource(R.string.hold_time_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
             )
         }
+    }
+
+    if (showHoldTimePicker) {
+        AppTimePickerBottomSheet(
+            initialSeconds = parameters.time?.inWholeSeconds?.toInt(),
+            contextBadgeText = stringResource(R.string.hold),
+            allowNoTime = true,
+            onDismissRequest = { showHoldTimePicker = false },
+            onSecondsConfirmed = { selectedSeconds ->
+                onParametersIntent(ExerciseParametersIntent.TimeChanged(selectedSeconds?.seconds))
+                showHoldTimePicker = false
+            }
+        )
     }
 
     if (showRestTimePicker) {
         AppTimePickerBottomSheet(
             initialSeconds = parameters.restTime?.inWholeSeconds?.toInt() ?: 60,
+            contextBadgeText = stringResource(R.string.rest_time),
+            allowNoTime = false,
             onDismissRequest = { showRestTimePicker = false },
             onSecondsConfirmed = { selectedSeconds ->
                 onParametersIntent(ExerciseParametersIntent.RestTimeChanged(selectedSeconds?.seconds))
@@ -260,6 +327,12 @@ sealed interface ExerciseParametersIntent {
     data class RestTimeChanged(val restTime: Duration?) : ExerciseParametersIntent {
         override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent {
             return ExerciseEditingEvent.RecommendedRestTimeChanged(restTime, level)
+        }
+    }
+
+    data class TimeChanged(val time: Duration?) : ExerciseParametersIntent {
+        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent {
+            return ExerciseEditingEvent.RecommendedTimeChanged(time, level)
         }
     }
 
@@ -349,7 +422,8 @@ private fun buildStringOverview(recommendation: Recommendation): String =
                 sets = it.sets!!,
                 reps = it.reps!!,
                 restTime = it.restTime!!,
-                weightInKg = it.weightInKg
+                weightInKg = it.weightInKg,
+                time = it.time
             )
         }
     }
@@ -360,22 +434,45 @@ fun buildStringOverview(
     reps: Int,
     restTime: Duration,
     weightInKg: Int?,
+    time: Duration? = null,
 ): String =
-    if (weightInKg != null) {
-        stringResource(
-            R.string.recommendation_overview,
-            sets,
-            reps,
-            restTime.inWholeSeconds,
-            weightInKg
-        )
-    } else {
-        stringResource(
-            R.string.recommendation_no_weight,
-            sets,
-            reps,
-            restTime.inWholeSeconds,
-        )
+    when {
+        time != null && weightInKg != null -> {
+            stringResource(
+                R.string.recommendation_overview_with_hold,
+                sets,
+                reps,
+                time.inWholeSeconds,
+                restTime.inWholeSeconds,
+                weightInKg
+            )
+        }
+        time != null -> {
+            stringResource(
+                R.string.recommendation_with_hold_no_weight,
+                sets,
+                reps,
+                time.inWholeSeconds,
+                restTime.inWholeSeconds
+            )
+        }
+        weightInKg != null -> {
+            stringResource(
+                R.string.recommendation_overview,
+                sets,
+                reps,
+                restTime.inWholeSeconds,
+                weightInKg
+            )
+        }
+        else -> {
+            stringResource(
+                R.string.recommendation_no_weight,
+                sets,
+                reps,
+                restTime.inWholeSeconds,
+            )
+        }
     }
 
 @Composable
@@ -451,6 +548,13 @@ private fun RecommendedParametersExtendedSummary(
             value = params.reps,
             label = "${stringResource(R.string.reps)}:"
         )
+        if (params.time != null) {
+            ParameterOverview(
+                value = params.time.inWholeSeconds.toInt(),
+                label = "${stringResource(R.string.hold)}:",
+                unit = stringResource(R.string.second_abbrv)
+            )
+        }
         ParameterOverview(
             value = params.restTime?.inWholeSeconds?.toInt(),
             label = "${stringResource(R.string.rest_time)}:",

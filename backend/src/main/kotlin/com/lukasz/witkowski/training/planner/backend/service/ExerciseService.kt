@@ -415,6 +415,7 @@ class ExerciseService {
                     it[reps] = rec.reps
                     it[restTimeInMillis] = rec.restTimeInMillis
                     it[weightInKg] = rec.weightInKg
+                    it[timeInMillis] = rec.timeInMillis
                 }
             }
 
@@ -534,6 +535,7 @@ class ExerciseService {
                     it[reps] = rec.reps
                     it[restTimeInMillis] = rec.restTimeInMillis
                     it[weightInKg] = rec.weightInKg
+                    it[timeInMillis] = rec.timeInMillis
                 }
             }
         }
@@ -612,7 +614,8 @@ class ExerciseService {
                 sets = row[ExerciseRecommendationsTable.sets],
                 reps = row[ExerciseRecommendationsTable.reps],
                 restTimeInMillis = row[ExerciseRecommendationsTable.restTimeInMillis],
-                weightInKg = row[ExerciseRecommendationsTable.weightInKg]
+                weightInKg = row[ExerciseRecommendationsTable.weightInKg],
+                timeInMillis = row[ExerciseRecommendationsTable.timeInMillis]
             )
             resultMap.getOrPut(exId) { mutableListOf() }.add(recDto)
         }

@@ -304,6 +304,28 @@ class DefaultExerciseRepositoryTest {
         assertEquals(details, result)
     }
 
+    @Test
+    fun `insert exercise with hold time preserves hold time in database and pending mutation`() = runTest {
+        val userMetadata = ExerciseMetadata(
+            source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
+            syncState = ExerciseSyncState.PENDING_UPLOAD
+        )
+        val details = TestData.PLANK_DETAILS.copy(
+            exercise = TestData.PLANK_EXERCISE.copy(metadata = userMetadata)
+        )
+        val isSuccess = repository.insert(details)
+        assertTrue(isSuccess)
+
+        val loaded = repository.getExerciseDetailsById(details.exercise.id).first()
+        assertEquals(details, loaded)
+
+        val mutation = mutationDao.getMutationByExerciseIdOnce(details.exercise.id.toString())
+        assertNotNull(mutation)
+        assertEquals(30000L, mutation.beginnerTime)
+        assertEquals(45000L, mutation.intermediateTime)
+        assertEquals(60000L, mutation.advancedTime)
+    }
+
     private suspend fun insertAllTestExercises() {
         TestData.EXERCISE_DETAILS_LIST.forEach {
             repository.insert(it)

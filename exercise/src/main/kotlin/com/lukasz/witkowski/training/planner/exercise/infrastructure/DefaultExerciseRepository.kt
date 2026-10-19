@@ -202,14 +202,17 @@ private fun ExerciseDetails.toPendingMutation(
         beginnerReps = beginnerRecommendation.reps,
         beginnerRestTime = beginnerRecommendation.restTime.inWholeMilliseconds,
         beginnerWeight = beginnerRecommendation.weightInKg,
+        beginnerTime = beginnerRecommendation.time?.inWholeMilliseconds,
         intermediateSets = intermediateRecommendation.sets,
         intermediateReps = intermediateRecommendation.reps,
         intermediateRestTime = intermediateRecommendation.restTime.inWholeMilliseconds,
         intermediateWeight = intermediateRecommendation.weightInKg,
+        intermediateTime = intermediateRecommendation.time?.inWholeMilliseconds,
         advancedSets = advancedRecommendation.sets,
         advancedReps = advancedRecommendation.reps,
         advancedRestTime = advancedRecommendation.restTime.inWholeMilliseconds,
-        advancedWeight = advancedRecommendation.weightInKg
+        advancedWeight = advancedRecommendation.weightInKg,
+        advancedTime = advancedRecommendation.time?.inWholeMilliseconds
     )
 
 private fun ExerciseDetails.toPendingUploadDetails(): ExerciseDetails = copy(

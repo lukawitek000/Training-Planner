@@ -302,6 +302,31 @@ class ExerciseEditorViewModelTest {
     }
 
     @Test
+    fun `when user changes recommended hold time, the state reflects it`() = runTest {
+        givenVm()
+        vm.uiState.test {
+            assertInitialCreateState()
+            val newHoldTime = 30.seconds
+            val level = RecommendationLevel.BEGINNER
+            vm.onEvent(ExerciseEditingEvent.RecommendedTimeChanged(newHoldTime, level))
+
+            val expectedRecommendations = ExerciseEditingInput().recommendations.map {
+                if (it.level == level) {
+                    it.copy(parameters = it.parameters.copy(time = newHoldTime))
+                } else {
+                    it
+                }
+            }
+            assertEquals(
+                ExerciseEditingUiState.Editing(
+                    ExerciseEditingInput(recommendations = expectedRecommendations)
+                ),
+                awaitItem()
+            )
+        }
+    }
+
+    @Test
     fun `when save exercise is requested and succeeds, saving and saved states are emitted`() = runTest {
         val newExerciseId = TestData.EXERCISE_ID_1
         coEvery { service.saveExercise(any()) } returns newExerciseId

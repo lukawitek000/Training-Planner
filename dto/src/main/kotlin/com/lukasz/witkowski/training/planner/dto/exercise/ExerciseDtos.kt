@@ -17,7 +17,8 @@ data class ExerciseRecommendationDto(
     val sets: Int,
     val reps: Int,
     val restTimeInMillis: Long,
-    val weightInKg: Int?
+    val weightInKg: Int?,
+    val timeInMillis: Long? = null
 )
 
 @Serializable

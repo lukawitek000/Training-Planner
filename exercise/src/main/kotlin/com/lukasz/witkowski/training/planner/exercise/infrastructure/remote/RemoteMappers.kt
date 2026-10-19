@@ -37,10 +37,11 @@ internal fun ExerciseDto.toExerciseDetails(
                 sets = dto.sets,
                 reps = dto.reps,
                 restTime = dto.restTimeInMillis.milliseconds,
-                weightInKg = dto.weightInKg
+                weightInKg = dto.weightInKg,
+                time = dto.timeInMillis?.milliseconds
             )
         } else {
-            ExerciseRecommendation(sets = 0, reps = 0, restTime = 0.seconds, weightInKg = null)
+            ExerciseRecommendation(sets = 0, reps = 0, restTime = 0.seconds, weightInKg = null, time = null)
         }
     }
 
@@ -123,9 +124,9 @@ internal fun ExerciseDetails.toCreateExerciseRequestDto(
     idempotencyKey: String? = null
 ): CreateExerciseRequestDto {
     val recList = listOf(
-        ExerciseRecommendationDto("BEGINNER", beginnerRecommendation.sets, beginnerRecommendation.reps, beginnerRecommendation.restTime.inWholeMilliseconds, beginnerRecommendation.weightInKg),
-        ExerciseRecommendationDto("INTERMEDIATE", intermediateRecommendation.sets, intermediateRecommendation.reps, intermediateRecommendation.restTime.inWholeMilliseconds, intermediateRecommendation.weightInKg),
-        ExerciseRecommendationDto("ADVANCED", advancedRecommendation.sets, advancedRecommendation.reps, advancedRecommendation.restTime.inWholeMilliseconds, advancedRecommendation.weightInKg)
+        ExerciseRecommendationDto("BEGINNER", beginnerRecommendation.sets, beginnerRecommendation.reps, beginnerRecommendation.restTime.inWholeMilliseconds, beginnerRecommendation.weightInKg, beginnerRecommendation.time?.inWholeMilliseconds),
+        ExerciseRecommendationDto("INTERMEDIATE", intermediateRecommendation.sets, intermediateRecommendation.reps, intermediateRecommendation.restTime.inWholeMilliseconds, intermediateRecommendation.weightInKg, intermediateRecommendation.time?.inWholeMilliseconds),
+        ExerciseRecommendationDto("ADVANCED", advancedRecommendation.sets, advancedRecommendation.reps, advancedRecommendation.restTime.inWholeMilliseconds, advancedRecommendation.weightInKg, advancedRecommendation.time?.inWholeMilliseconds)
     )
     return CreateExerciseRequestDto(
         name = exercise.name,
@@ -147,9 +148,9 @@ internal fun ExerciseDetails.toUpdateExerciseRequestDto(
     idempotencyKey: String? = null
 ): UpdateExerciseRequestDto {
     val recList = listOf(
-        ExerciseRecommendationDto("BEGINNER", beginnerRecommendation.sets, beginnerRecommendation.reps, beginnerRecommendation.restTime.inWholeMilliseconds, beginnerRecommendation.weightInKg),
-        ExerciseRecommendationDto("INTERMEDIATE", intermediateRecommendation.sets, intermediateRecommendation.reps, intermediateRecommendation.restTime.inWholeMilliseconds, intermediateRecommendation.weightInKg),
-        ExerciseRecommendationDto("ADVANCED", advancedRecommendation.sets, advancedRecommendation.reps, advancedRecommendation.restTime.inWholeMilliseconds, advancedRecommendation.weightInKg)
+        ExerciseRecommendationDto("BEGINNER", beginnerRecommendation.sets, beginnerRecommendation.reps, beginnerRecommendation.restTime.inWholeMilliseconds, beginnerRecommendation.weightInKg, beginnerRecommendation.time?.inWholeMilliseconds),
+        ExerciseRecommendationDto("INTERMEDIATE", intermediateRecommendation.sets, intermediateRecommendation.reps, intermediateRecommendation.restTime.inWholeMilliseconds, intermediateRecommendation.weightInKg, intermediateRecommendation.time?.inWholeMilliseconds),
+        ExerciseRecommendationDto("ADVANCED", advancedRecommendation.sets, advancedRecommendation.reps, advancedRecommendation.restTime.inWholeMilliseconds, advancedRecommendation.weightInKg, advancedRecommendation.time?.inWholeMilliseconds)
     )
     return UpdateExerciseRequestDto(
         name = exercise.name,

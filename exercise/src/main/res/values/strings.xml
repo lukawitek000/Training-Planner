@@ -58,6 +58,11 @@
     <string name="reps">Reps</string>
     <string name="sets">Sets</string>
     <string name="rest_time">Rest time</string>
+    <string name="hold_time">Hold / Time</string>
+    <string name="hold">Hold</string>
+    <string name="hold_time_hint">Configure hold duration for isometrics or leave unset for rep-only movements.</string>
+    <string name="recommendation_overview_with_hold">%1$d x %2$d &#183; %3$d s hold &#183; %4$d s &#183; %5$d kg</string>
+    <string name="recommendation_with_hold_no_weight">%1$d x %2$d &#183; %3$d s hold &#183; %4$d s</string>
     <string name="weight">Weight</string>
     <string name="kg">kg</string>
     <string name="second_abbrv">s</string>

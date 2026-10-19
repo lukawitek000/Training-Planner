@@ -158,19 +158,22 @@ object TestData {
                 sets = 3,
                 reps = 1,
                 restTime = 30.seconds,
-                weightInKg = null
+                weightInKg = null,
+                time = 30.seconds
             ),
             intermediateRecommendation = ExerciseRecommendation(
                 sets = 3,
                 reps = 1,
                 restTime = 45.seconds,
-                weightInKg = null
+                weightInKg = null,
+                time = 45.seconds
             ),
             advancedRecommendation = ExerciseRecommendation(
                 sets = 4,
                 reps = 1,
                 restTime = 60.seconds,
-                weightInKg = 10
+                weightInKg = 10,
+                time = 60.seconds
             )
         )
 

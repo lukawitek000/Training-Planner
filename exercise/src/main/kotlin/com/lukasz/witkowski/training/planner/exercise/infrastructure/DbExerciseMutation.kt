@@ -18,14 +18,17 @@ data class DbExerciseMutation(
     val beginnerReps: Int? = null,
     val beginnerRestTime: Long? = null,
     val beginnerWeight: Int? = null,
+    val beginnerTime: Long? = null,
     val intermediateSets: Int? = null,
     val intermediateReps: Int? = null,
     val intermediateRestTime: Long? = null,
     val intermediateWeight: Int? = null,
+    val intermediateTime: Long? = null,
     val advancedSets: Int? = null,
     val advancedReps: Int? = null,
     val advancedRestTime: Long? = null,
     val advancedWeight: Int? = null,
+    val advancedTime: Long? = null,
     val conflictServerJson: String? = null,
     val createdAt: Long = System.currentTimeMillis()
 ) {

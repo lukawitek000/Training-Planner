@@ -25,7 +25,8 @@ data class DbExerciseRecommendation(
     val sets: Int,
     val reps: Int,
     val restTimeInSeconds: Long,
-    val weightInKg: Int?
+    val weightInKg: Int?,
+    val timeInSeconds: Long? = null
 )
 
 enum class RecommendationLevel {
