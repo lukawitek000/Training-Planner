@@ -7,53 +7,53 @@ import kotlinx.serialization.Serializable
 data class TrainingExerciseDto(
     val id: String,
     val exercise: ExerciseDto,
-    val repetitions: Int = 1,
-    val sets: Int = 1,
-    val restTimeInMillis: Long = 0,
-    val weightInKg: Double? = null
+    val repetitions: Int,
+    val sets: Int,
+    val restTimeInMillis: Long,
+    val weightInKg: Double?
 )
 
 @Serializable
 data class TrainingPlanOverviewDto(
     val id: String,
     val title: String,
-    val description: String = "",
-    val categories: List<String> = emptyList(),
-    val exerciseCount: Int = 0,
-    val ownerId: String? = null
+    val description: String,
+    val categories: List<String>,
+    val exerciseCount: Int,
+    val ownerId: String?
 )
 
 @Serializable
 data class TrainingPlanDto(
     val id: String,
     val title: String,
-    val description: String = "",
-    val exercises: List<TrainingExerciseDto> = emptyList(),
-    val restTimeInMillis: Long = 0,
-    val ownerId: String? = null
+    val description: String,
+    val exercises: List<TrainingExerciseDto>,
+    val restTimeInMillis: Long,
+    val ownerId: String?
 )
 
 @Serializable
 data class CreateTrainingExerciseRequestDto(
     val exerciseId: String,
-    val repetitions: Int = 1,
-    val sets: Int = 1,
-    val restTimeInMillis: Long = 0,
-    val weightInKg: Double? = null
+    val repetitions: Int,
+    val sets: Int,
+    val restTimeInMillis: Long,
+    val weightInKg: Double?
 )
 
 @Serializable
 data class CreateTrainingPlanRequestDto(
     val title: String,
-    val description: String = "",
-    val exercises: List<CreateTrainingExerciseRequestDto> = emptyList(),
-    val restTimeInMillis: Long = 0
+    val description: String,
+    val exercises: List<CreateTrainingExerciseRequestDto>,
+    val restTimeInMillis: Long
 )
 
 @Serializable
 data class UpdateTrainingPlanRequestDto(
     val title: String,
-    val description: String = "",
-    val exercises: List<CreateTrainingExerciseRequestDto> = emptyList(),
-    val restTimeInMillis: Long = 0
+    val description: String,
+    val exercises: List<CreateTrainingExerciseRequestDto>,
+    val restTimeInMillis: Long
 )

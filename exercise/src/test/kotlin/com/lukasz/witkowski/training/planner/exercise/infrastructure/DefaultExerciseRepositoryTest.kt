@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.paging.testing.asSnapshot
 import androidx.room3.Room
 import com.lukasz.witkowski.training.planner.exercise.TestData
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepositoryConfig
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.RoomExerciseLocalDataSource
@@ -43,12 +44,14 @@ class DefaultExerciseRepositoryTest {
                     klass = ExerciseDatabase::class.java
                 ).build()
         exerciseDao = db.exerciseDao()
-        val localDataSource = RoomExerciseLocalDataSource(exerciseDao = exerciseDao)
+        val localDataSource = RoomExerciseLocalDataSource(exerciseDao = exerciseDao, mutationDao = db.mutationDao())
         val remoteDataSource = mockk<ExerciseRemoteDataSource>(relaxed = true)
+        val mutationScheduler = mockk<ExerciseMutationScheduler>(relaxed = true)
         repository =
             DefaultExerciseRepository(
                 localDataSource = localDataSource,
                 remoteDataSource = remoteDataSource,
+                mutationScheduler = mutationScheduler,
                 config = ExerciseRepositoryConfig(),
                 ioDispatcher = ioDispatcher
             )

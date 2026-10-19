@@ -118,6 +118,9 @@ internal interface ExerciseDao {
         return updatedRows
     }
 
+    @Query("UPDATE Exercise SET syncState = :syncState WHERE exerciseId = :exerciseId")
+    suspend fun updateSyncState(exerciseId: String, syncState: String)
+
     @Query("SELECT value FROM SyncMetadata WHERE key = 'exercise_sync_version'")
     suspend fun getSyncVersion(): Long?
 

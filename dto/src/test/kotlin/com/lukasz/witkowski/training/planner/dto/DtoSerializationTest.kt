@@ -21,7 +21,11 @@ class DtoSerializationTest {
                 id = "ex-1",
                 name = "Push-up",
                 description = "Standard push-up",
-                categories = listOf(CategoryDto("cat-1", "Chest"))
+                categories = listOf(CategoryDto("cat-1", "Chest")),
+                owner = null,
+                source = "BUNDLED",
+                sharing = "PRIVATE",
+                revision = 1L
             )
 
         val encoded = json.encodeToString(ExerciseDto.serializer(), exercise)
@@ -38,7 +42,10 @@ class DtoSerializationTest {
                 name = "Push-up",
                 description = "Standard push-up",
                 categories = listOf(CategoryDto("cat-1", "Chest")),
-                owner = OwnerDto("user-1", "john_doe")
+                owner = OwnerDto("user-1", "john_doe"),
+                source = "USER_CREATED",
+                sharing = "COMMUNITY",
+                revision = 2L
             )
 
         val encoded = json.encodeToString(ExerciseDto.serializer(), exercise)

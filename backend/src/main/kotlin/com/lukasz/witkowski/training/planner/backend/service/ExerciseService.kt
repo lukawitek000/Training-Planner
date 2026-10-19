@@ -4,16 +4,20 @@ import com.lukasz.witkowski.training.planner.backend.db.CategoriesTable
 import com.lukasz.witkowski.training.planner.backend.db.DatabaseFactory.dbQuery
 import com.lukasz.witkowski.training.planner.backend.db.ExerciseCategoriesTable
 import com.lukasz.witkowski.training.planner.backend.db.ExerciseDeletionsTable
+import com.lukasz.witkowski.training.planner.backend.db.ExerciseRecommendationsTable
 import com.lukasz.witkowski.training.planner.backend.db.ExercisesTable
+import com.lukasz.witkowski.training.planner.backend.db.IdempotencyLogsTable
 import com.lukasz.witkowski.training.planner.backend.db.UsersTable
 import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CategoryDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CreateExerciseRequestDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
+import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseRecommendationDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseSyncResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.OwnerDto
 import com.lukasz.witkowski.training.planner.dto.exercise.UpdateExerciseRequestDto
 import java.util.UUID
+import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.v1.core.AndOp
 import org.jetbrains.exposed.v1.core.Op
 import org.jetbrains.exposed.v1.core.OrOp
@@ -28,6 +32,9 @@ import org.jetbrains.exposed.v1.jdbc.deleteWhere
 import org.jetbrains.exposed.v1.jdbc.insert
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.update
+
+class ExerciseConflictException(val currentServerExercise: ExerciseDto) :
+    Exception("Version conflict detected")
 
 class ExerciseService {
     suspend fun getCategories(): List<CategoryDto> = dbQuery {
@@ -91,6 +98,7 @@ class ExerciseService {
         val changedRows = queryJoin.selectAll().where { condition }.toList()
         val exerciseIds = changedRows.map { it[ExercisesTable.id] }
         val categoriesMap = getCategoriesForExercises(exerciseIds)
+        val recommendationsMap = getRecommendationsForExercises(exerciseIds)
 
         val changedExercises = changedRows.map { row ->
             val exerciseId = row[ExercisesTable.id]
@@ -107,7 +115,8 @@ class ExerciseService {
                 owner = owner,
                 source = row[ExercisesTable.sourceType],
                 sharing = row[ExercisesTable.sharing],
-                revision = row[ExercisesTable.revision]
+                revision = row[ExercisesTable.revision],
+                recommendations = recommendationsMap[exerciseId]
             )
         }
 
@@ -175,6 +184,7 @@ class ExerciseService {
         val pageRows = allRows.drop(offset).take(limit)
         val exerciseIds = pageRows.map { it[ExercisesTable.id] }
         val categoriesMap = getCategoriesForExercises(exerciseIds)
+        val recommendationsMap = getRecommendationsForExercises(exerciseIds)
 
         val paginatedExercises =
             pageRows.map { row ->
@@ -192,7 +202,8 @@ class ExerciseService {
                     owner = owner,
                     source = row[ExercisesTable.sourceType],
                     sharing = row[ExercisesTable.sharing],
-                    revision = row[ExercisesTable.revision]
+                    revision = row[ExercisesTable.revision],
+                    recommendations = recommendationsMap[exerciseId]
                 )
             }
 
@@ -219,6 +230,7 @@ class ExerciseService {
             OwnerDto(id = oId, username = username)
         }
         val categories = getCategoriesForExercise(id)
+        val recommendations = getRecommendationsForExercise(id)
         ExerciseDto(
             id = id,
             name = row[ExercisesTable.name],
@@ -227,7 +239,8 @@ class ExerciseService {
             owner = owner,
             source = row[ExercisesTable.sourceType],
             sharing = row[ExercisesTable.sharing],
-            revision = row[ExercisesTable.revision]
+            revision = row[ExercisesTable.revision],
+            recommendations = recommendations
         )
     }
 
@@ -254,9 +267,22 @@ class ExerciseService {
                 }
             }
 
+            request.recommendations?.forEach { rec ->
+                ExerciseRecommendationsTable.insert {
+                    it[id] = UUID.randomUUID().toString()
+                    it[ExerciseRecommendationsTable.exerciseId] = exerciseId
+                    it[level] = rec.level
+                    it[sets] = rec.sets
+                    it[reps] = rec.reps
+                    it[restTimeInMillis] = rec.restTimeInMillis
+                    it[weightInKg] = rec.weightInKg
+                }
+            }
+
             val ownerName = UsersTable.selectAll().where { UsersTable.id eq ownerId }.singleOrNull()?.get(UsersTable.username) ?: ""
             val owner = OwnerDto(id = ownerId, username = ownerName)
             val categories = getCategoriesForExercise(exerciseId)
+            val recommendations = getRecommendationsForExercise(exerciseId)
             ExerciseDto(
                 id = exerciseId,
                 name = request.name,
@@ -265,7 +291,8 @@ class ExerciseService {
                 owner = owner,
                 source = "USER_CREATED",
                 sharing = sharingValue,
-                revision = 1L
+                revision = 1L,
+                recommendations = recommendations
             )
         }
 
@@ -274,6 +301,16 @@ class ExerciseService {
         request: UpdateExerciseRequestDto,
         ownerId: String
     ): ExerciseDto = dbQuery {
+        if (!request.idempotencyKey.isNullOrBlank()) {
+            val existingLog = IdempotencyLogsTable.selectAll()
+                .where { IdempotencyLogsTable.key eq request.idempotencyKey }
+                .singleOrNull()
+            if (existingLog != null) {
+                val jsonPayload = existingLog[IdempotencyLogsTable.responsePayload]
+                return@dbQuery Json.decodeFromString<ExerciseDto>(jsonPayload)
+            }
+        }
+
         val existing =
             ExercisesTable.selectAll().where { ExercisesTable.id eq id }.singleOrNull()
                 ?: throw IllegalArgumentException("Exercise $id not found.")
@@ -284,7 +321,27 @@ class ExerciseService {
             throw SecurityException("You do not have permission to update this exercise.")
         }
 
-        val nextRevision = existing[ExercisesTable.revision] + 1L
+        val currentRevision = existing[ExercisesTable.revision]
+        if (request.expectedVersion != null && request.expectedVersion != currentRevision) {
+            val ownerName = UsersTable.selectAll().where { UsersTable.id eq ownerId }.singleOrNull()?.get(UsersTable.username) ?: ""
+            val owner = OwnerDto(id = ownerId, username = ownerName)
+            val categories = getCategoriesForExercise(id)
+            val recommendations = getRecommendationsForExercise(id)
+            val currentServerExercise = ExerciseDto(
+                id = id,
+                name = existing[ExercisesTable.name],
+                description = existing[ExercisesTable.description],
+                categories = categories,
+                owner = owner,
+                source = existing[ExercisesTable.sourceType],
+                sharing = existing[ExercisesTable.sharing],
+                revision = currentRevision,
+                recommendations = recommendations
+            )
+            throw ExerciseConflictException(currentServerExercise)
+        }
+
+        val nextRevision = currentRevision + 1L
         val version = getNextChangeVersion()
         val sharingValue = request.sharing.ifBlank { existing[ExercisesTable.sharing] }
 
@@ -304,11 +361,27 @@ class ExerciseService {
             }
         }
 
+        if (request.recommendations != null) {
+            ExerciseRecommendationsTable.deleteWhere { ExerciseRecommendationsTable.exerciseId eq id }
+            request.recommendations.forEach { rec ->
+                ExerciseRecommendationsTable.insert {
+                    it[ExerciseRecommendationsTable.id] = UUID.randomUUID().toString()
+                    it[ExerciseRecommendationsTable.exerciseId] = id
+                    it[level] = rec.level
+                    it[sets] = rec.sets
+                    it[reps] = rec.reps
+                    it[restTimeInMillis] = rec.restTimeInMillis
+                    it[weightInKg] = rec.weightInKg
+                }
+            }
+        }
+
         val ownerName = UsersTable.selectAll().where { UsersTable.id eq ownerId }.singleOrNull()?.get(UsersTable.username) ?: ""
         val owner = OwnerDto(id = ownerId, username = ownerName)
         val categories = getCategoriesForExercise(id)
+        val recommendations = getRecommendationsForExercise(id)
         val sourceType = existing[ExercisesTable.sourceType]
-        ExerciseDto(
+        val resultDto = ExerciseDto(
             id = id,
             name = request.name,
             description = request.description,
@@ -316,8 +389,19 @@ class ExerciseService {
             owner = owner,
             source = sourceType,
             sharing = sharingValue,
-            revision = nextRevision
+            revision = nextRevision,
+            recommendations = recommendations
         )
+
+        if (!request.idempotencyKey.isNullOrBlank()) {
+            val jsonPayload = Json.encodeToString(ExerciseDto.serializer(), resultDto)
+            IdempotencyLogsTable.insert {
+                it[key] = request.idempotencyKey
+                it[responsePayload] = jsonPayload
+            }
+        }
+
+        resultDto
     }
 
     suspend fun deleteExercise(id: String, ownerId: String): Boolean = dbQuery {
@@ -343,6 +427,34 @@ class ExerciseService {
 
     private fun getCategoriesForExercise(exerciseId: String): List<CategoryDto> =
         getCategoriesForExercises(listOf(exerciseId))[exerciseId] ?: emptyList()
+
+    private fun getRecommendationsForExercise(exerciseId: String): List<ExerciseRecommendationDto> =
+        getRecommendationsForExercises(listOf(exerciseId))[exerciseId] ?: emptyList()
+
+    private fun getRecommendationsForExercises(
+        exerciseIds: List<String>
+    ): Map<String, List<ExerciseRecommendationDto>> {
+        if (exerciseIds.isEmpty()) return emptyMap()
+
+        val rows = ExerciseRecommendationsTable
+            .selectAll()
+            .where { ExerciseRecommendationsTable.exerciseId inList exerciseIds }
+            .toList()
+
+        val resultMap = mutableMapOf<String, MutableList<ExerciseRecommendationDto>>()
+        rows.forEach { row ->
+            val exId = row[ExerciseRecommendationsTable.exerciseId]
+            val recDto = ExerciseRecommendationDto(
+                level = row[ExerciseRecommendationsTable.level],
+                sets = row[ExerciseRecommendationsTable.sets],
+                reps = row[ExerciseRecommendationsTable.reps],
+                restTimeInMillis = row[ExerciseRecommendationsTable.restTimeInMillis],
+                weightInKg = row[ExerciseRecommendationsTable.weightInKg]
+            )
+            resultMap.getOrPut(exId) { mutableListOf() }.add(recDto)
+        }
+        return resultMap
+    }
 
     private fun getCategoriesForExercises(
         exerciseIds: List<String>

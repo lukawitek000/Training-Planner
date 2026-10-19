@@ -9,9 +9,9 @@ import androidx.room3.RoomDatabase
 @Database(
     entities = [
         DbExercise::class, DbExerciseCategory::class, ExerciseCategoryCrossRef::class,
-        DbExerciseRecommendation::class, DbSyncMetadata::class
+        DbExerciseRecommendation::class, DbSyncMetadata::class, DbExerciseMutation::class
     ],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 @ColumnTypeConverters(Converters::class)
@@ -19,6 +19,8 @@ internal abstract class ExerciseDatabase : RoomDatabase() {
     abstract fun exerciseDao(): ExerciseDao
 
     abstract fun categoryDao(): ExerciseCategoryDao
+
+    abstract fun mutationDao(): ExerciseMutationDao
 
     companion object {
         @Volatile

@@ -2,12 +2,15 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure.local
 
 import androidx.paging.PagingSource
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseDetails
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseMutation
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseWithCategories
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDao
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseMutationDao
 import kotlinx.coroutines.flow.Flow
 
 internal class RoomExerciseLocalDataSource(
-    private val exerciseDao: ExerciseDao
+    private val exerciseDao: ExerciseDao,
+    private val mutationDao: ExerciseMutationDao
 ) : ExerciseLocalDataSource {
 
     override fun getExerciseDetailsById(id: String): Flow<DbExerciseDetails?> =
@@ -31,6 +34,18 @@ internal class RoomExerciseLocalDataSource(
 
     override suspend fun deleteExerciseById(id: String): Boolean =
         exerciseDao.deleteExerciseById(id) == ONE_ROW
+
+    override suspend fun getMutationByExerciseIdOnce(exerciseId: String): DbExerciseMutation? =
+        mutationDao.getMutationByExerciseIdOnce(exerciseId)
+
+    override suspend fun insertMutation(mutation: DbExerciseMutation) =
+        mutationDao.insertMutation(mutation)
+
+    override suspend fun updateMutation(mutation: DbExerciseMutation) =
+        mutationDao.updateMutation(mutation)
+
+    override suspend fun deleteMutationsForExercise(exerciseId: String) =
+        mutationDao.deleteMutationsForExercise(exerciseId)
 
     private companion object {
         const val ONE_ROW = 1

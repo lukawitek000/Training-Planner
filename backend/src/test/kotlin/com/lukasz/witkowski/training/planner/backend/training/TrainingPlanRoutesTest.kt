@@ -50,7 +50,8 @@ class TrainingPlanRoutesTest {
                         CreateExerciseRequestDto(
                             name = "Deadlift",
                             description = "Back & legs",
-                            categoryIds = listOf(categoriesRes.first().id)
+                            categoryIds = listOf(categoriesRes.first().id),
+                            sharing = "PRIVATE"
                         )
                     )
                 }.body<ExerciseDto>()
@@ -96,7 +97,8 @@ class TrainingPlanRoutesTest {
             UpdateTrainingPlanRequestDto(
                 title = "Hacked Title",
                 description = "Hacked description",
-                exercises = emptyList()
+                exercises = emptyList(),
+                restTimeInMillis = 0
             )
         val forbiddenUpdateRes =
             userB.client.put("/api/v1/training-plans/${createdPlan.id}") {
@@ -111,7 +113,8 @@ class TrainingPlanRoutesTest {
             UpdateTrainingPlanRequestDto(
                 title = "Hypertrophy Upper Body V2",
                 description = "Updated mass building plan",
-                exercises = emptyList()
+                exercises = emptyList(),
+                restTimeInMillis = 0
             )
         val updateRes =
             userA.client.put("/api/v1/training-plans/${createdPlan.id}") {
@@ -166,7 +169,8 @@ class TrainingPlanRoutesTest {
                             CreateExerciseRequestDto(
                                 name = "Squat",
                                 description = "Legs",
-                                categoryIds = listOf(categories.first().id)
+                                categoryIds = listOf(categories.first().id),
+                                sharing = "PRIVATE"
                             )
                         )
                     }.body<ExerciseDto>()
@@ -178,7 +182,8 @@ class TrainingPlanRoutesTest {
                     CreateTrainingPlanRequestDto(
                         title = "Leg Day Destroy",
                         description = "Heavy squats",
-                        exercises = listOf(CreateTrainingExerciseRequestDto(exerciseId = ex.id))
+                        exercises = listOf(CreateTrainingExerciseRequestDto(exerciseId = ex.id, repetitions = 10, sets = 3, restTimeInMillis = 60000, weightInKg = null)),
+                        restTimeInMillis = 120000
                     )
                 )
             }

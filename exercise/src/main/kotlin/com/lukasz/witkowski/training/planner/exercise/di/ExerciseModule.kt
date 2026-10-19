@@ -30,8 +30,11 @@ import org.koin.dsl.module
 import org.koin.plugin.module.dsl.factory
 import org.koin.plugin.module.dsl.single
 import retrofit2.Retrofit
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncRepository
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseMutationDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.sync.DefaultExerciseSyncRepository
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.sync.WorkManagerExerciseMutationScheduler
 
 val exerciseModule =
     module {
@@ -53,14 +56,22 @@ val exerciseModule =
         single<ExerciseDatabase> { ExerciseDatabase.getInstance(androidContext()) }
 
         single<ExerciseDao> { get<ExerciseDatabase>().exerciseDao() }
+        single<ExerciseMutationDao> { get<ExerciseDatabase>().mutationDao() }
+
         single {
-            RoomExerciseLocalDataSource(exerciseDao = get())
+            RoomExerciseLocalDataSource(
+                exerciseDao = get(),
+                mutationDao = get()
+            )
         } bind ExerciseLocalDataSource::class
+
+        single<ExerciseMutationScheduler> { WorkManagerExerciseMutationScheduler(androidContext()) }
 
         single {
             DefaultExerciseRepository(
                 localDataSource = get(),
                 remoteDataSource = get(),
+                mutationScheduler = get(),
                 config = get(),
                 ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
             )
@@ -69,7 +80,9 @@ val exerciseModule =
         single {
             DefaultExerciseSyncRepository(
                 exerciseDao = get(),
+                mutationDao = get(),
                 remoteDataSource = get(),
+                json = get(),
                 ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
             )
         } bind ExerciseSyncRepository::class

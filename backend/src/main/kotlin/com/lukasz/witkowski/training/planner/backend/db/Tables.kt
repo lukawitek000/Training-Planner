@@ -48,6 +48,14 @@ object ExerciseDeletionsTable : Table("exercise_deletions") {
     override val primaryKey = PrimaryKey(id)
 }
 
+object IdempotencyLogsTable : Table("idempotency_logs") {
+    val key = varchar("key", 64)
+    val responsePayload = text("response_payload")
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
+
+    override val primaryKey = PrimaryKey(key)
+}
+
 object ExerciseCategoriesTable : Table("exercise_categories") {
     val exerciseId = varchar(
         "exercise_id",
@@ -59,6 +67,18 @@ object ExerciseCategoriesTable : Table("exercise_categories") {
     ).references(CategoriesTable.id, onDelete = ReferenceOption.CASCADE)
 
     override val primaryKey = PrimaryKey(exerciseId, categoryId)
+}
+
+object ExerciseRecommendationsTable : Table("exercise_recommendations") {
+    val id = varchar("id", 36)
+    val exerciseId = varchar("exercise_id", 36).references(ExercisesTable.id, onDelete = ReferenceOption.CASCADE)
+    val level = varchar("level", 20)
+    val sets = integer("sets")
+    val reps = integer("reps")
+    val restTimeInMillis = long("rest_time_in_millis")
+    val weightInKg = integer("weight_in_kg").nullable()
+
+    override val primaryKey = PrimaryKey(id)
 }
 
 object TrainingPlansTable : Table("training_plans") {

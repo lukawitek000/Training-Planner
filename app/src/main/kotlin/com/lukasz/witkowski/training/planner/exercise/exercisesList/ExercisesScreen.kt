@@ -29,6 +29,7 @@ import androidx.paging.compose.itemKey
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.ui.components.CategoriesRow
@@ -168,15 +169,27 @@ private fun ExerciseInformation(
     exercise: Exercise2,
 ) {
     val categories = exercise.categories
+    val syncState = exercise.metadata.syncState
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(Dimens.normal)
     ) {
-        Text(
-            text = exercise.name,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.testTag("ExerciseItemName-${exercise.name}")
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = exercise.name,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.testTag("ExerciseItemName-${exercise.name}")
+            )
+            if (syncState == ExerciseSyncState.CONFLICT) {
+                CategoryChip(category = "Conflict")
+            } else if (syncState == ExerciseSyncState.LOCAL_ONLY || syncState == ExerciseSyncState.PENDING_UPLOAD) {
+                CategoryChip(category = if (syncState == ExerciseSyncState.PENDING_UPLOAD) "Syncing" else "Local")
+            }
+        }
         CategoriesRow(
             categories = categories.map { it.name },
             modifier = Modifier.fillMaxWidth(),

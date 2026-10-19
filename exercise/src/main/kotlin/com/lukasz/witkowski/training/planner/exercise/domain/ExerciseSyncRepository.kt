@@ -4,4 +4,6 @@ import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 
 interface ExerciseSyncRepository {
     suspend fun synchronizeExercises(): AppResult<Unit, ExerciseFailure>
+
+    suspend fun processPendingMutations(): AppResult<Unit, ExerciseFailure>
 }

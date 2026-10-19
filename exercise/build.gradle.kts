@@ -27,6 +27,7 @@ dependencies {
     implementation(libs.kotlinReflect)
     implementation(libs.androidx.paging.common)
     implementation(libs.androidx.roomPaging)
+    implementation(libs.androidx.workRuntime)
 
     implementation(libs.timber)
     implementation(libs.androidx.roomRuntime)

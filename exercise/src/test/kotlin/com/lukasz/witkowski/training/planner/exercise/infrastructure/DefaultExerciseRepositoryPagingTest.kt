@@ -20,11 +20,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultExerciseRepositoryPagingTest {
     private val localDataSource = mockk<ExerciseLocalDataSource>(relaxed = true)
     private val remoteDataSource = mockk<ExerciseRemoteDataSource>(relaxed = true)
+    private val mutationScheduler = mockk<ExerciseMutationScheduler>(relaxed = true)
     private val testDispatcher = UnconfinedTestDispatcher()
 
     private val pagingConfig = ExercisePagingConfig(pageSize = 10, prefetchDistance = 10)
@@ -36,6 +38,7 @@ class DefaultExerciseRepositoryPagingTest {
     private val repository = DefaultExerciseRepository(
         localDataSource = localDataSource,
         remoteDataSource = remoteDataSource,
+        mutationScheduler = mutationScheduler,
         config = repositoryConfig,
         ioDispatcher = testDispatcher
     )

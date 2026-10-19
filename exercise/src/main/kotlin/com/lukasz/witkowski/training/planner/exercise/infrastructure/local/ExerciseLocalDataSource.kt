@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure.local
 
 import androidx.paging.PagingSource
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseDetails
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseMutation
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseWithCategories
 import kotlinx.coroutines.flow.Flow
 
@@ -18,4 +19,12 @@ internal interface ExerciseLocalDataSource {
     suspend fun updateExerciseDetails(details: DbExerciseDetails): Boolean
 
     suspend fun deleteExerciseById(id: String): Boolean
+
+    suspend fun getMutationByExerciseIdOnce(exerciseId: String): DbExerciseMutation?
+
+    suspend fun insertMutation(mutation: DbExerciseMutation)
+
+    suspend fun updateMutation(mutation: DbExerciseMutation)
+
+    suspend fun deleteMutationsForExercise(exerciseId: String)
 }

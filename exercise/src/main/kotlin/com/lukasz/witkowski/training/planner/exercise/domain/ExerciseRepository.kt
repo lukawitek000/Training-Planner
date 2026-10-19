@@ -24,4 +24,8 @@ interface ExerciseRepository {
      * Deliberately saves a remote exercise to local storage. Returns _true_ if successful.
      */
     suspend fun saveExerciseLocally(exerciseDetails: ExerciseDetails): Boolean
+
+    suspend fun resolveConflictKeepLocal(exerciseId: ExerciseId, latestServerVersion: Long): Boolean
+
+    suspend fun resolveConflictAcceptServer(exerciseId: ExerciseId, serverExerciseDetails: ExerciseDetails): Boolean
 }

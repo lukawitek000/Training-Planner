@@ -49,7 +49,9 @@ class ExerciseRoutesTest {
         val createReq =
             CreateExerciseRequestDto(
                 name = "Push Up",
-                description = "Upper body exercise"
+                description = "Upper body exercise",
+                categoryIds = emptyList(),
+                sharing = "PRIVATE"
             )
         val createRes =
             userA.client.post("/api/v1/exercises") {
@@ -83,7 +85,11 @@ class ExerciseRoutesTest {
         val updateReq =
             UpdateExerciseRequestDto(
                 name = "Push Up Modified by B",
-                description = "Hacked description"
+                description = "Hacked description",
+                categoryIds = emptyList(),
+                sharing = "PRIVATE",
+                expectedVersion = null,
+                idempotencyKey = null
             )
         val forbiddenUpdateRes =
             userB.client.put("/api/v1/exercises/${createdEx.id}") {
@@ -97,7 +103,11 @@ class ExerciseRoutesTest {
         val updateReqA =
             UpdateExerciseRequestDto(
                 name = "Diamond Push Up",
-                description = "Triceps focused push up"
+                description = "Triceps focused push up",
+                categoryIds = emptyList(),
+                sharing = "PRIVATE",
+                expectedVersion = null,
+                idempotencyKey = null
             )
         val updateRes =
             userA.client.put("/api/v1/exercises/${createdEx.id}") {
@@ -140,17 +150,17 @@ class ExerciseRoutesTest {
         user.client.post("/api/v1/exercises") {
             header(HttpHeaders.Authorization, "Bearer ${user.token}")
             contentType(ContentType.Application.Json)
-            setBody(CreateExerciseRequestDto(name = "Barbell Squat", description = "Legs"))
+            setBody(CreateExerciseRequestDto(name = "Barbell Squat", description = "Legs", categoryIds = emptyList(), sharing = "PRIVATE"))
         }
         user.client.post("/api/v1/exercises") {
             header(HttpHeaders.Authorization, "Bearer ${user.token}")
             contentType(ContentType.Application.Json)
-            setBody(CreateExerciseRequestDto(name = "Front Squat", description = "Legs"))
+            setBody(CreateExerciseRequestDto(name = "Front Squat", description = "Legs", categoryIds = emptyList(), sharing = "PRIVATE"))
         }
         user.client.post("/api/v1/exercises") {
             header(HttpHeaders.Authorization, "Bearer ${user.token}")
             contentType(ContentType.Application.Json)
-            setBody(CreateExerciseRequestDto(name = "Pull Up", description = "Back"))
+            setBody(CreateExerciseRequestDto(name = "Pull Up", description = "Back", categoryIds = emptyList(), sharing = "PRIVATE"))
         }
 
         // Search "squat"
@@ -204,7 +214,7 @@ class ExerciseRoutesTest {
         val createRes = user.client.post("/api/v1/exercises") {
             header(HttpHeaders.Authorization, "Bearer ${user.token}")
             contentType(ContentType.Application.Json)
-            setBody(CreateExerciseRequestDto(name = "Sync Bench Press", description = "Chest", sharing = "COMMUNITY"))
+            setBody(CreateExerciseRequestDto(name = "Sync Bench Press", description = "Chest", categoryIds = emptyList(), sharing = "COMMUNITY"))
         }
         assertEquals(HttpStatusCode.Created, createRes.status)
         val created = createRes.body<ExerciseDto>()

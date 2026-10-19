@@ -8,11 +8,14 @@ import com.lukasz.witkowski.training.planner.dto.exercise.OwnerDto
 import com.lukasz.witkowski.training.planner.dto.exercise.UpdateExerciseRequestDto
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseFailure
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRecommendation
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
+import kotlin.time.Duration.Companion.seconds
 import com.lukasz.witkowski.training.planner.shared.network.NetworkFailure
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import io.mockk.coEvery
@@ -67,7 +70,11 @@ class RetrofitExerciseRemoteDataSourceTest {
             name = "Push-ups",
             description = "Chest exercise",
             categories = listOf(CategoryDto("c1", "Chest")),
-            owner = OwnerDto(id = "user-123", username = "JohnDoe")
+            owner = OwnerDto(id = "user-123", username = "JohnDoe"),
+            source = "BUNDLED",
+            sharing = "PRIVATE",
+            revision = 1L,
+            recommendations = null
         )
         val pagedDto = PagedResponseDto(
             items = listOf(exerciseDto),
@@ -95,7 +102,11 @@ class RetrofitExerciseRemoteDataSourceTest {
             name = "Squats",
             description = "Leg exercise",
             categories = listOf(CategoryDto("c2", "Legs")),
-            owner = null
+            owner = null,
+            source = "BUNDLED",
+            sharing = "PRIVATE",
+            revision = 1L,
+            recommendations = null
         )
         coEvery { api.getExerciseById(exerciseId.toString()) } returns exerciseDto
 
@@ -121,7 +132,11 @@ class RetrofitExerciseRemoteDataSourceTest {
             name = "Lunges",
             description = "Legs exercise",
             categories = listOf(CategoryDto("c2", "Legs")),
-            owner = OwnerDto("user-123", "JohnDoe")
+            owner = OwnerDto("user-123", "JohnDoe"),
+            source = "USER_CREATED",
+            sharing = "PRIVATE",
+            revision = 1L,
+            recommendations = null
         )
         coEvery { api.createExercise(any()) } returns returnedDto
 
@@ -129,12 +144,13 @@ class RetrofitExerciseRemoteDataSourceTest {
 
         assertTrue(result is AppResult.Success)
         assertEquals("Lunges", result.value.name)
-        coVerify { api.createExercise(CreateExerciseRequestDto("Lunges", "Legs exercise", listOf("Legs"))) }
+        coVerify { api.createExercise(CreateExerciseRequestDto("Lunges", "Legs exercise", listOf("Legs"), "PRIVATE", null)) }
     }
 
     @Test
     fun `updateExercise returns Exercise2 when API succeeds`() = runTest {
         val exerciseId = ExerciseId.create()
+        val dummyRec = ExerciseRecommendation(0, 0, 0.seconds, null)
         val domainExercise = Exercise2(
             id = exerciseId,
             name = "Updated Lunges",
@@ -142,20 +158,30 @@ class RetrofitExerciseRemoteDataSourceTest {
             categories = setOf(ExerciseCategory("Legs")),
             metadata = ExerciseMetadata(source = ExerciseSource.UserCreated(ExerciseOwner.User("user-123", "JohnDoe")))
         )
+        val exerciseDetails = ExerciseDetails(
+            exercise = domainExercise,
+            beginnerRecommendation = dummyRec,
+            intermediateRecommendation = dummyRec,
+            advancedRecommendation = dummyRec
+        )
         val returnedDto = ExerciseDto(
             id = exerciseId.toString(),
             name = "Updated Lunges",
             description = "Legs exercise updated",
             categories = listOf(CategoryDto("c2", "Legs")),
-            owner = OwnerDto("user-123", "JohnDoe")
+            owner = OwnerDto("user-123", "JohnDoe"),
+            source = "USER_CREATED",
+            sharing = "PRIVATE",
+            revision = 1L,
+            recommendations = null
         )
         coEvery { api.updateExercise(exerciseId.toString(), any()) } returns returnedDto
 
-        val result = dataSource.updateExercise(domainExercise)
+        val result = dataSource.updateExercise(exerciseDetails)
 
         assertTrue(result is AppResult.Success)
         assertEquals("Updated Lunges", result.value.name)
-        coVerify { api.updateExercise(exerciseId.toString(), UpdateExerciseRequestDto("Updated Lunges", "Legs exercise updated", listOf("Legs"))) }
+        coVerify { api.updateExercise(exerciseId.toString(), any()) }
     }
 
     @Test

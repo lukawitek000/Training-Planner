@@ -59,6 +59,7 @@ enum class ExerciseSyncState {
     PENDING_UPLOAD,
     SYNCED,
     PENDING_DELETE,
+    CONFLICT,
     ERROR
 }
 

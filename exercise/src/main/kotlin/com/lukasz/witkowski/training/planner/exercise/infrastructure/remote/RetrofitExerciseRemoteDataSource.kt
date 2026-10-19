@@ -2,6 +2,8 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure.remote
 
 import com.lukasz.witkowski.training.planner.dto.common.ApiErrorDto
 import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
+import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseConflictDto
+import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseSyncResponseDto
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
@@ -21,6 +23,7 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import timber.log.Timber
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 
 class RetrofitExerciseRemoteDataSource(
     private val api: ExerciseApi,
@@ -120,18 +123,23 @@ class RetrofitExerciseRemoteDataSource(
         }
 
     override suspend fun updateExercise(
-        exercise: Exercise2
-    ): AppResult<Exercise2, ExerciseFailure> =
+        exerciseDetails: ExerciseDetails,
+        expectedVersion: Long?,
+        idempotencyKey: String?
+    ): AppResult<ExerciseDto, ExerciseFailure> =
         withContext(ioDispatcher) {
-            Timber.d("RemoteDataSource executing updateExercise for id: %s", exercise.id)
+            Timber.d("RemoteDataSource executing updateExercise for id: %s", exerciseDetails.exercise.id)
             runCatchingCancellable(
                 mapError = { exception ->
                     Timber.w(exception, "updateExercise RemoteDataSource error")
                     exception.toExerciseFailure(json)
                 }
             ) {
-                val request = exercise.toUpdateExerciseRequestDto()
-                api.updateExercise(exercise.id.toString(), request).toExercise2()
+                val request = exerciseDetails.toUpdateExerciseRequestDto(
+                    expectedVersion = expectedVersion ?: exerciseDetails.exercise.metadata.revision,
+                    idempotencyKey = idempotencyKey
+                )
+                api.updateExercise(exerciseDetails.exercise.id.toString(), request)
             }
         }
 
@@ -169,6 +177,16 @@ private fun Throwable.toExerciseFailure(json: Json): ExerciseFailure = when (thi
             401 -> ExerciseFailure.Unauthorized
             403 -> ExerciseFailure.Forbidden
             404 -> ExerciseFailure.ExerciseNotFound
+            409 -> {
+                val conflictDto = errorBody?.let {
+                    try {
+                        json.decodeFromString<ExerciseConflictDto>(it)
+                    } catch (_: Exception) {
+                        null
+                    }
+                }
+                ExerciseFailure.Conflict(conflictDto)
+            }
             else ->
                 ExerciseFailure.NetworkError(
                     NetworkFailure.HttpError(
