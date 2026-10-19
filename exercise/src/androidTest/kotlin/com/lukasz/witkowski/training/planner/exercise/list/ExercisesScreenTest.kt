@@ -19,8 +19,8 @@ import com.lukasz.witkowski.training.planner.exercise.givenExerciseItemTag
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesScreenContent
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.asPreviewPagerFlow
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
+import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
-import com.lukasz.witkowski.training.planner.ui.components.FilteringState
 import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
