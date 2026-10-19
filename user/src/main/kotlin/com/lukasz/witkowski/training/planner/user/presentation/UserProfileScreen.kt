@@ -74,8 +74,8 @@ fun UserProfileScreen(
         uiState = uiState,
         onWeightUnitChanged = viewModel::onWeightUnitChanged,
         onSignInClick = onSignInClick,
-        onSignOutClick = {
-            viewModel.signOut()
+        onSignOutWithPolicy = { keepLocalData ->
+            viewModel.signOut(keepLocalData = keepLocalData)
             onSignOutClick()
         },
         modifier = modifier
@@ -87,7 +87,8 @@ private fun UserProfileScreenContent(
     uiState: ProfileUiState,
     onWeightUnitChanged: (WeightUnit) -> Unit,
     onSignInClick: () -> Unit,
-    onSignOutClick: () -> Unit,
+    onSignOutClick: () -> Unit = {},
+    onSignOutWithPolicy: (keepLocalData: Boolean) -> Unit = { onSignOutClick() },
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -119,6 +120,9 @@ private fun UserProfileScreenContent(
                 var showReauthSheet by rememberSaveable(failure) {
                     mutableStateOf(failure != null)
                 }
+                var showSignOutSheet by rememberSaveable {
+                    mutableStateOf(false)
+                }
 
                 Column(
                     modifier =
@@ -138,7 +142,7 @@ private fun UserProfileScreenContent(
 
                     if (isOnline) {
                         SignOutCard(
-                            onSignOutClick = onSignOutClick
+                            onSignOutClick = { showSignOutSheet = true }
                         )
                     } else {
                         CloudSyncCtaCard(
@@ -152,6 +156,22 @@ private fun UserProfileScreenContent(
                     )
 
                     EngineFootnote()
+                }
+
+                if (showSignOutSheet) {
+                    SignOutBottomSheet(
+                        onKeepLocalDataClick = {
+                            showSignOutSheet = false
+                            onSignOutWithPolicy(true)
+                        },
+                        onRemoveAllLocalDataClick = {
+                            showSignOutSheet = false
+                            onSignOutWithPolicy(false)
+                        },
+                        onDismissRequest = {
+                            showSignOutSheet = false
+                        }
+                    )
                 }
 
                 if ((!isOnline) && (failure != null) && showReauthSheet) {

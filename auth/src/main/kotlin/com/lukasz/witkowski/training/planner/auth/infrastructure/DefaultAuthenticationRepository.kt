@@ -34,6 +34,7 @@ class DefaultAuthenticationRepository(
         return runCatchingCancellable {
             tokenStorage.clear()
             syncScheduler.cancelMutationSync()
+            syncScheduler.clearLocalSyncData(keepLocalData = false)
         }.fold(
             onSuccess = {
                 Timber.i("LogOut successful - tokens cleared")
@@ -53,6 +54,7 @@ class DefaultAuthenticationRepository(
                 Timber.i("Authentication remote call succeeded - saving tokens")
                 tokenStorage.saveTokens(tokens)
                 syncScheduler.enqueueMutationSync()
+                syncScheduler.enqueueRemoteChangeSync(force = true)
                 AuthenticationResult.Success
             },
             onError = { failure ->

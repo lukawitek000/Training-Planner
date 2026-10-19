@@ -49,6 +49,9 @@ internal class RoomExerciseLocalDataSource(
     override suspend fun deleteMutationsForExercise(exerciseId: String) =
         mutationDao.deleteMutationsForExercise(exerciseId)
 
+    override suspend fun updateSyncState(exerciseId: String, syncState: String) =
+        exerciseDao.updateSyncState(exerciseId, syncState)
+
     private companion object {
         const val ONE_ROW = 1
     }

@@ -2,10 +2,10 @@ package com.lukasz.witkowski.training.planner.training.editor
 
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
-import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseParametersIntent
-import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsState
-import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsViewModel
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsState
+import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsViewModel
+import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseParametersIntent
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName

@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface ExerciseMutationDao {
-    @Query("SELECT * FROM ExerciseMutation WHERE state = 'PENDING' ORDER BY createdAt ASC")
+    @Query("SELECT * FROM ExerciseMutation WHERE state IN ('PENDING', 'IN_PROGRESS') ORDER BY createdAt ASC")
     suspend fun getPendingMutations(): List<DbExerciseMutation>
 
     @Query("SELECT * FROM ExerciseMutation WHERE exerciseId = :exerciseId ORDER BY createdAt DESC LIMIT 1")
@@ -29,4 +29,7 @@ internal interface ExerciseMutationDao {
 
     @Query("DELETE FROM ExerciseMutation WHERE exerciseId = :exerciseId")
     suspend fun deleteMutationsForExercise(exerciseId: String)
+
+    @Query("DELETE FROM ExerciseMutation")
+    suspend fun deleteAllMutations()
 }

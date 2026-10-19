@@ -27,4 +27,6 @@ internal interface ExerciseLocalDataSource {
     suspend fun updateMutation(mutation: DbExerciseMutation)
 
     suspend fun deleteMutationsForExercise(exerciseId: String)
+
+    suspend fun updateSyncState(exerciseId: String, syncState: String)
 }

@@ -4,14 +4,19 @@ import android.content.Context
 import androidx.paging.testing.asSnapshot
 import androidx.room3.Room
 import com.lukasz.witkowski.training.planner.exercise.TestData
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepositoryConfig
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.RoomExerciseLocalDataSource
 import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,6 +36,7 @@ class DefaultExerciseRepositoryTest {
 
     private lateinit var db: ExerciseDatabase
     private lateinit var exerciseDao: ExerciseDao
+    private lateinit var mutationDao: ExerciseMutationDao
     private lateinit var repository: DefaultExerciseRepository
     private val ioDispatcher = UnconfinedTestDispatcher()
 
@@ -43,7 +49,8 @@ class DefaultExerciseRepositoryTest {
                     klass = ExerciseDatabase::class.java
                 ).build()
         exerciseDao = db.exerciseDao()
-        val localDataSource = RoomExerciseLocalDataSource(exerciseDao = exerciseDao, mutationDao = db.mutationDao())
+        mutationDao = db.mutationDao()
+        val localDataSource = RoomExerciseLocalDataSource(exerciseDao = exerciseDao, mutationDao = mutationDao)
         val mutationScheduler = mockk<ExerciseMutationScheduler>(relaxed = true)
         repository =
             DefaultExerciseRepository(
@@ -71,8 +78,15 @@ class DefaultExerciseRepositoryTest {
     }
 
     @Test
-    fun `delete and read exercise from database`() = runTest {
-        val details = TestData.SQUATS_DETAILS
+    fun `delete unsynced exercise removes exercise and CREATE mutation from database`() = runTest {
+        val details = TestData.SQUATS_DETAILS.copy(
+            exercise = TestData.SQUATS_EXERCISE.copy(
+                metadata = ExerciseMetadata(
+                    source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
+                    syncState = ExerciseSyncState.PENDING_UPLOAD
+                )
+            )
+        )
         val id = details.exercise.id
         val isSuccess = repository.insert(details)
         assertTrue(isSuccess)
@@ -82,25 +96,57 @@ class DefaultExerciseRepositoryTest {
 
         val result = repository.getExerciseDetailsById(id).first()
         assertNull(result)
+        assertNull(mutationDao.getMutationByExerciseIdOnce(id.toString()))
     }
 
     @Test
-    fun `update and read exercise from database`() = runTest {
-        repository.insert(TestData.PULL_UPS_DETAILS)
-        val details = TestData.SQUATS_DETAILS
+    fun `delete synced exercise marks PENDING_DELETE and enqueues DELETE mutation`() = runTest {
+        val syncedDetails = TestData.SQUATS_DETAILS.copy(
+            exercise = TestData.SQUATS_EXERCISE.copy(
+                metadata = ExerciseMetadata(
+                    source = ExerciseSource.UserCreated(ExerciseOwner.User("u1", "User")),
+                    syncState = ExerciseSyncState.SYNCED,
+                    revision = 2L
+                )
+            )
+        )
+        repository.saveExerciseLocally(syncedDetails)
+        val id = syncedDetails.exercise.id
+
+        val deleted = repository.delete(id)
+        assertTrue(deleted)
+
+        val dbExercise = exerciseDao.getExerciseByIdOnce(id.toString())
+        assertNotNull(dbExercise)
+        assertEquals(DbExercise.SYNC_STATE_PENDING_DELETE, dbExercise.syncState)
+
+        val mutation = mutationDao.getMutationByExerciseIdOnce(id.toString())
+        assertNotNull(mutation)
+        assertEquals(DbExerciseMutation.TYPE_DELETE, mutation.type)
+    }
+
+    @Test
+    fun `update and read exercise from database coalesces CREATE mutation`() = runTest {
+        val userMetadata = ExerciseMetadata(
+            source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
+            syncState = ExerciseSyncState.PENDING_UPLOAD
+        )
+        val details = TestData.SQUATS_DETAILS.copy(
+            exercise = TestData.SQUATS_EXERCISE.copy(metadata = userMetadata)
+        )
         val id = details.exercise.id
         val isSuccess = repository.insert(details)
         assertTrue(isSuccess)
 
         val updatedDetails =
-            TestData.SQUATS_DETAILS.copy(
+            details.copy(
                 exercise =
-                TestData.SQUATS_DETAILS.exercise.copy(
+                details.exercise.copy(
                     name = "New name",
                     categories = TestData.PULL_UPS_DETAILS.exercise.categories
                 ),
                 beginnerRecommendation =
-                TestData.SQUATS_DETAILS.beginnerRecommendation.copy(
+                details.beginnerRecommendation.copy(
                     sets = 10,
                     reps = 100
                 )
@@ -110,6 +156,11 @@ class DefaultExerciseRepositoryTest {
 
         val result = repository.getExerciseDetailsById(id).first()
         assertEquals(updatedDetails, result)
+
+        val mutation = mutationDao.getMutationByExerciseIdOnce(id.toString())
+        assertNotNull(mutation)
+        assertEquals(DbExerciseMutation.TYPE_CREATE, mutation.type)
+        assertEquals("New name", mutation.name)
     }
 
     @Test

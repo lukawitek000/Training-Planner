@@ -9,6 +9,24 @@ import kotlinx.coroutines.flow.update
 
 data class FilterCategory(val category: ExerciseCategory, val isSelected: Boolean = false)
 
+data class FilteringState(
+    val searchQuery: String,
+    val categories: List<FilterCategory>
+) {
+    val isAnyCategorySelected = categories.any { it.isSelected }
+}
+
+val PREVIEW_CATEGORIES = listOf(
+    FilterCategory(ExerciseCategory("Back"), isSelected = false),
+    FilterCategory(ExerciseCategory("Leg"), isSelected = true),
+    FilterCategory(ExerciseCategory("Arm"), isSelected = false),
+    FilterCategory(ExerciseCategory("Biceps"), isSelected = false),
+    FilterCategory(ExerciseCategory("Abs"), isSelected = false),
+    FilterCategory(ExerciseCategory("Cardio"), isSelected = false),
+    FilterCategory(ExerciseCategory("Shoulder"), isSelected = false),
+    FilterCategory(ExerciseCategory("Neck"), isSelected = false)
+)
+
 interface CategoryController2 {
     val filterCategories: Flow<List<FilterCategory>>
 

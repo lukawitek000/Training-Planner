@@ -21,9 +21,14 @@ import kotlin.time.Duration.Companion.seconds
 
 internal fun CategoryDto.toExerciseCategory(): ExerciseCategory = ExerciseCategory(name = name)
 
-internal fun ExerciseDto.toExerciseDetails(currentUserId: String? = null): ExerciseDetails {
-    val domainExercise = toExercise2(currentUserId)
-    val recMap = recommendations?.associateBy { it.level } ?: emptyMap()
+internal fun ExerciseDto.toExerciseDetails(
+    currentUserId: String? = null,
+    existingImageId: com.lukasz.witkowski.training.planner.image.ImageId? = null
+): ExerciseDetails {
+    val domainExercise = toExercise2(currentUserId).let {
+        if (existingImageId != null) it.copy(imageId = existingImageId) else it
+    }
+    val recMap = recommendations?.associateBy { it.level.uppercase() } ?: emptyMap()
 
     fun getRec(level: String): ExerciseRecommendation {
         val dto = recMap[level]
@@ -114,7 +119,9 @@ internal fun Exercise2.toUpdateExerciseRequestDto(
         recommendations = null
     )
 
-internal fun ExerciseDetails.toCreateExerciseRequestDto(): CreateExerciseRequestDto {
+internal fun ExerciseDetails.toCreateExerciseRequestDto(
+    idempotencyKey: String? = null
+): CreateExerciseRequestDto {
     val recList = listOf(
         ExerciseRecommendationDto("BEGINNER", beginnerRecommendation.sets, beginnerRecommendation.reps, beginnerRecommendation.restTime.inWholeMilliseconds, beginnerRecommendation.weightInKg),
         ExerciseRecommendationDto("INTERMEDIATE", intermediateRecommendation.sets, intermediateRecommendation.reps, intermediateRecommendation.restTime.inWholeMilliseconds, intermediateRecommendation.weightInKg),
@@ -129,7 +136,9 @@ internal fun ExerciseDetails.toCreateExerciseRequestDto(): CreateExerciseRequest
             is ExerciseSharing.Friends -> "FRIENDS"
             else -> "PRIVATE"
         },
-        recommendations = recList
+        recommendations = recList,
+        id = exercise.id.toString(),
+        idempotencyKey = idempotencyKey
     )
 }
 

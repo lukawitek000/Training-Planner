@@ -9,11 +9,18 @@ data class ExerciseMutation(
     val description: String,
     val categories: Set<ExerciseCategory>,
     val state: MutationState,
+    val type: ExerciseMutationType = ExerciseMutationType.UPDATE,
     val beginnerRecommendation: ExerciseRecommendation? = null,
     val intermediateRecommendation: ExerciseRecommendation? = null,
     val advancedRecommendation: ExerciseRecommendation? = null,
     val conflictServerExercise: ExerciseDetails? = null
 )
+
+enum class ExerciseMutationType {
+    CREATE,
+    UPDATE,
+    DELETE
+}
 
 enum class MutationState {
     PENDING,

@@ -43,4 +43,12 @@
     <string name="reauth_unknown_error_message">An unexpected error occurred while syncing your profile. Please try signing in again.</string>
     <string name="reauth_sign_in_to_reconnect">Sign In to Reconnect</string>
     <string name="reauth_stay_in_offline_mode">Stay in Offline Mode</string>
+
+    <!-- Sign Out Local Data Prompt -->
+    <string name="sign_out_dialog_title">Sign Out of Account?</string>
+    <string name="sign_out_dialog_subtitle">Choose what to do with your exercises and workout data stored on this device.</string>
+    <string name="sign_out_warning_unsynced_lost">Warning: Removing all local data will permanently delete any unsynced exercises and offline edits that have not been uploaded to the cloud.</string>
+    <string name="sign_out_keep_local_button">Sign Out &amp; Keep Local Data</string>
+    <string name="sign_out_remove_all_button">Sign Out &amp; Remove All Local Data</string>
+    <string name="sign_out_cancel_button">Cancel</string>
 </resources>

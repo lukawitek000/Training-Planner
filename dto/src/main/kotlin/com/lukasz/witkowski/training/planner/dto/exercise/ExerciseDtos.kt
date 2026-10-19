@@ -46,7 +46,9 @@ data class CreateExerciseRequestDto(
     val description: String,
     val categoryIds: List<String>,
     val sharing: String,
-    val recommendations: List<ExerciseRecommendationDto>?
+    val recommendations: List<ExerciseRecommendationDto>?,
+    val id: String? = null,
+    val idempotencyKey: String? = null
 )
 
 @Serializable

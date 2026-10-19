@@ -72,6 +72,7 @@ object Dimens2 {
     val avatarBadgeSize: Dp = 28.dp
 
     /** Icon sizes */
+    val iconSize12: Dp = 12.dp
     val iconSize13: Dp = 13.dp
     val iconSize14: Dp = 14.dp
     val iconSize15: Dp = 15.dp
@@ -98,4 +99,29 @@ object Dimens2 {
 
     /** Large shadow / elevation - 6dp */
     val shadowLg: Dp = 6.dp
+
+    /** Chips & Badges */
+    val chipHeightSmall: Dp = 24.dp
+    val chipHeightMedium: Dp = 36.dp
+    val statusDotSize: Dp = 8.dp
+    val badgeHorizontalPadding: Dp = 10.dp
+    val badgeVerticalPadding: Dp = 4.dp
+
+    /** List Items, Media & Actions */
+    val listItemThumbnailSize: Dp = 48.dp
+    val listItemActionCircleSize: Dp = 36.dp
+    val heroImageHeightCompact: Dp = 176.dp
+    val heroImageHeightStandard: Dp = 208.dp
+    val mediaThumbnailSize: Dp = 64.dp
+    val mediaEmptyContainerMinHeight: Dp = 220.dp
+    val fabSize: Dp = 56.dp
+
+    /** Bottom Sheets, Wheel Pickers & Dialogs */
+    val bottomSheetCornerRadius: Dp = 28.dp
+    val bottomSheetDragHandleWidth: Dp = 40.dp
+    val bottomSheetDragHandleHeight: Dp = 4.dp
+    val wheelPickerHeight: Dp = 160.dp
+    val wheelPickerRowHeight: Dp = 44.dp
+    val dialogMaxWidth: Dp = 360.dp
+    val dialogMaxWidthWide: Dp = 440.dp
 }

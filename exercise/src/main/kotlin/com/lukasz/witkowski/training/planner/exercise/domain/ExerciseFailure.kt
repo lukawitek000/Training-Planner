@@ -16,3 +16,18 @@ sealed interface ExerciseFailure {
 
     data object UnknownFailure : ExerciseFailure
 }
+
+fun ExerciseFailure.isRetryable(): Boolean = when (this) {
+    is ExerciseFailure.NetworkError -> when (val nf = networkFailure) {
+        is NetworkFailure.NoInternet,
+        is NetworkFailure.Timeout,
+        is NetworkFailure.Unknown -> true
+        is NetworkFailure.HttpError -> nf.statusCode >= 500 || nf.statusCode == 429
+        is NetworkFailure.SerializationError -> false
+    }
+    ExerciseFailure.Unauthorized -> true
+    is ExerciseFailure.Conflict,
+    ExerciseFailure.Forbidden,
+    ExerciseFailure.ExerciseNotFound,
+    ExerciseFailure.UnknownFailure -> false
+}

@@ -51,7 +51,8 @@ class TrainingPlanRoutesTest {
                             name = "Deadlift",
                             description = "Back & legs",
                             categoryIds = listOf(categoriesRes.first().id),
-                            sharing = "PRIVATE"
+                            sharing = "PRIVATE",
+                            recommendations = null
                         )
                     )
                 }.body<ExerciseDto>()
@@ -170,7 +171,8 @@ class TrainingPlanRoutesTest {
                                 name = "Squat",
                                 description = "Legs",
                                 categoryIds = listOf(categories.first().id),
-                                sharing = "PRIVATE"
+                                sharing = "PRIVATE",
+                                recommendations = null
                             )
                         )
                     }.body<ExerciseDto>()

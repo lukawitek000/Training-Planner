@@ -19,7 +19,7 @@ import androidx.room3.Index
         Index("exerciseId")
     ]
 )
-class DbExerciseRecommendation(
+data class DbExerciseRecommendation(
     val exerciseId: String,
     val level: RecommendationLevel,
     val sets: Int,

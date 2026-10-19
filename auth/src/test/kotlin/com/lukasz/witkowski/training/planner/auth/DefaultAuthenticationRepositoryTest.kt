@@ -9,13 +9,13 @@ import com.lukasz.witkowski.training.planner.auth.infrastructure.local.DefaultTo
 import com.lukasz.witkowski.training.planner.auth.infrastructure.local.SecureTokenStorage
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthenticationApi
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitAuthenticationRemoteDataSource
-import com.lukasz.witkowski.training.planner.dto.common.ApiRoutes
 import com.lukasz.witkowski.training.planner.network.NetworkConfig
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
+import io.mockk.verify
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -74,7 +74,7 @@ class DefaultAuthenticationRepositoryTest {
     @Test
     fun `signIn returns Success when server returns 200 OK and saves refresh token`() = runTest {
         val jsonResponse =
-            TestResourceReader.readJson("json/login_success.json")
+            TestResourceReader.readJson("login_success.json")
         mockWebServer.enqueue(MockResponse().setResponseCode(200).setBody(jsonResponse))
 
         coEvery { mockSecureTokenStorage.saveRefreshToken(any()) } returns Unit
@@ -91,7 +91,7 @@ class DefaultAuthenticationRepositoryTest {
     @Test
     fun `signIn returns IncorrectPassword failure when server returns 401`() = runTest {
         val jsonResponse =
-            TestResourceReader.readJson("json/error_incorrect_password.json")
+            TestResourceReader.readJson("error_incorrect_password.json")
         mockWebServer.enqueue(MockResponse().setResponseCode(401).setBody(jsonResponse))
 
         val result = repository.signIn(SignInForm("test@example.com", "wrong_password"))
@@ -105,7 +105,7 @@ class DefaultAuthenticationRepositoryTest {
     @Test
     fun `signIn returns UserNotFound failure when server returns 404`() = runTest {
         val jsonResponse =
-            TestResourceReader.readJson("json/error_user_not_found.json")
+            TestResourceReader.readJson("error_user_not_found.json")
         mockWebServer.enqueue(MockResponse().setResponseCode(404).setBody(jsonResponse))
 
         val result = repository.signIn(SignInForm("unknown@example.com", "password123"))
@@ -119,7 +119,7 @@ class DefaultAuthenticationRepositoryTest {
     @Test
     fun `signUp returns Success when server returns 201 Created and saves refresh token`() = runTest {
         val jsonResponse =
-            TestResourceReader.readJson("json/register_success.json")
+            TestResourceReader.readJson("register_success.json")
         mockWebServer.enqueue(MockResponse().setResponseCode(201).setBody(jsonResponse))
 
         coEvery { mockSecureTokenStorage.saveRefreshToken(any()) } returns Unit
@@ -127,13 +127,13 @@ class DefaultAuthenticationRepositoryTest {
         val result = repository.signUp(SignUpForm("NewUser", "newuser@example.com", "password123"))
 
         assertEquals(AuthenticationResult.Success, result)
-        coVerify { mockSecureTokenStorage.saveRefreshToken("refresh_token_xyz") }
+        coVerify { mockSecureTokenStorage.saveRefreshToken("refresh_token_abc") }
     }
 
     @Test
     fun `signUp returns UserAlreadyExists failure when server returns 400 with duplicate email`() = runTest {
         val jsonResponse =
-            TestResourceReader.readJson("json/error_user_already_exists.json")
+            TestResourceReader.readJson("error_user_already_exists.json")
         mockWebServer.enqueue(MockResponse().setResponseCode(400).setBody(jsonResponse))
 
         val result = repository.signUp(SignUpForm("ExistingUser", "existing@example.com", "password123"))
@@ -145,12 +145,14 @@ class DefaultAuthenticationRepositoryTest {
     }
 
     @Test
-    fun `logOut clears tokens from secure token storage`() = runTest {
+    fun `logOut clears tokens from secure token storage and clears local sync data`() = runTest {
         coEvery { mockSecureTokenStorage.clear() } returns Unit
 
         val result = repository.logOut()
 
         assertEquals(AuthenticationResult.Success, result)
         coVerify { mockSecureTokenStorage.clear() }
+        verify { syncScheduler.cancelMutationSync() }
+        coVerify { syncScheduler.clearLocalSyncData(keepLocalData = false) }
     }
 }

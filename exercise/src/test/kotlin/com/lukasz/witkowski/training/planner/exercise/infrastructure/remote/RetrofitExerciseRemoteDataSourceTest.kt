@@ -2,10 +2,8 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure.remote
 
 import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CategoryDto
-import com.lukasz.witkowski.training.planner.dto.exercise.CreateExerciseRequestDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.OwnerDto
-import com.lukasz.witkowski.training.planner.dto.exercise.UpdateExerciseRequestDto
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
@@ -15,7 +13,6 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRecommendation
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
-import kotlin.time.Duration.Companion.seconds
 import com.lukasz.witkowski.training.planner.shared.network.NetworkFailure
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import io.mockk.coEvery
@@ -27,6 +24,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -118,14 +116,21 @@ class RetrofitExerciseRemoteDataSourceTest {
     }
 
     @Test
-    fun `createExercise returns Exercise2 when API succeeds`() = runTest {
+    fun `createExercise returns ExerciseDto when API succeeds`() = runTest {
         val exerciseId = ExerciseId.create()
+        val dummyRec = ExerciseRecommendation(0, 0, 0.seconds, null)
         val domainExercise = Exercise2(
             id = exerciseId,
             name = "Lunges",
             description = "Legs exercise",
             categories = setOf(ExerciseCategory("Legs")),
             metadata = ExerciseMetadata(source = ExerciseSource.UserCreated(ExerciseOwner.User("user-123", "JohnDoe")))
+        )
+        val exerciseDetails = ExerciseDetails(
+            exercise = domainExercise,
+            beginnerRecommendation = dummyRec,
+            intermediateRecommendation = dummyRec,
+            advancedRecommendation = dummyRec
         )
         val returnedDto = ExerciseDto(
             id = exerciseId.toString(),
@@ -140,15 +145,23 @@ class RetrofitExerciseRemoteDataSourceTest {
         )
         coEvery { api.createExercise(any()) } returns returnedDto
 
-        val result = dataSource.createExercise(domainExercise)
+        val result = dataSource.createExercise(exerciseDetails, idempotencyKey = "idem-1")
 
         assertTrue(result is AppResult.Success)
         assertEquals("Lunges", result.value.name)
-        coVerify { api.createExercise(CreateExerciseRequestDto("Lunges", "Legs exercise", listOf("Legs"), "PRIVATE", null)) }
+        coVerify {
+            api.createExercise(
+                match {
+                    it.id == exerciseId.toString() &&
+                        it.name == "Lunges" &&
+                        it.idempotencyKey == "idem-1"
+                }
+            )
+        }
     }
 
     @Test
-    fun `updateExercise returns Exercise2 when API succeeds`() = runTest {
+    fun `updateExercise returns ExerciseDto when API succeeds`() = runTest {
         val exerciseId = ExerciseId.create()
         val dummyRec = ExerciseRecommendation(0, 0, 0.seconds, null)
         val domainExercise = Exercise2(
@@ -177,7 +190,7 @@ class RetrofitExerciseRemoteDataSourceTest {
         )
         coEvery { api.updateExercise(exerciseId.toString(), any()) } returns returnedDto
 
-        val result = dataSource.updateExercise(exerciseDetails)
+        val result = dataSource.updateExercise(exerciseDetails, expectedVersion = 1L, idempotencyKey = "idem-2")
 
         assertTrue(result is AppResult.Success)
         assertEquals("Updated Lunges", result.value.name)

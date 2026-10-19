@@ -3,10 +3,10 @@ package com.lukasz.witkowski.training.planner.user.di
 import com.lukasz.witkowski.training.planner.network.networkModule
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
-import com.lukasz.witkowski.training.planner.user.domain.UserPreferencesStorage
 import com.lukasz.witkowski.training.planner.user.domain.UserRepository
 import com.lukasz.witkowski.training.planner.user.infrastructure.DefaultUserRepository
 import com.lukasz.witkowski.training.planner.user.infrastructure.local.AndroidUserPreferencesStorage
+import com.lukasz.witkowski.training.planner.user.infrastructure.local.UserPreferencesStorage
 import com.lukasz.witkowski.training.planner.user.infrastructure.remote.RetrofitUserRemoteDataSource
 import com.lukasz.witkowski.training.planner.user.infrastructure.remote.UserApi
 import com.lukasz.witkowski.training.planner.user.infrastructure.remote.UserRemoteDataSource
@@ -43,7 +43,8 @@ val userModule =
             DefaultUserRepository(
                 tokenStorage = get(),
                 userRemoteDataSource = get(),
-                userPreferencesStorage = get()
+                userPreferencesStorage = get(),
+                syncScheduler = getOrNull()
             )
         } bind UserRepository::class
 

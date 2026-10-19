@@ -32,8 +32,10 @@ fun DomainExercise2.toPresentationExercise2(imageReference: ImageReference?): Ex
     metadata = metadata
 )
 
-fun DomainExerciseDetails.toPresentationExerciseDetails(): ExerciseDetails = ExerciseDetails(
-    exercise = this.exercise.toPresentationExercise2(null),
+fun DomainExerciseDetails.toPresentationExerciseDetails(
+    imageReference: ImageReference? = null
+): ExerciseDetails = ExerciseDetails(
+    exercise = this.exercise.toPresentationExercise2(imageReference),
     recommendations =
     listOf(
         beginnerRecommendation.toRecommendation(RecommendationLevel.BEGINNER),

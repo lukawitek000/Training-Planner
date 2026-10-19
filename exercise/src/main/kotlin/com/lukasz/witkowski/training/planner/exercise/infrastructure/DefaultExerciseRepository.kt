@@ -53,18 +53,77 @@ internal class DefaultExerciseRepository(
 
     override suspend fun insert(exercise: ExerciseDetails): Boolean = withContext(ioDispatcher) {
         val dbExerciseDetails = exercise.toDbExerciseDetails()
-        localDataSource.insertExerciseDetails(dbExerciseDetails)
+        val inserted = localDataSource.insertExerciseDetails(dbExerciseDetails)
+        if (inserted && (
+                exercise.exercise.metadata.source is com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource.UserCreated ||
+                    exercise.exercise.metadata.syncState == ExerciseSyncState.PENDING_UPLOAD
+                )
+        ) {
+            val idempotencyKey = UUID.randomUUID().toString()
+            val mutation = exercise.toPendingMutation(
+                idempotencyKey = idempotencyKey,
+                type = DbExerciseMutation.TYPE_CREATE
+            )
+            localDataSource.insertMutation(mutation)
+            enqueueMutationWorker()
+        }
+        inserted
     }
 
     override suspend fun delete(exerciseId: ExerciseId): Boolean = withContext(ioDispatcher) {
-        localDataSource.deleteExerciseById(exerciseId.toString())
+        val existingDbDetails = localDataSource.getExerciseDetailsById(exerciseId.toString()).firstOrNull()
+            ?: return@withContext false
+        val existingMutation = localDataSource.getMutationByExerciseIdOnce(exerciseId.toString())
+        val isUnsyncedLocal = existingMutation?.type == DbExerciseMutation.TYPE_CREATE ||
+            existingDbDetails.exercise.syncState == DbExercise.SYNC_STATE_LOCAL_ONLY ||
+            existingDbDetails.exercise.owner == null ||
+            existingDbDetails.exercise.owner.ownerName == "Local"
+
+        if (isUnsyncedLocal) {
+            localDataSource.deleteExerciseById(exerciseId.toString())
+        } else {
+            val existingDomain = existingDbDetails.toExerciseDetails()
+            val deleteMutation = existingDomain.toPendingMutation(
+                idempotencyKey = UUID.randomUUID().toString(),
+                type = DbExerciseMutation.TYPE_DELETE
+            )
+            localDataSource.updateSyncState(exerciseId.toString(), DbExercise.SYNC_STATE_PENDING_DELETE)
+            localDataSource.insertMutation(deleteMutation)
+            enqueueMutationWorker()
+            true
+        }
     }
 
     override suspend fun updateExercise(exercise: ExerciseDetails): Boolean =
         withContext(ioDispatcher) {
-            val idempotencyKey = UUID.randomUUID().toString()
-            val mutation = exercise.toPendingMutation(idempotencyKey)
-            val updatedExerciseDetails = exercise.toPendingUploadDetails()
+            val existingDbDetails = localDataSource.getExerciseDetailsById(exercise.exercise.id.toString()).firstOrNull()
+                ?: return@withContext false
+            val existingMutation = localDataSource.getMutationByExerciseIdOnce(exercise.exercise.id.toString())
+
+            val mutationType = if (existingMutation?.type == DbExerciseMutation.TYPE_CREATE) {
+                DbExerciseMutation.TYPE_CREATE
+            } else {
+                DbExerciseMutation.TYPE_UPDATE
+            }
+            val idempotencyKey = if (mutationType == DbExerciseMutation.TYPE_CREATE && existingMutation != null) {
+                existingMutation.idempotencyKey
+            } else {
+                UUID.randomUUID().toString()
+            }
+            val mutation = exercise.toPendingMutation(
+                idempotencyKey = idempotencyKey,
+                type = mutationType
+            )
+            val shouldMarkPendingUpload =
+                exercise.exercise.metadata.source is com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource.UserCreated ||
+                    existingDbDetails.exercise.sourceType == DbExercise.SOURCE_TYPE_USER_CREATED ||
+                    exercise.exercise.metadata.syncState == ExerciseSyncState.PENDING_UPLOAD
+
+            val updatedExerciseDetails = if (shouldMarkPendingUpload) {
+                exercise.toPendingUploadDetails()
+            } else {
+                exercise
+            }
 
             localDataSource.insertExerciseDetails(updatedExerciseDetails.toDbExerciseDetails())
             localDataSource.insertMutation(mutation)
@@ -103,7 +162,18 @@ internal class DefaultExerciseRepository(
         exerciseId: ExerciseId,
         serverExerciseDetails: ExerciseDetails
     ): Boolean = withContext(ioDispatcher) {
-        val dbExerciseDetails = serverExerciseDetails.toDbExerciseDetails()
+        val existingDbDetails = localDataSource.getExerciseDetailsById(exerciseId.toString()).firstOrNull()
+        val preservedImageId = existingDbDetails?.exercise?.imageId?.let {
+            com.lukasz.witkowski.training.planner.image.ImageId(it)
+        }
+        val mergedServerDetails = if (serverExerciseDetails.exercise.imageId == null && preservedImageId != null) {
+            serverExerciseDetails.copy(
+                exercise = serverExerciseDetails.exercise.copy(imageId = preservedImageId)
+            )
+        } else {
+            serverExerciseDetails
+        }
+        val dbExerciseDetails = mergedServerDetails.toDbExerciseDetails()
         localDataSource.insertExerciseDetails(dbExerciseDetails)
         localDataSource.deleteMutationsForExercise(exerciseId.toString())
         true
@@ -114,7 +184,10 @@ internal class DefaultExerciseRepository(
     }
 }
 
-private fun ExerciseDetails.toPendingMutation(idempotencyKey: String): DbExerciseMutation =
+private fun ExerciseDetails.toPendingMutation(
+    idempotencyKey: String,
+    type: String = DbExerciseMutation.TYPE_UPDATE
+): DbExerciseMutation =
     DbExerciseMutation(
         id = UUID.randomUUID().toString(),
         exerciseId = exercise.id.toString(),
@@ -123,7 +196,8 @@ private fun ExerciseDetails.toPendingMutation(idempotencyKey: String): DbExercis
         name = exercise.name,
         description = exercise.description,
         categoryNames = exercise.categories.joinToString(",") { it.name },
-        state = "PENDING",
+        state = DbExerciseMutation.STATE_PENDING,
+        type = type,
         beginnerSets = beginnerRecommendation.sets,
         beginnerReps = beginnerRecommendation.reps,
         beginnerRestTime = beginnerRecommendation.restTime.inWholeMilliseconds,
@@ -146,19 +220,14 @@ private fun ExerciseDetails.toPendingUploadDetails(): ExerciseDetails = copy(
 
 private fun DbExerciseMutation.toUpdatedPendingMutation(latestServerVersion: Long): DbExerciseMutation =
     copy(
+        idempotencyKey = UUID.randomUUID().toString(),
         expectedVersion = latestServerVersion,
-        state = "PENDING"
+        state = DbExerciseMutation.STATE_PENDING,
+        conflictServerJson = null
     )
 
 private fun DbExerciseDetails.toPendingUploadDbExerciseDetails(latestServerVersion: Long): DbExerciseDetails {
-    val updatedDbEx = DbExercise(
-        exerciseId = exercise.exerciseId,
-        name = exercise.name,
-        description = exercise.description,
-        imageId = exercise.imageId,
-        owner = exercise.owner,
-        sourceType = exercise.sourceType,
-        sharing = exercise.sharing,
+    val updatedDbEx = exercise.copy(
         revision = latestServerVersion,
         syncState = DbExercise.SYNC_STATE_PENDING_UPLOAD
     )

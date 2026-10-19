@@ -11,7 +11,11 @@
       "owner": {
         "id": "user-123",
         "username": "JohnDoe"
-      }
+      },
+      "source": "USER_CREATED",
+      "sharing": "PRIVATE",
+      "revision": 1,
+      "recommendations": null
     },
     {
       "id": "22222222-2222-2222-2222-222222222222",
@@ -20,7 +24,11 @@
       "categories": [
         { "id": "cat-2", "name": "Back" }
       ],
-      "owner": null
+      "owner": null,
+      "source": "BUNDLED",
+      "sharing": "PRIVATE",
+      "revision": 1,
+      "recommendations": null
     }
   ],
   "page": 1,

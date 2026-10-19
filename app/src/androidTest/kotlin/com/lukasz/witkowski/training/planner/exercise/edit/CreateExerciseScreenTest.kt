@@ -8,10 +8,10 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
-import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreenContent
-import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEditingEvent
-import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEditingInput
-import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEditingUiState
+import com.lukasz.witkowski.training.planner.exercise.presentation.editor.CreateExerciseScreenContent
+import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseEditingEvent
+import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseEditingInput
+import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseEditingUiState
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory

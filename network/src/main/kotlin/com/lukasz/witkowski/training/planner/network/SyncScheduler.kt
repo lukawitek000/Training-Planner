@@ -6,4 +6,6 @@ interface SyncScheduler {
     fun enqueueRemoteChangeSync(force: Boolean = false)
 
     fun cancelMutationSync()
+
+    suspend fun clearLocalSyncData(keepLocalData: Boolean = false) {}
 }

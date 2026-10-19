@@ -15,9 +15,9 @@ import com.lukasz.witkowski.training.planner.exercise.TestData
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.exerciseItemMatcher
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreenContent
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.asPreviewPagerFlow
 import com.lukasz.witkowski.training.planner.exercise.givenExerciseItemTag
+import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesScreenContent
+import com.lukasz.witkowski.training.planner.exercise.presentation.list.asPreviewPagerFlow
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.ui.components.FilteringState

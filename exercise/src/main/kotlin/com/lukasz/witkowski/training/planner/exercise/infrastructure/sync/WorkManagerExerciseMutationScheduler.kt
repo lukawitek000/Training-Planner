@@ -9,6 +9,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkRequest
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncRepository
 import com.lukasz.witkowski.training.planner.network.AuthSessionProvider
 import com.lukasz.witkowski.training.planner.network.SyncPreferencesStorage
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
@@ -22,7 +23,8 @@ class WorkManagerExerciseMutationScheduler(
     private val context: Context,
     private val authSessionProvider: AuthSessionProvider,
     private val syncPreferencesStorage: SyncPreferencesStorage,
-    private val coroutineScope: CoroutineScope
+    private val coroutineScope: CoroutineScope,
+    private val exerciseSyncRepositoryProvider: (() -> ExerciseSyncRepository)? = null
 ) : ExerciseMutationScheduler, SyncScheduler {
 
     @Volatile
@@ -54,7 +56,7 @@ class WorkManagerExerciseMutationScheduler(
                     .build()
                 WorkManager.getInstance(context).enqueueUniqueWork(
                     WORKER_NAME,
-                    ExistingWorkPolicy.KEEP,
+                    ExistingWorkPolicy.APPEND_OR_REPLACE,
                     workRequest
                 )
                 Timber.d("Enqueued ExerciseMutationWorker with CONNECTED constraint and backoff policy")
@@ -108,6 +110,7 @@ class WorkManagerExerciseMutationScheduler(
     }
 
     override fun cancelMutationSync() {
+        lastRemoteSyncTimestamp = 0L
         try {
             WorkManager.getInstance(context).cancelUniqueWork(WORKER_NAME)
             WorkManager.getInstance(context).cancelUniqueWork(REMOTE_CHANGES_WORKER_NAME)
@@ -115,6 +118,11 @@ class WorkManagerExerciseMutationScheduler(
         } catch (e: Exception) {
             Timber.w(e, "Failed to cancel exercise sync workers")
         }
+    }
+
+    override suspend fun clearLocalSyncData(keepLocalData: Boolean) {
+        cancelMutationSync()
+        exerciseSyncRepositoryProvider?.invoke()?.onUserLogout(keepLocalData)
     }
 
     companion object {

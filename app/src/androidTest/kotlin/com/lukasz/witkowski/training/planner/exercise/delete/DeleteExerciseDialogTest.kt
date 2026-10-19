@@ -6,7 +6,10 @@ import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeleteExerciseScreen
+import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeleteExerciseUiState
+import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeleteExerciseViewModel
+import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeletionEvent
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

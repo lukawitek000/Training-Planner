@@ -30,9 +30,19 @@ interface ExerciseRemoteDataSource {
         currentUserId: String? = null
     ): AppResult<Exercise2, ExerciseFailure>
 
+    suspend fun getExerciseDetailsById(
+        id: ExerciseId,
+        currentUserId: String? = null
+    ): AppResult<ExerciseDetails, ExerciseFailure>
+
     suspend fun createExercise(
         exercise: Exercise2
     ): AppResult<Exercise2, ExerciseFailure>
+
+    suspend fun createExercise(
+        exerciseDetails: ExerciseDetails,
+        idempotencyKey: String? = null
+    ): AppResult<ExerciseDto, ExerciseFailure>
 
     suspend fun updateExercise(
         exerciseDetails: ExerciseDetails,

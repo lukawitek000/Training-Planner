@@ -17,5 +17,5 @@ interface UserRepository {
 
     suspend fun setAutoSyncEnabled(enabled: Boolean)
 
-    suspend fun signOut()
+    suspend fun signOut(keepLocalData: Boolean = false)
 }

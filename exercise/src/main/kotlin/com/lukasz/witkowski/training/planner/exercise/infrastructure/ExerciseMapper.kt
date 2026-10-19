@@ -55,11 +55,12 @@ internal fun DbExercise.toExercise(categories: List<ExerciseCategory>): Exercise
         revision = revision,
         syncState = syncStateObj
     )
+    val categoriesSet = categories.toSet().ifEmpty { setOf(ExerciseCategory("Other")) }
     return Exercise2(
         id = ExerciseId(exerciseId),
         name = name,
         description = description,
-        categories = categories.toSet(),
+        categories = categoriesSet,
         imageId = imageId?.let { ImageId(it) },
         metadata = metadataObj
     )
@@ -143,9 +144,14 @@ internal fun DbExerciseDetails.toExerciseDetails(): ExerciseDetails {
 
 private fun List<DbExerciseRecommendation>.toExerciseRecommendation(
     level: RecommendationLevel
-): ExerciseRecommendation = first {
+): ExerciseRecommendation = firstOrNull {
     it.level == level
-}.toExerciseRecommendation()
+}?.toExerciseRecommendation() ?: ExerciseRecommendation(
+    sets = 0,
+    reps = 0,
+    restTime = 0.seconds,
+    weightInKg = null
+)
 
 private fun DbExerciseRecommendation.toExerciseRecommendation(): ExerciseRecommendation =
     ExerciseRecommendation(

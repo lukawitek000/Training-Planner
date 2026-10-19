@@ -6,7 +6,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.lukasz.witkowski.training.planner.network.SyncPreferencesStorage
-import com.lukasz.witkowski.training.planner.user.domain.UserPreferencesStorage
 import com.lukasz.witkowski.training.planner.user.domain.model.WeightUnit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

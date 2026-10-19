@@ -38,10 +38,15 @@ import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseMut
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.sync.DefaultExerciseSyncRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.sync.WorkManagerExerciseMutationScheduler
 
+import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeleteExerciseViewModel
+import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsViewModel
+import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseEditorViewModel
+import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.network.AuthSessionProvider
 import com.lukasz.witkowski.training.planner.network.SyncPreferencesStorage
-
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
+import org.koin.core.module.dsl.viewModel
+import org.koin.plugin.module.dsl.viewModel
 
 val exerciseModule =
     module {
@@ -77,7 +82,11 @@ val exerciseModule =
                 context = androidContext(),
                 authSessionProvider = get(),
                 syncPreferencesStorage = get(),
-                coroutineScope = CoroutineScope(get(named(CoroutineDispatcherQualifiers.IO)))
+                coroutineScope = CoroutineScope(
+                    kotlinx.coroutines.SupervisorJob() +
+                        get<CoroutineDispatcher>(named(CoroutineDispatcherQualifiers.IO))
+                ),
+                exerciseSyncRepositoryProvider = { get() }
             )
         }
         single<ExerciseMutationScheduler> { get<WorkManagerExerciseMutationScheduler>() }
@@ -118,4 +127,27 @@ val exerciseModule =
 
         single<ExerciseCategoriesService>()
         factory<DefaultCategoryController2>() bind CategoryController2::class
+
+        viewModel<ExercisesListViewModel>()
+        viewModel { params ->
+            ExerciseEditorViewModel(
+                exerciseService = get(),
+                categoryController = get(),
+                exerciseId = params.getOrNull(),
+            )
+        }
+        viewModel { params ->
+            ExerciseDetailsViewModel(
+                service = get(),
+                exerciseId = params.get(),
+                syncRepository = get(),
+                syncScheduler = get(),
+            )
+        }
+        viewModel { params ->
+            DeleteExerciseViewModel(
+                service = get(),
+                exerciseId = params.get(),
+            )
+        }
     }

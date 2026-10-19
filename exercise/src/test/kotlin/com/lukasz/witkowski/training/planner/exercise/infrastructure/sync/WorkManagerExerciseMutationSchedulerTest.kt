@@ -24,6 +24,7 @@ class WorkManagerExerciseMutationSchedulerTest {
         context = context,
         authSessionProvider = authSessionProvider,
         syncPreferencesStorage = syncPreferencesStorage,
+        exerciseSyncRepositoryProvider = { mockk(relaxed = true) },
         coroutineScope = testScope
     )
 

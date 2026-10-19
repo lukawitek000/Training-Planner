@@ -5,6 +5,8 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.lukasz.witkowski.training.planner.exercise.TestData
+import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsScreenContent
+import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsState
 import org.junit.Rule
 import org.junit.Test
 

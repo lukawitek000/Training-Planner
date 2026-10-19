@@ -11,7 +11,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.delete.DeletionEvent
+import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeletionEvent
 import com.lukasz.witkowski.training.planner.ui.components.ConfirmDeleteDialog
 import com.lukasz.witkowski.training.planner.ui.components.ConfirmDeleteUiState
 import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme

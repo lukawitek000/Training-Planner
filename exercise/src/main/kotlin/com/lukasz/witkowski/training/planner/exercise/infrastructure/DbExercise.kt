@@ -10,7 +10,7 @@ data class DbExerciseOwner(
 )
 
 @Entity(tableName = "Exercise")
-class DbExercise(
+data class DbExercise(
     @PrimaryKey
     val exerciseId: String,
     val name: String,
@@ -36,6 +36,7 @@ class DbExercise(
         const val SYNC_STATE_PENDING_UPLOAD = "PENDING_UPLOAD"
         const val SYNC_STATE_SYNCED = "SYNCED"
         const val SYNC_STATE_PENDING_DELETE = "PENDING_DELETE"
+        const val SYNC_STATE_CONFLICT = "CONFLICT"
         const val SYNC_STATE_ERROR = "ERROR"
     }
 }

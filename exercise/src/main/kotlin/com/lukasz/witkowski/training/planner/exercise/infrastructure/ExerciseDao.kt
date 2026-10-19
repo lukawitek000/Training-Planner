@@ -22,8 +22,11 @@ internal interface ExerciseDao {
         """
         SELECT *
         FROM Exercise
-        WHERE LOWER(name) LIKE LOWER('%' || :query || '%')
-           OR LOWER(description) LIKE LOWER('%' || :query || '%')
+        WHERE syncState != 'PENDING_DELETE'
+          AND (
+              LOWER(name) LIKE LOWER('%' || :query || '%')
+              OR LOWER(description) LIKE LOWER('%' || :query || '%')
+          )
         ORDER BY name ASC
     """
     )
@@ -36,7 +39,8 @@ internal interface ExerciseDao {
             FROM Exercise e
             JOIN ExerciseCategoryCrossRef r
                 ON e.exerciseId = r.exerciseId
-            WHERE r.categoryName IN (:categoriesNames)
+            WHERE e.syncState != 'PENDING_DELETE'
+              AND r.categoryName IN (:categoriesNames)
               AND (
                   LOWER(e.name) LIKE LOWER('%' || :query || '%')
                   OR LOWER(e.description) LIKE LOWER('%' || :query || '%')
@@ -54,6 +58,9 @@ internal interface ExerciseDao {
     @Query("SELECT * FROM Exercise WHERE :id == exerciseId")
     fun getExerciseDetailsById(id: String): Flow<DbExerciseDetails?>
 
+    @Query("SELECT * FROM Exercise WHERE exerciseId = :id")
+    suspend fun getExerciseByIdOnce(id: String): DbExercise?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(dbExercise: DbExercise): Long
 
@@ -64,6 +71,7 @@ internal interface ExerciseDao {
         details.categories.forEach {
             insert(it)
         }
+        deleteCategoryReferences(details.exercise.exerciseId)
         val crossRefs =
             details.categories.map {
                 ExerciseCategoryCrossRef(details.exercise.exerciseId, it.categoryName)
@@ -76,7 +84,7 @@ internal interface ExerciseDao {
         }
     }
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(recommendations: List<DbExerciseRecommendation>): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -137,22 +145,46 @@ internal interface ExerciseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSyncMetadata(metadata: DbSyncMetadata)
 
+    @Query("DELETE FROM SyncMetadata WHERE key = 'exercise_sync_version'")
+    suspend fun deleteSyncVersion()
+
+    @Query("DELETE FROM Exercise WHERE sourceType != 'BUNDLED'")
+    suspend fun deleteAllNonBundledExercises()
+
+    @Query("DELETE FROM Exercise WHERE syncState = 'PENDING_DELETE'")
+    suspend fun deletePendingDeleteExercises()
+
+    @Query("UPDATE Exercise SET syncState = 'LOCAL_ONLY', ownerId = 'local_user', ownerName = 'Local', revision = 1 WHERE sourceType != 'BUNDLED'")
+    suspend fun convertNonBundledExercisesToLocalOnly()
+
     @Transaction
     suspend fun applySyncChanges(
-        upserts: List<DbExerciseWithCategories>,
+        upserts: List<DbExerciseDetails>,
         deletedIds: List<String>,
         newVersion: Long
     ) {
+        val protectedStates = setOf(
+            DbExercise.SYNC_STATE_PENDING_UPLOAD,
+            DbExercise.SYNC_STATE_PENDING_DELETE,
+            DbExercise.SYNC_STATE_CONFLICT
+        )
         upserts.forEach { item ->
-            insert(item.exercise)
-            deleteCategoryReferences(item.exercise.exerciseId)
-            val crossRefs = item.categories.map {
-                ExerciseCategoryCrossRef(item.exercise.exerciseId, it.categoryName)
+            val existing = getExerciseByIdOnce(item.exercise.exerciseId)
+            if (existing != null && existing.syncState in protectedStates) {
+                return@forEach
             }
-            insertExerciseCategoryCrossRefs(crossRefs)
+            val mergedExercise = if (item.exercise.imageId == null && existing?.imageId != null) {
+                item.exercise.copy(imageId = existing.imageId)
+            } else {
+                item.exercise
+            }
+            insertExerciseDetails(item.copy(exercise = mergedExercise))
         }
         deletedIds.forEach { id ->
-            deleteExerciseById(id)
+            val existing = getExerciseByIdOnce(id)
+            if (existing == null || existing.syncState !in protectedStates) {
+                deleteExerciseAndCascade(id)
+            }
         }
         insertSyncMetadata(DbSyncMetadata(key = "exercise_sync_version", value = newVersion))
     }
