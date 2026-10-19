@@ -8,7 +8,6 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationSch
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepositoryConfig
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.RoomExerciseLocalDataSource
-import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.ExerciseRemoteDataSource
 import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -45,12 +44,10 @@ class DefaultExerciseRepositoryTest {
                 ).build()
         exerciseDao = db.exerciseDao()
         val localDataSource = RoomExerciseLocalDataSource(exerciseDao = exerciseDao, mutationDao = db.mutationDao())
-        val remoteDataSource = mockk<ExerciseRemoteDataSource>(relaxed = true)
         val mutationScheduler = mockk<ExerciseMutationScheduler>(relaxed = true)
         repository =
             DefaultExerciseRepository(
                 localDataSource = localDataSource,
-                remoteDataSource = remoteDataSource,
                 mutationScheduler = mutationScheduler,
                 config = ExerciseRepositoryConfig(),
                 ioDispatcher = ioDispatcher

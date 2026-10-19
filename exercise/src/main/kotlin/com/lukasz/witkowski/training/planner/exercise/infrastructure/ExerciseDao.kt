@@ -90,6 +90,16 @@ internal interface ExerciseDao {
     @Query("DELETE FROM Exercise WHERE :id == exerciseId")
     suspend fun deleteExerciseById(id: String): Int
 
+    @Query("DELETE FROM ExerciseMutation WHERE exerciseId = :exerciseId")
+    suspend fun deleteExerciseMutations(exerciseId: String)
+
+    @Transaction
+    suspend fun deleteExerciseAndCascade(id: String): Int {
+        deleteCategoryReferences(id)
+        deleteExerciseMutations(id)
+        return deleteExerciseById(id)
+    }
+
     @Query(
         """
             DELETE FROM ExerciseCategoryCrossRef

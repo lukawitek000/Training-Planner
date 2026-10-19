@@ -13,7 +13,6 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepositoryConfig
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.ExerciseLocalDataSource
-import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.ExerciseRemoteDataSource
 import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -24,10 +23,9 @@ import timber.log.Timber
 
 internal class DefaultExerciseRepository(
     private val localDataSource: ExerciseLocalDataSource,
-    private val remoteDataSource: ExerciseRemoteDataSource,
     private val mutationScheduler: ExerciseMutationScheduler,
     private val config: ExerciseRepositoryConfig = ExerciseRepositoryConfig(),
-    private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
 ) : ExerciseRepository {
 
     override fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails?> =

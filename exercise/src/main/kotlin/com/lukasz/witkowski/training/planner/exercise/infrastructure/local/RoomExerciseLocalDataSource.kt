@@ -33,13 +33,15 @@ internal class RoomExerciseLocalDataSource(
         exerciseDao.update(details) == ONE_ROW
 
     override suspend fun deleteExerciseById(id: String): Boolean =
-        exerciseDao.deleteExerciseById(id) == ONE_ROW
+        exerciseDao.deleteExerciseAndCascade(id) > 0
 
     override suspend fun getMutationByExerciseIdOnce(exerciseId: String): DbExerciseMutation? =
         mutationDao.getMutationByExerciseIdOnce(exerciseId)
 
-    override suspend fun insertMutation(mutation: DbExerciseMutation) =
+    override suspend fun insertMutation(mutation: DbExerciseMutation) {
+        mutationDao.deleteMutationsForExercise(mutation.exerciseId)
         mutationDao.insertMutation(mutation)
+    }
 
     override suspend fun updateMutation(mutation: DbExerciseMutation) =
         mutationDao.updateMutation(mutation)

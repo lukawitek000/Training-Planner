@@ -57,7 +57,8 @@ val authModule =
         single {
             DefaultAuthenticationRepository(
                 tokenStorage = get(),
-                remoteDataSource = get()
+                remoteDataSource = get(),
+                syncScheduler = get()
             )
         } bind AuthenticationRepository::class
 

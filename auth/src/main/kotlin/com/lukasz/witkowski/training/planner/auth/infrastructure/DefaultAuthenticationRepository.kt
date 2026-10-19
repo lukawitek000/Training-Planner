@@ -17,7 +17,7 @@ import timber.log.Timber
 class DefaultAuthenticationRepository(
     private val tokenStorage: TokenStorage,
     private val remoteDataSource: AuthenticationRemoteDataSource,
-    private val syncScheduler: SyncScheduler? = null
+    private val syncScheduler: SyncScheduler
 ) : AuthenticationRepository {
     override suspend fun signUp(form: SignUpForm): AuthenticationResult {
         Timber.i("Repository signUp called for email: %s, username: %s", form.email, form.username)
@@ -33,7 +33,7 @@ class DefaultAuthenticationRepository(
         Timber.i("Repository logOut called - clearing local token storage")
         return runCatchingCancellable {
             tokenStorage.clear()
-            syncScheduler?.cancelMutationSync()
+            syncScheduler.cancelMutationSync()
         }.fold(
             onSuccess = {
                 Timber.i("LogOut successful - tokens cleared")
@@ -52,7 +52,7 @@ class DefaultAuthenticationRepository(
             onSuccess = { tokens ->
                 Timber.i("Authentication remote call succeeded - saving tokens")
                 tokenStorage.saveTokens(tokens)
-                syncScheduler?.enqueueMutationSync()
+                syncScheduler.enqueueMutationSync()
                 AuthenticationResult.Success
             },
             onError = { failure ->

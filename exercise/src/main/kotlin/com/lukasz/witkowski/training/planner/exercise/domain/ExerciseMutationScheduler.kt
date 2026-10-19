@@ -1,7 +1,5 @@
 package com.lukasz.witkowski.training.planner.exercise.domain
 
-interface ExerciseMutationScheduler {
-    fun enqueueMutationSync()
+import com.lukasz.witkowski.training.planner.network.SyncScheduler
 
-    fun cancelMutationSync()
-}
+interface ExerciseMutationScheduler : SyncScheduler

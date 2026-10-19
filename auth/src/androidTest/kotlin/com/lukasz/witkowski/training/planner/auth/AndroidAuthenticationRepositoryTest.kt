@@ -11,7 +11,9 @@ import com.lukasz.witkowski.training.planner.auth.infrastructure.local.DefaultTo
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.AuthenticationApi
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitAuthenticationRemoteDataSource
 import com.lukasz.witkowski.training.planner.network.NetworkConfig
+import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
+import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -31,6 +33,7 @@ class AndroidAuthenticationRepositoryTest {
     private lateinit var context: Context
     private lateinit var realSecureTokenStorage: AndroidSecureTokenStorage
     private lateinit var repository: DefaultAuthenticationRepository
+    private val syncScheduler = mockk<SyncScheduler>(relaxed = true)
 
     private val timeProvider = TestTimeProvider()
 
@@ -65,7 +68,8 @@ class AndroidAuthenticationRepositoryTest {
         repository =
             DefaultAuthenticationRepository(
                 tokenStorage = tokenStorage,
-                remoteDataSource = remoteDataSource
+                remoteDataSource = remoteDataSource,
+                syncScheduler = syncScheduler
             )
     }
 

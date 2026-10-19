@@ -11,6 +11,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryContr
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
 import com.lukasz.witkowski.training.planner.ui.components.FilteringState
+import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -25,8 +26,13 @@ import kotlin.time.Duration.Companion.milliseconds
 class ExercisesListViewModel(
     private val exerciseService: ExerciseService,
     private val categoryController2: CategoryController2,
+    private val syncScheduler: SyncScheduler,
 ) : ViewModel() {
     private val searchQuery = MutableStateFlow("")
+
+    init {
+        syncScheduler.enqueueRemoteChangeSync(force = false)
+    }
 
     val filteringState =
         combine(

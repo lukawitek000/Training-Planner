@@ -86,7 +86,6 @@ val exerciseModule =
         single {
             DefaultExerciseRepository(
                 localDataSource = get(),
-                remoteDataSource = get(),
                 mutationScheduler = get(),
                 config = get(),
                 ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))

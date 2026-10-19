@@ -32,6 +32,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.milliseconds
+import com.lukasz.witkowski.training.planner.network.SyncScheduler
 
 class ExercisesListViewModelTest {
     private val categories = listOf(
@@ -41,6 +42,7 @@ class ExercisesListViewModelTest {
     )
     private val service: ExerciseService = mockk()
     private val categoryService: ExerciseCategoriesService = mockk()
+    private val syncScheduler: SyncScheduler = mockk(relaxed = true)
     private lateinit var vm: ExercisesListViewModel
 
     @Before
@@ -52,7 +54,8 @@ class ExercisesListViewModelTest {
             exerciseService = service,
             categoryController2 = DefaultCategoryController2(
                 categoryService = categoryService
-            )
+            ),
+            syncScheduler = syncScheduler
         )
     }
 

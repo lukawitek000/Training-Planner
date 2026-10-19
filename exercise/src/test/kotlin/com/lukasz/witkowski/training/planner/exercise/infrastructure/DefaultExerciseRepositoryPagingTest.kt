@@ -10,7 +10,6 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExercisePagingConfi
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepositoryConfig
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.ExerciseLocalDataSource
-import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.ExerciseRemoteDataSource
 import com.lukasz.witkowski.training.planner.network.NetworkConfig
 import io.mockk.mockk
 import kotlin.test.Test
@@ -25,7 +24,6 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationSch
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultExerciseRepositoryPagingTest {
     private val localDataSource = mockk<ExerciseLocalDataSource>(relaxed = true)
-    private val remoteDataSource = mockk<ExerciseRemoteDataSource>(relaxed = true)
     private val mutationScheduler = mockk<ExerciseMutationScheduler>(relaxed = true)
     private val testDispatcher = UnconfinedTestDispatcher()
 
@@ -37,7 +35,6 @@ class DefaultExerciseRepositoryPagingTest {
 
     private val repository = DefaultExerciseRepository(
         localDataSource = localDataSource,
-        remoteDataSource = remoteDataSource,
         mutationScheduler = mutationScheduler,
         config = repositoryConfig,
         ioDispatcher = testDispatcher
