@@ -10,7 +10,6 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepositoryConfig
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.ExerciseLocalDataSource
 import java.util.UUID
@@ -24,8 +23,11 @@ import timber.log.Timber
 internal class DefaultExerciseRepository(
     private val localDataSource: ExerciseLocalDataSource,
     private val mutationScheduler: ExerciseMutationScheduler,
-    private val config: ExerciseRepositoryConfig = ExerciseRepositoryConfig(),
     private val ioDispatcher: CoroutineDispatcher,
+    private val pagingConfig: PagingConfig = PagingConfig(
+        pageSize = DEFAULT_PAGE_SIZE,
+        prefetchDistance = DEFAULT_PREFETCH_DISTANCE
+    ),
 ) : ExerciseRepository {
 
     override fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails?> =
@@ -34,10 +36,7 @@ internal class DefaultExerciseRepository(
         }
 
     override fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise2>> = Pager(
-        config = PagingConfig(
-            pageSize = config.pagingConfig.pageSize,
-            prefetchDistance = config.pagingConfig.prefetchDistance
-        ),
+        config = pagingConfig,
         pagingSourceFactory = {
             localDataSource.getExercisesWithCategories(
                 query = query.query,
@@ -181,6 +180,11 @@ internal class DefaultExerciseRepository(
 
     private fun enqueueMutationWorker() {
         mutationScheduler.enqueueMutationSync()
+    }
+
+    companion object {
+        const val DEFAULT_PAGE_SIZE = 10
+        const val DEFAULT_PREFETCH_DISTANCE = 10
     }
 }
 

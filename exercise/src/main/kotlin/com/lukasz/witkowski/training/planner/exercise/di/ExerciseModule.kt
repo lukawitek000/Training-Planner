@@ -4,7 +4,6 @@ import com.lukasz.witkowski.training.planner.exercise.application.ExerciseCatego
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategoryRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepositoryConfig
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DefaultExerciseCategoryRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DefaultExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseCategoryDao
@@ -52,8 +51,6 @@ val exerciseModule =
     module {
         includes(dispatchersModule, imageModule, networkModule)
 
-        single { ExerciseRepositoryConfig() }
-
         single {
             get<Retrofit>().create(ExerciseApi::class.java)
         }
@@ -96,7 +93,6 @@ val exerciseModule =
             DefaultExerciseRepository(
                 localDataSource = get(),
                 mutationScheduler = get(),
-                config = get(),
                 ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
             )
         } bind ExerciseRepository::class

@@ -1,14 +1,14 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
+import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
 import com.lukasz.witkowski.training.planner.exercise.TestResourceReader
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
-import com.lukasz.witkowski.training.planner.exercise.domain.ExercisePagingConfig
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepositoryConfig
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.ExerciseLocalDataSource
 import com.lukasz.witkowski.training.planner.network.NetworkConfig
 import io.mockk.mockk
@@ -19,7 +19,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class DefaultExerciseRepositoryPagingTest {
@@ -27,17 +26,13 @@ class DefaultExerciseRepositoryPagingTest {
     private val mutationScheduler = mockk<ExerciseMutationScheduler>(relaxed = true)
     private val testDispatcher = UnconfinedTestDispatcher()
 
-    private val pagingConfig = ExercisePagingConfig(pageSize = 10, prefetchDistance = 10)
-    private val repositoryConfig = ExerciseRepositoryConfig(
-        autoSaveRemoteExercises = false,
-        pagingConfig = pagingConfig
-    )
+    private val pagingConfig = PagingConfig(pageSize = 10, prefetchDistance = 10)
 
     private val repository = DefaultExerciseRepository(
         localDataSource = localDataSource,
         mutationScheduler = mutationScheduler,
-        config = repositoryConfig,
-        ioDispatcher = testDispatcher
+        ioDispatcher = testDispatcher,
+        pagingConfig = pagingConfig
     )
 
     @Test

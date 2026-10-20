@@ -8,7 +8,6 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepositoryConfig
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.RoomExerciseLocalDataSource
@@ -56,7 +55,6 @@ class DefaultExerciseRepositoryTest {
             DefaultExerciseRepository(
                 localDataSource = localDataSource,
                 mutationScheduler = mutationScheduler,
-                config = ExerciseRepositoryConfig(),
                 ioDispatcher = ioDispatcher
             )
     }
