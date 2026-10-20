@@ -35,9 +35,8 @@ internal abstract class ExerciseDatabase : RoomDatabase() {
                             ExerciseDatabase::class.java,
                             "ExerciseDb"
                         )
-//                        .createFromAsset("database/exercises.db")
-                        // TODO regenerate default exercises
-                            .fallbackToDestructiveMigration(true)
+                        .createFromAsset("database/exercises.db")
+                        .fallbackToDestructiveMigration(true)
                         .build()
             }
             instance!!
