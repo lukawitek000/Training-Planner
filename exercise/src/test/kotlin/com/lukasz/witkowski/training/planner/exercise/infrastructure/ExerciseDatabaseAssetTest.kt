@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
 import android.content.Context
 import androidx.room3.Room
+import java.io.File
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -14,7 +15,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
-import java.io.File
 
 @RunWith(RobolectricTestRunner::class)
 class ExerciseDatabaseAssetTest {
@@ -50,16 +50,34 @@ class ExerciseDatabaseAssetTest {
 
         allExercises.forEach { exercise ->
             assertNull("Bundled exercise imageId should be null", exercise.imageId)
-            assertEquals("Bundled exercise sourceType should be BUNDLED", DbExercise.SOURCE_TYPE_BUNDLED, exercise.sourceType)
-            assertEquals("Bundled exercise sharing should be COMMUNITY", DbExercise.SHARING_COMMUNITY, exercise.sharing)
+            assertEquals(
+                "Bundled exercise sourceType should be BUNDLED",
+                DbExercise.SOURCE_TYPE_BUNDLED,
+                exercise.sourceType
+            )
+            assertEquals(
+                "Bundled exercise sharing should be COMMUNITY",
+                DbExercise.SHARING_COMMUNITY,
+                exercise.sharing
+            )
             assertEquals("Bundled exercise revision should be 1", 1L, exercise.revision)
-            assertEquals("Bundled exercise syncState should be SYNCED", DbExercise.SYNC_STATE_SYNCED, exercise.syncState)
+            assertEquals(
+                "Bundled exercise syncState should be SYNCED",
+                DbExercise.SYNC_STATE_SYNCED,
+                exercise.syncState
+            )
             assertNull("Bundled exercise owner should be null", exercise.owner)
 
             val details = exerciseDao.getExerciseDetailsById(exercise.exerciseId).first()
             assertNotNull("Details should exist for ${exercise.name}", details)
-            assertTrue("Bundled exercise should have categories: ${exercise.name}", details!!.categories.isNotEmpty())
-            assertTrue("Bundled exercise should have recommendations: ${exercise.name}", details.recommendations.isNotEmpty())
+            assertTrue(
+                "Bundled exercise should have categories: ${exercise.name}",
+                details!!.categories.isNotEmpty()
+            )
+            assertTrue(
+                "Bundled exercise should have recommendations: ${exercise.name}",
+                details.recommendations.isNotEmpty()
+            )
         }
     }
 

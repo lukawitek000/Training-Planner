@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
 import com.lukasz.witkowski.training.planner.shared.theme.DarkGrey
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2

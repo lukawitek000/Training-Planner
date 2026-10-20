@@ -23,7 +23,7 @@ open class ExerciseDetailsViewModel(
     private val service: ExerciseService,
     private val exerciseId: ExerciseId,
     private val syncRepository: ExerciseSyncRepository? = null,
-    private val syncScheduler: SyncScheduler? = null,
+    private val syncScheduler: SyncScheduler? = null
 ) : ViewModel() {
 
     private val _conflictServerDetails = MutableStateFlow<ExerciseDetails?>(null)

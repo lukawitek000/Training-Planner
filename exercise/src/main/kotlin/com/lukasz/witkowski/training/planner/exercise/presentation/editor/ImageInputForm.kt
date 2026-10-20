@@ -43,7 +43,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.button.AppSecondaryButton
 fun ImageInputForm(
     images: List<ImageBitmap>,
     previewImage: ImageBitmap?,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier,
@@ -64,7 +64,7 @@ fun ImageInputForm(
 fun ImagesPreview(
     images: List<ImageBitmap>,
     previewImage: ImageBitmap?,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     if (images.isEmpty() && previewImage == null) return
     Column(
@@ -82,10 +82,7 @@ fun ImagesPreview(
 }
 
 @Composable
-private fun ImagePlaceholder(
-    previewImage: ImageBitmap?,
-    modifier: Modifier = Modifier,
-) {
+private fun ImagePlaceholder(previewImage: ImageBitmap?, modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
@@ -111,9 +108,7 @@ private fun ImagePlaceholder(
 }
 
 @Composable
-private fun ImageInputPlaceholder(
-    modifier: Modifier = Modifier,
-) {
+private fun ImageInputPlaceholder(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -153,7 +148,7 @@ private fun ImageSelectionPanel(
     images: List<ImageBitmap>,
     previewImage: ImageBitmap?,
     modifier: Modifier = Modifier,
-    addImageItem: (LazyListScope.(Dp) -> Unit)? = null,
+    addImageItem: (LazyListScope.(Dp) -> Unit)? = null
 ) {
     val itemSize = Dimens2.mediaThumbnailSize
     LazyRow(
@@ -162,7 +157,10 @@ private fun ImageSelectionPanel(
     ) {
         items(images) { img ->
             val border = if (previewImage == img) {
-                BorderStroke(width = Dimens2.thinBorder * 2, color = MaterialTheme.colorScheme.primary)
+                BorderStroke(
+                    width = Dimens2.thinBorder * 2,
+                    color = MaterialTheme.colorScheme.primary
+                )
             } else {
                 BorderStroke(
                     width = Dimens2.thinBorder,

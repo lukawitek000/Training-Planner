@@ -4,10 +4,7 @@ import androidx.room3.Embedded
 import androidx.room3.Entity
 import androidx.room3.PrimaryKey
 
-data class DbExerciseOwner(
-    val ownerId: String,
-    val ownerName: String
-)
+data class DbExerciseOwner(val ownerId: String, val ownerName: String)
 
 @Entity(tableName = "Exercise")
 data class DbExercise(

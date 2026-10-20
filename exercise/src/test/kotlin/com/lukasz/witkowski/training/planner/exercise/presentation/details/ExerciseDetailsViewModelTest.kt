@@ -97,17 +97,19 @@ class ExerciseDetailsViewModelTest {
     }
 
     @Test
-    fun `when resolveConflictKeepLocal is called, syncRepository and syncScheduler are invoked`() = runTest {
-        coEvery { service.getExerciseDetailsById(any()) } returns flowOf(TestData.PUSH_UPS_DETAILS)
-        coEvery { syncRepository.resolveConflictKeepLocal(id) } returns AppResult.Success(Unit)
-        givenVm()
+    fun `when resolveConflictKeepLocal is called, syncRepository and syncScheduler are invoked`() =
+        runTest {
+            coEvery { service.getExerciseDetailsById(any()) } returns
+                flowOf(TestData.PUSH_UPS_DETAILS)
+            coEvery { syncRepository.resolveConflictKeepLocal(id) } returns AppResult.Success(Unit)
+            givenVm()
 
-        vm.resolveConflictKeepLocal()
-        advanceUntilIdle()
+            vm.resolveConflictKeepLocal()
+            advanceUntilIdle()
 
-        coVerify(exactly = 1) { syncRepository.resolveConflictKeepLocal(id) }
-        verify(exactly = 1) { syncScheduler.enqueueMutationSync() }
-    }
+            coVerify(exactly = 1) { syncRepository.resolveConflictKeepLocal(id) }
+            verify(exactly = 1) { syncScheduler.enqueueMutationSync() }
+        }
 
     @Test
     fun `when resolveConflictAcceptServer is called, syncRepository is invoked`() = runTest {

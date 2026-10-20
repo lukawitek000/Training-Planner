@@ -49,7 +49,10 @@ internal class DefaultExerciseSyncRepository(
                         deletedIds = syncResponse.deletedIds,
                         newVersion = syncResponse.currentVersion
                     )
-                    Timber.d("Exercise sync succeeded. Local sync version updated to %d", syncResponse.currentVersion)
+                    Timber.d(
+                        "Exercise sync succeeded. Local sync version updated to %d",
+                        syncResponse.currentVersion
+                    )
                     AppResult.Success(Unit)
                 }
 
@@ -131,7 +134,9 @@ internal class DefaultExerciseSyncRepository(
             is AppResult.Error -> return@withContext AppResult.Error(serverResult.error)
         }
         val existingDbExercise = exerciseDao.getExerciseByIdOnce(exerciseId.toString())
-        val existingImageId = existingDbExercise?.imageId?.takeIf { it.isNotBlank() }?.let { ImageId(it) }
+        val existingImageId = existingDbExercise?.imageId?.takeIf {
+            it.isNotBlank()
+        }?.let { ImageId(it) }
         val detailsToSave = if (existingImageId != null && serverDetails.exercise.imageId == null) {
             serverDetails.copy(exercise = serverDetails.exercise.copy(imageId = existingImageId))
         } else {
@@ -159,7 +164,11 @@ internal class DefaultExerciseSyncRepository(
         mutationDao.updateMutation(mutation.copy(state = DbExerciseMutation.STATE_IN_PROGRESS))
 
         if (mutation.type == DbExerciseMutation.TYPE_DELETE) {
-            return when (val deleteResult = remoteDataSource.deleteExercise(ExerciseId(mutation.exerciseId))) {
+            return when (
+                val deleteResult = remoteDataSource.deleteExercise(
+                    ExerciseId(mutation.exerciseId)
+                )
+            ) {
                 is AppResult.Success -> {
                     exerciseDao.deleteExerciseAndCascade(mutation.exerciseId)
                     mutationDao.deleteMutation(mutation.id)
@@ -178,7 +187,10 @@ internal class DefaultExerciseSyncRepository(
                             DbExerciseMutation.STATE_ERROR
                         }
                         mutationDao.updateMutation(mutation.copy(state = nextState))
-                        exerciseDao.updateSyncState(mutation.exerciseId, DbExercise.SYNC_STATE_ERROR)
+                        exerciseDao.updateSyncState(
+                            mutation.exerciseId,
+                            DbExercise.SYNC_STATE_ERROR
+                        )
                         AppResult.Error(failure)
                     }
                 }
@@ -186,7 +198,9 @@ internal class DefaultExerciseSyncRepository(
         }
 
         val existingDbExercise = exerciseDao.getExerciseByIdOnce(mutation.exerciseId)
-        val existingImageId = existingDbExercise?.imageId?.takeIf { it.isNotBlank() }?.let { ImageId(it) }
+        val existingImageId = existingDbExercise?.imageId?.takeIf {
+            it.isNotBlank()
+        }?.let { ImageId(it) }
         val categories = mutation.categoryNames
             .split(",")
             .filter { it.isNotBlank() }
@@ -254,7 +268,11 @@ internal class DefaultExerciseSyncRepository(
                 val updatedDetails = updatedDto.toExerciseDetails(existingImageId = existingImageId)
                 exerciseDao.insertExerciseDetails(updatedDetails.toDbExerciseDetails())
                 mutationDao.deleteMutation(mutation.id)
-                Timber.d("Successfully synced mutation %s for exercise %s", mutation.id, mutation.exerciseId)
+                Timber.d(
+                    "Successfully synced mutation %s for exercise %s",
+                    mutation.id,
+                    mutation.exerciseId
+                )
                 AppResult.Success(Unit)
             }
 
@@ -262,7 +280,9 @@ internal class DefaultExerciseSyncRepository(
                 val failure = result.error
                 if (failure is ExerciseFailure.Conflict) {
                     val conflictDto = failure.conflictDto
-                    val conflictServerJson = conflictDto?.let { json.encodeToString(it.currentServerExercise) }
+                    val conflictServerJson = conflictDto?.let {
+                        json.encodeToString(it.currentServerExercise)
+                    }
                     mutationDao.updateMutation(
                         mutation.copy(
                             state = DbExerciseMutation.STATE_CONFLICT,
@@ -270,7 +290,10 @@ internal class DefaultExerciseSyncRepository(
                         )
                     )
                     exerciseDao.updateSyncState(mutation.exerciseId, DbExercise.SYNC_STATE_CONFLICT)
-                    Timber.w("Version conflict during mutation sync for exercise %s", mutation.exerciseId)
+                    Timber.w(
+                        "Version conflict during mutation sync for exercise %s",
+                        mutation.exerciseId
+                    )
                 } else {
                     val nextState = if (failure.isRetryable()) {
                         DbExerciseMutation.STATE_PENDING

@@ -26,7 +26,8 @@ fun Route.exerciseRoutes(exerciseService: ExerciseService) {
             }
 
             get("/changes") {
-                val sinceVersion = call.request.queryParameters["sinceVersion"]?.toLongOrNull() ?: 0L
+                val sinceVersion =
+                    call.request.queryParameters["sinceVersion"]?.toLongOrNull() ?: 0L
                 val principal = call.principal<JWTPrincipal>()
                 val result = exerciseService.getExerciseChanges(
                     sinceVersion = sinceVersion,

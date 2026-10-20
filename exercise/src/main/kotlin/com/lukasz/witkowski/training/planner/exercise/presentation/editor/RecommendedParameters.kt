@@ -59,7 +59,7 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun RecommendedParametersOverview(
     recommendations: List<Recommendation>,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -86,7 +86,7 @@ fun RecommendedParametersOverview(
 fun RecommendedParametersForm(
     recommendations: List<Recommendation>,
     onRecommendationChange: (ExerciseEditingEvent) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -121,7 +121,7 @@ fun RecommendedParametersForm(
 private fun RecommendedParametersCard(
     recommendation: Recommendation,
     extendedCardContent: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
     Surface(
@@ -154,7 +154,7 @@ private fun RecommendedParametersCard(
 private fun RecommendedParametersInputFields(
     recommendation: Recommendation,
     onRecommendationChange: (ExerciseEditingEvent) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     ExerciseParametersInputFields(
         parameters = recommendation.parameters,
@@ -171,7 +171,7 @@ fun ExerciseParametersInputFields(
     parameters: RecommendedParameters,
     testTagPrefix: String,
     onParametersIntent: (ExerciseParametersIntent) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     var showRestTimePicker by rememberSaveable { mutableStateOf(false) }
     var showHoldTimePicker by rememberSaveable { mutableStateOf(false) }
@@ -183,7 +183,7 @@ fun ExerciseParametersInputFields(
         // Row 1: Sets, Reps, Weight
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm),
+            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
         ) {
             ParameterInputField(
                 value = parameters.sets,
@@ -212,11 +212,13 @@ fun ExerciseParametersInputFields(
         // Row 2: Hold / Time, Rest time
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm),
+            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
         ) {
             ParameterInputField(
                 value = parameters.time?.inWholeSeconds?.toInt(),
-                onValueChange = { onParametersIntent(ExerciseParametersIntent.TimeChanged(it?.seconds)) },
+                onValueChange = {
+                    onParametersIntent(ExerciseParametersIntent.TimeChanged(it?.seconds))
+                },
                 label = stringResource(R.string.hold_time),
                 unit = stringResource(R.string.second_abbrv),
                 modifier = Modifier.weight(1f),
@@ -239,7 +241,9 @@ fun ExerciseParametersInputFields(
             )
             ParameterInputField(
                 value = parameters.restTime?.inWholeSeconds?.toInt(),
-                onValueChange = { onParametersIntent(ExerciseParametersIntent.RestTimeChanged(it?.seconds)) },
+                onValueChange = {
+                    onParametersIntent(ExerciseParametersIntent.RestTimeChanged(it?.seconds))
+                },
                 label = buildRequiredString(stringResource(R.string.rest_time)),
                 unit = stringResource(R.string.second_abbrv),
                 modifier = Modifier.weight(1f),
@@ -302,7 +306,9 @@ fun ExerciseParametersInputFields(
             allowNoTime = false,
             onDismissRequest = { showRestTimePicker = false },
             onSecondsConfirmed = { selectedSeconds ->
-                onParametersIntent(ExerciseParametersIntent.RestTimeChanged(selectedSeconds?.seconds))
+                onParametersIntent(
+                    ExerciseParametersIntent.RestTimeChanged(selectedSeconds?.seconds)
+                )
                 showRestTimePicker = false
             }
         )
@@ -313,41 +319,34 @@ sealed interface ExerciseParametersIntent {
     fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent
 
     data class SetsChanged(val sets: Int?) : ExerciseParametersIntent {
-        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent {
-            return ExerciseEditingEvent.RecommendedSetsChanged(sets, level)
-        }
+        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent =
+            ExerciseEditingEvent.RecommendedSetsChanged(sets, level)
     }
 
     data class RepsChanged(val reps: Int?) : ExerciseParametersIntent {
-        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent {
-            return ExerciseEditingEvent.RecommendedRepsChanged(reps, level)
-        }
+        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent =
+            ExerciseEditingEvent.RecommendedRepsChanged(reps, level)
     }
 
     data class RestTimeChanged(val restTime: Duration?) : ExerciseParametersIntent {
-        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent {
-            return ExerciseEditingEvent.RecommendedRestTimeChanged(restTime, level)
-        }
+        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent =
+            ExerciseEditingEvent.RecommendedRestTimeChanged(restTime, level)
     }
 
     data class TimeChanged(val time: Duration?) : ExerciseParametersIntent {
-        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent {
-            return ExerciseEditingEvent.RecommendedTimeChanged(time, level)
-        }
+        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent =
+            ExerciseEditingEvent.RecommendedTimeChanged(time, level)
     }
 
     data class WeightChanged(val weight: Int?) : ExerciseParametersIntent {
-        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent {
-            return ExerciseEditingEvent.RecommendedWeightChanged(weight, level)
-        }
+        override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent =
+            ExerciseEditingEvent.RecommendedWeightChanged(weight, level)
     }
 }
 
-private fun buildRequiredString(str: String): String {
-    return buildString {
-        append(str)
-        append(" *")
-    }
+private fun buildRequiredString(str: String): String = buildString {
+    append(str)
+    append(" *")
 }
 
 @Composable
@@ -356,7 +355,7 @@ fun RecommendedParametersCardHeader(
     toggleExpansion: () -> Unit,
     recommendation: Recommendation,
     modifier: Modifier = Modifier,
-    isExpandable: Boolean = true,
+    isExpandable: Boolean = true
 ) {
     Row(
         modifier = modifier
@@ -404,12 +403,10 @@ fun RecommendedParametersCardHeader(
 }
 
 @Composable
-private fun RecommendationLevel.toColor(): Color {
-    return when (this) {
-        RecommendationLevel.BEGINNER -> Success
-        RecommendationLevel.INTERMEDIATE -> Warning
-        RecommendationLevel.ADVANCED -> MaterialTheme.colorScheme.error
-    }
+private fun RecommendationLevel.toColor(): Color = when (this) {
+    RecommendationLevel.BEGINNER -> Success
+    RecommendationLevel.INTERMEDIATE -> Warning
+    RecommendationLevel.ADVANCED -> MaterialTheme.colorScheme.error
 }
 
 @Composable
@@ -434,46 +431,45 @@ fun buildStringOverview(
     reps: Int,
     restTime: Duration,
     weightInKg: Int?,
-    time: Duration? = null,
-): String =
-    when {
-        time != null && weightInKg != null -> {
-            stringResource(
-                R.string.recommendation_overview_with_hold,
-                sets,
-                reps,
-                time.inWholeSeconds,
-                restTime.inWholeSeconds,
-                weightInKg
-            )
-        }
-        time != null -> {
-            stringResource(
-                R.string.recommendation_with_hold_no_weight,
-                sets,
-                reps,
-                time.inWholeSeconds,
-                restTime.inWholeSeconds
-            )
-        }
-        weightInKg != null -> {
-            stringResource(
-                R.string.recommendation_overview,
-                sets,
-                reps,
-                restTime.inWholeSeconds,
-                weightInKg
-            )
-        }
-        else -> {
-            stringResource(
-                R.string.recommendation_no_weight,
-                sets,
-                reps,
-                restTime.inWholeSeconds,
-            )
-        }
+    time: Duration? = null
+): String = when {
+    time != null && weightInKg != null -> {
+        stringResource(
+            R.string.recommendation_overview_with_hold,
+            sets,
+            reps,
+            time.inWholeSeconds,
+            restTime.inWholeSeconds,
+            weightInKg
+        )
     }
+    time != null -> {
+        stringResource(
+            R.string.recommendation_with_hold_no_weight,
+            sets,
+            reps,
+            time.inWholeSeconds,
+            restTime.inWholeSeconds
+        )
+    }
+    weightInKg != null -> {
+        stringResource(
+            R.string.recommendation_overview,
+            sets,
+            reps,
+            restTime.inWholeSeconds,
+            weightInKg
+        )
+    }
+    else -> {
+        stringResource(
+            R.string.recommendation_no_weight,
+            sets,
+            reps,
+            restTime.inWholeSeconds
+        )
+    }
+}
 
 @Composable
 private fun ParameterInputField(
@@ -483,7 +479,7 @@ private fun ParameterInputField(
     modifier: Modifier = Modifier,
     unit: String = "",
     testTag: String = "",
-    trailingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null
 ) {
     Column(modifier = modifier) {
         Text(
@@ -532,7 +528,7 @@ private fun ParameterInputField(
 @Composable
 private fun RecommendedParametersExtendedSummary(
     params: RecommendedParameters,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -573,7 +569,7 @@ private fun ParameterOverview(
     value: Int?,
     label: String,
     modifier: Modifier = Modifier,
-    unit: String = "",
+    unit: String = ""
 ) {
     if (value == null) return
     Row(
@@ -620,7 +616,7 @@ private fun RecommendedParametersOverviewPreview() {
     TrainingPlannerTheme2 {
         RecommendedParametersOverview(
             recommendations = PREVIEW_RECOMMENDED_PARAMETERS,
-            modifier = Modifier,
+            modifier = Modifier
         )
     }
 }
@@ -643,5 +639,5 @@ val PREVIEW_RECOMMENDED_PARAMETERS = listOf(
             weightInKg = 30
         )
     ),
-    Recommendation(RecommendationLevel.ADVANCED),
+    Recommendation(RecommendationLevel.ADVANCED)
 )

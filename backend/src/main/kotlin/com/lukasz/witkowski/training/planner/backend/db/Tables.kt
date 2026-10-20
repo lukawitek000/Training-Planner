@@ -72,7 +72,10 @@ object ExerciseCategoriesTable : Table("exercise_categories") {
 
 object ExerciseRecommendationsTable : Table("exercise_recommendations") {
     val id = varchar("id", 36)
-    val exerciseId = varchar("exercise_id", 36).references(ExercisesTable.id, onDelete = ReferenceOption.CASCADE)
+    val exerciseId = varchar(
+        "exercise_id",
+        36
+    ).references(ExercisesTable.id, onDelete = ReferenceOption.CASCADE)
     val level = varchar("level", 20)
     val sets = integer("sets")
     val reps = integer("reps")

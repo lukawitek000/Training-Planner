@@ -11,10 +11,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import timber.log.Timber
 
-class ExerciseMutationWorker(
-    appContext: Context,
-    workerParams: WorkerParameters
-) : CoroutineWorker(appContext, workerParams), KoinComponent {
+class ExerciseMutationWorker(appContext: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(appContext, workerParams),
+    KoinComponent {
 
     private val syncRepository: ExerciseSyncRepository by inject()
 
@@ -22,7 +21,11 @@ class ExerciseMutationWorker(
         Timber.d("ExerciseMutationWorker executing pending mutations")
         return when (val result = syncRepository.processPendingMutations()) {
             is AppResult.Success -> Result.success()
-            is AppResult.Error -> if (result.error.isRetryable()) Result.retry() else Result.success()
+            is AppResult.Error -> if (result.error.isRetryable()) {
+                Result.retry()
+            } else {
+                Result.success()
+            }
         }
     }
 }

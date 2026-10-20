@@ -20,8 +20,3 @@ jobs:
         run: ./gradlew :app:assembleDebug
       - name: Build release mobile app
         run: ./gradlew :app:assembleRelease
-        # Build application for Android watch
-      - name: Build debug wearable app
-        run: ./gradlew :wearable:assembleDebug
-      - name: Build release wearable app
-        run: ./gradlew :wearable:assembleRelease

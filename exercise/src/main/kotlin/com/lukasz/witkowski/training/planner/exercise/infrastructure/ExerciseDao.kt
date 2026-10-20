@@ -154,7 +154,9 @@ internal interface ExerciseDao {
     @Query("DELETE FROM Exercise WHERE syncState = 'PENDING_DELETE'")
     suspend fun deletePendingDeleteExercises()
 
-    @Query("UPDATE Exercise SET syncState = 'LOCAL_ONLY', ownerId = 'local_user', ownerName = 'Local', revision = 1 WHERE sourceType != 'BUNDLED'")
+    @Query(
+        "UPDATE Exercise SET syncState = 'LOCAL_ONLY', ownerId = 'local_user', ownerName = 'Local', revision = 1 WHERE sourceType != 'BUNDLED'"
+    )
     suspend fun convertNonBundledExercisesToLocalOnly()
 
     @Transaction

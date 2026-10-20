@@ -8,7 +8,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 fun EditExerciseScreen(
     viewModel: ExerciseEditorViewModel,
     navigateToDetails: (ExerciseId) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     CreateExerciseScreen(
         viewModel = viewModel,

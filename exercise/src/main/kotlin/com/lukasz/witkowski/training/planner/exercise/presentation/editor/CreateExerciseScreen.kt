@@ -43,7 +43,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.inputField.AppTextField
 fun CreateExerciseScreen(
     viewModel: ExerciseEditorViewModel,
     navigateToDetails: (ExerciseId) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsState()
     val isEditMode = viewModel.isEditMode
@@ -62,14 +62,14 @@ fun CreateExerciseScreenContent(
     onUserInputChange: (ExerciseEditingEvent) -> Unit,
     onExerciseSaved: (ExerciseId) -> Unit,
     isEditMode: Boolean,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     when (uiState) {
         is ExerciseEditingUiState.Saving -> LoadingExerciseForm(
             exerciseEditingInput = uiState.exerciseEditingInput,
             isEditMode = isEditMode,
-            modifier = modifier,
+            modifier = modifier
         )
 
         is ExerciseEditingUiState.Loading -> {
@@ -91,10 +91,14 @@ fun CreateExerciseScreenContent(
         )
 
         is ExerciseEditingUiState.Failure -> {
-            val failMessage = if (isEditMode) stringResource(
-                R.string.failed_update_exercise,
-                uiState.message
-            ) else stringResource(R.string.failed_save_exercise, uiState.message)
+            val failMessage = if (isEditMode) {
+                stringResource(
+                    R.string.failed_update_exercise,
+                    uiState.message
+                )
+            } else {
+                stringResource(R.string.failed_save_exercise, uiState.message)
+            }
             LaunchedEffect(uiState) {
                 Toast.makeText(
                     context,
@@ -122,7 +126,7 @@ fun CreateExerciseScreenContent(
 private fun LoadingExerciseForm(
     exerciseEditingInput: ExerciseEditingInput,
     isEditMode: Boolean,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     AppLoadingOverlay(
         isLoading = true,
@@ -143,7 +147,7 @@ private fun ExerciseForm(
     state: ExerciseEditingInput,
     onUserInputChange: (ExerciseEditingEvent) -> Unit,
     isEditMode: Boolean,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -159,11 +163,11 @@ private fun ExerciseForm(
         TextInputForm(
             name = state.name,
             description = state.description,
-            onUserInputChange = onUserInputChange,
+            onUserInputChange = onUserInputChange
         )
         CategorySelectionPanel(
             categories = state.categories,
-            toggleCategory = { onUserInputChange(ExerciseEditingEvent.CategoryToggled(it)) },
+            toggleCategory = { onUserInputChange(ExerciseEditingEvent.CategoryToggled(it)) }
         )
         RecommendedParametersForm(
             recommendations = state.recommendations,
@@ -186,7 +190,7 @@ private fun TextInputForm(
     name: String,
     description: String,
     onUserInputChange: (ExerciseEditingEvent) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Text(
@@ -230,7 +234,7 @@ private fun TextInputForm(
 private fun CategorySelectionPanel(
     categories: List<FilterCategory>,
     toggleCategory: (ExerciseCategory) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -251,7 +255,9 @@ private fun CategorySelectionPanel(
                     label = filterCategory.category.name,
                     selected = filterCategory.isSelected,
                     onClick = { toggleCategory(filterCategory.category) },
-                    modifier = Modifier.testTag("Chip${filterCategory.category.name}, isClickable=true")
+                    modifier = Modifier.testTag(
+                        "Chip${filterCategory.category.name}, isClickable=true"
+                    )
                 )
             }
         }

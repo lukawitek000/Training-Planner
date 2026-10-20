@@ -18,12 +18,11 @@ internal class DefaultExerciseCategoryRepository(
     private val ioDispatcher: CoroutineDispatcher
 ) : ExerciseCategoryRepository {
 
-    override fun getAll(): Flow<List<ExerciseCategory>> =
-        localDataSource.getAllCategories()
-            .onStart {
-                syncRemoteCategories()
-            }
-            .map { list -> list.map { it.toExerciseCategory() } }
+    override fun getAll(): Flow<List<ExerciseCategory>> = localDataSource.getAllCategories()
+        .onStart {
+            syncRemoteCategories()
+        }
+        .map { list -> list.map { it.toExerciseCategory() } }
 
     suspend fun syncRemoteCategories() = withContext(ioDispatcher) {
         Timber.d("Syncing remote categories into local storage")

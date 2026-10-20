@@ -25,7 +25,8 @@ class WorkManagerExerciseMutationScheduler(
     private val syncPreferencesStorage: SyncPreferencesStorage,
     private val coroutineScope: CoroutineScope,
     private val exerciseSyncRepositoryProvider: (() -> ExerciseSyncRepository)? = null
-) : ExerciseMutationScheduler, SyncScheduler {
+) : ExerciseMutationScheduler,
+    SyncScheduler {
 
     @Volatile
     private var lastRemoteSyncTimestamp: Long = 0L
@@ -59,7 +60,9 @@ class WorkManagerExerciseMutationScheduler(
                     ExistingWorkPolicy.APPEND_OR_REPLACE,
                     workRequest
                 )
-                Timber.d("Enqueued ExerciseMutationWorker with CONNECTED constraint and backoff policy")
+                Timber.d(
+                    "Enqueued ExerciseMutationWorker with CONNECTED constraint and backoff policy"
+                )
             } catch (e: Exception) {
                 Timber.w(e, "Failed to enqueue ExerciseMutationWorker")
             }

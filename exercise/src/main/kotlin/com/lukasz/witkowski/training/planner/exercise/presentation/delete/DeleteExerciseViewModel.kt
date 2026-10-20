@@ -16,7 +16,7 @@ import timber.log.Timber
 
 class DeleteExerciseViewModel(
     private val service: ExerciseService,
-    private val exerciseId: ExerciseId,
+    private val exerciseId: ExerciseId
 ) : ViewModel() {
 
     private var isDeleting = false

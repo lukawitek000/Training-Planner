@@ -47,7 +47,9 @@ class DefaultExerciseRepositoryPagingTest {
     @Test
     fun `test resource reader parses exercises page json successfully`() {
         val jsonString = TestResourceReader.readJson("exercises_page1.json")
-        val pagedDto = NetworkConfig.defaultJson.decodeFromString<PagedResponseDto<ExerciseDto>>(jsonString)
+        val pagedDto = NetworkConfig.defaultJson.decodeFromString<PagedResponseDto<ExerciseDto>>(
+            jsonString
+        )
 
         assertNotNull(pagedDto)
         kotlin.test.assertEquals(2, pagedDto.items.size)

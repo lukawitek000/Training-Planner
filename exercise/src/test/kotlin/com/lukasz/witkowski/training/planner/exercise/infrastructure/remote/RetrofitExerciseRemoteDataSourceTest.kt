@@ -124,7 +124,9 @@ class RetrofitExerciseRemoteDataSourceTest {
             name = "Lunges",
             description = "Legs exercise",
             categories = setOf(ExerciseCategory("Legs")),
-            metadata = ExerciseMetadata(source = ExerciseSource.UserCreated(ExerciseOwner.User("user-123", "JohnDoe")))
+            metadata = ExerciseMetadata(
+                source = ExerciseSource.UserCreated(ExerciseOwner.User("user-123", "JohnDoe"))
+            )
         )
         val exerciseDetails = ExerciseDetails(
             exercise = domainExercise,
@@ -169,7 +171,9 @@ class RetrofitExerciseRemoteDataSourceTest {
             name = "Updated Lunges",
             description = "Legs exercise updated",
             categories = setOf(ExerciseCategory("Legs")),
-            metadata = ExerciseMetadata(source = ExerciseSource.UserCreated(ExerciseOwner.User("user-123", "JohnDoe")))
+            metadata = ExerciseMetadata(
+                source = ExerciseSource.UserCreated(ExerciseOwner.User("user-123", "JohnDoe"))
+            )
         )
         val exerciseDetails = ExerciseDetails(
             exercise = domainExercise,
@@ -190,7 +194,11 @@ class RetrofitExerciseRemoteDataSourceTest {
         )
         coEvery { api.updateExercise(exerciseId.toString(), any()) } returns returnedDto
 
-        val result = dataSource.updateExercise(exerciseDetails, expectedVersion = 1L, idempotencyKey = "idem-2")
+        val result = dataSource.updateExercise(
+            exerciseDetails,
+            expectedVersion = 1L,
+            idempotencyKey = "idem-2"
+        )
 
         assertTrue(result is AppResult.Success)
         assertEquals("Updated Lunges", result.value.name)
@@ -238,7 +246,8 @@ class RetrofitExerciseRemoteDataSourceTest {
     @Test
     fun `getExerciseById maps UnknownHostException to NoInternet`() = runTest {
         val exerciseId = ExerciseId.create()
-        coEvery { api.getExerciseById(exerciseId.toString()) } throws UnknownHostException("No host")
+        coEvery { api.getExerciseById(exerciseId.toString()) } throws
+            UnknownHostException("No host")
 
         val result = dataSource.getExerciseById(exerciseId)
 
@@ -251,7 +260,8 @@ class RetrofitExerciseRemoteDataSourceTest {
     @Test
     fun `getExerciseById rethrows CancellationException`() = runTest {
         val exerciseId = ExerciseId.create()
-        coEvery { api.getExerciseById(exerciseId.toString()) } throws CancellationException("Cancelled")
+        coEvery { api.getExerciseById(exerciseId.toString()) } throws
+            CancellationException("Cancelled")
 
         assertFailsWith<CancellationException> {
             dataSource.getExerciseById(exerciseId)

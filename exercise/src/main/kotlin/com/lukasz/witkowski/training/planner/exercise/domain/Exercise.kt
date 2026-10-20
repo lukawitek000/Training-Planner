@@ -40,18 +40,14 @@ data class Exercise2(
 
 sealed interface ExerciseSource {
     data object Bundled : ExerciseSource
-    data class UserCreated(
-        val owner: ExerciseOwner
-    ) : ExerciseSource
+    data class UserCreated(val owner: ExerciseOwner) : ExerciseSource
     data object Organization : ExerciseSource
 }
 
 sealed interface ExerciseSharing {
     data object Private : ExerciseSharing
     data object Community : ExerciseSharing
-    data class Friends(
-        val selectedUserIds: Set<String> = emptySet()
-    ) : ExerciseSharing
+    data class Friends(val selectedUserIds: Set<String> = emptySet()) : ExerciseSharing
 }
 
 enum class ExerciseSyncState {
@@ -66,12 +62,7 @@ enum class ExerciseSyncState {
 sealed interface ExerciseOwner {
     val id: String
 
-    data class Local(
-        override val id: String = "local_user"
-    ) : ExerciseOwner
+    data class Local(override val id: String = "local_user") : ExerciseOwner
 
-    data class User(
-        override val id: String,
-        val username: String
-    ) : ExerciseOwner
+    data class User(override val id: String, val username: String) : ExerciseOwner
 }

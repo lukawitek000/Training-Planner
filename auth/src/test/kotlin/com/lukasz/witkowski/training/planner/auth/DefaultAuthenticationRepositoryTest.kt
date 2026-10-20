@@ -117,26 +117,28 @@ class DefaultAuthenticationRepositoryTest {
     }
 
     @Test
-    fun `signUp returns Success when server returns 201 Created and saves refresh token`() = runTest {
+    fun `signUp saves refresh token when server returns 201 Created`() = runTest {
         val jsonResponse =
             TestResourceReader.readJson("register_success.json")
         mockWebServer.enqueue(MockResponse().setResponseCode(201).setBody(jsonResponse))
 
         coEvery { mockSecureTokenStorage.saveRefreshToken(any()) } returns Unit
 
-        val result = repository.signUp(SignUpForm("NewUser", "newuser@example.com", "password123"))
+        val form = SignUpForm("NewUser", "newuser@example.com", "password123")
+        val result = repository.signUp(form)
 
         assertEquals(AuthenticationResult.Success, result)
         coVerify { mockSecureTokenStorage.saveRefreshToken("refresh_token_abc") }
     }
 
     @Test
-    fun `signUp returns UserAlreadyExists failure when server returns 400 with duplicate email`() = runTest {
+    fun `signUp returns UserAlreadyExists failure when server returns 400`() = runTest {
         val jsonResponse =
             TestResourceReader.readJson("error_user_already_exists.json")
         mockWebServer.enqueue(MockResponse().setResponseCode(400).setBody(jsonResponse))
 
-        val result = repository.signUp(SignUpForm("ExistingUser", "existing@example.com", "password123"))
+        val form = SignUpForm("ExistingUser", "existing@example.com", "password123")
+        val result = repository.signUp(form)
 
         assertEquals(
             AuthenticationResult.Failure(AuthenticationFailure.UserAlreadyExists),

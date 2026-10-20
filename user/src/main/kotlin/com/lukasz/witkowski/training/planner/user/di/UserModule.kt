@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.user.di
 
+import com.lukasz.witkowski.training.planner.network.SyncPreferencesStorage
 import com.lukasz.witkowski.training.planner.network.networkModule
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
@@ -17,8 +18,6 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import retrofit2.Retrofit
-
-import com.lukasz.witkowski.training.planner.network.SyncPreferencesStorage
 
 val userModule =
     module {

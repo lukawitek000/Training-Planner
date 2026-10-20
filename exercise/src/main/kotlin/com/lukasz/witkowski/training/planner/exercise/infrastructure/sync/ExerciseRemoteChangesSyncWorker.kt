@@ -10,10 +10,9 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import timber.log.Timber
 
-class ExerciseRemoteChangesSyncWorker(
-    appContext: Context,
-    workerParams: WorkerParameters
-) : CoroutineWorker(appContext, workerParams), KoinComponent {
+class ExerciseRemoteChangesSyncWorker(appContext: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(appContext, workerParams),
+    KoinComponent {
 
     private val syncRepository: ExerciseSyncRepository by inject()
 

@@ -3,12 +3,15 @@ package com.lukasz.witkowski.training.planner.exercise.di
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseCategoriesService
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategoryRepository
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DefaultExerciseCategoryRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DefaultExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseCategoryDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDatabase
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseMutationDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.ExerciseCategoryLocalDataSource
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.ExerciseLocalDataSource
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.RoomExerciseCategoryLocalDataSource
@@ -16,36 +19,30 @@ import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.RoomE
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.ExerciseApi
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.ExerciseRemoteDataSource
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.RetrofitExerciseRemoteDataSource
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.sync.DefaultExerciseSyncRepository
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.sync.WorkManagerExerciseMutationScheduler
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController2
 import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoryController2
+import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeleteExerciseViewModel
+import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsViewModel
+import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseEditorViewModel
+import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.image.di.imageModule
+import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.network.networkModule
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.factory
 import org.koin.plugin.module.dsl.single
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import retrofit2.Retrofit
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncRepository
-import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseMutationDao
-import com.lukasz.witkowski.training.planner.exercise.infrastructure.sync.DefaultExerciseSyncRepository
-import com.lukasz.witkowski.training.planner.exercise.infrastructure.sync.WorkManagerExerciseMutationScheduler
-
-import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeleteExerciseViewModel
-import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsViewModel
-import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseEditorViewModel
-import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesListViewModel
-import com.lukasz.witkowski.training.planner.network.AuthSessionProvider
-import com.lukasz.witkowski.training.planner.network.SyncPreferencesStorage
-import com.lukasz.witkowski.training.planner.network.SyncScheduler
-import org.koin.core.module.dsl.viewModel
 import org.koin.plugin.module.dsl.viewModel
+import retrofit2.Retrofit
 
 val exerciseModule =
     module {
@@ -129,7 +126,7 @@ val exerciseModule =
             ExerciseEditorViewModel(
                 exerciseService = get(),
                 categoryController = get(),
-                exerciseId = params.getOrNull(),
+                exerciseId = params.getOrNull()
             )
         }
         viewModel { params ->
@@ -137,13 +134,13 @@ val exerciseModule =
                 service = get(),
                 exerciseId = params.get(),
                 syncRepository = get(),
-                syncScheduler = get(),
+                syncScheduler = get()
             )
         }
         viewModel { params ->
             DeleteExerciseViewModel(
                 service = get(),
-                exerciseId = params.get(),
+                exerciseId = params.get()
             )
         }
     }

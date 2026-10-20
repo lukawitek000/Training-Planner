@@ -24,7 +24,7 @@ fun DeleteExerciseScreen(
     viewModel: DeleteExerciseViewModel,
     onDelete: () -> Unit,
     onCancel: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val successMessage = stringResource(R.string.exercise_deleted)
     val failureMessage = stringResource(R.string.exercise_deletion_failed)
@@ -53,7 +53,7 @@ fun DeleteExerciseDialog(
     state: DeleteExerciseUiState,
     onDelete: () -> Unit,
     onCancel: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     when (val current = state) {
         DeleteExerciseUiState.Loading -> {

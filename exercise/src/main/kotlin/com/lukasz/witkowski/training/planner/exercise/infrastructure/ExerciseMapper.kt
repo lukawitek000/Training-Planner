@@ -71,7 +71,10 @@ internal fun DbExerciseWithCategories.toExercise(): Exercise2 =
 
 private fun DbExercise.toExerciseSource(): ExerciseSource = when (sourceType) {
     DbExercise.SOURCE_TYPE_USER_CREATED -> {
-        val ownerObj = if (owner == null || owner.ownerName.isBlank() || owner.ownerName == "Local") {
+        val ownerObj = if (owner == null ||
+            owner.ownerName.isBlank() ||
+            owner.ownerName == "Local"
+        ) {
             ExerciseOwner.Local(id = owner?.ownerId ?: "local_user")
         } else {
             ExerciseOwner.User(id = owner.ownerId, username = owner.ownerName)

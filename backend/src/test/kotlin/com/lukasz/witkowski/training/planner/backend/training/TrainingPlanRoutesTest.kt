@@ -184,7 +184,15 @@ class TrainingPlanRoutesTest {
                     CreateTrainingPlanRequestDto(
                         title = "Leg Day Destroy",
                         description = "Heavy squats",
-                        exercises = listOf(CreateTrainingExerciseRequestDto(exerciseId = ex.id, repetitions = 10, sets = 3, restTimeInMillis = 60000, weightInKg = null)),
+                        exercises = listOf(
+                            CreateTrainingExerciseRequestDto(
+                                exerciseId = ex.id,
+                                repetitions = 10,
+                                sets = 3,
+                                restTimeInMillis = 60000,
+                                weightInKg = null
+                            )
+                        ),
                         restTimeInMillis = 120000
                     )
                 )

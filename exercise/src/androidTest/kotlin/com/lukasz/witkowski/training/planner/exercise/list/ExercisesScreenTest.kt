@@ -6,7 +6,6 @@ import androidx.compose.ui.test.assertIsNotSelected
 import androidx.compose.ui.test.assertIsSelectable
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
@@ -16,14 +15,14 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.exerciseItemMatcher
 import com.lukasz.witkowski.training.planner.exercise.givenExerciseItemTag
-import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesScreenContent
-import com.lukasz.witkowski.training.planner.exercise.presentation.list.asPreviewPagerFlow
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
+import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesScreenContent
+import com.lukasz.witkowski.training.planner.exercise.presentation.list.asPreviewPagerFlow
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
+import kotlin.test.assertEquals
 import org.junit.Rule
 import org.junit.Test
-import kotlin.test.assertEquals
 
 class ExercisesScreenTest {
     @get:Rule

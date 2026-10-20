@@ -19,12 +19,11 @@ internal class RoomExerciseLocalDataSource(
     override fun getExercisesWithCategories(
         query: String,
         categoriesNames: List<String>
-    ): PagingSource<Int, DbExerciseWithCategories> =
-        if (categoriesNames.isEmpty()) {
-            exerciseDao.getExercisesWithCategories(query)
-        } else {
-            exerciseDao.getExercisesWithCategories(query, categoriesNames)
-        }
+    ): PagingSource<Int, DbExerciseWithCategories> = if (categoriesNames.isEmpty()) {
+        exerciseDao.getExercisesWithCategories(query)
+    } else {
+        exerciseDao.getExercisesWithCategories(query, categoriesNames)
+    }
 
     override suspend fun insertExerciseDetails(details: DbExerciseDetails): Boolean =
         exerciseDao.insertExerciseDetails(details)

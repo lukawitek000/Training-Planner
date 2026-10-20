@@ -7,10 +7,10 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
 
 class DeleteExerciseViewModelTest {
     private val service: ExerciseService = mockk()

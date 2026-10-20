@@ -25,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -220,7 +219,10 @@ private fun AppConfirmationDialogDestructivePreview() {
         Box(modifier = Modifier.padding(Dimens2.spaceMd)) {
             AppConfirmationDialog(
                 title = "Delete exercise?",
-                message = "This will permanently remove this exercise and its custom configurations. Training plans containing this exercise and past session logs will retain historical data.",
+                message =
+                "This will permanently remove this exercise and its custom configurations. " +
+                    "Training plans containing this exercise and past session logs will " +
+                    "retain historical data.",
                 onConfirm = {},
                 onDismiss = {},
                 isDestructive = true
@@ -236,7 +238,9 @@ private fun AppConfirmationDialogStandardPreview() {
         Box(modifier = Modifier.padding(Dimens2.spaceMd)) {
             AppConfirmationDialog(
                 title = "Overwrite local changes?",
-                message = "Accepting the cloud version will replace your local edits with the latest server revision.",
+                message =
+                "Accepting the cloud version will replace your local edits with the latest " +
+                    "server revision.",
                 confirmText = "Confirm",
                 icon = Icons.Default.Warning,
                 onConfirm = {},

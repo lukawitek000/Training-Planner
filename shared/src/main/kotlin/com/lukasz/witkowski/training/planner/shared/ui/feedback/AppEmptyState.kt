@@ -115,7 +115,8 @@ private fun AppEmptyStatePreview() {
     TrainingPlannerTheme2 {
         AppEmptyState(
             title = "No exercises found",
-            subtitle = "Try adjusting your search terms or filter criteria to discover more movements.",
+            subtitle =
+            "Try adjusting your search terms or filter criteria to discover more movements.",
             actionLabel = "Reset Filters",
             onActionClick = {}
         )

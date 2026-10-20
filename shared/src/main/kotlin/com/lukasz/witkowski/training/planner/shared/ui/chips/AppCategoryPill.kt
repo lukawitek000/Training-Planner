@@ -45,7 +45,9 @@ fun AppCategoryPill(
     val containerColor =
         when (style) {
             AppCategoryPillStyle.Filled -> MaterialTheme.colorScheme.primaryContainer
-            AppCategoryPillStyle.Tonal -> MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.15f)
+            AppCategoryPillStyle.Tonal -> MaterialTheme.colorScheme.primaryContainer.copy(
+                alpha = 0.15f
+            )
         }
 
     val contentColor =

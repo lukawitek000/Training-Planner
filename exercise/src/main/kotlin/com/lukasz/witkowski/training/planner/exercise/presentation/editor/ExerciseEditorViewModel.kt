@@ -15,6 +15,8 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recomm
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toExerciseRecommendation
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toRecommendation
 import com.lukasz.witkowski.training.planner.image.ImageBitmap
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,13 +26,11 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 class ExerciseEditorViewModel(
     private val exerciseService: ExerciseService,
     private val categoryController: CategoryController2,
-    private val exerciseId: ExerciseId? = null,
+    private val exerciseId: ExerciseId? = null
 ) : ViewModel() {
     val isEditMode = exerciseId != null
     private val initialState = exerciseId?.let { ExerciseEditingUiState.Loading(it) }
@@ -56,7 +56,9 @@ class ExerciseEditorViewModel(
 
     fun onEvent(event: ExerciseEditingEvent) {
         when (event) {
-            is ExerciseEditingEvent.NameChanged -> uiState.updateInput { it.copy(name = event.name) }
+            is ExerciseEditingEvent.NameChanged -> uiState.updateInput {
+                it.copy(name = event.name)
+            }
             is ExerciseEditingEvent.DescriptionChanged -> {
                 uiState.updateInput { it.copy(description = event.description) }
             }
@@ -121,7 +123,7 @@ class ExerciseEditorViewModel(
     }
 
     private fun MutableStateFlow<ExerciseEditingUiState>.updateInput(
-        transform: (ExerciseEditingInput) -> ExerciseEditingInput,
+        transform: (ExerciseEditingInput) -> ExerciseEditingInput
     ) {
         update {
             if (it is ExerciseEditingUiState.Editing) {
@@ -134,7 +136,7 @@ class ExerciseEditorViewModel(
 
     private fun MutableStateFlow<ExerciseEditingUiState>.updateRecommendationParam(
         level: RecommendationLevel,
-        updateParameters: (RecommendedParameters) -> RecommendedParameters,
+        updateParameters: (RecommendedParameters) -> RecommendedParameters
     ) {
         updateInput {
             val index = it.recommendations.indexOfFirst { it.level == level }
@@ -164,10 +166,10 @@ class ExerciseEditorViewModel(
         }
     }
 
-    private suspend fun saveExercise(config: ExerciseConfiguration): ExerciseId {
-        return exerciseId?.let { exerciseService.updateExercise(config, it) }
-            ?: exerciseService.saveExercise(config)
+    private suspend fun saveExercise(config: ExerciseConfiguration): ExerciseId = exerciseId?.let {
+        exerciseService.updateExercise(config, it)
     }
+        ?: exerciseService.saveExercise(config)
 
     private fun loadExercise(exerciseId: ExerciseId) {
         viewModelScope.launch {
@@ -191,32 +193,34 @@ class ExerciseEditorViewModel(
         }
     }
 
-    private fun ExerciseEditingInput.toExerciseConfiguration(): ExerciseConfiguration {
-        return ExerciseConfiguration(
+    private fun ExerciseEditingInput.toExerciseConfiguration(): ExerciseConfiguration =
+        ExerciseConfiguration(
             name = name,
             description = description,
             categories = categories.filter { it.isSelected }.map { it.category },
             image = null,
-            beginnerRecommendation = recommendations.toExerciseRecommendation(RecommendationLevel.BEGINNER),
+            beginnerRecommendation = recommendations.toExerciseRecommendation(
+                RecommendationLevel.BEGINNER
+            ),
             intermediateRecommendation = recommendations.toExerciseRecommendation(
                 RecommendationLevel.INTERMEDIATE
             ),
-            advancedRecommendation = recommendations.toExerciseRecommendation(RecommendationLevel.ADVANCED),
+            advancedRecommendation = recommendations.toExerciseRecommendation(
+                RecommendationLevel.ADVANCED
+            )
         )
-    }
 
-    private fun ExerciseDetails.toExerciseEditingState(): ExerciseEditingInput {
-        return ExerciseEditingInput(
+    private fun ExerciseDetails.toExerciseEditingState(): ExerciseEditingInput =
+        ExerciseEditingInput(
             name = exercise.name,
             description = exercise.description,
             categories = filterCategories.value,
             recommendations = listOf(
                 beginnerRecommendation.toRecommendation(RecommendationLevel.BEGINNER),
                 intermediateRecommendation.toRecommendation(RecommendationLevel.INTERMEDIATE),
-                advancedRecommendation.toRecommendation(RecommendationLevel.ADVANCED),
+                advancedRecommendation.toRecommendation(RecommendationLevel.ADVANCED)
             )
         )
-    }
 }
 
 sealed interface ExerciseEditingEvent {
@@ -245,9 +249,7 @@ sealed interface ExerciseEditingEvent {
 }
 
 sealed interface ExerciseEditingUiState {
-    data class Loading(
-        val exerciseId: ExerciseId,
-    ) : ExerciseEditingUiState
+    data class Loading(val exerciseId: ExerciseId) : ExerciseEditingUiState
 
     data class Saving(val exerciseEditingInput: ExerciseEditingInput) :
         ExerciseEditingUiState
@@ -255,15 +257,10 @@ sealed interface ExerciseEditingUiState {
     data class Editing(val exerciseEditingInput: ExerciseEditingInput) :
         ExerciseEditingUiState
 
-    data class Failure(
-        val exerciseEditingInput: ExerciseEditingInput?,
-        val message: String,
-    ) : ExerciseEditingUiState
+    data class Failure(val exerciseEditingInput: ExerciseEditingInput?, val message: String) :
+        ExerciseEditingUiState
 
-    data class Saved(
-        val exerciseId: ExerciseId,
-        val name: String,
-    ) : ExerciseEditingUiState
+    data class Saved(val exerciseId: ExerciseId, val name: String) : ExerciseEditingUiState
 }
 
 data class ExerciseEditingInput(
@@ -275,10 +272,10 @@ data class ExerciseEditingInput(
     val recommendations: List<Recommendation> = listOf(
         Recommendation(RecommendationLevel.BEGINNER),
         Recommendation(RecommendationLevel.INTERMEDIATE),
-        Recommendation(RecommendationLevel.ADVANCED),
-    ),
+        Recommendation(RecommendationLevel.ADVANCED)
+    )
 ) {
-    fun isValidForCreation(): Boolean {
-        return name.isNotEmpty() && categories.any { it.isSelected } && recommendations.all { it.parameters.areValid() }
-    }
+    fun isValidForCreation(): Boolean = name.isNotEmpty() &&
+        categories.any { it.isSelected } &&
+        recommendations.all { it.parameters.areValid() }
 }

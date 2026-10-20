@@ -5,6 +5,7 @@ import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CategoryDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CreateExerciseRequestDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
+import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseSyncResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.UpdateExerciseRequestDto
 import retrofit2.Response
 import retrofit2.http.Body
@@ -14,7 +15,6 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
-import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseSyncResponseDto
 
 interface ExerciseApi {
     @GET(ApiRoutes.Exercises.CATEGORIES)

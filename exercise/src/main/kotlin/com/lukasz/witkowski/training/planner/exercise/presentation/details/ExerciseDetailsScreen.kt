@@ -62,10 +62,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
 import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppErrorState
 
 @Composable
-fun ExerciseDetailsScreen(
-    viewModel: ExerciseDetailsViewModel,
-    modifier: Modifier = Modifier,
-) {
+fun ExerciseDetailsScreen(viewModel: ExerciseDetailsViewModel, modifier: Modifier = Modifier) {
     val state by viewModel.state.collectAsState()
     val showConflictDialog by viewModel.showConflictDialog.collectAsState()
     val conflictServerDetails by viewModel.conflictServerDetails.collectAsState()
@@ -74,7 +71,7 @@ fun ExerciseDetailsScreen(
         state = state,
         modifier = modifier.fillMaxSize(),
         onResolveConflictClick = viewModel::openConflictDialog,
-        onRetrySyncClick = viewModel::retrySync,
+        onRetrySyncClick = viewModel::retrySync
     )
 
     val currentState = state
@@ -99,7 +96,7 @@ fun ExerciseDetailsScreenContent(
         RecommendedParametersOverview(
             recommendations = details.recommendations
         )
-    },
+    }
 ) {
     when (state) {
         ExerciseDetailsState.Loading -> {
@@ -149,7 +146,7 @@ private fun ExerciseDetailsBody(
     onResolveConflictClick: () -> Unit,
     onRetrySyncClick: () -> Unit,
     footer: @Composable ColumnScope.(ExerciseDetails) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val exercise = details.exercise
     val metadata = exercise.metadata
@@ -160,7 +157,7 @@ private fun ExerciseDetailsBody(
                 .verticalScroll(rememberScrollState())
                 .padding(Dimens2.spaceMd)
                 .testTag("ExerciseDetails"),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
         ) {
             ImagesPreview(
                 images = emptyList(),
@@ -220,7 +217,9 @@ private fun ExerciseDetailsBody(
 
             footer(details)
 
-            if (metadata.syncState == ExerciseSyncState.CONFLICT || metadata.syncState == ExerciseSyncState.ERROR) {
+            if (metadata.syncState == ExerciseSyncState.CONFLICT ||
+                metadata.syncState == ExerciseSyncState.ERROR
+            ) {
                 Spacer(modifier = Modifier.height(Dimens2.spaceXl * 3))
             }
         }
@@ -260,10 +259,7 @@ private fun ExerciseDetailsBody(
 }
 
 @Composable
-private fun ExerciseSyncStatusCard(
-    metadata: ExerciseMetadata,
-    modifier: Modifier = Modifier,
-) {
+private fun ExerciseSyncStatusCard(metadata: ExerciseMetadata, modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -376,7 +372,7 @@ private fun SyncActionBottomBanner(
     isWarning: Boolean,
     onActionClick: () -> Unit,
     actionTestTag: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val containerColor = if (isWarning) {
         Warning.copy(alpha = 0.14f)
@@ -455,7 +451,7 @@ private fun ExerciseDetailsScreenContentPreview() {
                             )
                         ),
                         recommendations = PREVIEW_RECOMMENDED_PARAMETERS
-                    ),
+                    )
                 ),
                 modifier = Modifier.fillMaxSize()
             )

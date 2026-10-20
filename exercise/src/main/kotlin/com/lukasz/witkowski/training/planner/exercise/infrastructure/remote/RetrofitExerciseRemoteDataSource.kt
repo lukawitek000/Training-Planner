@@ -7,6 +7,7 @@ import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseSyncResponseDto
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseFailure
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.network.NetworkConfig
@@ -23,7 +24,6 @@ import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 import timber.log.Timber
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 
 class RetrofitExerciseRemoteDataSource(
     private val api: ExerciseApi,
@@ -46,18 +46,20 @@ class RetrofitExerciseRemoteDataSource(
 
     override suspend fun getExerciseChanges(
         sinceVersion: Long
-    ): AppResult<ExerciseSyncResponseDto, ExerciseFailure> =
-        withContext(ioDispatcher) {
-            Timber.d("RemoteDataSource executing getExerciseChanges for sinceVersion: %d", sinceVersion)
-            runCatchingCancellable(
-                mapError = { exception ->
-                    Timber.w(exception, "getExerciseChanges RemoteDataSource error")
-                    exception.toExerciseFailure(json)
-                }
-            ) {
-                api.getExerciseChanges(sinceVersion)
+    ): AppResult<ExerciseSyncResponseDto, ExerciseFailure> = withContext(ioDispatcher) {
+        Timber.d(
+            "RemoteDataSource executing getExerciseChanges for sinceVersion: %d",
+            sinceVersion
+        )
+        runCatchingCancellable(
+            mapError = { exception ->
+                Timber.w(exception, "getExerciseChanges RemoteDataSource error")
+                exception.toExerciseFailure(json)
             }
+        ) {
+            api.getExerciseChanges(sinceVersion)
         }
+    }
 
     override suspend fun getExercises(
         query: String?,
@@ -65,120 +67,120 @@ class RetrofitExerciseRemoteDataSource(
         page: Int?,
         limit: Int?,
         currentUserId: String?
-    ): AppResult<PagedResponseDto<Exercise2>, ExerciseFailure> =
-        withContext(ioDispatcher) {
-            Timber.d("RemoteDataSource executing getExercises")
-            runCatchingCancellable(
-                mapError = { exception ->
-                    Timber.w(exception, "getExercises RemoteDataSource error")
-                    exception.toExerciseFailure(json)
-                }
-            ) {
-                val pagedDto = api.getExercises(
-                    query = query,
-                    categoryId = categoryId,
-                    page = page,
-                    limit = limit
-                )
-                PagedResponseDto(
-                    items = pagedDto.items.map { it.toExercise2(currentUserId) },
-                    page = pagedDto.page,
-                    limit = pagedDto.limit,
-                    totalItems = pagedDto.totalItems,
-                    totalPages = pagedDto.totalPages
-                )
+    ): AppResult<PagedResponseDto<Exercise2>, ExerciseFailure> = withContext(ioDispatcher) {
+        Timber.d("RemoteDataSource executing getExercises")
+        runCatchingCancellable(
+            mapError = { exception ->
+                Timber.w(exception, "getExercises RemoteDataSource error")
+                exception.toExerciseFailure(json)
             }
+        ) {
+            val pagedDto = api.getExercises(
+                query = query,
+                categoryId = categoryId,
+                page = page,
+                limit = limit
+            )
+            PagedResponseDto(
+                items = pagedDto.items.map { it.toExercise2(currentUserId) },
+                page = pagedDto.page,
+                limit = pagedDto.limit,
+                totalItems = pagedDto.totalItems,
+                totalPages = pagedDto.totalPages
+            )
         }
+    }
 
     override suspend fun getExerciseById(
         id: ExerciseId,
         currentUserId: String?
-    ): AppResult<Exercise2, ExerciseFailure> =
-        withContext(ioDispatcher) {
-            Timber.d("RemoteDataSource executing getExerciseById for id: %s", id)
-            runCatchingCancellable(
-                mapError = { exception ->
-                    Timber.w(exception, "getExerciseById RemoteDataSource error")
-                    exception.toExerciseFailure(json)
-                }
-            ) {
-                api.getExerciseById(id.toString()).toExercise2(currentUserId)
+    ): AppResult<Exercise2, ExerciseFailure> = withContext(ioDispatcher) {
+        Timber.d("RemoteDataSource executing getExerciseById for id: %s", id)
+        runCatchingCancellable(
+            mapError = { exception ->
+                Timber.w(exception, "getExerciseById RemoteDataSource error")
+                exception.toExerciseFailure(json)
             }
+        ) {
+            api.getExerciseById(id.toString()).toExercise2(currentUserId)
         }
+    }
 
     override suspend fun getExerciseDetailsById(
         id: ExerciseId,
         currentUserId: String?
-    ): AppResult<ExerciseDetails, ExerciseFailure> =
-        withContext(ioDispatcher) {
-            Timber.d("RemoteDataSource executing getExerciseDetailsById for id: %s", id)
-            runCatchingCancellable(
-                mapError = { exception ->
-                    Timber.w(exception, "getExerciseDetailsById RemoteDataSource error")
-                    exception.toExerciseFailure(json)
-                }
-            ) {
-                api.getExerciseById(id.toString()).toExerciseDetails(currentUserId)
+    ): AppResult<ExerciseDetails, ExerciseFailure> = withContext(ioDispatcher) {
+        Timber.d("RemoteDataSource executing getExerciseDetailsById for id: %s", id)
+        runCatchingCancellable(
+            mapError = { exception ->
+                Timber.w(exception, "getExerciseDetailsById RemoteDataSource error")
+                exception.toExerciseFailure(json)
             }
+        ) {
+            api.getExerciseById(id.toString()).toExerciseDetails(currentUserId)
         }
+    }
 
     override suspend fun createExercise(
         exercise: Exercise2
-    ): AppResult<Exercise2, ExerciseFailure> =
-        withContext(ioDispatcher) {
-            Timber.d("RemoteDataSource executing createExercise: %s", exercise.name)
-            runCatchingCancellable(
-                mapError = { exception ->
-                    Timber.w(exception, "createExercise RemoteDataSource error")
-                    exception.toExerciseFailure(json)
-                }
-            ) {
-                val request = exercise.toCreateExerciseRequestDto()
-                api.createExercise(request).toExercise2()
+    ): AppResult<Exercise2, ExerciseFailure> = withContext(ioDispatcher) {
+        Timber.d("RemoteDataSource executing createExercise: %s", exercise.name)
+        runCatchingCancellable(
+            mapError = { exception ->
+                Timber.w(exception, "createExercise RemoteDataSource error")
+                exception.toExerciseFailure(json)
             }
+        ) {
+            val request = exercise.toCreateExerciseRequestDto()
+            api.createExercise(request).toExercise2()
         }
+    }
 
     override suspend fun createExercise(
         exerciseDetails: ExerciseDetails,
         idempotencyKey: String?
-    ): AppResult<ExerciseDto, ExerciseFailure> =
-        withContext(ioDispatcher) {
-            Timber.d("RemoteDataSource executing createExercise(details): %s", exerciseDetails.exercise.name)
-            runCatchingCancellable(
-                mapError = { exception ->
-                    Timber.w(exception, "createExercise(details) RemoteDataSource error")
-                    exception.toExerciseFailure(json)
-                }
-            ) {
-                val request = exerciseDetails.toCreateExerciseRequestDto(idempotencyKey = idempotencyKey)
-                api.createExercise(request)
+    ): AppResult<ExerciseDto, ExerciseFailure> = withContext(ioDispatcher) {
+        Timber.d(
+            "RemoteDataSource executing createExercise(details): %s",
+            exerciseDetails.exercise.name
+        )
+        runCatchingCancellable(
+            mapError = { exception ->
+                Timber.w(exception, "createExercise(details) RemoteDataSource error")
+                exception.toExerciseFailure(json)
             }
+        ) {
+            val request = exerciseDetails.toCreateExerciseRequestDto(
+                idempotencyKey = idempotencyKey
+            )
+            api.createExercise(request)
         }
+    }
 
     override suspend fun updateExercise(
         exerciseDetails: ExerciseDetails,
         expectedVersion: Long?,
         idempotencyKey: String?
-    ): AppResult<ExerciseDto, ExerciseFailure> =
-        withContext(ioDispatcher) {
-            Timber.d("RemoteDataSource executing updateExercise for id: %s", exerciseDetails.exercise.id)
-            runCatchingCancellable(
-                mapError = { exception ->
-                    Timber.w(exception, "updateExercise RemoteDataSource error")
-                    exception.toExerciseFailure(json)
-                }
-            ) {
-                val request = exerciseDetails.toUpdateExerciseRequestDto(
-                    expectedVersion = expectedVersion ?: exerciseDetails.exercise.metadata.revision,
-                    idempotencyKey = idempotencyKey
-                )
-                api.updateExercise(exerciseDetails.exercise.id.toString(), request)
+    ): AppResult<ExerciseDto, ExerciseFailure> = withContext(ioDispatcher) {
+        Timber.d(
+            "RemoteDataSource executing updateExercise for id: %s",
+            exerciseDetails.exercise.id
+        )
+        runCatchingCancellable(
+            mapError = { exception ->
+                Timber.w(exception, "updateExercise RemoteDataSource error")
+                exception.toExerciseFailure(json)
             }
+        ) {
+            val request = exerciseDetails.toUpdateExerciseRequestDto(
+                expectedVersion = expectedVersion ?: exerciseDetails.exercise.metadata.revision,
+                idempotencyKey = idempotencyKey
+            )
+            api.updateExercise(exerciseDetails.exercise.id.toString(), request)
         }
+    }
 
-    override suspend fun deleteExercise(
-        id: ExerciseId
-    ): AppResult<Unit, ExerciseFailure> =
+    override suspend fun deleteExercise(id: ExerciseId): AppResult<Unit, ExerciseFailure> =
         withContext(ioDispatcher) {
             Timber.d("RemoteDataSource executing deleteExercise for id: %s", id)
             runCatchingCancellable(

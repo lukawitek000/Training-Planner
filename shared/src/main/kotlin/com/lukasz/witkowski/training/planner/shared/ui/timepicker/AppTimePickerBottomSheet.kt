@@ -195,9 +195,11 @@ fun AppTimePickerSheetContent(
     val resolvedInitialTab =
         remember(initialSeconds, secondsPresets, minutesPresets) {
             when {
-                initialSeconds == null || initialSeconds in secondsPresets -> AppTimePickerTab.SECONDS
+                initialSeconds == null || initialSeconds in secondsPresets ->
+                    AppTimePickerTab.SECONDS
                 initialSeconds % SECONDS_PER_MINUTE == 0 &&
-                    (initialSeconds / SECONDS_PER_MINUTE) in minutesPresets -> AppTimePickerTab.MINUTES
+                    (initialSeconds / SECONDS_PER_MINUTE) in minutesPresets ->
+                    AppTimePickerTab.MINUTES
                 else -> AppTimePickerTab.CUSTOM
             }
         }
@@ -376,7 +378,9 @@ fun AppTimePickerSheetContent(
 
             AppTimePickerTab.MINUTES -> {
                 val selectedMinutePreset =
-                    selectedSeconds?.takeIf { it % SECONDS_PER_MINUTE == 0 }?.div(SECONDS_PER_MINUTE)
+                    selectedSeconds?.takeIf {
+                        it % SECONDS_PER_MINUTE == 0
+                    }?.div(SECONDS_PER_MINUTE)
                 TimePresetGrid(
                     presets = minutesPresets,
                     selectedValue = selectedMinutePreset,
@@ -490,7 +494,8 @@ private fun TimePresetGrid(
                                 text = label,
                                 style =
                                 MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                    fontWeight =
+                                    if (isSelected) FontWeight.Bold else FontWeight.Medium
                                 )
                             )
                         }
@@ -613,7 +618,8 @@ private fun WheelColumnPicker(
     onItemSelected: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val initialIndex = remember(items, selectedItem) { items.indexOf(selectedItem).coerceAtLeast(0) }
+    val initialIndex =
+        remember(items, selectedItem) { items.indexOf(selectedItem).coerceAtLeast(0) }
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialIndex)
     val flingBehavior = rememberSnapFlingBehavior(lazyListState = listState)
     val coroutineScope = rememberCoroutineScope()
@@ -700,7 +706,9 @@ private fun formatDurationLabel(seconds: Int?): String {
     val remSecs = seconds % SECONDS_PER_MINUTE
     return when {
         mins > 0 && remSecs > 0 ->
-            "$mins ${stringResource(R.string.minutes_shortcut)} $remSecs ${stringResource(R.string.seconds_shortcut)}"
+            "$mins ${stringResource(
+                R.string.minutes_shortcut
+            )} $remSecs ${stringResource(R.string.seconds_shortcut)}"
         mins > 0 && seconds !in DEFAULT_SECONDS_PRESETS ->
             stringResource(R.string.time_picker_minutes_preset, mins)
         else ->

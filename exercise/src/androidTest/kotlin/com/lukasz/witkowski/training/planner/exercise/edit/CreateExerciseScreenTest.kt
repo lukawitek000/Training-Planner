@@ -8,21 +8,21 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.CreateExerciseScreenContent
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseEditingEvent
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseEditingInput
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseEditingUiState
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recommendation
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
-import kotlinx.coroutines.test.runTest
-import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.test.runTest
+import org.junit.Rule
 
 class CreateExerciseScreenTest {
     @get:Rule
@@ -36,7 +36,7 @@ class CreateExerciseScreenTest {
                 uiState = ExerciseEditingUiState.Loading(id),
                 onUserInputChange = {},
                 onExerciseSaved = {},
-                isEditMode = false,
+                isEditMode = false
             )
         }
 
@@ -52,7 +52,7 @@ class CreateExerciseScreenTest {
                 uiState = ExerciseEditingUiState.Saving(ExerciseEditingInput()),
                 onUserInputChange = {},
                 onExerciseSaved = {},
-                isEditMode = false,
+                isEditMode = false
             )
         }
 
@@ -76,7 +76,7 @@ class CreateExerciseScreenTest {
                 uiState = ExerciseEditingUiState.Failure(ExerciseEditingInput(), failureMessage),
                 onUserInputChange = {},
                 onExerciseSaved = {},
-                isEditMode = false,
+                isEditMode = false
             )
         }
 
@@ -104,7 +104,12 @@ class CreateExerciseScreenTest {
         val recommendations = listOf(
             Recommendation(
                 RecommendationLevel.BEGINNER,
-                parameters = RecommendedParameters(sets = 3, reps = 10, restTime = 30.seconds, weightInKg = 20)
+                parameters = RecommendedParameters(
+                    sets = 3,
+                    reps = 10,
+                    restTime = 30.seconds,
+                    weightInKg = 20
+                )
             )
         )
         val input = ExerciseEditingInput(
@@ -121,7 +126,7 @@ class CreateExerciseScreenTest {
                 uiState = ExerciseEditingUiState.Editing(input),
                 onUserInputChange = { inputEvents.add(it) },
                 onExerciseSaved = {},
-                isEditMode = false,
+                isEditMode = false
             )
         }
         composeTestRule
@@ -197,12 +202,38 @@ class CreateExerciseScreenTest {
         saveButton.performClick()
 
         assertEquals(true, inputEvents.contains(ExerciseEditingEvent.NameChanged(newName)))
-        assertEquals(true, inputEvents.contains(ExerciseEditingEvent.DescriptionChanged(newDescription)))
+        assertEquals(
+            true,
+            inputEvents.contains(ExerciseEditingEvent.DescriptionChanged(newDescription))
+        )
         assertEquals(true, inputEvents.contains(ExerciseEditingEvent.CategoryToggled(category2)))
-        assertEquals(true, inputEvents.contains(ExerciseEditingEvent.RecommendedSetsChanged(5, RecommendationLevel.BEGINNER)))
-        assertEquals(true, inputEvents.contains(ExerciseEditingEvent.RecommendedRepsChanged(15, RecommendationLevel.BEGINNER)))
-        assertEquals(true, inputEvents.contains(ExerciseEditingEvent.RecommendedRestTimeChanged(60.seconds, RecommendationLevel.BEGINNER)))
-        assertEquals(true, inputEvents.contains(ExerciseEditingEvent.RecommendedWeightChanged(40, RecommendationLevel.BEGINNER)))
+        assertEquals(
+            true,
+            inputEvents.contains(
+                ExerciseEditingEvent.RecommendedSetsChanged(5, RecommendationLevel.BEGINNER)
+            )
+        )
+        assertEquals(
+            true,
+            inputEvents.contains(
+                ExerciseEditingEvent.RecommendedRepsChanged(15, RecommendationLevel.BEGINNER)
+            )
+        )
+        assertEquals(
+            true,
+            inputEvents.contains(
+                ExerciseEditingEvent.RecommendedRestTimeChanged(
+                    60.seconds,
+                    RecommendationLevel.BEGINNER
+                )
+            )
+        )
+        assertEquals(
+            true,
+            inputEvents.contains(
+                ExerciseEditingEvent.RecommendedWeightChanged(40, RecommendationLevel.BEGINNER)
+            )
+        )
         assertEquals(true, inputEvents.contains(ExerciseEditingEvent.SaveChangesRequested(input)))
     }
 
@@ -215,7 +246,7 @@ class CreateExerciseScreenTest {
                 uiState = ExerciseEditingUiState.Saved(exerciseId, name = "Test Exercise"),
                 onUserInputChange = {},
                 onExerciseSaved = { savedExerciseId = it },
-                isEditMode = false,
+                isEditMode = false
             )
         }
         assertEquals(exerciseId, savedExerciseId)

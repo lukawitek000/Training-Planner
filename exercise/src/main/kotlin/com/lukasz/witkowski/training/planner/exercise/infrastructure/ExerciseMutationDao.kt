@@ -9,13 +9,19 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface ExerciseMutationDao {
-    @Query("SELECT * FROM ExerciseMutation WHERE state IN ('PENDING', 'IN_PROGRESS') ORDER BY createdAt ASC")
+    @Query(
+        "SELECT * FROM ExerciseMutation WHERE state IN ('PENDING', 'IN_PROGRESS') ORDER BY createdAt ASC"
+    )
     suspend fun getPendingMutations(): List<DbExerciseMutation>
 
-    @Query("SELECT * FROM ExerciseMutation WHERE exerciseId = :exerciseId ORDER BY createdAt DESC LIMIT 1")
+    @Query(
+        "SELECT * FROM ExerciseMutation WHERE exerciseId = :exerciseId ORDER BY createdAt DESC LIMIT 1"
+    )
     fun getMutationByExerciseId(exerciseId: String): Flow<DbExerciseMutation?>
 
-    @Query("SELECT * FROM ExerciseMutation WHERE exerciseId = :exerciseId ORDER BY createdAt DESC LIMIT 1")
+    @Query(
+        "SELECT * FROM ExerciseMutation WHERE exerciseId = :exerciseId ORDER BY createdAt DESC LIMIT 1"
+    )
     suspend fun getMutationByExerciseIdOnce(exerciseId: String): DbExerciseMutation?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -13,12 +13,12 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.delete.Deleti
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
-import org.junit.Rule
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
+import org.junit.Rule
 
 class DeleteExerciseDialogTest {
     @get:Rule
@@ -49,7 +49,8 @@ class DeleteExerciseDialogTest {
     @Test
     fun dialog_is_displayed_when_exercise_is_loaded() {
         val exerciseName = "PushUp"
-        every { vm.state } returns MutableStateFlow(DeleteExerciseUiState.LoadedExercise(exerciseName))
+        every { vm.state } returns
+            MutableStateFlow(DeleteExerciseUiState.LoadedExercise(exerciseName))
 
         composeTestRule.setContent {
             DeleteExerciseScreen(
@@ -68,7 +69,6 @@ class DeleteExerciseDialogTest {
             .assertIsDisplayed()
             .assertTextContains(exerciseName, substring = true)
 
-
         composeTestRule
             .onNodeWithTag("Loading")
             .assertIsNotDisplayed()
@@ -77,7 +77,8 @@ class DeleteExerciseDialogTest {
     @Test
     fun on_delete_triggered_when_exercise_is_deleted() {
         val exerciseName = "PushUp"
-        every { vm.state } returns MutableStateFlow(DeleteExerciseUiState.LoadedExercise(exerciseName))
+        every { vm.state } returns
+            MutableStateFlow(DeleteExerciseUiState.LoadedExercise(exerciseName))
         every { vm.deletionEvent } returns flow { emit(DeletionEvent.Success) }
 
         var isDeleteClicked = false
@@ -105,7 +106,8 @@ class DeleteExerciseDialogTest {
     @Test
     fun on_cancel_triggered_when_deletion_is_cancelled() {
         val exerciseName = "PushUp"
-        every { vm.state } returns MutableStateFlow(DeleteExerciseUiState.LoadedExercise(exerciseName))
+        every { vm.state } returns
+            MutableStateFlow(DeleteExerciseUiState.LoadedExercise(exerciseName))
         var isDeleteClicked = false
         var isCancelClicked = false
         composeTestRule.setContent {

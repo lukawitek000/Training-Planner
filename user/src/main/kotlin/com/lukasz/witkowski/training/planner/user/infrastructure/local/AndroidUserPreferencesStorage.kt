@@ -13,7 +13,9 @@ import timber.log.Timber
 
 private val Context.userPreferencesDataStore by preferencesDataStore("user_preferences")
 
-class AndroidUserPreferencesStorage(private val context: Context) : UserPreferencesStorage, SyncPreferencesStorage {
+class AndroidUserPreferencesStorage(private val context: Context) :
+    UserPreferencesStorage,
+    SyncPreferencesStorage {
     private val weightUnitKey = stringPreferencesKey(WEIGHT_UNIT_KEY)
     private val autoSyncEnabledKey = booleanPreferencesKey(AUTO_SYNC_ENABLED_KEY)
 

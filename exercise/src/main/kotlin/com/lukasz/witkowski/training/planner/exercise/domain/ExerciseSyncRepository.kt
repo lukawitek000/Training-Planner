@@ -11,9 +11,7 @@ interface ExerciseSyncRepository {
         exerciseId: ExerciseId
     ): AppResult<ExerciseDetails, ExerciseFailure>
 
-    suspend fun resolveConflictKeepLocal(
-        exerciseId: ExerciseId
-    ): AppResult<Unit, ExerciseFailure>
+    suspend fun resolveConflictKeepLocal(exerciseId: ExerciseId): AppResult<Unit, ExerciseFailure>
 
     suspend fun resolveConflictAcceptServer(
         exerciseId: ExerciseId

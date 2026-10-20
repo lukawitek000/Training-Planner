@@ -63,7 +63,7 @@ fun ExerciseConflictDialog(
     onKeepLocal: () -> Unit,
     onAcceptServer: () -> Unit,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     BasicAlertDialog(
         onDismissRequest = onDismiss,
@@ -181,7 +181,7 @@ private fun ConflictVersionColumn(
     icon: ImageVector,
     accentColor: Color,
     details: ExerciseDetails,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Surface(
         modifier = modifier,
@@ -254,9 +254,17 @@ private fun ConflictVersionColumn(
             details.recommendations.forEach { rec ->
                 val p = rec.parameters
                 if (p.areValid()) {
-                    val holdText = if (p.time != null && p.time.inWholeSeconds > 0) " · ${p.time.inWholeSeconds}s hold" else ""
+                    val holdText = if (p.time != null &&
+                        p.time.inWholeSeconds > 0
+                    ) {
+                        " · ${p.time.inWholeSeconds}s hold"
+                    } else {
+                        ""
+                    }
                     Text(
-                        text = "${rec.level.name.take(3)}: ${p.sets}x${p.reps}$holdText · ${p.restTime?.inWholeSeconds ?: 0}s",
+                        text = "${rec.level.name.take(
+                            3
+                        )}: ${p.sets}x${p.reps}$holdText · ${p.restTime?.inWholeSeconds ?: 0}s",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -283,7 +291,10 @@ private fun ExerciseConflictDialogPreview() {
                     name = "Barbell Bench Press (Heavy)",
                     description = "Updated local notes with pause at bottom",
                     categories = listOf(ExerciseCategory("Chest"), ExerciseCategory("Triceps")),
-                    metadata = ExerciseMetadata(syncState = ExerciseSyncState.CONFLICT, revision = 3)
+                    metadata = ExerciseMetadata(
+                        syncState = ExerciseSyncState.CONFLICT,
+                        revision = 3
+                    )
                 ),
                 recommendations = sampleRecs
             ),

@@ -15,6 +15,11 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -28,17 +33,12 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-import kotlin.time.Duration.Companion.milliseconds
 
 class ExercisesListViewModelTest {
     private val categories = listOf(
         ExerciseCategory("Back"),
         ExerciseCategory("Abs"),
-        ExerciseCategory("Leg"),
+        ExerciseCategory("Leg")
     )
     private val service: ExerciseService = mockk()
     private val categoryService: ExerciseCategoriesService = mockk()
@@ -164,8 +164,6 @@ class ExercisesListViewModelTest {
     }
 
     private fun List<ExerciseCategory>.toFilterCategories(
-        selected: List<ExerciseCategory> = emptyList(),
-    ): List<FilterCategory> {
-        return map { FilterCategory(it, isSelected = selected.contains(it)) }
-    }
+        selected: List<ExerciseCategory> = emptyList()
+    ): List<FilterCategory> = map { FilterCategory(it, isSelected = selected.contains(it)) }
 }

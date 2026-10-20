@@ -132,7 +132,10 @@ class DtoSerializationTest {
             }
             """.trimIndent()
         val decodedFromRaw =
-            json.decodeFromString(CreateExerciseRequestDto.serializer(), rawJsonWithoutOptionalFields)
+            json.decodeFromString(
+                CreateExerciseRequestDto.serializer(),
+                rawJsonWithoutOptionalFields
+            )
         assertEquals("Squat", decodedFromRaw.name)
         assertNull(decodedFromRaw.id)
         assertNull(decodedFromRaw.idempotencyKey)

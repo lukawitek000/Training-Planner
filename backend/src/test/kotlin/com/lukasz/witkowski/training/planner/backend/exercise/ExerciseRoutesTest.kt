@@ -261,7 +261,9 @@ class ExerciseRoutesTest {
         assertEquals(HttpStatusCode.Created, createRes.status)
         val created = createRes.body<ExerciseDto>()
 
-        val newChangesRes = user.client.get("/api/v1/exercises/changes?sinceVersion=$startVersion") {
+        val newChangesRes = user.client.get(
+            "/api/v1/exercises/changes?sinceVersion=$startVersion"
+        ) {
             header(HttpHeaders.Authorization, "Bearer ${user.token}")
         }
         assertEquals(HttpStatusCode.OK, newChangesRes.status)
@@ -277,7 +279,9 @@ class ExerciseRoutesTest {
             header(HttpHeaders.Authorization, "Bearer ${user.token}")
         }
 
-        val deleteChangesRes = user.client.get("/api/v1/exercises/changes?sinceVersion=$delVersion") {
+        val deleteChangesRes = user.client.get(
+            "/api/v1/exercises/changes?sinceVersion=$delVersion"
+        ) {
             header(HttpHeaders.Authorization, "Bearer ${user.token}")
         }
         assertEquals(HttpStatusCode.OK, deleteChangesRes.status)
@@ -635,6 +639,11 @@ class ExerciseRoutesTest {
         val syncData = syncRes.body<ExerciseSyncResponseDto>()
         val syncedExercise = syncData.changes.firstOrNull { it.id == created.id }
         assertNotNull(syncedExercise)
-        assertEquals(45_000L, syncedExercise.recommendations?.firstOrNull { it.level == "BEGINNER" }?.timeInMillis)
+        assertEquals(
+            45_000L,
+            syncedExercise.recommendations?.firstOrNull {
+                it.level == "BEGINNER"
+            }?.timeInMillis
+        )
     }
 }

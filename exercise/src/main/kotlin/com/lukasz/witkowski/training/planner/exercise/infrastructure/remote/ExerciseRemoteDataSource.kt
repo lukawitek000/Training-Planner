@@ -5,10 +5,10 @@ import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseSyncResponseDto
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseFailure
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 
 interface ExerciseRemoteDataSource {
     suspend fun getCategories(): AppResult<List<ExerciseCategory>, ExerciseFailure>
@@ -35,9 +35,7 @@ interface ExerciseRemoteDataSource {
         currentUserId: String? = null
     ): AppResult<ExerciseDetails, ExerciseFailure>
 
-    suspend fun createExercise(
-        exercise: Exercise2
-    ): AppResult<Exercise2, ExerciseFailure>
+    suspend fun createExercise(exercise: Exercise2): AppResult<Exercise2, ExerciseFailure>
 
     suspend fun createExercise(
         exerciseDetails: ExerciseDetails,
@@ -50,7 +48,5 @@ interface ExerciseRemoteDataSource {
         idempotencyKey: String? = null
     ): AppResult<ExerciseDto, ExerciseFailure>
 
-    suspend fun deleteExercise(
-        id: ExerciseId
-    ): AppResult<Unit, ExerciseFailure>
+    suspend fun deleteExercise(id: ExerciseId): AppResult<Unit, ExerciseFailure>
 }

@@ -62,7 +62,7 @@ class ExerciseDetailsScreenTest {
     private fun whenSetContent(state: ExerciseDetailsState) {
         composeTestRule.setContent {
             ExerciseDetailsScreenContent(
-                state = state,
+                state = state
             )
         }
     }

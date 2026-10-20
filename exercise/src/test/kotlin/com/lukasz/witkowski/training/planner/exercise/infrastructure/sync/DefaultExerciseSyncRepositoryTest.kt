@@ -62,7 +62,7 @@ class DefaultExerciseSyncRepositoryTest {
     }
 
     @Test
-    fun `processPendingMutations uploads pending UPDATE mutations and deletes mutation on success`() = runTest {
+    fun `processPendingMutations uploads UPDATE mutations and deletes on success`() = runTest {
         val mutation = DbExerciseMutation(
             id = "mut-1",
             exerciseId = EX_ID_1,
@@ -86,7 +86,8 @@ class DefaultExerciseSyncRepositoryTest {
             revision = 2L,
             recommendations = null
         )
-        coEvery { remoteDataSource.updateExercise(any(), any(), any()) } returns AppResult.Success(updatedDto)
+        coEvery { remoteDataSource.updateExercise(any(), any(), any()) } returns
+            AppResult.Success(updatedDto)
 
         val result = repository.processPendingMutations()
 
@@ -95,7 +96,7 @@ class DefaultExerciseSyncRepositoryTest {
     }
 
     @Test
-    fun `processPendingMutations uploads pending CREATE mutations and deletes mutation on success`() = runTest {
+    fun `processPendingMutations uploads CREATE mutations and deletes on success`() = runTest {
         val mutation = DbExerciseMutation(
             id = "mut-create",
             exerciseId = EX_ID_CREATE,
@@ -119,7 +120,8 @@ class DefaultExerciseSyncRepositoryTest {
             revision = 1L,
             recommendations = null
         )
-        coEvery { remoteDataSource.createExercise(any(), "key-create") } returns AppResult.Success(createdDto)
+        coEvery { remoteDataSource.createExercise(any(), "key-create") } returns
+            AppResult.Success(createdDto)
 
         val result = repository.processPendingMutations()
 
@@ -129,7 +131,7 @@ class DefaultExerciseSyncRepositoryTest {
     }
 
     @Test
-    fun `processPendingMutations treats 404 on DELETE mutation as success and cascades local deletion`() = runTest {
+    fun `processPendingMutations handles 404 on DELETE mutation as success`() = runTest {
         val mutation = DbExerciseMutation(
             id = "mut-del",
             exerciseId = EX_ID_DEL,
@@ -142,7 +144,8 @@ class DefaultExerciseSyncRepositoryTest {
             state = "PENDING"
         )
         coEvery { mutationDao.getPendingMutations() } returns listOf(mutation)
-        coEvery { remoteDataSource.deleteExercise(ExerciseId(EX_ID_DEL)) } returns AppResult.Error(ExerciseFailure.ExerciseNotFound)
+        coEvery { remoteDataSource.deleteExercise(ExerciseId(EX_ID_DEL)) } returns
+            AppResult.Error(ExerciseFailure.ExerciseNotFound)
 
         val result = repository.processPendingMutations()
 
@@ -152,40 +155,49 @@ class DefaultExerciseSyncRepositoryTest {
     }
 
     @Test
-    fun `processPendingMutations sets CONFLICT state when backend returns conflict failure`() = runTest {
-        val mutation = DbExerciseMutation(
-            id = "mut-2",
-            exerciseId = EX_ID_2,
-            idempotencyKey = "key-2",
-            expectedVersion = 1L,
-            name = "Squat",
-            description = "Legs",
-            categoryNames = "Legs",
-            state = "PENDING"
-        )
-        coEvery { mutationDao.getPendingMutations() } returns listOf(mutation)
-        val conflictDto = ExerciseConflictDto(
-            message = "Conflict",
-            currentServerExercise = ExerciseDto(
-                id = EX_ID_2,
-                name = "Server Squat",
+    fun `processPendingMutations sets CONFLICT state when backend returns conflict failure`() =
+        runTest {
+            val mutation = DbExerciseMutation(
+                id = "mut-2",
+                exerciseId = EX_ID_2,
+                idempotencyKey = "key-2",
+                expectedVersion = 1L,
+                name = "Squat",
                 description = "Legs",
-                categories = emptyList(),
-                owner = null,
-                source = "USER_CREATED",
-                sharing = "PRIVATE",
-                revision = 3L,
-                recommendations = null
+                categoryNames = "Legs",
+                state = "PENDING"
             )
-        )
-        coEvery { remoteDataSource.updateExercise(any(), any(), any()) } returns AppResult.Error(ExerciseFailure.Conflict(conflictDto))
+            coEvery { mutationDao.getPendingMutations() } returns listOf(mutation)
+            val conflictDto = ExerciseConflictDto(
+                message = "Conflict",
+                currentServerExercise = ExerciseDto(
+                    id = EX_ID_2,
+                    name = "Server Squat",
+                    description = "Legs",
+                    categories = emptyList(),
+                    owner = null,
+                    source = "USER_CREATED",
+                    sharing = "PRIVATE",
+                    revision = 3L,
+                    recommendations = null
+                )
+            )
+            coEvery { remoteDataSource.updateExercise(any(), any(), any()) } returns
+                AppResult.Error(ExerciseFailure.Conflict(conflictDto))
 
-        val result = repository.processPendingMutations()
+            val result = repository.processPendingMutations()
 
-        assertTrue(result is AppResult.Error)
-        assertEquals(ExerciseFailure.Conflict(conflictDto), result.error)
-        coVerify { mutationDao.updateMutation(match { it.state == "CONFLICT" && it.conflictServerJson != null }) }
-    }
+            assertTrue(result is AppResult.Error)
+            assertEquals(ExerciseFailure.Conflict(conflictDto), result.error)
+            coVerify {
+                mutationDao.updateMutation(
+                    match {
+                        it.state == "CONFLICT" &&
+                            it.conflictServerJson != null
+                    }
+                )
+            }
+        }
 
     @Test
     fun `onUserLogout with keepLocalData false deletes all non-bundled exercises`() = runTest {
@@ -197,17 +209,18 @@ class DefaultExerciseSyncRepositoryTest {
     }
 
     @Test
-    fun `onUserLogout with keepLocalData true converts non-bundled exercises to LOCAL_ONLY`() = runTest {
-        repository.onUserLogout(keepLocalData = true)
+    fun `onUserLogout with keepLocalData true converts non-bundled exercises to LOCAL_ONLY`() =
+        runTest {
+            repository.onUserLogout(keepLocalData = true)
 
-        coVerify { mutationDao.deleteAllMutations() }
-        coVerify { exerciseDao.deleteSyncVersion() }
-        coVerify { exerciseDao.deletePendingDeleteExercises() }
-        coVerify { exerciseDao.convertNonBundledExercisesToLocalOnly() }
-    }
+            coVerify { mutationDao.deleteAllMutations() }
+            coVerify { exerciseDao.deleteSyncVersion() }
+            coVerify { exerciseDao.deletePendingDeleteExercises() }
+            coVerify { exerciseDao.convertNonBundledExercisesToLocalOnly() }
+        }
 
     @Test
-    fun `resolveConflictKeepLocal updates mutation expectedVersion to server revision and resets to PENDING`() = runTest {
+    fun `resolveConflictKeepLocal updates mutation version to server revision`() = runTest {
         val serverExerciseDto = ExerciseDto(
             id = EX_ID_2,
             name = "Server Squat",
@@ -275,7 +288,8 @@ class DefaultExerciseSyncRepositoryTest {
             revision = 1L,
             recommendations = null
         )
-        coEvery { remoteDataSource.createExercise(any(), "key-time") } returns AppResult.Success(createdDto)
+        coEvery { remoteDataSource.createExercise(any(), "key-time") } returns
+            AppResult.Success(createdDto)
 
         val result = repository.processPendingMutations()
 
@@ -284,8 +298,8 @@ class DefaultExerciseSyncRepositoryTest {
             remoteDataSource.createExercise(
                 match {
                     it.beginnerRecommendation.time?.inWholeSeconds == 30L &&
-                    it.intermediateRecommendation.time?.inWholeSeconds == 45L &&
-                    it.advancedRecommendation.time?.inWholeSeconds == 60L
+                        it.intermediateRecommendation.time?.inWholeSeconds == 45L &&
+                        it.advancedRecommendation.time?.inWholeSeconds == 60L
                 },
                 "key-time"
             )

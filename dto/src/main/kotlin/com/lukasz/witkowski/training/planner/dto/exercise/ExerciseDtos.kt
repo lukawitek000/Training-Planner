@@ -6,10 +6,7 @@ import kotlinx.serialization.Serializable
 data class CategoryDto(val id: String, val name: String)
 
 @Serializable
-data class OwnerDto(
-    val id: String,
-    val username: String
-)
+data class OwnerDto(val id: String, val username: String)
 
 @Serializable
 data class ExerciseRecommendationDto(
@@ -64,7 +61,4 @@ data class UpdateExerciseRequestDto(
 )
 
 @Serializable
-data class ExerciseConflictDto(
-    val message: String,
-    val currentServerExercise: ExerciseDto
-)
+data class ExerciseConflictDto(val message: String, val currentServerExercise: ExerciseDto)

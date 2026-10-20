@@ -14,6 +14,11 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
@@ -24,11 +29,6 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Before
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
-import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class ExerciseEditorViewModelTest {
@@ -327,27 +327,28 @@ class ExerciseEditorViewModelTest {
     }
 
     @Test
-    fun `when save exercise is requested and succeeds, saving and saved states are emitted`() = runTest {
-        val newExerciseId = TestData.EXERCISE_ID_1
-        coEvery { service.saveExercise(any()) } returns newExerciseId
-        givenVm()
-        val input = ExerciseEditingInput(
-            name = "Push-up",
-            recommendations = TestData.PRESENTATION_PUSH_UPS_DETAILS.recommendations
-        )
+    fun `when save exercise is requested and succeeds, saving and saved states are emitted`() =
+        runTest {
+            val newExerciseId = TestData.EXERCISE_ID_1
+            coEvery { service.saveExercise(any()) } returns newExerciseId
+            givenVm()
+            val input = ExerciseEditingInput(
+                name = "Push-up",
+                recommendations = TestData.PRESENTATION_PUSH_UPS_DETAILS.recommendations
+            )
 
-        vm.uiState.test {
-            assertInitialCreateState()
-            vm.onEvent(ExerciseEditingEvent.SaveChangesRequested(input))
+            vm.uiState.test {
+                assertInitialCreateState()
+                vm.onEvent(ExerciseEditingEvent.SaveChangesRequested(input))
 
-            assertEquals(ExerciseEditingUiState.Saving(input), awaitItem())
-            assertEquals(ExerciseEditingUiState.Saved(newExerciseId, input.name), awaitItem())
+                assertEquals(ExerciseEditingUiState.Saving(input), awaitItem())
+                assertEquals(ExerciseEditingUiState.Saved(newExerciseId, input.name), awaitItem())
+            }
+            coVerify(exactly = 1) { service.saveExercise(any()) }
         }
-        coVerify(exactly = 1) { service.saveExercise(any()) }
-    }
 
     @Test
-    fun `when save exercise is requested and fails, saving, failure and editing states are emitted`() = runTest {
+    fun `when save exercise fails, saving, failure and editing states are emitted`() = runTest {
         val errorMessage = "Failed to save exercise"
         coEvery { service.saveExercise(any()) } throws IllegalStateException(errorMessage)
         givenVm()
@@ -368,7 +369,7 @@ class ExerciseEditorViewModelTest {
     }
 
     @Test
-    fun `when update exercise in edit mode is requested and succeeds, saving and saved states are emitted`() = runTest {
+    fun `when update exercise succeeds, saving and saved states are emitted`() = runTest {
         val exerciseId = TestData.EXERCISE_ID_1
         val details = TestData.PUSH_UPS_DETAILS
         every { service.getExerciseDetailsById(exerciseId) } returns flowOf(details)
@@ -391,12 +392,13 @@ class ExerciseEditorViewModelTest {
     }
 
     @Test
-    fun `when update exercise in edit mode is requested and fails, saving, failure and editing states are emitted`() = runTest {
+    fun `when update exercise fails, saving, failure and editing states are emitted`() = runTest {
         val exerciseId = TestData.EXERCISE_ID_1
         val details = TestData.PUSH_UPS_DETAILS
         val errorMessage = "Failed to update exercise"
         every { service.getExerciseDetailsById(exerciseId) } returns flowOf(details)
-        coEvery { service.updateExercise(any(), exerciseId) } throws IllegalStateException(errorMessage)
+        coEvery { service.updateExercise(any(), exerciseId) } throws
+            IllegalStateException(errorMessage)
         givenVm(exerciseId = exerciseId)
 
         val input = ExerciseEditingInput(
@@ -419,13 +421,11 @@ class ExerciseEditorViewModelTest {
         assertEquals(ExerciseEditingUiState.Editing(ExerciseEditingInput()), awaitItem())
     }
 
-    private fun Collection<ExerciseCategory>.mapToFilteredCategories(): List<FilterCategory> {
-        return map {
-            FilterCategory(it, isSelected = true)
-        } + TestData.CATEGORIES_LIST.filter {
-            !contains(it)
-        }.map {
-            FilterCategory(it, isSelected = false)
-        }
+    private fun Collection<ExerciseCategory>.mapToFilteredCategories(): List<FilterCategory> = map {
+        FilterCategory(it, isSelected = true)
+    } + TestData.CATEGORIES_LIST.filter {
+        !contains(it)
+    }.map {
+        FilterCategory(it, isSelected = false)
     }
 }

@@ -9,10 +9,7 @@ import kotlinx.coroutines.flow.update
 
 data class FilterCategory(val category: ExerciseCategory, val isSelected: Boolean = false)
 
-data class FilteringState(
-    val searchQuery: String,
-    val categories: List<FilterCategory>
-) {
+data class FilteringState(val searchQuery: String, val categories: List<FilterCategory>) {
     val isAnyCategorySelected = categories.any { it.isSelected }
 }
 

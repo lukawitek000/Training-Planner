@@ -4,10 +4,10 @@ import androidx.paging.PagingData
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.image.Image
@@ -41,7 +41,11 @@ class ExerciseService(
             throw IllegalStateException("Bundled exercises cannot be modified")
         }
         val imageId = if (exerciseConfiguration.image != null) {
-            updateImage(exerciseConfiguration.image, existing?.exercise?.imageId, exerciseId)?.imageId
+            updateImage(
+                exerciseConfiguration.image,
+                existing?.exercise?.imageId,
+                exerciseId
+            )?.imageId
         } else {
             existing?.exercise?.imageId
         }

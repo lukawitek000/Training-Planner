@@ -20,7 +20,6 @@ import com.lukasz.witkowski.training.planner.image.ImageReference
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
-
 object TestData {
     // --- IDs ---
     val EXERCISE_ID_1 = ExerciseId("11111111-1111-1111-1111-111111111111")
@@ -53,7 +52,7 @@ object TestData {
             CATEGORY_BICEPS,
             CATEGORY_ABS,
             CATEGORY_SHOULDERS,
-            CATEGORY_CARDIO,
+            CATEGORY_CARDIO
         )
 
     // --- Recommendations ---
@@ -62,7 +61,7 @@ object TestData {
             sets = 3,
             reps = 10,
             restTime = 60.seconds,
-            weightInKg = 0,
+            weightInKg = 0
         )
 
     val INTERMEDIATE_RECOMMENDATION =
@@ -70,7 +69,7 @@ object TestData {
             sets = 4,
             reps = 12,
             restTime = 45.seconds,
-            weightInKg = 10,
+            weightInKg = 10
         )
 
     val ADVANCED_RECOMMENDATION =
@@ -78,7 +77,7 @@ object TestData {
             sets = 5,
             reps = 15,
             restTime = 30.seconds,
-            weightInKg = 20,
+            weightInKg = 20
         )
 
     // --- Domain Exercises (Exercise2) ---
@@ -88,7 +87,7 @@ object TestData {
             name = "Push-up",
             description = "Standard push-up focusing on chest and triceps, BODYWEIGHT",
             categories = listOf(CATEGORY_CHEST, CATEGORY_TRICEPS, CATEGORY_BICEPS),
-            imageId = IMAGE_ID_1,
+            imageId = IMAGE_ID_1
         )
 
     val SQUATS_EXERCISE =
@@ -96,7 +95,7 @@ object TestData {
             id = EXERCISE_ID_2,
             name = "Bodyweight Squat",
             description = "Basic bodyweight squat targeting legs and glutes",
-            categories = listOf(CATEGORY_LEGS),
+            categories = listOf(CATEGORY_LEGS)
         )
 
     val PULL_UPS_EXERCISE =
@@ -105,7 +104,7 @@ object TestData {
             name = "Pull-up",
             description = "Wide-grip pull-up for back and biceps",
             categories = listOf(CATEGORY_BACK, CATEGORY_BICEPS),
-            imageId = IMAGE_ID_2,
+            imageId = IMAGE_ID_2
         )
 
     val PLANK_EXERCISE =
@@ -113,7 +112,7 @@ object TestData {
             id = EXERCISE_ID_4,
             name = "Plank",
             description = "Core isometric hold",
-            categories = listOf(CATEGORY_ABS),
+            categories = listOf(CATEGORY_ABS)
         )
 
     val EXERCISES_LIST =
@@ -121,7 +120,7 @@ object TestData {
             PUSH_UPS_EXERCISE,
             SQUATS_EXERCISE,
             PULL_UPS_EXERCISE,
-            PLANK_EXERCISE,
+            PLANK_EXERCISE
         )
 
     // --- Domain ExerciseDetails ---
@@ -130,15 +129,18 @@ object TestData {
             exercise = PUSH_UPS_EXERCISE,
             beginnerRecommendation = BEGINNER_RECOMMENDATION,
             intermediateRecommendation = INTERMEDIATE_RECOMMENDATION,
-            advancedRecommendation = ADVANCED_RECOMMENDATION,
+            advancedRecommendation = ADVANCED_RECOMMENDATION
         )
 
     val SQUATS_DETAILS =
         createExerciseDetails(
             exercise = SQUATS_EXERCISE,
             beginnerRecommendation = BEGINNER_RECOMMENDATION.copy(reps = 12),
-            intermediateRecommendation = INTERMEDIATE_RECOMMENDATION.copy(reps = 15, weightInKg = 20),
-            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 20, weightInKg = 40),
+            intermediateRecommendation = INTERMEDIATE_RECOMMENDATION.copy(
+                reps = 15,
+                weightInKg = 20
+            ),
+            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 20, weightInKg = 40)
         )
 
     val PULL_UPS_DETAILS =
@@ -146,15 +148,30 @@ object TestData {
             exercise = PULL_UPS_EXERCISE,
             beginnerRecommendation = BEGINNER_RECOMMENDATION.copy(reps = 5),
             intermediateRecommendation = INTERMEDIATE_RECOMMENDATION.copy(reps = 8),
-            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 12, weightInKg = 10),
+            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 12, weightInKg = 10)
         )
 
     val PLANK_DETAILS =
         createExerciseDetails(
             exercise = PLANK_EXERCISE,
-            beginnerRecommendation = ExerciseRecommendation(sets = 3, reps = 1, restTime = 30.seconds, weightInKg = null),
-            intermediateRecommendation = ExerciseRecommendation(sets = 3, reps = 1, restTime = 45.seconds, weightInKg = null),
-            advancedRecommendation = ExerciseRecommendation(sets = 4, reps = 1, restTime = 60.seconds, weightInKg = 10),
+            beginnerRecommendation = ExerciseRecommendation(
+                sets = 3,
+                reps = 1,
+                restTime = 30.seconds,
+                weightInKg = null
+            ),
+            intermediateRecommendation = ExerciseRecommendation(
+                sets = 3,
+                reps = 1,
+                restTime = 45.seconds,
+                weightInKg = null
+            ),
+            advancedRecommendation = ExerciseRecommendation(
+                sets = 4,
+                reps = 1,
+                restTime = 60.seconds,
+                weightInKg = 10
+            )
         )
 
     val EXERCISE_DETAILS_LIST =
@@ -162,7 +179,7 @@ object TestData {
             PUSH_UPS_DETAILS,
             SQUATS_DETAILS,
             PULL_UPS_DETAILS,
-            PLANK_DETAILS,
+            PLANK_DETAILS
         )
 
     // --- Legacy Domain Exercises ---
@@ -172,7 +189,7 @@ object TestData {
             name = "Push-up",
             description = "Standard push-up focusing on chest and triceps",
             categories = listOf(ExerciseCategoryLegacy.CHEST, ExerciseCategoryLegacy.TRICEPS),
-            imageId = IMAGE_ID_1,
+            imageId = IMAGE_ID_1
         )
 
     val LEGACY_SQUATS_EXERCISE =
@@ -180,13 +197,13 @@ object TestData {
             id = EXERCISE_ID_2,
             name = "Bodyweight Squat",
             description = "Basic bodyweight squat targeting legs and glutes",
-            categories = listOf(ExerciseCategoryLegacy.LEGS),
+            categories = listOf(ExerciseCategoryLegacy.LEGS)
         )
 
     val LEGACY_EXERCISES_LIST =
         listOf(
             LEGACY_PUSH_UPS_EXERCISE,
-            LEGACY_SQUATS_EXERCISE,
+            LEGACY_SQUATS_EXERCISE
         )
 
     // --- Exercise Configurations (Application Layer) ---
@@ -198,7 +215,7 @@ object TestData {
             image = SAMPLE_IMAGE_BYTE_ARRAY,
             beginnerRecommendation = BEGINNER_RECOMMENDATION,
             intermediateRecommendation = INTERMEDIATE_RECOMMENDATION,
-            advancedRecommendation = ADVANCED_RECOMMENDATION,
+            advancedRecommendation = ADVANCED_RECOMMENDATION
         )
 
     val SQUATS_CONFIGURATION =
@@ -207,8 +224,11 @@ object TestData {
             description = SQUATS_EXERCISE.description,
             categories = SQUATS_EXERCISE.categories.toList(),
             beginnerRecommendation = BEGINNER_RECOMMENDATION.copy(reps = 12),
-            intermediateRecommendation = INTERMEDIATE_RECOMMENDATION.copy(reps = 15, weightInKg = 20),
-            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 20, weightInKg = 40),
+            intermediateRecommendation = INTERMEDIATE_RECOMMENDATION.copy(
+                reps = 15,
+                weightInKg = 20
+            ),
+            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 20, weightInKg = 40)
         )
 
     // --- Exercise Queries ---
@@ -224,45 +244,45 @@ object TestData {
             name = "Push-up",
             description = "Standard push-up focusing on chest and triceps, BODYWEIGHT",
             categories = listOf(CATEGORY_CHEST, CATEGORY_TRICEPS, CATEGORY_BICEPS),
-            image = null, // images not yet supported
+            image = null // images not yet supported
         )
 
     val PRESENTATION_PUSH_UPS_DETAILS =
         PresentationExerciseDetails(
             exercise = PRESENTATION_PUSH_UPS_EXERCISE,
             recommendations =
-                listOf(
-                    Recommendation(
-                        level = RecommendationLevel.BEGINNER,
-                        parameters =
-                            RecommendedParameters(
-                                sets = BEGINNER_RECOMMENDATION.sets,
-                                reps = BEGINNER_RECOMMENDATION.reps,
-                                restTime = BEGINNER_RECOMMENDATION.restTime,
-                                weightInKg = BEGINNER_RECOMMENDATION.weightInKg,
-                            ),
-                    ),
-                    Recommendation(
-                        level = RecommendationLevel.INTERMEDIATE,
-                        parameters =
-                            RecommendedParameters(
-                                sets = INTERMEDIATE_RECOMMENDATION.sets,
-                                reps = INTERMEDIATE_RECOMMENDATION.reps,
-                                restTime = INTERMEDIATE_RECOMMENDATION.restTime,
-                                weightInKg = INTERMEDIATE_RECOMMENDATION.weightInKg,
-                            ),
-                    ),
-                    Recommendation(
-                        level = RecommendationLevel.ADVANCED,
-                        parameters =
-                            RecommendedParameters(
-                                sets = ADVANCED_RECOMMENDATION.sets,
-                                reps = ADVANCED_RECOMMENDATION.reps,
-                                restTime = ADVANCED_RECOMMENDATION.restTime,
-                                weightInKg = ADVANCED_RECOMMENDATION.weightInKg,
-                            ),
-                    ),
+            listOf(
+                Recommendation(
+                    level = RecommendationLevel.BEGINNER,
+                    parameters =
+                    RecommendedParameters(
+                        sets = BEGINNER_RECOMMENDATION.sets,
+                        reps = BEGINNER_RECOMMENDATION.reps,
+                        restTime = BEGINNER_RECOMMENDATION.restTime,
+                        weightInKg = BEGINNER_RECOMMENDATION.weightInKg
+                    )
                 ),
+                Recommendation(
+                    level = RecommendationLevel.INTERMEDIATE,
+                    parameters =
+                    RecommendedParameters(
+                        sets = INTERMEDIATE_RECOMMENDATION.sets,
+                        reps = INTERMEDIATE_RECOMMENDATION.reps,
+                        restTime = INTERMEDIATE_RECOMMENDATION.restTime,
+                        weightInKg = INTERMEDIATE_RECOMMENDATION.weightInKg
+                    )
+                ),
+                Recommendation(
+                    level = RecommendationLevel.ADVANCED,
+                    parameters =
+                    RecommendedParameters(
+                        sets = ADVANCED_RECOMMENDATION.sets,
+                        reps = ADVANCED_RECOMMENDATION.reps,
+                        restTime = ADVANCED_RECOMMENDATION.restTime,
+                        weightInKg = ADVANCED_RECOMMENDATION.weightInKg
+                    )
+                )
+            )
         )
 
     // --- Factory Helper Functions ---
@@ -271,43 +291,40 @@ object TestData {
         name: String = "Test Exercise",
         description: String = "Test Description",
         categories: List<ExerciseCategory> = listOf(CATEGORY_CHEST),
-        imageId: ImageId? = null,
-    ): Exercise2 =
-        Exercise2(
-            id = id,
-            name = name,
-            description = description,
-            categories = categories.toSet(),
-            imageId = imageId,
-        )
+        imageId: ImageId? = null
+    ): Exercise2 = Exercise2(
+        id = id,
+        name = name,
+        description = description,
+        categories = categories.toSet(),
+        imageId = imageId
+    )
 
     fun createExerciseDetails(
         exercise: Exercise2 = createExercise2(),
         beginnerRecommendation: ExerciseRecommendation = BEGINNER_RECOMMENDATION,
         intermediateRecommendation: ExerciseRecommendation = INTERMEDIATE_RECOMMENDATION,
-        advancedRecommendation: ExerciseRecommendation = ADVANCED_RECOMMENDATION,
-    ): ExerciseDetails =
-        ExerciseDetails(
-            exercise = exercise,
-            beginnerRecommendation = beginnerRecommendation,
-            intermediateRecommendation = intermediateRecommendation,
-            advancedRecommendation = advancedRecommendation,
-        )
+        advancedRecommendation: ExerciseRecommendation = ADVANCED_RECOMMENDATION
+    ): ExerciseDetails = ExerciseDetails(
+        exercise = exercise,
+        beginnerRecommendation = beginnerRecommendation,
+        intermediateRecommendation = intermediateRecommendation,
+        advancedRecommendation = advancedRecommendation
+    )
 
     fun createLegacyExercise(
         id: ExerciseId = ExerciseId.create(),
         name: String = "Legacy Test Exercise",
         description: String = "Legacy Test Description",
         categories: List<ExerciseCategoryLegacy> = listOf(ExerciseCategoryLegacy.CHEST),
-        imageId: ImageId? = null,
-    ): Exercise =
-        Exercise(
-            id = id,
-            name = name,
-            description = description,
-            categories = categories,
-            imageId = imageId,
-        )
+        imageId: ImageId? = null
+    ): Exercise = Exercise(
+        id = id,
+        name = name,
+        description = description,
+        categories = categories,
+        imageId = imageId
+    )
 
     fun createExerciseConfiguration(
         name: String = "Test Exercise Configuration",
@@ -316,15 +333,14 @@ object TestData {
         image: ImageByteArray? = null,
         beginnerRecommendation: ExerciseRecommendation = BEGINNER_RECOMMENDATION,
         intermediateRecommendation: ExerciseRecommendation = INTERMEDIATE_RECOMMENDATION,
-        advancedRecommendation: ExerciseRecommendation = ADVANCED_RECOMMENDATION,
-    ): ExerciseConfiguration =
-        ExerciseConfiguration(
-            name = name,
-            description = description,
-            categories = categories,
-            image = image,
-            beginnerRecommendation = beginnerRecommendation,
-            intermediateRecommendation = intermediateRecommendation,
-            advancedRecommendation = advancedRecommendation,
-        )
+        advancedRecommendation: ExerciseRecommendation = ADVANCED_RECOMMENDATION
+    ): ExerciseConfiguration = ExerciseConfiguration(
+        name = name,
+        description = description,
+        categories = categories,
+        image = image,
+        beginnerRecommendation = beginnerRecommendation,
+        intermediateRecommendation = intermediateRecommendation,
+        advancedRecommendation = advancedRecommendation
+    )
 }

@@ -27,5 +27,8 @@ interface ExerciseRepository {
 
     suspend fun resolveConflictKeepLocal(exerciseId: ExerciseId, latestServerVersion: Long): Boolean
 
-    suspend fun resolveConflictAcceptServer(exerciseId: ExerciseId, serverExerciseDetails: ExerciseDetails): Boolean
+    suspend fun resolveConflictAcceptServer(
+        exerciseId: ExerciseId,
+        serverExerciseDetails: ExerciseDetails
+    ): Boolean
 }

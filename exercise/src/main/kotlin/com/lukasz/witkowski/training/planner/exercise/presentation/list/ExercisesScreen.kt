@@ -21,7 +21,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cloud
-import androidx.compose.material.icons.filled.CloudDone
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.CloudSync
 import androidx.compose.material.icons.filled.ErrorOutline
@@ -63,7 +62,6 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exerci
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
 import com.lukasz.witkowski.training.planner.shared.theme.Info
-import com.lukasz.witkowski.training.planner.shared.theme.Success
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
 import com.lukasz.witkowski.training.planner.shared.theme.Warning
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
@@ -133,7 +131,8 @@ fun ExercisesScreenContent(
                 modifier = Modifier.weight(1f)
             )
         } else {
-            val hasActiveFilters = filteringState.isAnyCategorySelected || filteringState.searchQuery.isNotBlank()
+            val hasActiveFilters =
+                filteringState.isAnyCategorySelected || filteringState.searchQuery.isNotBlank()
             AppEmptyState(
                 title =
                 if (filteringState.isAnyCategorySelected) {
@@ -142,7 +141,13 @@ fun ExercisesScreenContent(
                     stringResource(id = R.string.no_exercises)
                 },
                 subtitle = stringResource(id = R.string.no_exercises_subtitle),
-                actionLabel = if (hasActiveFilters) stringResource(id = R.string.reset_filters) else null,
+                actionLabel = if (hasActiveFilters) {
+                    stringResource(
+                        id = R.string.reset_filters
+                    )
+                } else {
+                    null
+                },
                 onActionClick = if (hasActiveFilters) onResetFilters else null,
                 modifier =
                 Modifier
@@ -197,7 +202,9 @@ private fun ExercisesSearchAndFilterHeader(
                         selected = filterCategory.isSelected,
                         showCheckIcon = true,
                         onClick = { toggleCategory(filterCategory.category) },
-                        modifier = Modifier.testTag("Chip${filterCategory.category.name}, isClickable=true")
+                        modifier = Modifier.testTag(
+                            "Chip${filterCategory.category.name}, isClickable=true"
+                        )
                     )
                 }
             }
@@ -257,7 +264,10 @@ fun ExerciseListItemContent(
             ExerciseSyncState.CONFLICT ->
                 BorderStroke(Dimens2.thinBorder, Warning.copy(alpha = 0.45f))
             ExerciseSyncState.ERROR ->
-                BorderStroke(Dimens2.thinBorder, MaterialTheme.colorScheme.error.copy(alpha = 0.45f))
+                BorderStroke(
+                    Dimens2.thinBorder,
+                    MaterialTheme.colorScheme.error.copy(alpha = 0.45f)
+                )
             else ->
                 BorderStroke(
                     Dimens2.thinBorder,
@@ -298,10 +308,7 @@ fun ExerciseListItemContent(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ExerciseInformation(
-    exercise: Exercise2,
-    modifier: Modifier = Modifier
-) {
+private fun ExerciseInformation(exercise: Exercise2, modifier: Modifier = Modifier) {
     val categories = exercise.categories
     val metadata = exercise.metadata
 
@@ -349,10 +356,7 @@ private fun ExerciseInformation(
 }
 
 @Composable
-internal fun ExerciseSyncBadge(
-    syncState: ExerciseSyncState,
-    modifier: Modifier = Modifier
-) {
+internal fun ExerciseSyncBadge(syncState: ExerciseSyncState, modifier: Modifier = Modifier) {
     when (syncState) {
         ExerciseSyncState.CONFLICT -> {
             AppStatusBadge(
@@ -393,10 +397,7 @@ internal fun ExerciseSyncBadge(
 }
 
 @Composable
-private fun ExerciseSourcePill(
-    metadata: ExerciseMetadata,
-    modifier: Modifier = Modifier
-) {
+private fun ExerciseSourcePill(metadata: ExerciseMetadata, modifier: Modifier = Modifier) {
     when (val source = metadata.source) {
         ExerciseSource.Bundled -> {
             AppMetadataPill(

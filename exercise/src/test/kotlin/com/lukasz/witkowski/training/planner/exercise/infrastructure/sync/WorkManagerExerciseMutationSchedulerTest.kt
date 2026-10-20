@@ -37,10 +37,11 @@ class WorkManagerExerciseMutationSchedulerTest {
     }
 
     @Test
-    fun `enqueueMutationSync does not throw exception when auto cloud sync is disabled`() = runTest {
-        coEvery { authSessionProvider.isLoggedIn() } returns true
-        coEvery { syncPreferencesStorage.autoSyncEnabled } returns flowOf(false)
+    fun `enqueueMutationSync does not throw exception when auto cloud sync is disabled`() =
+        runTest {
+            coEvery { authSessionProvider.isLoggedIn() } returns true
+            coEvery { syncPreferencesStorage.autoSyncEnabled } returns flowOf(false)
 
-        scheduler.enqueueMutationSync()
-    }
+            scheduler.enqueueMutationSync()
+        }
 }

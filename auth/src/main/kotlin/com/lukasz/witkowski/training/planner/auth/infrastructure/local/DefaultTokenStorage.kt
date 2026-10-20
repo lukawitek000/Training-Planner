@@ -5,7 +5,9 @@ import com.lukasz.witkowski.training.planner.network.AuthSessionProvider
 import com.lukasz.witkowski.training.planner.network.AuthTokens
 import com.lukasz.witkowski.training.planner.network.TokenStorage
 
-class DefaultTokenStorage(private val secureTokenStorage: SecureTokenStorage) : TokenStorage, AuthSessionProvider {
+class DefaultTokenStorage(private val secureTokenStorage: SecureTokenStorage) :
+    TokenStorage,
+    AuthSessionProvider {
     @Volatile
     private var accessToken: AccessToken? = null
 
@@ -29,6 +31,5 @@ class DefaultTokenStorage(private val secureTokenStorage: SecureTokenStorage) : 
         secureTokenStorage.clear()
     }
 
-    override suspend fun isLoggedIn(): Boolean =
-        secureTokenStorage.getRefreshToken() != null
+    override suspend fun isLoggedIn(): Boolean = secureTokenStorage.getRefreshToken() != null
 }

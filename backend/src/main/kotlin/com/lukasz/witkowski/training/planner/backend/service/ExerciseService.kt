@@ -113,24 +113,32 @@ class ExerciseService {
         requesterId: String? = null
     ): ExerciseSyncResponseDto = dbQuery {
         val visibilityCondition: Op<Boolean> = if (requesterId != null) {
-            OrOp(listOf(
-                ExercisesTable.ownerId.isNull(),
-                ExercisesTable.ownerId eq requesterId,
-                ExercisesTable.sharing eq "COMMUNITY"
-            ))
+            OrOp(
+                listOf(
+                    ExercisesTable.ownerId.isNull(),
+                    ExercisesTable.ownerId eq requesterId,
+                    ExercisesTable.sharing eq "COMMUNITY"
+                )
+            )
         } else {
-            OrOp(listOf(
-                ExercisesTable.ownerId.isNull(),
-                ExercisesTable.sharing eq "COMMUNITY"
-            ))
+            OrOp(
+                listOf(
+                    ExercisesTable.ownerId.isNull(),
+                    ExercisesTable.sharing eq "COMMUNITY"
+                )
+            )
         }
 
-        val condition = AndOp(listOf(
-            ExercisesTable.changeVersion greater sinceVersion,
-            visibilityCondition
-        ))
+        val condition = AndOp(
+            listOf(
+                ExercisesTable.changeVersion greater sinceVersion,
+                visibilityCondition
+            )
+        )
 
-        val queryJoin = ExercisesTable.leftJoin(UsersTable, { ExercisesTable.ownerId }, { UsersTable.id })
+        val queryJoin = ExercisesTable.leftJoin(UsersTable, {
+            ExercisesTable.ownerId
+        }, { UsersTable.id })
         val changedRows = queryJoin.selectAll().where { condition }.toList()
         val exerciseIds = changedRows.map { it[ExercisesTable.id] }
         val categoriesMap = getCategoriesForExercises(exerciseIds)
@@ -235,7 +243,9 @@ class ExerciseService {
                 }
         }
 
-        val queryJoin = ExercisesTable.leftJoin(UsersTable, { ExercisesTable.ownerId }, { UsersTable.id })
+        val queryJoin = ExercisesTable.leftJoin(UsersTable, {
+            ExercisesTable.ownerId
+        }, { UsersTable.id })
         val allRows =
             queryJoin
                 .selectAll()
@@ -289,7 +299,9 @@ class ExerciseService {
     }
 
     suspend fun getExerciseById(id: String, requesterId: String? = null): ExerciseDto? = dbQuery {
-        val queryJoin = ExercisesTable.leftJoin(UsersTable, { ExercisesTable.ownerId }, { UsersTable.id })
+        val queryJoin = ExercisesTable.leftJoin(UsersTable, {
+            ExercisesTable.ownerId
+        }, { UsersTable.id })
         val row =
             queryJoin.selectAll().where { ExercisesTable.id eq id }.singleOrNull()
                 ?: return@dbQuery null
@@ -419,7 +431,11 @@ class ExerciseService {
                 }
             }
 
-            val ownerName = UsersTable.selectAll().where { UsersTable.id eq ownerId }.singleOrNull()?.get(UsersTable.username) ?: ""
+            val ownerName =
+                UsersTable.selectAll().where {
+                    UsersTable.id eq ownerId
+                }.singleOrNull()?.get(UsersTable.username)
+                    ?: ""
             val owner = OwnerDto(id = ownerId, username = ownerName)
             val categories = getCategoriesForExercise(exerciseId)
             val recommendations = getRecommendationsForExercise(exerciseId)
@@ -485,7 +501,11 @@ class ExerciseService {
 
         val currentRevision = existing[ExercisesTable.revision]
         if (request.expectedVersion != null && request.expectedVersion != currentRevision) {
-            val ownerName = UsersTable.selectAll().where { UsersTable.id eq ownerId }.singleOrNull()?.get(UsersTable.username) ?: ""
+            val ownerName =
+                UsersTable.selectAll().where {
+                    UsersTable.id eq ownerId
+                }.singleOrNull()?.get(UsersTable.username)
+                    ?: ""
             val owner = OwnerDto(id = ownerId, username = ownerName)
             val categories = getCategoriesForExercise(id)
             val recommendations = getRecommendationsForExercise(id)
@@ -525,7 +545,9 @@ class ExerciseService {
         }
 
         request.recommendations?.let { recs ->
-            ExerciseRecommendationsTable.deleteWhere { ExerciseRecommendationsTable.exerciseId eq id }
+            ExerciseRecommendationsTable.deleteWhere {
+                ExerciseRecommendationsTable.exerciseId eq id
+            }
             recs.forEach { rec ->
                 ExerciseRecommendationsTable.insert {
                     it[ExerciseRecommendationsTable.id] = UUID.randomUUID().toString()
@@ -540,7 +562,11 @@ class ExerciseService {
             }
         }
 
-        val ownerName = UsersTable.selectAll().where { UsersTable.id eq ownerId }.singleOrNull()?.get(UsersTable.username) ?: ""
+        val ownerName =
+            UsersTable.selectAll().where {
+                UsersTable.id eq ownerId
+            }.singleOrNull()?.get(UsersTable.username)
+                ?: ""
         val owner = OwnerDto(id = ownerId, username = ownerName)
         val categories = getCategoriesForExercise(id)
         val recommendations = getRecommendationsForExercise(id)
