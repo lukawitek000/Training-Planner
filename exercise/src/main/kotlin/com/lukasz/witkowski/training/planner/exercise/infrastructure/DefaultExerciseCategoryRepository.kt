@@ -20,10 +20,10 @@ internal class DefaultExerciseCategoryRepository(
 
     override fun getAll(): Flow<List<ExerciseCategory>> =
         localDataSource.getAllCategories()
-            .map { list -> list.map { it.toExerciseCategory() } }
             .onStart {
                 syncRemoteCategories()
             }
+            .map { list -> list.map { it.toExerciseCategory() } }
 
     suspend fun syncRemoteCategories() = withContext(ioDispatcher) {
         Timber.d("Syncing remote categories into local storage")

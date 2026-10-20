@@ -28,6 +28,7 @@ internal abstract class ExerciseDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): ExerciseDatabase = synchronized(this) {
             if (instance == null) {
+                cleanOrphanedOrCorruptDatabaseFiles(context, "ExerciseDb")
                 instance =
                     Room
                         .databaseBuilder(
@@ -40,6 +41,30 @@ internal abstract class ExerciseDatabase : RoomDatabase() {
                         .build()
             }
             instance!!
+        }
+
+        private fun cleanOrphanedOrCorruptDatabaseFiles(context: Context, databaseName: String) {
+            val dbFile = context.getDatabasePath(databaseName)
+            if (!dbFile.exists()) {
+                context.deleteDatabase(databaseName)
+                return
+            }
+            if (dbFile.length() < 512L) {
+                context.deleteDatabase(databaseName)
+                return
+            }
+            try {
+                java.io.FileInputStream(dbFile).channel.use { channel ->
+                    val buffer = java.nio.ByteBuffer.allocate(4)
+                    channel.position(60)
+                    val bytesRead = channel.read(buffer)
+                    if (bytesRead != 4) {
+                        context.deleteDatabase(databaseName)
+                    }
+                }
+            } catch (_: Exception) {
+                context.deleteDatabase(databaseName)
+            }
         }
     }
 }

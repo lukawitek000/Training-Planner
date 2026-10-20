@@ -307,7 +307,7 @@ private fun ExerciseInformation(
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -342,9 +342,9 @@ private fun ExerciseInformation(
                         style = AppCategoryPillStyle.Filled
                     )
                 }
-                ExerciseSourcePill(metadata = metadata)
             }
         }
+        ExerciseSourcePill(metadata = metadata)
     }
 }
 
