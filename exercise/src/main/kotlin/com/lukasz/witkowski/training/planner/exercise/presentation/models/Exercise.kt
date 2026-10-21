@@ -23,20 +23,4 @@ data class Exercise2(
 ) {
     val image: ImageReference?
         get() = images.firstOrNull()
-
-    constructor(
-        id: ExerciseId,
-        name: String,
-        description: String,
-        categories: List<ExerciseCategory>,
-        image: ImageReference?,
-        metadata: ExerciseMetadata = ExerciseMetadata()
-    ) : this(
-        id = id,
-        name = name,
-        description = description,
-        categories = categories,
-        images = listOfNotNull(image),
-        metadata = metadata
-    )
 }

@@ -213,7 +213,7 @@ internal class DefaultExerciseSyncRepository(
             name = mutation.name,
             description = mutation.description,
             categories = categories,
-            imageId = existingImageId,
+            imageIds = listOfNotNull(existingImageId),
             metadata = ExerciseMetadata(
                 revision = mutation.expectedVersion,
                 syncState = ExerciseSyncState.PENDING_UPLOAD

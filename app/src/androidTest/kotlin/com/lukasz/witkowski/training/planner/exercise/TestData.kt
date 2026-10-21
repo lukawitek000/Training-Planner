@@ -88,7 +88,7 @@ object TestData {
             name = "Push-up",
             description = "Standard push-up focusing on chest and triceps, BODYWEIGHT",
             categories = listOf(CATEGORY_CHEST, CATEGORY_TRICEPS, CATEGORY_BICEPS),
-            imageId = IMAGE_ID_1,
+            imageIds = listOf(IMAGE_ID_1),
         )
 
     val SQUATS_EXERCISE =
@@ -105,7 +105,7 @@ object TestData {
             name = "Pull-up",
             description = "Wide-grip pull-up for back and biceps",
             categories = listOf(CATEGORY_BACK, CATEGORY_BICEPS),
-            imageId = IMAGE_ID_2,
+            imageIds = listOf(IMAGE_ID_2),
         )
 
     val PLANK_EXERCISE =
@@ -195,7 +195,7 @@ object TestData {
             name = PUSH_UPS_EXERCISE.name,
             description = PUSH_UPS_EXERCISE.description,
             categories = PUSH_UPS_EXERCISE.categories.toList(),
-            image = SAMPLE_IMAGE_BYTE_ARRAY,
+            images = listOf(SAMPLE_IMAGE_BYTE_ARRAY),
             beginnerRecommendation = BEGINNER_RECOMMENDATION,
             intermediateRecommendation = INTERMEDIATE_RECOMMENDATION,
             advancedRecommendation = ADVANCED_RECOMMENDATION,
@@ -224,7 +224,7 @@ object TestData {
             name = "Push-up",
             description = "Standard push-up focusing on chest and triceps, BODYWEIGHT",
             categories = listOf(CATEGORY_CHEST, CATEGORY_TRICEPS, CATEGORY_BICEPS),
-            image = null, // images not yet supported
+            images = emptyList(),
         )
 
     val PRESENTATION_PUSH_UPS_DETAILS =
@@ -271,14 +271,14 @@ object TestData {
         name: String = "Test Exercise",
         description: String = "Test Description",
         categories: List<ExerciseCategory> = listOf(CATEGORY_CHEST),
-        imageId: ImageId? = null,
+        imageIds: List<ImageId> = emptyList(),
     ): Exercise2 =
         Exercise2(
             id = id,
             name = name,
             description = description,
             categories = categories.toSet(),
-            imageId = imageId,
+            imageIds = imageIds,
         )
 
     fun createExerciseDetails(
@@ -313,7 +313,7 @@ object TestData {
         name: String = "Test Exercise Configuration",
         description: String = "Test Configuration Description",
         categories: List<ExerciseCategory> = listOf(CATEGORY_CHEST),
-        image: ImageByteArray? = null,
+        images: List<ImageByteArray> = emptyList(),
         beginnerRecommendation: ExerciseRecommendation = BEGINNER_RECOMMENDATION,
         intermediateRecommendation: ExerciseRecommendation = INTERMEDIATE_RECOMMENDATION,
         advancedRecommendation: ExerciseRecommendation = ADVANCED_RECOMMENDATION,
@@ -322,7 +322,7 @@ object TestData {
             name = name,
             description = description,
             categories = categories,
-            image = image,
+            images = images,
             beginnerRecommendation = beginnerRecommendation,
             intermediateRecommendation = intermediateRecommendation,
             advancedRecommendation = advancedRecommendation,

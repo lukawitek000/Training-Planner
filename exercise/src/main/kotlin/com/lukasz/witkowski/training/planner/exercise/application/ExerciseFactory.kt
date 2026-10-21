@@ -35,21 +35,4 @@ internal object ExerciseFactory {
         intermediateRecommendation = exerciseConfiguration.intermediateRecommendation,
         advancedRecommendation = exerciseConfiguration.advancedRecommendation
     )
-
-    fun create(
-        exerciseConfiguration: ExerciseConfiguration,
-        imageId: ImageId?,
-        exerciseId: ExerciseId = ExerciseId.create(),
-        metadata: ExerciseMetadata = ExerciseMetadata(
-            source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
-            sharing = ExerciseSharing.Private,
-            revision = 1L,
-            syncState = ExerciseSyncState.PENDING_UPLOAD
-        )
-    ): ExerciseDetails = create(
-        exerciseConfiguration = exerciseConfiguration,
-        imageIds = listOfNotNull(imageId),
-        exerciseId = exerciseId,
-        metadata = metadata
-    )
 }

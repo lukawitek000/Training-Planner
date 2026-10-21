@@ -61,7 +61,7 @@ class ExercisesListViewModel(
             .flatMapLatest { state ->
                 exerciseService.queryExercises(state.toExerciseQuery())
             }.map { pagingData ->
-                pagingData.map { exercise -> exercise.toPresentationExercise2(null) }
+                pagingData.map { exercise -> exercise.toPresentationExercise2() }
             }.cachedIn(viewModelScope)
 
     fun onSearchQueryChange(new: String) {
