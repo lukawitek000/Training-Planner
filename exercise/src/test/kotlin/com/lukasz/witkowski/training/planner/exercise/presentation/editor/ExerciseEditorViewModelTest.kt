@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation.editor
 
+import android.graphics.Bitmap
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
 import com.lukasz.witkowski.training.planner.exercise.TestData
@@ -10,6 +11,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoryController2
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
+import com.lukasz.witkowski.training.planner.image.ImageBitmap
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -417,6 +419,84 @@ class ExerciseEditorViewModelTest {
         coVerify(exactly = 1) { service.updateExercise(any(), exerciseId) }
     }
 
+    @Test
+    fun `when user adds image, the state reflects it and sets preview`() = runTest {
+        givenVm()
+        val bitmap1 = ImageBitmap(mockk(relaxed = true))
+        val bitmap2 = ImageBitmap(mockk(relaxed = true))
+        vm.uiState.test {
+            assertInitialCreateState()
+            vm.onEvent(ExerciseEditingEvent.ImageAdded(bitmap1))
+            assertEquals(
+                ExerciseEditingUiState.Editing(
+                    ExerciseEditingInput(images = listOf(bitmap1), previewImage = bitmap1)
+                ),
+                awaitItem()
+            )
+            vm.onEvent(ExerciseEditingEvent.ImageAdded(bitmap2))
+            assertEquals(
+                ExerciseEditingUiState.Editing(
+                    ExerciseEditingInput(images = listOf(bitmap1, bitmap2), previewImage = bitmap1)
+                ),
+                awaitItem()
+            )
+        }
+    }
+
+    @Test
+    fun `when user adds multiple images, the state reflects it`() = runTest {
+        givenVm()
+        val bitmap1 = ImageBitmap(mockk(relaxed = true))
+        val bitmap2 = ImageBitmap(mockk(relaxed = true))
+        vm.uiState.test {
+            assertInitialCreateState()
+            vm.onEvent(ExerciseEditingEvent.ImagesAdded(listOf(bitmap1, bitmap2)))
+            assertEquals(
+                ExerciseEditingUiState.Editing(
+                    ExerciseEditingInput(images = listOf(bitmap1, bitmap2), previewImage = bitmap1)
+                ),
+                awaitItem()
+            )
+        }
+    }
+
+    @Test
+    fun `when user changes preview image, the state reflects it`() = runTest {
+        givenVm()
+        val bitmap1 = ImageBitmap(mockk(relaxed = true))
+        val bitmap2 = ImageBitmap(mockk(relaxed = true))
+        vm.uiState.test {
+            assertInitialCreateState()
+            vm.onEvent(ExerciseEditingEvent.ImagesAdded(listOf(bitmap1, bitmap2)))
+            skipItems(1)
+            vm.onEvent(ExerciseEditingEvent.ImagePreviewChanged(bitmap2))
+            assertEquals(
+                ExerciseEditingUiState.Editing(
+                    ExerciseEditingInput(images = listOf(bitmap1, bitmap2), previewImage = bitmap2)
+                ),
+                awaitItem()
+            )
+        }
+    }
+
+    @Test
+    fun `when user removes preview image, preview falls back to remaining image`() = runTest {
+        givenVm()
+        val bitmap1 = ImageBitmap(mockk(relaxed = true))
+        val bitmap2 = ImageBitmap(mockk(relaxed = true))
+        vm.uiState.test {
+            assertInitialCreateState()
+            vm.onEvent(ExerciseEditingEvent.ImagesAdded(listOf(bitmap1, bitmap2)))
+            skipItems(1)
+            vm.onEvent(ExerciseEditingEvent.ImageRemoved(bitmap1))
+            assertEquals(
+                ExerciseEditingUiState.Editing(
+                    ExerciseEditingInput(images = listOf(bitmap2), previewImage = bitmap2)
+                ),
+                awaitItem()
+            )
+        }
+    }
     private suspend fun ReceiveTurbine<ExerciseEditingUiState>.assertInitialCreateState() {
         assertEquals(ExerciseEditingUiState.Editing(ExerciseEditingInput()), awaitItem())
     }

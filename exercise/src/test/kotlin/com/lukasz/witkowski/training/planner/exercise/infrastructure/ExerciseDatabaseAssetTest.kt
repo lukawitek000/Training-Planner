@@ -42,14 +42,14 @@ class ExerciseDatabaseAssetTest {
     }
 
     @Test
-    fun verifyBundledDatabaseLoadsSuccessfullyWithExpectedExercises() = runTest {
+    fun verifyBundledDatabaseLoadsSuccessfullyWithExpectedExercisesAndImages() = runTest {
         val exerciseDao = db.exerciseDao()
         val allExercises = exerciseDao.getAll().first()
 
         assertEquals("Should contain 71 bundled exercises", 71, allExercises.size)
 
         allExercises.forEach { exercise ->
-            assertNull("Bundled exercise imageId should be null", exercise.imageId)
+            assertNotNull("Bundled exercise imageId should not be null: ${exercise.name}", exercise.imageId)
             assertEquals(
                 "Bundled exercise sourceType should be BUNDLED",
                 DbExercise.SOURCE_TYPE_BUNDLED,
@@ -78,6 +78,10 @@ class ExerciseDatabaseAssetTest {
                 "Bundled exercise should have recommendations: ${exercise.name}",
                 details.recommendations.isNotEmpty()
             )
+            assertTrue(
+                "Bundled exercise should have images: ${exercise.name}",
+                details.images.isNotEmpty()
+            )
         }
     }
 
@@ -86,6 +90,19 @@ class ExerciseDatabaseAssetTest {
         val categoryDao = db.categoryDao()
         val categories = categoryDao.getAll().first()
         assertEquals("Should contain 9 categories", 9, categories.size)
+    }
+
+    @Test
+    fun verifySampleExercisesHaveImages() = runTest {
+        val exerciseDao = db.exerciseDao()
+        val allExercises = exerciseDao.getAll().first()
+
+        val pushUp = allExercises.firstOrNull { it.name == "Push-Up" }
+        assertNotNull("Push-Up should be present", pushUp)
+
+        val pushUpDetails = exerciseDao.getExerciseDetailsById(pushUp!!.exerciseId).first()
+        assertNotNull("Push-Up details should be present", pushUpDetails)
+        assertEquals("Push-Up should have 2 images", 2, pushUpDetails!!.images.size)
     }
 
     @Test

@@ -188,7 +188,7 @@ internal class DefaultExerciseRepository(
             preservedImageId != null
         ) {
             serverExerciseDetails.copy(
-                exercise = serverExerciseDetails.exercise.copy(imageId = preservedImageId)
+                exercise = serverExerciseDetails.exercise.copy(imageIds = listOf(preservedImageId))
             )
         } else {
             serverExerciseDetails

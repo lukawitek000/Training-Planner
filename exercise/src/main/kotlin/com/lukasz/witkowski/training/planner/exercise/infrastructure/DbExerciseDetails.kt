@@ -17,5 +17,10 @@ data class DbExerciseDetails(
         parentColumns = ["exerciseId"],
         entityColumns = ["exerciseId"]
     )
-    val recommendations: List<DbExerciseRecommendation>
+    val recommendations: List<DbExerciseRecommendation>,
+    @Relation(
+        parentColumns = ["exerciseId"],
+        entityColumns = ["exerciseId"]
+    )
+    val images: List<DbExerciseImage> = emptyList()
 )

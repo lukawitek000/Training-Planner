@@ -13,7 +13,7 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 internal object ExerciseFactory {
     fun create(
         exerciseConfiguration: ExerciseConfiguration,
-        imageId: ImageId?,
+        imageIds: List<ImageId> = emptyList(),
         exerciseId: ExerciseId = ExerciseId.create(),
         metadata: ExerciseMetadata = ExerciseMetadata(
             source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
@@ -28,11 +28,28 @@ internal object ExerciseFactory {
             name = exerciseConfiguration.name,
             description = exerciseConfiguration.description,
             categories = exerciseConfiguration.categories.toSet(),
-            imageId = imageId,
+            imageIds = imageIds,
             metadata = metadata
         ),
         beginnerRecommendation = exerciseConfiguration.beginnerRecommendation,
         intermediateRecommendation = exerciseConfiguration.intermediateRecommendation,
         advancedRecommendation = exerciseConfiguration.advancedRecommendation
+    )
+
+    fun create(
+        exerciseConfiguration: ExerciseConfiguration,
+        imageId: ImageId?,
+        exerciseId: ExerciseId = ExerciseId.create(),
+        metadata: ExerciseMetadata = ExerciseMetadata(
+            source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
+            sharing = ExerciseSharing.Private,
+            revision = 1L,
+            syncState = ExerciseSyncState.PENDING_UPLOAD
+        )
+    ): ExerciseDetails = create(
+        exerciseConfiguration = exerciseConfiguration,
+        imageIds = listOfNotNull(imageId),
+        exerciseId = exerciseId,
+        metadata = metadata
     )
 }

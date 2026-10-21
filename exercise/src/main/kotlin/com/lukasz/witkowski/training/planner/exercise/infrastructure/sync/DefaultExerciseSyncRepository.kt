@@ -138,7 +138,7 @@ internal class DefaultExerciseSyncRepository(
             it.isNotBlank()
         }?.let { ImageId(it) }
         val detailsToSave = if (existingImageId != null && serverDetails.exercise.imageId == null) {
-            serverDetails.copy(exercise = serverDetails.exercise.copy(imageId = existingImageId))
+            serverDetails.copy(exercise = serverDetails.exercise.copy(imageIds = listOf(existingImageId)))
         } else {
             serverDetails
         }

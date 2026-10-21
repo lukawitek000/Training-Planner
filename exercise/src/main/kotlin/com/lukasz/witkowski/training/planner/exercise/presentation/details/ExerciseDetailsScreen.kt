@@ -45,7 +45,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
-import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ImagesPreview
+import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.PREVIEW_RECOMMENDED_PARAMETERS
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.RecommendedParametersOverview
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
@@ -159,11 +159,12 @@ private fun ExerciseDetailsBody(
                 .testTag("ExerciseDetails"),
             verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
         ) {
-            ImagesPreview(
-                images = emptyList(),
-                previewImage = null,
-                modifier = Modifier.padding(bottom = Dimens2.spaceSm)
-            )
+            if (exercise.images.isNotEmpty()) {
+                ImageGallery(
+                    images = exercise.images,
+                    modifier = Modifier.padding(bottom = Dimens2.spaceSm)
+                )
+            }
 
             Text(
                 text = exercise.name,

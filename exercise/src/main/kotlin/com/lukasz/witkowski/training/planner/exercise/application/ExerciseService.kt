@@ -25,9 +25,13 @@ class ExerciseService(
 ) {
     suspend fun saveExercise(exerciseConfiguration: ExerciseConfiguration): ExerciseId {
         val exerciseId = ExerciseId.create()
-        val imageReference = exerciseConfiguration.image?.let { saveImage(it, exerciseId) }
+        val imageReferences = if (exerciseConfiguration.images.isNotEmpty()) {
+            saveImages(exerciseConfiguration.images, exerciseId)
+        } else {
+            emptyList()
+        }
         val exerciseDetails =
-            ExerciseFactory.create(exerciseConfiguration, imageReference?.imageId, exerciseId)
+            ExerciseFactory.create(exerciseConfiguration, imageReferences.map { it.imageId }, exerciseId)
         exerciseRepository.insert(exerciseDetails)
         return exerciseId
     }
@@ -40,14 +44,10 @@ class ExerciseService(
         if (existing?.exercise?.metadata?.source is ExerciseSource.Bundled) {
             throw IllegalStateException("Bundled exercises cannot be modified")
         }
-        val imageId = if (exerciseConfiguration.image != null) {
-            updateImage(
-                exerciseConfiguration.image,
-                existing?.exercise?.imageId,
-                exerciseId
-            )?.imageId
+        val imageIds = if (exerciseConfiguration.images.isNotEmpty()) {
+            saveImages(exerciseConfiguration.images, exerciseId).map { it.imageId }
         } else {
-            existing?.exercise?.imageId
+            existing?.exercise?.imageIds ?: emptyList()
         }
         val metadata = existing?.exercise?.metadata?.copy(
             syncState = ExerciseSyncState.PENDING_UPLOAD
@@ -57,12 +57,20 @@ class ExerciseService(
         )
         val exerciseDetails = ExerciseFactory.create(
             exerciseConfiguration = exerciseConfiguration,
-            imageId = imageId,
+            imageIds = imageIds,
             exerciseId = exerciseId,
             metadata = metadata
         )
         exerciseRepository.updateExercise(exerciseDetails)
         return exerciseId
+    }
+
+    private suspend fun saveImages(
+        images: List<ImageByteArray>,
+        exerciseId: ExerciseId
+    ): List<ImageReference> {
+        val imageConfigurations = images.map { it.toImageConfiguration(exerciseId.value) }
+        return imageStorage.saveImages(imageConfigurations)
     }
 
     private suspend fun saveImage(
@@ -113,4 +121,15 @@ class ExerciseService(
 
     suspend fun readImageReference(imageId: ImageId): ImageReference? =
         imageStorage.readImageReference(imageId)
+
+    suspend fun readImageReferences(exerciseId: ExerciseId): List<ImageReference> {
+        val fromStorage = imageStorage.readImageReferences(exerciseId.value)
+        if (fromStorage.isNotEmpty()) {
+            return fromStorage
+        }
+        val details = exerciseRepository.getExerciseDetailsById(exerciseId).firstOrNull()
+        return details?.exercise?.imageIds?.mapNotNull { imageId ->
+            imageStorage.readImageReference(imageId)
+        } ?: emptyList()
+    }
 }

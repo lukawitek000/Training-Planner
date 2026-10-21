@@ -97,6 +97,24 @@ class ExerciseDetailsViewModelTest {
     }
 
     @Test
+    fun `when exercise has images they are loaded into presentation model`() = runTest {
+        val imageReferences = listOf(
+            TestData.SAMPLE_IMAGE_REFERENCE,
+            TestData.SAMPLE_IMAGE_REFERENCE.copy(imageId = TestData.IMAGE_ID_2, path = "path/to/image2.jpg")
+        )
+        coEvery { service.getExerciseDetailsById(id) } returns flowOf(TestData.PUSH_UPS_DETAILS)
+        coEvery { service.readImageReferences(id) } returns imageReferences
+
+        givenVm()
+
+        vm.state.test {
+            assertEquals(ExerciseDetailsState.Loading, awaitItem())
+            val success = awaitItem() as ExerciseDetailsState.Success
+            assertEquals(imageReferences, success.details.exercise.images)
+        }
+    }
+
+    @Test
     fun `when resolveConflictKeepLocal is called, syncRepository and syncScheduler are invoked`() =
         runTest {
             coEvery { service.getExerciseDetailsById(any()) } returns

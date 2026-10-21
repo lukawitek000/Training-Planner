@@ -10,6 +10,9 @@
     <string name="edit_exercise">Edit exercise</string>
     <string name="search_exercise">Search Exercise</string>
     <string name="add_exercise_image">Add exercise image</string>
+    <string name="add_exercise_images">Add exercise images</string>
+    <string name="add_photos_cue">Add up to 5 photos or demonstration cues</string>
+    <string name="delete_current_image">Delete current image</string>
     <string name="can_add_multiple_img">You can add multiple images</string>
     <string name="exercise_name_label">Exercise name *</string>
     <string name="enter_exercise_name">Enter exercise name</string>

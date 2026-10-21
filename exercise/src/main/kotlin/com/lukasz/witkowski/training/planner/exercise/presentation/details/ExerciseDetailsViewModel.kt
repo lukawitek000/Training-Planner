@@ -7,6 +7,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExerciseDetails
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
@@ -40,7 +41,17 @@ open class ExerciseDetailsViewModel(
                 if (domainDetails.exercise.metadata.syncState == ExerciseSyncState.CONFLICT) {
                     loadConflictServerDetails()
                 }
-                ExerciseDetailsState.Success(domainDetails.toPresentationExerciseDetails())
+                val imageReferences = if (domainDetails.exercise.imageIds.isNotEmpty()) {
+                    runCatching { service.readImageReferences(exerciseId) }.getOrDefault(emptyList())
+                } else {
+                    emptyList()
+                }
+                val presentationExercise = domainDetails.exercise.toPresentationExercise2(imageReferences)
+                val presentationDetails = ExerciseDetails(
+                    exercise = presentationExercise,
+                    recommendations = domainDetails.toPresentationExerciseDetails().recommendations
+                )
+                ExerciseDetailsState.Success(presentationDetails)
             }
         }
         .catch {

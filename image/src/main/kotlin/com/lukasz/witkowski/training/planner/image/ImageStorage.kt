@@ -5,6 +5,10 @@ import java.util.UUID
 interface ImageStorage {
     suspend fun saveImage(imageConfiguration: ImageConfiguration): ImageReference
 
+    suspend fun saveImages(imageConfigurations: List<ImageConfiguration>): List<ImageReference> {
+        return imageConfigurations.map { saveImage(it) }
+    }
+
     /**
      * Read the image based on the [imageId].
      * @throws [ImageNotFoundException] if the image was not found.
@@ -15,6 +19,11 @@ interface ImageStorage {
      * @return [ImageReference] for the [imageId] or _null_ if it does not exist.
      */
     suspend fun readImageReference(imageId: ImageId): ImageReference?
+
+    /**
+     * @return List of [ImageReference] for the given [ownerId].
+     */
+    suspend fun readImageReferences(ownerId: UUID): List<ImageReference>
 
     /**
      * The update will be done for the owner specified in [newImageConfiguration].

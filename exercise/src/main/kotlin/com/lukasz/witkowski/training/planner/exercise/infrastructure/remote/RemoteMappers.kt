@@ -15,6 +15,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRecommendat
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSharing
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
+import com.lukasz.witkowski.training.planner.image.ImageId
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -22,10 +23,10 @@ internal fun CategoryDto.toExerciseCategory(): ExerciseCategory = ExerciseCatego
 
 internal fun ExerciseDto.toExerciseDetails(
     currentUserId: String? = null,
-    existingImageId: com.lukasz.witkowski.training.planner.image.ImageId? = null
+    existingImageId: ImageId? = null
 ): ExerciseDetails {
     val domainExercise = toExercise2(currentUserId).let {
-        if (existingImageId != null) it.copy(imageId = existingImageId) else it
+        if (existingImageId != null && it.imageIds.isEmpty()) it.copy(imageIds = listOf(existingImageId)) else it
     }
     val recMap = recommendations?.associateBy { it.level.uppercase() } ?: emptyMap()
 
@@ -95,7 +96,7 @@ internal fun ExerciseDto.toExercise2(currentUserId: String? = null): Exercise2 {
         } else {
             categoriesSet
         },
-        imageId = null,
+        imageIds = images.map { ImageId(it) },
         metadata = metadataObj
     )
 }
@@ -110,7 +111,8 @@ internal fun Exercise2.toCreateExerciseRequestDto(): CreateExerciseRequestDto =
             is ExerciseSharing.Friends -> "FRIENDS"
             else -> "PRIVATE"
         },
-        recommendations = null
+        recommendations = null,
+        images = imageIds.map { it.value.toString() }
     )
 
 internal fun Exercise2.toUpdateExerciseRequestDto(
@@ -127,7 +129,8 @@ internal fun Exercise2.toUpdateExerciseRequestDto(
     },
     expectedVersion = expectedVersion ?: metadata.revision,
     idempotencyKey = idempotencyKey,
-    recommendations = null
+    recommendations = null,
+    images = imageIds.map { it.value.toString() }
 )
 
 internal fun ExerciseDetails.toCreateExerciseRequestDto(
@@ -170,7 +173,8 @@ internal fun ExerciseDetails.toCreateExerciseRequestDto(
         },
         recommendations = recList,
         id = exercise.id.toString(),
-        idempotencyKey = idempotencyKey
+        idempotencyKey = idempotencyKey,
+        images = exercise.imageIds.map { it.value.toString() }
     )
 }
 
@@ -215,6 +219,7 @@ internal fun ExerciseDetails.toUpdateExerciseRequestDto(
         },
         expectedVersion = expectedVersion ?: exercise.metadata.revision,
         idempotencyKey = idempotencyKey,
-        recommendations = recList
+        recommendations = recList,
+        images = exercise.imageIds.map { it.value.toString() }
     )
 }

@@ -45,7 +45,10 @@ internal fun Exercise2.toDbExercise(): DbExercise {
     )
 }
 
-internal fun DbExercise.toExercise(categories: List<ExerciseCategory>): Exercise2 {
+internal fun DbExercise.toExercise(
+    categories: List<ExerciseCategory>,
+    images: List<DbExerciseImage> = emptyList()
+): Exercise2 {
     val sourceObj = toExerciseSource()
     val sharingObj = toExerciseSharing()
     val syncStateObj = toExerciseSyncState()
@@ -56,18 +59,23 @@ internal fun DbExercise.toExercise(categories: List<ExerciseCategory>): Exercise
         syncState = syncStateObj
     )
     val categoriesSet = categories.toSet().ifEmpty { setOf(ExerciseCategory("Other")) }
+    val imageIds = if (images.isNotEmpty()) {
+        images.sortedBy { it.orderIndex }.map { ImageId(it.imageId) }
+    } else {
+        listOfNotNull(imageId?.let { ImageId(it) })
+    }
     return Exercise2(
         id = ExerciseId(exerciseId),
         name = name,
         description = description,
         categories = categoriesSet,
-        imageId = imageId?.let { ImageId(it) },
+        imageIds = imageIds,
         metadata = metadataObj
     )
 }
 
 internal fun DbExerciseWithCategories.toExercise(): Exercise2 =
-    exercise.toExercise(categories.map { it.toExerciseCategory() })
+    exercise.toExercise(categories.map { it.toExerciseCategory() }, images)
 
 private fun DbExercise.toExerciseSource(): ExerciseSource = when (sourceType) {
     DbExercise.SOURCE_TYPE_USER_CREATED -> {
@@ -114,7 +122,14 @@ internal fun ExerciseDetails.toDbExerciseDetails(): DbExerciseDetails = DbExerci
             exerciseId = exercise.id,
             level = RecommendationLevel.ADVANCED
         )
-    )
+    ),
+    images = exercise.imageIds.mapIndexed { index, imageId ->
+        DbExerciseImage(
+            exerciseId = exercise.id.toString(),
+            imageId = imageId.toString(),
+            orderIndex = index
+        )
+    }
 )
 
 internal fun ExerciseRecommendation.toDbExerciseRecommendation(
@@ -133,7 +148,7 @@ internal fun ExerciseRecommendation.toDbExerciseRecommendation(
 internal fun DbExerciseDetails.toExerciseDetails(): ExerciseDetails {
     val categories = categories.map { it.toExerciseCategory() }
     return ExerciseDetails(
-        exercise = exercise.toExercise(categories),
+        exercise = exercise.toExercise(categories, images),
         beginnerRecommendation = recommendations.toExerciseRecommendation(
             RecommendationLevel.BEGINNER
         ),

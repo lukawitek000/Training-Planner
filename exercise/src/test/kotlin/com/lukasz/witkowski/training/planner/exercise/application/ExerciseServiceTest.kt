@@ -32,7 +32,7 @@ class ExerciseServiceTest {
 
     @Test
     fun `save exercise calls exercise repository and image storage`() = runTest {
-        coEvery { imageStorage.saveImage(any()) } returns TestData.SAMPLE_IMAGE_REFERENCE
+        coEvery { imageStorage.saveImages(any()) } returns listOf(TestData.SAMPLE_IMAGE_REFERENCE)
         val exerciseId =
             service.saveExercise(
                 exerciseConfiguration = TestData.PUSH_UPS_CONFIGURATION
@@ -50,7 +50,7 @@ class ExerciseServiceTest {
             TestData.SAMPLE_IMAGE_BYTE_ARRAY.toImageConfiguration(
                 ownerId = exerciseId.value
             )
-        coVerify(exactly = 1) { imageStorage.saveImage(imageConfig) }
+        coVerify(exactly = 1) { imageStorage.saveImages(listOf(imageConfig)) }
     }
 
     @Test
@@ -68,12 +68,12 @@ class ExerciseServiceTest {
             ),
             exerciseRepository.exercises.first()
         )
-        coVerify(exactly = 0) { imageStorage.saveImage(any()) }
+        coVerify(exactly = 0) { imageStorage.saveImages(any()) }
     }
 
     @Test
     fun `update exercise calls exercise repository and image storage`() = runTest {
-        coEvery { imageStorage.updateImage(any(), any()) } returns TestData.SAMPLE_IMAGE_REFERENCE
+        coEvery { imageStorage.saveImages(any()) } returns listOf(TestData.SAMPLE_IMAGE_REFERENCE)
         val exerciseId = TestData.EXERCISE_ID_1
         val updatedId =
             service.updateExercise(
@@ -94,7 +94,7 @@ class ExerciseServiceTest {
             TestData.SAMPLE_IMAGE_BYTE_ARRAY.toImageConfiguration(
                 ownerId = exerciseId.value
             )
-        coVerify(exactly = 1) { imageStorage.updateImage(TestData.IMAGE_ID_1, imageConfig) }
+        coVerify(exactly = 1) { imageStorage.saveImages(listOf(imageConfig)) }
     }
 
     @Test
@@ -115,7 +115,7 @@ class ExerciseServiceTest {
             ),
             exerciseRepository.exercises.first()
         )
-        coVerify(exactly = 0) { imageStorage.saveImage(any()) }
+        coVerify(exactly = 0) { imageStorage.saveImages(any()) }
     }
 
     @Test

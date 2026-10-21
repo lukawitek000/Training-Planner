@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.image.infrastructure
 
+import android.content.Context
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.domain.ImageReference
 import com.lukasz.witkowski.training.planner.image.domain.ImageReferenceRepository
@@ -13,8 +14,14 @@ import kotlinx.coroutines.withContext
 
 internal class DbImageReferenceRepository(
     private val imageReferenceDao: ImageReferenceDao,
-    private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
+    private val context: Context? = null
 ) : ImageReferenceRepository {
+    private val bundledAssets: Set<String> by lazy {
+        runCatching {
+            context?.assets?.list("exercise_images")?.toSet()
+        }.getOrNull() ?: emptySet()
+    }
     override suspend fun save(imageReference: ImageReference): ImageId = withContext(ioDispatcher) {
         imageReferenceDao.insert(imageReference.toDbImageReferenceWithOwners())
         imageReference.imageId
@@ -30,7 +37,7 @@ internal class DbImageReferenceRepository(
                 isImageReferenceDeletedSuccessfully = (deletedRows == ONE_ROW)
             }
             val ownersIdsString = ownersIds.map { it.toString() }
-            val deletedRows = imageReferenceDao.deleteImageOwners(ownersIdsString)
+            val deletedRows = imageReferenceDao.deleteImageOwners(imageId.toString(), ownersIdsString)
             (deletedRows == ownersIds.size) && isImageReferenceDeletedSuccessfully
         }
 
@@ -38,8 +45,7 @@ internal class DbImageReferenceRepository(
         withContext(ioDispatcher) {
             val ownersIdsString = ownersIds.map { it.toString() }
             val allImageOwners =
-                imageReferenceDao.getOwnersOfImage(imageId.toString())?.map { it.ownerId }
-                    ?: emptyList()
+                imageReferenceDao.getOwnersOfImage(imageId.toString()).map { it.ownerId }
             allImageOwners.containsAll(ownersIdsString) &&
                 ownersIdsString.containsAll(allImageOwners)
         }
@@ -56,7 +62,7 @@ internal class DbImageReferenceRepository(
             val owners = imageReferenceDao.getOwnersOfImage(sameImage.id)
             ImageReference(
                 ImageId(sameImage.id),
-                owners!!.map { UUID.fromString(it.ownerId) },
+                owners.map { UUID.fromString(it.ownerId) },
                 sameImage.path,
                 checksum
             )
@@ -81,9 +87,27 @@ internal class DbImageReferenceRepository(
         dbImageReference?.toImageReference(ownerId.toString())
     }
 
+    override suspend fun readAllByOwnerId(ownerId: UUID): List<ImageReference> = withContext(ioDispatcher) {
+        val dbImageReferences = imageReferenceDao.getImageReferencesByOwnerId(ownerId.toString())
+        dbImageReferences.map { it.toImageReference(ownerId.toString()) }
+    }
+
     override suspend fun read(imageId: ImageId): ImageReference? = withContext(ioDispatcher) {
         val dbImageReference = imageReferenceDao.getImageReferenceWithOwners(imageId.toString())
-        dbImageReference?.toImageReference()
+        if (dbImageReference != null) {
+            return@withContext dbImageReference.toImageReference()
+        }
+        val fileName = "${imageId}.webp"
+        if (bundledAssets.contains(fileName)) {
+            ImageReference(
+                imageId = imageId,
+                ownersIds = emptyList(),
+                path = "file:///android_asset/exercise_images/$fileName",
+                checksum = 0L
+            )
+        } else {
+            null
+        }
     }
 
     private companion object {

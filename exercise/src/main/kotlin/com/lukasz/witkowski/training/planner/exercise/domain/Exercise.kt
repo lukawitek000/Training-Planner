@@ -28,9 +28,28 @@ data class Exercise2(
     val name: String,
     val description: String,
     val categories: Set<ExerciseCategory>,
-    val imageId: ImageId? = null,
+    val imageIds: List<ImageId> = emptyList(),
     val metadata: ExerciseMetadata = ExerciseMetadata()
 ) {
+    val imageId: ImageId?
+        get() = imageIds.firstOrNull()
+
+    constructor(
+        id: ExerciseId,
+        name: String,
+        description: String,
+        categories: Set<ExerciseCategory>,
+        imageId: ImageId?,
+        metadata: ExerciseMetadata = ExerciseMetadata()
+    ) : this(
+        id = id,
+        name = name,
+        description = description,
+        categories = categories,
+        imageIds = listOfNotNull(imageId),
+        metadata = metadata
+    )
+
     init {
         require(categories.isNotEmpty()) {
             "Exercise should have at least one category"

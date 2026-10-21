@@ -1,6 +1,11 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation.editor
 
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +37,8 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_CATEGORIES
+import com.lukasz.witkowski.training.planner.image.ImageBitmap
+import com.lukasz.witkowski.training.planner.image.presentation.ImageInputForm
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
@@ -149,6 +156,25 @@ private fun ExerciseForm(
     isEditMode: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 5),
+        onResult = { uris: List<Uri> ->
+            if (uris.isNotEmpty()) {
+                val bitmaps = uris.mapNotNull { uri ->
+                    runCatching {
+                        context.contentResolver.openInputStream(uri)?.use { stream ->
+                            BitmapFactory.decodeStream(stream)
+                        }?.let { ImageBitmap(it) }
+                    }.getOrNull()
+                }
+                if (bitmaps.isNotEmpty()) {
+                    onUserInputChange(ExerciseEditingEvent.ImagesAdded(bitmaps))
+                }
+            }
+        }
+    )
+
     Column(
         modifier = modifier
             .padding(Dimens2.spaceMd)
@@ -158,7 +184,18 @@ private fun ExerciseForm(
     ) {
         ImageInputForm(
             images = state.images,
-            previewImage = state.previewImage
+            previewImage = state.previewImage,
+            onAddImagesClicked = {
+                photoPickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            },
+            onRemoveImageClicked = {
+                onUserInputChange(ExerciseEditingEvent.ImageRemoved(it))
+            },
+            onSelectPreview = {
+                onUserInputChange(ExerciseEditingEvent.ImagePreviewChanged(it))
+            }
         )
         TextInputForm(
             name = state.name,
@@ -262,6 +299,11 @@ private fun CategorySelectionPanel(
             }
         }
     }
+}
+
+private fun createPreviewBitmaps(): List<ImageBitmap> {
+    val bitmap = android.graphics.Bitmap.createBitmap(100, 100, android.graphics.Bitmap.Config.ARGB_8888)
+    return listOf(ImageBitmap(bitmap), ImageBitmap(bitmap))
 }
 
 @Preview
