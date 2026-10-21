@@ -1,8 +1,5 @@
 package com.lukasz.witkowski.training.planner.exercise.e2e
 
-import androidx.compose.ui.semantics.SemanticsProperties
-import androidx.compose.ui.semantics.getOrNull
-import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
@@ -12,24 +9,34 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.printToLog
+import androidx.test.platform.app.InstrumentationRegistry
 import com.lukasz.witkowski.training.planner.MainActivity
 import com.lukasz.witkowski.training.planner.exercise.exerciseItemMatcher
 import com.lukasz.witkowski.training.planner.exercise.givenExerciseItemTag
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.Test
 
 class ExerciseE2ETest {
+    companion object {
+        @JvmStatic
+        @BeforeClass
+        fun clearDatabase() {
+            val context = InstrumentationRegistry.getInstrumentation().targetContext
+            context.deleteDatabase("ExerciseDb")
+        }
+    }
+
     @get:Rule
     val composeTestRule = createAndroidComposeRule<MainActivity>()
 
-    private val firstExerciseName = "90° Hold"
-    private val secondExerciseName = "90° Push-Up"
     private val legExerciseName = "Bodyweight Squat"
     private val plankExerciseName = "Plank"
     private val createExerciseMatcher = hasContentDescription("Create exercise")
@@ -38,8 +45,19 @@ class ExerciseE2ETest {
 
     @Before
     fun setUp() {
-        composeTestRule.onNodeWithTag("BottomNavItem_1").performClick()
+        navigateToExercisesTab()
         waitForExercisesLoaded()
+    }
+
+    private fun navigateToExercisesTab() {
+        composeTestRule.waitForIdle()
+        while (composeTestRule.onAllNodesWithTag("BottomNavItem_1").fetchSemanticsNodes().isEmpty()) {
+            composeTestRule.activityRule.scenario.onActivity { activity ->
+                activity.onBackPressedDispatcher.onBackPressed()
+            }
+            composeTestRule.waitForIdle()
+        }
+        composeTestRule.onNodeWithTag("BottomNavItem_1").performClick()
     }
 
     private fun waitForExercisesLoaded() {
@@ -52,6 +70,48 @@ class ExerciseE2ETest {
                 .fetchSemanticsNodes()
                 .isNotEmpty()
         }
+    }
+
+    private fun createCustomExercise(name: String, description: String = "Test Description") {
+        composeTestRule.waitUntil(timeoutMillis = 5000) {
+            composeTestRule
+                .onAllNodes(createExerciseMatcher)
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
+        composeTestRule
+            .onNode(createExerciseMatcher)
+            .performClick()
+
+        composeTestRule.waitForIdle()
+
+        composeTestRule.waitUntil(timeoutMillis = 10000) {
+            composeTestRule
+                .onAllNodesWithTag(chipLegsTag)
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
+
+        composeTestRule.onNodeWithTag("NameField").performTextInput(name)
+        composeTestRule.onNodeWithTag("DescriptionField").performTextInput(description)
+
+        composeTestRule.onNodeWithTag(chipLegsTag).performClick()
+
+        RecommendationLevel.entries.forEach {
+            enterRecommendations(it)
+        }
+        performClickOnSaveButton()
+
+        composeTestRule.waitUntil(timeoutMillis = 10000) {
+            composeTestRule
+                .onAllNodesWithTag("ExerciseDetails")
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
+        composeTestRule.activityRule.scenario.onActivity { activity ->
+            activity.onBackPressedDispatcher.onBackPressed()
+        }
+        composeTestRule.waitForIdle()
     }
 
     @Test
@@ -101,8 +161,10 @@ class ExerciseE2ETest {
 
     @Test
     fun testExerciseEditRealE2E() {
-        val originalName = firstExerciseName
-        val updatedName = "$firstExerciseName Updated"
+        val originalName = "Editable Custom Exercise"
+        val updatedName = "$originalName Updated"
+
+        createCustomExercise(originalName)
 
         whenGoToExerciseDetails(originalName)
 
@@ -125,11 +187,13 @@ class ExerciseE2ETest {
     fun testExerciseFilteringRealE2E() {
         // Filter by query
         composeTestRule.onNodeWithTag("SearchField").performTextInput(plankExerciseName)
+        composeTestRule.onNodeWithTag("SearchField").performImeAction()
         composeTestRule.waitForIdle()
         assertExerciseDisplayedInList(plankExerciseName)
 
         // Clear query
         composeTestRule.onNodeWithTag("SearchField").performTextReplacement("")
+        composeTestRule.onNodeWithTag("SearchField").performImeAction()
         composeTestRule.waitForIdle()
 
         composeTestRule.onNodeWithTag(chipLegsTag).performClick()
@@ -140,7 +204,11 @@ class ExerciseE2ETest {
 
     @Test
     fun testExerciseDeleteRealE2E() {
-        whenGoToExerciseDetails(secondExerciseName)
+        val exerciseToDelete = "Deletable Custom Exercise"
+
+        createCustomExercise(exerciseToDelete)
+
+        whenGoToExerciseDetails(exerciseToDelete)
 
         // Open overflow menu and click Delete
         composeTestRule.onNodeWithTag("OverflowMenuButton").performClick()
@@ -151,17 +219,23 @@ class ExerciseE2ETest {
         composeTestRule.onNodeWithTag("confirmButton").performClick()
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithTag("ExercisesList").assertIsDisplayed()
         composeTestRule.waitUntil(timeoutMillis = 10000) {
             composeTestRule
-                .onAllNodesWithTag(givenExerciseItemTag(secondExerciseName))
+                .onAllNodesWithTag("ExercisesList")
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
+        composeTestRule.onNodeWithTag("ExercisesList").assertIsDisplayed()
+
+        composeTestRule.waitUntil(timeoutMillis = 10000) {
+            composeTestRule
+                .onAllNodesWithTag(givenExerciseItemTag(exerciseToDelete))
                 .fetchSemanticsNodes()
                 .isEmpty()
         }
-        composeTestRule.onNodeWithTag(givenExerciseItemNameTag(secondExerciseName))
+        composeTestRule.onNodeWithTag(givenExerciseItemNameTag(exerciseToDelete))
             .assertDoesNotExist()
     }
-
 
     private fun assertExerciseDisplayedInList(exerciseName: String) {
         composeTestRule.waitUntil(timeoutMillis = 10000) {
@@ -170,7 +244,13 @@ class ExerciseE2ETest {
                 .fetchSemanticsNodes()
                 .isNotEmpty()
         }
-        composeTestRule.onNodeWithTag(givenExerciseItemNameTag(exerciseName)).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("ExercisesList")
+            .performScrollToNode(hasTestTag(givenExerciseItemTag(exerciseName)))
+        composeTestRule.onNodeWithTag(givenExerciseItemTag(exerciseName)).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag(givenExerciseItemNameTag(exerciseName), useUnmergedTree = true)
+            .assertExists()
     }
 
     private fun enterRecommendations(
@@ -220,6 +300,9 @@ class ExerciseE2ETest {
     }
 
     private fun whenGoToExerciseDetails(exerciseName: String) {
+        composeTestRule
+            .onNodeWithTag("ExercisesList")
+            .performScrollToNode(hasTestTag(givenExerciseItemTag(exerciseName)))
         composeTestRule
             .onNodeWithTag(givenExerciseItemTag(exerciseName))
             .performClick()
