@@ -36,11 +36,14 @@ fun DomainExercise2.toPresentationExercise2(imageReference: ImageReference?): Ex
     name = name,
     description = description,
     categories = categories.toList(),
-    image = imageReference
+    image = imageReference,
+    metadata = metadata
 )
 
-fun DomainExerciseDetails.toPresentationExerciseDetails(): ExerciseDetails = ExerciseDetails(
-    exercise = this.exercise.toPresentationExercise2(null),
+fun DomainExerciseDetails.toPresentationExerciseDetails(
+    imageReference: ImageReference? = null
+): ExerciseDetails = ExerciseDetails(
+    exercise = this.exercise.toPresentationExercise2(imageReference),
     recommendations =
     listOf(
         beginnerRecommendation.toRecommendation(RecommendationLevel.BEGINNER),
@@ -57,7 +60,8 @@ fun ExerciseRecommendation.toRecommendation(level: RecommendationLevel): Recomme
             sets = sets,
             reps = reps,
             restTime = restTime,
-            weightInKg = weightInKg
+            weightInKg = weightInKg,
+            time = time
         )
     )
 
@@ -70,5 +74,6 @@ private fun Recommendation.toDomainExerciseRecommendation(): ExerciseRecommendat
         sets = checkNotNull(parameters.sets) { "Sets cannot be empty" },
         reps = checkNotNull(parameters.reps) { "Reps cannot be empty" },
         restTime = checkNotNull(parameters.restTime) { "Rest time cannot be empty" },
-        weightInKg = parameters.weightInKg
+        weightInKg = parameters.weightInKg,
+        time = parameters.time
     )

@@ -19,10 +19,10 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreenContent
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.PREVIEW_EXERCISES
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.asPreviewPagerFlow
+import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesListViewModel
+import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesScreenContent
+import com.lukasz.witkowski.training.planner.exercise.presentation.list.PREVIEW_EXERCISES
+import com.lukasz.witkowski.training.planner.exercise.presentation.list.asPreviewPagerFlow
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.ui.components.FilteringState
 import com.lukasz.witkowski.training.planner.ui.components.PREVIEW_CATEGORIES

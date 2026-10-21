@@ -80,7 +80,9 @@ class ApplicationTest {
             CreateExerciseRequestDto(
                 name = "Barbell Bench Press",
                 description = "Compound chest exercise",
-                categoryIds = listOf(categories.first().id)
+                categoryIds = listOf(categories.first().id),
+                sharing = "PRIVATE",
+                recommendations = null
             )
         val createExerciseResponse =
             client.post("/api/v1/exercises") {

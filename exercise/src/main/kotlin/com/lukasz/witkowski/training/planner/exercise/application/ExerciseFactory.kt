@@ -3,13 +3,24 @@ package com.lukasz.witkowski.training.planner.exercise.application
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSharing
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.image.ImageId
 
 internal object ExerciseFactory {
     fun create(
         exerciseConfiguration: ExerciseConfiguration,
         imageIds: List<ImageId> = emptyList(),
-        exerciseId: ExerciseId = ExerciseId.create()
+        exerciseId: ExerciseId = ExerciseId.create(),
+        metadata: ExerciseMetadata = ExerciseMetadata(
+            source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
+            sharing = ExerciseSharing.Private,
+            revision = 1L,
+            syncState = ExerciseSyncState.PENDING_UPLOAD
+        )
     ): ExerciseDetails = ExerciseDetails(
         exercise =
         Exercise2(
@@ -17,7 +28,8 @@ internal object ExerciseFactory {
             name = exerciseConfiguration.name,
             description = exerciseConfiguration.description,
             categories = exerciseConfiguration.categories.toSet(),
-            imageIds = imageIds
+            imageIds = imageIds,
+            metadata = metadata
         ),
         beginnerRecommendation = exerciseConfiguration.beginnerRecommendation,
         intermediateRecommendation = exerciseConfiguration.intermediateRecommendation,
@@ -27,10 +39,17 @@ internal object ExerciseFactory {
     fun create(
         exerciseConfiguration: ExerciseConfiguration,
         imageId: ImageId?,
-        exerciseId: ExerciseId = ExerciseId.create()
+        exerciseId: ExerciseId = ExerciseId.create(),
+        metadata: ExerciseMetadata = ExerciseMetadata(
+            source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
+            sharing = ExerciseSharing.Private,
+            revision = 1L,
+            syncState = ExerciseSyncState.PENDING_UPLOAD
+        )
     ): ExerciseDetails = create(
         exerciseConfiguration = exerciseConfiguration,
         imageIds = listOfNotNull(imageId),
-        exerciseId = exerciseId
+        exerciseId = exerciseId,
+        metadata = metadata
     )
 }

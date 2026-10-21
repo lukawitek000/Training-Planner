@@ -15,11 +15,11 @@ import androidx.navigation3.runtime.result.rememberResultEventBusNavEntryDecorat
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import com.lukasz.witkowski.training.planner.auth.presentation.auth.AuthenticationScreen
-import com.lukasz.witkowski.training.planner.exercise.createExercise.CreateExerciseScreen
-import com.lukasz.witkowski.training.planner.exercise.createExercise.EditExerciseScreen
-import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseScreen
-import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsScreen
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesScreen
+import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeleteExerciseScreen
+import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsScreen
+import com.lukasz.witkowski.training.planner.exercise.presentation.editor.CreateExerciseScreen
+import com.lukasz.witkowski.training.planner.exercise.presentation.editor.EditExerciseScreen
+import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesScreen
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
 import com.lukasz.witkowski.training.planner.training.delete.DeleteTrainingPlanScreen
 import com.lukasz.witkowski.training.planner.training.details.TrainingPlanDetailsScreen
@@ -174,50 +174,60 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.exerciseEntryBuilder(
     navigator: TrainingPlannerNavigator
 ) {
     entry<ExercisesList> {
-        ExercisesScreen(
-            viewModel = koinViewModel(),
-            onExerciseClicked = { id ->
-                navigator.exerciseDetails(id)
-            }
-        )
+        TrainingPlannerTheme2 {
+            ExercisesScreen(
+                viewModel = koinViewModel(),
+                onExerciseClicked = { id ->
+                    navigator.exerciseDetails(id)
+                }
+            )
+        }
     }
 
     entry<CreateExercise> {
-        CreateExerciseScreen(
-            viewModel = koinViewModel(),
-            navigateToDetails = { id ->
-                navigator.exerciseCreated(id)
-            }
-        )
+        TrainingPlannerTheme2 {
+            CreateExerciseScreen(
+                viewModel = koinViewModel(),
+                navigateToDetails = { id ->
+                    navigator.exerciseCreated(id)
+                }
+            )
+        }
     }
 
     entry<EditExercise> { key ->
-        EditExerciseScreen(
-            viewModel = koinViewModel { parametersOf(key.exerciseId) },
-            navigateToDetails = { _ ->
-                navigator.goBack()
-            }
-        )
+        TrainingPlannerTheme2 {
+            EditExerciseScreen(
+                viewModel = koinViewModel { parametersOf(key.exerciseId) },
+                navigateToDetails = { _ ->
+                    navigator.goBack()
+                }
+            )
+        }
     }
 
     entry<ExerciseDetails> { key ->
-        ExerciseDetailsScreen(
-            viewModel = koinViewModel { parametersOf(key.exerciseId) }
-        )
+        TrainingPlannerTheme2 {
+            ExerciseDetailsScreen(
+                viewModel = koinViewModel { parametersOf(key.exerciseId) }
+            )
+        }
     }
 
     entry<DeleteExercise>(
         metadata = DialogSceneStrategy.dialog()
     ) { key ->
-        DeleteExerciseScreen(
-            viewModel = koinViewModel { parametersOf(key.exerciseId) },
-            onDelete = {
-                navigator.exerciseDeleted()
-            },
-            onCancel = {
-                navigator.goBack()
-            }
-        )
+        TrainingPlannerTheme2 {
+            DeleteExerciseScreen(
+                viewModel = koinViewModel { parametersOf(key.exerciseId) },
+                onDelete = {
+                    navigator.exerciseDeleted()
+                },
+                onCancel = {
+                    navigator.goBack()
+                }
+            )
+        }
     }
 }
 

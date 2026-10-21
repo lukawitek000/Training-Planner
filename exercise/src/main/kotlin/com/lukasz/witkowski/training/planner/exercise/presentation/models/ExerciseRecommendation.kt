@@ -19,7 +19,8 @@ data class RecommendedParameters(
     val sets: Int? = null,
     val reps: Int? = null,
     val restTime: Duration? = null,
-    val weightInKg: Int? = null
+    val weightInKg: Int? = null,
+    val time: Duration? = null
 ) {
     fun areValid() = sets != null && reps != null && restTime != null
 }

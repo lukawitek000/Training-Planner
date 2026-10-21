@@ -5,4 +5,20 @@
     <string name="hour_shortcut">h</string>
     <string name="minutes_shortcut">min</string>
     <string name="seconds_shortcut">s</string>
+    <string name="search_clear_query">Clear search query</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
+    <string name="delete">Delete</string>
+    <string name="done">Done</string>
+    <string name="time_picker_select_time">Select time</string>
+    <string name="time_picker_subtitle">Quickly select durations or clear for standard rep logs</string>
+    <string name="time_picker_no_time">No Time (None)</string>
+    <string name="time_picker_tab_seconds">Seconds</string>
+    <string name="time_picker_tab_minutes">Minutes</string>
+    <string name="time_picker_tab_custom">Custom</string>
+    <string name="time_picker_custom_hint">Scroll or tap digits to adjust custom interval</string>
+    <string name="time_picker_seconds_preset">%1$d s</string>
+    <string name="time_picker_minutes_preset">%1$d min</string>
+    <string name="time_picker_set_time">Set Time (%1$s)</string>
+    <string name="time_picker_confirm_no_timer">Confirm (No Timer)</string>
 </resources>

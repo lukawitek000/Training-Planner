@@ -77,10 +77,10 @@ class UserProfileViewModel(private val userRepository: UserRepository) : ViewMod
         }
     }
 
-    fun signOut() {
-        Timber.i("Signing out user from profile screen")
+    fun signOut(keepLocalData: Boolean = false) {
+        Timber.i("Signing out user from profile screen (keepLocalData=%s)", keepLocalData)
         viewModelScope.launch {
-            userRepository.signOut()
+            userRepository.signOut(keepLocalData)
             loadUserProfile()
         }
     }

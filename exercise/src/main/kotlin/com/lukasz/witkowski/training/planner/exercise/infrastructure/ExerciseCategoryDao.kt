@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
 import androidx.room3.Dao
+import androidx.room3.Insert
+import androidx.room3.OnConflictStrategy
 import androidx.room3.Query
 import kotlinx.coroutines.flow.Flow
 
@@ -8,4 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface ExerciseCategoryDao {
     @Query("SELECT * FROM DbExerciseCategory")
     fun getAll(): Flow<List<DbExerciseCategory>>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(categories: List<DbExerciseCategory>)
 }

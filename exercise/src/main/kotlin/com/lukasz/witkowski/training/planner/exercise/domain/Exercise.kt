@@ -16,12 +16,20 @@ data class Exercise(
     }
 }
 
+data class ExerciseMetadata(
+    val source: ExerciseSource = ExerciseSource.Bundled,
+    val sharing: ExerciseSharing = ExerciseSharing.Private,
+    val revision: Long = 1L,
+    val syncState: ExerciseSyncState = ExerciseSyncState.SYNCED
+)
+
 data class Exercise2(
     val id: ExerciseId,
     val name: String,
     val description: String,
     val categories: Set<ExerciseCategory>,
-    val imageIds: List<ImageId> = emptyList()
+    val imageIds: List<ImageId> = emptyList(),
+    val metadata: ExerciseMetadata = ExerciseMetadata()
 ) {
     val imageId: ImageId?
         get() = imageIds.firstOrNull()
@@ -31,13 +39,15 @@ data class Exercise2(
         name: String,
         description: String,
         categories: Set<ExerciseCategory>,
-        imageId: ImageId?
+        imageId: ImageId?,
+        metadata: ExerciseMetadata = ExerciseMetadata()
     ) : this(
         id = id,
         name = name,
         description = description,
         categories = categories,
-        imageIds = listOfNotNull(imageId)
+        imageIds = listOfNotNull(imageId),
+        metadata = metadata
     )
 
     init {
@@ -45,4 +55,33 @@ data class Exercise2(
             "Exercise should have at least one category"
         }
     }
+}
+
+sealed interface ExerciseSource {
+    data object Bundled : ExerciseSource
+    data class UserCreated(val owner: ExerciseOwner) : ExerciseSource
+    data object Organization : ExerciseSource
+}
+
+sealed interface ExerciseSharing {
+    data object Private : ExerciseSharing
+    data object Community : ExerciseSharing
+    data class Friends(val selectedUserIds: Set<String> = emptySet()) : ExerciseSharing
+}
+
+enum class ExerciseSyncState {
+    LOCAL_ONLY,
+    PENDING_UPLOAD,
+    SYNCED,
+    PENDING_DELETE,
+    CONFLICT,
+    ERROR
+}
+
+sealed interface ExerciseOwner {
+    val id: String
+
+    data class Local(override val id: String = "local_user") : ExerciseOwner
+
+    data class User(override val id: String, val username: String) : ExerciseOwner
 }

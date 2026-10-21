@@ -1,7 +1,9 @@
 package com.lukasz.witkowski.training.planner.backend.plugins
 
 import com.lukasz.witkowski.training.planner.backend.exception.AuthException
+import com.lukasz.witkowski.training.planner.backend.service.ExerciseConflictException
 import com.lukasz.witkowski.training.planner.dto.common.ApiErrorDto
+import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseConflictDto
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
@@ -19,6 +21,15 @@ fun Application.configureStatusPages() {
                     statusCode = cause.statusCode.value,
                     message = cause.message ?: "Authentication failed.",
                     errorCode = cause.errorCode
+                )
+            )
+        }
+        exception<ExerciseConflictException> { call, cause ->
+            call.respond(
+                HttpStatusCode.Conflict,
+                ExerciseConflictDto(
+                    message = cause.message ?: "Version conflict detected",
+                    currentServerExercise = cause.currentServerExercise
                 )
             )
         }

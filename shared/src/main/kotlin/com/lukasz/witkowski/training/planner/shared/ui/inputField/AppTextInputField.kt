@@ -25,7 +25,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.unit.dp
 import com.lukasz.witkowski.training.planner.shared.theme.DarkGrey
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
@@ -46,6 +45,8 @@ fun AppTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     singleLine: Boolean = true,
+    minLines: Int = 1,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -71,13 +72,20 @@ fun AppTextField(
             unfocusedTrailingIconColor = MaterialTheme.colorScheme.secondary
         )
 
+    val sizeModifier =
+        if (singleLine) {
+            Modifier.height(Dimens2.inputFieldHeight)
+        } else {
+            Modifier
+        }
+
     BasicTextField(
         value = value,
         onValueChange = onValueChange,
         modifier =
         modifier
             .fillMaxWidth()
-            .height(Dimens2.inputFieldHeight),
+            .then(sizeModifier),
         enabled = enabled,
         readOnly = readOnly,
         textStyle = textStyle,
@@ -87,6 +95,8 @@ fun AppTextField(
         keyboardActions = keyboardActions,
         interactionSource = interactionSource,
         singleLine = singleLine,
+        minLines = minLines,
+        maxLines = maxLines,
         decorationBox = { innerTextField ->
             OutlinedTextFieldDefaults.DecorationBox(
                 value = value,
@@ -113,7 +123,7 @@ fun AppTextField(
                 contentPadding =
                 PaddingValues(
                     horizontal = Dimens2.inputHorizontalPadding,
-                    vertical = 0.dp
+                    vertical = if (singleLine) Dimens2.zeroDp else Dimens2.spaceSm
                 ),
                 container = {
                     OutlinedTextFieldDefaults.Container(
@@ -144,6 +154,8 @@ fun AppTextField(
     enabled: Boolean = true,
     readOnly: Boolean = false,
     singleLine: Boolean = true,
+    minLines: Int = 1,
+    maxLines: Int = if (singleLine) 1 else Int.MAX_VALUE,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
@@ -173,6 +185,8 @@ fun AppTextField(
         enabled = enabled,
         readOnly = readOnly,
         singleLine = singleLine,
+        minLines = minLines,
+        maxLines = maxLines,
         visualTransformation = visualTransformation,
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,

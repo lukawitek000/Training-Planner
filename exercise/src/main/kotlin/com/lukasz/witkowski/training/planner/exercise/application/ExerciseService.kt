@@ -4,8 +4,12 @@ import androidx.paging.PagingData
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.image.Image
 import com.lukasz.witkowski.training.planner.image.ImageByteArray
 import com.lukasz.witkowski.training.planner.image.ImageId
@@ -36,13 +40,27 @@ class ExerciseService(
         exerciseConfiguration: ExerciseConfiguration,
         exerciseId: ExerciseId
     ): ExerciseId {
-        val imageReferences = if (exerciseConfiguration.images.isNotEmpty()) {
-            saveImages(exerciseConfiguration.images, exerciseId)
-        } else {
-            emptyList()
+        val existing = exerciseRepository.getExerciseDetailsById(exerciseId).firstOrNull()
+        if (existing?.exercise?.metadata?.source is ExerciseSource.Bundled) {
+            throw IllegalStateException("Bundled exercises cannot be modified")
         }
-        val exerciseDetails =
-            ExerciseFactory.create(exerciseConfiguration, imageReferences.map { it.imageId }, exerciseId)
+        val imageIds = if (exerciseConfiguration.images.isNotEmpty()) {
+            saveImages(exerciseConfiguration.images, exerciseId).map { it.imageId }
+        } else {
+            existing?.exercise?.imageIds ?: emptyList()
+        }
+        val metadata = existing?.exercise?.metadata?.copy(
+            syncState = ExerciseSyncState.PENDING_UPLOAD
+        ) ?: ExerciseMetadata(
+            source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
+            syncState = ExerciseSyncState.PENDING_UPLOAD
+        )
+        val exerciseDetails = ExerciseFactory.create(
+            exerciseConfiguration = exerciseConfiguration,
+            imageIds = imageIds,
+            exerciseId = exerciseId,
+            metadata = metadata
+        )
         exerciseRepository.updateExercise(exerciseDetails)
         return exerciseId
     }
@@ -71,6 +89,10 @@ class ExerciseService(
         exerciseRepository.queryExercises(exerciseQuery)
 
     suspend fun deleteExercise(exerciseId: ExerciseId) {
+        val existing = exerciseRepository.getExerciseDetailsById(exerciseId).firstOrNull()
+        if (existing?.exercise?.metadata?.source is ExerciseSource.Bundled) {
+            throw IllegalStateException("Bundled exercises cannot be deleted")
+        }
         exerciseRepository.delete(exerciseId)
     }
 

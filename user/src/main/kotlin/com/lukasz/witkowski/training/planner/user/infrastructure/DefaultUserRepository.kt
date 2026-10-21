@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.user.infrastructure
 
+import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.network.TokenStorage
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import com.lukasz.witkowski.training.planner.user.domain.UserRepository
@@ -14,7 +15,8 @@ import timber.log.Timber
 class DefaultUserRepository(
     private val tokenStorage: TokenStorage,
     private val userRemoteDataSource: UserRemoteDataSource,
-    private val userPreferencesStorage: UserPreferencesStorage
+    private val userPreferencesStorage: UserPreferencesStorage,
+    private val syncScheduler: SyncScheduler? = null
 ) : UserRepository {
     override suspend fun getUserProfile(): AppResult<User, UserFailure> {
         val refreshToken = tokenStorage.getTokens()?.refreshToken
@@ -33,8 +35,23 @@ class DefaultUserRepository(
         userPreferencesStorage.setWeightUnit(weightUnit)
     }
 
-    override suspend fun signOut() {
-        Timber.i("signOut: Clearing user tokens")
+    override val autoSyncEnabled: Flow<Boolean> = userPreferencesStorage.autoSyncEnabled
+
+    override suspend fun setAutoSyncEnabled(enabled: Boolean) {
+        Timber.d("setAutoSyncEnabled: Setting auto sync enabled to %s", enabled)
+        userPreferencesStorage.setAutoSyncEnabled(enabled)
+        if (enabled) {
+            syncScheduler?.enqueueMutationSync()
+            syncScheduler?.enqueueRemoteChangeSync(force = true)
+        } else {
+            syncScheduler?.cancelMutationSync()
+        }
+    }
+
+    override suspend fun signOut(keepLocalData: Boolean) {
+        Timber.i("signOut: Clearing user tokens and sync data (keepLocalData=%s)", keepLocalData)
         tokenStorage.clear()
+        syncScheduler?.cancelMutationSync()
+        syncScheduler?.clearLocalSyncData(keepLocalData)
     }
 }

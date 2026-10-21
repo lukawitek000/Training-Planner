@@ -7,4 +7,8 @@ interface UserPreferencesStorage {
     val weightUnit: Flow<WeightUnit>
 
     suspend fun setWeightUnit(weightUnit: WeightUnit)
+
+    val autoSyncEnabled: Flow<Boolean>
+
+    suspend fun setAutoSyncEnabled(enabled: Boolean)
 }

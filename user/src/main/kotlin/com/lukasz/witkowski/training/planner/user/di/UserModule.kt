@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.user.di
 
+import com.lukasz.witkowski.training.planner.network.SyncPreferencesStorage
 import com.lukasz.witkowski.training.planner.network.networkModule
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
@@ -33,14 +34,16 @@ val userModule =
             )
         } bind UserRemoteDataSource::class
 
-        single { AndroidUserPreferencesStorage(androidContext()) } bind
-            UserPreferencesStorage::class
+        single { AndroidUserPreferencesStorage(androidContext()) }
+        single<UserPreferencesStorage> { get<AndroidUserPreferencesStorage>() }
+        single<SyncPreferencesStorage> { get<AndroidUserPreferencesStorage>() }
 
         single {
             DefaultUserRepository(
                 tokenStorage = get(),
                 userRemoteDataSource = get(),
-                userPreferencesStorage = get()
+                userPreferencesStorage = get(),
+                syncScheduler = getOrNull()
             )
         } bind UserRepository::class
 

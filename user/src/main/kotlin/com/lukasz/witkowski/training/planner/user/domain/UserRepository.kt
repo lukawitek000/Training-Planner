@@ -13,5 +13,9 @@ interface UserRepository {
 
     suspend fun setWeightUnit(weightUnit: WeightUnit)
 
-    suspend fun signOut()
+    val autoSyncEnabled: Flow<Boolean>
+
+    suspend fun setAutoSyncEnabled(enabled: Boolean)
+
+    suspend fun signOut(keepLocalData: Boolean = false)
 }

@@ -19,13 +19,14 @@ import androidx.room3.Index
         Index("exerciseId")
     ]
 )
-class DbExerciseRecommendation(
+data class DbExerciseRecommendation(
     val exerciseId: String,
     val level: RecommendationLevel,
     val sets: Int,
     val reps: Int,
     val restTimeInSeconds: Long,
-    val weightInKg: Int?
+    val weightInKg: Int?,
+    val timeInSeconds: Long? = null
 )
 
 enum class RecommendationLevel {
