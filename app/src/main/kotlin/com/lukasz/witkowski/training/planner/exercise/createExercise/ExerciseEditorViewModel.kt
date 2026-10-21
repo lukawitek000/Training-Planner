@@ -15,6 +15,8 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recomm
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toExerciseRecommendation
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toRecommendation
 import com.lukasz.witkowski.training.planner.image.ImageBitmap
+import com.lukasz.witkowski.training.planner.image.toBitmapImage
+import com.lukasz.witkowski.training.planner.image.toImageByteArray
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -65,9 +67,46 @@ class ExerciseEditorViewModel(
                 categoryController.toggleCategory(event.category)
             }
 
-            is ExerciseEditingEvent.ImageAdded -> {}
-            is ExerciseEditingEvent.ImageRemoved -> {}
-            is ExerciseEditingEvent.ImagePreviewChanged -> {}
+            is ExerciseEditingEvent.ImageAdded -> {
+                uiState.updateInput { current ->
+                    val updatedImages = current.images + event.bitmap
+                    current.copy(
+                        images = updatedImages,
+                        previewImage = current.previewImage ?: event.bitmap
+                    )
+                }
+            }
+
+            is ExerciseEditingEvent.ImagesAdded -> {
+                uiState.updateInput { current ->
+                    val updatedImages = current.images + event.bitmaps
+                    current.copy(
+                        images = updatedImages,
+                        previewImage = current.previewImage ?: updatedImages.firstOrNull()
+                    )
+                }
+            }
+
+            is ExerciseEditingEvent.ImageRemoved -> {
+                uiState.updateInput { current ->
+                    val updatedImages = current.images - event.bitmap
+                    val newPreview = if (current.previewImage == event.bitmap) {
+                        updatedImages.firstOrNull()
+                    } else {
+                        current.previewImage
+                    }
+                    current.copy(
+                        images = updatedImages,
+                        previewImage = newPreview
+                    )
+                }
+            }
+
+            is ExerciseEditingEvent.ImagePreviewChanged -> {
+                uiState.updateInput { current ->
+                    current.copy(previewImage = event.bitmap)
+                }
+            }
 
             is ExerciseEditingEvent.RecommendedSetsChanged -> {
                 uiState.updateRecommendationParam(
@@ -165,8 +204,13 @@ class ExerciseEditorViewModel(
             runCatching {
                 val exerciseDetails = exerciseService.getExerciseDetailsById(exerciseId).first()
                 if (exerciseDetails != null) {
+                    val loadedImages = exerciseDetails.exercise.imageIds.mapNotNull { imageId ->
+                        runCatching {
+                            exerciseService.readImage(imageId).toBitmapImage()
+                        }.getOrNull()
+                    }
                     uiState.value = ExerciseEditingUiState.Editing(
-                        exerciseDetails.toExerciseEditingState()
+                        exerciseDetails.toExerciseEditingState(loadedImages)
                     )
                     categoryController.selectCategories(exerciseDetails.exercise.categories.toSet())
                 } else {
@@ -187,7 +231,7 @@ class ExerciseEditorViewModel(
             name = name,
             description = description,
             categories = categories.filter { it.isSelected }.map { it.category },
-            image = null,
+            images = images.map { it.toImageByteArray() },
             beginnerRecommendation = recommendations.toExerciseRecommendation(RecommendationLevel.BEGINNER),
             intermediateRecommendation = recommendations.toExerciseRecommendation(
                 RecommendationLevel.INTERMEDIATE
@@ -196,11 +240,13 @@ class ExerciseEditorViewModel(
         )
     }
 
-    private fun ExerciseDetails.toExerciseEditingState(): ExerciseEditingInput {
+    private fun ExerciseDetails.toExerciseEditingState(loadedImages: List<ImageBitmap> = emptyList()): ExerciseEditingInput {
         return ExerciseEditingInput(
             name = exercise.name,
             description = exercise.description,
             categories = filterCategories.value,
+            images = loadedImages,
+            previewImage = loadedImages.firstOrNull(),
             recommendations = listOf(
                 beginnerRecommendation.toRecommendation(RecommendationLevel.BEGINNER),
                 intermediateRecommendation.toRecommendation(RecommendationLevel.INTERMEDIATE),
@@ -216,6 +262,7 @@ sealed interface ExerciseEditingEvent {
     data class DescriptionChanged(val description: String) : ExerciseEditingEvent
     data class CategoryToggled(val category: ExerciseCategory) : ExerciseEditingEvent
     data class ImageAdded(val bitmap: ImageBitmap) : ExerciseEditingEvent
+    data class ImagesAdded(val bitmaps: List<ImageBitmap>) : ExerciseEditingEvent
     data class ImageRemoved(val bitmap: ImageBitmap) : ExerciseEditingEvent
     data class ImagePreviewChanged(val bitmap: ImageBitmap) : ExerciseEditingEvent
     data class RecommendedSetsChanged(val sets: Int?, val level: RecommendationLevel) :

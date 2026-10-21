@@ -13,6 +13,7 @@ import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageStorage
 import com.lukasz.witkowski.training.planner.image.toImageConfiguration
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.firstOrNull
 
 class ExerciseService(
     private val exerciseRepository: ExerciseRepository,
@@ -20,9 +21,13 @@ class ExerciseService(
 ) {
     suspend fun saveExercise(exerciseConfiguration: ExerciseConfiguration): ExerciseId {
         val exerciseId = ExerciseId.create()
-        val imageReference = exerciseConfiguration.image?.let { saveImage(it, exerciseId) }
+        val imageReferences = if (exerciseConfiguration.images.isNotEmpty()) {
+            saveImages(exerciseConfiguration.images, exerciseId)
+        } else {
+            emptyList()
+        }
         val exerciseDetails =
-            ExerciseFactory.create(exerciseConfiguration, imageReference?.imageId, exerciseId)
+            ExerciseFactory.create(exerciseConfiguration, imageReferences.map { it.imageId }, exerciseId)
         exerciseRepository.insert(exerciseDetails)
         return exerciseId
     }
@@ -31,11 +36,23 @@ class ExerciseService(
         exerciseConfiguration: ExerciseConfiguration,
         exerciseId: ExerciseId
     ): ExerciseId {
-        val imageReference = exerciseConfiguration.image?.let { saveImage(it, exerciseId) }
+        val imageReferences = if (exerciseConfiguration.images.isNotEmpty()) {
+            saveImages(exerciseConfiguration.images, exerciseId)
+        } else {
+            emptyList()
+        }
         val exerciseDetails =
-            ExerciseFactory.create(exerciseConfiguration, imageReference?.imageId, exerciseId)
+            ExerciseFactory.create(exerciseConfiguration, imageReferences.map { it.imageId }, exerciseId)
         exerciseRepository.updateExercise(exerciseDetails)
         return exerciseId
+    }
+
+    private suspend fun saveImages(
+        images: List<ImageByteArray>,
+        exerciseId: ExerciseId
+    ): List<ImageReference> {
+        val imageConfigurations = images.map { it.toImageConfiguration(exerciseId.value) }
+        return imageStorage.saveImages(imageConfigurations)
     }
 
     private suspend fun saveImage(
@@ -82,4 +99,15 @@ class ExerciseService(
 
     suspend fun readImageReference(imageId: ImageId): ImageReference? =
         imageStorage.readImageReference(imageId)
+
+    suspend fun readImageReferences(exerciseId: ExerciseId): List<ImageReference> {
+        val fromStorage = imageStorage.readImageReferences(exerciseId.value)
+        if (fromStorage.isNotEmpty()) {
+            return fromStorage
+        }
+        val details = exerciseRepository.getExerciseDetailsById(exerciseId).firstOrNull()
+        return details?.exercise?.imageIds?.mapNotNull { imageId ->
+            imageStorage.readImageReference(imageId)
+        } ?: emptyList()
+    }
 }

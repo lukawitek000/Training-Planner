@@ -15,21 +15,38 @@ internal fun Exercise2.toDbExercise(): DbExercise = DbExercise(
     imageId = imageId?.toString()
 )
 
-internal fun DbExercise.toExercise(categories: List<ExerciseCategory>): Exercise2 = Exercise2(
-    id = ExerciseId(exerciseId),
-    name = name,
-    description = description,
-    categories = categories.toSet(),
-    imageId = imageId?.let { ImageId(it) }
-)
+internal fun DbExercise.toExercise(
+    categories: List<ExerciseCategory>,
+    images: List<DbExerciseImage> = emptyList()
+): Exercise2 {
+    val imageIds = if (images.isNotEmpty()) {
+        images.sortedBy { it.orderIndex }.map { ImageId(it.imageId) }
+    } else {
+        listOfNotNull(imageId?.let { ImageId(it) })
+    }
+    return Exercise2(
+        id = ExerciseId(exerciseId),
+        name = name,
+        description = description,
+        categories = categories.toSet(),
+        imageIds = imageIds
+    )
+}
 
-internal fun DbExerciseWithCategories.toExercise(): Exercise2 = Exercise2(
-    id = ExerciseId(exercise.exerciseId),
-    name = exercise.name,
-    description = exercise.description,
-    categories = categories.map { it.toExerciseCategory() }.toSet(),
-    imageId = exercise.imageId?.let { ImageId(it) }
-)
+internal fun DbExerciseWithCategories.toExercise(): Exercise2 {
+    val imageIds = if (images.isNotEmpty()) {
+        images.sortedBy { it.orderIndex }.map { ImageId(it.imageId) }
+    } else {
+        listOfNotNull(exercise.imageId?.let { ImageId(it) })
+    }
+    return Exercise2(
+        id = ExerciseId(exercise.exerciseId),
+        name = exercise.name,
+        description = exercise.description,
+        categories = categories.map { it.toExerciseCategory() }.toSet(),
+        imageIds = imageIds
+    )
+}
 
 internal fun ExerciseDetails.toDbExerciseDetails(): DbExerciseDetails = DbExerciseDetails(
     exercise = exercise.toDbExercise(),
@@ -48,7 +65,14 @@ internal fun ExerciseDetails.toDbExerciseDetails(): DbExerciseDetails = DbExerci
             exerciseId = exercise.id,
             level = RecommendationLevel.ADVANCED
         )
-    )
+    ),
+    images = exercise.imageIds.mapIndexed { index, imageId ->
+        DbExerciseImage(
+            exerciseId = exercise.id.toString(),
+            imageId = imageId.toString(),
+            orderIndex = index
+        )
+    }
 )
 
 internal fun ExerciseRecommendation.toDbExerciseRecommendation(
@@ -66,7 +90,7 @@ internal fun ExerciseRecommendation.toDbExerciseRecommendation(
 internal fun DbExerciseDetails.toExerciseDetails(): ExerciseDetails {
     val categories = categories.map { it.toExerciseCategory() }
     return ExerciseDetails(
-        exercise = exercise.toExercise(categories),
+        exercise = exercise.toExercise(categories, images),
         beginnerRecommendation = recommendations.toExerciseRecommendation(
             RecommendationLevel.BEGINNER
         ),

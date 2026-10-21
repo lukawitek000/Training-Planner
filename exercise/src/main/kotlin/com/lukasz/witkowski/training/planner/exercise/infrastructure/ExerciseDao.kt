@@ -71,10 +71,19 @@ internal interface ExerciseDao {
         val insertedRowIds = insertExerciseCategoryCrossRefs(crossRefs)
         if (insertedRowIds.any { it == -1L }) return false
         val insertedRecRowIds = insert(details.recommendations)
-        return insertedRecRowIds.all {
-            it != -1L
+        if (insertedRecRowIds.any { it == -1L }) return false
+        if (details.images.isNotEmpty()) {
+            val insertedImageRowIds = insertExerciseImages(details.images)
+            if (insertedImageRowIds.any { it == -1L }) return false
         }
+        return true
     }
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertExerciseImages(images: List<DbExerciseImage>): List<Long>
+
+    @Query("DELETE FROM ExerciseImage WHERE exerciseId = :exerciseId")
+    suspend fun deleteExerciseImages(exerciseId: String): Int
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(recommendations: List<DbExerciseRecommendation>): List<Long>
@@ -115,6 +124,10 @@ internal interface ExerciseDao {
                 ExerciseCategoryCrossRef(exerciseDetails.exercise.exerciseId, it.categoryName)
             }
         insertExerciseCategoryCrossRefs(crossRefs)
+        deleteExerciseImages(exerciseDetails.exercise.exerciseId)
+        if (exerciseDetails.images.isNotEmpty()) {
+            insertExerciseImages(exerciseDetails.images)
+        }
         return updatedRows
     }
 }

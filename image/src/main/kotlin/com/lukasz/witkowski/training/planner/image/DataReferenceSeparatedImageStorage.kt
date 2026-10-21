@@ -59,10 +59,16 @@ internal class DataReferenceSeparatedImageStorage constructor(
         return domainImageReference?.toImageReference()
     }
 
+    override suspend fun readImageReferences(ownerId: UUID): List<ImageReference> {
+        val domainImageReferences = imageReferenceRepository.readAllByOwnerId(ownerId)
+        return domainImageReferences.map { it.toImageReference() }
+    }
+
     override suspend fun deleteImage(imageId: ImageId, ownerId: UUID): Boolean {
         val imageReference =
-            imageReferenceRepository.readByOwnerId(ownerId) ?: throw ImageNotFoundException(imageId)
-        val deletedReference = imageReferenceRepository.delete(imageReference)
+            imageReferenceRepository.read(imageId) ?: throw ImageNotFoundException(imageId)
+        val imageReferenceForOwner = imageReference.copy(ownersIds = listOf(ownerId))
+        val deletedReference = imageReferenceRepository.delete(imageReferenceForOwner)
         var isImageDeleted = true
         if (!doesAnyReferenceExist(imageId)) {
             isImageDeleted = imageRepository.delete(imageReference)

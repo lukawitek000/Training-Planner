@@ -186,4 +186,64 @@ class ExerciseRoutesTest {
             }
         assertEquals(HttpStatusCode.BadRequest, badJsonRes.status)
     }
+
+    @Test
+    fun `exercise creation and update with multiple images`() = testApplication {
+        application { module() }
+        val user = createAuthenticatedUser()
+
+        val images = listOf("img_url_1", "img_url_2", "img_url_3")
+        val createReq =
+            CreateExerciseRequestDto(
+                name = "Multi-Image Exercise",
+                description = "Exercise with 3 images",
+                images = images
+            )
+        val createRes =
+            user.client.post("/api/v1/exercises") {
+                header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                contentType(ContentType.Application.Json)
+                setBody(createReq)
+            }
+        assertEquals(HttpStatusCode.Created, createRes.status)
+        val created = createRes.body<ExerciseDto>()
+        assertEquals(images, created.images)
+
+        // Fetch by ID
+        val getRes =
+            user.client.get("/api/v1/exercises/${created.id}") {
+                header(HttpHeaders.Authorization, "Bearer ${user.token}")
+            }
+        assertEquals(HttpStatusCode.OK, getRes.status)
+        val fetched = getRes.body<ExerciseDto>()
+        assertEquals(images, fetched.images)
+
+        // Update with new images
+        val updatedImages = listOf("img_url_4", "img_url_5")
+        val updateReq =
+            UpdateExerciseRequestDto(
+                name = "Multi-Image Exercise Updated",
+                description = "Updated description",
+                images = updatedImages
+            )
+        val updateRes =
+            user.client.put("/api/v1/exercises/${created.id}") {
+                header(HttpHeaders.Authorization, "Bearer ${user.token}")
+                contentType(ContentType.Application.Json)
+                setBody(updateReq)
+            }
+        assertEquals(HttpStatusCode.OK, updateRes.status)
+        val updated = updateRes.body<ExerciseDto>()
+        assertEquals(updatedImages, updated.images)
+
+        // List exercises
+        val listRes =
+            user.client.get("/api/v1/exercises?query=Multi-Image") {
+                header(HttpHeaders.Authorization, "Bearer ${user.token}")
+            }
+        assertEquals(HttpStatusCode.OK, listRes.status)
+        val paged = listRes.body<PagedResponseDto<ExerciseDto>>()
+        assertEquals(1, paged.items.size)
+        assertEquals(updatedImages, paged.items.first().images)
+    }
 }

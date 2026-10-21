@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.backend.service
 import com.lukasz.witkowski.training.planner.backend.db.CategoriesTable
 import com.lukasz.witkowski.training.planner.backend.db.DatabaseFactory.dbQuery
 import com.lukasz.witkowski.training.planner.backend.db.ExerciseCategoriesTable
+import com.lukasz.witkowski.training.planner.backend.db.ExerciseImagesTable
 import com.lukasz.witkowski.training.planner.backend.db.ExercisesTable
 import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CategoryDto
@@ -101,6 +102,7 @@ class ExerciseService {
         val pageRows = allRows.drop(offset).take(limit)
         val exerciseIds = pageRows.map { it[ExercisesTable.id] }
         val categoriesMap = getCategoriesForExercises(exerciseIds)
+        val imagesMap = getImagesForExercises(exerciseIds)
 
         val paginatedExercises =
             pageRows.map { row ->
@@ -110,7 +112,8 @@ class ExerciseService {
                     name = row[ExercisesTable.name],
                     description = row[ExercisesTable.description],
                     categories = categoriesMap[exerciseId] ?: emptyList(),
-                    ownerId = row[ExercisesTable.ownerId]
+                    ownerId = row[ExercisesTable.ownerId],
+                    images = imagesMap[exerciseId] ?: emptyList()
                 )
             }
 
@@ -132,12 +135,14 @@ class ExerciseService {
             throw SecurityException("You do not have permission to access this exercise.")
         }
         val categories = getCategoriesForExercise(id)
+        val images = getImagesForExercise(id)
         ExerciseDto(
             id = id,
             name = row[ExercisesTable.name],
             description = row[ExercisesTable.description],
             categories = categories,
-            ownerId = ownerId
+            ownerId = ownerId,
+            images = images
         )
     }
 
@@ -158,13 +163,22 @@ class ExerciseService {
                 }
             }
 
+            request.images.forEachIndexed { index, imgId ->
+                ExerciseImagesTable.insert {
+                    it[ExerciseImagesTable.exerciseId] = exerciseId
+                    it[ExerciseImagesTable.imageId] = imgId
+                    it[ExerciseImagesTable.orderIndex] = index
+                }
+            }
+
             val categories = getCategoriesForExercise(exerciseId)
             ExerciseDto(
                 id = exerciseId,
                 name = request.name,
                 description = request.description,
                 categories = categories,
-                ownerId = ownerId
+                ownerId = ownerId,
+                images = request.images
             )
         }
 
@@ -196,13 +210,23 @@ class ExerciseService {
             }
         }
 
+        ExerciseImagesTable.deleteWhere { ExerciseImagesTable.exerciseId eq id }
+        request.images.forEachIndexed { index, imgId ->
+            ExerciseImagesTable.insert {
+                it[ExerciseImagesTable.exerciseId] = id
+                it[ExerciseImagesTable.imageId] = imgId
+                it[ExerciseImagesTable.orderIndex] = index
+            }
+        }
+
         val categories = getCategoriesForExercise(id)
         ExerciseDto(
             id = id,
             name = request.name,
             description = request.description,
             categories = categories,
-            ownerId = existing[ExercisesTable.ownerId]
+            ownerId = existing[ExercisesTable.ownerId],
+            images = request.images
         )
     }
 
@@ -260,6 +284,33 @@ class ExerciseService {
             if (catDto != null) {
                 resultMap.getOrPut(exId) { mutableListOf() }.add(catDto)
             }
+        }
+        return resultMap
+    }
+
+    private fun getImagesForExercise(exerciseId: String): List<String> =
+        getImagesForExercises(listOf(exerciseId))[exerciseId] ?: emptyList()
+
+    private fun getImagesForExercises(
+        exerciseIds: List<String>
+    ): Map<String, List<String>> {
+        if (exerciseIds.isEmpty()) return emptyMap()
+
+        val imageRows =
+            ExerciseImagesTable
+                .selectAll()
+                .where { ExerciseImagesTable.exerciseId inList exerciseIds }
+                .map {
+                    Triple(
+                        it[ExerciseImagesTable.exerciseId],
+                        it[ExerciseImagesTable.imageId],
+                        it[ExerciseImagesTable.orderIndex]
+                    )
+                }
+
+        val resultMap = mutableMapOf<String, MutableList<String>>()
+        imageRows.sortedBy { it.third }.forEach { (exId, imgId, _) ->
+            resultMap.getOrPut(exId) { mutableListOf() }.add(imgId)
         }
         return resultMap
     }

@@ -8,19 +8,29 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 internal object ExerciseFactory {
     fun create(
         exerciseConfiguration: ExerciseConfiguration,
-        imageId: ImageId?,
+        imageIds: List<ImageId> = emptyList(),
         exerciseId: ExerciseId = ExerciseId.create()
     ): ExerciseDetails = ExerciseDetails(
         exercise =
         Exercise2(
-            exerciseId,
-            exerciseConfiguration.name,
-            exerciseConfiguration.description,
-            exerciseConfiguration.categories.toSet(),
-            imageId
+            id = exerciseId,
+            name = exerciseConfiguration.name,
+            description = exerciseConfiguration.description,
+            categories = exerciseConfiguration.categories.toSet(),
+            imageIds = imageIds
         ),
         beginnerRecommendation = exerciseConfiguration.beginnerRecommendation,
         intermediateRecommendation = exerciseConfiguration.intermediateRecommendation,
         advancedRecommendation = exerciseConfiguration.advancedRecommendation
+    )
+
+    fun create(
+        exerciseConfiguration: ExerciseConfiguration,
+        imageId: ImageId?,
+        exerciseId: ExerciseId = ExerciseId.create()
+    ): ExerciseDetails = create(
+        exerciseConfiguration = exerciseConfiguration,
+        imageIds = listOfNotNull(imageId),
+        exerciseId = exerciseId
     )
 }

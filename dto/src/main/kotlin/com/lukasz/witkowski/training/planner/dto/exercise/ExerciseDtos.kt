@@ -11,19 +11,22 @@ data class ExerciseDto(
     val name: String,
     val description: String = "",
     val categories: List<CategoryDto> = emptyList(),
-    val ownerId: String? = null
+    val ownerId: String? = null,
+    val images: List<String> = emptyList()
 )
 
 @Serializable
 data class CreateExerciseRequestDto(
     val name: String,
     val description: String = "",
-    val categoryIds: List<String> = emptyList()
+    val categoryIds: List<String> = emptyList(),
+    val images: List<String> = emptyList()
 )
 
 @Serializable
 data class UpdateExerciseRequestDto(
     val name: String,
     val description: String = "",
-    val categoryIds: List<String> = emptyList()
+    val categoryIds: List<String> = emptyList(),
+    val images: List<String> = emptyList()
 )

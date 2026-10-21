@@ -1,29 +1,56 @@
 package com.lukasz.witkowski.training.planner.exercise.details
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.PhotoLibrary
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.createExercise.ImagesPreview
 import com.lukasz.witkowski.training.planner.exercise.createExercise.PREVIEW_RECOMMENDED_PARAMETERS
 import com.lukasz.witkowski.training.planner.exercise.createExercise.RecommendedParametersOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
+import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.ui.components.CategoryChips
 import com.lukasz.witkowski.training.planner.ui.components.FailureScreen
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
@@ -90,11 +117,12 @@ private fun ExerciseDetails(
         modifier.padding(Dimens.normal).testTag("ExerciseDetails"),
         verticalArrangement = Arrangement.spacedBy(Dimens.large),
     ) {
-        ImagesPreview(
-            images = emptyList(),
-            previewImage = null,
-            modifier = Modifier.padding(bottom = Dimens.large)
-        )
+        if (exercise.images.isNotEmpty()) {
+            ExerciseGallery(
+                images = exercise.images,
+                modifier = Modifier.padding(bottom = Dimens.normal)
+            )
+        }
         Text(
             text = exercise.name,
             style = MaterialTheme.typography.headlineSmall,
@@ -108,6 +136,123 @@ private fun ExerciseDetails(
             Text(text = exercise.description)
         }
         footer(details)
+    }
+}
+
+@Composable
+fun ExerciseGallery(
+    images: List<ImageReference>,
+    modifier: Modifier = Modifier,
+) {
+    if (images.isEmpty()) return
+
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    val activeIndex = selectedIndex.coerceIn(images.indices)
+    val activeImage = images[activeIndex]
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        // Hero Image
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(240.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant)
+        ) {
+            AsyncImage(
+                model = activeImage.path,
+                contentDescription = stringResource(R.string.exercise_image),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
+
+            // Gradient Overlay
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Black.copy(alpha = 0.5f)
+                            ),
+                            startY = 100f
+                        )
+                    )
+            )
+
+            // Photo Count Badge (Top-Left)
+            if (images.size > 1) {
+                Surface(
+                    shape = CircleShape,
+                    color = Color.Black.copy(alpha = 0.6f),
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.PhotoLibrary,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(14.dp)
+                        )
+                        Text(
+                            text = "${activeIndex + 1} / ${images.size}",
+                            style = MaterialTheme.typography.labelSmall,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+        }
+
+        // Thumbnails Strip
+        if (images.size > 1) {
+            val itemSize = 64.dp
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                itemsIndexed(images) { index, img ->
+                    val isSelected = index == activeIndex
+                    val border = if (isSelected) {
+                        BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+                    } else {
+                        BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+                    }
+                    Box(
+                        modifier = Modifier
+                            .size(itemSize)
+                            .clip(RoundedCornerShape(8.dp))
+                            .border(border, RoundedCornerShape(8.dp))
+                            .clickable { selectedIndex = index }
+                    ) {
+                        AsyncImage(
+                            model = img.path,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                        if (isSelected) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f))
+                            )
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

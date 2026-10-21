@@ -1,6 +1,11 @@
 package com.lukasz.witkowski.training.planner.exercise.createExercise
 
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +31,7 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
+import com.lukasz.witkowski.training.planner.image.ImageBitmap
 import com.lukasz.witkowski.training.planner.ui.components.CategoryFilters
 import com.lukasz.witkowski.training.planner.ui.components.FormFieldLabel
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
@@ -127,6 +133,25 @@ private fun ExerciseForm(
     isEditMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 5),
+        onResult = { uris: List<Uri> ->
+            if (uris.isNotEmpty()) {
+                val bitmaps = uris.mapNotNull { uri ->
+                    runCatching {
+                        context.contentResolver.openInputStream(uri)?.use { stream ->
+                            BitmapFactory.decodeStream(stream)
+                        }?.let { ImageBitmap(it) }
+                    }.getOrNull()
+                }
+                if (bitmaps.isNotEmpty()) {
+                    onUserInputChange(ExerciseEditingEvent.ImagesAdded(bitmaps))
+                }
+            }
+        }
+    )
+
     Column(
         modifier = modifier
             .padding(Dimens.normal)
@@ -136,7 +161,18 @@ private fun ExerciseForm(
     ) {
         ImageInputForm(
             images = state.images,
-            previewImage = state.previewImage
+            previewImage = state.previewImage,
+            onAddImagesClicked = {
+                photoPickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+            },
+            onRemoveImageClicked = {
+                onUserInputChange(ExerciseEditingEvent.ImageRemoved(it))
+            },
+            onSelectPreview = {
+                onUserInputChange(ExerciseEditingEvent.ImagePreviewChanged(it))
+            }
         )
         TextInputForm(
             name = state.name,

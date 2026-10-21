@@ -23,6 +23,14 @@ fun DomainExercise.toPresentationExercise(imageReference: ImageReference?): Exer
     image = imageReference
 )
 
+fun DomainExercise2.toPresentationExercise2(images: List<ImageReference> = emptyList()): Exercise2 = Exercise2(
+    id = id,
+    name = name,
+    description = description,
+    categories = categories.toList(),
+    images = images
+)
+
 fun DomainExercise2.toPresentationExercise2(imageReference: ImageReference?): Exercise2 = Exercise2(
     id = id,
     name = name,

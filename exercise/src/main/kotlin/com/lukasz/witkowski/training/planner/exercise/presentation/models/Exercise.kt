@@ -17,5 +17,22 @@ data class Exercise2(
     val name: String,
     val description: String,
     val categories: List<ExerciseCategory>,
-    val image: ImageReference? = null
-)
+    val images: List<ImageReference> = emptyList()
+) {
+    val image: ImageReference?
+        get() = images.firstOrNull()
+
+    constructor(
+        id: ExerciseId,
+        name: String,
+        description: String,
+        categories: List<ExerciseCategory>,
+        image: ImageReference?
+    ) : this(
+        id = id,
+        name = name,
+        description = description,
+        categories = categories,
+        images = listOfNotNull(image)
+    )
+}

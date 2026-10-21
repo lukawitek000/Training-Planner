@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExerciseDetails
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -20,11 +21,21 @@ open class ExerciseDetailsViewModel(
     private val exerciseId: ExerciseId,
 ) : ViewModel() {
     val state: StateFlow<ExerciseDetailsState> = service.getExerciseDetailsById(exerciseId)
-        .map {
-            if (it == null) {
+        .map { domainDetails ->
+            if (domainDetails == null) {
                 ExerciseDetailsState.Failure("Exercise not found")
             } else {
-                ExerciseDetailsState.Success(it.toPresentationExerciseDetails())
+                val imageReferences = if (domainDetails.exercise.imageIds.isNotEmpty()) {
+                    runCatching { service.readImageReferences(exerciseId) }.getOrDefault(emptyList())
+                } else {
+                    emptyList()
+                }
+                val presentationExercise = domainDetails.exercise.toPresentationExercise2(imageReferences)
+                val presentationDetails = ExerciseDetails(
+                    exercise = presentationExercise,
+                    recommendations = domainDetails.toPresentationExerciseDetails().recommendations
+                )
+                ExerciseDetailsState.Success(presentationDetails)
             }
         }
         .catch {

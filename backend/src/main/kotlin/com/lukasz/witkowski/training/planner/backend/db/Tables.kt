@@ -48,6 +48,17 @@ object ExerciseCategoriesTable : Table("exercise_categories") {
     override val primaryKey = PrimaryKey(exerciseId, categoryId)
 }
 
+object ExerciseImagesTable : Table("exercise_images") {
+    val exerciseId = varchar(
+        "exercise_id",
+        36
+    ).references(ExercisesTable.id, onDelete = ReferenceOption.CASCADE)
+    val imageId = varchar("image_id", 255)
+    val orderIndex = integer("order_index").default(0)
+
+    override val primaryKey = PrimaryKey(exerciseId, imageId)
+}
+
 object TrainingPlansTable : Table("training_plans") {
     val id = varchar("id", 36)
     val title = varchar("title", 255)
