@@ -252,6 +252,11 @@ private fun CategorySelectionPanel(
     }
 }
 
+private fun createPreviewBitmaps(): List<ImageBitmap> {
+    val bitmap = android.graphics.Bitmap.createBitmap(100, 100, android.graphics.Bitmap.Config.ARGB_8888)
+    return listOf(ImageBitmap(bitmap), ImageBitmap(bitmap))
+}
+
 @Preview
 @Composable
 fun CreateExerciseScreenPreview() {
