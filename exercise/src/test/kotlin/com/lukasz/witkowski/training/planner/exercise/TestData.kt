@@ -158,19 +158,22 @@ object TestData {
                 sets = 3,
                 reps = 1,
                 restTime = 30.seconds,
-                weightInKg = null
+                weightInKg = null,
+                time = 30.seconds
             ),
             intermediateRecommendation = ExerciseRecommendation(
                 sets = 3,
                 reps = 1,
                 restTime = 45.seconds,
-                weightInKg = null
+                weightInKg = null,
+                time = 45.seconds
             ),
             advancedRecommendation = ExerciseRecommendation(
                 sets = 4,
                 reps = 1,
                 restTime = 60.seconds,
-                weightInKg = 10
+                weightInKg = 10,
+                time = 60.seconds
             )
         )
 
@@ -242,9 +245,9 @@ object TestData {
         PresentationExercise2(
             id = EXERCISE_ID_1,
             name = "Push-up",
-            description = "Standard push-up focusing on chest and triceps",
-            categories = listOf(CATEGORY_CHEST, CATEGORY_TRICEPS),
-            image = SAMPLE_IMAGE_REFERENCE
+            description = "Standard push-up focusing on chest and triceps, BODYWEIGHT",
+            categories = listOf(CATEGORY_CHEST, CATEGORY_TRICEPS, CATEGORY_BICEPS),
+            image = null
         )
 
     val PRESENTATION_PUSH_UPS_DETAILS =

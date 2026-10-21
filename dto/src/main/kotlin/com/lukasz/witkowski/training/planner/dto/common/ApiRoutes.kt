@@ -14,6 +14,7 @@ object ApiRoutes {
     object Exercises {
         const val BASE = "$BASE_PATH/exercises"
         const val CATEGORIES = "$BASE/categories"
+        const val CHANGES = "$BASE/changes"
 
         fun byId(id: String) = "$BASE/$id"
     }

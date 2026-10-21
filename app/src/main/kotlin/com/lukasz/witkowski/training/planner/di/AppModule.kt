@@ -2,11 +2,7 @@ package com.lukasz.witkowski.training.planner.di
 
 import com.lukasz.witkowski.training.planner.BuildConfig
 import com.lukasz.witkowski.training.planner.auth.di.authModule
-import com.lukasz.witkowski.training.planner.exercise.createExercise.ExerciseEditorViewModel
-import com.lukasz.witkowski.training.planner.exercise.delete.DeleteExerciseViewModel
-import com.lukasz.witkowski.training.planner.exercise.details.ExerciseDetailsViewModel
 import com.lukasz.witkowski.training.planner.exercise.di.exerciseModule
-import com.lukasz.witkowski.training.planner.exercise.exercisesList.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.network.NetworkQualifiers
 import com.lukasz.witkowski.training.planner.network.networkModule
 import com.lukasz.witkowski.training.planner.statistics.di.statisticsModule
@@ -27,27 +23,6 @@ val appModule = module {
 
     single<String>(NetworkQualifiers.BASE_URL) {
         BuildConfig.BASE_URL
-    }
-
-    viewModel<ExercisesListViewModel>()
-    viewModel { params ->
-        ExerciseEditorViewModel(
-            exerciseService = get(),
-            categoryController = get(),
-            exerciseId = params.getOrNull(),
-        )
-    }
-    viewModel { params ->
-        ExerciseDetailsViewModel(
-            service = get(),
-            exerciseId = params.get(),
-        )
-    }
-    viewModel { params ->
-        DeleteExerciseViewModel(
-            service = get(),
-            exerciseId = params.get(),
-        )
     }
 
     viewModel<TrainingsListViewModel>()

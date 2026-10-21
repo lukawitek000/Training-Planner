@@ -167,4 +167,27 @@ class UserProfileViewModelTest {
 
         coVerify { userRepository.setWeightUnit(WeightUnit.LBS) }
     }
+
+    @Test
+    fun `signOut calls repository with keepLocalData and reloads profile`() = runTest {
+        val user = User("1", "test@example.com", "testuser")
+        coEvery { userRepository.getUserProfile() } returns AppResult.Success(user)
+
+        viewModel = UserProfileViewModel(userRepository)
+        viewModel.loadUserProfile()
+
+        coEvery { userRepository.getUserProfile() } returns AppResult.Error(UserFailure.NotSignedIn)
+        viewModel.signOut(keepLocalData = true)
+
+        coVerify { userRepository.signOut(keepLocalData = true) }
+        viewModel.uiState.test {
+            assertEquals(
+                ProfileUiState.OfflineProfileLoaded(
+                    weightUnit = WeightUnit.KG,
+                    failure = null
+                ),
+                awaitItem()
+            )
+        }
+    }
 }

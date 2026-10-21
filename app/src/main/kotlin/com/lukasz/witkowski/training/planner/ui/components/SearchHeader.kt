@@ -41,12 +41,7 @@ fun SearchHeader(
     }
 }
 
-data class FilteringState(
-    val searchQuery: String,
-    val categories: List<FilterCategory>
-) {
-    val isAnyCategorySelected = categories.any { it.isSelected }
-}
+typealias FilteringState = com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
 
 @Preview
 @Composable

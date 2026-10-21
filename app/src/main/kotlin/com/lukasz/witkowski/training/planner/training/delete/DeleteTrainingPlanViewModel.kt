@@ -2,7 +2,7 @@ package com.lukasz.witkowski.training.planner.training.delete
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lukasz.witkowski.training.planner.exercise.delete.DeletionEvent
+import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeletionEvent
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.coroutines.channels.Channel

@@ -1,0 +1,38 @@
+{
+  "items": [
+    {
+      "id": "11111111-1111-1111-1111-111111111111",
+      "name": "Push-up",
+      "description": "Standard push-up focusing on chest and triceps",
+      "categories": [
+        { "id": "cat-1", "name": "Chest" },
+        { "id": "cat-5", "name": "Triceps" }
+      ],
+      "owner": {
+        "id": "user-123",
+        "username": "JohnDoe"
+      },
+      "source": "USER_CREATED",
+      "sharing": "PRIVATE",
+      "revision": 1,
+      "recommendations": null
+    },
+    {
+      "id": "22222222-2222-2222-2222-222222222222",
+      "name": "Pull-up",
+      "description": "Bodyweight back exercise",
+      "categories": [
+        { "id": "cat-2", "name": "Back" }
+      ],
+      "owner": null,
+      "source": "BUNDLED",
+      "sharing": "PRIVATE",
+      "revision": 1,
+      "recommendations": null
+    }
+  ],
+  "page": 1,
+  "limit": 10,
+  "totalItems": 2,
+  "totalPages": 1
+}

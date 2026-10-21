@@ -1,0 +1,6 @@
+[
+  { "id": "cat-1", "name": "Chest" },
+  { "id": "cat-2", "name": "Back" },
+  { "id": "cat-3", "name": "Legs" },
+  { "id": "cat-4", "name": "Shoulders" }
+]

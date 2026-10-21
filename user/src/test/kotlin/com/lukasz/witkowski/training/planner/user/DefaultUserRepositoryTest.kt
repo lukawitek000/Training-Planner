@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.user
 
 import com.lukasz.witkowski.training.planner.network.AccessToken
 import com.lukasz.witkowski.training.planner.network.AuthTokens
+import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.network.TokenStorage
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
@@ -15,6 +16,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,9 +28,10 @@ import org.junit.Before
 @OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("ktlint:standard:max-line-length")
 class DefaultUserRepositoryTest {
-    private val mockTokenStorage = mockk<TokenStorage>()
+    private val mockTokenStorage = mockk<TokenStorage>(relaxed = true)
     private val mockUserRemoteDataSource = mockk<UserRemoteDataSource>()
     private val mockUserPreferencesStorage = mockk<UserPreferencesStorage>(relaxed = true)
+    private val mockSyncScheduler = mockk<SyncScheduler>(relaxed = true)
     private val timeProvider = TestTimeProvider()
 
     private lateinit var repository: DefaultUserRepository
@@ -36,11 +39,13 @@ class DefaultUserRepositoryTest {
     @Before
     fun setUp() {
         every { mockUserPreferencesStorage.weightUnit } returns flowOf(WeightUnit.KG)
+        every { mockUserPreferencesStorage.autoSyncEnabled } returns flowOf(true)
         repository =
             DefaultUserRepository(
                 tokenStorage = mockTokenStorage,
                 userRemoteDataSource = mockUserRemoteDataSource,
-                userPreferencesStorage = mockUserPreferencesStorage
+                userPreferencesStorage = mockUserPreferencesStorage,
+                syncScheduler = mockSyncScheduler
             )
     }
 
@@ -92,5 +97,14 @@ class DefaultUserRepositoryTest {
         repository.setWeightUnit(WeightUnit.LBS)
 
         coVerify { mockUserPreferencesStorage.setWeightUnit(WeightUnit.LBS) }
+    }
+
+    @Test
+    fun `signOut clears tokens and notifies syncScheduler with keepLocalData`() = runTest {
+        repository.signOut(keepLocalData = true)
+
+        coVerify { mockTokenStorage.clear() }
+        verify { mockSyncScheduler.cancelMutationSync() }
+        coVerify { mockSyncScheduler.clearLocalSyncData(keepLocalData = true) }
     }
 }

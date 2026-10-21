@@ -30,9 +30,31 @@ object ExercisesTable : Table("exercises") {
         "owner_id",
         36
     ).references(UsersTable.id, onDelete = ReferenceOption.SET_NULL).nullable()
+    val sourceType = varchar("source_type", 50).default("BUNDLED")
+    val sharing = varchar("sharing", 50).default("PRIVATE")
+    val revision = long("revision").default(1L)
+    val changeVersion = long("change_version").default(1L)
     val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
 
     override val primaryKey = PrimaryKey(id)
+}
+
+object ExerciseDeletionsTable : Table("exercise_deletions") {
+    val id = varchar("id", 36)
+    val exerciseId = varchar("exercise_id", 36)
+    val changeVersion = long("change_version")
+    val deletedAt = timestamp("deleted_at").defaultExpression(CurrentTimestamp)
+
+    override val primaryKey = PrimaryKey(id)
+}
+
+object IdempotencyLogsTable : Table("idempotency_logs") {
+    val ownerId = varchar("owner_id", 128)
+    val key = varchar("key", 64)
+    val responsePayload = text("response_payload")
+    val createdAt = timestamp("created_at").defaultExpression(CurrentTimestamp)
+
+    override val primaryKey = PrimaryKey(ownerId, key)
 }
 
 object ExerciseCategoriesTable : Table("exercise_categories") {
@@ -46,6 +68,22 @@ object ExerciseCategoriesTable : Table("exercise_categories") {
     ).references(CategoriesTable.id, onDelete = ReferenceOption.CASCADE)
 
     override val primaryKey = PrimaryKey(exerciseId, categoryId)
+}
+
+object ExerciseRecommendationsTable : Table("exercise_recommendations") {
+    val id = varchar("id", 36)
+    val exerciseId = varchar(
+        "exercise_id",
+        36
+    ).references(ExercisesTable.id, onDelete = ReferenceOption.CASCADE)
+    val level = varchar("level", 20)
+    val sets = integer("sets")
+    val reps = integer("reps")
+    val restTimeInMillis = long("rest_time_in_millis")
+    val weightInKg = integer("weight_in_kg").nullable()
+    val timeInMillis = long("time_in_millis").nullable()
+
+    override val primaryKey = PrimaryKey(id)
 }
 
 object TrainingPlansTable : Table("training_plans") {

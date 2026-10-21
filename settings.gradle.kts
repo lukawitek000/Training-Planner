@@ -18,7 +18,6 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 rootProject.name = "Training-Planner"
 
 include(":app")
-include(":wearable")
 include(":shared")
 include(":exercise")
 include(":training")

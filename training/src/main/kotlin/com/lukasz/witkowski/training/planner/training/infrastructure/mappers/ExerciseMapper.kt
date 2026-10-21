@@ -37,7 +37,8 @@ private fun TrainingExercise.toDbTrainingExercise(trainingPlanId: TrainingPlanId
         repetitions = repetitions,
         sets = sets,
         restTime = restTime.inWholeSeconds,
-        weightInKg = weightInKg
+        weightInKg = weightInKg,
+        exerciseRevision = exercise.revision
     )
 
 private fun ExerciseCategoryName.toDbExerciseCategory(
@@ -67,7 +68,8 @@ private fun DbTrainingExercise.toExerciseSnapshot(categories: List<DbExerciseCat
         name = name,
         description = description,
         imageId = null,
-        categories = categories.map { it.toExerciseCategoryName() }.toSet()
+        categories = categories.map { it.toExerciseCategoryName() }.toSet(),
+        revision = exerciseRevision
     )
 
 internal fun DbExerciseCategory.toExerciseCategoryName() = ExerciseCategoryName(name)
