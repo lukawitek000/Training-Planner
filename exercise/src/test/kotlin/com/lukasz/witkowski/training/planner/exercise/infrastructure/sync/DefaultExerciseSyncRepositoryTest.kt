@@ -3,9 +3,12 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure.sync
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseConflictDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseSyncResponseDto
+import com.lukasz.witkowski.training.planner.exercise.TestData
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseFailure
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExercise
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseDetails
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseImage
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseMutation
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseMutationDao
@@ -305,4 +308,111 @@ class DefaultExerciseSyncRepositoryTest {
             )
         }
     }
+
+    @Test
+    fun `resolveConflictAcceptServer preserves multiple images when server exercise has empty images`() =
+        runTest {
+            val serverDetailsWithNoImages = TestData.PUSH_UPS_DETAILS.copy(
+                exercise = TestData.PUSH_UPS_EXERCISE.copy(
+                    id = ExerciseId(EX_ID_1),
+                    imageIds = emptyList()
+                )
+            )
+            coEvery { remoteDataSource.getExerciseDetailsById(ExerciseId(EX_ID_1)) } returns
+                AppResult.Success(serverDetailsWithNoImages)
+
+            val existingDbDetails = DbExerciseDetails(
+                exercise = DbExercise(
+                    exerciseId = EX_ID_1,
+                    name = "Local Push-up",
+                    description = "Local desc",
+                    sourceType = "USER_CREATED",
+                    sharing = "PRIVATE",
+                    revision = 1L,
+                    syncState = DbExercise.SYNC_STATE_CONFLICT,
+                    imageId = null
+                ),
+                categories = emptyList(),
+                recommendations = emptyList(),
+                images = listOf(
+                    DbExerciseImage(EX_ID_1, "img-1", 0),
+                    DbExerciseImage(EX_ID_1, "img-2", 1)
+                )
+            )
+            coEvery { exerciseDao.getExerciseDetailsById(EX_ID_1) } returns kotlinx.coroutines.flow.flowOf(existingDbDetails)
+
+            val result = repository.resolveConflictAcceptServer(ExerciseId(EX_ID_1))
+
+            assertTrue(result is AppResult.Success)
+            coVerify {
+                exerciseDao.insertExerciseDetails(
+                    match {
+                        it.images.map { img -> img.imageId } == listOf("img-1", "img-2")
+                    }
+                )
+            }
+        }
+
+    @Test
+    fun `processPendingMutations preserves multiple existing images when DTO has empty images`() =
+        runTest {
+            val mutation = DbExerciseMutation(
+                id = "mut-multi-img",
+                exerciseId = EX_ID_1,
+                type = DbExerciseMutation.TYPE_UPDATE,
+                idempotencyKey = "key-multi-img",
+                expectedVersion = 1L,
+                name = "Push-up",
+                description = "Chest",
+                categoryNames = "Chest",
+                state = "PENDING"
+            )
+            coEvery { mutationDao.getPendingMutations() } returns listOf(mutation)
+
+            val existingDbDetails = DbExerciseDetails(
+                exercise = DbExercise(
+                    exerciseId = EX_ID_1,
+                    name = "Push-up",
+                    description = "Chest",
+                    sourceType = "USER_CREATED",
+                    sharing = "PRIVATE",
+                    revision = 1L,
+                    syncState = DbExercise.SYNC_STATE_PENDING_UPLOAD,
+                    imageId = null
+                ),
+                categories = emptyList(),
+                recommendations = emptyList(),
+                images = listOf(
+                    DbExerciseImage(EX_ID_1, "img-1", 0),
+                    DbExerciseImage(EX_ID_1, "img-2", 1)
+                )
+            )
+            coEvery { exerciseDao.getExerciseDetailsById(EX_ID_1) } returns kotlinx.coroutines.flow.flowOf(existingDbDetails)
+
+            val updatedDto = ExerciseDto(
+                id = EX_ID_1,
+                name = "Push-up",
+                description = "Chest",
+                categories = emptyList(),
+                owner = null,
+                source = "USER_CREATED",
+                sharing = "PRIVATE",
+                revision = 2L,
+                recommendations = null,
+                images = emptyList()
+            )
+            coEvery { remoteDataSource.updateExercise(any(), any(), any()) } returns
+                AppResult.Success(updatedDto)
+
+            val result = repository.processPendingMutations()
+
+            assertTrue(result is AppResult.Success)
+            coVerify {
+                exerciseDao.insertExerciseDetails(
+                    match {
+                        it.images.map { img -> img.imageId } == listOf("img-1", "img-2")
+                    }
+                )
+            }
+        }
 }

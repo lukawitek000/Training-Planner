@@ -173,6 +173,9 @@ internal interface ExerciseDao {
     )
     suspend fun convertNonBundledExercisesToLocalOnly()
 
+    @Query("SELECT * FROM ExerciseImage WHERE exerciseId = :exerciseId ORDER BY orderIndex ASC")
+    suspend fun getExerciseImages(exerciseId: String): List<DbExerciseImage>
+
     @Transaction
     suspend fun applySyncChanges(
         upserts: List<DbExerciseDetails>,
@@ -189,12 +192,18 @@ internal interface ExerciseDao {
             if (existing != null && existing.syncState in protectedStates) {
                 return@forEach
             }
+            val existingImages = getExerciseImages(item.exercise.exerciseId)
+            val mergedImages = if (item.images.isEmpty() && existingImages.isNotEmpty()) {
+                existingImages
+            } else {
+                item.images
+            }
             val mergedExercise = if (item.exercise.imageId == null && existing?.imageId != null) {
                 item.exercise.copy(imageId = existing.imageId)
             } else {
                 item.exercise
             }
-            insertExerciseDetails(item.copy(exercise = mergedExercise))
+            insertExerciseDetails(item.copy(exercise = mergedExercise, images = mergedImages))
         }
         deletedIds.forEach { id ->
             val existing = getExerciseByIdOnce(id)

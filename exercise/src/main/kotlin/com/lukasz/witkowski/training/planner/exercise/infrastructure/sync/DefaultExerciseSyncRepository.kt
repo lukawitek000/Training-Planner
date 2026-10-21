@@ -22,6 +22,7 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import timber.log.Timber
@@ -133,12 +134,12 @@ internal class DefaultExerciseSyncRepository(
             is AppResult.Success -> serverResult.value
             is AppResult.Error -> return@withContext AppResult.Error(serverResult.error)
         }
-        val existingDbExercise = exerciseDao.getExerciseByIdOnce(exerciseId.toString())
-        val existingImageId = existingDbExercise?.imageId?.takeIf {
-            it.isNotBlank()
-        }?.let { ImageId(it) }
-        val detailsToSave = if (existingImageId != null && serverDetails.exercise.imageId == null) {
-            serverDetails.copy(exercise = serverDetails.exercise.copy(imageIds = listOf(existingImageId)))
+        val existingDbDetails = exerciseDao.getExerciseDetailsById(exerciseId.toString()).firstOrNull()
+        val existingImageIds = existingDbDetails?.images?.sortedBy { it.orderIndex }
+            ?.map { ImageId(it.imageId) }
+            ?: emptyList()
+        val detailsToSave = if (existingImageIds.isNotEmpty() && serverDetails.exercise.imageIds.isEmpty()) {
+            serverDetails.copy(exercise = serverDetails.exercise.copy(imageIds = existingImageIds))
         } else {
             serverDetails
         }
@@ -197,10 +198,10 @@ internal class DefaultExerciseSyncRepository(
             }
         }
 
-        val existingDbExercise = exerciseDao.getExerciseByIdOnce(mutation.exerciseId)
-        val existingImageId = existingDbExercise?.imageId?.takeIf {
-            it.isNotBlank()
-        }?.let { ImageId(it) }
+        val existingDbDetails = exerciseDao.getExerciseDetailsById(mutation.exerciseId).firstOrNull()
+        val existingImageIds = existingDbDetails?.images?.sortedBy { it.orderIndex }
+            ?.map { ImageId(it.imageId) }
+            ?: emptyList()
         val categories = mutation.categoryNames
             .split(",")
             .filter { it.isNotBlank() }
@@ -213,7 +214,7 @@ internal class DefaultExerciseSyncRepository(
             name = mutation.name,
             description = mutation.description,
             categories = categories,
-            imageIds = listOfNotNull(existingImageId),
+            imageIds = existingImageIds,
             metadata = ExerciseMetadata(
                 revision = mutation.expectedVersion,
                 syncState = ExerciseSyncState.PENDING_UPLOAD
@@ -265,7 +266,7 @@ internal class DefaultExerciseSyncRepository(
         return when (result) {
             is AppResult.Success -> {
                 val updatedDto = result.value
-                val updatedDetails = updatedDto.toExerciseDetails(existingImageId = existingImageId)
+                val updatedDetails = updatedDto.toExerciseDetails(existingImageIds = existingImageIds)
                 exerciseDao.insertExerciseDetails(updatedDetails.toDbExerciseDetails())
                 mutationDao.deleteMutation(mutation.id)
                 Timber.d(

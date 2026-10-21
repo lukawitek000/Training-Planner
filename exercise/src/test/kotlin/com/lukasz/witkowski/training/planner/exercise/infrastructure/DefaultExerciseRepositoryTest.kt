@@ -11,6 +11,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.RoomExerciseLocalDataSource
+import com.lukasz.witkowski.training.planner.image.ImageId
 import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -324,6 +325,35 @@ class DefaultExerciseRepositoryTest {
             assertEquals(30000L, mutation.beginnerTime)
             assertEquals(45000L, mutation.intermediateTime)
             assertEquals(60000L, mutation.advancedTime)
+        }
+
+    @Test
+    fun `resolveConflictAcceptServer preserves multiple images when server details has empty images`() =
+        runTest {
+            val imageId1 = ImageId.create()
+            val imageId2 = ImageId.create()
+            val multiImageExercise = TestData.PUSH_UPS_EXERCISE.copy(
+                imageIds = listOf(imageId1, imageId2)
+            )
+            val initialDetails = TestData.PUSH_UPS_DETAILS.copy(exercise = multiImageExercise)
+            repository.saveExerciseLocally(initialDetails)
+
+            val serverDetailsWithNoImages = TestData.PUSH_UPS_DETAILS.copy(
+                exercise = TestData.PUSH_UPS_EXERCISE.copy(
+                    imageIds = emptyList(),
+                    metadata = ExerciseMetadata(revision = 5L, syncState = ExerciseSyncState.SYNCED)
+                )
+            )
+
+            val result = repository.resolveConflictAcceptServer(
+                exerciseId = multiImageExercise.id,
+                serverExerciseDetails = serverDetailsWithNoImages
+            )
+            assertTrue(result)
+
+            val loadedDetails = repository.getExerciseDetailsById(multiImageExercise.id).first()
+            assertNotNull(loadedDetails)
+            assertEquals(listOf(imageId1, imageId2), loadedDetails.exercise.imageIds)
         }
 
     private suspend fun insertAllTestExercises() {

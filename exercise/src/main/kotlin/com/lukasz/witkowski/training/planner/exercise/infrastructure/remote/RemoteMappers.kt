@@ -23,10 +23,10 @@ internal fun CategoryDto.toExerciseCategory(): ExerciseCategory = ExerciseCatego
 
 internal fun ExerciseDto.toExerciseDetails(
     currentUserId: String? = null,
-    existingImageId: ImageId? = null
+    existingImageIds: List<ImageId> = emptyList()
 ): ExerciseDetails {
     val domainExercise = toExercise2(currentUserId).let {
-        if (existingImageId != null && it.imageIds.isEmpty()) it.copy(imageIds = listOf(existingImageId)) else it
+        if (existingImageIds.isNotEmpty() && it.imageIds.isEmpty()) it.copy(imageIds = existingImageIds) else it
     }
     val recMap = recommendations?.associateBy { it.level.uppercase() } ?: emptyMap()
 

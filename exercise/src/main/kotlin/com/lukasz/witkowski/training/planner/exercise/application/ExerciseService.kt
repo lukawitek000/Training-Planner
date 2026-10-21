@@ -73,18 +73,6 @@ class ExerciseService(
         return imageStorage.saveImages(imageConfigurations)
     }
 
-    private suspend fun saveImage(
-        imageByteArray: ImageByteArray,
-        exerciseId: ExerciseId
-    ): ImageReference {
-        val imageConfiguration = imageByteArray.toImageConfiguration(exerciseId.value)
-        return imageStorage.saveImage(imageConfiguration)
-    }
-
-    private suspend fun deleteImage(imageId: ImageId, exerciseId: ExerciseId) {
-        imageStorage.deleteImage(imageId, exerciseId.value)
-    }
-
     fun queryExercises(exerciseQuery: ExerciseQuery): Flow<PagingData<Exercise2>> =
         exerciseRepository.queryExercises(exerciseQuery)
 
@@ -98,24 +86,6 @@ class ExerciseService(
 
     fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails?> =
         exerciseRepository.getExerciseDetailsById(id)
-
-    private suspend fun updateImage(
-        imageByteArray: ImageByteArray?,
-        oldImageId: ImageId?,
-        exerciseId: ExerciseId
-    ): ImageReference? {
-        val imageConfiguration = imageByteArray?.toImageConfiguration(exerciseId.value)
-        return if (oldImageId == null) {
-            imageConfiguration?.let { imageStorage.saveImage(imageConfiguration) }
-        } else {
-            if (imageConfiguration == null) {
-                imageStorage.deleteImage(oldImageId, exerciseId.value)
-                null // Do not exist after delete
-            } else {
-                imageConfiguration.let { imageStorage.updateImage(oldImageId, imageConfiguration) }
-            }
-        }
-    }
 
     suspend fun readImage(imageId: ImageId): Image = imageStorage.readImage(imageId)
 

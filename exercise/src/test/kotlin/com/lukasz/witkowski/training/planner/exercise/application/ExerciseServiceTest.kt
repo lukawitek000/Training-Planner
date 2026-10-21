@@ -148,4 +148,33 @@ class ExerciseServiceTest {
             service.deleteExercise(bundledDetails.exercise.id)
         }
     }
+
+    @Test
+    fun `save exercise with multiple images calls saveImages with all image configurations`() = runTest {
+        val imageRef1 = TestData.SAMPLE_IMAGE_REFERENCE
+        val imageRef2 = TestData.SAMPLE_IMAGE_REFERENCE.copy(imageId = TestData.IMAGE_ID_2)
+        coEvery { imageStorage.saveImages(any()) } returns listOf(imageRef1, imageRef2)
+
+        val multiImageConfig = TestData.PUSH_UPS_CONFIGURATION.copy(
+            images = listOf(TestData.SAMPLE_IMAGE_BYTE_ARRAY, TestData.SAMPLE_IMAGE_BYTE_ARRAY)
+        )
+        val exerciseId = service.saveExercise(exerciseConfiguration = multiImageConfig)
+
+        val imageConfig = TestData.SAMPLE_IMAGE_BYTE_ARRAY.toImageConfiguration(ownerId = exerciseId.value)
+        coVerify(exactly = 1) { imageStorage.saveImages(listOf(imageConfig, imageConfig)) }
+
+        val savedExercise = exerciseRepository.exercises.first().exercise
+        assertEquals(listOf(imageRef1.imageId, imageRef2.imageId), savedExercise.imageIds)
+    }
+
+    @Test
+    fun `readImageReferences returns all image references from storage`() = runTest {
+        val imageRef1 = TestData.SAMPLE_IMAGE_REFERENCE
+        val imageRef2 = TestData.SAMPLE_IMAGE_REFERENCE.copy(imageId = TestData.IMAGE_ID_2)
+        coEvery { imageStorage.readImageReferences(TestData.EXERCISE_ID_1.value) } returns listOf(imageRef1, imageRef2)
+
+        val imageReferences = service.readImageReferences(TestData.EXERCISE_ID_1)
+
+        assertEquals(listOf(imageRef1, imageRef2), imageReferences)
+    }
 }
