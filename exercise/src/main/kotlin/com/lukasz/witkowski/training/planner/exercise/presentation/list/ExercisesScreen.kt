@@ -465,10 +465,18 @@ private fun ExerciseThumbnail(
     ) {
         Box(contentAlignment = Alignment.Center) {
             if (imageReference != null) {
+                val imgModel: Any = if (imageReference.path.startsWith("file:///android_asset/") || imageReference.isRemote) {
+                    imageReference.path
+                } else {
+                    java.io.File(imageReference.path)
+                }
                 AsyncImage(
-                    model = imageReference.path,
+                    model = imgModel,
+                    placeholder = painterResource(id = R.drawable.exercise_default),
+                    error = painterResource(id = R.drawable.exercise_default),
+                    fallback = painterResource(id = R.drawable.exercise_default),
                     contentDescription = imageDescription,
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.Fit,
                     modifier =
                     Modifier
                         .fillMaxSize()

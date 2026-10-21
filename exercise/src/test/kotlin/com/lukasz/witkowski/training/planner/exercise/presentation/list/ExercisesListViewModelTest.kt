@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoryController2
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import io.mockk.coEvery
 import io.mockk.coVerify

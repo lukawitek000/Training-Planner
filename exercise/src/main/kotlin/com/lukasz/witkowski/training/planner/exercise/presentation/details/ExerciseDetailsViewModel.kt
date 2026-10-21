@@ -42,7 +42,7 @@ open class ExerciseDetailsViewModel(
                     loadConflictServerDetails()
                 }
                 val imageReferences = if (domainDetails.exercise.imageIds.isNotEmpty()) {
-                    runCatching { service.readImageReferences(exerciseId) }.getOrDefault(emptyList())
+                    service.readImageReferences(exerciseId)
                 } else {
                     emptyList()
                 }

@@ -86,6 +86,7 @@ class ExerciseDetailsViewModelTest {
         coEvery { service.getExerciseDetailsById(any()) } returns flow {
             emit(TestData.PUSH_UPS_DETAILS)
         }
+        coEvery { service.readImageReferences(any()) } returns emptyList()
         givenVm()
         vm.state.test {
             assertEquals(ExerciseDetailsState.Loading, awaitItem())

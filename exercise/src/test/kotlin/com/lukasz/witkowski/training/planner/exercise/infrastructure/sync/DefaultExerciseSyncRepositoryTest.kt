@@ -7,6 +7,7 @@ import com.lukasz.witkowski.training.planner.exercise.TestData
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseFailure
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExercise
+import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseImage
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseMutation
@@ -321,6 +322,8 @@ class DefaultExerciseSyncRepositoryTest {
             coEvery { remoteDataSource.getExerciseDetailsById(ExerciseId(EX_ID_1)) } returns
                 AppResult.Success(serverDetailsWithNoImages)
 
+            val img1 = TestData.IMAGE_ID_1.toString()
+            val img2 = TestData.IMAGE_ID_2.toString()
             val existingDbDetails = DbExerciseDetails(
                 exercise = DbExercise(
                     exerciseId = EX_ID_1,
@@ -332,11 +335,11 @@ class DefaultExerciseSyncRepositoryTest {
                     syncState = DbExercise.SYNC_STATE_CONFLICT,
                     imageId = null
                 ),
-                categories = emptyList(),
+                categories = listOf(DbExerciseCategory("Chest")),
                 recommendations = emptyList(),
                 images = listOf(
-                    DbExerciseImage(EX_ID_1, "img-1", 0),
-                    DbExerciseImage(EX_ID_1, "img-2", 1)
+                    DbExerciseImage(EX_ID_1, img1, 0),
+                    DbExerciseImage(EX_ID_1, img2, 1)
                 )
             )
             coEvery { exerciseDao.getExerciseDetailsById(EX_ID_1) } returns kotlinx.coroutines.flow.flowOf(existingDbDetails)
@@ -347,7 +350,7 @@ class DefaultExerciseSyncRepositoryTest {
             coVerify {
                 exerciseDao.insertExerciseDetails(
                     match {
-                        it.images.map { img -> img.imageId } == listOf("img-1", "img-2")
+                        it.images.map { img -> img.imageId } == listOf(img1, img2)
                     }
                 )
             }
@@ -356,6 +359,8 @@ class DefaultExerciseSyncRepositoryTest {
     @Test
     fun `processPendingMutations preserves multiple existing images when DTO has empty images`() =
         runTest {
+            val img1 = TestData.IMAGE_ID_1.toString()
+            val img2 = TestData.IMAGE_ID_2.toString()
             val mutation = DbExerciseMutation(
                 id = "mut-multi-img",
                 exerciseId = EX_ID_1,
@@ -380,11 +385,11 @@ class DefaultExerciseSyncRepositoryTest {
                     syncState = DbExercise.SYNC_STATE_PENDING_UPLOAD,
                     imageId = null
                 ),
-                categories = emptyList(),
+                categories = listOf(DbExerciseCategory("Chest")),
                 recommendations = emptyList(),
                 images = listOf(
-                    DbExerciseImage(EX_ID_1, "img-1", 0),
-                    DbExerciseImage(EX_ID_1, "img-2", 1)
+                    DbExerciseImage(EX_ID_1, img1, 0),
+                    DbExerciseImage(EX_ID_1, img2, 1)
                 )
             )
             coEvery { exerciseDao.getExerciseDetailsById(EX_ID_1) } returns kotlinx.coroutines.flow.flowOf(existingDbDetails)
@@ -410,7 +415,7 @@ class DefaultExerciseSyncRepositoryTest {
             coVerify {
                 exerciseDao.insertExerciseDetails(
                     match {
-                        it.images.map { img -> img.imageId } == listOf("img-1", "img-2")
+                        it.images.map { img -> img.imageId } == listOf(img1, img2)
                     }
                 )
             }

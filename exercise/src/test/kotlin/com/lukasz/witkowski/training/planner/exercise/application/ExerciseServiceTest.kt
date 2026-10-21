@@ -177,4 +177,13 @@ class ExerciseServiceTest {
 
         assertEquals(listOf(imageRef1, imageRef2), imageReferences)
     }
+
+    @Test
+    fun `readImageReferences handles exception gracefully and returns empty list`() = runTest {
+        coEvery { imageStorage.readImageReferences(any()) } throws RuntimeException("Storage failure")
+
+        val imageReferences = service.readImageReferences(TestData.EXERCISE_ID_1)
+
+        assertEquals(emptyList(), imageReferences)
+    }
 }

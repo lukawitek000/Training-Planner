@@ -16,6 +16,7 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageStorage
 import com.lukasz.witkowski.training.planner.image.toImageConfiguration
+import com.lukasz.witkowski.training.planner.shared.utils.runCatchingCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 
@@ -89,17 +90,14 @@ class ExerciseService(
 
     suspend fun readImage(imageId: ImageId): Image = imageStorage.readImage(imageId)
 
-    suspend fun readImageReference(imageId: ImageId): ImageReference? =
-        imageStorage.readImageReference(imageId)
-
-    suspend fun readImageReferences(exerciseId: ExerciseId): List<ImageReference> {
+    suspend fun readImageReferences(exerciseId: ExerciseId): List<ImageReference> = runCatchingCancellable {
         val fromStorage = imageStorage.readImageReferences(exerciseId.value)
         if (fromStorage.isNotEmpty()) {
-            return fromStorage
+            return@runCatchingCancellable fromStorage
         }
         val details = exerciseRepository.getExerciseDetailsById(exerciseId).firstOrNull()
-        return details?.exercise?.imageIds?.mapNotNull { imageId ->
+        details?.exercise?.imageIds?.mapNotNull { imageId ->
             imageStorage.readImageReference(imageId)
         } ?: emptyList()
-    }
+    }.getOrDefault(emptyList())
 }
