@@ -408,7 +408,7 @@ private fun SyncActionBottomBanner(
                 tint = accentColor,
                 modifier = Modifier.size(Dimens2.iconSize24)
             )
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
@@ -420,12 +420,12 @@ private fun SyncActionBottomBanner(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                AppSecondaryButton(
+                    text = actionLabel,
+                    onClick = onActionClick,
+                    modifier = Modifier.testTag(actionTestTag)
+                )
             }
-            AppSecondaryButton(
-                text = actionLabel,
-                onClick = onActionClick,
-                modifier = Modifier.testTag(actionTestTag)
-            )
         }
     }
 }

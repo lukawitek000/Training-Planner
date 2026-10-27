@@ -74,7 +74,7 @@ fun ImageGallery(
             AsyncImage(
                 model = imgModel,
                 contentDescription = stringResource(R.string.exercise_image),
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxSize()
             )
 
@@ -142,7 +142,7 @@ fun ImageGallery(
                         AsyncImage(
                             model = thumbModel,
                             contentDescription = null,
-                            contentScale = ContentScale.Crop,
+                            contentScale = ContentScale.Fit,
                             modifier = Modifier.fillMaxSize()
                         )
                         if (isSelected) {

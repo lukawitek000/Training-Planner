@@ -297,7 +297,7 @@ private fun PopulatedImageInputCard(
             AsyncImage(
                 model = activeImage.toCoilModel(),
                 contentDescription = stringResource(R.string.image_preview),
-                contentScale = ContentScale.Crop,
+                contentScale = ContentScale.Fit,
                 modifier = Modifier.fillMaxSize()
             )
 
@@ -364,7 +364,7 @@ private fun PopulatedImageInputCard(
                     AsyncImage(
                         model = img.toCoilModel(),
                         contentDescription = null,
-                        contentScale = ContentScale.Crop,
+                        contentScale = ContentScale.Fit,
                         modifier = Modifier.fillMaxSize()
                     )
                     if (isSelected) {

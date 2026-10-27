@@ -482,7 +482,7 @@ private fun ExerciseThumbnail(
                     modifier =
                     Modifier
                         .fillMaxSize()
-                        .clip(MaterialTheme.shapes.medium)
+                        .clip(MaterialTheme.shapes.small)
                 )
             } else {
                 Image(

@@ -108,7 +108,7 @@ object Dimens2 {
     val badgeVerticalPadding: Dp = 4.dp
 
     /** List Items, Media & Actions */
-    val listItemThumbnailSize: Dp = 48.dp
+    val listItemThumbnailSize: Dp = 64.dp
     val listItemActionCircleSize: Dp = 36.dp
     val heroImageHeightCompact: Dp = 176.dp
     val heroImageHeightStandard: Dp = 208.dp
