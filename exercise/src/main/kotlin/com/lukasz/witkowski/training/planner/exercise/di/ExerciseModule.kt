@@ -126,7 +126,8 @@ val exerciseModule =
             ExerciseEditorViewModel(
                 exerciseService = get(),
                 categoryController = get(),
-                exerciseId = params.getOrNull()
+                exerciseId = params.getOrNull(),
+                context = androidContext()
             )
         }
         viewModel { params ->

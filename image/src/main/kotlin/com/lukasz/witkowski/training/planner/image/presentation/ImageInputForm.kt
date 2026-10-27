@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,13 +17,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.AddPhotoAlternate
-import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -32,32 +31,39 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.lukasz.witkowski.training.planner.image.ImageBitmap
+import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.R
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
+import java.io.File
+
+private fun ImageReference.toCoilModel(): Any =
+    if (path.startsWith("file:///android_asset/") || isRemote || path.startsWith("content://")) {
+        path
+    } else {
+        File(path)
+    }
 
 @Composable
 fun ImageInputForm(
-    images: List<ImageBitmap>,
-    previewImage: ImageBitmap?,
+    images: List<ImageReference>,
+    previewImage: ImageReference?,
     modifier: Modifier = Modifier,
     title: String = stringResource(R.string.add_images),
     description: String = stringResource(R.string.add_photos_cue),
     onAddImagesClicked: () -> Unit = {},
-    onRemoveImageClicked: (ImageBitmap) -> Unit = {},
-    onSelectPreview: (ImageBitmap) -> Unit = {},
+    onRemoveImageClicked: (ImageReference) -> Unit = {},
+    onSelectPreview: (ImageReference) -> Unit = {},
 ) {
     if (images.isEmpty()) {
         EmptyImageInputCard(
@@ -80,75 +86,90 @@ fun ImageInputForm(
 
 @Composable
 fun ImagesPreview(
-    images: List<ImageBitmap>,
-    previewImage: ImageBitmap?,
+    images: List<ImageReference>,
+    previewImage: ImageReference?,
     modifier: Modifier = Modifier,
-    onSelectPreview: (ImageBitmap) -> Unit = {},
+    onSelectPreview: (ImageReference) -> Unit = {},
 ) {
     if (images.isEmpty() && previewImage == null) return
     val activeImage = previewImage ?: images.firstOrNull() ?: return
     val activeIndex = images.indexOf(activeImage).coerceAtLeast(0)
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(activeIndex) {
+        if (images.size > 1) {
+            listState.animateScrollToItem(activeIndex)
+        }
+    }
 
     Column(modifier = modifier) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .height(Dimens2.heroImageHeightStandard)
+                .clip(RoundedCornerShape(Dimens2.spaceGapIconTextMedium))
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
         ) {
             AsyncImage(
-                model = activeImage.bitmap,
-                contentDescription = null,
+                model = activeImage.toCoilModel(),
+                contentDescription = stringResource(R.string.image_preview),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
-            if (images.size > 1) {
-                Surface(
-                    shape = RoundedCornerShape(12.dp),
-                    color = Color.Black.copy(alpha = 0.65f),
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(8.dp)
-                ) {
-                    Text(
-                        text = "${activeIndex + 1} / ${images.size}",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Color.White,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
-                    )
+            PhotoCountBadge(
+                currentIndex = activeIndex,
+                totalCount = images.size,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(Dimens2.spaceSm)
+            )
+            CarouselNavigationArrows(
+                currentIndex = activeIndex,
+                totalCount = images.size,
+                onIndexChanged = { newIdx ->
+                    if (newIdx in images.indices) {
+                        onSelectPreview(images[newIdx])
+                    }
                 }
-            }
+            )
         }
 
         if (images.size > 1) {
-            val itemSize = 56.dp
+            val itemSize = Dimens2.iconContainerSize
             LazyRow(
+                state = listState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(top = Dimens2.spaceSm),
+                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
             ) {
                 items(images) { img ->
                     val isSelected = img == activeImage
                     val border = if (isSelected) {
-                        BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+                        BorderStroke(Dimens2.shadowSm, MaterialTheme.colorScheme.primary)
                     } else {
-                        BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+                        BorderStroke(Dimens2.thinBorder, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
                     }
                     Box(
                         modifier = Modifier
                             .size(itemSize)
-                            .clip(RoundedCornerShape(8.dp))
-                            .border(border, RoundedCornerShape(8.dp))
+                            .clip(RoundedCornerShape(Dimens2.spaceSm))
+                            .border(border, RoundedCornerShape(Dimens2.spaceSm))
                             .clickable { onSelectPreview(img) }
                     ) {
                         AsyncImage(
-                            model = img.bitmap,
+                            model = img.toCoilModel(),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier.fillMaxSize()
                         )
+                        if (isSelected) {
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f))
+                            )
+                        }
                     }
                 }
             }
@@ -165,28 +186,28 @@ private fun EmptyImageInputCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(Dimens2.spaceMd),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
         ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+        border = BorderStroke(Dimens2.thinBorder, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(24.dp),
+                .padding(Dimens2.spaceLg),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Box(
                 modifier = Modifier
-                    .size(64.dp)
-                    .clip(RoundedCornerShape(16.dp))
+                    .size(Dimens2.mediaThumbnailSize)
+                    .clip(RoundedCornerShape(Dimens2.spaceMd))
                     .background(MaterialTheme.colorScheme.surface)
                     .border(
-                        1.dp,
+                        Dimens2.thinBorder,
                         MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f),
-                        RoundedCornerShape(16.dp)
+                        RoundedCornerShape(Dimens2.spaceMd)
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -194,23 +215,23 @@ private fun EmptyImageInputCard(
                     imageVector = Icons.Outlined.AddPhotoAlternate,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(Dimens2.spaceXl)
                 )
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(Dimens2.spaceGapIconTextMedium))
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(Dimens2.spaceXs))
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(Dimens2.spaceMd))
             Button(
                 onClick = onAddImagesClicked,
                 shape = CircleShape,
@@ -218,21 +239,21 @@ private fun EmptyImageInputCard(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ),
-                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 10.dp)
+                contentPadding = PaddingValues(horizontal = Dimens2.inputIconSize, vertical = Dimens2.inputIconSpacing)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = null,
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(Dimens2.iconSize18)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(modifier = Modifier.width(Dimens2.spaceSm))
                 Text(
                     text = stringResource(R.string.add_image),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold
                 )
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(Dimens2.spaceGapIconTextMedium))
             Text(
                 text = stringResource(R.string.can_add_multiple_img),
                 style = MaterialTheme.typography.labelSmall,
@@ -244,104 +265,104 @@ private fun EmptyImageInputCard(
 
 @Composable
 private fun PopulatedImageInputCard(
-    images: List<ImageBitmap>,
-    previewImage: ImageBitmap?,
+    images: List<ImageReference>,
+    previewImage: ImageReference?,
     onAddImagesClicked: () -> Unit,
-    onRemoveImageClicked: (ImageBitmap) -> Unit,
-    onSelectPreview: (ImageBitmap) -> Unit,
+    onRemoveImageClicked: (ImageReference) -> Unit,
+    onSelectPreview: (ImageReference) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val activeImage = previewImage ?: images.firstOrNull() ?: return
     val activeIndex = images.indexOf(activeImage).coerceAtLeast(0)
+    val listState = rememberLazyListState()
+
+    LaunchedEffect(activeIndex) {
+        if (images.size > 1) {
+            listState.animateScrollToItem(activeIndex)
+        }
+    }
 
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceGapIconTextMedium)
     ) {
         // Hero Image Container
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(220.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .height(Dimens2.mediaEmptyContainerMinHeight)
+                .clip(RoundedCornerShape(Dimens2.spaceMd))
+                .background(MaterialTheme.colorScheme.surfaceContainerLow)
         ) {
             AsyncImage(
-                model = activeImage.bitmap,
+                model = activeImage.toCoilModel(),
                 contentDescription = stringResource(R.string.image_preview),
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.fillMaxSize()
             )
 
             // Top-Left Badge (1 / N)
-            Surface(
-                shape = RoundedCornerShape(20.dp),
-                color = Color.Black.copy(alpha = 0.65f),
+            PhotoCountBadge(
+                currentIndex = activeIndex,
+                totalCount = images.size,
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(12.dp)
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.PhotoLibrary,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(14.dp)
-                    )
-                    Text(
-                        text = "${activeIndex + 1} / ${images.size}",
-                        style = MaterialTheme.typography.labelSmall,
-                        fontWeight = FontWeight.SemiBold,
-                        color = Color.White
-                    )
-                }
-            }
+                    .padding(Dimens2.spaceGapIconTextMedium)
+            )
 
             // Top-Right Delete Button
             IconButton(
                 onClick = { onRemoveImageClicked(activeImage) },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(8.dp)
-                    .size(36.dp)
-                    .background(Color.Black.copy(alpha = 0.65f), CircleShape)
+                    .padding(Dimens2.spaceSm)
+                    .size(Dimens2.actionIconBoxSize)
+                    .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.75f), CircleShape)
             ) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = stringResource(R.string.delete_current_image),
-                    tint = Color.White,
-                    modifier = Modifier.size(18.dp)
+                    tint = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.size(Dimens2.iconSize18)
                 )
             }
+
+            // Carousel Navigation Arrows
+            CarouselNavigationArrows(
+                currentIndex = activeIndex,
+                totalCount = images.size,
+                onIndexChanged = { newIdx ->
+                    if (newIdx in images.indices) {
+                        onSelectPreview(images[newIdx])
+                    }
+                }
+            )
         }
 
         // Horizontal Thumbnail Strip with Add Button
-        val itemSize: Dp = 64.dp
+        val itemSize: Dp = Dimens2.mediaThumbnailSize
         LazyRow(
+            state = listState,
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(Dimens2.inputIconSpacing),
             verticalAlignment = Alignment.CenterVertically
         ) {
             items(images) { img ->
                 val isSelected = img == activeImage
                 val border = if (isSelected) {
-                    BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+                    BorderStroke(Dimens2.shadowSm, MaterialTheme.colorScheme.primary)
                 } else {
-                    BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+                    BorderStroke(Dimens2.thinBorder, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
                 }
                 Box(
                     modifier = Modifier
                         .size(itemSize)
-                        .clip(RoundedCornerShape(8.dp))
-                        .border(border, RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(Dimens2.spaceSm))
+                        .border(border, RoundedCornerShape(Dimens2.spaceSm))
                         .clickable { onSelectPreview(img) }
                 ) {
                     AsyncImage(
-                        model = img.bitmap,
+                        model = img.toCoilModel(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
@@ -361,11 +382,11 @@ private fun PopulatedImageInputCard(
                 Box(
                     modifier = Modifier
                         .size(itemSize)
-                        .clip(RoundedCornerShape(8.dp))
+                        .clip(RoundedCornerShape(Dimens2.spaceSm))
                         .border(
-                            1.dp,
+                            Dimens2.thinBorder,
                             MaterialTheme.colorScheme.outlineVariant,
-                            RoundedCornerShape(8.dp)
+                            RoundedCornerShape(Dimens2.spaceSm)
                         )
                         .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
                         .clickable(onClick = onAddImagesClicked),
@@ -377,9 +398,9 @@ private fun PopulatedImageInputCard(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Add,
-                            contentDescription = stringResource(R.string.add_image),
+                            contentDescription = stringResource(R.string.add_more_images),
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(20.dp)
+                            modifier = Modifier.size(Dimens2.inputIconSize)
                         )
                         Text(
                             text = stringResource(R.string.add_image),

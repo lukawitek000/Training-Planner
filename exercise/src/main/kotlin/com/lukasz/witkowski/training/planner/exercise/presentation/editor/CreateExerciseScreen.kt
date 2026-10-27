@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation.editor
 
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -24,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -37,7 +35,9 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_CATEGORIES
-import com.lukasz.witkowski.training.planner.image.ImageBitmap
+import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
+import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.presentation.ImageInputForm
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
@@ -156,21 +156,17 @@ private fun ExerciseForm(
     isEditMode: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = 5),
         onResult = { uris: List<Uri> ->
             if (uris.isNotEmpty()) {
-                val bitmaps = uris.mapNotNull { uri ->
-                    runCatching {
-                        context.contentResolver.openInputStream(uri)?.use { stream ->
-                            BitmapFactory.decodeStream(stream)
-                        }?.let { ImageBitmap(it) }
-                    }.getOrNull()
+                val imageReferences = uris.map { uri ->
+                    ImageReference(
+                        imageId = ImageId.create(),
+                        path = uri.toString()
+                    )
                 }
-                if (bitmaps.isNotEmpty()) {
-                    onUserInputChange(ExerciseEditingEvent.ImagesAdded(bitmaps))
-                }
+                onUserInputChange(ExerciseEditingEvent.ImagesAdded(imageReferences))
             }
         }
     )
@@ -301,19 +297,15 @@ private fun CategorySelectionPanel(
     }
 }
 
-private fun createPreviewBitmaps(): List<ImageBitmap> {
-    val bitmap = android.graphics.Bitmap.createBitmap(100, 100, android.graphics.Bitmap.Config.ARGB_8888)
-    return listOf(ImageBitmap(bitmap), ImageBitmap(bitmap))
-}
-
 @Preview
 @Composable
 fun CreateExerciseScreenPreview() {
     TrainingPlannerTheme2 {
-        val bitmaps = remember { createPreviewBitmaps() }
         val state = ExerciseEditingInput(
-            images = bitmaps,
-            previewImage = bitmaps.first(),
+            name = "Push ups",
+            description = "Compound upper-body pushing movement",
+            images = PREVIEW_PUSH_UP_IMAGES,
+            previewImage = PREVIEW_PUSH_UP_IMAGES.firstOrNull(),
             categories = PREVIEW_CATEGORIES
         )
         CreateExerciseScreenContent(
@@ -328,12 +320,30 @@ fun CreateExerciseScreenPreview() {
 
 @Preview
 @Composable
+fun CreateExerciseScreenEmptyPreview() {
+    TrainingPlannerTheme2 {
+        val state = ExerciseEditingInput(
+            categories = PREVIEW_CATEGORIES
+        )
+        CreateExerciseScreenContent(
+            modifier = Modifier.fillMaxSize(),
+            uiState = ExerciseEditingUiState.Editing(state),
+            onUserInputChange = {},
+            onExerciseSaved = {},
+            isEditMode = false
+        )
+    }
+}
+
+@Preview
+@Composable
 fun CreateExerciseScreenSavingPreview() {
     TrainingPlannerTheme2 {
-        val bitmaps = remember { createPreviewBitmaps() }
         val state = ExerciseEditingInput(
-            images = bitmaps,
-            previewImage = bitmaps.first(),
+            name = "Push ups",
+            description = "Compound upper-body pushing movement",
+            images = PREVIEW_PUSH_UP_IMAGES,
+            previewImage = PREVIEW_PUSH_UP_IMAGES.firstOrNull(),
             categories = PREVIEW_CATEGORIES
         )
         CreateExerciseScreenContent(

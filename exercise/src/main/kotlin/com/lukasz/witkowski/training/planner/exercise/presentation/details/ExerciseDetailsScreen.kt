@@ -45,6 +45,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
+import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
 import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.PREVIEW_RECOMMENDED_PARAMETERS
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.RecommendedParametersOverview
@@ -445,6 +446,7 @@ private fun ExerciseDetailsScreenContentPreview() {
                                 ExerciseCategory("Chest"),
                                 ExerciseCategory("Shoulder")
                             ),
+                            images = PREVIEW_PUSH_UP_IMAGES,
                             metadata = ExerciseMetadata(
                                 source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
                                 syncState = ExerciseSyncState.CONFLICT,

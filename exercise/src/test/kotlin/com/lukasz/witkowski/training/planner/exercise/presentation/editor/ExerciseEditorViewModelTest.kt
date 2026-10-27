@@ -11,7 +11,8 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.DefaultCategoryController2
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
-import com.lukasz.witkowski.training.planner.image.ImageBitmap
+import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.image.ImageReference
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -52,6 +53,7 @@ class ExerciseEditorViewModelTest {
     @Before
     fun setUp() {
         Dispatchers.setMain(StandardTestDispatcher())
+        coEvery { service.readImageReferences(any()) } returns emptyList()
     }
 
     @After
@@ -106,6 +108,41 @@ class ExerciseEditorViewModelTest {
             val expectedInput = ExerciseEditingInput(
                 name = details.exercise.name,
                 description = details.exercise.description,
+                recommendations = TestData.PRESENTATION_PUSH_UPS_DETAILS.recommendations
+            )
+            assertEquals(
+                ExerciseEditingUiState.Editing(expectedInput),
+                awaitItem()
+            )
+            assertEquals(
+                ExerciseEditingUiState.Editing(
+                    expectedInput.copy(
+                        categories = details.exercise.categories.mapToFilteredCategories()
+                    )
+                ),
+                awaitItem()
+            )
+        }
+    }
+
+    @Test
+    fun `when loading exercise to edit with images is successful, images are loaded`() = runTest {
+        val exerciseId = ExerciseId.create()
+        val details = TestData.PUSH_UPS_DETAILS
+        val loadedImages = listOf(ImageReference(ImageId.create(), "path/to/img"))
+        every { service.getExerciseDetailsById(any()) } returns flowOf(details)
+        coEvery { service.readImageReferences(exerciseId) } returns loadedImages
+        givenVm(exerciseId = exerciseId)
+        vm.uiState.test {
+            assertEquals(
+                ExerciseEditingUiState.Loading(exerciseId),
+                awaitItem()
+            )
+            val expectedInput = ExerciseEditingInput(
+                name = details.exercise.name,
+                description = details.exercise.description,
+                images = loadedImages,
+                previewImage = loadedImages.first(),
                 recommendations = TestData.PRESENTATION_PUSH_UPS_DETAILS.recommendations
             )
             assertEquals(
@@ -422,21 +459,21 @@ class ExerciseEditorViewModelTest {
     @Test
     fun `when user adds image, the state reflects it and sets preview`() = runTest {
         givenVm()
-        val bitmap1 = ImageBitmap(mockk(relaxed = true))
-        val bitmap2 = ImageBitmap(mockk(relaxed = true))
+        val image1 = ImageReference(ImageId.create(), "path/to/img1")
+        val image2 = ImageReference(ImageId.create(), "path/to/img2")
         vm.uiState.test {
             assertInitialCreateState()
-            vm.onEvent(ExerciseEditingEvent.ImageAdded(bitmap1))
+            vm.onEvent(ExerciseEditingEvent.ImageAdded(image1))
             assertEquals(
                 ExerciseEditingUiState.Editing(
-                    ExerciseEditingInput(images = listOf(bitmap1), previewImage = bitmap1)
+                    ExerciseEditingInput(images = listOf(image1), previewImage = image1)
                 ),
                 awaitItem()
             )
-            vm.onEvent(ExerciseEditingEvent.ImageAdded(bitmap2))
+            vm.onEvent(ExerciseEditingEvent.ImageAdded(image2))
             assertEquals(
                 ExerciseEditingUiState.Editing(
-                    ExerciseEditingInput(images = listOf(bitmap1, bitmap2), previewImage = bitmap1)
+                    ExerciseEditingInput(images = listOf(image1, image2), previewImage = image1)
                 ),
                 awaitItem()
             )
@@ -446,14 +483,14 @@ class ExerciseEditorViewModelTest {
     @Test
     fun `when user adds multiple images, the state reflects it`() = runTest {
         givenVm()
-        val bitmap1 = ImageBitmap(mockk(relaxed = true))
-        val bitmap2 = ImageBitmap(mockk(relaxed = true))
+        val image1 = ImageReference(ImageId.create(), "path/to/img1")
+        val image2 = ImageReference(ImageId.create(), "path/to/img2")
         vm.uiState.test {
             assertInitialCreateState()
-            vm.onEvent(ExerciseEditingEvent.ImagesAdded(listOf(bitmap1, bitmap2)))
+            vm.onEvent(ExerciseEditingEvent.ImagesAdded(listOf(image1, image2)))
             assertEquals(
                 ExerciseEditingUiState.Editing(
-                    ExerciseEditingInput(images = listOf(bitmap1, bitmap2), previewImage = bitmap1)
+                    ExerciseEditingInput(images = listOf(image1, image2), previewImage = image1)
                 ),
                 awaitItem()
             )
@@ -463,16 +500,16 @@ class ExerciseEditorViewModelTest {
     @Test
     fun `when user changes preview image, the state reflects it`() = runTest {
         givenVm()
-        val bitmap1 = ImageBitmap(mockk(relaxed = true))
-        val bitmap2 = ImageBitmap(mockk(relaxed = true))
+        val image1 = ImageReference(ImageId.create(), "path/to/img1")
+        val image2 = ImageReference(ImageId.create(), "path/to/img2")
         vm.uiState.test {
             assertInitialCreateState()
-            vm.onEvent(ExerciseEditingEvent.ImagesAdded(listOf(bitmap1, bitmap2)))
+            vm.onEvent(ExerciseEditingEvent.ImagesAdded(listOf(image1, image2)))
             skipItems(1)
-            vm.onEvent(ExerciseEditingEvent.ImagePreviewChanged(bitmap2))
+            vm.onEvent(ExerciseEditingEvent.ImagePreviewChanged(image2))
             assertEquals(
                 ExerciseEditingUiState.Editing(
-                    ExerciseEditingInput(images = listOf(bitmap1, bitmap2), previewImage = bitmap2)
+                    ExerciseEditingInput(images = listOf(image1, image2), previewImage = image2)
                 ),
                 awaitItem()
             )
@@ -482,16 +519,16 @@ class ExerciseEditorViewModelTest {
     @Test
     fun `when user removes preview image, preview falls back to remaining image`() = runTest {
         givenVm()
-        val bitmap1 = ImageBitmap(mockk(relaxed = true))
-        val bitmap2 = ImageBitmap(mockk(relaxed = true))
+        val image1 = ImageReference(ImageId.create(), "path/to/img1")
+        val image2 = ImageReference(ImageId.create(), "path/to/img2")
         vm.uiState.test {
             assertInitialCreateState()
-            vm.onEvent(ExerciseEditingEvent.ImagesAdded(listOf(bitmap1, bitmap2)))
+            vm.onEvent(ExerciseEditingEvent.ImagesAdded(listOf(image1, image2)))
             skipItems(1)
-            vm.onEvent(ExerciseEditingEvent.ImageRemoved(bitmap1))
+            vm.onEvent(ExerciseEditingEvent.ImageRemoved(image1))
             assertEquals(
                 ExerciseEditingUiState.Editing(
-                    ExerciseEditingInput(images = listOf(bitmap2), previewImage = bitmap2)
+                    ExerciseEditingInput(images = listOf(image2), previewImage = image2)
                 ),
                 awaitItem()
             )
