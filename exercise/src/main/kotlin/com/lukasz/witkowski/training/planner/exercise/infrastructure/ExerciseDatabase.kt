@@ -8,8 +8,13 @@ import androidx.room3.RoomDatabase
 
 @Database(
     entities = [
-        DbExercise::class, DbExerciseCategory::class, ExerciseCategoryCrossRef::class,
-        DbExerciseRecommendation::class, DbSyncMetadata::class, DbExerciseMutation::class
+        DbExercise::class,
+        DbExerciseCategory::class,
+        ExerciseCategoryCrossRef::class,
+        DbExerciseRecommendation::class,
+        DbExerciseImage::class,
+        DbSyncMetadata::class,
+        DbExerciseMutation::class
     ],
     version = 14,
     exportSchema = false

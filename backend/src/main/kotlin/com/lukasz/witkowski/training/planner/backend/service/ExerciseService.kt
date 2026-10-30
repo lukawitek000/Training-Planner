@@ -4,6 +4,7 @@ import com.lukasz.witkowski.training.planner.backend.db.CategoriesTable
 import com.lukasz.witkowski.training.planner.backend.db.DatabaseFactory.dbQuery
 import com.lukasz.witkowski.training.planner.backend.db.ExerciseCategoriesTable
 import com.lukasz.witkowski.training.planner.backend.db.ExerciseDeletionsTable
+import com.lukasz.witkowski.training.planner.backend.db.ExerciseImagesTable
 import com.lukasz.witkowski.training.planner.backend.db.ExerciseRecommendationsTable
 import com.lukasz.witkowski.training.planner.backend.db.ExercisesTable
 import com.lukasz.witkowski.training.planner.backend.db.IdempotencyLogsTable
@@ -143,6 +144,7 @@ class ExerciseService {
         val exerciseIds = changedRows.map { it[ExercisesTable.id] }
         val categoriesMap = getCategoriesForExercises(exerciseIds)
         val recommendationsMap = getRecommendationsForExercises(exerciseIds)
+        val imagesMap = getImagesForExercises(exerciseIds)
 
         val changedExercises = changedRows.map { row ->
             val exerciseId = row[ExercisesTable.id]
@@ -160,7 +162,8 @@ class ExerciseService {
                 source = row[ExercisesTable.sourceType],
                 sharing = row[ExercisesTable.sharing],
                 revision = row[ExercisesTable.revision],
-                recommendations = recommendationsMap[exerciseId]
+                recommendations = recommendationsMap[exerciseId],
+                images = imagesMap[exerciseId] ?: emptyList()
             )
         }
 
@@ -266,6 +269,7 @@ class ExerciseService {
         val pageRows = allRows.drop(offset).take(safeLimit)
         val exerciseIds = pageRows.map { it[ExercisesTable.id] }
         val categoriesMap = getCategoriesForExercises(exerciseIds)
+        val imagesMap = getImagesForExercises(exerciseIds)
         val recommendationsMap = getRecommendationsForExercises(exerciseIds)
 
         val paginatedExercises =
@@ -285,7 +289,8 @@ class ExerciseService {
                     source = row[ExercisesTable.sourceType],
                     sharing = row[ExercisesTable.sharing],
                     revision = row[ExercisesTable.revision],
-                    recommendations = recommendationsMap[exerciseId]
+                    recommendations = recommendationsMap[exerciseId],
+                    images = imagesMap[exerciseId] ?: emptyList()
                 )
             }
 
@@ -315,6 +320,7 @@ class ExerciseService {
             OwnerDto(id = oId, username = username)
         }
         val categories = getCategoriesForExercise(id)
+        val images = getImagesForExercise(id)
         val recommendations = getRecommendationsForExercise(id)
         ExerciseDto(
             id = id,
@@ -325,7 +331,8 @@ class ExerciseService {
             source = row[ExercisesTable.sourceType],
             sharing = sharing,
             revision = row[ExercisesTable.revision],
-            recommendations = recommendations
+            recommendations = recommendations,
+            images = images
         )
     }
 
@@ -418,6 +425,14 @@ class ExerciseService {
                 }
             }
 
+            request.images.forEachIndexed { index, imgId ->
+                ExerciseImagesTable.insert {
+                    it[ExerciseImagesTable.exerciseId] = exerciseId
+                    it[ExerciseImagesTable.imageId] = imgId
+                    it[ExerciseImagesTable.orderIndex] = index
+                }
+            }
+
             request.recommendations?.forEach { rec ->
                 ExerciseRecommendationsTable.insert {
                     it[id] = UUID.randomUUID().toString()
@@ -449,7 +464,8 @@ class ExerciseService {
                     source = "USER_CREATED",
                     sharing = sharingValue,
                     revision = 1L,
-                    recommendations = recommendations
+                    recommendations = recommendations,
+                    images = request.images
                 )
 
             if (idempotencyKey != null) {
@@ -544,6 +560,15 @@ class ExerciseService {
             }
         }
 
+        ExerciseImagesTable.deleteWhere { ExerciseImagesTable.exerciseId eq id }
+        request.images.forEachIndexed { index, imgId ->
+            ExerciseImagesTable.insert {
+                it[ExerciseImagesTable.exerciseId] = id
+                it[ExerciseImagesTable.imageId] = imgId
+                it[ExerciseImagesTable.orderIndex] = index
+            }
+        }
+
         request.recommendations?.let { recs ->
             ExerciseRecommendationsTable.deleteWhere {
                 ExerciseRecommendationsTable.exerciseId eq id
@@ -580,7 +605,8 @@ class ExerciseService {
             source = sourceType,
             sharing = sharingValue,
             revision = nextRevision,
-            recommendations = recommendations
+            recommendations = recommendations,
+            images = request.images
         )
 
         if (idempotencyKey != null) {
@@ -685,6 +711,31 @@ class ExerciseService {
             if (catDto != null) {
                 resultMap.getOrPut(exId) { mutableListOf() }.add(catDto)
             }
+        }
+        return resultMap
+    }
+
+    private fun getImagesForExercise(exerciseId: String): List<String> =
+        getImagesForExercises(listOf(exerciseId))[exerciseId] ?: emptyList()
+
+    private fun getImagesForExercises(exerciseIds: List<String>): Map<String, List<String>> {
+        if (exerciseIds.isEmpty()) return emptyMap()
+
+        val imageRows =
+            ExerciseImagesTable
+                .selectAll()
+                .where { ExerciseImagesTable.exerciseId inList exerciseIds }
+                .map {
+                    Triple(
+                        it[ExerciseImagesTable.exerciseId],
+                        it[ExerciseImagesTable.imageId],
+                        it[ExerciseImagesTable.orderIndex]
+                    )
+                }
+
+        val resultMap = mutableMapOf<String, MutableList<String>>()
+        imageRows.sortedBy { it.third }.forEach { (exId, imgId, _) ->
+            resultMap.getOrPut(exId) { mutableListOf() }.add(imgId)
         }
         return resultMap
     }

@@ -1,0 +1,13 @@
+<resources>
+    <string name="add_images">Add images</string>
+    <string name="add_photos_cue">Upload high-quality photos or illustrations to demonstrate proper form and execution.</string>
+    <string name="delete_current_image">Delete current image</string>
+    <string name="add_image">Add image</string>
+    <string name="image_preview">Image preview</string>
+    <string name="can_add_multiple_img">You can add multiple images</string>
+    <string name="previous_image">Previous image</string>
+    <string name="next_image">Next image</string>
+    <string name="image_counter_format">%1$d / %2$d</string>
+    <string name="exercise_image">Exercise image</string>
+    <string name="add_more_images">Add more images</string>
+</resources>

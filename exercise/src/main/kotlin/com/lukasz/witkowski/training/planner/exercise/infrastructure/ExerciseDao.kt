@@ -79,12 +79,21 @@ internal interface ExerciseDao {
         val insertedRowIds = insertExerciseCategoryCrossRefs(crossRefs)
         if (insertedRowIds.any { it == -1L }) return false
         val insertedRecRowIds = insert(details.recommendations)
-        return insertedRecRowIds.all {
-            it != -1L
+        if (insertedRecRowIds.any { it == -1L }) return false
+        if (details.images.isNotEmpty()) {
+            val insertedImageRowIds = insertExerciseImages(details.images)
+            if (insertedImageRowIds.any { it == -1L }) return false
         }
+        return true
     }
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertExerciseImages(images: List<DbExerciseImage>): List<Long>
+
+    @Query("DELETE FROM ExerciseImage WHERE exerciseId = :exerciseId")
+    suspend fun deleteExerciseImages(exerciseId: String): Int
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(recommendations: List<DbExerciseRecommendation>): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -105,6 +114,7 @@ internal interface ExerciseDao {
     suspend fun deleteExerciseAndCascade(id: String): Int {
         deleteCategoryReferences(id)
         deleteExerciseMutations(id)
+        deleteExerciseImages(id)
         return deleteExerciseById(id)
     }
 
@@ -133,6 +143,10 @@ internal interface ExerciseDao {
                 ExerciseCategoryCrossRef(exerciseDetails.exercise.exerciseId, it.categoryName)
             }
         insertExerciseCategoryCrossRefs(crossRefs)
+        deleteExerciseImages(exerciseDetails.exercise.exerciseId)
+        if (exerciseDetails.images.isNotEmpty()) {
+            insertExerciseImages(exerciseDetails.images)
+        }
         return updatedRows
     }
 
@@ -159,6 +173,9 @@ internal interface ExerciseDao {
     )
     suspend fun convertNonBundledExercisesToLocalOnly()
 
+    @Query("SELECT * FROM ExerciseImage WHERE exerciseId = :exerciseId ORDER BY orderIndex ASC")
+    suspend fun getExerciseImages(exerciseId: String): List<DbExerciseImage>
+
     @Transaction
     suspend fun applySyncChanges(
         upserts: List<DbExerciseDetails>,
@@ -175,12 +192,18 @@ internal interface ExerciseDao {
             if (existing != null && existing.syncState in protectedStates) {
                 return@forEach
             }
+            val existingImages = getExerciseImages(item.exercise.exerciseId)
+            val mergedImages = if (item.images.isEmpty() && existingImages.isNotEmpty()) {
+                existingImages
+            } else {
+                item.images
+            }
             val mergedExercise = if (item.exercise.imageId == null && existing?.imageId != null) {
                 item.exercise.copy(imageId = existing.imageId)
             } else {
                 item.exercise
             }
-            insertExerciseDetails(item.copy(exercise = mergedExercise))
+            insertExerciseDetails(item.copy(exercise = mergedExercise, images = mergedImages))
         }
         deletedIds.forEach { id ->
             val existing = getExerciseByIdOnce(id)

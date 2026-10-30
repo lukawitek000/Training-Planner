@@ -8,8 +8,11 @@ data class ExerciseConfiguration(
     val name: String,
     val description: String,
     val categories: List<ExerciseCategory>,
-    val image: ImageByteArray? = null,
+    val images: List<ImageByteArray> = emptyList(),
     val beginnerRecommendation: ExerciseRecommendation,
     val intermediateRecommendation: ExerciseRecommendation,
     val advancedRecommendation: ExerciseRecommendation
-)
+) {
+    val image: ImageByteArray?
+        get() = images.firstOrNull()
+}

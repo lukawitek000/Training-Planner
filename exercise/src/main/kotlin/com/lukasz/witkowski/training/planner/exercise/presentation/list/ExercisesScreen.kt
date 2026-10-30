@@ -58,6 +58,8 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_CATEGORIES
+import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PULL_UP_IMAGES
+import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
@@ -465,10 +467,21 @@ private fun ExerciseThumbnail(
     ) {
         Box(contentAlignment = Alignment.Center) {
             if (imageReference != null) {
+                val imgModel: Any = if (imageReference.path.startsWith("file:///android_asset/") ||
+                    imageReference.isRemote ||
+                    imageReference.path.startsWith("content://")
+                ) {
+                    imageReference.path
+                } else {
+                    java.io.File(imageReference.path)
+                }
                 AsyncImage(
-                    model = imageReference.path,
+                    model = imgModel,
+                    placeholder = painterResource(id = R.drawable.exercise_default),
+                    error = painterResource(id = R.drawable.exercise_default),
+                    fallback = painterResource(id = R.drawable.exercise_default),
                     contentDescription = imageDescription,
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.Fit,
                     modifier =
                     Modifier
                         .fillMaxSize()
@@ -497,6 +510,7 @@ val PREVIEW_EXERCISES =
             name = "Push ups",
             description = "Compound upper-body pushing movement",
             categories = listOf(ExerciseCategory("Chest"), ExerciseCategory("Shoulders")),
+            images = PREVIEW_PUSH_UP_IMAGES,
             metadata =
             ExerciseMetadata(
                 source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
@@ -508,6 +522,7 @@ val PREVIEW_EXERCISES =
             name = "Pull up",
             description = "Vertical pulling exercise for lats and biceps",
             categories = listOf(ExerciseCategory("Back"), ExerciseCategory("Biceps")),
+            images = PREVIEW_PULL_UP_IMAGES,
             metadata =
             ExerciseMetadata(
                 source = ExerciseSource.Bundled,

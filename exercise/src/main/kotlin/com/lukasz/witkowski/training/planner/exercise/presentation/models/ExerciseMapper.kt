@@ -23,19 +23,20 @@ fun DomainExercise.toPresentationExercise(imageReference: ImageReference?): Exer
     image = imageReference
 )
 
-fun DomainExercise2.toPresentationExercise2(imageReference: ImageReference?): Exercise2 = Exercise2(
-    id = id,
-    name = name,
-    description = description,
-    categories = categories.toList(),
-    image = imageReference,
-    metadata = metadata
-)
+fun DomainExercise2.toPresentationExercise2(images: List<ImageReference> = emptyList()): Exercise2 =
+    Exercise2(
+        id = id,
+        name = name,
+        description = description,
+        categories = categories.toList(),
+        images = images,
+        metadata = metadata
+    )
 
 fun DomainExerciseDetails.toPresentationExerciseDetails(
-    imageReference: ImageReference? = null
+    images: List<ImageReference> = emptyList()
 ): ExerciseDetails = ExerciseDetails(
-    exercise = this.exercise.toPresentationExercise2(imageReference),
+    exercise = this.exercise.toPresentationExercise2(images),
     recommendations =
     listOf(
         beginnerRecommendation.toRecommendation(RecommendationLevel.BEGINNER),

@@ -13,6 +13,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.ExerciseLocalDataSource
+import com.lukasz.witkowski.training.planner.image.ImageId
 import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -181,14 +182,14 @@ internal class DefaultExerciseRepository(
         val existingDbDetails = localDataSource.getExerciseDetailsById(
             exerciseId.toString()
         ).firstOrNull()
-        val preservedImageId = existingDbDetails?.exercise?.imageId?.let {
-            com.lukasz.witkowski.training.planner.image.ImageId(it)
-        }
-        val mergedServerDetails = if (serverExerciseDetails.exercise.imageId == null &&
-            preservedImageId != null
+        val preservedImageIds = existingDbDetails?.images?.sortedBy { it.orderIndex }
+            ?.map { ImageId(it.imageId) }
+            ?: emptyList()
+        val mergedServerDetails = if (serverExerciseDetails.exercise.imageIds.isEmpty() &&
+            preservedImageIds.isNotEmpty()
         ) {
             serverExerciseDetails.copy(
-                exercise = serverExerciseDetails.exercise.copy(imageId = preservedImageId)
+                exercise = serverExerciseDetails.exercise.copy(imageIds = preservedImageIds)
             )
         } else {
             serverExerciseDetails

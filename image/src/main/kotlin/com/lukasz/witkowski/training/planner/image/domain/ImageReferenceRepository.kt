@@ -25,6 +25,8 @@ internal interface ImageReferenceRepository {
 
     suspend fun readByOwnerId(ownerId: UUID): ImageReference?
 
+    suspend fun readAllByOwnerId(ownerId: UUID): List<ImageReference>
+
     suspend fun read(imageId: ImageId): ImageReference?
 
     /**

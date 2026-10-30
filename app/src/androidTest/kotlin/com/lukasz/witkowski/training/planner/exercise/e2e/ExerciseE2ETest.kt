@@ -300,6 +300,12 @@ class ExerciseE2ETest {
     }
 
     private fun whenGoToExerciseDetails(exerciseName: String) {
+        composeTestRule.waitUntil(timeoutMillis = 10000) {
+            composeTestRule
+                .onAllNodesWithTag("ExercisesList")
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
         composeTestRule
             .onNodeWithTag("ExercisesList")
             .performScrollToNode(hasTestTag(givenExerciseItemTag(exerciseName)))

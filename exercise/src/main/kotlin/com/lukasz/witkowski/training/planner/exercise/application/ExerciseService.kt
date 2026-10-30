@@ -16,6 +16,7 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageStorage
 import com.lukasz.witkowski.training.planner.image.toImageConfiguration
+import com.lukasz.witkowski.training.planner.shared.utils.runCatchingCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 
@@ -25,9 +26,19 @@ class ExerciseService(
 ) {
     suspend fun saveExercise(exerciseConfiguration: ExerciseConfiguration): ExerciseId {
         val exerciseId = ExerciseId.create()
-        val imageReference = exerciseConfiguration.image?.let { saveImage(it, exerciseId) }
+        val imageReferences = if (exerciseConfiguration.images.isNotEmpty()) {
+            saveImages(exerciseConfiguration.images, exerciseId)
+        } else {
+            emptyList()
+        }
         val exerciseDetails =
-            ExerciseFactory.create(exerciseConfiguration, imageReference?.imageId, exerciseId)
+            ExerciseFactory.create(
+                exerciseConfiguration,
+                imageReferences.map {
+                    it.imageId
+                },
+                exerciseId
+            )
         exerciseRepository.insert(exerciseDetails)
         return exerciseId
     }
@@ -40,14 +51,10 @@ class ExerciseService(
         if (existing?.exercise?.metadata?.source is ExerciseSource.Bundled) {
             throw IllegalStateException("Bundled exercises cannot be modified")
         }
-        val imageId = if (exerciseConfiguration.image != null) {
-            updateImage(
-                exerciseConfiguration.image,
-                existing?.exercise?.imageId,
-                exerciseId
-            )?.imageId
+        val imageIds = if (exerciseConfiguration.images.isNotEmpty()) {
+            saveImages(exerciseConfiguration.images, exerciseId).map { it.imageId }
         } else {
-            existing?.exercise?.imageId
+            existing?.exercise?.imageIds ?: emptyList()
         }
         val metadata = existing?.exercise?.metadata?.copy(
             syncState = ExerciseSyncState.PENDING_UPLOAD
@@ -57,7 +64,7 @@ class ExerciseService(
         )
         val exerciseDetails = ExerciseFactory.create(
             exerciseConfiguration = exerciseConfiguration,
-            imageId = imageId,
+            imageIds = imageIds,
             exerciseId = exerciseId,
             metadata = metadata
         )
@@ -65,16 +72,12 @@ class ExerciseService(
         return exerciseId
     }
 
-    private suspend fun saveImage(
-        imageByteArray: ImageByteArray,
+    private suspend fun saveImages(
+        images: List<ImageByteArray>,
         exerciseId: ExerciseId
-    ): ImageReference {
-        val imageConfiguration = imageByteArray.toImageConfiguration(exerciseId.value)
-        return imageStorage.saveImage(imageConfiguration)
-    }
-
-    private suspend fun deleteImage(imageId: ImageId, exerciseId: ExerciseId) {
-        imageStorage.deleteImage(imageId, exerciseId.value)
+    ): List<ImageReference> {
+        val imageConfigurations = images.map { it.toImageConfiguration(exerciseId.value) }
+        return imageStorage.saveImages(imageConfigurations)
     }
 
     fun queryExercises(exerciseQuery: ExerciseQuery): Flow<PagingData<Exercise2>> =
@@ -91,26 +94,17 @@ class ExerciseService(
     fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails?> =
         exerciseRepository.getExerciseDetailsById(id)
 
-    private suspend fun updateImage(
-        imageByteArray: ImageByteArray?,
-        oldImageId: ImageId?,
-        exerciseId: ExerciseId
-    ): ImageReference? {
-        val imageConfiguration = imageByteArray?.toImageConfiguration(exerciseId.value)
-        return if (oldImageId == null) {
-            imageConfiguration?.let { imageStorage.saveImage(imageConfiguration) }
-        } else {
-            if (imageConfiguration == null) {
-                imageStorage.deleteImage(oldImageId, exerciseId.value)
-                null // Do not exist after delete
-            } else {
-                imageConfiguration.let { imageStorage.updateImage(oldImageId, imageConfiguration) }
-            }
-        }
-    }
-
     suspend fun readImage(imageId: ImageId): Image = imageStorage.readImage(imageId)
 
-    suspend fun readImageReference(imageId: ImageId): ImageReference? =
-        imageStorage.readImageReference(imageId)
+    suspend fun readImageReferences(exerciseId: ExerciseId): List<ImageReference> =
+        runCatchingCancellable {
+            val fromStorage = imageStorage.readImageReferences(exerciseId.value)
+            if (fromStorage.isNotEmpty()) {
+                return@runCatchingCancellable fromStorage
+            }
+            val details = exerciseRepository.getExerciseDetailsById(exerciseId).firstOrNull()
+            details?.exercise?.imageIds?.mapNotNull { imageId ->
+                imageStorage.readImageReference(imageId)
+            } ?: emptyList()
+        }.getOrDefault(emptyList())
 }

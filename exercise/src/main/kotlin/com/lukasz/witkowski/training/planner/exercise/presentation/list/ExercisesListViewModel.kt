@@ -61,7 +61,14 @@ class ExercisesListViewModel(
             .flatMapLatest { state ->
                 exerciseService.queryExercises(state.toExerciseQuery())
             }.map { pagingData ->
-                pagingData.map { exercise -> exercise.toPresentationExercise2(null) }
+                pagingData.map { exercise ->
+                    val imageReferences = if (exercise.imageIds.isNotEmpty()) {
+                        exerciseService.readImageReferences(exercise.id)
+                    } else {
+                        emptyList()
+                    }
+                    exercise.toPresentationExercise2(imageReferences)
+                }
             }.cachedIn(viewModelScope)
 
     fun onSearchQueryChange(new: String) {

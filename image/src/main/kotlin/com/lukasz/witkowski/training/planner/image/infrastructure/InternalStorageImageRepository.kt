@@ -39,6 +39,21 @@ internal class InternalStorageImageRepository(
 
     override suspend fun read(imageReference: ImageReference): Image? = withContext(ioDispatcher) {
         val filePath = imageReference.path
+        if (filePath.startsWith("file:///android_asset/")) {
+            val assetPath = filePath.removePrefix("file:///android_asset/")
+            return@withContext try {
+                val byteArray = context.assets.open(assetPath).use { it.readBytes() }
+                Image(
+                    imageReference.imageId,
+                    imageReference.ownersIds,
+                    byteArray,
+                    imageReference.checksum
+                )
+            } catch (e: Exception) {
+                Timber.w("Failed to read asset under path $filePath: ${e.message}")
+                null
+            }
+        }
         try {
             val file = File(filePath)
             if (file.exists()) {

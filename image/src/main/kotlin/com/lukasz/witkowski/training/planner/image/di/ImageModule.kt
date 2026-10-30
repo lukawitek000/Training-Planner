@@ -34,7 +34,8 @@ val imageModule =
         single {
             DbImageReferenceRepository(
                 imageReferenceDao = get(),
-                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
+                context = androidContext()
             )
         } bind ImageReferenceRepository::class
 

@@ -11,5 +11,10 @@ data class DbExerciseWithCategories(
         entityColumns = ["categoryName"],
         associateBy = Junction(ExerciseCategoryCrossRef::class)
     )
-    val categories: List<DbExerciseCategory>
+    val categories: List<DbExerciseCategory>,
+    @Relation(
+        parentColumns = ["exerciseId"],
+        entityColumns = ["exerciseId"]
+    )
+    val images: List<DbExerciseImage> = emptyList()
 )

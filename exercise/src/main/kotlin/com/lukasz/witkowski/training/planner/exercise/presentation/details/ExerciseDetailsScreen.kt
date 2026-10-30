@@ -45,11 +45,12 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
-import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ImagesPreview
+import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.PREVIEW_RECOMMENDED_PARAMETERS
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.RecommendedParametersOverview
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
+import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
 import com.lukasz.witkowski.training.planner.shared.theme.Info
 import com.lukasz.witkowski.training.planner.shared.theme.Success
@@ -159,11 +160,12 @@ private fun ExerciseDetailsBody(
                 .testTag("ExerciseDetails"),
             verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
         ) {
-            ImagesPreview(
-                images = emptyList(),
-                previewImage = null,
-                modifier = Modifier.padding(bottom = Dimens2.spaceSm)
-            )
+            if (exercise.images.isNotEmpty()) {
+                ImageGallery(
+                    images = exercise.images,
+                    modifier = Modifier.padding(bottom = Dimens2.spaceSm)
+                )
+            }
 
             Text(
                 text = exercise.name,
@@ -406,7 +408,10 @@ private fun SyncActionBottomBanner(
                 tint = accentColor,
                 modifier = Modifier.size(Dimens2.iconSize24)
             )
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            ) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
@@ -418,12 +423,12 @@ private fun SyncActionBottomBanner(
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                AppSecondaryButton(
+                    text = actionLabel,
+                    onClick = onActionClick,
+                    modifier = Modifier.testTag(actionTestTag)
+                )
             }
-            AppSecondaryButton(
-                text = actionLabel,
-                onClick = onActionClick,
-                modifier = Modifier.testTag(actionTestTag)
-            )
         }
     }
 }
@@ -444,6 +449,7 @@ private fun ExerciseDetailsScreenContentPreview() {
                                 ExerciseCategory("Chest"),
                                 ExerciseCategory("Shoulder")
                             ),
+                            images = PREVIEW_PUSH_UP_IMAGES,
                             metadata = ExerciseMetadata(
                                 source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
                                 syncState = ExerciseSyncState.CONFLICT,
