@@ -311,7 +311,7 @@ class DefaultExerciseSyncRepositoryTest {
     }
 
     @Test
-    fun `resolveConflictAcceptServer preserves multiple images when server exercise has empty images`() =
+    fun `resolveConflict preserves multiple images when server exercise has empty images`() =
         runTest {
             val serverDetailsWithNoImages = TestData.PUSH_UPS_DETAILS.copy(
                 exercise = TestData.PUSH_UPS_EXERCISE.copy(
@@ -342,7 +342,8 @@ class DefaultExerciseSyncRepositoryTest {
                     DbExerciseImage(EX_ID_1, img2, 1)
                 )
             )
-            coEvery { exerciseDao.getExerciseDetailsById(EX_ID_1) } returns kotlinx.coroutines.flow.flowOf(existingDbDetails)
+            coEvery { exerciseDao.getExerciseDetailsById(EX_ID_1) } returns
+                kotlinx.coroutines.flow.flowOf(existingDbDetails)
 
             val result = repository.resolveConflictAcceptServer(ExerciseId(EX_ID_1))
 
@@ -392,7 +393,8 @@ class DefaultExerciseSyncRepositoryTest {
                     DbExerciseImage(EX_ID_1, img2, 1)
                 )
             )
-            coEvery { exerciseDao.getExerciseDetailsById(EX_ID_1) } returns kotlinx.coroutines.flow.flowOf(existingDbDetails)
+            coEvery { exerciseDao.getExerciseDetailsById(EX_ID_1) } returns
+                kotlinx.coroutines.flow.flowOf(existingDbDetails)
 
             val updatedDto = ExerciseDto(
                 id = EX_ID_1,

@@ -49,7 +49,10 @@ class ExerciseDatabaseAssetTest {
         assertEquals("Should contain 71 bundled exercises", 71, allExercises.size)
 
         allExercises.forEach { exercise ->
-            assertNotNull("Bundled exercise imageId should not be null: ${exercise.name}", exercise.imageId)
+            assertNotNull(
+                "Bundled exercise imageId should not be null: ${exercise.name}",
+                exercise.imageId
+            )
             assertEquals(
                 "Bundled exercise sourceType should be BUNDLED",
                 DbExercise.SOURCE_TYPE_BUNDLED,

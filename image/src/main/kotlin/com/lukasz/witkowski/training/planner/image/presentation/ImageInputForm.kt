@@ -44,7 +44,7 @@ fun ImageInputForm(
     description: String = stringResource(R.string.add_photos_cue),
     onAddImagesClicked: () -> Unit = {},
     onRemoveImageClicked: (ImageReference) -> Unit = {},
-    onSelectPreview: (ImageReference) -> Unit = {},
+    onSelectPreview: (ImageReference) -> Unit = {}
 ) {
     if (images.isEmpty()) {
         EmptyImageInputCard(
@@ -73,7 +73,7 @@ fun ImagesPreview(
     images: List<ImageReference>,
     previewImage: ImageReference?,
     modifier: Modifier = Modifier,
-    onSelectPreview: (ImageReference) -> Unit = {},
+    onSelectPreview: (ImageReference) -> Unit = {}
 ) {
     ImageGallery(
         images = images,
@@ -91,7 +91,7 @@ private fun EmptyImageInputCard(
     title: String,
     description: String,
     onAddImagesClicked: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -99,7 +99,10 @@ private fun EmptyImageInputCard(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
         ),
-        border = BorderStroke(Dimens2.thinBorder, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+        border = BorderStroke(
+            Dimens2.thinBorder,
+            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+        )
     ) {
         Column(
             modifier = Modifier
@@ -148,7 +151,10 @@ private fun EmptyImageInputCard(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ),
-                contentPadding = PaddingValues(horizontal = Dimens2.inputIconSize, vertical = Dimens2.inputIconSpacing)
+                contentPadding = PaddingValues(
+                    horizontal = Dimens2.inputIconSize,
+                    vertical = Dimens2.inputIconSpacing
+                )
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,

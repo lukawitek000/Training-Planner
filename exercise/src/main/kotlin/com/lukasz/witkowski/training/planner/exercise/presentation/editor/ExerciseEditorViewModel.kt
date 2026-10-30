@@ -221,7 +221,9 @@ class ExerciseEditorViewModel(
                 val exerciseDetails = exerciseService.getExerciseDetailsById(exerciseId).first()
                 if (exerciseDetails != null) {
                     val loadedImages = if (exerciseDetails.exercise.imageIds.isNotEmpty()) {
-                        runCatching { exerciseService.readImageReferences(exerciseId) }.getOrDefault(emptyList())
+                        runCatching {
+                            exerciseService.readImageReferences(exerciseId)
+                        }.getOrDefault(emptyList())
                     } else {
                         emptyList()
                     }
@@ -251,7 +253,9 @@ class ExerciseEditorViewModel(
             description = description,
             categories = categories.filter { it.isSelected }.map { it.category },
             images = imageByteArrays,
-            beginnerRecommendation = recommendations.toExerciseRecommendation(RecommendationLevel.BEGINNER),
+            beginnerRecommendation = recommendations.toExerciseRecommendation(
+                RecommendationLevel.BEGINNER
+            ),
             intermediateRecommendation = recommendations.toExerciseRecommendation(
                 RecommendationLevel.INTERMEDIATE
             ),
@@ -261,39 +265,47 @@ class ExerciseEditorViewModel(
         )
     }
 
-    private suspend fun readImageBytes(imageReference: ImageReference): ByteArray? = withContext(Dispatchers.IO) {
-        runCatching {
-            val path = imageReference.path
-            when {
-                path.startsWith("content://") -> {
-                    context?.contentResolver?.openInputStream(Uri.parse(path))?.use { it.readBytes() }
+    private suspend fun readImageBytes(imageReference: ImageReference): ByteArray? =
+        withContext(Dispatchers.IO) {
+            runCatching {
+                val path = imageReference.path
+                when {
+                    path.startsWith("content://") -> {
+                        context?.contentResolver?.openInputStream(Uri.parse(path))?.use {
+                            it.readBytes()
+                        }
+                    }
+                    path.startsWith("file:///android_asset/") -> {
+                        context?.assets?.open(path.removePrefix("file:///android_asset/"))?.use {
+                            it.readBytes()
+                        }
+                    }
+                    File(path).exists() -> {
+                        File(path).readBytes()
+                    }
+                    else -> {
+                        runCatching {
+                            exerciseService.readImage(imageReference.imageId).data
+                        }.getOrNull()
+                    }
                 }
-                path.startsWith("file:///android_asset/") -> {
-                    context?.assets?.open(path.removePrefix("file:///android_asset/"))?.use { it.readBytes() }
-                }
-                File(path).exists() -> {
-                    File(path).readBytes()
-                }
-                else -> {
-                    runCatching { exerciseService.readImage(imageReference.imageId).data }.getOrNull()
-                }
-            }
-        }.getOrNull()
-    }
+            }.getOrNull()
+        }
 
-    private fun ExerciseDetails.toExerciseEditingState(loadedImages: List<ImageReference> = emptyList()): ExerciseEditingInput =
-        ExerciseEditingInput(
-            name = exercise.name,
-            description = exercise.description,
-            categories = filterCategories.value,
-            images = loadedImages,
-            previewImage = loadedImages.firstOrNull(),
-            recommendations = listOf(
-                beginnerRecommendation.toRecommendation(RecommendationLevel.BEGINNER),
-                intermediateRecommendation.toRecommendation(RecommendationLevel.INTERMEDIATE),
-                advancedRecommendation.toRecommendation(RecommendationLevel.ADVANCED)
-            )
+    private fun ExerciseDetails.toExerciseEditingState(
+        loadedImages: List<ImageReference> = emptyList()
+    ): ExerciseEditingInput = ExerciseEditingInput(
+        name = exercise.name,
+        description = exercise.description,
+        categories = filterCategories.value,
+        images = loadedImages,
+        previewImage = loadedImages.firstOrNull(),
+        recommendations = listOf(
+            beginnerRecommendation.toRecommendation(RecommendationLevel.BEGINNER),
+            intermediateRecommendation.toRecommendation(RecommendationLevel.INTERMEDIATE),
+            advancedRecommendation.toRecommendation(RecommendationLevel.ADVANCED)
         )
+    )
 }
 
 sealed interface ExerciseEditingEvent {

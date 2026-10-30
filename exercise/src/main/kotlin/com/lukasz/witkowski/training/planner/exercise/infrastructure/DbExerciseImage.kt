@@ -17,8 +17,4 @@ import androidx.room3.Index
     ],
     indices = [Index("exerciseId")]
 )
-data class DbExerciseImage(
-    val exerciseId: String,
-    val imageId: String,
-    val orderIndex: Int = 0
-)
+data class DbExerciseImage(val exerciseId: String, val imageId: String, val orderIndex: Int = 0)

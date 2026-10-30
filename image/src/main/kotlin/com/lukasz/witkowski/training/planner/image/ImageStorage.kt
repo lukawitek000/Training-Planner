@@ -5,9 +5,10 @@ import java.util.UUID
 interface ImageStorage {
     suspend fun saveImage(imageConfiguration: ImageConfiguration): ImageReference
 
-    suspend fun saveImages(imageConfigurations: List<ImageConfiguration>): List<ImageReference> {
-        return imageConfigurations.map { saveImage(it) }
-    }
+    suspend fun saveImages(imageConfigurations: List<ImageConfiguration>): List<ImageReference> =
+        imageConfigurations.map {
+            saveImage(it)
+        }
 
     /**
      * Read the image based on the [imageId].

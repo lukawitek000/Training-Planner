@@ -101,7 +101,10 @@ class ExerciseDetailsViewModelTest {
     fun `when exercise has images they are loaded into presentation model`() = runTest {
         val imageReferences = listOf(
             TestData.SAMPLE_IMAGE_REFERENCE,
-            TestData.SAMPLE_IMAGE_REFERENCE.copy(imageId = TestData.IMAGE_ID_2, path = "path/to/image2.jpg")
+            TestData.SAMPLE_IMAGE_REFERENCE.copy(
+                imageId = TestData.IMAGE_ID_2,
+                path = "path/to/image2.jpg"
+            )
         )
         coEvery { service.getExerciseDetailsById(id) } returns flowOf(TestData.PUSH_UPS_DETAILS)
         coEvery { service.readImageReferences(id) } returns imageReferences

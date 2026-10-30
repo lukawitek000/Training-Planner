@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation.editor
 
-import android.graphics.Bitmap
 import app.cash.turbine.ReceiveTurbine
 import app.cash.turbine.test
 import com.lukasz.witkowski.training.planner.exercise.TestData

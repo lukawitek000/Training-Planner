@@ -32,7 +32,7 @@ import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
 internal fun calculatePreviousCarouselIndex(
     currentIndex: Int,
     totalCount: Int,
-    cycle: Boolean = true,
+    cycle: Boolean = true
 ): Int {
     if (totalCount <= 0) return 0
     return if (currentIndex > 0) {
@@ -47,7 +47,7 @@ internal fun calculatePreviousCarouselIndex(
 internal fun calculateNextCarouselIndex(
     currentIndex: Int,
     totalCount: Int,
-    cycle: Boolean = true,
+    cycle: Boolean = true
 ): Int {
     if (totalCount <= 0) return 0
     return if (currentIndex < totalCount - 1) {
@@ -60,16 +60,15 @@ internal fun calculateNextCarouselIndex(
 }
 
 @Composable
-fun PhotoCountBadge(
-    currentIndex: Int,
-    totalCount: Int,
-    modifier: Modifier = Modifier,
-) {
+fun PhotoCountBadge(currentIndex: Int, totalCount: Int, modifier: Modifier = Modifier) {
     if (totalCount <= 1) return
     Surface(
         shape = RoundedCornerShape(Dimens2.inputIconSize),
         color = MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.75f),
-        border = BorderStroke(Dimens2.thinBorder, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)),
+        border = BorderStroke(
+            Dimens2.thinBorder,
+            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
+        ),
         modifier = modifier
     ) {
         Row(
@@ -103,7 +102,7 @@ fun CarouselNavButton(
     icon: ImageVector,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    size: Dp = Dimens2.spaceXl,
+    size: Dp = Dimens2.spaceXl
 ) {
     Surface(
         onClick = onClick,
@@ -111,7 +110,10 @@ fun CarouselNavButton(
         shape = CircleShape,
         color = MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.75f),
         contentColor = MaterialTheme.colorScheme.onSurface,
-        border = BorderStroke(Dimens2.thinBorder, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)),
+        border = BorderStroke(
+            Dimens2.thinBorder,
+            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
+        ),
         shadowElevation = Dimens2.shadowSm,
         modifier = modifier.size(size)
     ) {
@@ -123,7 +125,13 @@ fun CarouselNavButton(
                 imageVector = icon,
                 contentDescription = contentDescription,
                 modifier = Modifier.size(Dimens2.iconSize18),
-                tint = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f)
+                tint = if (enabled) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.onSurface.copy(
+                        alpha = 0.38f
+                    )
+                }
             )
         }
     }
@@ -135,7 +143,7 @@ fun BoxScope.CarouselNavigationArrows(
     totalCount: Int,
     onIndexChanged: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    cycle: Boolean = true,
+    cycle: Boolean = true
 ) {
     if (totalCount <= 1) return
 
@@ -161,7 +169,7 @@ fun BoxScope.CarouselNavigationArrows(
     onNextClicked: () -> Unit,
     modifier: Modifier = Modifier,
     isPreviousEnabled: Boolean = true,
-    isNextEnabled: Boolean = true,
+    isNextEnabled: Boolean = true
 ) {
     CarouselNavButton(
         onClick = onPreviousClicked,

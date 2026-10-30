@@ -718,9 +718,7 @@ class ExerciseService {
     private fun getImagesForExercise(exerciseId: String): List<String> =
         getImagesForExercises(listOf(exerciseId))[exerciseId] ?: emptyList()
 
-    private fun getImagesForExercises(
-        exerciseIds: List<String>
-    ): Map<String, List<String>> {
+    private fun getImagesForExercises(exerciseIds: List<String>): Map<String, List<String>> {
         if (exerciseIds.isEmpty()) return emptyMap()
 
         val imageRows =

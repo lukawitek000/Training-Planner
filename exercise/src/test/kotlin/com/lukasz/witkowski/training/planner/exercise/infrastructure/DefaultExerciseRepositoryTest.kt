@@ -328,7 +328,7 @@ class DefaultExerciseRepositoryTest {
         }
 
     @Test
-    fun `resolveConflictAcceptServer preserves multiple images when server details has empty images`() =
+    fun `resolveConflict preserves multiple images when server details has empty images`() =
         runTest {
             val imageId1 = ImageId.create()
             val imageId2 = ImageId.create()

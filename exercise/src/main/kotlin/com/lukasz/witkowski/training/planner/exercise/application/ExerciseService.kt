@@ -32,7 +32,13 @@ class ExerciseService(
             emptyList()
         }
         val exerciseDetails =
-            ExerciseFactory.create(exerciseConfiguration, imageReferences.map { it.imageId }, exerciseId)
+            ExerciseFactory.create(
+                exerciseConfiguration,
+                imageReferences.map {
+                    it.imageId
+                },
+                exerciseId
+            )
         exerciseRepository.insert(exerciseDetails)
         return exerciseId
     }
@@ -90,14 +96,15 @@ class ExerciseService(
 
     suspend fun readImage(imageId: ImageId): Image = imageStorage.readImage(imageId)
 
-    suspend fun readImageReferences(exerciseId: ExerciseId): List<ImageReference> = runCatchingCancellable {
-        val fromStorage = imageStorage.readImageReferences(exerciseId.value)
-        if (fromStorage.isNotEmpty()) {
-            return@runCatchingCancellable fromStorage
-        }
-        val details = exerciseRepository.getExerciseDetailsById(exerciseId).firstOrNull()
-        details?.exercise?.imageIds?.mapNotNull { imageId ->
-            imageStorage.readImageReference(imageId)
-        } ?: emptyList()
-    }.getOrDefault(emptyList())
+    suspend fun readImageReferences(exerciseId: ExerciseId): List<ImageReference> =
+        runCatchingCancellable {
+            val fromStorage = imageStorage.readImageReferences(exerciseId.value)
+            if (fromStorage.isNotEmpty()) {
+                return@runCatchingCancellable fromStorage
+            }
+            val details = exerciseRepository.getExerciseDetailsById(exerciseId).firstOrNull()
+            details?.exercise?.imageIds?.mapNotNull { imageId ->
+                imageStorage.readImageReference(imageId)
+            } ?: emptyList()
+        }.getOrDefault(emptyList())
 }

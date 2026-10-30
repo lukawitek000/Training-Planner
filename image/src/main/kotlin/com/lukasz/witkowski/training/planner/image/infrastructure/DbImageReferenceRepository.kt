@@ -37,7 +37,10 @@ internal class DbImageReferenceRepository(
                 isImageReferenceDeletedSuccessfully = (deletedRows == ONE_ROW)
             }
             val ownersIdsString = ownersIds.map { it.toString() }
-            val deletedRows = imageReferenceDao.deleteImageOwners(imageId.toString(), ownersIdsString)
+            val deletedRows = imageReferenceDao.deleteImageOwners(
+                imageId.toString(),
+                ownersIdsString
+            )
             (deletedRows == ownersIds.size) && isImageReferenceDeletedSuccessfully
         }
 
@@ -87,17 +90,20 @@ internal class DbImageReferenceRepository(
         dbImageReference?.toImageReference(ownerId.toString())
     }
 
-    override suspend fun readAllByOwnerId(ownerId: UUID): List<ImageReference> = withContext(ioDispatcher) {
-        val dbImageReferences = imageReferenceDao.getImageReferencesByOwnerId(ownerId.toString())
-        dbImageReferences.map { it.toImageReference(ownerId.toString()) }
-    }
+    override suspend fun readAllByOwnerId(ownerId: UUID): List<ImageReference> =
+        withContext(ioDispatcher) {
+            val dbImageReferences = imageReferenceDao.getImageReferencesByOwnerId(
+                ownerId.toString()
+            )
+            dbImageReferences.map { it.toImageReference(ownerId.toString()) }
+        }
 
     override suspend fun read(imageId: ImageId): ImageReference? = withContext(ioDispatcher) {
         val dbImageReference = imageReferenceDao.getImageReferenceWithOwners(imageId.toString())
         if (dbImageReference != null) {
             return@withContext dbImageReference.toImageReference()
         }
-        val fileName = "${imageId}.webp"
+        val fileName = "$imageId.webp"
         if (bundledAssets.contains(fileName)) {
             ImageReference(
                 imageId = imageId,

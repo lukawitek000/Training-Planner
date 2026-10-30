@@ -63,12 +63,13 @@ fun ImageGallery(
     heroHeight: Dp = Dimens2.heroImageHeightStandard,
     thumbnailSize: Dp = Dimens2.mediaThumbnailSize,
     showGradientOverlay: Boolean = (onDeleteImage == null && onAddImageClicked == null),
-    contentScale: ContentScale = ContentScale.Fit,
+    contentScale: ContentScale = ContentScale.Fit
 ) {
     if (images.isEmpty()) return
 
     var internalIndex by remember { mutableIntStateOf(0) }
-    val activeImage = selectedImage ?: images.getOrNull(internalIndex) ?: images.firstOrNull() ?: return
+    val activeImage =
+        selectedImage ?: images.getOrNull(internalIndex) ?: images.firstOrNull() ?: return
     val activeIndex = images.indexOf(activeImage).coerceAtLeast(0)
     val listState = rememberLazyListState()
 
@@ -136,7 +137,10 @@ fun ImageGallery(
                         .align(Alignment.TopEnd)
                         .padding(Dimens2.spaceSm)
                         .size(Dimens2.actionIconBoxSize)
-                        .background(MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.75f), CircleShape)
+                        .background(
+                            MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.75f),
+                            CircleShape
+                        )
                 ) {
                     Icon(
                         imageVector = Icons.Default.Delete,
@@ -174,7 +178,10 @@ fun ImageGallery(
                     val border = if (isSelected) {
                         BorderStroke(Dimens2.shadowSm, MaterialTheme.colorScheme.primary)
                     } else {
-                        BorderStroke(Dimens2.thinBorder, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f))
+                        BorderStroke(
+                            Dimens2.thinBorder,
+                            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
+                        )
                     }
                     Box(
                         modifier = Modifier
@@ -193,7 +200,9 @@ fun ImageGallery(
                             Box(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f))
+                                    .background(
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                                    )
                             )
                         }
                     }
@@ -211,7 +220,9 @@ fun ImageGallery(
                                     MaterialTheme.colorScheme.outlineVariant,
                                     RoundedCornerShape(Dimens2.spaceSm)
                                 )
-                                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                                .background(
+                                    MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                                )
                                 .clickable(onClick = onAddImageClicked),
                             contentAlignment = Alignment.Center
                         ) {

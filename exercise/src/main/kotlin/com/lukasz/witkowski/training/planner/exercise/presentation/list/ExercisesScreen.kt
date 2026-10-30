@@ -467,7 +467,10 @@ private fun ExerciseThumbnail(
     ) {
         Box(contentAlignment = Alignment.Center) {
             if (imageReference != null) {
-                val imgModel: Any = if (imageReference.path.startsWith("file:///android_asset/") || imageReference.isRemote || imageReference.path.startsWith("content://")) {
+                val imgModel: Any = if (imageReference.path.startsWith("file:///android_asset/") ||
+                    imageReference.isRemote ||
+                    imageReference.path.startsWith("content://")
+                ) {
                     imageReference.path
                 } else {
                     java.io.File(imageReference.path)

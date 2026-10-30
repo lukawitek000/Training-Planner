@@ -18,7 +18,10 @@ fun Image(
 ) {
     val imgModel: Any = when {
         imageReference == null -> defaultImage
-        imageReference.path.startsWith("file:///android_asset/") || imageReference.isRemote -> imageReference.path
+        imageReference.path.startsWith(
+            "file:///android_asset/"
+        ) ||
+            imageReference.isRemote -> imageReference.path
         else -> File(imageReference.path)
     }
     AsyncImage(
@@ -28,6 +31,6 @@ fun Image(
         error = painterResource(defaultImage),
         fallback = painterResource(defaultImage),
         contentDescription = contentDescriptor,
-        contentScale = ContentScale.Fit,
+        contentScale = ContentScale.Fit
     )
 }

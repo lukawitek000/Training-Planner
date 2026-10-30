@@ -26,7 +26,13 @@ internal fun ExerciseDto.toExerciseDetails(
     existingImageIds: List<ImageId> = emptyList()
 ): ExerciseDetails {
     val domainExercise = toExercise2(currentUserId).let {
-        if (existingImageIds.isNotEmpty() && it.imageIds.isEmpty()) it.copy(imageIds = existingImageIds) else it
+        if (existingImageIds.isNotEmpty() &&
+            it.imageIds.isEmpty()
+        ) {
+            it.copy(imageIds = existingImageIds)
+        } else {
+            it
+        }
     }
     val recMap = recommendations?.associateBy { it.level.uppercase() } ?: emptyMap()
 

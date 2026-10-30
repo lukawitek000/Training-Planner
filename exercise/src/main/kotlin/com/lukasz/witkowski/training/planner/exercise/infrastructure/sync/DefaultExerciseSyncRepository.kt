@@ -134,11 +134,15 @@ internal class DefaultExerciseSyncRepository(
             is AppResult.Success -> serverResult.value
             is AppResult.Error -> return@withContext AppResult.Error(serverResult.error)
         }
-        val existingDbDetails = exerciseDao.getExerciseDetailsById(exerciseId.toString()).firstOrNull()
+        val existingDbDetails = exerciseDao.getExerciseDetailsById(
+            exerciseId.toString()
+        ).firstOrNull()
         val existingImageIds = existingDbDetails?.images?.sortedBy { it.orderIndex }
             ?.map { ImageId(it.imageId) }
             ?: emptyList()
-        val detailsToSave = if (existingImageIds.isNotEmpty() && serverDetails.exercise.imageIds.isEmpty()) {
+        val detailsToSave = if (existingImageIds.isNotEmpty() &&
+            serverDetails.exercise.imageIds.isEmpty()
+        ) {
             serverDetails.copy(exercise = serverDetails.exercise.copy(imageIds = existingImageIds))
         } else {
             serverDetails
@@ -198,7 +202,9 @@ internal class DefaultExerciseSyncRepository(
             }
         }
 
-        val existingDbDetails = exerciseDao.getExerciseDetailsById(mutation.exerciseId).firstOrNull()
+        val existingDbDetails = exerciseDao.getExerciseDetailsById(
+            mutation.exerciseId
+        ).firstOrNull()
         val existingImageIds = existingDbDetails?.images?.sortedBy { it.orderIndex }
             ?.map { ImageId(it.imageId) }
             ?: emptyList()
@@ -266,7 +272,9 @@ internal class DefaultExerciseSyncRepository(
         return when (result) {
             is AppResult.Success -> {
                 val updatedDto = result.value
-                val updatedDetails = updatedDto.toExerciseDetails(existingImageIds = existingImageIds)
+                val updatedDetails = updatedDto.toExerciseDetails(
+                    existingImageIds = existingImageIds
+                )
                 exerciseDao.insertExerciseDetails(updatedDetails.toDbExerciseDetails())
                 mutationDao.deleteMutation(mutation.id)
                 Timber.d(

@@ -46,7 +46,9 @@ open class ExerciseDetailsViewModel(
                 } else {
                     emptyList()
                 }
-                val presentationExercise = domainDetails.exercise.toPresentationExercise2(imageReferences)
+                val presentationExercise = domainDetails.exercise.toPresentationExercise2(
+                    imageReferences
+                )
                 val presentationDetails = ExerciseDetails(
                     exercise = presentationExercise,
                     recommendations = domainDetails.toPresentationExerciseDetails().recommendations
