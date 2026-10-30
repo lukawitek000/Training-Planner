@@ -1,9 +1,8 @@
-package com.lukasz.witkowski.training.planner.training.editor
+package com.lukasz.witkowski.training.planner.training.presentation.editor
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +21,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -97,25 +95,4 @@ class TrainingPlanEditorViewModel(
                 }
         }
     }
-}
-
-sealed interface SavingResult {
-    data object Success : SavingResult
-    data class Failure(val message: String?) : SavingResult
-}
-
-sealed interface TrainingPlanEditingIntent {
-    data class TitleChanged(val title: String) : TrainingPlanEditingIntent
-    data class DescriptionChanged(val description: String) : TrainingPlanEditingIntent
-    data class RestTimeChanged(val restTime: Duration) : TrainingPlanEditingIntent
-    data class TrainingExerciseAdded(val trainingExercise: TrainingExercise) :
-        TrainingPlanEditingIntent
-
-    data class TrainingExerciseRemoved(val trainingExercise: TrainingExercise) :
-        TrainingPlanEditingIntent
-
-    data class TrainingExercisesReordered(val fromIndex: Int, val toIndex: Int) :
-        TrainingPlanEditingIntent
-
-    data object SaveTrainingPlan : TrainingPlanEditingIntent
 }

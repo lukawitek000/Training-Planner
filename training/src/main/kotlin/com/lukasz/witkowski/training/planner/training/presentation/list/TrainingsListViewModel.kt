@@ -1,14 +1,16 @@
-package com.lukasz.witkowski.training.planner.training.list
+package com.lukasz.witkowski.training.planner.training.presentation.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController2
+import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanOverview
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
-import com.lukasz.witkowski.training.planner.ui.components.FilteringState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +25,7 @@ import kotlin.collections.map
 import kotlin.collections.toSet
 import kotlin.time.Duration.Companion.milliseconds
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class TrainingsListViewModel(
     private val service: TrainingPlanService,
     private val categoryController: CategoryController2
@@ -69,18 +72,4 @@ class TrainingsListViewModel(
             .map { ExerciseCategoryName(it.category.name) }.toSet()
         return TrainingQuery(searchQuery, categoryNames)
     }
-}
-
-sealed interface TrainingsListUiState {
-    val filteringState: FilteringState
-
-    data class Loading(override val filteringState: FilteringState) : TrainingsListUiState
-    data class Success(
-        override val filteringState: FilteringState,
-        val plans: List<TrainingPlanOverview>
-    ) :
-        TrainingsListUiState
-
-    data class Failure(override val filteringState: FilteringState, val message: String?) :
-        TrainingsListUiState
 }

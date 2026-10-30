@@ -21,16 +21,16 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.editor.Create
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.EditExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesScreen
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
-import com.lukasz.witkowski.training.planner.training.delete.DeleteTrainingPlanScreen
-import com.lukasz.witkowski.training.planner.training.details.TrainingPlanDetailsScreen
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.editor.AddTrainingExerciseScreen
-import com.lukasz.witkowski.training.planner.training.editor.EditTrainingPlanScreen
 import com.lukasz.witkowski.training.planner.training.editor.TrainingExerciseConfigurationScreen
-import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditingIntent
-import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorScreen
-import com.lukasz.witkowski.training.planner.training.editor.TrainingPlanEditorViewModel
-import com.lukasz.witkowski.training.planner.training.list.TrainingsScreen
+import com.lukasz.witkowski.training.planner.training.presentation.delete.DeleteTrainingPlanScreen
+import com.lukasz.witkowski.training.planner.training.presentation.details.TrainingPlanDetailsScreen
+import com.lukasz.witkowski.training.planner.training.presentation.editor.EditTrainingPlanScreen
+import com.lukasz.witkowski.training.planner.training.presentation.editor.TrainingPlanEditingIntent
+import com.lukasz.witkowski.training.planner.training.presentation.editor.TrainingPlanEditorScreen
+import com.lukasz.witkowski.training.planner.training.presentation.editor.TrainingPlanEditorViewModel
+import com.lukasz.witkowski.training.planner.training.presentation.list.TrainingsScreen
 import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionScreen
 import com.lukasz.witkowski.training.planner.user.presentation.UserProfileScreen
 import kotlinx.serialization.serializer
@@ -58,10 +58,13 @@ fun Navigation(
         sceneStrategies = listOf(dialogStrategy),
         entryProvider = entryProvider {
             entry<TrainingPlansList> {
-                TrainingsScreen(
-                    viewModel = koinViewModel(),
-                    onTrainingPlanClicked = { navigator.trainingPlanDetails(it) },
-                )
+                TrainingPlannerTheme2 {
+                    TrainingsScreen(
+                        viewModel = koinViewModel(),
+                        onTrainingPlanClicked = { navigator.trainingPlanDetails(it) },
+                        onCreateTrainingClicked = { navigator.trainingCreate() }
+                    )
+                }
             }
 
             entry<UserProfile> {
@@ -91,12 +94,13 @@ fun Navigation(
                         TrainingPlanEditingIntent.TrainingExerciseAdded(trainingExercise)
                     )
                 }
-                TrainingPlanEditorScreen(
-                    viewModel = trainingPlanEditorViewModel,
-                    onAddExerciseClicked = { navigator.addTrainingExercises() },
-                    navigateBack = { navigator.goBack() }
-                )
-
+                TrainingPlannerTheme2 {
+                    TrainingPlanEditorScreen(
+                        viewModel = trainingPlanEditorViewModel,
+                        onAddExerciseClicked = { navigator.addTrainingExercises() },
+                        navigateBack = { navigator.goBack() }
+                    )
+                }
             }
 
             entry<EditTrainingPlan> { key ->
@@ -107,11 +111,13 @@ fun Navigation(
                         TrainingPlanEditingIntent.TrainingExerciseAdded(trainingExercise)
                     )
                 }
-                EditTrainingPlanScreen(
-                    viewModel = trainingPlanEditorViewModel,
-                    onAddExerciseClicked = { navigator.addTrainingExercises() },
-                    navigateBack = { navigator.goBack() }
-                )
+                TrainingPlannerTheme2 {
+                    EditTrainingPlanScreen(
+                        viewModel = trainingPlanEditorViewModel,
+                        onAddExerciseClicked = { navigator.addTrainingExercises() },
+                        navigateBack = { navigator.goBack() }
+                    )
+                }
             }
 
             entry<AddTrainingExercise> {
@@ -134,23 +140,28 @@ fun Navigation(
             }
 
             entry<TrainingPlanDetails> { key ->
-                TrainingPlanDetailsScreen(
-                    viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
-                )
+                TrainingPlannerTheme2 {
+                    TrainingPlanDetailsScreen(
+                        viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
+                        onStartTrainingSessionClicked = { navigator.trainingSession(it) }
+                    )
+                }
             }
 
             entry<DeleteTrainingPlan>(
                 metadata = DialogSceneStrategy.dialog()
             ) { key ->
-                DeleteTrainingPlanScreen(
-                    viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
-                    onDelete = {
-                        navigator.trainingPlanDeleted()
-                    },
-                    onCancel = {
-                        navigator.goBack()
-                    }
-                )
+                TrainingPlannerTheme2 {
+                    DeleteTrainingPlanScreen(
+                        viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
+                        onDelete = {
+                            navigator.trainingPlanDeleted()
+                        },
+                        onCancel = {
+                            navigator.goBack()
+                        }
+                    )
+                }
             }
 
             exerciseEntryBuilder(navigator)

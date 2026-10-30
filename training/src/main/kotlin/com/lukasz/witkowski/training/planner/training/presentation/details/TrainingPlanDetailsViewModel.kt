@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.details
+package com.lukasz.witkowski.training.planner.training.presentation.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

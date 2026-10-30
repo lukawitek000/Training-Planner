@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.editor
+package com.lukasz.witkowski.training.planner.training.presentation.editor
 
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
 import timber.log.Timber
