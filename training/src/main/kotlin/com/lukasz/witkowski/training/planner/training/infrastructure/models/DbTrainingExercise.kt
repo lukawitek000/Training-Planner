@@ -27,10 +27,11 @@ data class DbTrainingExercise(
     val position: Int,
     val name: String,
     val description: String,
-    val imagePath: String?,
+    val imageIds: List<String> = emptyList(),
     val repetitions: Int,
     val sets: Int,
     val restTime: Long,
     val weightInKg: Int?,
+    val time: Long = 0L,
     val exerciseRevision: Long? = 1L
 )

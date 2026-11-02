@@ -13,9 +13,12 @@ data class ExerciseSnapshot(
     val name: String,
     val description: String,
     val categories: Set<ExerciseCategoryName>,
-    val imageId: ImageId? = null,
+    val imageIds: List<ImageId> = emptyList(),
     val revision: Long? = 1L
 ) {
+    val imageId: ImageId?
+        get() = imageIds.firstOrNull()
+
     init {
         require(categories.isNotEmpty()) {
             "Exercise should have at least one category"

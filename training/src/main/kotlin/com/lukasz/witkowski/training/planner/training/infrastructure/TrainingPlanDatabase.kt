@@ -11,10 +11,10 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTr
 
 @Database(
     entities = [DbTrainingPlan::class, DbTrainingExercise::class, DbExerciseCategory::class],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
-@ColumnTypeConverters(InstantConverters::class)
+@ColumnTypeConverters(InstantConverters::class, Converters::class)
 internal abstract class TrainingPlanDatabase : RoomDatabase() {
     abstract fun trainingPlanDao(): TrainingPlanDao
 
