@@ -1,10 +1,13 @@
-package com.lukasz.witkowski.training.planner.training.editor
+package com.lukasz.witkowski.training.planner.training.presentation.editor
 
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
 import timber.log.Timber
 
 class TrainingConfigurationReducer {
-    fun reduce(currentState: TrainingPlanConfiguration, intent: TrainingPlanEditingIntent): TrainingPlanConfiguration {
+    fun reduce(
+        currentState: TrainingPlanConfiguration,
+        intent: TrainingPlanEditingIntent
+    ): TrainingPlanConfiguration {
         Timber.i("Reduce intent: $intent")
         return when (intent) {
             is TrainingPlanEditingIntent.TitleChanged -> currentState.copy(

@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.details
+package com.lukasz.witkowski.training.planner.training.presentation.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.stateIn
 
 class TrainingPlanDetailsViewModel(
     private val trainingPlanService: TrainingPlanService,
-    private val trainingPlanId: TrainingPlanId,
+    private val trainingPlanId: TrainingPlanId
 ) : ViewModel() {
     val trainingPlan = trainingPlanService.getTrainingPlanById(trainingPlanId).map { plan ->
         if (plan != null) {

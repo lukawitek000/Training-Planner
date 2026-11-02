@@ -1,21 +1,23 @@
-package com.lukasz.witkowski.training.planner.training.list
+package com.lukasz.witkowski.training.planner.training.presentation.list
 
 import android.text.format.DateUtils
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,29 +27,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
+import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
+import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
+import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
+import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPillStyle
+import com.lukasz.witkowski.training.planner.shared.ui.chips.AppFilterChip
+import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppEmptyState
+import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppErrorState
+import com.lukasz.witkowski.training.planner.shared.ui.inputField.AppSearchBar
+import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingState
+import com.lukasz.witkowski.training.planner.training.R
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanOverview
-import com.lukasz.witkowski.training.planner.ui.components.CategoriesRow
-import com.lukasz.witkowski.training.planner.ui.components.FailureScreen
-import com.lukasz.witkowski.training.planner.ui.components.FilteringState
-import com.lukasz.witkowski.training.planner.ui.components.ListCardItem
-import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
-import com.lukasz.witkowski.training.planner.ui.components.NoDataMessage
-import com.lukasz.witkowski.training.planner.ui.components.SearchHeader
-import com.lukasz.witkowski.training.planner.ui.theme.Dimens
-import com.lukasz.witkowski.training.planner.ui.theme.MediumGrey
-import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 import kotlin.time.Instant
 
 @Composable
 fun TrainingsScreen(
     viewModel: TrainingsListViewModel,
     onTrainingPlanClicked: (TrainingPlanId) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onCreateTrainingClicked: (() -> Unit)? = null
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -56,41 +61,75 @@ fun TrainingsScreen(
         uiState = uiState,
         onTrainingPlanClicked = onTrainingPlanClicked,
         onSearchQueryChanged = viewModel::onSearchQueryChange,
-        toggleCategory = viewModel::toggleCategory
+        toggleCategory = viewModel::toggleCategory,
+        onCreateTrainingClicked = onCreateTrainingClicked
     )
 }
 
 @Composable
-private fun TrainingsScreenContent(
-    modifier: Modifier = Modifier,
+fun TrainingsScreenContent(
     uiState: TrainingsListUiState,
     onTrainingPlanClicked: (TrainingPlanId) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
-    toggleCategory: (ExerciseCategory) -> Unit
+    toggleCategory: (ExerciseCategory) -> Unit,
+    modifier: Modifier = Modifier,
+    onCreateTrainingClicked: (() -> Unit)? = null
 ) {
-    Column(modifier) {
+    Column(modifier = modifier) {
         val filteringState = uiState.filteringState
-        SearchHeader(
+        AppSearchBar(
             query = filteringState.searchQuery,
-            onSearchQueryChanged = onSearchQueryChanged,
-            categories = filteringState.categories,
-            toggleCategory = toggleCategory,
-            label = stringResource(R.string.search_training_plan)
+            onQueryChange = onSearchQueryChanged,
+            placeholder = stringResource(R.string.search_training_plan),
+            modifier = Modifier.padding(horizontal = Dimens2.spaceMd, vertical = Dimens2.spaceSm)
         )
+
+        if (filteringState.categories.isNotEmpty()) {
+            CategoryFilters(
+                categories = filteringState.categories,
+                toggleCategory = toggleCategory,
+                modifier = Modifier.padding(bottom = Dimens2.spaceSm)
+            )
+        }
+
         when (uiState) {
-            is TrainingsListUiState.Loading -> LoadingScreen(
-                modifier = Modifier.fillMaxSize(),
+            is TrainingsListUiState.Loading -> AppLoadingState(
+                title = stringResource(R.string.loading_training_plan),
+                modifier = Modifier.fillMaxSize()
             )
 
-            is TrainingsListUiState.Failure -> FailureScreen(
-                modifier = Modifier.fillMaxSize(),
+            is TrainingsListUiState.Failure -> AppErrorState(
                 title = stringResource(R.string.failed_to_load_training_plans),
-                message = uiState.message ?: ""
+                subtitle = uiState.message.orEmpty(),
+                modifier = Modifier.fillMaxSize()
             )
 
             is TrainingsListUiState.Success -> TrainingPlansOverviews(
                 plans = uiState.plans,
-                onTrainingPlanClicked = onTrainingPlanClicked
+                onTrainingPlanClicked = onTrainingPlanClicked,
+                onCreateTrainingClicked = onCreateTrainingClicked,
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+    }
+}
+
+@Composable
+private fun CategoryFilters(
+    categories: List<FilterCategory>,
+    toggleCategory: (ExerciseCategory) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyRow(
+        modifier = modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(horizontal = Dimens2.spaceMd),
+        horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+    ) {
+        items(categories, key = { it.category.name }) { filterCategory ->
+            AppFilterChip(
+                label = filterCategory.category.name,
+                selected = filterCategory.isSelected,
+                onClick = { toggleCategory(filterCategory.category) }
             )
         }
     }
@@ -98,9 +137,10 @@ private fun TrainingsScreenContent(
 
 @Composable
 private fun TrainingPlansOverviews(
-    modifier: Modifier = Modifier,
     plans: List<TrainingPlanOverview>,
     onTrainingPlanClicked: (TrainingPlanId) -> Unit,
+    modifier: Modifier = Modifier,
+    onCreateTrainingClicked: (() -> Unit)? = null
 ) {
     if (plans.isNotEmpty()) {
         TrainingsList(
@@ -109,22 +149,25 @@ private fun TrainingPlansOverviews(
             onTrainingPlanClicked = onTrainingPlanClicked
         )
     } else {
-        NoDataMessage(
-            modifier = modifier,
-            text = stringResource(id = R.string.no_trainings_info)
+        AppEmptyState(
+            title = stringResource(R.string.no_trainings_info),
+            actionLabel = onCreateTrainingClicked?.let { stringResource(R.string.create_training) },
+            onActionClick = onCreateTrainingClicked,
+            modifier = modifier
         )
     }
 }
 
-
 @Composable
 private fun TrainingsList(
-    modifier: Modifier = Modifier,
     plans: List<TrainingPlanOverview>,
     onTrainingPlanClicked: (TrainingPlanId) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        modifier = modifier
+        modifier = modifier,
+        contentPadding = PaddingValues(Dimens2.spaceMd),
+        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
     ) {
         items(plans, key = { it.id.toString() }) { trainingOverview ->
             TrainingPlanOverviewCard(
@@ -135,35 +178,45 @@ private fun TrainingsList(
     }
 }
 
-
 @Composable
 private fun TrainingPlanOverviewCard(
     trainingOverview: TrainingPlanOverview,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
-    ListCardItem(
-        modifier = modifier,
-        onCardClicked = onClick
+    AppCard(
+        modifier = modifier.clickable { onClick() }
     ) {
         Column(
-            modifier = Modifier,
-            verticalArrangement = Arrangement.spacedBy(Dimens.normal)
+            modifier = Modifier.padding(Dimens2.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
         ) {
             Text(
                 text = trainingOverview.title,
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
             )
-            trainingOverview.description.takeIf { it.isNotEmpty() }?.let {
+            if (trainingOverview.description.isNotEmpty()) {
                 Text(
-                    text = it,
-                    style = MaterialTheme.typography.bodyLarge
+                    text = trainingOverview.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            CategoriesRow(
-                categories = trainingOverview.categories.map { it.name },
-                modifier = Modifier.fillMaxWidth()
-            )
+            if (trainingOverview.categories.isNotEmpty()) {
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs),
+                    verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+                ) {
+                    trainingOverview.categories.forEach { category ->
+                        AppCategoryPill(
+                            text = category.name,
+                            style = AppCategoryPillStyle.Tonal
+                        )
+                    }
+                }
+            }
             TrainingPlanDateInfo(
                 instant = trainingOverview.lastModification,
                 icon = Icons.Default.CalendarMonth,
@@ -185,9 +238,9 @@ fun TrainingPlanDateInfo(
     instant: Instant,
     icon: ImageVector,
     @StringRes stringRes: Int,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
-    val color = MediumGrey
+    val color = MaterialTheme.colorScheme.onSurfaceVariant
     val timeMillis = instant.toEpochMilliseconds()
     val nowMillis = System.currentTimeMillis()
     val formattedTime = DateUtils.getRelativeTimeSpanString(
@@ -203,21 +256,21 @@ fun TrainingPlanDateInfo(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.padding(end = Dimens.normal),
+            modifier = Modifier.padding(end = Dimens2.spaceXs),
             tint = color
         )
         Text(
             text = stringResource(stringRes, formattedTime),
             color = color,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodySmall
         )
     }
 }
 
-@Preview
+@AppPreview
 @Composable
 private fun TrainingsScreenLoadingPreview() {
-    TrainingPlannerTheme {
+    TrainingPlannerTheme2 {
         TrainingsScreenContent(
             uiState = TrainingsListUiState.Loading(
                 filteringState = FilteringState("Some query", categories = emptyList())
@@ -230,10 +283,10 @@ private fun TrainingsScreenLoadingPreview() {
     }
 }
 
-@Preview
+@AppPreview
 @Composable
 private fun TrainingsScreenFailurePreview() {
-    TrainingPlannerTheme {
+    TrainingPlannerTheme2 {
         TrainingsScreenContent(
             uiState = TrainingsListUiState.Failure(
                 filteringState = FilteringState("Some query", categories = emptyList()),
@@ -247,10 +300,10 @@ private fun TrainingsScreenFailurePreview() {
     }
 }
 
-@Preview
+@AppPreview
 @Composable
 private fun TrainingsScreenEmptyListPreview() {
-    TrainingPlannerTheme {
+    TrainingPlannerTheme2 {
         TrainingsScreenContent(
             uiState = TrainingsListUiState.Success(
                 filteringState = FilteringState("Some query", categories = emptyList()),
@@ -264,10 +317,10 @@ private fun TrainingsScreenEmptyListPreview() {
     }
 }
 
-@Preview
+@AppPreview
 @Composable
 private fun TrainingsScreenSuccessPreview() {
-    TrainingPlannerTheme {
+    TrainingPlannerTheme2 {
         TrainingsScreenContent(
             uiState = TrainingsListUiState.Success(
                 filteringState = FilteringState("Some query", categories = emptyList()),
@@ -277,17 +330,6 @@ private fun TrainingsScreenSuccessPreview() {
             onSearchQueryChanged = {},
             toggleCategory = {},
             modifier = Modifier.fillMaxSize()
-        )
-    }
-}
-
-@Preview
-@Composable
-private fun TrainingPlanOverviewCardPreview() {
-    TrainingPlannerTheme {
-        TrainingPlanOverviewCard(
-            trainingOverview = PREVIEW_TRAINING_PLANS_OVERVIEWS.first(),
-            onClick = {},
         )
     }
 }
@@ -317,18 +359,5 @@ private val PREVIEW_TRAINING_PLANS_OVERVIEWS = listOf(
         ),
         lastModification = Instant.parse("2026-09-05T10:00:00Z"),
         lastSession = null
-    ),
-    TrainingPlanOverview(
-        id = TrainingPlanId.create(),
-        title = "Cardio & Core",
-        description = "High intensity cardio routine with core stability exercises",
-        categories = setOf(
-            ExerciseCategoryName("Cardio"),
-            ExerciseCategoryName("Abs")
-        ),
-        lastModification = Instant.parse("2026-10-03T08:15:00Z"),
-        lastSession = Instant.parse("2025-09-12T18:00:00Z")
     )
 )
-
-

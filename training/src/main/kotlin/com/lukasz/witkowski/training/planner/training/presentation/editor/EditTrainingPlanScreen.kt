@@ -1,4 +1,4 @@
-package com.lukasz.witkowski.training.planner.training.editor
+package com.lukasz.witkowski.training.planner.training.presentation.editor
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -8,7 +8,7 @@ fun EditTrainingPlanScreen(
     viewModel: TrainingPlanEditorViewModel,
     onAddExerciseClicked: () -> Unit,
     navigateBack: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     TrainingPlanEditorScreen(
         viewModel = viewModel,

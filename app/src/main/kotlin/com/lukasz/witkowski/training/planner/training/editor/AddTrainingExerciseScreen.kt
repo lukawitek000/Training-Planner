@@ -13,21 +13,21 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
+import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_CATEGORIES
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesListViewModel
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesScreenContent
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.PREVIEW_EXERCISES
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.asPreviewPagerFlow
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
-import com.lukasz.witkowski.training.planner.ui.components.FilteringState
-import com.lukasz.witkowski.training.planner.ui.components.PREVIEW_CATEGORIES
-import com.lukasz.witkowski.training.planner.ui.theme.Dimens
-import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 @Composable
 fun AddTrainingExerciseScreen(
@@ -48,7 +48,7 @@ fun AddTrainingExerciseScreen(
 }
 
 @Composable
-private fun AddTrainingExerciseScreenContent(
+fun AddTrainingExerciseScreenContent(
     onExerciseSelected: (ExerciseId) -> Unit,
     exercisesList: LazyPagingItems<Exercise2>,
     filteringState: FilteringState,
@@ -67,23 +67,23 @@ private fun AddTrainingExerciseScreenContent(
             IconButton(
                 onClick = { onExerciseSelected(it) },
                 colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = MaterialTheme.colorScheme.primary
+                    contentColor = MaterialTheme.colorScheme.primaryContainer
                 ),
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = stringResource(R.string.add_exercise_icon),
-                    modifier = Modifier.padding(Dimens.normal)
+                    modifier = Modifier.padding(Dimens2.spaceSm)
                 )
             }
         }
     )
 }
 
-@Preview
+@AppPreview
 @Composable
 private fun AddTrainingExerciseScreenContentPreview() {
-    TrainingPlannerTheme {
+    TrainingPlannerTheme2 {
         AddTrainingExerciseScreenContent(
             exercisesList = PREVIEW_EXERCISES.asPreviewPagerFlow().collectAsLazyPagingItems(),
             filteringState = FilteringState(

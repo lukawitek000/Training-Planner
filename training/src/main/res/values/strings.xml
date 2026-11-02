@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Training Plan List -->
+    <string name="search_training_plan">Search Training Plan</string>
+    <string name="failed_to_load_training_plans">Failed to load training plans</string>
+    <string name="no_trainings_info">No trainings. Create your first training</string>
+    <string name="create_training">Create training</string>
+    <string name="last_modified">Last modified %1$s</string>
+    <string name="last_session">Last session %1$s</string>
+
+    <!-- Training Plan Details -->
+    <string name="training_plan_details">Training Plan Details</string>
+    <string name="exercises_tab_title">Exercises</string>
+    <string name="previous_sessions_tab_title">Previous sessions</string>
+    <string name="no_previous_sessions">No previous sessions available yet</string>
+    <string name="training_plan_not_found">Training Plan not found</string>
+    <string name="training_plan_loading_error">Failed to load Training Plan</string>
+    <string name="loading_training_plan">Loading training plan…</string>
+    <string name="start_training_session">Start training session</string>
+    <string name="rest_time_with_value">Rest time: %1$s</string>
+
+    <!-- Delete Training Plan -->
+    <string name="delete_training_plan_dialog_title">Delete training plan?</string>
+    <string name="delete_training_plan_dialog_text">This will permanently delete this training plan and all its configuration. Past training sessions will be kept.</string>
+    <string name="training_plan_deleted">Training plan deleted.</string>
+    <string name="training_plan_deletion_failed">Training plan deletion failed.</string>
+
+    <!-- Training Plan Editor -->
+    <string name="edit_training_plan">Edit training plan</string>
+    <string name="training_plan_title_label">Training Plan title *</string>
+    <string name="training_plan_title">Title</string>
+    <string name="training_plan_description_label">Training Plan description</string>
+    <string name="training_plan_description">Description</string>
+    <string name="save_training_plan">Create plan</string>
+    <string name="save_training_plan_changes">Save changes</string>
+    <string name="no_exercises_added_yet">No exercises added yet</string>
+    <string name="add_exercises_from_catalogue">Add exercises from the exercise catalogue to build your training plan</string>
+    <string name="add_exercises">Add exercises</string>
+    <string name="plan_categories">Plan categories</string>
+    <string name="plan_categories_caption">Will be derived from selected exercises</string>
+    <string name="no_exercises_yet">No exercises yet</string>
+    <string name="exercises_count">Exercises (%1$d) *</string>
+    <string name="failed_to_save_training_plan">Failed to save training plan. Try again.</string>
+    <string name="training_plan_no_enough_data_message">Title and exercises are required</string>
+    <string name="change_rest_time">Change rest time</string>
+    <string name="remove_training_exercise">Remove training exercise</string>
+    <string name="reps">Reps</string>
+    <string name="sets">Sets</string>
+    <string name="weight">Weight</string>
+    <string name="kg">kg</string>
+    <string name="reps_with_value">Reps: %1$s</string>
+    <string name="sets_with_value">Sets: %1$s</string>
+</resources>
