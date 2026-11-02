@@ -127,7 +127,8 @@ object TestData {
                 repetitions = 1,
                 sets = 3,
                 restTime = 45.seconds,
-                weightInKg = null
+                weightInKg = null,
+                time = 45.seconds
             )
 
     val TRAINING_EXERCISE_RUNNING
@@ -279,14 +280,16 @@ object TestData {
         repetitions: Int = 10,
         sets: Int = 3,
         restTime: Duration = 30.seconds,
-        weightInKg: Int? = null
+        weightInKg: Int? = null,
+        time: Duration = Duration.ZERO
     ): TrainingExercise = TrainingExercise(
         id = id,
         exercise = exercise,
         repetitions = repetitions,
         sets = sets,
         restTime = restTime,
-        weightInKg = weightInKg
+        weightInKg = weightInKg,
+        time = time
     )
 
     fun TrainingPlan.toTrainingPlanConfiguration() = TrainingPlanConfiguration(

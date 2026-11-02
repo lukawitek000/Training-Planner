@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure.mappers
 
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -33,11 +34,12 @@ private fun TrainingExercise.toDbTrainingExercise(trainingPlanId: TrainingPlanId
         position = position,
         name = exercise.name,
         description = exercise.description,
-        imagePath = null,
+        imagePath = exercise.imageId?.toString(),
         repetitions = repetitions,
         sets = sets,
         restTime = restTime.inWholeSeconds,
         weightInKg = weightInKg,
+        time = time.inWholeSeconds,
         exerciseRevision = exercise.revision
     )
 
@@ -59,7 +61,8 @@ internal fun DbTrainingExerciseWithCategories.toTrainingExercise() = TrainingExe
     repetitions = trainingExercise.repetitions,
     sets = trainingExercise.sets,
     weightInKg = trainingExercise.weightInKg,
-    restTime = trainingExercise.restTime.seconds
+    restTime = trainingExercise.restTime.seconds,
+    time = trainingExercise.time.seconds
 )
 
 private fun DbTrainingExercise.toExerciseSnapshot(categories: List<DbExerciseCategory>) =
@@ -67,7 +70,7 @@ private fun DbTrainingExercise.toExerciseSnapshot(categories: List<DbExerciseCat
         id = ExerciseId(this.exerciseId),
         name = name,
         description = description,
-        imageId = null,
+        imageId = imagePath?.let(::ImageId),
         categories = categories.map { it.toExerciseCategoryName() }.toSet(),
         revision = exerciseRevision
     )

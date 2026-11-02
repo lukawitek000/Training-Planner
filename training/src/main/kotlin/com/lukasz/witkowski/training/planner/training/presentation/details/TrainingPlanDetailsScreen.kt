@@ -289,12 +289,17 @@ private fun ExerciseListItem(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
+                val repsOrTime = if (exercise.isIsometric) {
+                    "${exercise.time.inWholeSeconds}s"
+                } else {
+                    stringResource(R.string.reps_with_value, exercise.repetitions)
+                }
                 Text(
                     text =
                     "${stringResource(
                         R.string.sets_with_value,
                         exercise.sets
-                    )} | ${stringResource(R.string.reps_with_value, exercise.repetitions)}" +
+                    )} | $repsOrTime" +
                         if (exercise.weightInKg !=
                             null
                         ) {
