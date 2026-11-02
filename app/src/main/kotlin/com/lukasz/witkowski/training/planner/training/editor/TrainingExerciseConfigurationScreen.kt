@@ -1,12 +1,10 @@
 package com.lukasz.witkowski.training.planner.training.editor
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -14,25 +12,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsScreenContent
 import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsState
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseParametersInputFields
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseParametersIntent
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.PREVIEW_RECOMMENDED_PARAMETERS
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.RecommendedParametersCardHeader
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
+import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
+import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
-import com.lukasz.witkowski.training.planner.ui.components.ConfirmButton
-import com.lukasz.witkowski.training.planner.ui.theme.Dimens
-import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
 
 @Composable
 fun TrainingExerciseConfigurationScreen(
@@ -92,7 +90,7 @@ private fun TrainingExerciseParameters(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(Dimens.normal)
+        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
     ) {
         Text(
             text = stringResource(R.string.recommended_parameters_label),
@@ -100,9 +98,15 @@ private fun TrainingExerciseParameters(
         )
         details.recommendations.forEach {
             val isSelected = parameters == it.parameters
-            Card(
-                colors = CardDefaults.cardColors(
-                    containerColor = if (isSelected) MaterialTheme.colorScheme.secondary else Color.Unspecified
+            AppCard(
+                containerColor = if (isSelected) {
+                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainer
+                },
+                border = BorderStroke(
+                    width = if (isSelected) Dimens2.shadowSm else Dimens2.thinBorder,
+                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
                 ),
             ) {
                 RecommendedParametersCardHeader(
@@ -110,7 +114,7 @@ private fun TrainingExerciseParameters(
                     isExpanded = false,
                     recommendation = it,
                     toggleExpansion = { onRecommendationSelected(it.parameters) },
-                    modifier = Modifier.padding(Dimens.large)
+                    modifier = Modifier.padding(Dimens2.spaceMd)
                 )
             }
         }
@@ -121,26 +125,27 @@ private fun TrainingExerciseParameters(
         )
         Text(
             text = stringResource(R.string.set_parameters_description),
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         ExerciseParametersInputFields(
             parameters = parameters,
             testTagPrefix = "Config",
             onParametersIntent = onParametersIntent
         )
-        ConfirmButton(
+        AppPrimaryButton(
             text = stringResource(R.string.add_exercise),
             onClick = onAddTrainingExercise,
-            isEnabled = parameters.areValid()
+            enabled = parameters.areValid()
         )
     }
 
 }
 
-@Preview
+@AppPreview
 @Composable
 private fun TrainingExerciseConfigurationScreenContentPreview() {
-    TrainingPlannerTheme {
+    TrainingPlannerTheme2 {
         Surface {
             TrainingExerciseConfigurationScreenContent(
                 state = PREVIEW_SUCCESS_STATE,
@@ -154,10 +159,10 @@ private fun TrainingExerciseConfigurationScreenContentPreview() {
     }
 }
 
-@Preview
+@AppPreview
 @Composable
 private fun TrainingExerciseConfigurationScreenContentSelectedRecommendationPreview() {
-    TrainingPlannerTheme {
+    TrainingPlannerTheme2 {
         Surface {
             TrainingExerciseConfigurationScreenContent(
                 state = PREVIEW_SUCCESS_STATE,

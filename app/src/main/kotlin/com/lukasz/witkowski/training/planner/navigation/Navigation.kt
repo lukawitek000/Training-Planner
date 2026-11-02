@@ -121,22 +121,26 @@ fun Navigation(
             }
 
             entry<AddTrainingExercise> {
-                AddTrainingExerciseScreen(
-                    viewModel = koinViewModel(),
-                    onExerciseSelected = { navigator.configureTrainingExercise(it) }
-                )
+                TrainingPlannerTheme2 {
+                    AddTrainingExerciseScreen(
+                        viewModel = koinViewModel(),
+                        onExerciseSelected = { navigator.configureTrainingExercise(it) }
+                    )
+                }
             }
 
             entry<TrainingExerciseConfiguration> { key ->
                 val resultBus = LocalResultEventBus.current
-                TrainingExerciseConfigurationScreen(
-                    viewModel = koinViewModel { parametersOf(key.exerciseId) },
-                    onExerciseConfigured = { trainingExercise ->
-                        Timber.i("TrainingExercise configured $trainingExercise")
-                        resultBus.sendResult(trainingExercise)
-                        navigator.returnToCreateTrainingPlan()
-                    }
-                )
+                TrainingPlannerTheme2 {
+                    TrainingExerciseConfigurationScreen(
+                        viewModel = koinViewModel { parametersOf(key.exerciseId) },
+                        onExerciseConfigured = { trainingExercise ->
+                            Timber.i("TrainingExercise configured $trainingExercise")
+                            resultBus.sendResult(trainingExercise)
+                            navigator.returnToCreateTrainingPlan()
+                        }
+                    )
+                }
             }
 
             entry<TrainingPlanDetails> { key ->
