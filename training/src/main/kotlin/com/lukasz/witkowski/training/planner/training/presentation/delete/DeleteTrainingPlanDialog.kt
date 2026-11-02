@@ -52,7 +52,7 @@ fun DeleteTrainingPlanDialog(
     state: DeleteTrainingPlanUiState,
     onDelete: () -> Unit,
     onCancel: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     when (state) {
         DeleteTrainingPlanUiState.Loading -> {

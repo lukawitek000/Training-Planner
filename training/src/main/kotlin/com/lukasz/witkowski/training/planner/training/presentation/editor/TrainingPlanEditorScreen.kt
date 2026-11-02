@@ -65,11 +65,10 @@ import com.lukasz.witkowski.training.planner.training.R
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
-import sh.calvin.reorderable.ReorderableItem
-import sh.calvin.reorderable.ReorderableLazyListState
-import sh.calvin.reorderable.rememberReorderableLazyListState
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import sh.calvin.reorderable.ReorderableItem
+import sh.calvin.reorderable.rememberReorderableLazyListState
 
 @Composable
 fun TrainingPlanEditorScreen(
@@ -190,7 +189,14 @@ fun TrainingPlanEditorScreenContent(
             initialTime = Time(state.restTime.inWholeMilliseconds),
             onTimeConfirmed = { selectedTime ->
                 if (selectedTime != null) {
-                    onIntent(TrainingPlanEditingIntent.RestTimeChanged((selectedTime.timeInMillis / 1000).seconds))
+                    onIntent(
+                        TrainingPlanEditingIntent.RestTimeChanged(
+                            (
+                                selectedTime.timeInMillis /
+                                    1000
+                                ).seconds
+                        )
+                    )
                 }
                 showRestTimePicker = false
             },
@@ -404,10 +410,7 @@ private fun SwipeToDeleteExercise(
 }
 
 @Composable
-private fun AddExercisesButton(
-    onAddExerciseClicked: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun AddExercisesButton(onAddExerciseClicked: () -> Unit, modifier: Modifier = Modifier) {
     Button(
         onClick = onAddExerciseClicked,
         modifier = modifier.fillMaxWidth(),

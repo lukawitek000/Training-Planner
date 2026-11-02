@@ -7,10 +7,10 @@ import com.lukasz.witkowski.training.planner.training.application.TrainingPlanSe
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
 
 class TrainingPlanDetailsViewModelTest {
     private val service: TrainingPlanService = mockk()

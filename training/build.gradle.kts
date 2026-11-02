@@ -50,4 +50,3 @@ dependencies {
     testImplementation(libs.mockk)
     testImplementation(libs.turbine)
 }
-

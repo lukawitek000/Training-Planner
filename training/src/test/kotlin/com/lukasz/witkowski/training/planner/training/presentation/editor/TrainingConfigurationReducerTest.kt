@@ -35,28 +35,43 @@ class TrainingConfigurationReducerTest {
 
     @Test
     fun `title changed updates title`() {
-        val result = reducer.reduce(initialConfig, TrainingPlanEditingIntent.TitleChanged("New Title"))
+        val result = reducer.reduce(
+            initialConfig,
+            TrainingPlanEditingIntent.TitleChanged("New Title")
+        )
         assertEquals("New Title", result.title)
     }
 
     @Test
     fun `description changed updates description`() {
-        val result = reducer.reduce(initialConfig, TrainingPlanEditingIntent.DescriptionChanged("New Description"))
+        val result = reducer.reduce(
+            initialConfig,
+            TrainingPlanEditingIntent.DescriptionChanged("New Description")
+        )
         assertEquals("New Description", result.description)
     }
 
     @Test
     fun `rest time changed updates rest time`() {
-        val result = reducer.reduce(initialConfig, TrainingPlanEditingIntent.RestTimeChanged(120.seconds))
+        val result = reducer.reduce(
+            initialConfig,
+            TrainingPlanEditingIntent.RestTimeChanged(120.seconds)
+        )
         assertEquals(120.seconds, result.restTime)
     }
 
     @Test
     fun `exercise added and removed updates exercises list`() {
-        val withExercise = reducer.reduce(initialConfig, TrainingPlanEditingIntent.TrainingExerciseAdded(sampleExercise))
+        val withExercise = reducer.reduce(
+            initialConfig,
+            TrainingPlanEditingIntent.TrainingExerciseAdded(sampleExercise)
+        )
         assertEquals(listOf(sampleExercise), withExercise.exercises)
 
-        val removed = reducer.reduce(withExercise, TrainingPlanEditingIntent.TrainingExerciseRemoved(sampleExercise))
+        val removed = reducer.reduce(
+            withExercise,
+            TrainingPlanEditingIntent.TrainingExerciseRemoved(sampleExercise)
+        )
         assertEquals(emptyList(), removed.exercises)
     }
 
@@ -66,7 +81,10 @@ class TrainingConfigurationReducerTest {
         val exercise2 = sampleExercise.copy(id = TrainingExerciseId.create())
         val configWithTwo = initialConfig.copy(exercises = listOf(exercise1, exercise2))
 
-        val reordered = reducer.reduce(configWithTwo, TrainingPlanEditingIntent.TrainingExercisesReordered(0, 1))
+        val reordered = reducer.reduce(
+            configWithTwo,
+            TrainingPlanEditingIntent.TrainingExercisesReordered(0, 1)
+        )
         assertEquals(listOf(exercise2, exercise1), reordered.exercises)
     }
 }

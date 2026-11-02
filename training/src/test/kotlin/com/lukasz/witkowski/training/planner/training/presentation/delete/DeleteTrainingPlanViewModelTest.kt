@@ -7,10 +7,10 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.test.runTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.runTest
 
 class DeleteTrainingPlanViewModelTest {
     private val service: TrainingPlanService = mockk()
@@ -49,7 +49,8 @@ class DeleteTrainingPlanViewModelTest {
 
     @Test
     fun `when deletion succeeds emit success event`() = runTest {
-        every { service.getTrainingPlanById(any()) } returns flowOf(TestData.FULL_BODY_TRAINING_PLAN)
+        every { service.getTrainingPlanById(any()) } returns
+            flowOf(TestData.FULL_BODY_TRAINING_PLAN)
         coEvery { service.deleteTrainingPlan(any()) } returns Result.success(Unit)
         givenVm()
 
@@ -61,8 +62,10 @@ class DeleteTrainingPlanViewModelTest {
 
     @Test
     fun `when deletion fails emit failure event`() = runTest {
-        every { service.getTrainingPlanById(any()) } returns flowOf(TestData.FULL_BODY_TRAINING_PLAN)
-        coEvery { service.deleteTrainingPlan(any()) } returns Result.failure(IllegalStateException("Failed deletion"))
+        every { service.getTrainingPlanById(any()) } returns
+            flowOf(TestData.FULL_BODY_TRAINING_PLAN)
+        coEvery { service.deleteTrainingPlan(any()) } returns
+            Result.failure(IllegalStateException("Failed deletion"))
         givenVm()
 
         vm.deletionEvent.test {
@@ -71,4 +74,3 @@ class DeleteTrainingPlanViewModelTest {
         }
     }
 }
-

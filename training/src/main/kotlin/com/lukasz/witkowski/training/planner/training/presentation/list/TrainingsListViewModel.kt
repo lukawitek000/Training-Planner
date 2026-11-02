@@ -9,6 +9,10 @@ import com.lukasz.witkowski.training.planner.training.application.TrainingPlanSe
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanOverview
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
+import kotlin.collections.filter
+import kotlin.collections.map
+import kotlin.collections.toSet
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,10 +24,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlin.collections.filter
-import kotlin.collections.map
-import kotlin.collections.toSet
-import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class TrainingsListViewModel(

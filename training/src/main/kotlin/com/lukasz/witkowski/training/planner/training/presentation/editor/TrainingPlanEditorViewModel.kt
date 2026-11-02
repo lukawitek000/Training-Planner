@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +22,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TrainingPlanEditorViewModel(
@@ -37,9 +37,11 @@ class TrainingPlanEditorViewModel(
         restTime = 90.seconds
     )
 
-    private val _intents = MutableSharedFlow<TrainingPlanEditingIntent>(extraBufferCapacity = 64)
+    private val intents = MutableSharedFlow<TrainingPlanEditingIntent>(extraBufferCapacity = 64)
 
-    private val initialConfigurationFlow: Flow<TrainingPlanConfiguration> = if (trainingPlanId != null) {
+    private val initialConfigurationFlow: Flow<TrainingPlanConfiguration> = if (trainingPlanId !=
+        null
+    ) {
         trainingPlanService.getTrainingPlanById(trainingPlanId)
             .filterNotNull()
             .take(1)
@@ -57,7 +59,7 @@ class TrainingPlanEditorViewModel(
 
     val uiState: StateFlow<TrainingPlanConfiguration> = initialConfigurationFlow
         .flatMapLatest { initialConfig ->
-            _intents.scan(initialConfig) { currentConfig, intent ->
+            intents.scan(initialConfig) { currentConfig, intent ->
                 reducer.reduce(currentConfig, intent)
             }
         }
@@ -74,7 +76,7 @@ class TrainingPlanEditorViewModel(
         if (intent == TrainingPlanEditingIntent.SaveTrainingPlan) {
             saveTrainingPlan()
         } else {
-            _intents.tryEmit(intent)
+            intents.tryEmit(intent)
         }
     }
 

@@ -39,20 +39,19 @@ val trainingModule =
         viewModel { params ->
             TrainingPlanEditorViewModel(
                 trainingPlanService = get(),
-                trainingPlanId = params.getOrNull(),
+                trainingPlanId = params.getOrNull()
             )
         }
         viewModel { params ->
             TrainingPlanDetailsViewModel(
                 trainingPlanService = get(),
-                trainingPlanId = params.get(),
+                trainingPlanId = params.get()
             )
         }
         viewModel { params ->
             DeleteTrainingPlanViewModel(
                 trainingPlanService = get(),
-                trainingPlanId = params.get(),
+                trainingPlanId = params.get()
             )
         }
     }
-

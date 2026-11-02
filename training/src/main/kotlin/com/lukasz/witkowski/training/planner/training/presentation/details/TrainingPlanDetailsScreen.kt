@@ -163,10 +163,7 @@ private fun TrainingPlanDetails(
 }
 
 @Composable
-private fun TrainingPlanInfoSection(
-    trainingPlan: TrainingPlan,
-    modifier: Modifier = Modifier
-) {
+private fun TrainingPlanInfoSection(trainingPlan: TrainingPlan, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
@@ -217,10 +214,7 @@ private fun TrainingPlanInfoSection(
 }
 
 @Composable
-private fun TrainingPlanRestTimeInfo(
-    restTime: Duration,
-    modifier: Modifier = Modifier
-) {
+private fun TrainingPlanRestTimeInfo(restTime: Duration, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val formattedRestTime = TimeFormatter(context).formatTime(Time(restTime.inWholeMilliseconds))
     Row(
@@ -242,10 +236,7 @@ private fun TrainingPlanRestTimeInfo(
 }
 
 @Composable
-private fun ExercisesTabContent(
-    exercises: List<TrainingExercise>,
-    modifier: Modifier = Modifier
-) {
+private fun ExercisesTabContent(exercises: List<TrainingExercise>, modifier: Modifier = Modifier) {
     Column(modifier = modifier.fillMaxSize()) {
         Text(
             text = stringResource(id = R.string.exercises_count, exercises.size),
@@ -299,8 +290,18 @@ private fun ExerciseListItem(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "${stringResource(R.string.sets_with_value, exercise.sets)} | ${stringResource(R.string.reps_with_value, exercise.repetitions)}" +
-                        if (exercise.weightInKg != null) " | ${exercise.weightInKg} ${stringResource(R.string.kg)}" else "",
+                    text =
+                    "${stringResource(
+                        R.string.sets_with_value,
+                        exercise.sets
+                    )} | ${stringResource(R.string.reps_with_value, exercise.repetitions)}" +
+                        if (exercise.weightInKg !=
+                            null
+                        ) {
+                            " | ${exercise.weightInKg} ${stringResource(R.string.kg)}"
+                        } else {
+                            ""
+                        },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -310,9 +311,7 @@ private fun ExerciseListItem(
 }
 
 @Composable
-private fun PreviousSessionsTabContent(
-    modifier: Modifier = Modifier
-) {
+private fun PreviousSessionsTabContent(modifier: Modifier = Modifier) {
     AppEmptyState(
         title = stringResource(id = R.string.no_previous_sessions),
         modifier = modifier

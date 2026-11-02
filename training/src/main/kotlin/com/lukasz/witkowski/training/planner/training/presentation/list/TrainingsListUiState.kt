@@ -12,8 +12,6 @@ sealed interface TrainingsListUiState {
         val plans: List<TrainingPlanOverview>
     ) : TrainingsListUiState
 
-    data class Failure(
-        override val filteringState: FilteringState,
-        val message: String?
-    ) : TrainingsListUiState
+    data class Failure(override val filteringState: FilteringState, val message: String?) :
+        TrainingsListUiState
 }

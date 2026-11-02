@@ -8,7 +8,7 @@ fun EditTrainingPlanScreen(
     viewModel: TrainingPlanEditorViewModel,
     onAddExerciseClicked: () -> Unit,
     navigateBack: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     TrainingPlanEditorScreen(
         viewModel = viewModel,
