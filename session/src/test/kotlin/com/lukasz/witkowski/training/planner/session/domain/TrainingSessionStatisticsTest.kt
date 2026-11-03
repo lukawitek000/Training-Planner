@@ -1,9 +1,24 @@
 package com.lukasz.witkowski.training.planner.session.domain
 
+import com.lukasz.witkowski.training.planner.session.TRAINING_EXERCISES
+import com.lukasz.witkowski.training.planner.session.TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.session.TrainingSessionTest
+import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
+import com.lukasz.witkowski.training.planner.session.domain.session.CircuitSetsPolicy
+import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSession
+import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
+import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSetsPolicy
+import com.lukasz.witkowski.training.planner.shared.time.Time
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import java.util.Date
+import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Test
 
 internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
-    /*
     private val trainingExercises: List<TrainingExercise> = TRAINING_EXERCISES
     private val trainingPlan: TrainingPlan = TRAINING_PLAN
     private val trainingSetsPolicy: TrainingSetsPolicy = CircuitSetsPolicy()
@@ -36,6 +51,8 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                 time = TIME_10_SECONDS,
                 set = 1,
                 completed = true,
+                actualReps = exerciseToRecordAttempt.repetitions,
+                actualWeightInKg = exerciseToRecordAttempt.weightInKg?.toDouble()
             )
         assertAttemptStatistics(expectedStatistics, attemptStatistics)
     }
@@ -46,7 +63,6 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
         // given
         val exerciseToRecordStatistics = trainingExercises[1]
 
-        // when
         // when
         trainingSession.start(Time.ZERO)
         val summaryState = completeRestOfTheTraining(trainingSession)
@@ -62,24 +78,30 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                     time = TIME_10_SECONDS,
                     set = 1,
                     completed = true,
+                    actualReps = exerciseToRecordStatistics.repetitions,
+                    actualWeightInKg = exerciseToRecordStatistics.weightInKg?.toDouble()
                 ),
                 ExerciseAttemptStatistics(
                     trainingExerciseId = exerciseToRecordStatistics.id,
                     time = TIME_10_SECONDS,
                     set = 2,
                     completed = true,
+                    actualReps = exerciseToRecordStatistics.repetitions,
+                    actualWeightInKg = exerciseToRecordStatistics.weightInKg?.toDouble()
                 ),
                 ExerciseAttemptStatistics(
                     trainingExerciseId = exerciseToRecordStatistics.id,
                     time = TIME_10_SECONDS,
                     set = 3,
                     completed = true,
-                ),
+                    actualReps = exerciseToRecordStatistics.repetitions,
+                    actualWeightInKg = exerciseToRecordStatistics.weightInKg?.toDouble()
+                )
             )
         val expectedStatistics =
             ExerciseStatistics(
                 trainingExerciseId = exerciseToRecordStatistics.id,
-                attemptsStatistics = expectedAttemptsStatistics,
+                attemptsStatistics = expectedAttemptsStatistics
             )
         assertExerciseStatistics(expectedStatistics, exerciseStatistics)
     }
@@ -97,109 +119,130 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
     }
 
     @Suppress("LongMethod")
-    private fun createExpectedStatisticsForCompletedTraining() =
-        TrainingStatistics(
-            trainingPlanId = trainingPlan.id,
-            totalTime = Time(seconds = 180),
-            date = Date(),
-            exercisesStatistics =
+    private fun createExpectedStatisticsForCompletedTraining() = TrainingStatistics(
+        trainingPlanId = trainingPlan.id,
+        totalTime = Time(seconds = 180),
+        date = Date(),
+        exercisesStatistics =
+        listOf(
+            ExerciseStatistics(
+                trainingExerciseId = trainingExercises.first().id,
+                attemptsStatistics =
                 listOf(
-                    ExerciseStatistics(
+                    ExerciseAttemptStatistics(
                         trainingExerciseId = trainingExercises.first().id,
-                        attemptsStatistics =
-                            listOf(
-                                ExerciseAttemptStatistics(
-                                    trainingExerciseId = trainingExercises.first().id,
-                                    time = TIME_10_SECONDS,
-                                    set = 1,
-                                    completed = true,
-                                ),
-                                ExerciseAttemptStatistics(
-                                    trainingExerciseId = trainingExercises.first().id,
-                                    time = TIME_10_SECONDS,
-                                    set = 2,
-                                    completed = true,
-                                ),
-                            ),
+                        time = TIME_10_SECONDS,
+                        set = 1,
+                        completed = true,
+                        actualReps = trainingExercises.first().repetitions,
+                        actualWeightInKg = trainingExercises.first().weightInKg?.toDouble()
                     ),
-                    ExerciseStatistics(
+                    ExerciseAttemptStatistics(
+                        trainingExerciseId = trainingExercises.first().id,
+                        time = TIME_10_SECONDS,
+                        set = 2,
+                        completed = true,
+                        actualReps = trainingExercises.first().repetitions,
+                        actualWeightInKg = trainingExercises.first().weightInKg?.toDouble()
+                    )
+                )
+            ),
+            ExerciseStatistics(
+                trainingExerciseId = trainingExercises[1].id,
+                attemptsStatistics =
+                listOf(
+                    ExerciseAttemptStatistics(
                         trainingExerciseId = trainingExercises[1].id,
-                        attemptsStatistics =
-                            listOf(
-                                ExerciseAttemptStatistics(
-                                    trainingExerciseId = trainingExercises[1].id,
-                                    time = TIME_10_SECONDS,
-                                    set = 1,
-                                    completed = true,
-                                ),
-                                ExerciseAttemptStatistics(
-                                    trainingExerciseId = trainingExercises[1].id,
-                                    time = TIME_10_SECONDS,
-                                    set = 2,
-                                    completed = true,
-                                ),
-                                ExerciseAttemptStatistics(
-                                    trainingExerciseId = trainingExercises[1].id,
-                                    time = TIME_10_SECONDS,
-                                    set = 3,
-                                    completed = true,
-                                ),
-                            ),
+                        time = TIME_10_SECONDS,
+                        set = 1,
+                        completed = true,
+                        actualReps = trainingExercises[1].repetitions,
+                        actualWeightInKg = trainingExercises[1].weightInKg?.toDouble()
                     ),
-                    ExerciseStatistics(
+                    ExerciseAttemptStatistics(
+                        trainingExerciseId = trainingExercises[1].id,
+                        time = TIME_10_SECONDS,
+                        set = 2,
+                        completed = true,
+                        actualReps = trainingExercises[1].repetitions,
+                        actualWeightInKg = trainingExercises[1].weightInKg?.toDouble()
+                    ),
+                    ExerciseAttemptStatistics(
+                        trainingExerciseId = trainingExercises[1].id,
+                        time = TIME_10_SECONDS,
+                        set = 3,
+                        completed = true,
+                        actualReps = trainingExercises[1].repetitions,
+                        actualWeightInKg = trainingExercises[1].weightInKg?.toDouble()
+                    )
+                )
+            ),
+            ExerciseStatistics(
+                trainingExerciseId = trainingExercises[2].id,
+                attemptsStatistics =
+                listOf(
+                    ExerciseAttemptStatistics(
                         trainingExerciseId = trainingExercises[2].id,
-                        attemptsStatistics =
-                            listOf(
-                                ExerciseAttemptStatistics(
-                                    trainingExerciseId = trainingExercises[2].id,
-                                    time = TIME_10_SECONDS,
-                                    set = 1,
-                                    completed = true,
-                                ),
-                            ),
-                    ),
-                    ExerciseStatistics(
+                        time = TIME_10_SECONDS,
+                        set = 1,
+                        completed = true,
+                        actualReps = trainingExercises[2].repetitions,
+                        actualWeightInKg = trainingExercises[2].weightInKg?.toDouble()
+                    )
+                )
+            ),
+            ExerciseStatistics(
+                trainingExerciseId = trainingExercises[3].id,
+                attemptsStatistics =
+                listOf(
+                    ExerciseAttemptStatistics(
                         trainingExerciseId = trainingExercises[3].id,
-                        attemptsStatistics =
-                            listOf(
-                                ExerciseAttemptStatistics(
-                                    trainingExerciseId = trainingExercises[3].id,
-                                    time = TIME_10_SECONDS,
-                                    set = 1,
-                                    completed = true,
-                                ),
-                                ExerciseAttemptStatistics(
-                                    trainingExerciseId = trainingExercises[3].id,
-                                    time = TIME_10_SECONDS,
-                                    set = 2,
-                                    completed = true,
-                                ),
-                                ExerciseAttemptStatistics(
-                                    trainingExerciseId = trainingExercises[3].id,
-                                    time = TIME_10_SECONDS,
-                                    set = 3,
-                                    completed = true,
-                                ),
-                                ExerciseAttemptStatistics(
-                                    trainingExerciseId = trainingExercises[3].id,
-                                    time = TIME_10_SECONDS,
-                                    set = 4,
-                                    completed = true,
-                                ),
-                                ExerciseAttemptStatistics(
-                                    trainingExerciseId = trainingExercises[3].id,
-                                    time = TIME_10_SECONDS,
-                                    set = 5,
-                                    completed = true,
-                                ),
-                            ),
+                        time = TIME_10_SECONDS,
+                        set = 1,
+                        completed = true,
+                        actualReps = trainingExercises[3].repetitions,
+                        actualWeightInKg = trainingExercises[3].weightInKg?.toDouble()
                     ),
-                ),
+                    ExerciseAttemptStatistics(
+                        trainingExerciseId = trainingExercises[3].id,
+                        time = TIME_10_SECONDS,
+                        set = 2,
+                        completed = true,
+                        actualReps = trainingExercises[3].repetitions,
+                        actualWeightInKg = trainingExercises[3].weightInKg?.toDouble()
+                    ),
+                    ExerciseAttemptStatistics(
+                        trainingExerciseId = trainingExercises[3].id,
+                        time = TIME_10_SECONDS,
+                        set = 3,
+                        completed = true,
+                        actualReps = trainingExercises[3].repetitions,
+                        actualWeightInKg = trainingExercises[3].weightInKg?.toDouble()
+                    ),
+                    ExerciseAttemptStatistics(
+                        trainingExerciseId = trainingExercises[3].id,
+                        time = TIME_10_SECONDS,
+                        set = 4,
+                        completed = true,
+                        actualReps = trainingExercises[3].repetitions,
+                        actualWeightInKg = trainingExercises[3].weightInKg?.toDouble()
+                    ),
+                    ExerciseAttemptStatistics(
+                        trainingExerciseId = trainingExercises[3].id,
+                        time = TIME_10_SECONDS,
+                        set = 5,
+                        completed = true,
+                        actualReps = trainingExercises[3].repetitions,
+                        actualWeightInKg = trainingExercises[3].weightInKg?.toDouble()
+                    )
+                )
+            )
         )
+    )
 
     private fun completeRestOfTheTraining(
         trainingSession: TrainingSession,
-        startTime: Time = Time.ZERO,
+        startTime: Time = Time.ZERO
     ): TrainingSessionState.SummaryState {
         var time = startTime
         var state: TrainingSessionState? = null
@@ -212,19 +255,19 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
 
     private fun assertTrainingStatistics(
         expectedStatistics: TrainingStatistics,
-        trainingStatistics: TrainingStatistics,
+        trainingStatistics: TrainingStatistics
     ) {
         assertEquals(expectedStatistics.trainingPlanId, trainingStatistics.trainingPlanId)
         assertEqualsTime(expectedStatistics.totalTime, trainingStatistics.totalTime)
         assertExercisesStatistics(
             expectedStatistics.exercisesStatistics,
-            trainingStatistics.exercisesStatistics,
+            trainingStatistics.exercisesStatistics
         )
     }
 
     private fun assertExercisesStatistics(
         expectedExercisesStatistics: List<ExerciseStatistics>,
-        exercisesStatistics: List<ExerciseStatistics>,
+        exercisesStatistics: List<ExerciseStatistics>
     ) {
         assertEquals(expectedExercisesStatistics.size, exercisesStatistics.size)
         for (i in exercisesStatistics.indices) {
@@ -234,26 +277,27 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
 
     private fun assertExerciseStatistics(
         expectedExerciseStatistics: ExerciseStatistics,
-        exerciseStatistics: ExerciseStatistics,
+        exerciseStatistics: ExerciseStatistics
     ) {
         assertEquals(
             expectedExerciseStatistics.trainingExerciseId,
-            exerciseStatistics.trainingExerciseId,
+            exerciseStatistics.trainingExerciseId
         )
         assertEqualsTime(expectedExerciseStatistics.totalTime, exerciseStatistics.totalTime)
         assertEquals(
             expectedExerciseStatistics.completenessRate,
             exerciseStatistics.completenessRate,
+            0.001
         )
         assertAttemptsStatistics(
             expectedExerciseStatistics.attemptsStatistics,
-            exerciseStatistics.attemptsStatistics,
+            exerciseStatistics.attemptsStatistics
         )
     }
 
     private fun assertAttemptsStatistics(
         expectedAttemptsStatistics: List<ExerciseAttemptStatistics>,
-        attemptsStatistics: List<ExerciseAttemptStatistics>,
+        attemptsStatistics: List<ExerciseAttemptStatistics>
     ) {
         assertEquals(expectedAttemptsStatistics.size, attemptsStatistics.size)
         for (i in attemptsStatistics.indices) {
@@ -263,26 +307,22 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
 
     private fun assertAttemptStatistics(
         expectedAttemptStatistics: ExerciseAttemptStatistics,
-        attemptStatistics: ExerciseAttemptStatistics,
+        attemptStatistics: ExerciseAttemptStatistics
     ) {
         assertEquals(
             expectedAttemptStatistics.trainingExerciseId,
-            attemptStatistics.trainingExerciseId,
+            attemptStatistics.trainingExerciseId
         )
         assertEquals(expectedAttemptStatistics.completed, attemptStatistics.completed)
         assertEqualsTime(expectedAttemptStatistics.time, attemptStatistics.time)
         assertEquals(expectedAttemptStatistics.set, attemptStatistics.set)
     }
 
-    private fun assertEqualsTime(
-        expected: Time,
-        actual: Time,
-    ) {
+    private fun assertEqualsTime(expected: Time, actual: Time) {
         assertEquals(expected.timeInMillis, actual.timeInMillis)
     }
 
     private companion object {
         val TIME_10_SECONDS = Time(10000L)
     }
-     */
 }

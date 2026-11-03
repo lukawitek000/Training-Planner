@@ -9,7 +9,9 @@ data class TrainingStatistics(
     val trainingPlanId: TrainingPlanId,
     val totalTime: Time,
     val date: Date,
-    val exercisesStatistics: List<ExerciseStatistics>
+    val exercisesStatistics: List<ExerciseStatistics>,
+    val note: String? = null,
+    val rpe: Int? = null
 ) {
     val effectiveTime: Time
         get() {
@@ -19,4 +21,19 @@ data class TrainingStatistics(
                 }
             return Time(timeInMillis)
         }
+
+    val allAttempts: List<ExerciseAttemptStatistics>
+        get() = exercisesStatistics.flatMap { it.attemptsStatistics }
+
+    val totalVolumeKg: Double
+        get() = allAttempts.sumOf { (it.actualWeightInKg ?: 0.0) * it.actualReps }
+
+    val totalReps: Int
+        get() = allAttempts.sumOf { it.actualReps }
+
+    val completedSetsCount: Int
+        get() = allAttempts.count { it.completed }
+
+    val totalSetsCount: Int
+        get() = allAttempts.size
 }
