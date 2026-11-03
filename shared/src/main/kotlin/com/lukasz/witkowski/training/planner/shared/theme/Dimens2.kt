@@ -124,4 +124,34 @@ object Dimens2 {
     val wheelPickerRowHeight: Dp = 44.dp
     val dialogMaxWidth: Dp = 360.dp
     val dialogMaxWidthWide: Dp = 440.dp
+
+    /** Stepper button size - 44dp */
+    val stepperButtonSize: Dp = 44.dp
+
+    /** Circular timer ring size - 220dp */
+    val timerRingSize: Dp = 220.dp
+
+    /** Circular timer ring stroke width - 10dp */
+    val timerRingStrokeWidth: Dp = 10.dp
+
+    /** RPE rating cell size - 44dp */
+    val rpeCellSize: Dp = 44.dp
+
+    /** Bento tile minimum height - 88dp */
+    val bentoTileMinHeight: Dp = 88.dp
+
+    /** Extra-extra small spacing - 2dp */
+    val spaceXxs: Dp = 2.dp
+
+    /** Extra large spacing 2 - 48dp */
+    val spaceXxl2: Dp = 48.dp
+
+    /** Medium-thick border - 2dp */
+    val mediumBorder: Dp = 2.dp
+
+    /** Thick border - 3dp */
+    val thickBorder: Dp = 3.dp
+
+    /** Set tracker indicator chip size - 32dp */
+    val setChipSize: Dp = 32.dp
 }
