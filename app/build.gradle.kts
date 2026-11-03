@@ -55,7 +55,8 @@ android {
 dependencies {
     implementation(projects.exercise)
     implementation(projects.training)
-    implementation(projects.statistics)
+    implementation(projects.session)
+    implementation(projects.analytics)
     implementation(projects.auth)
     implementation(projects.user)
     implementation(projects.network)

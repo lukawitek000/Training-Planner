@@ -6,10 +6,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.lukasz.witkowski.training.planner.navigation.TrainingSession
 import com.lukasz.witkowski.training.planner.shared.time.Time
-import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
-import com.lukasz.witkowski.training.planner.statistics.application.TrainingStatisticsService
-import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
-import com.lukasz.witkowski.training.planner.statistics.presentation.toPresentationTrainingSessionState
+import com.lukasz.witkowski.training.planner.analytics.application.TrainingStatisticsService
+import com.lukasz.witkowski.training.planner.session.application.TrainingSessionService
+import com.lukasz.witkowski.training.planner.session.presentation.TrainingSessionState
+import com.lukasz.witkowski.training.planner.session.presentation.toPresentationTrainingSessionState
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.coroutines.flow.SharingStarted

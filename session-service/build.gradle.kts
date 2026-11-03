@@ -7,7 +7,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.statistics)
+    implementation(projects.session)
     implementation(projects.training)
 
     implementation(libs.androidx.core)

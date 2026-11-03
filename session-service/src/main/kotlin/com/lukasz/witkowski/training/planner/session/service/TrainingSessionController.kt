@@ -1,9 +1,9 @@
 package com.lukasz.witkowski.training.planner.session.service
 
 import android.content.Context
-import com.lukasz.witkowski.training.planner.statistics.application.SessionFinishedListener
-import com.lukasz.witkowski.training.planner.statistics.application.TrainingSessionService
-import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatisticsId
+import com.lukasz.witkowski.training.planner.session.application.SessionFinishedListener
+import com.lukasz.witkowski.training.planner.session.application.TrainingSessionService
+import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

@@ -1,0 +1,48 @@
+package com.lukasz.witkowski.training.planner.analytics.infrastructure.db
+
+import androidx.room3.Dao
+import androidx.room3.Insert
+import androidx.room3.OnConflictStrategy
+import androidx.room3.Query
+import androidx.room3.Transaction
+import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.models.DbExerciseAttemptStatistics
+import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.models.DbExerciseStatistics
+import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.models.DbTrainingStatistics
+import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.models.DbTrainingWithExercisesStatistics
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface StatisticsDao {
+    @Transaction
+    suspend fun insertAllStatistics(
+        dbTrainingWithExercisesStatistics: DbTrainingWithExercisesStatistics
+    ) {
+        val dbTrainingStatistics = dbTrainingWithExercisesStatistics.trainingStatistics
+        insert(dbTrainingStatistics)
+        for (exercisesStatistics in dbTrainingWithExercisesStatistics.exercisesStatistics) {
+            insert(exercisesStatistics.exerciseStatistics)
+            for (attemptStatistics in exercisesStatistics.exerciseAttemptsStatistics) {
+                insert(attemptStatistics)
+            }
+        }
+    }
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(dbTrainingStatistics: DbTrainingStatistics)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(dbExerciseAttemptStatistics: DbExerciseAttemptStatistics)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(dbExerciseStatistics: DbExerciseStatistics)
+
+    @Transaction
+    @Query("SELECT * FROM TrainingStatistics WHERE trainingPlanId=:trainingPlanId")
+    fun getTrainingStatisticsByTrainingPlanId(
+        trainingPlanId: String
+    ): Flow<List<DbTrainingWithExercisesStatistics>>
+
+    @Transaction
+    @Query("SELECT * FROM TrainingStatistics WHERE id=:id")
+    fun getTrainingStatisticsById(id: String): Flow<DbTrainingWithExercisesStatistics>
+}
