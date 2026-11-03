@@ -1,0 +1,17 @@
+{
+  "git-and-gradle-guardrails": {
+    "enabled": true,
+    "PreToolUse": [
+      {
+        "matcher": "run_command",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/pre_command_guard.sh",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
