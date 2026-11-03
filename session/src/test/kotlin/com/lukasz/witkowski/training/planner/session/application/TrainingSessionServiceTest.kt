@@ -209,25 +209,29 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
     }
 
     @Test
-    fun `inform SessionFinishedListener when session is in summary state and saving finished`() =
-        runTest(testDispatcher) {
-            val listener = mockk<SessionFinishedListener>(relaxed = true)
-            trainingSessionService.addSessionFinishedListener(listener)
+    fun `inform SessionFinishedListener when session is finished`() = runTest(testDispatcher) {
+        val listener = mockk<SessionFinishedListener>(relaxed = true)
+        trainingSessionService.addSessionFinishedListener(listener)
 
-            coEvery { sessionCompletedListener.onSessionCompleted(any()) } returns Unit
+        coEvery { sessionCompletedListener.onSessionCompleted(any()) } returns Unit
 
-            whenStartTrainingSession()
-            whenAllTrainingExercisesCompleted()
-            advanceUntilIdle()
+        whenStartTrainingSession()
+        whenAllTrainingExercisesCompleted()
+        advanceUntilIdle()
 
-            val state = trainingSessionService.trainingSessionState.value
-            assertTrue(state is TrainingSessionState.SummaryState)
-            val summaryState = state as TrainingSessionState.SummaryState
-            verify(exactly = 1) { listener.onSessionFinished(summaryState.statistics.id) }
-            coVerify(exactly = 1) {
-                sessionCompletedListener.onSessionCompleted(summaryState.statistics)
-            }
+        val state = trainingSessionService.trainingSessionState.value
+        assertTrue(state is TrainingSessionState.SummaryState)
+        val summaryState = state as TrainingSessionState.SummaryState
+
+        trainingSessionService.finishSession(note = "Great workout", rpe = 8)
+
+        verify(exactly = 1) { listener.onSessionFinished(summaryState.statistics.id) }
+        coVerify(exactly = 1) {
+            sessionCompletedListener.onSessionCompleted(
+                match { it.note == "Great workout" && it.rpe == 8 }
+            )
         }
+    }
 
     private fun whenStartTrainingSession() {
         trainingSessionService.startTraining(trainingPlan)

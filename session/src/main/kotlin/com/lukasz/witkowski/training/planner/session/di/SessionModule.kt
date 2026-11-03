@@ -34,7 +34,6 @@ val sessionModule =
             TrainingSessionViewModel(
                 trainingPlanService = get(),
                 trainingSessionService = get(),
-                sessionCompletedListener = getOrNull<SessionCompletedListener>(),
                 trainingPlanId = params.get()
             )
         }

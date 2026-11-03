@@ -21,8 +21,10 @@ sealed class TrainingSessionState(val exercise: TrainingExercise? = null) {
         val exerciseIndex: Int = 1,
         val totalExercises: Int = 1,
         val setsLeftInWorkout: Int = 0,
-        val followingExerciseName: String? = null
+        val followingExercise: TrainingExercise? = null
     ) : TrainingSessionState(currentExercise) {
+        val followingExerciseName: String?
+            get() = followingExercise?.exercise?.name
         val isIsometric: Boolean
             get() = targetTime > Duration.ZERO
     }
@@ -33,8 +35,11 @@ sealed class TrainingSessionState(val exercise: TrainingExercise? = null) {
         val nextSet: Int = 1,
         val totalSetsForNextExercise: Int = nextExercise.sets,
         val lastCompletedAttempt: ExerciseAttemptStatistics? = null,
-        val followingExerciseName: String? = null
-    ) : TrainingSessionState(nextExercise)
+        val followingExercise: TrainingExercise? = null
+    ) : TrainingSessionState(nextExercise) {
+        val followingExerciseName: String?
+            get() = followingExercise?.exercise?.name
+    }
 
     data class SummaryState(
         val statistics: TrainingStatistics,

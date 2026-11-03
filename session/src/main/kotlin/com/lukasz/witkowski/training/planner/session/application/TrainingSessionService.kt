@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.session.application
 
 import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedListener
+import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.session.StraightSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSession
@@ -8,6 +9,7 @@ import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSess
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.CompositeStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
+import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SystemTimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.TimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.timer.Timer
 import com.lukasz.witkowski.training.planner.shared.time.Time
@@ -22,15 +24,19 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class TrainingSessionService(
-    private val timeProvider: TimeProvider,
-    private val timer: Timer,
+    private val timeProvider: TimeProvider = SystemTimeProvider(),
+    private val timer: Timer = Timer(),
     private val sessionCompletedListener: SessionCompletedListener? = null,
     private val trainingSetsStrategy: TrainingSetsPolicy = StraightSetsPolicy(),
-    private val backgroundDispatcher: CoroutineDispatcher = Dispatchers.Default,
+    backgroundDispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val sessionStatisticsRecorder: SessionStatisticsRecorder = CompositeStatisticsRecorder()
 ) {
     private lateinit var trainingSession: TrainingSession
     private val scope = CoroutineScope(backgroundDispatcher)
+
+    init {
+        observeTimerFinished()
+    }
 
     val isTimerRunning: StateFlow<Boolean>
         get() = timer.isRunning
@@ -39,7 +45,6 @@ class TrainingSessionService(
         private set(value) {
             configureTimer(value)
             _trainingSessionState.value = value
-            saveTrainingSessionStatistics(value)
         }
         get() = _trainingSessionState.value
 
@@ -64,7 +69,8 @@ class TrainingSessionService(
         trainingSession = TrainingSession(
             trainingPlan = trainingPlan,
             trainingSetsPolicy = policy,
-            statisticsRecorder = sessionStatisticsRecorder
+            statisticsRecorder = sessionStatisticsRecorder,
+            timeProvider = timeProvider
         )
         state = trainingSession.start(timeProvider.currentTime())
     }
@@ -81,6 +87,12 @@ class TrainingSessionService(
 
     fun addExtraSet() {
         state = trainingSession.addExtraSet()
+    }
+
+    fun updateLastAttemptRpe(rpe: Float) {
+        if (::trainingSession.isInitialized) {
+            trainingSession.updateLastAttemptRpe(rpe)
+        }
     }
 
     fun completed(
@@ -112,7 +124,6 @@ class TrainingSessionService(
         if (timer.isPaused) {
             timer.resume()
         } else {
-            observeTimerFinished()
             timer.start()
         }
     }
@@ -125,6 +136,17 @@ class TrainingSessionService(
         timer.pause()
     }
 
+    fun resetTimer() {
+        configureTimer(state)
+    }
+
+    suspend fun finishSession(note: String? = null, rpe: Int? = null): TrainingStatistics {
+        val stats = trainingSession.finalizeStatistics(note, rpe)
+        sessionCompletedListener?.onSessionCompleted(stats)
+        notifySessionFinished(stats.id)
+        return stats
+    }
+
     fun addSessionFinishedListener(sessionFinishedListener: SessionFinishedListener) {
         require(trainingSessionFinishedListeners.add(sessionFinishedListener)) {
             LISTENER_ALREADY_ADDED_MESSAGE
@@ -135,15 +157,6 @@ class TrainingSessionService(
         trainingSessionFinishedListeners.remove(sessionFinishedListener)
     }
 
-    private fun saveTrainingSessionStatistics(state: TrainingSessionState) {
-        if (state is TrainingSessionState.SummaryState) {
-            scope.launch {
-                sessionCompletedListener?.onSessionCompleted(state.statistics)
-                notifySessionFinished(state.statistics.id)
-            }
-        }
-    }
-
     private fun notifySessionFinished(trainingStatisticsId: TrainingStatisticsId) {
         trainingSessionFinishedListeners.forEach {
             it.onSessionFinished(trainingStatisticsId)
@@ -152,8 +165,8 @@ class TrainingSessionService(
 
     private fun observeTimerFinished() {
         scope.launch {
-            timer.hasFinished.collectLatest {
-                if (it) {
+            timer.hasFinished.collectLatest { finished ->
+                if (finished) {
                     navigateNextIfRestTimeElapsed()
                     resetTimerIfExerciseTimeElapsed()
                 }
@@ -173,18 +186,19 @@ class TrainingSessionService(
         }
     }
 
-    private val TrainingSessionState.time: Time?
-        get() =
-            when (this) {
-                is TrainingSessionState.RestTimeState -> restTime
-                else -> null
-            }
-
     private fun configureTimer(value: TrainingSessionState) {
         stopTimer()
-        value.time?.let { timer.setTime(it) }
-        if (value is TrainingSessionState.RestTimeState) {
-            startTimer()
+        when (value) {
+            is TrainingSessionState.RestTimeState -> {
+                timer.setTime(value.restTime)
+                startTimer()
+            }
+            is TrainingSessionState.ExerciseState -> {
+                if (value.isIsometric) {
+                    timer.setTime(Time(value.targetTime.inWholeMilliseconds))
+                }
+            }
+            else -> Unit
         }
     }
 

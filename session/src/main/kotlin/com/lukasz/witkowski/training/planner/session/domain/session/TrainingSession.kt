@@ -1,9 +1,12 @@
 package com.lukasz.witkowski.training.planner.session.domain.session
 
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.CompositeStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionEvent
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
+import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SystemTimeProvider
+import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.TimeProvider
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
@@ -17,14 +20,15 @@ import kotlin.time.Duration
 internal class TrainingSession(
     private val trainingPlan: TrainingPlan,
     private val trainingSetsPolicy: TrainingSetsPolicy = StraightSetsPolicy(),
-    private val statisticsRecorder: SessionStatisticsRecorder = CompositeStatisticsRecorder()
+    private val statisticsRecorder: SessionStatisticsRecorder = CompositeStatisticsRecorder(),
+    private val timeProvider: TimeProvider = SystemTimeProvider()
 ) {
     private val exercises = mutableListOf<TrainingExercise>()
     private val attempts = mutableListOf<ExerciseAttemptStatistics>()
     private var state: TrainingSessionState = TrainingSessionState.IdleState
 
     private lateinit var exerciseSession: ExerciseSession
-    private lateinit var trainingStatistics: TrainingStatistics
+    private lateinit var statisticsBuilder: SessionStatisticsBuilder
     private var lastRecordedAttempt: ExerciseAttemptStatistics? = null
 
     init {
@@ -36,7 +40,7 @@ internal class TrainingSession(
 
     fun start(startTime: Time): TrainingSessionState {
         statisticsRecorder.onEvent(SessionEvent.SessionStarted(trainingPlan, startTime))
-        trainingStatistics = TrainingStatistics(trainingPlan, startTime)
+        statisticsBuilder = SessionStatisticsBuilder(trainingPlan, startTime, timeProvider)
         val firstExercise = loadExercise()
         val currentSet = getCurrentSet(firstExercise)
         exerciseSession = ExerciseSession(firstExercise, startTime, currentSet)
@@ -99,10 +103,11 @@ internal class TrainingSession(
             }
             exercises.add(insertIndex, currentExercise)
             val currentSet = exerciseSession.set
+            val updatedTotalSets = getTotalSetsForExercise(currentExercise)
             statisticsRecorder.onEvent(
                 SessionEvent.ExtraSetAdded(
                     currentExercise,
-                    exercises.count { it.id == currentExercise.id } + currentSet
+                    updatedTotalSets
                 )
             )
             val updatedState = createExerciseState(currentExercise, currentSet)
@@ -110,6 +115,23 @@ internal class TrainingSession(
             return updatedState
         }
         return state
+    }
+
+    fun updateLastAttemptRpe(rpe: Float) {
+        lastRecordedAttempt?.let { attempt ->
+            val updated = attempt.copy(rpe = rpe)
+            val index = attempts.indexOfLast { it.id == attempt.id }
+            if (index >= 0) {
+                attempts[index] = updated
+            }
+            lastRecordedAttempt = updated
+        }
+    }
+
+    fun finalizeStatistics(note: String? = null, rpe: Int? = null): TrainingStatistics {
+        val summaryState = state as? TrainingSessionState.SummaryState
+            ?: throw IllegalStateException("Cannot finalize session that is not in SummaryState")
+        return summaryState.statistics.copy(note = note, rpe = rpe)
     }
 
     fun stop() {
@@ -120,22 +142,22 @@ internal class TrainingSession(
 
     private fun next(time: Time): TrainingSessionState = when {
         isTrainingSessionFinished() && !isTrainingSessionStopped() -> {
-            val stats = this.trainingStatistics.gatherTrainingStatistics(time)
+            val stats = this.statisticsBuilder.gatherTrainingStatistics(time)
             statisticsRecorder.onEvent(SessionEvent.SessionFinished(stats.totalTime, time))
             TrainingSessionState.SummaryState(stats, trainingPlan)
         }
         isExerciseState() && exerciseSession.hasRestTime() -> {
             val nextExercise = getNextExerciseOverview()
             val nextSet = getNextExerciseSet(nextExercise)
-            val followingName = getFollowingExerciseName(nextExercise)
+            val following = getFollowingExercise(nextExercise)
             statisticsRecorder.onEvent(SessionEvent.RestStarted(exerciseSession.restTime, time))
             TrainingSessionState.RestTimeState(
                 nextExercise = nextExercise,
                 restTime = exerciseSession.restTime,
                 nextSet = nextSet,
-                totalSetsForNextExercise = nextExercise.sets,
+                totalSetsForNextExercise = getTotalSetsForExercise(nextExercise),
                 lastCompletedAttempt = lastRecordedAttempt,
-                followingExerciseName = followingName
+                followingExercise = following
             )
         }
         isRestTimeState() || (isExerciseState() && !exerciseSession.hasRestTime()) -> {
@@ -158,20 +180,30 @@ internal class TrainingSession(
         val exerciseIndex = trainingPlan.exercises.indexOfFirst { it.id == currentExercise.id } + 1
         val totalExercises = trainingPlan.exercises.size
         val setsLeft = exercises.size
-        val followingName = getFollowingExerciseName(currentExercise)
+        val following = getFollowingExercise(currentExercise)
+        val totalSets = getTotalSetsForExercise(currentExercise)
 
         return TrainingSessionState.ExerciseState(
             currentExercise = currentExercise,
             currentSet = currentSet,
-            totalSets = currentExercise.sets,
+            totalSets = totalSets,
             targetReps = currentExercise.repetitions,
             targetWeightInKg = currentExercise.weightInKg?.toDouble(),
             completedSets = exerciseCompletedSets,
             exerciseIndex = if (exerciseIndex > 0) exerciseIndex else 1,
             totalExercises = totalExercises,
             setsLeftInWorkout = setsLeft,
-            followingExerciseName = followingName
+            followingExercise = following
         )
+    }
+
+    private fun getTotalSetsForExercise(exercise: TrainingExercise): Int {
+        val completed = attempts.count { it.trainingExerciseId == exercise.id }
+        val remaining = exercises.count { it.id == exercise.id }
+        val isInProgress = ::exerciseSession.isInitialized &&
+            exerciseSession.exercise.id == exercise.id &&
+            isExerciseState()
+        return completed + remaining + (if (isInProgress) 1 else 0)
     }
 
     private fun startRecordingExerciseStatistics(
@@ -204,7 +236,7 @@ internal class TrainingSession(
             )
             attempts.add(exerciseAttemptStatistics)
             lastRecordedAttempt = exerciseAttemptStatistics
-            trainingStatistics.addExerciseAttemptStatistics(exerciseAttemptStatistics)
+            statisticsBuilder.addExerciseAttemptStatistics(exerciseAttemptStatistics)
             statisticsRecorder.onEvent(
                 SessionEvent.ExerciseCompleted(exerciseAttemptStatistics, time)
             )
@@ -213,24 +245,21 @@ internal class TrainingSession(
 
     private fun getNextExerciseOverview() = exercises.first()
 
-    private fun getNextExerciseSet(nextExercise: TrainingExercise): Int {
-        val remainingAttempts = exercises.count { it.id == nextExercise.id }
-        return nextExercise.sets - remainingAttempts + 1
-    }
+    private fun getNextExerciseSet(nextExercise: TrainingExercise): Int =
+        attempts.count { it.trainingExerciseId == nextExercise.id } + 1
 
     private fun loadExercise(): TrainingExercise = exercises.removeAt(0)
 
-    private fun getCurrentSet(currentExercise: TrainingExercise): Int {
-        val numberOfLeftAttempts = exercises.count { it.id == currentExercise.id }
-        return currentExercise.sets - numberOfLeftAttempts
-    }
+    private fun getCurrentSet(currentExercise: TrainingExercise): Int =
+        attempts.count { it.trainingExerciseId == currentExercise.id } + 1
 
-    private fun getFollowingExerciseName(currentExercise: TrainingExercise): String? {
-        val followingExercise = exercises.firstOrNull { it.id != currentExercise.id }
-            ?: trainingPlan.exercises.dropWhile {
-                it.id != currentExercise.id
-            }.drop(1).firstOrNull()
-        return followingExercise?.let { "${it.exercise.name} (${it.sets} sets)" }
+    private fun getFollowingExercise(currentExercise: TrainingExercise): TrainingExercise? {
+        val remaining = exercises.firstOrNull { it.id != currentExercise.id }
+        if (remaining != null) return remaining
+        return trainingPlan.exercises
+            .dropWhile { it.id != currentExercise.id }
+            .drop(1)
+            .firstOrNull()
     }
 
     private fun isTrainingSessionFinished(): Boolean = exercises.isEmpty()
