@@ -53,9 +53,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import com.lukasz.witkowski.training.planner.auth.R
 import com.lukasz.witkowski.training.planner.auth.domain.model.AuthenticationFailure
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.Success
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.theme.Warning
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.appIcon.AppIconBox
@@ -102,7 +102,7 @@ private fun AuthenticationScreenContent(
         modifier =
         modifier
             .fillMaxSize()
-            .padding(Dimens2.margin)
+            .padding(Dimens.margin)
     ) {
         Column(
             modifier =
@@ -110,7 +110,7 @@ private fun AuthenticationScreenContent(
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceLg)
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceLg)
         ) {
             AuthHeroHeader(mode = uiState.mode)
 
@@ -206,7 +206,7 @@ private fun AuthHeroHeader(mode: AuthMode, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         AppIconBox(
             mainIcon = Icons.Default.FitnessCenter,
@@ -309,12 +309,12 @@ private fun AuthFailureBanner(
             modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(Dimens2.spaceMd),
+                .padding(Dimens.spaceMd),
             verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             Surface(
-                modifier = Modifier.size(Dimens2.iconSize30),
+                modifier = Modifier.size(Dimens.iconSize30),
                 shape = MaterialTheme.shapes.small,
                 color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.2f)
             ) {
@@ -323,7 +323,7 @@ private fun AuthFailureBanner(
                         imageVector = Icons.Default.Error,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onErrorContainer,
-                        modifier = Modifier.size(Dimens2.inputIconSize)
+                        modifier = Modifier.size(Dimens.inputIconSize)
                     )
                 }
             }
@@ -339,19 +339,19 @@ private fun AuthFailureBanner(
                     text = messageText,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onErrorContainer,
-                    modifier = Modifier.padding(top = Dimens2.spaceXs)
+                    modifier = Modifier.padding(top = Dimens.spaceXs)
                 )
             }
 
             IconButton(
                 onClick = onDismiss,
-                modifier = Modifier.size(Dimens2.iconSize24)
+                modifier = Modifier.size(Dimens.iconSize24)
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
                     contentDescription = "Dismiss error",
                     tint = MaterialTheme.colorScheme.onErrorContainer,
-                    modifier = Modifier.size(Dimens2.iconSize16)
+                    modifier = Modifier.size(Dimens.iconSize16)
                 )
             }
         }
@@ -375,14 +375,14 @@ private fun AuthLoadingBanner(modifier: Modifier = Modifier) {
             modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(Dimens2.spaceMd),
+                .padding(Dimens.spaceMd),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             CircularProgressIndicator(
-                modifier = Modifier.size(Dimens2.inputIconSize),
+                modifier = Modifier.size(Dimens.inputIconSize),
                 color = MaterialTheme.colorScheme.primary,
-                strokeWidth = Dimens2.thinBorder
+                strokeWidth = Dimens.thinBorder
             )
 
             Column(modifier = Modifier.weight(1f)) {
@@ -397,7 +397,7 @@ private fun AuthLoadingBanner(modifier: Modifier = Modifier) {
                         text = stringResource(id = R.string.auth_loading_taking_longer),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = Dimens2.spaceXs)
+                        modifier = Modifier.padding(top = Dimens.spaceXs)
                     )
                 }
             }
@@ -419,7 +419,7 @@ private fun SignInFormContent(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
         AppLabeledTextField(
             label = stringResource(id = R.string.auth_email_label),
@@ -455,7 +455,7 @@ private fun SignInFormContent(
                         },
                         contentDescription = "Toggle password visibility",
                         tint = MaterialTheme.colorScheme.secondary,
-                        modifier = Modifier.size(Dimens2.inputIconSize)
+                        modifier = Modifier.size(Dimens.inputIconSize)
                     )
                 }
             },
@@ -482,9 +482,9 @@ private fun SignInFormContent(
             if (isLoading) {
                 @Composable {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(Dimens2.inputIconSize),
+                        modifier = Modifier.size(Dimens.inputIconSize),
                         color = MaterialTheme.colorScheme.onPrimary,
-                        strokeWidth = Dimens2.thinBorder
+                        strokeWidth = Dimens.thinBorder
                     )
                 }
             } else {
@@ -492,7 +492,7 @@ private fun SignInFormContent(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
-                        modifier = Modifier.size(Dimens2.inputIconSize)
+                        modifier = Modifier.size(Dimens.inputIconSize)
                     )
                 }
             }
@@ -524,7 +524,7 @@ private fun SignUpFormContent(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
         AppLabeledTextField(
             label = stringResource(id = R.string.auth_username_label),
@@ -554,7 +554,7 @@ private fun SignUpFormContent(
             )
         )
 
-        Column(verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)) {
+        Column(verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)) {
             AppLabeledTextField(
                 label = stringResource(id = R.string.auth_password_label),
                 value = password,
@@ -575,7 +575,7 @@ private fun SignUpFormContent(
                             },
                             contentDescription = "Toggle password visibility",
                             tint = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier.size(Dimens2.inputIconSize)
+                            modifier = Modifier.size(Dimens.inputIconSize)
                         )
                     }
                 },
@@ -607,9 +607,9 @@ private fun SignUpFormContent(
             if (isLoading) {
                 @Composable {
                     CircularProgressIndicator(
-                        modifier = Modifier.size(Dimens2.inputIconSize),
+                        modifier = Modifier.size(Dimens.inputIconSize),
                         color = MaterialTheme.colorScheme.onPrimary,
-                        strokeWidth = Dimens2.thinBorder
+                        strokeWidth = Dimens.thinBorder
                     )
                 }
             } else {
@@ -617,7 +617,7 @@ private fun SignUpFormContent(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
-                        modifier = Modifier.size(Dimens2.inputIconSize)
+                        modifier = Modifier.size(Dimens.inputIconSize)
                     )
                 }
             }
@@ -659,14 +659,14 @@ private fun PasswordStrengthGauge(strength: PasswordStrength, modifier: Modifier
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
     ) {
         for (i in 1..3) {
             Surface(
                 modifier =
                 Modifier
                     .weight(1f)
-                    .height(Dimens2.spaceXs),
+                    .height(Dimens.spaceXs),
                 shape = MaterialTheme.shapes.small,
                 color = if (i <=
                     activeSegments
@@ -694,11 +694,11 @@ private fun OrContinueWithDivider(modifier: Modifier = Modifier) {
     ) {
         HorizontalDivider(
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
-            thickness = Dimens2.thinBorder
+            thickness = Dimens.thinBorder
         )
         Surface(
             color = MaterialTheme.colorScheme.surface,
-            modifier = Modifier.padding(horizontal = Dimens2.spaceSm)
+            modifier = Modifier.padding(horizontal = Dimens.spaceSm)
         ) {
             Text(
                 text = stringResource(id = R.string.auth_or_continue_with).uppercase(),
@@ -713,7 +713,7 @@ private fun OrContinueWithDivider(modifier: Modifier = Modifier) {
 @AppPreview
 @Composable
 private fun AuthenticationSignInPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AuthenticationScreenContent(
             uiState =
             AuthUiState(
@@ -729,7 +729,7 @@ private fun AuthenticationSignInPreview() {
 @AppPreview
 @Composable
 private fun AuthenticationSignUpPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AuthenticationScreenContent(
             uiState =
             AuthUiState(
@@ -747,7 +747,7 @@ private fun AuthenticationSignUpPreview() {
 @AppPreview
 @Composable
 private fun AuthenticationFailurePreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AuthenticationScreenContent(
             uiState =
             AuthUiState(
@@ -764,7 +764,7 @@ private fun AuthenticationFailurePreview() {
 @AppPreview
 @Composable
 private fun AuthenticationLoadingPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AuthenticationScreenContent(
             uiState =
             AuthUiState(

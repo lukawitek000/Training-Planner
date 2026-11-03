@@ -7,24 +7,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
  * Divider composable intended for in-card content separation according to design specification.
  *
  * Spec Highlights:
- * - Height / Thickness: 1dp [Dimens2.thinBorder]
+ * - Height / Thickness: 1dp [Dimens.thinBorder]
  * - Color: surfaceContainerHigh
- * - Horizontal Margins: 16dp [Dimens2.spaceMd]
+ * - Horizontal Margins: 16dp [Dimens.spaceMd]
  */
 @Composable
 fun AppCardDivider(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
-    thickness: Dp = Dimens2.thinBorder,
-    horizontalMargin: Dp = Dimens2.spaceMd
+    thickness: Dp = Dimens.thinBorder,
+    horizontalMargin: Dp = Dimens.spaceMd
 ) {
     HorizontalDivider(
         modifier = modifier.padding(horizontal = horizontalMargin),
@@ -36,7 +36,7 @@ fun AppCardDivider(
 @AppPreview
 @Composable
 private fun AppCardDividerPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AppCardDivider()
     }
 }

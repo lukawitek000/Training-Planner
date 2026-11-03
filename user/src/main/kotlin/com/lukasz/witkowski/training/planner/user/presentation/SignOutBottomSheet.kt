@@ -31,8 +31,8 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppSecondaryButton
@@ -71,16 +71,16 @@ internal fun SignOutBottomSheetContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimens2.margin)
-            .padding(bottom = Dimens2.spaceLg),
+            .padding(horizontal = Dimens.margin)
+            .padding(bottom = Dimens.spaceLg),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Surface(
-            modifier = Modifier.size(Dimens2.spinnerIconContainerSize),
+            modifier = Modifier.size(Dimens.spinnerIconContainerSize),
             shape = CircleShape,
             color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f),
             border = BorderStroke(
-                width = Dimens2.thinBorder,
+                width = Dimens.thinBorder,
                 color = MaterialTheme.colorScheme.error.copy(alpha = 0.3f)
             )
         ) {
@@ -89,12 +89,12 @@ internal fun SignOutBottomSheetContent(
                     imageVector = Icons.AutoMirrored.Filled.Logout,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(Dimens2.iconSize30)
+                    modifier = Modifier.size(Dimens.iconSize30)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(Dimens2.spaceSm))
+        Spacer(modifier = Modifier.height(Dimens.spaceSm))
 
         Text(
             text = stringResource(id = R.string.sign_out_dialog_title),
@@ -110,31 +110,31 @@ internal fun SignOutBottomSheetContent(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
             modifier = Modifier
-                .widthIn(max = Dimens2.maxSubtitleWidth + Dimens2.spaceXl)
-                .padding(top = Dimens2.spaceXs)
+                .widthIn(max = Dimens.maxSubtitleWidth + Dimens.spaceXl)
+                .padding(top = Dimens.spaceXs)
         )
 
-        Spacer(modifier = Modifier.height(Dimens2.spaceMd))
+        Spacer(modifier = Modifier.height(Dimens.spaceMd))
 
         Surface(
             shape = MaterialTheme.shapes.medium,
             color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.25f),
             border = BorderStroke(
-                width = Dimens2.thinBorder,
+                width = Dimens.thinBorder,
                 color = MaterialTheme.colorScheme.error.copy(alpha = 0.4f)
             ),
             modifier = Modifier.fillMaxWidth()
         ) {
             Row(
-                modifier = Modifier.padding(Dimens2.spaceSm),
+                modifier = Modifier.padding(Dimens.spaceSm),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
             ) {
                 Icon(
                     imageVector = Icons.Default.WarningAmber,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(Dimens2.iconSize22)
+                    modifier = Modifier.size(Dimens.iconSize22)
                 )
                 Text(
                     text = stringResource(id = R.string.sign_out_warning_unsynced_lost),
@@ -144,7 +144,7 @@ internal fun SignOutBottomSheetContent(
             }
         }
 
-        Spacer(modifier = Modifier.height(Dimens2.spaceLg))
+        Spacer(modifier = Modifier.height(Dimens.spaceLg))
 
         AppPrimaryButton(
             text = stringResource(id = R.string.sign_out_keep_local_button),
@@ -155,7 +155,7 @@ internal fun SignOutBottomSheetContent(
                 .testTag("SignOutKeepLocalButton")
         )
 
-        Spacer(modifier = Modifier.height(Dimens2.spaceSm))
+        Spacer(modifier = Modifier.height(Dimens.spaceSm))
 
         AppSecondaryButton(
             text = stringResource(id = R.string.sign_out_remove_all_button),
@@ -166,7 +166,7 @@ internal fun SignOutBottomSheetContent(
                 .testTag("SignOutRemoveAllButton")
         )
 
-        Spacer(modifier = Modifier.height(Dimens2.spaceXs))
+        Spacer(modifier = Modifier.height(Dimens.spaceXs))
 
         AppTertiaryButton(
             text = stringResource(id = R.string.sign_out_cancel_button),
@@ -181,7 +181,7 @@ internal fun SignOutBottomSheetContent(
 @AppPreview
 @Composable
 private fun SignOutBottomSheetContentPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh) {
             SignOutBottomSheetContent(
                 onKeepLocalDataClick = {},

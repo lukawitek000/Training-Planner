@@ -35,8 +35,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
@@ -121,8 +121,8 @@ private fun TrainingPlanDetails(
     )
 
     Column(
-        modifier = modifier.padding(Dimens2.spaceMd),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+        modifier = modifier.padding(Dimens.spaceMd),
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
         TrainingPlanInfoSection(trainingPlan = trainingPlan)
         AppPrimaryButton(
@@ -166,7 +166,7 @@ private fun TrainingPlanDetails(
 private fun TrainingPlanInfoSection(trainingPlan: TrainingPlan, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Text(
             text = trainingPlan.title,
@@ -199,8 +199,8 @@ private fun TrainingPlanInfoSection(trainingPlan: TrainingPlan, modifier: Modifi
         if (trainingPlan.categories.isNotEmpty()) {
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs),
-                verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
             ) {
                 trainingPlan.categories.forEach { category ->
                     AppCategoryPill(
@@ -219,7 +219,7 @@ private fun TrainingPlanRestTimeInfo(restTime: Duration, modifier: Modifier = Mo
     val formattedRestTime = TimeFormatter(context).formatTime(Time(restTime.inWholeMilliseconds))
     Row(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -242,9 +242,9 @@ private fun ExercisesTabContent(exercises: List<TrainingExercise>, modifier: Mod
             text = stringResource(id = R.string.exercises_count, exercises.size),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = Dimens2.spaceSm)
+            modifier = Modifier.padding(bottom = Dimens.spaceSm)
         )
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)) {
+        LazyColumn(verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)) {
             itemsIndexed(exercises, key = { _, it -> it.id.toString() }) { index, exercise ->
                 ExerciseListItem(index = index, exercise = exercise)
             }
@@ -262,13 +262,13 @@ private fun ExerciseListItem(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(Dimens2.spaceMd),
+                .padding(Dimens.spaceMd),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
         ) {
             Box(
                 modifier = Modifier
-                    .size(Dimens2.spaceXl)
+                    .size(Dimens.spaceXl)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.primaryContainer),
                 contentAlignment = Alignment.Center
@@ -282,7 +282,7 @@ private fun ExerciseListItem(
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
             ) {
                 Text(
                     text = exercise.exercise.name,
@@ -332,7 +332,7 @@ private fun PreviousSessionsTabContent(modifier: Modifier = Modifier) {
 @AppPreview
 @Composable
 private fun TrainingPlanDetailsScreenContentLoadingPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         TrainingPlanDetailsScreenContent(
             trainingPlanState = ResultHandler.Loading,
             modifier = Modifier.fillMaxSize()
@@ -343,7 +343,7 @@ private fun TrainingPlanDetailsScreenContentLoadingPreview() {
 @AppPreview
 @Composable
 private fun TrainingPlanDetailsScreenContentFailurePreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         TrainingPlanDetailsScreenContent(
             trainingPlanState = ResultHandler.Error("Some error"),
             modifier = Modifier.fillMaxSize()
@@ -354,7 +354,7 @@ private fun TrainingPlanDetailsScreenContentFailurePreview() {
 @AppPreview
 @Composable
 private fun TrainingPlanDetailsScreenContentPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         TrainingPlanDetailsScreenContent(
             trainingPlanState = ResultHandler.Success(value = previewTrainingPlan),
             modifier = Modifier.fillMaxSize()

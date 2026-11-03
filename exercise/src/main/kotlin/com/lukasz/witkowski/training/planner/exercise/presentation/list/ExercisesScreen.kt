@@ -62,9 +62,9 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PULL_
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.image.ImageReference
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.Info
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.theme.Warning
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.badges.AppMetadataPill
@@ -172,21 +172,21 @@ private fun ExercisesSearchAndFilterHeader(
         modifier =
         modifier
             .fillMaxWidth()
-            .padding(top = Dimens2.spaceSm, bottom = Dimens2.spaceSm),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            .padding(top = Dimens.spaceSm, bottom = Dimens.spaceSm),
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         AppSearchBar(
             query = filteringState.searchQuery,
             onQueryChange = onSearchQueryChanged,
             placeholder = stringResource(R.string.search_exercise),
-            modifier = Modifier.padding(horizontal = Dimens2.margin)
+            modifier = Modifier.padding(horizontal = Dimens.margin)
         )
 
         if (filteringState.categories.isNotEmpty()) {
             LazyRow(
                 modifier = Modifier.fillMaxWidth(),
-                contentPadding = PaddingValues(horizontal = Dimens2.margin),
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+                contentPadding = PaddingValues(horizontal = Dimens.margin),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
             ) {
                 item(key = "filter_all") {
                     AppFilterChip(
@@ -228,12 +228,12 @@ private fun ExercisesList(
             .testTag("ExercisesList"),
         contentPadding =
         PaddingValues(
-            start = Dimens2.margin,
-            end = Dimens2.margin,
-            top = Dimens2.spaceXs,
-            bottom = Dimens2.spaceXl
+            start = Dimens.margin,
+            end = Dimens.margin,
+            top = Dimens.spaceXs,
+            bottom = Dimens.spaceXl
         ),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         items(
             count = exercisesList.itemCount,
@@ -264,15 +264,15 @@ fun ExerciseListItemContent(
     val borderStroke =
         when (syncState) {
             ExerciseSyncState.CONFLICT ->
-                BorderStroke(Dimens2.thinBorder, Warning.copy(alpha = 0.45f))
+                BorderStroke(Dimens.thinBorder, Warning.copy(alpha = 0.45f))
             ExerciseSyncState.ERROR ->
                 BorderStroke(
-                    Dimens2.thinBorder,
+                    Dimens.thinBorder,
                     MaterialTheme.colorScheme.error.copy(alpha = 0.45f)
                 )
             else ->
                 BorderStroke(
-                    Dimens2.thinBorder,
+                    Dimens.thinBorder,
                     MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
                 )
         }
@@ -288,20 +288,20 @@ fun ExerciseListItemContent(
             modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(Dimens2.spaceMd),
+                .padding(Dimens.spaceMd),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ExerciseThumbnail(
                 imageDescription = imageDescription,
                 imageReference = exercise.image
             )
-            Spacer(modifier = Modifier.width(Dimens2.spaceMd))
+            Spacer(modifier = Modifier.width(Dimens.spaceMd))
             ExerciseInformation(
                 modifier = Modifier.weight(1f),
                 exercise = exercise
             )
             itemTrailingIcon?.let { icon ->
-                Spacer(modifier = Modifier.width(Dimens2.spaceSm))
+                Spacer(modifier = Modifier.width(Dimens.spaceSm))
                 icon(exercise.id)
             }
         }
@@ -316,7 +316,7 @@ private fun ExerciseInformation(exercise: Exercise2, modifier: Modifier = Modifi
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -335,15 +335,15 @@ private fun ExerciseInformation(exercise: Exercise2, modifier: Modifier = Modifi
                     .weight(1f)
                     .testTag("ExerciseItemName-${exercise.name}")
             )
-            Spacer(modifier = Modifier.width(Dimens2.spaceXs))
+            Spacer(modifier = Modifier.width(Dimens.spaceXs))
             ExerciseSyncBadge(syncState = metadata.syncState)
         }
 
         if (categories.isNotEmpty()) {
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs),
-                verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
             ) {
                 categories.forEach { category ->
                     AppCategoryPill(
@@ -456,12 +456,12 @@ private fun ExerciseThumbnail(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier.size(Dimens2.listItemThumbnailSize),
+        modifier = modifier.size(Dimens.listItemThumbnailSize),
         shape = MaterialTheme.shapes.small,
         color = MaterialTheme.colorScheme.surfaceContainerHighest,
         border =
         BorderStroke(
-            width = Dimens2.thinBorder,
+            width = Dimens.thinBorder,
             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
         )
     ) {
@@ -494,7 +494,7 @@ private fun ExerciseThumbnail(
                     modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(Dimens2.spaceSm)
+                        .padding(Dimens.spaceSm)
                 )
             }
         }
@@ -534,8 +534,8 @@ val PREVIEW_EXERCISES =
 @AppPreview
 @Composable
 private fun ExerciseListItemPreview() {
-    TrainingPlannerTheme2 {
-        Box(modifier = Modifier.padding(Dimens2.spaceMd)) {
+    TrainingPlannerTheme {
+        Box(modifier = Modifier.padding(Dimens.spaceMd)) {
             ExerciseListItemContent(
                 exercise = PREVIEW_EXERCISES.first(),
                 onClick = {}
@@ -547,7 +547,7 @@ private fun ExerciseListItemPreview() {
 @AppPreview
 @Composable
 private fun ExercisesScreenContentPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         ExercisesScreenContent(
             exercisesList = PREVIEW_EXERCISES.asPreviewPagerFlow().collectAsLazyPagingItems(),
             filteringState =

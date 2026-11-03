@@ -17,8 +17,8 @@ import androidx.compose.ui.res.painterResource
 import coil3.compose.AsyncImage
 import com.lukasz.witkowski.training.planner.exercise.R
 import com.lukasz.witkowski.training.planner.image.ImageId
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -75,7 +75,7 @@ fun AppExerciseImage(
             contentScale = contentScale,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(Dimens2.spaceXs)
+                .padding(Dimens.spaceXs)
         )
     }
 }
@@ -83,11 +83,11 @@ fun AppExerciseImage(
 @AppPreview
 @Composable
 internal fun AppExerciseImagePreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AppExerciseImage(
             imageIds = emptyList(),
             contentDescription = "Default Exercise",
-            modifier = Modifier.size(Dimens2.avatarSize)
+            modifier = Modifier.size(Dimens.avatarSize)
         )
     }
 }

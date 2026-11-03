@@ -14,10 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 class BottomBarItem(
     val icon: Int,
@@ -42,8 +42,8 @@ fun BottomNavigationBar(
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
                     selectedTextColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSecondary,
-                    unselectedTextColor = MaterialTheme.colorScheme.onSecondary,
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     indicatorColor = Color.Transparent
                 ),
                 icon = {
@@ -65,11 +65,11 @@ private fun NavigationIcon(item: BottomBarItem) {
     Icon(
         painter = painterResource(id = item.icon),
         contentDescription = item.title,
-        modifier = Modifier.size(24.dp)
+        modifier = Modifier.size(Dimens.iconSize24)
     )
 }
 
-@Preview(showBackground = true)
+@AppPreview
 @Composable
 private fun BottomNavigationBarPreview() {
     TrainingPlannerTheme {

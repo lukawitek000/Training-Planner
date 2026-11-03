@@ -19,8 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -49,15 +49,15 @@ fun AppIconBox(
         contentAlignment = Alignment.BottomEnd
     ) {
         Surface(
-            modifier = Modifier.size(Dimens2.iconContainerSize),
+            modifier = Modifier.size(Dimens.iconContainerSize),
             shape = MaterialTheme.shapes.large,
             color = containerColor,
             border =
             BorderStroke(
-                width = Dimens2.thinBorder,
+                width = Dimens.thinBorder,
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
             ),
-            shadowElevation = Dimens2.shadowLg
+            shadowElevation = Dimens.shadowLg
         ) {
             Box(
                 contentAlignment = Alignment.Center
@@ -66,7 +66,7 @@ fun AppIconBox(
                     imageVector = mainIcon,
                     contentDescription = mainIconContentDescription,
                     tint = mainIconTint,
-                    modifier = Modifier.size(Dimens2.iconSize30)
+                    modifier = Modifier.size(Dimens.iconSize30)
                 )
             }
         }
@@ -75,11 +75,11 @@ fun AppIconBox(
             Surface(
                 modifier =
                 Modifier
-                    .size(Dimens2.inputIconSize)
-                    .offset(x = Dimens2.spaceXs, y = Dimens2.spaceXs),
+                    .size(Dimens.inputIconSize)
+                    .offset(x = Dimens.spaceXs, y = Dimens.spaceXs),
                 shape = CircleShape,
                 color = badgeContainerColor,
-                shadowElevation = Dimens2.shadowSm
+                shadowElevation = Dimens.shadowSm
             ) {
                 Box(
                     contentAlignment = Alignment.Center
@@ -88,7 +88,7 @@ fun AppIconBox(
                         imageVector = badgeIcon,
                         contentDescription = badgeIconContentDescription,
                         tint = badgeIconTint,
-                        modifier = Modifier.size(Dimens2.iconSize13)
+                        modifier = Modifier.size(Dimens.iconSize13)
                     )
                 }
             }
@@ -99,10 +99,10 @@ fun AppIconBox(
 @AppPreview
 @Composable
 private fun AppIconBoxPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Row(
-            modifier = Modifier.padding(Dimens2.spaceMd),
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceLg)
+            modifier = Modifier.padding(Dimens.spaceMd),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceLg)
         ) {
             // Normal Icon Box
             AppIconBox(

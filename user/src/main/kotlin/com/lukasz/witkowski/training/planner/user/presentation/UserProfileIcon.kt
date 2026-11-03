@@ -7,7 +7,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -30,7 +30,7 @@ fun UserProfileIcon(onClick: () -> Unit, modifier: Modifier = Modifier) {
 @AppPreview
 @Composable
 private fun UserProfileIconPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         UserProfileIcon(onClick = {})
     }
 }

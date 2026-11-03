@@ -13,8 +13,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingState
 
@@ -64,7 +64,7 @@ fun AppLoadingOverlay(
 @AppPreview
 @Composable
 private fun AppLoadingOverlayPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AppLoadingOverlay(
             isLoading = true,
             loadingTitle = "Saving exercise...",
@@ -74,7 +74,7 @@ private fun AppLoadingOverlayPreview() {
                 modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(Dimens2.spaceLg),
+                    .padding(Dimens.spaceLg),
                 contentAlignment = Alignment.TopStart
             ) {
                 Text(

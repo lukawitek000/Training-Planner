@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.dp
 /**
  * Dimension and spacing constants taken from the theme configuration and UI components.
  */
-object Dimens2 {
+object Dimens {
     /** Zero Dimension - 0dp */
     val zeroDp: Dp = 0.dp
 

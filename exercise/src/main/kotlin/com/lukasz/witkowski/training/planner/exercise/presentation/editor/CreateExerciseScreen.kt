@@ -39,8 +39,8 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.presentation.ImageInputForm
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppFilterChip
 import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppLoadingOverlay
@@ -173,10 +173,10 @@ private fun ExerciseForm(
 
     Column(
         modifier = modifier
-            .padding(Dimens2.spaceMd)
+            .padding(Dimens.spaceMd)
             .verticalScroll(rememberScrollState())
             .testTag("ExerciseForm"),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
         ImageInputForm(
             images = state.images,
@@ -231,7 +231,7 @@ private fun TextInputForm(
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = Dimens2.spaceXs)
+            modifier = Modifier.padding(bottom = Dimens.spaceXs)
         )
         AppTextField(
             value = name,
@@ -241,13 +241,13 @@ private fun TextInputForm(
                 .fillMaxWidth()
                 .testTag("NameField")
         )
-        Spacer(Modifier.height(Dimens2.spaceMd))
+        Spacer(Modifier.height(Dimens.spaceMd))
         Text(
             text = stringResource(R.string.exercise_description_label),
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = Dimens2.spaceXs)
+            modifier = Modifier.padding(bottom = Dimens.spaceXs)
         )
         AppTextField(
             value = description,
@@ -271,7 +271,7 @@ private fun CategorySelectionPanel(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Text(
             text = stringResource(R.string.target_muscles),
@@ -280,8 +280,8 @@ private fun CategorySelectionPanel(
             color = MaterialTheme.colorScheme.onSurface
         )
         FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             categories.forEach { filterCategory ->
                 AppFilterChip(
@@ -300,7 +300,7 @@ private fun CategorySelectionPanel(
 @Preview
 @Composable
 fun CreateExerciseScreenPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         val state = ExerciseEditingInput(
             name = "Push ups",
             description = "Compound upper-body pushing movement",
@@ -321,7 +321,7 @@ fun CreateExerciseScreenPreview() {
 @Preview
 @Composable
 fun CreateExerciseScreenEmptyPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         val state = ExerciseEditingInput(
             categories = PREVIEW_CATEGORIES
         )
@@ -338,7 +338,7 @@ fun CreateExerciseScreenEmptyPreview() {
 @Preview
 @Composable
 fun CreateExerciseScreenSavingPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         val state = ExerciseEditingInput(
             name = "Push ups",
             description = "Compound upper-body pushing movement",

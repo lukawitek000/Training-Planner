@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -39,15 +39,15 @@ fun AppCircularTimer(
     )
 
     Box(
-        modifier = modifier.size(Dimens2.timerRingSize),
+        modifier = modifier.size(Dimens.timerRingSize),
         contentAlignment = Alignment.Center
     ) {
         Canvas(
             modifier = Modifier
-                .size(Dimens2.timerRingSize)
-                .padding(Dimens2.spaceSm)
+                .size(Dimens.timerRingSize)
+                .padding(Dimens.spaceSm)
         ) {
-            val strokeWidthPx = Dimens2.timerRingStrokeWidth.toPx()
+            val strokeWidthPx = Dimens.timerRingStrokeWidth.toPx()
 
             // Background circle track
             drawCircle(
@@ -90,12 +90,12 @@ fun AppCircularTimer(
 @AppPreview
 @Composable
 private fun AppCircularTimerPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AppCircularTimer(
             timeFormatted = "01:15",
             progress = 0.65f,
             label = "Rest Interval",
-            modifier = Modifier.padding(Dimens2.spaceLg)
+            modifier = Modifier.padding(Dimens.spaceLg)
         )
     }
 }

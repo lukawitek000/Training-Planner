@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.MaterialTheme
 import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
 import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
@@ -26,7 +27,8 @@ import com.lukasz.witkowski.training.planner.navigation.TrainingPlannerNavigator
 import com.lukasz.witkowski.training.planner.navigation.TrainingPlansList
 import com.lukasz.witkowski.training.planner.navigation.rememberTrainingPlannerNavBackStack
 import com.lukasz.witkowski.training.planner.navigation.toUiConfig
-import com.lukasz.witkowski.training.planner.ui.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,7 +92,11 @@ fun TrainingPlannerApp(initialKey: TrainingPlannerNavKey = TrainingPlansList) {
         },
         floatingActionButton = {
             uiConfig.fabConfig?.let { fab ->
-                FloatingActionButton(onClick = fab.onClick) {
+                FloatingActionButton(
+                    onClick = fab.onClick,
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
+                ) {
                     Icon(
                         imageVector = fab.icon,
                         contentDescription = fab.contentDescription
@@ -107,7 +113,7 @@ fun TrainingPlannerApp(initialKey: TrainingPlannerNavKey = TrainingPlansList) {
 }
 
 @ExperimentalAnimationApi
-@Preview(showBackground = true)
+@AppPreview
 @Composable
 fun TrainingPlannerPreview() {
     TrainingPlannerTheme {

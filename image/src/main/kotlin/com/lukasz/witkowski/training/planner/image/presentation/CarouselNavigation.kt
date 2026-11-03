@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import com.lukasz.witkowski.training.planner.image.R
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 
 internal fun calculatePreviousCarouselIndex(
     currentIndex: Int,
@@ -63,27 +63,27 @@ internal fun calculateNextCarouselIndex(
 fun PhotoCountBadge(currentIndex: Int, totalCount: Int, modifier: Modifier = Modifier) {
     if (totalCount <= 1) return
     Surface(
-        shape = RoundedCornerShape(Dimens2.inputIconSize),
+        shape = RoundedCornerShape(Dimens.inputIconSize),
         color = MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.75f),
         border = BorderStroke(
-            Dimens2.thinBorder,
+            Dimens.thinBorder,
             MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
         ),
         modifier = modifier
     ) {
         Row(
             modifier = Modifier.padding(
-                horizontal = Dimens2.badgeHorizontalPadding,
-                vertical = Dimens2.badgeVerticalPadding
+                horizontal = Dimens.badgeHorizontalPadding,
+                vertical = Dimens.badgeVerticalPadding
             ),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
         ) {
             Icon(
                 imageVector = Icons.Outlined.PhotoLibrary,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(Dimens2.iconSize14)
+                modifier = Modifier.size(Dimens.iconSize14)
             )
             Text(
                 text = stringResource(R.string.image_counter_format, currentIndex + 1, totalCount),
@@ -102,7 +102,7 @@ fun CarouselNavButton(
     icon: ImageVector,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    size: Dp = Dimens2.spaceXl
+    size: Dp = Dimens.spaceXl
 ) {
     Surface(
         onClick = onClick,
@@ -111,10 +111,10 @@ fun CarouselNavButton(
         color = MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.75f),
         contentColor = MaterialTheme.colorScheme.onSurface,
         border = BorderStroke(
-            Dimens2.thinBorder,
+            Dimens.thinBorder,
             MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
         ),
-        shadowElevation = Dimens2.shadowSm,
+        shadowElevation = Dimens.shadowSm,
         modifier = modifier.size(size)
     ) {
         Box(
@@ -124,7 +124,7 @@ fun CarouselNavButton(
             Icon(
                 imageVector = icon,
                 contentDescription = contentDescription,
-                modifier = Modifier.size(Dimens2.iconSize18),
+                modifier = Modifier.size(Dimens.iconSize18),
                 tint = if (enabled) {
                     MaterialTheme.colorScheme.onSurface
                 } else {
@@ -178,7 +178,7 @@ fun BoxScope.CarouselNavigationArrows(
         enabled = isPreviousEnabled,
         modifier = modifier
             .align(Alignment.CenterStart)
-            .padding(start = Dimens2.spaceSm)
+            .padding(start = Dimens.spaceSm)
             .testTag("carousel_prev_button")
     )
 
@@ -189,7 +189,7 @@ fun BoxScope.CarouselNavigationArrows(
         enabled = isNextEnabled,
         modifier = modifier
             .align(Alignment.CenterEnd)
-            .padding(end = Dimens2.spaceSm)
+            .padding(end = Dimens.spaceSm)
             .testTag("carousel_next_button")
     )
 }

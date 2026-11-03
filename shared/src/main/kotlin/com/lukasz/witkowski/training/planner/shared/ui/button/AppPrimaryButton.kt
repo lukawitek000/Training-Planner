@@ -8,8 +8,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -37,8 +37,8 @@ fun AppPrimaryButton(
         MaterialTheme.typography.titleMedium.copy(
             fontWeight = FontWeight.SemiBold
         ),
-        elevation = Dimens2.buttonElevation,
-        iconTextGap = Dimens2.spaceSm
+        elevation = Dimens.buttonElevation,
+        iconTextGap = Dimens.spaceSm
     )
 }
 
@@ -71,20 +71,20 @@ fun AppPrimaryButton(
         MaterialTheme.typography.titleMedium.copy(
             fontWeight = FontWeight.SemiBold
         ),
-        elevation = Dimens2.buttonElevation,
-        iconTextGap = Dimens2.spaceSm,
-        iconSize = Dimens2.inputIconSize
+        elevation = Dimens.buttonElevation,
+        iconTextGap = Dimens.spaceSm,
+        iconSize = Dimens.inputIconSize
     )
 }
 
 @AppPreview
 @Composable
 private fun AppPrimaryButtonPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AppPrimaryButton(
             text = "Sign In",
             onClick = {},
-            modifier = Modifier.padding(Dimens2.spaceMd),
+            modifier = Modifier.padding(Dimens.spaceMd),
             trailingIcon = Icons.AutoMirrored.Filled.ArrowForward
         )
     }

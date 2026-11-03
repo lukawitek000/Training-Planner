@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -23,7 +23,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
  * Spec Highlights:
  * - Background color: surfaceContainer
  * - Shape: rounded-xl / medium shape
- * - Elevation: shadow-sm / 2dp [Dimens2.shadowSm]
+ * - Elevation: shadow-sm / 2dp [Dimens.shadowSm]
  * - Content: Flex Column scope
  */
 @Composable
@@ -32,7 +32,7 @@ fun AppCard(
     shape: Shape = MaterialTheme.shapes.medium,
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
     border: BorderStroke? = null,
-    elevation: Dp = Dimens2.shadowSm,
+    elevation: Dp = Dimens.shadowSm,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
@@ -54,18 +54,18 @@ fun AppCard(
 @AppPreview
 @Composable
 private fun AppCardPreview() {
-    TrainingPlannerTheme2 {
-        AppCard(modifier = Modifier.padding(Dimens2.spaceMd)) {
+    TrainingPlannerTheme {
+        AppCard(modifier = Modifier.padding(Dimens.spaceMd)) {
             Text(
                 text = "Card Section 1",
-                modifier = Modifier.padding(Dimens2.spaceMd),
+                modifier = Modifier.padding(Dimens.spaceMd),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurface
             )
             AppCardDivider()
             Text(
                 text = "Card Section 2",
-                modifier = Modifier.padding(Dimens2.spaceMd),
+                modifier = Modifier.padding(Dimens.spaceMd),
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.onSurface
             )

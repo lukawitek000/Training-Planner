@@ -24,8 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import com.lukasz.witkowski.training.planner.session.R
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 
@@ -57,7 +57,7 @@ fun AppStepper(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = Dimens2.spaceMd, vertical = Dimens2.spaceSm),
+                .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceSm),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -153,11 +153,11 @@ private fun StepperActionButton(
 
     Box(
         modifier = modifier
-            .size(Dimens2.stepperButtonSize)
+            .size(Dimens.stepperButtonSize)
             .clip(CircleShape)
             .background(backgroundColor)
             .border(
-                width = Dimens2.thinBorder,
+                width = Dimens.thinBorder,
                 color = MaterialTheme.colorScheme.outlineVariant,
                 shape = CircleShape
             )
@@ -172,7 +172,7 @@ private fun StepperActionButton(
             imageVector = icon,
             contentDescription = contentDescription,
             tint = iconColor,
-            modifier = Modifier.size(Dimens2.iconSize24)
+            modifier = Modifier.size(Dimens.iconSize24)
         )
     }
 }
@@ -180,10 +180,10 @@ private fun StepperActionButton(
 @AppPreview
 @Composable
 private fun AppStepperPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Column(
-            modifier = Modifier.padding(Dimens2.spaceMd),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+            modifier = Modifier.padding(Dimens.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
         ) {
             AppIntStepper(
                 value = 10,

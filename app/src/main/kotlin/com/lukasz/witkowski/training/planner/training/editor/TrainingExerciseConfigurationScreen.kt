@@ -25,8 +25,8 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.editor.Recomm
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
@@ -90,7 +90,7 @@ private fun TrainingExerciseParameters(
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
         Text(
             text = stringResource(R.string.recommended_parameters_label),
@@ -105,7 +105,7 @@ private fun TrainingExerciseParameters(
                     MaterialTheme.colorScheme.surfaceContainer
                 },
                 border = BorderStroke(
-                    width = if (isSelected) Dimens2.shadowSm else Dimens2.thinBorder,
+                    width = if (isSelected) Dimens.shadowSm else Dimens.thinBorder,
                     color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
                 ),
             ) {
@@ -114,7 +114,7 @@ private fun TrainingExerciseParameters(
                     isExpanded = false,
                     recommendation = it,
                     toggleExpansion = { onRecommendationSelected(it.parameters) },
-                    modifier = Modifier.padding(Dimens2.spaceMd)
+                    modifier = Modifier.padding(Dimens.spaceMd)
                 )
             }
         }
@@ -145,7 +145,7 @@ private fun TrainingExerciseParameters(
 @AppPreview
 @Composable
 private fun TrainingExerciseConfigurationScreenContentPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Surface {
             TrainingExerciseConfigurationScreenContent(
                 state = PREVIEW_SUCCESS_STATE,
@@ -162,7 +162,7 @@ private fun TrainingExerciseConfigurationScreenContentPreview() {
 @AppPreview
 @Composable
 private fun TrainingExerciseConfigurationScreenContentSelectedRecommendationPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Surface {
             TrainingExerciseConfigurationScreenContent(
                 state = PREVIEW_SUCCESS_STATE,

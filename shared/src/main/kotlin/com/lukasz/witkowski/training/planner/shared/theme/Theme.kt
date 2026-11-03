@@ -4,7 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 
 @Composable
-fun TrainingPlannerTheme2(content: @Composable () -> Unit) {
+fun TrainingPlannerTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = TrainingPlannerColorScheme,
         typography = AppTypography,

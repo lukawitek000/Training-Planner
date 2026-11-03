@@ -53,6 +53,7 @@ android {
 }
 
 dependencies {
+    implementation(projects.shared)
     implementation(projects.exercise)
     implementation(projects.training)
     implementation(projects.session)

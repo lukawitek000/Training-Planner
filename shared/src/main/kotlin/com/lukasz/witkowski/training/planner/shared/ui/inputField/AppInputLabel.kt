@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -30,7 +30,7 @@ fun AppInputLabel(
 @AppPreview
 @Composable
 private fun AppInputLabelPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AppInputLabel(text = "Email Address")
     }
 }

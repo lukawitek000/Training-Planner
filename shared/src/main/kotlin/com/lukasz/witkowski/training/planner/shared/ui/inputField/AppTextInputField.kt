@@ -26,8 +26,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.VisualTransformation
 import com.lukasz.witkowski.training.planner.shared.theme.DarkGrey
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -74,7 +74,7 @@ fun AppTextField(
 
     val sizeModifier =
         if (singleLine) {
-            Modifier.height(Dimens2.inputFieldHeight)
+            Modifier.height(Dimens.inputFieldHeight)
         } else {
             Modifier
         }
@@ -122,8 +122,8 @@ fun AppTextField(
                 colors = textFieldColors,
                 contentPadding =
                 PaddingValues(
-                    horizontal = Dimens2.inputHorizontalPadding,
-                    vertical = if (singleLine) Dimens2.zeroDp else Dimens2.spaceSm
+                    horizontal = Dimens.inputHorizontalPadding,
+                    vertical = if (singleLine) Dimens.zeroDp else Dimens.spaceSm
                 ),
                 container = {
                     OutlinedTextFieldDefaults.Container(
@@ -168,7 +168,7 @@ fun AppTextField(
                     imageVector = leadingIcon,
                     contentDescription = leadingIconContentDescription,
                     tint = MaterialTheme.colorScheme.secondary,
-                    modifier = Modifier.size(Dimens2.inputIconSize)
+                    modifier = Modifier.size(Dimens.inputIconSize)
                 )
             }
         } else {
@@ -197,10 +197,10 @@ fun AppTextField(
 @AppPreview
 @Composable
 private fun AppTextFieldPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Column(
-            modifier = Modifier.padding(Dimens2.spaceMd),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+            modifier = Modifier.padding(Dimens.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
         ) {
             AppTextField(
                 value = "",

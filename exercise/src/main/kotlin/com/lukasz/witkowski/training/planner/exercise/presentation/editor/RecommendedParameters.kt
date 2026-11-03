@@ -42,14 +42,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.lukasz.witkowski.training.planner.exercise.R
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recommendation
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.Success
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.theme.Warning
 import com.lukasz.witkowski.training.planner.shared.ui.timepicker.AppTimePickerBottomSheet
 import kotlin.time.Duration
@@ -63,7 +62,7 @@ fun RecommendedParametersOverview(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Text(
             text = stringResource(R.string.recommended_parameters),
@@ -90,7 +89,7 @@ fun RecommendedParametersForm(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Text(
             text = stringResource(R.string.recommended_parameters),
@@ -129,13 +128,13 @@ private fun RecommendedParametersCard(
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(
-            width = Dimens2.thinBorder,
+            width = Dimens.thinBorder,
             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
         )
     ) {
         Column(
-            modifier = Modifier.padding(Dimens2.spaceSm),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            modifier = Modifier.padding(Dimens.spaceSm),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             RecommendedParametersCardHeader(
                 isExpanded = isExpanded,
@@ -178,12 +177,12 @@ fun ExerciseParametersInputFields(
 
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         // Row 1: Sets, Reps, Weight
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             ParameterInputField(
                 value = parameters.sets,
@@ -212,7 +211,7 @@ fun ExerciseParametersInputFields(
         // Row 2: Hold / Time, Rest time
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             ParameterInputField(
                 value = parameters.time?.inWholeSeconds?.toInt(),
@@ -227,14 +226,14 @@ fun ExerciseParametersInputFields(
                     IconButton(
                         onClick = { showHoldTimePicker = true },
                         modifier = Modifier
-                            .size(Dimens2.inputIconSize)
+                            .size(Dimens.inputIconSize)
                             .testTag("${testTagPrefix}_HoldTimePickerButton")
                     ) {
                         Icon(
                             imageVector = Icons.Default.Timer,
                             contentDescription = stringResource(R.string.hold_time),
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(Dimens2.iconSize16)
+                            modifier = Modifier.size(Dimens.iconSize16)
                         )
                     }
                 }
@@ -252,14 +251,14 @@ fun ExerciseParametersInputFields(
                     IconButton(
                         onClick = { showRestTimePicker = true },
                         modifier = Modifier
-                            .size(Dimens2.inputIconSize)
+                            .size(Dimens.inputIconSize)
                             .testTag("${testTagPrefix}_RestTimePickerButton")
                     ) {
                         Icon(
                             imageVector = Icons.Default.Timer,
                             contentDescription = stringResource(R.string.rest_time),
                             tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(Dimens2.iconSize16)
+                            modifier = Modifier.size(Dimens.iconSize16)
                         )
                     }
                 }
@@ -268,15 +267,15 @@ fun ExerciseParametersInputFields(
 
         // Row 3: Helper note
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = Dimens2.spaceXs),
+            modifier = Modifier.fillMaxWidth().padding(top = Dimens.spaceXs),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
         ) {
             Icon(
                 imageVector = Icons.Default.Info,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                modifier = Modifier.size(Dimens2.iconSize16)
+                modifier = Modifier.size(Dimens.iconSize16)
             )
             Text(
                 text = stringResource(R.string.hold_time_hint),
@@ -361,14 +360,14 @@ fun RecommendedParametersCardHeader(
         modifier = modifier
             .fillMaxWidth()
             .clickable { toggleExpansion() }
-            .padding(start = Dimens2.spaceSm),
+            .padding(start = Dimens.spaceSm),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Box(Modifier.weight(0.1f)) {
             Box(
                 modifier = Modifier
-                    .size(Dimens2.spaceSm)
+                    .size(Dimens.spaceSm)
                     .background(recommendation.level.toColor(), shape = CircleShape)
             )
         }
@@ -484,7 +483,7 @@ private fun ParameterInputField(
     Column(modifier = modifier) {
         Text(
             text = label,
-            modifier = Modifier.padding(bottom = Dimens2.spaceXs),
+            modifier = Modifier.padding(bottom = Dimens.spaceXs),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
@@ -513,7 +512,7 @@ private fun ParameterInputField(
                 unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
             ),
             modifier = Modifier
-                .defaultMinSize(minWidth = 40.dp)
+                .defaultMinSize(minWidth = Dimens.iconSize40)
                 .testTag(testTag),
             suffix = if (unit.isNotEmpty()) {
                 { Text(unit, style = MaterialTheme.typography.labelSmall) }
@@ -533,7 +532,7 @@ private fun RecommendedParametersExtendedSummary(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(top = Dimens2.spaceSm),
+            .padding(top = Dimens.spaceSm),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         ParameterOverview(
@@ -581,7 +580,7 @@ private fun ParameterOverview(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Spacer(Modifier.width(Dimens2.spaceXs))
+        Spacer(Modifier.width(Dimens.spaceXs))
         Text(
             text = value.toString(),
             style = MaterialTheme.typography.bodySmall,
@@ -589,7 +588,7 @@ private fun ParameterOverview(
             color = MaterialTheme.colorScheme.onSurface
         )
         if (unit.isNotEmpty()) {
-            Spacer(Modifier.width(Dimens2.spaceXs / 2))
+            Spacer(Modifier.width(Dimens.spaceXs / 2))
             Text(
                 text = unit,
                 style = MaterialTheme.typography.bodySmall,
@@ -602,7 +601,7 @@ private fun ParameterOverview(
 @Preview
 @Composable
 private fun RecommendedParametersFormPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         RecommendedParametersForm(
             recommendations = PREVIEW_RECOMMENDED_PARAMETERS,
             onRecommendationChange = {}
@@ -613,7 +612,7 @@ private fun RecommendedParametersFormPreview() {
 @Preview
 @Composable
 private fun RecommendedParametersOverviewPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         RecommendedParametersOverview(
             recommendations = PREVIEW_RECOMMENDED_PARAMETERS,
             modifier = Modifier

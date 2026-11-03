@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -38,10 +38,10 @@ fun AppSecondaryButton(
         ),
         border =
         BorderStroke(
-            width = Dimens2.thinBorder,
+            width = Dimens.thinBorder,
             color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.4f)
         ),
-        iconTextGap = Dimens2.spaceGapIconTextMedium
+        iconTextGap = Dimens.spaceGapIconTextMedium
     )
 }
 
@@ -76,22 +76,22 @@ fun AppSecondaryButton(
         ),
         border =
         BorderStroke(
-            width = Dimens2.thinBorder,
+            width = Dimens.thinBorder,
             color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.4f)
         ),
-        iconTextGap = Dimens2.spaceGapIconTextMedium,
-        iconSize = Dimens2.iconSize16
+        iconTextGap = Dimens.spaceGapIconTextMedium,
+        iconSize = Dimens.iconSize16
     )
 }
 
 @AppPreview
 @Composable
 private fun AppSecondaryButtonPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AppSecondaryButton(
             text = "Continue with Google",
             onClick = {},
-            modifier = Modifier.padding(Dimens2.spaceMd)
+            modifier = Modifier.padding(Dimens.spaceMd)
         )
     }
 }

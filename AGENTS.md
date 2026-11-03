@@ -30,7 +30,7 @@ $$\text{Learn} \longrightarrow \text{Design} \longrightarrow \text{Implement} \l
 - **`:wearable`** — Wear OS execution-only companion app module.
 - **`:network`** — HTTP client, REST/Ktor communication, serialization, and auth interceptors.
 - **`:auth`** — Authentication token lifecycle, session persistence, and security.
-- **`:shared`** — Design system primitives, `@AppPreview`, `Dimens2`, and core shared utilities.
+- **`:shared`** — Design system primitives, `@AppPreview`, `Dimens`, and core shared utilities.
 - **`:backend`** — Standalone Kotlin backend powered by Ktor and PostgreSQL.
 
 ---
@@ -40,8 +40,8 @@ $$\text{Learn} \longrightarrow \text{Design} \longrightarrow \text{Implement} \l
 1. **Composable Guidelines (`docs/composable_guidelines.md`):**
    - Follow strict Unidirectional Data Flow (UDF) with immutable view states and sealed event classes.
    - Prefix custom design system components with `App` (e.g. `AppTextField`, `AppButton`).
-   - Source all dimensions and spacing from `Dimens2` (no raw `.dp` or `.sp` literals).
-   - Annotate previews with `@AppPreview` and wrap in `TrainingPlannerTheme2`.
+   - Source all dimensions and spacing from `Dimens` (no raw `.dp` or `.sp` literals).
+   - Annotate previews with `@AppPreview` and wrap in `TrainingPlannerTheme`.
 2. **Dependency Injection:** Koin modules configured per feature.
 3. **KMP Separation:** Keep pure domain models, business logic, and state machines in `commonMain`; isolate Android-specific components (`Room`, `ForegroundService`, `WorkManager`) to `androidMain`.
 

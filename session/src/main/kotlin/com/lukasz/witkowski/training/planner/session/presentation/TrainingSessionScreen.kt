@@ -15,7 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.lukasz.witkowski.training.planner.session.R
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.dialogs.AppConfirmationDialog
@@ -58,39 +58,37 @@ fun TrainingSessionScreen(
         )
     }
 
-    TrainingPlannerTheme2 {
-        Scaffold(
-            modifier = modifier.fillMaxSize(),
-            containerColor = MaterialTheme.colorScheme.background
-        ) { paddingValues ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                TrainingSessionContent(
-                    trainingSessionState = trainingSessionState,
-                    time = time,
-                    onRepsChanged = viewModel::onRepsChanged,
-                    onWeightChanged = viewModel::onWeightChanged,
-                    onHoldDurationChanged = viewModel::onHoldDurationChanged,
-                    onToggleHoldTimer = viewModel::toggleHoldTimer,
-                    onResetHoldTimer = viewModel::resetHoldTimer,
-                    onCompleteSet = viewModel::completed,
-                    onSkipSet = viewModel::skip,
-                    onSkipExercise = viewModel::skipExercise,
-                    onAddExtraSet = viewModel::addExtraSet,
-                    onFeedbackSelected = viewModel::onFeedbackSelected,
-                    onStartNextSet = viewModel::completed,
-                    onSkipRest = viewModel::skip,
-                    onSummaryRpeSelected = viewModel::onSummaryRpeSelected,
-                    onSummaryNotesChanged = viewModel::onSummaryNotesChanged,
-                    onSaveWorkout = {
-                        viewModel.saveStatistics()
-                        navigateBack()
-                    }
-                )
-            }
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = MaterialTheme.colorScheme.background
+    ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            TrainingSessionContent(
+                trainingSessionState = trainingSessionState,
+                time = time,
+                onRepsChanged = viewModel::onRepsChanged,
+                onWeightChanged = viewModel::onWeightChanged,
+                onHoldDurationChanged = viewModel::onHoldDurationChanged,
+                onToggleHoldTimer = viewModel::toggleHoldTimer,
+                onResetHoldTimer = viewModel::resetHoldTimer,
+                onCompleteSet = viewModel::completed,
+                onSkipSet = viewModel::skip,
+                onSkipExercise = viewModel::skipExercise,
+                onAddExtraSet = viewModel::addExtraSet,
+                onFeedbackSelected = viewModel::onFeedbackSelected,
+                onStartNextSet = viewModel::completed,
+                onSkipRest = viewModel::skip,
+                onSummaryRpeSelected = viewModel::onSummaryRpeSelected,
+                onSummaryNotesChanged = viewModel::onSummaryNotesChanged,
+                onSaveWorkout = {
+                    viewModel.saveStatistics()
+                    navigateBack()
+                }
+            )
         }
     }
 }
@@ -166,7 +164,7 @@ fun TrainingSessionContent(
 @AppPreview
 @Composable
 private fun TrainingSessionContentLoadingPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         TrainingSessionContent(
             trainingSessionState = TrainingSessionState.IdleState,
             time = Time.ZERO,

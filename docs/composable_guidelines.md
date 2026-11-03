@@ -43,10 +43,10 @@ Always build UI components using modern Jetpack Compose Material 3 foundation co
 - **Typography**: Access font styles via `MaterialTheme.typography` (e.g. `labelMedium`, `titleSmall`, `titleMedium`, `bodyLarge`).
 - **Shapes**: Access corner radii via `MaterialTheme.shapes` (e.g. `small` for 8dp, `medium` for 12dp, `large` for 16dp, `CircleShape` for full rounded badges).
 
-### Dimensions & Spacing (`Dimens2.kt`)
+### Dimensions & Spacing (`Dimens.kt`)
 - **No Raw `dp` Literals**: **Never** import or hardcode raw `.dp` or `.sp` literals in UI composable files.
-- **Source from `Dimens2`**: Sourced all spacing, margins, gaps, border widths, elevations, and icon sizes directly from `Dimens2` (e.g. `Dimens2.spaceMd`, `Dimens2.buttonHeight`, `Dimens2.thinBorder`, `Dimens2.shadowSm`, `Dimens2.iconSize16`, `Dimens2.zeroDp`).
-- **Missing Tokens**: If a required dimension token is missing, add it to `Dimens2.kt` first before referencing it in UI composables.
+- **Source from `Dimens`**: Sourced all spacing, margins, gaps, border widths, elevations, and icon sizes directly from `Dimens` (e.g. `Dimens.spaceMd`, `Dimens.buttonHeight`, `Dimens.thinBorder`, `Dimens.shadowSm`, `Dimens.iconSize16`, `Dimens.zeroDp`).
+- **Missing Tokens**: If a required dimension token is missing, add it to `Dimens.kt` first before referencing it in UI composables.
 
 ---
 
@@ -55,7 +55,7 @@ Always build UI components using modern Jetpack Compose Material 3 foundation co
 Every generated composable file must include a `private` preview function:
 
 1. **Custom Preview Annotation**: Annotate preview functions with `@AppPreview` (`com.lukasz.witkowski.training.planner.shared.ui.AppPreview`). This custom annotation automatically configures `showBackground = true` and `backgroundColor = 0xFF1A120A` (Dark Surface Theme Background), eliminating raw color literal duplication across previews.
-2. **Theme Wrapper**: Always wrap preview content inside `TrainingPlannerTheme2 { ... }`.
+2. **Theme Wrapper**: Always wrap preview content inside `TrainingPlannerTheme { ... }`.
 3. **Realistic States**: Showcase realistic component states (e.g. empty vs. filled, normal vs. premium, enabled vs. disabled).
 
 ---
@@ -68,8 +68,8 @@ package com.lukasz.witkowski.training.planner.shared.ui.category
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -80,16 +80,16 @@ fun AppExampleComponent(
     text: String,
     modifier: Modifier = Modifier,
 ) {
-    // Implementation using MaterialTheme and Dimens2 tokens
+    // Implementation using MaterialTheme and Dimens tokens
 }
 
 @AppPreview
 @Composable
 private fun AppExampleComponentPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AppExampleComponent(
             text = "Example",
-            modifier = Modifier.padding(Dimens2.spaceMd),
+            modifier = Modifier.padding(Dimens.spaceMd),
         )
     }
 }

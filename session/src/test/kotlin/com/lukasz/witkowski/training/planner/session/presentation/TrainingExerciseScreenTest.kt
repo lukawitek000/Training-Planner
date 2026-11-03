@@ -7,7 +7,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.lukasz.witkowski.training.planner.session.createDummyExercise
 import com.lukasz.witkowski.training.planner.session.presentation.TrainingSessionState.ExerciseState
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlin.test.assertTrue
@@ -49,7 +49,7 @@ class TrainingExerciseScreenTest {
         var completedCalled = false
 
         composeTestRule.setContent {
-            TrainingPlannerTheme2 {
+            TrainingPlannerTheme {
                 TrainingExerciseScreen(
                     state = state,
                     onRepsChanged = {},
@@ -99,7 +99,7 @@ class TrainingExerciseScreenTest {
         var completedCalled = false
 
         composeTestRule.setContent {
-            TrainingPlannerTheme2 {
+            TrainingPlannerTheme {
                 TrainingExerciseScreen(
                     state = state,
                     onRepsChanged = {},
@@ -148,7 +148,7 @@ class TrainingExerciseScreenTest {
         var addExtraSetClicked = false
 
         composeTestRule.setContent {
-            TrainingPlannerTheme2 {
+            TrainingPlannerTheme {
                 TrainingExerciseScreen(
                     state = state,
                     onRepsChanged = {},
