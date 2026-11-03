@@ -85,7 +85,7 @@ fun AppExerciseImage(
 internal fun AppExerciseImagePreview() {
     TrainingPlannerTheme2 {
         AppExerciseImage(
-            imageId = null,
+            imageIds = emptyList(),
             contentDescription = "Default Exercise",
             modifier = Modifier.size(Dimens2.avatarSize)
         )
