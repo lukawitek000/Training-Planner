@@ -9,5 +9,7 @@ data class DbTrainingStatistics(
     val id: String,
     val trainingPlanId: String,
     val totalTime: Long,
-    val date: Long
+    val date: Long,
+    val note: String? = null,
+    val rpe: Int? = null
 )

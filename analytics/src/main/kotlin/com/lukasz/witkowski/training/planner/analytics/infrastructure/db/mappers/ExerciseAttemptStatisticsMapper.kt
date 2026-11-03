@@ -15,14 +15,20 @@ internal fun ExerciseAttemptStatistics.toDbExerciseAttemptStatistics(
     trainingExerciseId = trainingExerciseId.toString(),
     time = time.timeInMillis,
     set = set,
-    completed = completed
+    completed = completed,
+    actualReps = actualReps,
+    actualWeightInKg = actualWeightInKg,
+    rpe = rpe
 )
 
 internal fun DbExerciseAttemptStatistics.toExerciseAttemptStatistics(): ExerciseAttemptStatistics =
     ExerciseAttemptStatistics(
         id = ExerciseAttemptStatisticsId(id),
-        trainingExerciseId = TrainingExerciseId(id),
+        trainingExerciseId = TrainingExerciseId(trainingExerciseId),
         time = Time(time),
         set = set,
-        completed = completed
+        completed = completed,
+        actualReps = actualReps,
+        actualWeightInKg = actualWeightInKg,
+        rpe = rpe
     )
