@@ -24,14 +24,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.Success
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.theme.Warning
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
- * Status pill badge with optional [Dimens2.statusDotSize] dot or leading icon.
+ * Status pill badge with optional [Dimens.statusDotSize] dot or leading icon.
  *
  * Spec Highlights:
  * - Container: `toneColor.copy(alpha = 0.15f)`
@@ -56,15 +56,15 @@ fun AppStatusBadge(
         contentColor = toneColor,
         border =
         BorderStroke(
-            width = Dimens2.thinBorder,
+            width = Dimens.thinBorder,
             color = toneColor.copy(alpha = 0.3f)
         )
     ) {
         Row(
             modifier =
             Modifier.padding(
-                horizontal = Dimens2.badgeHorizontalPadding,
-                vertical = Dimens2.badgeVerticalPadding
+                horizontal = Dimens.badgeHorizontalPadding,
+                vertical = Dimens.badgeVerticalPadding
             ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
@@ -74,17 +74,17 @@ fun AppStatusBadge(
                     imageVector = leadingIcon,
                     contentDescription = leadingIconContentDescription,
                     tint = toneColor,
-                    modifier = Modifier.size(Dimens2.iconSize13)
+                    modifier = Modifier.size(Dimens.iconSize13)
                 )
-                Spacer(modifier = Modifier.width(Dimens2.spaceXs))
+                Spacer(modifier = Modifier.width(Dimens.spaceXs))
             } else if (showDot) {
                 Box(
                     modifier =
                     Modifier
-                        .size(Dimens2.statusDotSize)
+                        .size(Dimens.statusDotSize)
                         .background(color = toneColor, shape = CircleShape)
                 )
-                Spacer(modifier = Modifier.width(Dimens2.spaceXs))
+                Spacer(modifier = Modifier.width(Dimens.spaceXs))
             }
             Text(
                 text = if (uppercase) text.uppercase() else text,
@@ -101,10 +101,10 @@ fun AppStatusBadge(
 @AppPreview
 @Composable
 private fun AppStatusBadgePreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Column(
-            modifier = Modifier.padding(Dimens2.spaceMd),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            modifier = Modifier.padding(Dimens.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             AppStatusBadge(
                 text = "Synced",

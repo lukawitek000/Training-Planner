@@ -29,8 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -62,7 +62,7 @@ fun <T> AppSegmentedControl(
     val containerShape = MaterialTheme.shapes.medium
     val borderStroke =
         BorderStroke(
-            width = Dimens2.thinBorder,
+            width = Dimens.thinBorder,
             color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.4f)
         )
 
@@ -78,7 +78,7 @@ fun <T> AppSegmentedControl(
             modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(Dimens2.spaceXs),
+                .padding(Dimens.spaceXs),
             verticalAlignment = Alignment.CenterVertically
         ) {
             items.forEach { item ->
@@ -107,7 +107,7 @@ fun <T> AppSegmentedControl(
                 )
 
                 val segmentShape = MaterialTheme.shapes.small
-                val segmentElevation = if (isSelected) Dimens2.shadowSm else Dimens2.zeroDp
+                val segmentElevation = if (isSelected) Dimens.shadowSm else Dimens.zeroDp
 
                 Surface(
                     onClick = { if (enabled) onItemSelected(item.value) },
@@ -121,7 +121,7 @@ fun <T> AppSegmentedControl(
                         modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(vertical = Dimens2.segmentVerticalPadding),
+                            .padding(vertical = Dimens.segmentVerticalPadding),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -130,9 +130,9 @@ fun <T> AppSegmentedControl(
                                 imageVector = item.icon,
                                 contentDescription = item.iconContentDescription,
                                 tint = textColor,
-                                modifier = Modifier.size(Dimens2.iconSize18)
+                                modifier = Modifier.size(Dimens.iconSize18)
                             )
-                            Spacer(modifier = Modifier.width(Dimens2.spaceGapLabelInput))
+                            Spacer(modifier = Modifier.width(Dimens.spaceGapLabelInput))
                         }
                         Text(
                             text = item.label,
@@ -170,8 +170,8 @@ private fun AppSegmentedControlPreview() {
             )
         )
 
-    TrainingPlannerTheme2 {
-        Box(modifier = Modifier.padding(Dimens2.spaceMd)) {
+    TrainingPlannerTheme {
+        Box(modifier = Modifier.padding(Dimens.spaceMd)) {
             AppSegmentedControl(
                 items = items,
                 selectedItem = selectedMode,

@@ -31,8 +31,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import com.lukasz.witkowski.training.planner.shared.R
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -83,7 +83,7 @@ fun AppSearchBar(
         modifier =
         modifier
             .fillMaxWidth()
-            .height(Dimens2.inputFieldHeight)
+            .height(Dimens.inputFieldHeight)
             .testTag("SearchField"),
         enabled = enabled,
         singleLine = true,
@@ -117,7 +117,7 @@ fun AppSearchBar(
                         imageVector = Icons.Default.Search,
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.primaryContainer,
-                        modifier = Modifier.size(Dimens2.inputIconSize)
+                        modifier = Modifier.size(Dimens.inputIconSize)
                     )
                 },
                 trailingIcon =
@@ -131,7 +131,7 @@ fun AppSearchBar(
                                 imageVector = Icons.Default.Cancel,
                                 contentDescription = stringResource(R.string.search_clear_query),
                                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(Dimens2.iconSize18)
+                                modifier = Modifier.size(Dimens.iconSize18)
                             )
                         }
                     }
@@ -141,8 +141,8 @@ fun AppSearchBar(
                 colors = textFieldColors,
                 contentPadding =
                 PaddingValues(
-                    horizontal = Dimens2.inputHorizontalPadding,
-                    vertical = Dimens2.zeroDp
+                    horizontal = Dimens.inputHorizontalPadding,
+                    vertical = Dimens.zeroDp
                 ),
                 container = {
                     OutlinedTextFieldDefaults.Container(
@@ -161,10 +161,10 @@ fun AppSearchBar(
 @AppPreview
 @Composable
 private fun AppSearchBarPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Column(
-            modifier = Modifier.padding(Dimens2.spaceMd),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+            modifier = Modifier.padding(Dimens.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
         ) {
             AppSearchBar(
                 query = "",

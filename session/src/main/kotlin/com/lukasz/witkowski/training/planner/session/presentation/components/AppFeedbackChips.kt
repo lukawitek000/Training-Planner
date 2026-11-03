@@ -16,8 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -33,7 +33,7 @@ fun <T> AppFeedbackChips(
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         options.forEach { option ->
             val isSelected = option == selectedOption
@@ -59,7 +59,7 @@ fun <T> AppFeedbackChips(
                     .clip(CircleShape)
                     .background(backgroundColor)
                     .border(
-                        width = if (isSelected) Dimens2.mediumBorder else Dimens2.thinBorder,
+                        width = if (isSelected) Dimens.mediumBorder else Dimens.thinBorder,
                         color = borderColor,
                         shape = CircleShape
                     )
@@ -67,7 +67,7 @@ fun <T> AppFeedbackChips(
                         role = Role.RadioButton,
                         onClick = { onOptionSelected(option) }
                     )
-                    .padding(vertical = Dimens2.spaceSm, horizontal = Dimens2.spaceXs),
+                    .padding(vertical = Dimens.spaceSm, horizontal = Dimens.spaceXs),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -85,13 +85,13 @@ fun <T> AppFeedbackChips(
 @Composable
 private fun AppFeedbackChipsPreview() {
     val options = listOf("Easy", "Good", "Hard", "Failed")
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AppFeedbackChips(
             options = options,
             selectedOption = "Good",
             onOptionSelected = {},
             labelProvider = { it },
-            modifier = Modifier.padding(Dimens2.spaceMd)
+            modifier = Modifier.padding(Dimens.spaceMd)
         )
     }
 }

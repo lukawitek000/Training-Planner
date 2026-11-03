@@ -9,8 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -40,10 +40,10 @@ fun AppTertiaryButton(
         ),
         border =
         BorderStroke(
-            width = Dimens2.thinBorder,
+            width = Dimens.thinBorder,
             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
         ),
-        iconTextGap = Dimens2.spaceSm
+        iconTextGap = Dimens.spaceSm
     )
 }
 
@@ -78,22 +78,22 @@ fun AppTertiaryButton(
         ),
         border =
         BorderStroke(
-            width = Dimens2.thinBorder,
+            width = Dimens.thinBorder,
             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
         ),
-        iconTextGap = Dimens2.spaceSm,
-        iconSize = Dimens2.iconSize16
+        iconTextGap = Dimens.spaceSm,
+        iconSize = Dimens.iconSize16
     )
 }
 
 @AppPreview
 @Composable
 private fun AppTertiaryButtonPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AppTertiaryButton(
             text = "Continue as Guest (Offline Mode)",
             onClick = {},
-            modifier = Modifier.padding(Dimens2.spaceMd),
+            modifier = Modifier.padding(Dimens.spaceMd),
             leadingIcon = Icons.Default.CloudOff
         )
     }

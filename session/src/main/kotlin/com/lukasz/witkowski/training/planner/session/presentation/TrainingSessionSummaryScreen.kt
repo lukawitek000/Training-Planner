@@ -32,8 +32,8 @@ import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttem
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppRpeScaleGrid
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.time.formatToString
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
@@ -70,8 +70,8 @@ fun TrainingSessionSummaryScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(horizontal = Dimens2.margin, vertical = Dimens2.spaceMd),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceLg)
+            .padding(horizontal = Dimens.margin, vertical = Dimens.spaceMd),
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceLg)
     ) {
         // Celebration Banner
         CelebrationBanner(
@@ -123,11 +123,11 @@ private fun CelebrationBanner(planTitle: String, date: Date, modifier: Modifier 
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Box(
             modifier = Modifier
-                .size(Dimens2.iconContainerSize)
+                .size(Dimens.iconContainerSize)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primaryContainer),
             contentAlignment = Alignment.Center
@@ -136,7 +136,7 @@ private fun CelebrationBanner(planTitle: String, date: Date, modifier: Modifier 
                 imageVector = Icons.Default.EmojiEvents,
                 contentDescription = stringResource(R.string.session_workout_complete),
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.size(Dimens2.iconSize30)
+                modifier = Modifier.size(Dimens.iconSize30)
             )
         }
 
@@ -167,11 +167,11 @@ private fun BentoMetricsGrid(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             AppBentoTile(
                 label = stringResource(R.string.session_bento_duration_label),
@@ -193,7 +193,7 @@ private fun BentoMetricsGrid(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             AppBentoTile(
                 label = stringResource(R.string.session_bento_sets_label),
@@ -219,7 +219,7 @@ private fun ExercisesBreakdownSection(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Text(
             text = stringResource(R.string.session_exercise_breakdown),
@@ -240,8 +240,8 @@ private fun ExercisesBreakdownSection(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimens2.spaceMd),
-                    verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+                        .padding(Dimens.spaceMd),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
                 ) {
                     Text(
                         text = exerciseName,
@@ -311,7 +311,7 @@ private fun ExercisesBreakdownSection(
                                 imageVector = icon,
                                 contentDescription = desc,
                                 tint = tint,
-                                modifier = Modifier.size(Dimens2.iconSize16)
+                                modifier = Modifier.size(Dimens.iconSize16)
                             )
                         }
                     }
@@ -390,7 +390,7 @@ private fun TrainingSessionSummaryScreenPreview() {
         )
     )
 
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         TrainingSessionSummaryScreen(
             state = TrainingSessionState.SummaryState(
                 statistics = stats,

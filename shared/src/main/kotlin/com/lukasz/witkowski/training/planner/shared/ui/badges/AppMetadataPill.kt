@@ -20,8 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -30,7 +30,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
  * Spec Highlights:
  * - Container: [MaterialTheme.colorScheme.surfaceContainerHigh] (or custom [containerColor])
  * - Shape: [CircleShape]
- * - Icon: optional leading [Dimens2.iconSize12] icon
+ * - Icon: optional leading [Dimens.iconSize12] icon
  * - Text: [MaterialTheme.typography.labelSmall]
  */
 @Composable
@@ -52,8 +52,8 @@ fun AppMetadataPill(
         Row(
             modifier =
             Modifier.padding(
-                horizontal = Dimens2.spaceSm,
-                vertical = Dimens2.badgeVerticalPadding
+                horizontal = Dimens.spaceSm,
+                vertical = Dimens.badgeVerticalPadding
             ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
@@ -63,9 +63,9 @@ fun AppMetadataPill(
                     imageVector = leadingIcon,
                     contentDescription = leadingIconContentDescription,
                     tint = iconTint,
-                    modifier = Modifier.size(Dimens2.iconSize12)
+                    modifier = Modifier.size(Dimens.iconSize12)
                 )
-                Spacer(modifier = Modifier.width(Dimens2.spaceXs))
+                Spacer(modifier = Modifier.width(Dimens.spaceXs))
             }
             Text(
                 text = text,
@@ -79,10 +79,10 @@ fun AppMetadataPill(
 @AppPreview
 @Composable
 private fun AppMetadataPillPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Row(
-            modifier = Modifier.padding(Dimens2.spaceMd),
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            modifier = Modifier.padding(Dimens.spaceMd),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             AppMetadataPill(
                 text = "Local",

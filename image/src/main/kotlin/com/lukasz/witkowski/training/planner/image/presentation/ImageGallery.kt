@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.Dp
 import coil3.compose.AsyncImage
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.R
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import java.io.File
 
 internal fun ImageReference.toCoilModel(): Any =
@@ -60,8 +60,8 @@ fun ImageGallery(
     onSelectImage: ((ImageReference) -> Unit)? = null,
     onDeleteImage: ((ImageReference) -> Unit)? = null,
     onAddImageClicked: (() -> Unit)? = null,
-    heroHeight: Dp = Dimens2.heroImageHeightStandard,
-    thumbnailSize: Dp = Dimens2.mediaThumbnailSize,
+    heroHeight: Dp = Dimens.heroImageHeightStandard,
+    thumbnailSize: Dp = Dimens.mediaThumbnailSize,
     showGradientOverlay: Boolean = (onDeleteImage == null && onAddImageClicked == null),
     contentScale: ContentScale = ContentScale.Fit
 ) {
@@ -93,7 +93,7 @@ fun ImageGallery(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(heroHeight)
-                .clip(RoundedCornerShape(Dimens2.spaceMd))
+                .clip(RoundedCornerShape(Dimens.spaceMd))
                 .background(MaterialTheme.colorScheme.surfaceContainerLow)
         ) {
             AsyncImage(
@@ -126,7 +126,7 @@ fun ImageGallery(
                 totalCount = images.size,
                 modifier = Modifier
                     .align(Alignment.TopStart)
-                    .padding(Dimens2.spaceGapIconTextMedium)
+                    .padding(Dimens.spaceGapIconTextMedium)
             )
 
             // Optional Delete Button (Top-Right)
@@ -135,8 +135,8 @@ fun ImageGallery(
                     onClick = { onDeleteImage(activeImage) },
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(Dimens2.spaceSm)
-                        .size(Dimens2.actionIconBoxSize)
+                        .padding(Dimens.spaceSm)
+                        .size(Dimens.actionIconBoxSize)
                         .background(
                             MaterialTheme.colorScheme.surfaceDim.copy(alpha = 0.75f),
                             CircleShape
@@ -146,7 +146,7 @@ fun ImageGallery(
                         imageVector = Icons.Default.Delete,
                         contentDescription = stringResource(R.string.delete_current_image),
                         tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(Dimens2.iconSize18)
+                        modifier = Modifier.size(Dimens.iconSize18)
                     )
                 }
             }
@@ -169,25 +169,25 @@ fun ImageGallery(
                 state = listState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = Dimens2.inputIconSpacing),
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.inputIconSpacing),
+                    .padding(top = Dimens.inputIconSpacing),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.inputIconSpacing),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 itemsIndexed(images) { index, img ->
                     val isSelected = img == activeImage
                     val border = if (isSelected) {
-                        BorderStroke(Dimens2.shadowSm, MaterialTheme.colorScheme.primary)
+                        BorderStroke(Dimens.shadowSm, MaterialTheme.colorScheme.primary)
                     } else {
                         BorderStroke(
-                            Dimens2.thinBorder,
+                            Dimens.thinBorder,
                             MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
                         )
                     }
                     Box(
                         modifier = Modifier
                             .size(thumbnailSize)
-                            .clip(RoundedCornerShape(Dimens2.spaceSm))
-                            .border(border, RoundedCornerShape(Dimens2.spaceSm))
+                            .clip(RoundedCornerShape(Dimens.spaceSm))
+                            .border(border, RoundedCornerShape(Dimens.spaceSm))
                             .clickable { onSelect(img) }
                     ) {
                         AsyncImage(
@@ -214,11 +214,11 @@ fun ImageGallery(
                         Box(
                             modifier = Modifier
                                 .size(thumbnailSize)
-                                .clip(RoundedCornerShape(Dimens2.spaceSm))
+                                .clip(RoundedCornerShape(Dimens.spaceSm))
                                 .border(
-                                    Dimens2.thinBorder,
+                                    Dimens.thinBorder,
                                     MaterialTheme.colorScheme.outlineVariant,
-                                    RoundedCornerShape(Dimens2.spaceSm)
+                                    RoundedCornerShape(Dimens.spaceSm)
                                 )
                                 .background(
                                     MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
@@ -234,7 +234,7 @@ fun ImageGallery(
                                     imageVector = Icons.Default.Add,
                                     contentDescription = stringResource(R.string.add_more_images),
                                     tint = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.size(Dimens2.inputIconSize)
+                                    modifier = Modifier.size(Dimens.inputIconSize)
                                 )
                                 Text(
                                     text = stringResource(R.string.add_image),

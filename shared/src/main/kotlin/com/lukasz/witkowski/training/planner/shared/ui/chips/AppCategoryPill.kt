@@ -13,8 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -61,7 +61,7 @@ fun AppCategoryPill(
             AppCategoryPillStyle.Filled -> null
             AppCategoryPillStyle.Tonal ->
                 BorderStroke(
-                    width = Dimens2.thinBorder,
+                    width = Dimens.thinBorder,
                     color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)
                 )
         }
@@ -76,8 +76,8 @@ fun AppCategoryPill(
         Box(
             modifier =
             Modifier.padding(
-                horizontal = Dimens2.badgeHorizontalPadding,
-                vertical = Dimens2.badgeVerticalPadding
+                horizontal = Dimens.badgeHorizontalPadding,
+                vertical = Dimens.badgeVerticalPadding
             ),
             contentAlignment = Alignment.Center
         ) {
@@ -96,10 +96,10 @@ fun AppCategoryPill(
 @AppPreview
 @Composable
 private fun AppCategoryPillPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Row(
-            modifier = Modifier.padding(Dimens2.spaceMd),
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            modifier = Modifier.padding(Dimens.spaceMd),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             AppCategoryPill(
                 text = "Chest",

@@ -50,8 +50,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.buildStringOverview
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
@@ -124,8 +124,8 @@ fun TrainingPlanEditorScreenContent(
     LazyColumn(
         modifier = modifier,
         state = lazyListState,
-        contentPadding = PaddingValues(Dimens2.spaceMd),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+        contentPadding = PaddingValues(Dimens.spaceMd),
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
         item {
             TextInputForm(
@@ -149,7 +149,7 @@ fun TrainingPlanEditorScreenContent(
                 key = { _, it -> it.id.toString() }
             ) { index, exercise ->
                 ReorderableItem(reorderableState, key = exercise.id.toString()) { isDragging ->
-                    val elevation = if (isDragging) Dimens2.shadowLg else Dimens2.shadowSm
+                    val elevation = if (isDragging) Dimens.shadowLg else Dimens.shadowSm
                     SwipeToDeleteExercise(
                         exercise = exercise,
                         index = index,
@@ -214,7 +214,7 @@ private fun TextInputForm(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
         AppLabeledTextField(
             label = stringResource(R.string.training_plan_title_label),
@@ -241,7 +241,7 @@ private fun CategoriesOverview(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
     ) {
         Text(
             text = stringResource(R.string.plan_categories),
@@ -259,15 +259,15 @@ private fun CategoriesOverview(
                 text = stringResource(R.string.no_exercises_yet),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(vertical = Dimens2.spaceXs)
+                modifier = Modifier.padding(vertical = Dimens.spaceXs)
             )
         } else {
             FlowRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = Dimens2.spaceXs),
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs),
-                verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+                    .padding(top = Dimens.spaceXs),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
             ) {
                 categories.forEach { category ->
                     AppCategoryPill(
@@ -289,9 +289,9 @@ private fun TrainingExercisesListPlaceholder(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(Dimens2.spaceLg),
+                .padding(Dimens.spaceLg),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
         ) {
             Text(
                 text = stringResource(R.string.no_exercises_added_yet),
@@ -342,7 +342,7 @@ private fun SwipeToDeleteExercise(
                     .fillMaxSize()
                     .clip(MaterialTheme.shapes.medium)
                     .background(MaterialTheme.colorScheme.errorContainer)
-                    .padding(end = Dimens2.spaceLg),
+                    .padding(end = Dimens.spaceLg),
                 contentAlignment = Alignment.CenterEnd
             ) {
                 Icon(
@@ -357,13 +357,13 @@ private fun SwipeToDeleteExercise(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(Dimens2.spaceMd),
+                        .padding(Dimens.spaceMd),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(Dimens2.spaceXl)
+                            .size(Dimens.spaceXl)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.primaryContainer),
                         contentAlignment = Alignment.Center
@@ -377,7 +377,7 @@ private fun SwipeToDeleteExercise(
 
                     Column(
                         modifier = Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+                        verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
                     ) {
                         Text(
                             text = exercise.exercise.name,
@@ -415,7 +415,7 @@ private fun AddExercisesButton(onAddExerciseClicked: () -> Unit, modifier: Modif
         onClick = onAddExerciseClicked,
         modifier = modifier.fillMaxWidth(),
         border = BorderStroke(
-            width = Dimens2.thinBorder,
+            width = Dimens.thinBorder,
             color = MaterialTheme.colorScheme.primaryContainer
         ),
         colors = ButtonDefaults.buttonColors(
@@ -425,12 +425,12 @@ private fun AddExercisesButton(onAddExerciseClicked: () -> Unit, modifier: Modif
         shape = MaterialTheme.shapes.medium
     ) {
         Row(
-            modifier = Modifier.padding(vertical = Dimens2.spaceSm),
+            modifier = Modifier.padding(vertical = Dimens.spaceSm),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = null)
-            Spacer(Modifier.width(Dimens2.spaceSm))
+            Spacer(Modifier.width(Dimens.spaceSm))
             Text(
                 text = stringResource(R.string.add_exercises),
                 style = MaterialTheme.typography.titleSmall
@@ -449,7 +449,7 @@ private fun TrainingPlanRestTime(
     val formattedRestTime = TimeFormatter(context).formatTime(Time(restTime.inWholeMilliseconds))
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
     ) {
         Text(
             text = stringResource(R.string.rest_time),
@@ -463,7 +463,7 @@ private fun TrainingPlanRestTime(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(Dimens2.spaceMd),
+                    .padding(Dimens.spaceMd),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
@@ -475,7 +475,7 @@ private fun TrainingPlanRestTime(
                     text = formattedRestTime,
                     modifier = Modifier
                         .weight(1f)
-                        .padding(start = Dimens2.spaceMd),
+                        .padding(start = Dimens.spaceMd),
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
@@ -492,7 +492,7 @@ private fun TrainingPlanRestTime(
 @AppPreview
 @Composable
 private fun TrainingPlanEditorScreenContentPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         TrainingPlanEditorScreenContent(
             state = TrainingPlanConfiguration(
                 title = "Push Workout",

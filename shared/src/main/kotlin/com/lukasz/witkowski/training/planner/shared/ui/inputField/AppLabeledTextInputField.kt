@@ -15,8 +15,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.VisualTransformation
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -40,7 +40,7 @@ fun AppLabeledTextField(
 ) {
     Column(modifier = modifier) {
         AppInputLabel(text = label)
-        Spacer(modifier = Modifier.height(Dimens2.spaceGapLabelInput))
+        Spacer(modifier = Modifier.height(Dimens.spaceGapLabelInput))
         AppTextField(
             value = value,
             onValueChange = onValueChange,
@@ -80,7 +80,7 @@ fun AppLabeledTextField(
 ) {
     Column(modifier = modifier) {
         AppInputLabel(text = label)
-        Spacer(modifier = Modifier.height(Dimens2.spaceGapLabelInput))
+        Spacer(modifier = Modifier.height(Dimens.spaceGapLabelInput))
         AppTextField(
             value = value,
             onValueChange = onValueChange,
@@ -102,10 +102,10 @@ fun AppLabeledTextField(
 @AppPreview
 @Composable
 private fun AppLabeledTextFieldPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Column(
-            modifier = Modifier.padding(Dimens2.spaceMd),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+            modifier = Modifier.padding(Dimens.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
         ) {
             AppLabeledTextField(
                 label = "Email Address",

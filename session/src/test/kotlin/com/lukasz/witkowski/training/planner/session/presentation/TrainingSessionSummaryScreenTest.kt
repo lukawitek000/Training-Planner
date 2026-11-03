@@ -14,7 +14,7 @@ import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStati
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
@@ -83,7 +83,7 @@ class TrainingSessionSummaryScreenTest {
         )
 
         composeTestRule.setContent {
-            TrainingPlannerTheme2 {
+            TrainingPlannerTheme {
                 TrainingSessionSummaryScreen(
                     state = state,
                     onRpeSelected = {},
@@ -130,7 +130,7 @@ class TrainingSessionSummaryScreenTest {
         var savedCalled = false
 
         composeTestRule.setContent {
-            TrainingPlannerTheme2 {
+            TrainingPlannerTheme {
                 TrainingSessionSummaryScreen(
                     state = TrainingSessionState.SummaryState(
                         statistics = statistics,

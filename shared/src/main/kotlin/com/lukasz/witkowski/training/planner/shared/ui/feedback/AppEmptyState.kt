@@ -20,8 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.appIcon.AppIconBox
 
@@ -31,7 +31,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.appIcon.AppIconBox
  * Spec Highlights:
  * - Icon: [AppIconBox] with [Icons.Default.FitnessCenter] (or custom [icon])
  * - Title: [MaterialTheme.typography.titleMedium] bold in [MaterialTheme.colorScheme.onSurface]
- * - Subtitle: [MaterialTheme.typography.bodySmall] in [MaterialTheme.colorScheme.onSurfaceVariant], max width [Dimens2.maxSubtitleWidth]
+ * - Subtitle: [MaterialTheme.typography.bodySmall] in [MaterialTheme.colorScheme.onSurfaceVariant], max width [Dimens.maxSubtitleWidth]
  * - Optional CTA button: Rounded pill button in [MaterialTheme.colorScheme.surfaceContainerHighest] with [MaterialTheme.colorScheme.primaryContainer] text
  */
 @Composable
@@ -49,8 +49,8 @@ fun AppEmptyState(
         modifier
             .fillMaxWidth()
             .padding(
-                horizontal = Dimens2.spaceLg,
-                vertical = Dimens2.spaceXl
+                horizontal = Dimens.spaceLg,
+                vertical = Dimens.spaceXl
             ),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -60,7 +60,7 @@ fun AppEmptyState(
             mainIconContentDescription = iconContentDescription
         )
 
-        Spacer(modifier = Modifier.height(Dimens2.spaceGapIconTextMedium))
+        Spacer(modifier = Modifier.height(Dimens.spaceGapIconTextMedium))
 
         Text(
             text = title,
@@ -71,18 +71,18 @@ fun AppEmptyState(
         )
 
         if (!subtitle.isNullOrBlank()) {
-            Spacer(modifier = Modifier.height(Dimens2.spaceXs))
+            Spacer(modifier = Modifier.height(Dimens.spaceXs))
             Text(
                 text = subtitle,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.widthIn(max = Dimens2.maxSubtitleWidth)
+                modifier = Modifier.widthIn(max = Dimens.maxSubtitleWidth)
             )
         }
 
         if (!actionLabel.isNullOrBlank() && onActionClick != null) {
-            Spacer(modifier = Modifier.height(Dimens2.spaceMd))
+            Spacer(modifier = Modifier.height(Dimens.spaceMd))
             Surface(
                 onClick = onActionClick,
                 shape = CircleShape,
@@ -92,8 +92,8 @@ fun AppEmptyState(
                 Box(
                     modifier =
                     Modifier.padding(
-                        horizontal = Dimens2.spaceMd,
-                        vertical = Dimens2.spaceSm
+                        horizontal = Dimens.spaceMd,
+                        vertical = Dimens.spaceSm
                     ),
                     contentAlignment = Alignment.Center
                 ) {
@@ -112,7 +112,7 @@ fun AppEmptyState(
 @AppPreview
 @Composable
 private fun AppEmptyStatePreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AppEmptyState(
             title = "No exercises found",
             subtitle =

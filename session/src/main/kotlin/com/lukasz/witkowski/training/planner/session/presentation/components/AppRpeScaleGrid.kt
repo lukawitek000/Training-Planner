@@ -19,8 +19,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import com.lukasz.witkowski.training.planner.session.R
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 
@@ -40,8 +40,8 @@ fun AppRpeScaleGrid(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(Dimens2.spaceMd),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+                .padding(Dimens.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -65,7 +65,7 @@ fun AppRpeScaleGrid(
             // Top row: 1 to 5
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
             ) {
                 (1..5).forEach { rpe ->
                     RpeCell(
@@ -80,7 +80,7 @@ fun AppRpeScaleGrid(
             // Bottom row: 6 to 10
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
             ) {
                 (6..10).forEach { rpe ->
                     RpeCell(
@@ -97,7 +97,7 @@ fun AppRpeScaleGrid(
                 text = descriptor,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.padding(top = Dimens2.spaceXs)
+                modifier = Modifier.padding(top = Dimens.spaceXs)
             )
         }
     }
@@ -128,11 +128,11 @@ private fun RpeCell(
 
     Box(
         modifier = modifier
-            .size(Dimens2.rpeCellSize)
+            .size(Dimens.rpeCellSize)
             .clip(MaterialTheme.shapes.small)
             .background(backgroundColor)
             .border(
-                width = if (isSelected) Dimens2.mediumBorder else Dimens2.thinBorder,
+                width = if (isSelected) Dimens.mediumBorder else Dimens.thinBorder,
                 color = borderColor,
                 shape = MaterialTheme.shapes.small
             )
@@ -164,11 +164,11 @@ private fun getRpeDescription(rpe: Int?): String = when (rpe) {
 @AppPreview
 @Composable
 private fun AppRpeScaleGridPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AppRpeScaleGrid(
             selectedRpe = 8,
             onRpeSelected = {},
-            modifier = Modifier.padding(Dimens2.spaceMd)
+            modifier = Modifier.padding(Dimens.spaceMd)
         )
     }
 }

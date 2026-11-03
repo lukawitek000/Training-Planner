@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.exercise.R
 import com.lukasz.witkowski.training.planner.shared.R as SharedR
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.dialogs.AppConfirmationDialog
 import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppLoadingOverlay
 import kotlinx.coroutines.flow.collectLatest
@@ -105,7 +105,7 @@ fun DeleteExerciseDialog(
 @Composable
 @Preview
 private fun DeleteExerciseDialogPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Surface {
             DeleteExerciseDialog(
                 state = DeleteExerciseUiState.LoadedExercise(

@@ -7,7 +7,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.lukasz.witkowski.training.planner.session.createDummyExercise
 import com.lukasz.witkowski.training.planner.session.presentation.TrainingSessionState.RestTimeState
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
@@ -53,7 +53,7 @@ class RestTimeScreenTest {
         )
 
         composeTestRule.setContent {
-            TrainingPlannerTheme2 {
+            TrainingPlannerTheme {
                 RestTimeScreen(
                     state = state,
                     timeLeft = Time(45000L),
@@ -102,7 +102,7 @@ class RestTimeScreenTest {
         var selectedRpe: Int? = null
 
         composeTestRule.setContent {
-            TrainingPlannerTheme2 {
+            TrainingPlannerTheme {
                 RestTimeScreen(
                     state = state,
                     timeLeft = Time(60000L),
@@ -138,7 +138,7 @@ class RestTimeScreenTest {
         var skipRestClicked = false
 
         composeTestRule.setContent {
-            TrainingPlannerTheme2 {
+            TrainingPlannerTheme {
                 RestTimeScreen(
                     state = state,
                     timeLeft = Time(60000L),

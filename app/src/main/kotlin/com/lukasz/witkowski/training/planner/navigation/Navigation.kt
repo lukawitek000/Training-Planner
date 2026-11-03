@@ -20,7 +20,6 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.details.Exerc
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.EditExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesScreen
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.editor.AddTrainingExerciseScreen
 import com.lukasz.witkowski.training.planner.training.editor.TrainingExerciseConfigurationScreen
@@ -58,32 +57,26 @@ fun Navigation(
         sceneStrategies = listOf(dialogStrategy),
         entryProvider = entryProvider {
             entry<TrainingPlansList> {
-                TrainingPlannerTheme2 {
-                    TrainingsScreen(
-                        viewModel = koinViewModel(),
-                        onTrainingPlanClicked = { navigator.trainingPlanDetails(it) },
-                        onCreateTrainingClicked = { navigator.trainingCreate() }
-                    )
-                }
+                TrainingsScreen(
+                    viewModel = koinViewModel(),
+                    onTrainingPlanClicked = { navigator.trainingPlanDetails(it) },
+                    onCreateTrainingClicked = { navigator.trainingCreate() }
+                )
             }
 
             entry<UserProfile> {
-                TrainingPlannerTheme2 {
-                    UserProfileScreen(
-                        viewModel = koinViewModel(),
-                        onSignInClick = { navigator.authentication() },
-                    )
-                }
+                UserProfileScreen(
+                    viewModel = koinViewModel(),
+                    onSignInClick = { navigator.authentication() },
+                )
             }
 
             entry<Authentication> {
-                TrainingPlannerTheme2 {
-                    AuthenticationScreen(
-                        viewModel = koinViewModel(),
-                        onContinueAsGuestClick = { navigator.goBack() },
-                        onAuthSuccess = { navigator.goBack() },
-                    )
-                }
+                AuthenticationScreen(
+                    viewModel = koinViewModel(),
+                    onContinueAsGuestClick = { navigator.goBack() },
+                    onAuthSuccess = { navigator.goBack() },
+                )
             }
 
             entry<CreateTrainingPlan> {
@@ -94,13 +87,11 @@ fun Navigation(
                         TrainingPlanEditingIntent.TrainingExerciseAdded(trainingExercise)
                     )
                 }
-                TrainingPlannerTheme2 {
-                    TrainingPlanEditorScreen(
-                        viewModel = trainingPlanEditorViewModel,
-                        onAddExerciseClicked = { navigator.addTrainingExercises() },
-                        navigateBack = { navigator.goBack() }
-                    )
-                }
+                TrainingPlanEditorScreen(
+                    viewModel = trainingPlanEditorViewModel,
+                    onAddExerciseClicked = { navigator.addTrainingExercises() },
+                    navigateBack = { navigator.goBack() }
+                )
             }
 
             entry<EditTrainingPlan> { key ->
@@ -111,77 +102,60 @@ fun Navigation(
                         TrainingPlanEditingIntent.TrainingExerciseAdded(trainingExercise)
                     )
                 }
-                TrainingPlannerTheme2 {
-                    EditTrainingPlanScreen(
-                        viewModel = trainingPlanEditorViewModel,
-                        onAddExerciseClicked = { navigator.addTrainingExercises() },
-                        navigateBack = { navigator.goBack() }
-                    )
-                }
+                EditTrainingPlanScreen(
+                    viewModel = trainingPlanEditorViewModel,
+                    onAddExerciseClicked = { navigator.addTrainingExercises() },
+                    navigateBack = { navigator.goBack() }
+                )
             }
 
             entry<AddTrainingExercise> {
-                TrainingPlannerTheme2 {
-                    AddTrainingExerciseScreen(
-                        viewModel = koinViewModel(),
-                        onExerciseSelected = { navigator.configureTrainingExercise(it) }
-                    )
-                }
+                AddTrainingExerciseScreen(
+                    viewModel = koinViewModel(),
+                    onExerciseSelected = { navigator.configureTrainingExercise(it) }
+                )
             }
 
             entry<TrainingExerciseConfiguration> { key ->
                 val resultBus = LocalResultEventBus.current
-                TrainingPlannerTheme2 {
-                    TrainingExerciseConfigurationScreen(
-                        viewModel = koinViewModel { parametersOf(key.exerciseId) },
-                        onExerciseConfigured = { trainingExercise ->
-                            Timber.i("TrainingExercise configured $trainingExercise")
-                            resultBus.sendResult(trainingExercise)
-                            navigator.returnToCreateTrainingPlan()
-                        }
-                    )
-                }
+                TrainingExerciseConfigurationScreen(
+                    viewModel = koinViewModel { parametersOf(key.exerciseId) },
+                    onExerciseConfigured = { trainingExercise ->
+                        Timber.i("TrainingExercise configured $trainingExercise")
+                        resultBus.sendResult(trainingExercise)
+                        navigator.returnToCreateTrainingPlan()
+                    }
+                )
             }
 
             entry<TrainingPlanDetails> { key ->
-                TrainingPlannerTheme2 {
-                    TrainingPlanDetailsScreen(
-                        viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
-                        onStartTrainingSessionClicked = { navigator.trainingSession(it) }
-                    )
-                }
+                TrainingPlanDetailsScreen(
+                    viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
+                    onStartTrainingSessionClicked = { navigator.trainingSession(it) }
+                )
             }
 
             entry<DeleteTrainingPlan>(
                 metadata = DialogSceneStrategy.dialog()
             ) { key ->
-                TrainingPlannerTheme2 {
-                    DeleteTrainingPlanScreen(
-                        viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
-                        onDelete = {
-                            navigator.trainingPlanDeleted()
-                        },
-                        onCancel = {
-                            navigator.goBack()
-                        }
-                    )
-                }
+                DeleteTrainingPlanScreen(
+                    viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
+                    onDelete = {
+                        navigator.trainingPlanDeleted()
+                    },
+                    onCancel = {
+                        navigator.goBack()
+                    }
+                )
             }
 
             exerciseEntryBuilder(navigator)
 
-//            trainingGraph(
-//                navigateUp = { backStack.removeLastOrNull() },
-//                navigateToPickExercise = { backStack.add(PickExercise) }
-//            )
-
             entry<TrainingSession> { key ->
-                TrainingPlannerTheme2 {
-                    TrainingSessionScreen(
-                        viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
-                        navigateBack = { navigator.goBack() }
-                    )
-                }
+                TrainingSessionScreen(
+                    viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
+                    navigateBack = { navigator.goBack() }
+                )
             }
         }
     )
@@ -191,60 +165,50 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.exerciseEntryBuilder(
     navigator: TrainingPlannerNavigator
 ) {
     entry<ExercisesList> {
-        TrainingPlannerTheme2 {
-            ExercisesScreen(
-                viewModel = koinViewModel(),
-                onExerciseClicked = { id ->
-                    navigator.exerciseDetails(id)
-                }
-            )
-        }
+        ExercisesScreen(
+            viewModel = koinViewModel(),
+            onExerciseClicked = { id ->
+                navigator.exerciseDetails(id)
+            }
+        )
     }
 
     entry<CreateExercise> {
-        TrainingPlannerTheme2 {
-            CreateExerciseScreen(
-                viewModel = koinViewModel(),
-                navigateToDetails = { id ->
-                    navigator.exerciseCreated(id)
-                }
-            )
-        }
+        CreateExerciseScreen(
+            viewModel = koinViewModel(),
+            navigateToDetails = { id ->
+                navigator.exerciseCreated(id)
+            }
+        )
     }
 
     entry<EditExercise> { key ->
-        TrainingPlannerTheme2 {
-            EditExerciseScreen(
-                viewModel = koinViewModel { parametersOf(key.exerciseId) },
-                navigateToDetails = { _ ->
-                    navigator.goBack()
-                }
-            )
-        }
+        EditExerciseScreen(
+            viewModel = koinViewModel { parametersOf(key.exerciseId) },
+            navigateToDetails = { _ ->
+                navigator.goBack()
+            }
+        )
     }
 
     entry<ExerciseDetails> { key ->
-        TrainingPlannerTheme2 {
-            ExerciseDetailsScreen(
-                viewModel = koinViewModel { parametersOf(key.exerciseId) }
-            )
-        }
+        ExerciseDetailsScreen(
+            viewModel = koinViewModel { parametersOf(key.exerciseId) }
+        )
     }
 
     entry<DeleteExercise>(
         metadata = DialogSceneStrategy.dialog()
     ) { key ->
-        TrainingPlannerTheme2 {
-            DeleteExerciseScreen(
-                viewModel = koinViewModel { parametersOf(key.exerciseId) },
-                onDelete = {
-                    navigator.exerciseDeleted()
-                },
-                onCancel = {
-                    navigator.goBack()
-                }
-            )
-        }
+        DeleteExerciseScreen(
+            viewModel = koinViewModel { parametersOf(key.exerciseId) },
+            onDelete = {
+                navigator.exerciseDeleted()
+            },
+            onCancel = {
+                navigator.goBack()
+            }
+        )
     }
 }
 

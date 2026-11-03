@@ -27,8 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppSecondaryButton
@@ -72,17 +72,17 @@ private fun ReauthBottomSheetContent(
         modifier =
         modifier
             .fillMaxWidth()
-            .padding(horizontal = Dimens2.margin)
-            .padding(bottom = Dimens2.spaceLg),
+            .padding(horizontal = Dimens.margin)
+            .padding(bottom = Dimens.spaceLg),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Surface(
-            modifier = Modifier.size(Dimens2.spinnerIconContainerSize),
+            modifier = Modifier.size(Dimens.spinnerIconContainerSize),
             shape = CircleShape,
             color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f),
             border =
             BorderStroke(
-                width = Dimens2.thinBorder,
+                width = Dimens.thinBorder,
                 color = MaterialTheme.colorScheme.error.copy(alpha = 0.3f)
             )
         ) {
@@ -91,12 +91,12 @@ private fun ReauthBottomSheetContent(
                     imageVector = Icons.Default.SyncProblem,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.size(Dimens2.iconSize30)
+                    modifier = Modifier.size(Dimens.iconSize30)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(Dimens2.spaceSm))
+        Spacer(modifier = Modifier.height(Dimens.spaceSm))
 
         Text(
             text = stringResource(id = R.string.reauth_required_title),
@@ -113,11 +113,11 @@ private fun ReauthBottomSheetContent(
             textAlign = TextAlign.Center,
             modifier =
             Modifier
-                .widthIn(max = Dimens2.maxSubtitleWidth + Dimens2.spaceXl)
-                .padding(top = Dimens2.spaceXs)
+                .widthIn(max = Dimens.maxSubtitleWidth + Dimens.spaceXl)
+                .padding(top = Dimens.spaceXs)
         )
 
-        Spacer(modifier = Modifier.height(Dimens2.spaceLg))
+        Spacer(modifier = Modifier.height(Dimens.spaceLg))
 
         AppPrimaryButton(
             text = stringResource(id = R.string.reauth_sign_in_to_reconnect),
@@ -126,7 +126,7 @@ private fun ReauthBottomSheetContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(Dimens2.spaceSm))
+        Spacer(modifier = Modifier.height(Dimens.spaceSm))
 
         AppSecondaryButton(
             text = stringResource(id = R.string.reauth_stay_in_offline_mode),
@@ -149,7 +149,7 @@ internal fun UserFailure.toReauthMessageRes(): Int = when (this) {
 @AppPreview
 @Composable
 private fun ReauthBottomSheetContentPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh) {
             ReauthBottomSheetContent(
                 onSignInClick = {},

@@ -37,8 +37,8 @@ import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppIntStepper
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppStepper
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppSecondaryButton
@@ -76,8 +76,8 @@ fun TrainingExerciseScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(horizontal = Dimens2.margin, vertical = Dimens2.spaceMd),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+            .padding(horizontal = Dimens.margin, vertical = Dimens.spaceMd),
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
         // Exercise Header
         ExerciseHeader(
@@ -92,7 +92,7 @@ fun TrainingExerciseScreen(
         AppCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(Dimens2.heroImageHeightCompact),
+                .height(Dimens.heroImageHeightCompact),
             containerColor = MaterialTheme.colorScheme.surfaceContainer
         ) {
             AppExerciseImage(
@@ -116,8 +116,8 @@ fun TrainingExerciseScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(Dimens2.spaceMd),
-                verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+                    .padding(Dimens.spaceMd),
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -194,7 +194,7 @@ fun TrainingExerciseScreen(
         // Secondary Actions (Add extra set, skip exercise)
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AppTertiaryButton(
@@ -212,12 +212,12 @@ fun TrainingExerciseScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(Dimens2.spaceMd))
+        Spacer(modifier = Modifier.height(Dimens.spaceMd))
 
         // Main CTA Area
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             AppPrimaryButton(
                 text = stringResource(R.string.session_complete_set),
@@ -246,26 +246,26 @@ private fun IsometricHoldControls(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.small)
                 .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                .padding(horizontal = Dimens2.spaceMd, vertical = Dimens2.spaceSm),
+                .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceSm),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = Icons.Default.Timer,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(Dimens2.iconSize24)
+                    modifier = Modifier.size(Dimens.iconSize24)
                 )
                 Text(
                     text = stringResource(
@@ -280,7 +280,7 @@ private fun IsometricHoldControls(
             }
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onToggleTimer) {
@@ -334,7 +334,7 @@ private fun ExerciseHeader(
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -381,7 +381,7 @@ private fun ExerciseHeader(
 private fun SetsProgressStrip(currentSet: Int, totalSets: Int, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
         verticalAlignment = Alignment.CenterVertically
     ) {
         for (setIndex in 1..totalSets) {
@@ -406,11 +406,11 @@ private fun SetsProgressStrip(currentSet: Int, totalSets: Int, modifier: Modifie
 
             Box(
                 modifier = Modifier
-                    .size(Dimens2.setChipSize)
+                    .size(Dimens.setChipSize)
                     .clip(CircleShape)
                     .background(backgroundColor)
                     .border(
-                        width = if (isCurrent) Dimens2.mediumBorder else Dimens2.thinBorder,
+                        width = if (isCurrent) Dimens.mediumBorder else Dimens.thinBorder,
                         color = borderColor,
                         shape = CircleShape
                     ),
@@ -424,7 +424,7 @@ private fun SetsProgressStrip(currentSet: Int, totalSets: Int, modifier: Modifie
                             setIndex
                         ),
                         tint = textColor,
-                        modifier = Modifier.size(Dimens2.iconSize16)
+                        modifier = Modifier.size(Dimens.iconSize16)
                     )
                 } else {
                     Text(
@@ -467,7 +467,7 @@ private fun TrainingExerciseScreenPreview() {
         setsLeftInWorkout = 10
     )
 
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         TrainingExerciseScreen(
             state = state,
             onRepsChanged = {},
@@ -515,7 +515,7 @@ private fun TrainingExerciseScreenHoldTimePreview() {
         isHoldTimerRunning = true
     )
 
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         TrainingExerciseScreen(
             state = state,
             onRepsChanged = {},

@@ -30,8 +30,8 @@ import androidx.compose.ui.res.stringResource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
@@ -81,14 +81,14 @@ fun TrainingsScreenContent(
             query = filteringState.searchQuery,
             onQueryChange = onSearchQueryChanged,
             placeholder = stringResource(R.string.search_training_plan),
-            modifier = Modifier.padding(horizontal = Dimens2.spaceMd, vertical = Dimens2.spaceSm)
+            modifier = Modifier.padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceSm)
         )
 
         if (filteringState.categories.isNotEmpty()) {
             CategoryFilters(
                 categories = filteringState.categories,
                 toggleCategory = toggleCategory,
-                modifier = Modifier.padding(bottom = Dimens2.spaceSm)
+                modifier = Modifier.padding(bottom = Dimens.spaceSm)
             )
         }
 
@@ -122,8 +122,8 @@ private fun CategoryFilters(
 ) {
     LazyRow(
         modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = Dimens2.spaceMd),
-        horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        contentPadding = PaddingValues(horizontal = Dimens.spaceMd),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         items(categories, key = { it.category.name }) { filterCategory ->
             AppFilterChip(
@@ -166,8 +166,8 @@ private fun TrainingsList(
 ) {
     LazyColumn(
         modifier = modifier,
-        contentPadding = PaddingValues(Dimens2.spaceMd),
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        contentPadding = PaddingValues(Dimens.spaceMd),
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         items(plans, key = { it.id.toString() }) { trainingOverview ->
             TrainingPlanOverviewCard(
@@ -188,8 +188,8 @@ private fun TrainingPlanOverviewCard(
         modifier = modifier.clickable { onClick() }
     ) {
         Column(
-            modifier = Modifier.padding(Dimens2.spaceMd),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            modifier = Modifier.padding(Dimens.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             Text(
                 text = trainingOverview.title,
@@ -206,8 +206,8 @@ private fun TrainingPlanOverviewCard(
             if (trainingOverview.categories.isNotEmpty()) {
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs),
-                    verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
                 ) {
                     trainingOverview.categories.forEach { category ->
                         AppCategoryPill(
@@ -256,7 +256,7 @@ fun TrainingPlanDateInfo(
         Icon(
             imageVector = icon,
             contentDescription = null,
-            modifier = Modifier.padding(end = Dimens2.spaceXs),
+            modifier = Modifier.padding(end = Dimens.spaceXs),
             tint = color
         )
         Text(
@@ -270,7 +270,7 @@ fun TrainingPlanDateInfo(
 @AppPreview
 @Composable
 private fun TrainingsScreenLoadingPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         TrainingsScreenContent(
             uiState = TrainingsListUiState.Loading(
                 filteringState = FilteringState("Some query", categories = emptyList())
@@ -286,7 +286,7 @@ private fun TrainingsScreenLoadingPreview() {
 @AppPreview
 @Composable
 private fun TrainingsScreenFailurePreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         TrainingsScreenContent(
             uiState = TrainingsListUiState.Failure(
                 filteringState = FilteringState("Some query", categories = emptyList()),
@@ -303,7 +303,7 @@ private fun TrainingsScreenFailurePreview() {
 @AppPreview
 @Composable
 private fun TrainingsScreenEmptyListPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         TrainingsScreenContent(
             uiState = TrainingsListUiState.Success(
                 filteringState = FilteringState("Some query", categories = emptyList()),
@@ -320,7 +320,7 @@ private fun TrainingsScreenEmptyListPreview() {
 @AppPreview
 @Composable
 private fun TrainingsScreenSuccessPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         TrainingsScreenContent(
             uiState = TrainingsListUiState.Success(
                 filteringState = FilteringState("Some query", categories = emptyList()),

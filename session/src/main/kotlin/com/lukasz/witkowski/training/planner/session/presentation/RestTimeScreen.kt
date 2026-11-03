@@ -27,8 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppFeedbackChips
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
@@ -76,16 +76,16 @@ fun RestTimeScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(horizontal = Dimens2.margin, vertical = Dimens2.spaceMd),
+            .padding(horizontal = Dimens.margin, vertical = Dimens.spaceMd),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
         // Rest Header
         Box(
             modifier = Modifier
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primaryContainer)
-                .padding(horizontal = Dimens2.spaceMd, vertical = Dimens2.spaceXs)
+                .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceXs)
         ) {
             Text(
                 text = stringResource(R.string.session_rest_interval),
@@ -106,7 +106,7 @@ fun RestTimeScreen(
         // Preceding Set Feedback Section
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
         ) {
             Text(
                 text = stringResource(R.string.session_feedback_prompt),
@@ -131,19 +131,19 @@ fun RestTimeScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(Dimens2.spaceMd),
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceMd),
+                    .padding(Dimens.spaceMd),
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AppExerciseImage(
                     imageIds = state.nextExercise.exercise.imageIds,
                     contentDescription = state.nextExercise.exercise.name,
-                    modifier = Modifier.size(Dimens2.listItemThumbnailSize)
+                    modifier = Modifier.size(Dimens.listItemThumbnailSize)
                 )
 
                 Column(
                     modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
                 ) {
                     Text(
                         text = stringResource(R.string.session_up_next),
@@ -213,12 +213,12 @@ fun RestTimeScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(Dimens2.spaceMd))
+        Spacer(modifier = Modifier.height(Dimens.spaceMd))
 
         // CTA Buttons
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             AppPrimaryButton(
                 text = stringResource(R.string.session_start_next_set_now),
@@ -266,7 +266,7 @@ private fun RestTimeScreenPreview() {
         lastCompletedAttempt = null
     )
 
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         RestTimeScreen(
             state = state,
             timeLeft = Time(42000L),

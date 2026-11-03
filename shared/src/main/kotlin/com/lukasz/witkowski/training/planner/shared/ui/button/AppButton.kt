@@ -25,8 +25,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -46,15 +46,15 @@ fun AppButton(
         fontWeight = FontWeight.SemiBold
     ),
     border: BorderStroke? = null,
-    elevation: Dp = Dimens2.zeroDp,
-    iconTextGap: Dp = Dimens2.spaceSm
+    elevation: Dp = Dimens.zeroDp,
+    iconTextGap: Dp = Dimens.spaceSm
 ) {
     Button(
         onClick = onClick,
         modifier =
         modifier
             .fillMaxWidth()
-            .height(Dimens2.buttonHeight),
+            .height(Dimens.buttonHeight),
         enabled = enabled,
         shape = MaterialTheme.shapes.medium,
         colors =
@@ -64,15 +64,15 @@ fun AppButton(
         ),
         border = border,
         elevation =
-        if (elevation > Dimens2.zeroDp) {
+        if (elevation > Dimens.zeroDp) {
             ButtonDefaults.buttonElevation(defaultElevation = elevation)
         } else {
             ButtonDefaults.buttonElevation(
-                defaultElevation = Dimens2.zeroDp,
-                pressedElevation = Dimens2.zeroDp,
-                focusedElevation = Dimens2.zeroDp,
-                hoveredElevation = Dimens2.zeroDp,
-                disabledElevation = Dimens2.zeroDp
+                defaultElevation = Dimens.zeroDp,
+                pressedElevation = Dimens.zeroDp,
+                focusedElevation = Dimens.zeroDp,
+                hoveredElevation = Dimens.zeroDp,
+                disabledElevation = Dimens.zeroDp
             )
         }
     ) {
@@ -115,9 +115,9 @@ fun AppButton(
         fontWeight = FontWeight.SemiBold
     ),
     border: BorderStroke? = null,
-    elevation: Dp = Dimens2.zeroDp,
-    iconTextGap: Dp = Dimens2.spaceSm,
-    iconSize: Dp = Dimens2.inputIconSize
+    elevation: Dp = Dimens.zeroDp,
+    iconTextGap: Dp = Dimens.spaceSm,
+    iconSize: Dp = Dimens.inputIconSize
 ) {
     val leadingIconComposable: @Composable (() -> Unit)? =
         if (leadingIcon != null) {
@@ -164,14 +164,14 @@ fun AppButton(
 @AppPreview
 @Composable
 private fun AppButtonPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AppButton(
             text = "Button with Icons",
             onClick = {},
-            modifier = Modifier.padding(Dimens2.spaceMd),
+            modifier = Modifier.padding(Dimens.spaceMd),
             leadingIcon = Icons.Default.Email,
             trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
-            elevation = Dimens2.buttonElevation
+            elevation = Dimens.buttonElevation
         )
     }
 }

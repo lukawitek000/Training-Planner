@@ -9,7 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.dialogs.AppConfirmationDialog
 import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingState
@@ -95,7 +95,7 @@ fun DeleteTrainingPlanDialog(
 @AppPreview
 @Composable
 private fun DeleteTrainingPlanDialogPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Surface {
             DeleteTrainingPlanDialog(
                 state = DeleteTrainingPlanUiState.LoadedTrainingPlan(

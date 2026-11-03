@@ -34,18 +34,18 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
  * Centered loading state composable styled according to design specification.
  *
  * Spec Highlights:
- * - Central Spinner Container: 112dp x 112dp (w-28 h-28) [Dimens2.spinnerSize].
+ * - Central Spinner Container: 112dp x 112dp (w-28 h-28) [Dimens.spinnerSize].
  * - Pulse Glow: Animated scaling and opacity background circle in primaryContainer color.
  * - Circular Spinner Ring: Rotating progress indicator with primaryContainer indicator and surfaceContainerHighest track.
- * - Inner Icon Box: 64dp x 64dp (w-16 h-16) [Dimens2.spinnerIconContainerSize] rounded circle surface with outlineVariant border and shadow-lg elevation.
+ * - Inner Icon Box: 64dp x 64dp (w-16 h-16) [Dimens.spinnerIconContainerSize] rounded circle surface with outlineVariant border and shadow-lg elevation.
  * - Typography: headlineSmall bold title and bodyMedium centered subtitle.
  */
 @Composable
@@ -95,19 +95,19 @@ fun AppLoadingState(
         modifier =
         modifier
             .fillMaxSize()
-            .padding(Dimens2.margin),
+            .padding(Dimens.margin),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Box(
-            modifier = Modifier.size(Dimens2.spinnerSize),
+            modifier = Modifier.size(Dimens.spinnerSize),
             contentAlignment = Alignment.Center
         ) {
             // Soft Ambient Pulse Glow
             Surface(
                 modifier =
                 Modifier
-                    .size(Dimens2.spinnerSize)
+                    .size(Dimens.spinnerSize)
                     .scale(pulseScale),
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = pulseAlpha)
@@ -117,38 +117,38 @@ fun AppLoadingState(
             CircularProgressIndicator(
                 modifier =
                 Modifier
-                    .size(Dimens2.spinnerSize)
+                    .size(Dimens.spinnerSize)
                     .rotate(rotation),
                 color = MaterialTheme.colorScheme.primaryContainer,
                 trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                strokeWidth = Dimens2.spinnerStrokeWidth,
+                strokeWidth = Dimens.spinnerStrokeWidth,
                 strokeCap = StrokeCap.Round
             )
 
             // Centered Brand Dumbbell Icon Container
             Surface(
-                modifier = Modifier.size(Dimens2.spinnerIconContainerSize),
+                modifier = Modifier.size(Dimens.spinnerIconContainerSize),
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 border =
                 BorderStroke(
-                    width = Dimens2.thinBorder,
+                    width = Dimens.thinBorder,
                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
                 ),
-                shadowElevation = Dimens2.shadowLg
+                shadowElevation = Dimens.shadowLg
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = icon,
                         contentDescription = iconContentDescription,
                         tint = MaterialTheme.colorScheme.primaryContainer,
-                        modifier = Modifier.size(Dimens2.iconSize24)
+                        modifier = Modifier.size(Dimens.iconSize24)
                     )
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(Dimens2.spaceLg))
+        Spacer(modifier = Modifier.height(Dimens.spaceLg))
 
         Text(
             text = title,
@@ -166,8 +166,8 @@ fun AppLoadingState(
                 textAlign = TextAlign.Center,
                 modifier =
                 Modifier
-                    .widthIn(max = Dimens2.maxSubtitleWidth)
-                    .padding(top = Dimens2.spaceXs)
+                    .widthIn(max = Dimens.maxSubtitleWidth)
+                    .padding(top = Dimens.spaceXs)
             )
         }
     }
@@ -176,7 +176,7 @@ fun AppLoadingState(
 @AppPreview
 @Composable
 private fun AppLoadingStatePreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AppLoadingState()
     }
 }

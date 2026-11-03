@@ -51,10 +51,10 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.editor.Recomm
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
 import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.Info
 import com.lukasz.witkowski.training.planner.shared.theme.Success
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.theme.Warning
 import com.lukasz.witkowski.training.planner.shared.ui.badges.AppMetadataPill
 import com.lukasz.witkowski.training.planner.shared.ui.badges.AppStatusBadge
@@ -109,7 +109,7 @@ fun ExerciseDetailsScreenContent(
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
                 ) {
                     CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                     Text(
@@ -156,14 +156,14 @@ private fun ExerciseDetailsBody(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(Dimens2.spaceMd)
+                .padding(Dimens.spaceMd)
                 .testTag("ExerciseDetails"),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
         ) {
             if (exercise.images.isNotEmpty()) {
                 ImageGallery(
                     images = exercise.images,
-                    modifier = Modifier.padding(bottom = Dimens2.spaceSm)
+                    modifier = Modifier.padding(bottom = Dimens.spaceSm)
                 )
             }
 
@@ -176,8 +176,8 @@ private fun ExerciseDetailsBody(
 
             if (exercise.categories.isNotEmpty()) {
                 FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm),
-                    verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
                 ) {
                     exercise.categories.forEach { category ->
                         AppCategoryPill(
@@ -195,13 +195,13 @@ private fun ExerciseDetailsBody(
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
                 border = BorderStroke(
-                    width = Dimens2.thinBorder,
+                    width = Dimens.thinBorder,
                     color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
                 )
             ) {
                 Column(
-                    modifier = Modifier.padding(Dimens2.spaceMd),
-                    verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+                    modifier = Modifier.padding(Dimens.spaceMd),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
                 ) {
                     Text(
                         text = stringResource(R.string.description),
@@ -222,7 +222,7 @@ private fun ExerciseDetailsBody(
             if (metadata.syncState == ExerciseSyncState.CONFLICT ||
                 metadata.syncState == ExerciseSyncState.ERROR
             ) {
-                Spacer(modifier = Modifier.height(Dimens2.spaceXl * 3))
+                Spacer(modifier = Modifier.height(Dimens.spaceXl * 3))
             }
         }
 
@@ -237,7 +237,7 @@ private fun ExerciseDetailsBody(
                     actionTestTag = "ResolveConflictButton",
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(Dimens2.spaceMd)
+                        .padding(Dimens.spaceMd)
                 )
             }
 
@@ -251,7 +251,7 @@ private fun ExerciseDetailsBody(
                     actionTestTag = "RetrySyncButton",
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(Dimens2.spaceMd)
+                        .padding(Dimens.spaceMd)
                 )
             }
 
@@ -269,13 +269,13 @@ private fun ExerciseSyncStatusCard(metadata: ExerciseMetadata, modifier: Modifie
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(
-            width = Dimens2.thinBorder,
+            width = Dimens.thinBorder,
             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
         )
     ) {
         Column(
-            modifier = Modifier.padding(Dimens2.spaceMd),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            modifier = Modifier.padding(Dimens.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -292,8 +292,8 @@ private fun ExerciseSyncStatusCard(metadata: ExerciseMetadata, modifier: Modifie
             }
 
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm),
-                verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
             ) {
                 when (metadata.source) {
                     ExerciseSource.Bundled -> {
@@ -393,24 +393,24 @@ private fun SyncActionBottomBanner(
             .testTag("SyncActionBottomBanner"),
         shape = MaterialTheme.shapes.medium,
         color = containerColor,
-        border = BorderStroke(width = Dimens2.thinBorder, color = accentColor.copy(alpha = 0.4f))
+        border = BorderStroke(width = Dimens.thinBorder, color = accentColor.copy(alpha = 0.4f))
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(Dimens2.spaceMd),
+                .padding(Dimens.spaceMd),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             Icon(
                 imageVector = if (isWarning) Icons.Default.Warning else Icons.Default.ErrorOutline,
                 contentDescription = null,
                 tint = accentColor,
-                modifier = Modifier.size(Dimens2.iconSize24)
+                modifier = Modifier.size(Dimens.iconSize24)
             )
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
             ) {
                 Text(
                     text = title,
@@ -436,7 +436,7 @@ private fun SyncActionBottomBanner(
 @Composable
 @Preview
 private fun ExerciseDetailsScreenContentPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Surface {
             ExerciseDetailsScreenContent(
                 state = ExerciseDetailsState.Success(
@@ -468,7 +468,7 @@ private fun ExerciseDetailsScreenContentPreview() {
 @Composable
 @Preview
 private fun ExerciseDetailsScreenLoadingPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         ExerciseDetailsScreenContent(
             state = ExerciseDetailsState.Loading,
             modifier = Modifier.fillMaxSize()
@@ -479,7 +479,7 @@ private fun ExerciseDetailsScreenLoadingPreview() {
 @Composable
 @Preview
 private fun ExerciseDetailsScreenFailurePreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         ExerciseDetailsScreenContent(
             state = ExerciseDetailsState.Failure("No exercise in DB"),
             modifier = Modifier.fillMaxSize()

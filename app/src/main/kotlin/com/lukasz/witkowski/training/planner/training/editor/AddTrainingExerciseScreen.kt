@@ -25,8 +25,8 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.list.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.PREVIEW_EXERCISES
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.asPreviewPagerFlow
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 @Composable
@@ -73,7 +73,7 @@ fun AddTrainingExerciseScreenContent(
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = stringResource(R.string.add_exercise_icon),
-                    modifier = Modifier.padding(Dimens2.spaceSm)
+                    modifier = Modifier.padding(Dimens.spaceSm)
                 )
             }
         }
@@ -83,7 +83,7 @@ fun AddTrainingExerciseScreenContent(
 @AppPreview
 @Composable
 private fun AddTrainingExerciseScreenContentPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         AddTrainingExerciseScreenContent(
             exercisesList = PREVIEW_EXERCISES.asPreviewPagerFlow().collectAsLazyPagingItems(),
             filteringState = FilteringState(

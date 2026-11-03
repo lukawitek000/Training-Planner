@@ -25,8 +25,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
@@ -34,8 +34,8 @@ import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
  *
  * Spec Highlights:
  * - Shape: [CircleShape]
- * - Height: [Dimens2.chipHeightMedium] (36dp)
- * - Selected state: [MaterialTheme.colorScheme.primaryContainer] background, [MaterialTheme.colorScheme.onPrimary] bold text, optional leading check icon, [Dimens2.shadowSm] elevation.
+ * - Height: [Dimens.chipHeightMedium] (36dp)
+ * - Selected state: [MaterialTheme.colorScheme.primaryContainer] background, [MaterialTheme.colorScheme.onPrimary] bold text, optional leading check icon, [Dimens.shadowSm] elevation.
  * - Unselected state: [MaterialTheme.colorScheme.surfaceContainerHigh] background, [MaterialTheme.colorScheme.onSurfaceVariant] text, subtle [MaterialTheme.colorScheme.outlineVariant] border.
  */
 @Composable
@@ -76,7 +76,7 @@ fun AppFilterChip(
             null
         } else {
             BorderStroke(
-                width = Dimens2.thinBorder,
+                width = Dimens.thinBorder,
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)
             )
         }
@@ -85,17 +85,17 @@ fun AppFilterChip(
         onClick = onClick,
         modifier =
         modifier
-            .height(Dimens2.chipHeightMedium)
+            .height(Dimens.chipHeightMedium)
             .semantics { this.selected = selected },
         enabled = enabled,
         shape = CircleShape,
         color = backgroundColor,
         contentColor = contentColor,
         border = borderStroke,
-        shadowElevation = if (selected) Dimens2.shadowSm else Dimens2.zeroDp
+        shadowElevation = if (selected) Dimens.shadowSm else Dimens.zeroDp
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = Dimens2.inputHorizontalPadding),
+            modifier = Modifier.padding(horizontal = Dimens.inputHorizontalPadding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
@@ -104,9 +104,9 @@ fun AppFilterChip(
                     imageVector = leadingIcon,
                     contentDescription = leadingIconContentDescription,
                     tint = contentColor,
-                    modifier = Modifier.size(Dimens2.iconSize14)
+                    modifier = Modifier.size(Dimens.iconSize14)
                 )
-                Spacer(modifier = Modifier.width(Dimens2.spaceXs))
+                Spacer(modifier = Modifier.width(Dimens.spaceXs))
             }
             Text(
                 text = label.uppercase(),
@@ -123,10 +123,10 @@ fun AppFilterChip(
 @AppPreview
 @Composable
 private fun AppFilterChipPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         Row(
-            modifier = Modifier.padding(Dimens2.spaceMd),
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            modifier = Modifier.padding(Dimens.spaceMd),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             AppFilterChip(
                 label = "All",

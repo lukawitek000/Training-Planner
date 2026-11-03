@@ -43,10 +43,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.shared.network.NetworkFailure
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.OrangeContainer
 import com.lukasz.witkowski.training.planner.shared.theme.OrangeLight
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
@@ -128,9 +128,9 @@ private fun UserProfileScreenContent(
                     modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(Dimens2.margin)
+                        .padding(Dimens.margin)
                         .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
                 ) {
                     UserIdentitySection(
                         isOnline = isOnline,
@@ -205,14 +205,14 @@ private fun UserIdentitySection(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
-            modifier = Modifier.padding(bottom = Dimens2.spaceSm),
+            modifier = Modifier.padding(bottom = Dimens.spaceSm),
             contentAlignment = Alignment.BottomEnd
         ) {
             Surface(
-                modifier = Modifier.size(Dimens2.avatarSize),
+                modifier = Modifier.size(Dimens.avatarSize),
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                shadowElevation = Dimens2.shadowLg
+                shadowElevation = Dimens.shadowLg
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
@@ -229,13 +229,13 @@ private fun UserIdentitySection(
                         } else {
                             MaterialTheme.colorScheme.outline
                         },
-                        modifier = Modifier.size(Dimens2.iconSize42)
+                        modifier = Modifier.size(Dimens.iconSize42)
                     )
                 }
             }
 
             Surface(
-                modifier = Modifier.size(Dimens2.avatarBadgeSize),
+                modifier = Modifier.size(Dimens.avatarBadgeSize),
                 shape = CircleShape,
                 color =
                 if (isOnline) {
@@ -245,7 +245,7 @@ private fun UserIdentitySection(
                 } else {
                     OrangeContainer
                 },
-                shadowElevation = Dimens2.shadowSm
+                shadowElevation = Dimens.shadowSm
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
@@ -266,7 +266,7 @@ private fun UserIdentitySection(
                         } else {
                             OrangeLight
                         },
-                        modifier = Modifier.size(Dimens2.iconSize15)
+                        modifier = Modifier.size(Dimens.iconSize15)
                     )
                 }
             }
@@ -286,7 +286,7 @@ private fun UserIdentitySection(
             } else {
                 MaterialTheme.colorScheme.surfaceContainerHighest
             },
-            modifier = Modifier.padding(top = Dimens2.spaceXs)
+            modifier = Modifier.padding(top = Dimens.spaceXs)
         ) {
             Text(
                 text =
@@ -306,8 +306,8 @@ private fun UserIdentitySection(
                     MaterialTheme.colorScheme.onSurfaceVariant
                 },
                 modifier = Modifier.padding(
-                    horizontal = Dimens2.spaceSm,
-                    vertical = Dimens2.spaceXs
+                    horizontal = Dimens.spaceSm,
+                    vertical = Dimens.spaceXs
                 )
             )
         }
@@ -319,21 +319,21 @@ private fun UserIdentitySection(
                 color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f),
                 border =
                 BorderStroke(
-                    width = Dimens2.thinBorder,
+                    width = Dimens.thinBorder,
                     color = MaterialTheme.colorScheme.error.copy(alpha = 0.3f)
                 ),
-                modifier = Modifier.padding(top = Dimens2.spaceXs)
+                modifier = Modifier.padding(top = Dimens.spaceXs)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs),
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
                     modifier = Modifier.padding(
-                        horizontal = Dimens2.spaceGapIconTextMedium,
-                        vertical = Dimens2.spaceXs
+                        horizontal = Dimens.spaceGapIconTextMedium,
+                        vertical = Dimens.spaceXs
                     )
                 ) {
                     Surface(
-                        modifier = Modifier.size(Dimens2.spaceSm),
+                        modifier = Modifier.size(Dimens.spaceSm),
                         shape = CircleShape,
                         color = MaterialTheme.colorScheme.error
                     ) {}
@@ -351,7 +351,7 @@ private fun UserIdentitySection(
             text = subtitle,
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = Dimens2.spaceXs)
+            modifier = Modifier.padding(top = Dimens.spaceXs)
         )
     }
 }
@@ -368,17 +368,17 @@ private fun SignOutCard(onSignOutClick: () -> Unit, modifier: Modifier = Modifie
                 modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(Dimens2.spaceMd),
+                    .padding(Dimens.spaceMd),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm),
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
                     modifier = Modifier.weight(1f)
                 ) {
                     Surface(
-                        modifier = Modifier.size(Dimens2.iconSize40),
+                        modifier = Modifier.size(Dimens.iconSize40),
                         shape = MaterialTheme.shapes.medium,
                         color = MaterialTheme.colorScheme.surfaceContainerHigh
                     ) {
@@ -387,7 +387,7 @@ private fun SignOutCard(onSignOutClick: () -> Unit, modifier: Modifier = Modifie
                                 imageVector = Icons.AutoMirrored.Filled.Logout,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(Dimens2.inputIconSize)
+                                modifier = Modifier.size(Dimens.inputIconSize)
                             )
                         }
                     }
@@ -411,7 +411,7 @@ private fun SignOutCard(onSignOutClick: () -> Unit, modifier: Modifier = Modifie
                     imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.size(Dimens2.inputIconSize)
+                    modifier = Modifier.size(Dimens.inputIconSize)
                 )
             }
         }
@@ -424,13 +424,13 @@ private fun CloudSyncCtaCard(onSignInClick: () -> Unit, modifier: Modifier = Mod
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
     ) {
-        Column(modifier = Modifier.padding(Dimens2.spaceMd)) {
+        Column(modifier = Modifier.padding(Dimens.spaceMd)) {
             Row(
                 verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceGapIconTextMedium)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceGapIconTextMedium)
             ) {
                 Surface(
-                    modifier = Modifier.size(Dimens2.iconSize40),
+                    modifier = Modifier.size(Dimens.iconSize40),
                     shape = MaterialTheme.shapes.medium,
                     color = OrangeContainer
                 ) {
@@ -439,7 +439,7 @@ private fun CloudSyncCtaCard(onSignInClick: () -> Unit, modifier: Modifier = Mod
                             imageVector = Icons.Default.CloudSync,
                             contentDescription = null,
                             tint = OrangeLight,
-                            modifier = Modifier.size(Dimens2.iconSize22)
+                            modifier = Modifier.size(Dimens.iconSize22)
                         )
                     }
                 }
@@ -455,7 +455,7 @@ private fun CloudSyncCtaCard(onSignInClick: () -> Unit, modifier: Modifier = Mod
                         text = stringResource(id = R.string.user_profile_cta_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = Dimens2.spaceXs)
+                        modifier = Modifier.padding(top = Dimens.spaceXs)
                     )
                 }
             }
@@ -465,7 +465,7 @@ private fun CloudSyncCtaCard(onSignInClick: () -> Unit, modifier: Modifier = Mod
                 onClick = onSignInClick,
                 leadingIcon = Icons.AutoMirrored.Filled.Login,
                 trailingIcon = Icons.AutoMirrored.Filled.ArrowForward,
-                modifier = Modifier.padding(top = Dimens2.spaceMd)
+                modifier = Modifier.padding(top = Dimens.spaceMd)
             )
         }
     }
@@ -490,8 +490,8 @@ private fun OfflinePreferencesCard(
 
     AppCard(modifier = modifier) {
         Column(
-            modifier = Modifier.padding(Dimens2.spaceMd),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            modifier = Modifier.padding(Dimens.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -520,20 +520,20 @@ private fun OfflinePreferencesCard(
                     modifier =
                     Modifier
                         .fillMaxWidth()
-                        .padding(Dimens2.spaceGapIconTextMedium),
+                        .padding(Dimens.spaceGapIconTextMedium),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm),
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
                         modifier = Modifier.weight(1f)
                     ) {
                         Icon(
                             imageVector = Icons.Default.Scale,
                             contentDescription = null,
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(Dimens2.inputIconSize)
+                            modifier = Modifier.size(Dimens.inputIconSize)
                         )
                         Column {
                             Text(
@@ -558,7 +558,7 @@ private fun OfflinePreferencesCard(
                         items = items,
                         selectedItem = selectedWeightUnit,
                         onItemSelected = onWeightUnitChanged,
-                        modifier = Modifier.width(Dimens2.iconContainerSize * 2.2f)
+                        modifier = Modifier.width(Dimens.iconContainerSize * 2.2f)
                     )
                 }
             }
@@ -572,19 +572,19 @@ private fun EngineFootnote(modifier: Modifier = Modifier) {
         modifier =
         modifier
             .fillMaxWidth()
-            .padding(vertical = Dimens2.spaceSm),
+            .padding(vertical = Dimens.spaceSm),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
         ) {
             Icon(
                 imageVector = Icons.Default.Terminal,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.outline,
-                modifier = Modifier.size(Dimens2.iconSize14)
+                modifier = Modifier.size(Dimens.iconSize14)
             )
             Text(
                 text = stringResource(id = R.string.user_profile_engine_footnote_build),
@@ -598,7 +598,7 @@ private fun EngineFootnote(modifier: Modifier = Modifier) {
 @AppPreview
 @Composable
 private fun UserProfileLoadingPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         UserProfileScreenContent(
             uiState = ProfileUiState.Loading,
             onWeightUnitChanged = {},
@@ -611,7 +611,7 @@ private fun UserProfileLoadingPreview() {
 @AppPreview
 @Composable
 private fun UserProfileScreenOfflinePreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         UserProfileScreenContent(
             uiState =
             ProfileUiState.OfflineProfileLoaded(
@@ -627,7 +627,7 @@ private fun UserProfileScreenOfflinePreview() {
 @AppPreview
 @Composable
 private fun UserProfileScreenOfflineFailurePreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         UserProfileScreenContent(
             uiState =
             ProfileUiState.OfflineProfileLoaded(
@@ -644,7 +644,7 @@ private fun UserProfileScreenOfflineFailurePreview() {
 @AppPreview
 @Composable
 private fun UserProfileScreenOnlinePreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         UserProfileScreenContent(
             uiState =
             ProfileUiState.OnlineProfileLoaded(

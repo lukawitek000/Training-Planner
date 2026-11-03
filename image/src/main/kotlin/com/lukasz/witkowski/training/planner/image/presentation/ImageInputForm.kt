@@ -33,7 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.R
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 
 @Composable
 fun ImageInputForm(
@@ -60,8 +60,8 @@ fun ImageInputForm(
             onSelectImage = onSelectPreview,
             onDeleteImage = onRemoveImageClicked,
             onAddImageClicked = onAddImagesClicked,
-            heroHeight = Dimens2.mediaEmptyContainerMinHeight,
-            thumbnailSize = Dimens2.mediaThumbnailSize,
+            heroHeight = Dimens.mediaEmptyContainerMinHeight,
+            thumbnailSize = Dimens.mediaThumbnailSize,
             showGradientOverlay = false,
             modifier = modifier
         )
@@ -79,8 +79,8 @@ fun ImagesPreview(
         images = images,
         selectedImage = previewImage,
         onSelectImage = onSelectPreview,
-        heroHeight = Dimens2.heroImageHeightStandard,
-        thumbnailSize = Dimens2.mediaThumbnailSize,
+        heroHeight = Dimens.heroImageHeightStandard,
+        thumbnailSize = Dimens.mediaThumbnailSize,
         showGradientOverlay = false,
         modifier = modifier
     )
@@ -95,31 +95,31 @@ private fun EmptyImageInputCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(Dimens2.spaceMd),
+        shape = RoundedCornerShape(Dimens.spaceMd),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
         ),
         border = BorderStroke(
-            Dimens2.thinBorder,
+            Dimens.thinBorder,
             MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
         )
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(Dimens2.spaceLg),
+                .padding(Dimens.spaceLg),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Box(
                 modifier = Modifier
-                    .size(Dimens2.mediaThumbnailSize)
-                    .clip(RoundedCornerShape(Dimens2.spaceMd))
+                    .size(Dimens.mediaThumbnailSize)
+                    .clip(RoundedCornerShape(Dimens.spaceMd))
                     .background(MaterialTheme.colorScheme.surface)
                     .border(
-                        Dimens2.thinBorder,
+                        Dimens.thinBorder,
                         MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f),
-                        RoundedCornerShape(Dimens2.spaceMd)
+                        RoundedCornerShape(Dimens.spaceMd)
                     ),
                 contentAlignment = Alignment.Center
             ) {
@@ -127,23 +127,23 @@ private fun EmptyImageInputCard(
                     imageVector = Icons.Outlined.AddPhotoAlternate,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(Dimens2.spaceXl)
+                    modifier = Modifier.size(Dimens.spaceXl)
                 )
             }
-            Spacer(modifier = Modifier.height(Dimens2.spaceGapIconTextMedium))
+            Spacer(modifier = Modifier.height(Dimens.spaceGapIconTextMedium))
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Spacer(modifier = Modifier.height(Dimens2.spaceXs))
+            Spacer(modifier = Modifier.height(Dimens.spaceXs))
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Spacer(modifier = Modifier.height(Dimens2.spaceMd))
+            Spacer(modifier = Modifier.height(Dimens.spaceMd))
             Button(
                 onClick = onAddImagesClicked,
                 shape = CircleShape,
@@ -152,23 +152,23 @@ private fun EmptyImageInputCard(
                     contentColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ),
                 contentPadding = PaddingValues(
-                    horizontal = Dimens2.inputIconSize,
-                    vertical = Dimens2.inputIconSpacing
+                    horizontal = Dimens.inputIconSize,
+                    vertical = Dimens.inputIconSpacing
                 )
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = null,
-                    modifier = Modifier.size(Dimens2.iconSize18)
+                    modifier = Modifier.size(Dimens.iconSize18)
                 )
-                Spacer(modifier = Modifier.width(Dimens2.spaceSm))
+                Spacer(modifier = Modifier.width(Dimens.spaceSm))
                 Text(
                     text = stringResource(R.string.add_image),
                     style = MaterialTheme.typography.labelLarge,
                     fontWeight = FontWeight.Bold
                 )
             }
-            Spacer(modifier = Modifier.height(Dimens2.spaceGapIconTextMedium))
+            Spacer(modifier = Modifier.height(Dimens.spaceGapIconTextMedium))
             Text(
                 text = stringResource(R.string.can_add_multiple_img),
                 style = MaterialTheme.typography.labelSmall,

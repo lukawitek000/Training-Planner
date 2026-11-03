@@ -31,18 +31,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import com.lukasz.witkowski.training.planner.shared.R
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
 /**
- * Stitch-styled modal confirmation dialog card (`RoundedCornerShape(Dimens2.bottomSheetCornerRadius)`).
+ * Stitch-styled modal confirmation dialog card (`RoundedCornerShape(Dimens.bottomSheetCornerRadius)`).
  *
  * Spec Highlights:
- * - Container: `RoundedCornerShape(Dimens2.bottomSheetCornerRadius)` (28dp), `surfaceContainerHigh`, max width `Dimens2.dialogMaxWidth` (360dp), `Dimens2.spaceLg` padding.
- * - Nested circular icon badge: outer `Dimens2.spinnerIconContainerSize` (64dp) `surfaceContainerHighest` circle, inner `Dimens2.listItemThumbnailSize` (48dp) circle tinted with `errorContainer.copy(alpha = 0.4f)` (or `primaryContainer.copy(alpha = 0.25f)` when non-destructive).
+ * - Container: `RoundedCornerShape(Dimens.bottomSheetCornerRadius)` (28dp), `surfaceContainerHigh`, max width `Dimens.dialogMaxWidth` (360dp), `Dimens.spaceLg` padding.
+ * - Nested circular icon badge: outer `Dimens.spinnerIconContainerSize` (64dp) `surfaceContainerHighest` circle, inner `Dimens.listItemThumbnailSize` (48dp) circle tinted with `errorContainer.copy(alpha = 0.4f)` (or `primaryContainer.copy(alpha = 0.25f)` when non-destructive).
  * - Title: centered `headlineSmall` bold text in `onSurface`.
- * - Description: centered `bodyMedium` text in `onSurfaceVariant`, max width `Dimens2.maxSubtitleWidth`.
+ * - Description: centered `bodyMedium` text in `onSurfaceVariant`, max width `Dimens.maxSubtitleWidth`.
  * - Action Buttons Row: 2-column button row with Cancel (`surfaceContainerHighest` bg, `primary` text) and Confirm/Destructive (`error` bg + `onError` text when destructive, or `primaryContainer` bg + `onPrimary` text).
  */
 @Composable
@@ -85,32 +85,32 @@ fun AppConfirmationDialog(
     Surface(
         modifier =
         modifier
-            .widthIn(max = Dimens2.dialogMaxWidth)
+            .widthIn(max = Dimens.dialogMaxWidth)
             .fillMaxWidth()
             .testTag(dialogTestTag),
-        shape = RoundedCornerShape(Dimens2.bottomSheetCornerRadius),
+        shape = RoundedCornerShape(Dimens.bottomSheetCornerRadius),
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        shadowElevation = Dimens2.shadowLg
+        shadowElevation = Dimens.shadowLg
     ) {
         Column(
             modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(Dimens2.spaceLg),
+                .padding(Dimens.spaceLg),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Nested Circular Icon Badge
             Surface(
-                modifier = Modifier.size(Dimens2.spinnerIconContainerSize),
+                modifier = Modifier.size(Dimens.spinnerIconContainerSize),
                 shape = CircleShape,
                 color = MaterialTheme.colorScheme.surfaceContainerHighest,
-                shadowElevation = Dimens2.shadowSm
+                shadowElevation = Dimens.shadowSm
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Box(
                         modifier =
                         Modifier
-                            .size(Dimens2.listItemThumbnailSize)
+                            .size(Dimens.listItemThumbnailSize)
                             .background(
                                 color = innerBadgeColor,
                                 shape = CircleShape
@@ -121,13 +121,13 @@ fun AppConfirmationDialog(
                             imageVector = icon,
                             contentDescription = iconContentDescription,
                             tint = accentColor,
-                            modifier = Modifier.size(Dimens2.iconSize24)
+                            modifier = Modifier.size(Dimens.iconSize24)
                         )
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(Dimens2.spaceMd))
+            Spacer(modifier = Modifier.height(Dimens.spaceMd))
 
             // Centered Heading
             Text(
@@ -142,7 +142,7 @@ fun AppConfirmationDialog(
                     .testTag(titleTestTag)
             )
 
-            Spacer(modifier = Modifier.height(Dimens2.spaceXs))
+            Spacer(modifier = Modifier.height(Dimens.spaceXs))
 
             // Description Body
             Text(
@@ -150,15 +150,15 @@ fun AppConfirmationDialog(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.widthIn(max = Dimens2.maxSubtitleWidth)
+                modifier = Modifier.widthIn(max = Dimens.maxSubtitleWidth)
             )
 
-            Spacer(modifier = Modifier.height(Dimens2.spaceXl))
+            Spacer(modifier = Modifier.height(Dimens.spaceXl))
 
             // 2-Column Action Buttons Row
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
             ) {
                 if (showDismissButton) {
                     Button(
@@ -166,7 +166,7 @@ fun AppConfirmationDialog(
                         modifier =
                         Modifier
                             .weight(1f)
-                            .height(Dimens2.buttonHeight)
+                            .height(Dimens.buttonHeight)
                             .testTag(dismissButtonTestTag),
                         shape = CircleShape,
                         colors =
@@ -188,7 +188,7 @@ fun AppConfirmationDialog(
                     modifier =
                     Modifier
                         .weight(1f)
-                        .height(Dimens2.buttonHeight)
+                        .height(Dimens.buttonHeight)
                         .testTag(confirmButtonTestTag),
                     shape = CircleShape,
                     colors =
@@ -198,7 +198,7 @@ fun AppConfirmationDialog(
                     ),
                     elevation =
                     ButtonDefaults.buttonElevation(
-                        defaultElevation = Dimens2.buttonElevation
+                        defaultElevation = Dimens.buttonElevation
                     )
                 ) {
                     Text(
@@ -215,8 +215,8 @@ fun AppConfirmationDialog(
 @AppPreview
 @Composable
 private fun AppConfirmationDialogDestructivePreview() {
-    TrainingPlannerTheme2 {
-        Box(modifier = Modifier.padding(Dimens2.spaceMd)) {
+    TrainingPlannerTheme {
+        Box(modifier = Modifier.padding(Dimens.spaceMd)) {
             AppConfirmationDialog(
                 title = "Delete exercise?",
                 message =
@@ -234,8 +234,8 @@ private fun AppConfirmationDialogDestructivePreview() {
 @AppPreview
 @Composable
 private fun AppConfirmationDialogStandardPreview() {
-    TrainingPlannerTheme2 {
-        Box(modifier = Modifier.padding(Dimens2.spaceMd)) {
+    TrainingPlannerTheme {
+        Box(modifier = Modifier.padding(Dimens.spaceMd)) {
             AppConfirmationDialog(
                 title = "Overwrite local changes?",
                 message =

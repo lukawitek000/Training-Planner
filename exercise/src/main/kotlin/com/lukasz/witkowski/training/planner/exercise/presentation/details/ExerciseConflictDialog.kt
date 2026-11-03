@@ -45,8 +45,8 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recomm
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
 import com.lukasz.witkowski.training.planner.shared.R as SharedR
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
-import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.theme.Warning
 import com.lukasz.witkowski.training.planner.shared.ui.badges.AppMetadataPill
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
@@ -68,14 +68,14 @@ fun ExerciseConflictDialog(
     BasicAlertDialog(
         onDismissRequest = onDismiss,
         modifier = modifier
-            .widthIn(max = Dimens2.dialogMaxWidthWide)
+            .widthIn(max = Dimens.dialogMaxWidthWide)
             .testTag("ExerciseConflictDialog")
     ) {
         Surface(
             shape = MaterialTheme.shapes.large,
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
             border = BorderStroke(
-                width = Dimens2.thinBorder,
+                width = Dimens.thinBorder,
                 color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
             )
         ) {
@@ -83,12 +83,12 @@ fun ExerciseConflictDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(Dimens2.spaceLg),
-                verticalArrangement = Arrangement.spacedBy(Dimens2.spaceMd)
+                    .padding(Dimens.spaceLg),
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
                 ) {
                     Surface(
                         shape = MaterialTheme.shapes.small,
@@ -99,8 +99,8 @@ fun ExerciseConflictDialog(
                             contentDescription = null,
                             tint = Warning,
                             modifier = Modifier
-                                .padding(Dimens2.spaceSm)
-                                .size(Dimens2.iconSize24)
+                                .padding(Dimens.spaceSm)
+                                .size(Dimens.iconSize24)
                         )
                     }
                     Column {
@@ -121,7 +121,7 @@ fun ExerciseConflictDialog(
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
                 ) {
                     ConflictVersionColumn(
                         title = stringResource(R.string.conflict_local_version),
@@ -146,7 +146,7 @@ fun ExerciseConflictDialog(
                 )
 
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
                 ) {
                     AppPrimaryButton(
                         text = stringResource(R.string.conflict_keep_local),
@@ -188,23 +188,23 @@ private fun ConflictVersionColumn(
         shape = MaterialTheme.shapes.medium,
         color = MaterialTheme.colorScheme.surfaceContainerLow,
         border = BorderStroke(
-            width = Dimens2.thinBorder,
+            width = Dimens.thinBorder,
             color = accentColor.copy(alpha = 0.35f)
         )
     ) {
         Column(
-            modifier = Modifier.padding(Dimens2.spaceSm),
-            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            modifier = Modifier.padding(Dimens.spaceSm),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
             ) {
                 Icon(
                     imageVector = icon,
                     contentDescription = null,
                     tint = accentColor,
-                    modifier = Modifier.size(Dimens2.iconSize16)
+                    modifier = Modifier.size(Dimens.iconSize16)
                 )
                 Text(
                     text = title,
@@ -241,8 +241,8 @@ private fun ConflictVersionColumn(
 
             if (details.exercise.categories.isNotEmpty()) {
                 FlowRow(
-                    horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceXs),
-                    verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
+                    horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
                 ) {
                     details.exercise.categories.forEach { category ->
                         AppCategoryPill(text = category.name)
@@ -250,7 +250,7 @@ private fun ConflictVersionColumn(
                 }
             }
 
-            Spacer(modifier = Modifier.height(Dimens2.spaceXs))
+            Spacer(modifier = Modifier.height(Dimens.spaceXs))
             details.recommendations.forEach { rec ->
                 val p = rec.parameters
                 if (p.areValid()) {
@@ -277,7 +277,7 @@ private fun ConflictVersionColumn(
 @Preview
 @Composable
 private fun ExerciseConflictDialogPreview() {
-    TrainingPlannerTheme2 {
+    TrainingPlannerTheme {
         val sampleRecs = listOf(
             Recommendation(
                 RecommendationLevel.BEGINNER,
