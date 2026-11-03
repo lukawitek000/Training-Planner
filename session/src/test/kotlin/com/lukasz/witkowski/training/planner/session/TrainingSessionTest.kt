@@ -5,28 +5,30 @@ import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSess
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSetsPolicy
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
+import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import kotlin.time.Duration.Companion.seconds
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 
 internal open class TrainingSessionTest {
     private val trainingSetsStrategy: TrainingSetsPolicy = CircuitSetsPolicy()
 
-    protected fun createTrainingSession(trainingPlan: TrainingPlan) =
-        TrainingSession(trainingPlan, trainingSetsStrategy)
+    protected fun createTrainingSession(
+        trainingPlan: TrainingPlan,
+        policy: TrainingSetsPolicy = trainingSetsStrategy
+    ) = TrainingSession(trainingPlan, policy)
 
     protected fun createSingleTrainingExerciseWithManySets(): List<TrainingExercise> {
-        return emptyList()
-//        val exercise =
-//            TrainingExercise(
-//                id = TrainingExerciseId.create(),
-//                repetitions = 10,
-//                sets = 2,
-//                time = Time(10000L),
-//                restTime = Time(30000),
-//                exercise = createDummyExercise(),
-//            )
-//        return listOf(exercise)
+        val exercise =
+            TrainingExercise(
+                id = TrainingExerciseId.create(),
+                repetitions = 10,
+                sets = 2,
+                restTime = 30.seconds,
+                exercise = createDummyExercise()
+            )
+        return listOf(exercise)
     }
 
     protected fun assertRestTimeState(

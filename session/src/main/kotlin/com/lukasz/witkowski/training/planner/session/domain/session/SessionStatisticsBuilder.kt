@@ -2,19 +2,24 @@ package com.lukasz.witkowski.training.planner.session.domain.session
 
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
-import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics as Statistics
+import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
+import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SystemTimeProvider
+import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.TimeProvider
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import java.util.Date
 
-class TrainingStatistics(private val trainingPlan: TrainingPlan, private val startTime: Time) {
-    private var exercisesAttemptsStatistics = mutableListOf<ExerciseAttemptStatistics>()
+internal class SessionStatisticsBuilder(
+    private val trainingPlan: TrainingPlan,
+    private val startTime: Time,
+    private val timeProvider: TimeProvider = SystemTimeProvider()
+) {
+    private val exercisesAttemptsStatistics = mutableListOf<ExerciseAttemptStatistics>()
 
     fun addExerciseAttemptStatistics(attemptStatistics: ExerciseAttemptStatistics) {
         exercisesAttemptsStatistics.add(attemptStatistics)
     }
 
-    fun gatherTrainingStatistics(time: Time): Statistics {
+    fun gatherTrainingStatistics(time: Time): TrainingStatistics {
         val exercisesStatisticsMap = exercisesAttemptsStatistics.groupBy { it.trainingExerciseId }
         val exercisesStatistics =
             exercisesStatisticsMap.map { (exerciseId, attemptsStatistics) ->
@@ -23,10 +28,10 @@ class TrainingStatistics(private val trainingPlan: TrainingPlan, private val sta
                     attemptsStatistics = attemptsStatistics
                 )
             }
-        return Statistics(
+        return TrainingStatistics(
             trainingPlanId = trainingPlan.id,
             totalTime = time - startTime,
-            date = Date(), // TODO how to provide a date
+            date = timeProvider.currentDate(),
             exercisesStatistics = exercisesStatistics
         )
     }

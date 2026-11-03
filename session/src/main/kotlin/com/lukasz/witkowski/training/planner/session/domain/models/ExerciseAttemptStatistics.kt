@@ -8,5 +8,8 @@ data class ExerciseAttemptStatistics(
     val trainingExerciseId: TrainingExerciseId,
     val time: Time,
     val set: Int,
-    val completed: Boolean
+    val completed: Boolean,
+    val actualReps: Int = 0,
+    val actualWeightInKg: Double? = null,
+    val rpe: Float? = null
 )
