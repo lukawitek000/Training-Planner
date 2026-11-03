@@ -14,7 +14,7 @@ import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.models.
         DbExerciseStatistics::class,
         DbExerciseAttemptStatistics::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class StatisticsDatabase : RoomDatabase() {
@@ -32,7 +32,7 @@ abstract class StatisticsDatabase : RoomDatabase() {
                             context,
                             StatisticsDatabase::class.java,
                             "Statistics Database"
-                        ).fallbackToDestructiveMigration()
+                        ).fallbackToDestructiveMigration(dropAllTables = true)
                         .build()
             }
             instance!!

@@ -15,7 +15,9 @@ internal fun TrainingStatistics.toDbTrainingStatistics(): DbTrainingWithExercise
             id = id.toString(),
             trainingPlanId = trainingPlanId.toString(),
             totalTime = totalTime.timeInMillis,
-            date = date.time
+            date = date.time,
+            note = note,
+            rpe = rpe
         ),
         exercisesStatistics = exercisesStatistics.map { it.toDbExerciseStatistics(id) }
     )
@@ -26,5 +28,7 @@ internal fun DbTrainingWithExercisesStatistics.toTrainingStatistics(): TrainingS
         trainingPlanId = TrainingPlanId(trainingStatistics.trainingPlanId),
         totalTime = Time(trainingStatistics.totalTime),
         date = Date(trainingStatistics.date),
-        exercisesStatistics = exercisesStatistics.map { it.toExerciseStatistics() }
+        exercisesStatistics = exercisesStatistics.map { it.toExerciseStatistics() },
+        note = trainingStatistics.note,
+        rpe = trainingStatistics.rpe
     )
