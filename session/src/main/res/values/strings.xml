@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- RPE Scale -->
+    <string name="rpe_scale_title">RATE OF PERCEIVED EXERTION</string>
+    <string name="rpe_scale_score_format">RPE %1$d/10</string>
+    <string name="rpe_desc_warmup">Very Light (Warmup pace, breathing easily)</string>
+    <string name="rpe_desc_light">Light / Moderate (Can hold conversation)</string>
+    <string name="rpe_desc_challenging">Challenging (4-5 reps left in the tank)</string>
+    <string name="rpe_desc_hard">Hard (1-2 reps in reserve, heavy effort)</string>
+    <string name="rpe_desc_near_limit">Near Limit (Could maybe do 1 more rep)</string>
+    <string name="rpe_desc_max_effort">Maximum Effort (Absolute limit, no reps left)</string>
+    <string name="rpe_desc_prompt">Tap a score from 1 (warmup) to 10 (maximum exertion)</string>
+
+    <!-- Stepper -->
+    <string name="stepper_decrease_cd">Decrease</string>
+    <string name="stepper_increase_cd">Increase</string>
+</resources>

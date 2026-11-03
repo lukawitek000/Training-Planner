@@ -1,0 +1,34 @@
+package com.lukasz.witkowski.training.planner.analytics.infrastructure.db.mappers
+
+import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.models.DbTrainingStatistics
+import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.models.DbTrainingWithExercisesStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
+import com.lukasz.witkowski.training.planner.shared.time.Time
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import java.util.Date
+
+internal fun TrainingStatistics.toDbTrainingStatistics(): DbTrainingWithExercisesStatistics =
+    DbTrainingWithExercisesStatistics(
+        trainingStatistics =
+        DbTrainingStatistics(
+            id = id.toString(),
+            trainingPlanId = trainingPlanId.toString(),
+            totalTime = totalTime.timeInMillis,
+            date = date.time,
+            note = note,
+            rpe = rpe
+        ),
+        exercisesStatistics = exercisesStatistics.map { it.toDbExerciseStatistics(id) }
+    )
+
+internal fun DbTrainingWithExercisesStatistics.toTrainingStatistics(): TrainingStatistics =
+    TrainingStatistics(
+        id = TrainingStatisticsId(trainingStatistics.id),
+        trainingPlanId = TrainingPlanId(trainingStatistics.trainingPlanId),
+        totalTime = Time(trainingStatistics.totalTime),
+        date = Date(trainingStatistics.date),
+        exercisesStatistics = exercisesStatistics.map { it.toExerciseStatistics() },
+        note = trainingStatistics.note,
+        rpe = trainingStatistics.rpe
+    )

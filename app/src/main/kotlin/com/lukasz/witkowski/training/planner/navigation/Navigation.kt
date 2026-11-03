@@ -31,7 +31,7 @@ import com.lukasz.witkowski.training.planner.training.presentation.editor.Traini
 import com.lukasz.witkowski.training.planner.training.presentation.editor.TrainingPlanEditorScreen
 import com.lukasz.witkowski.training.planner.training.presentation.editor.TrainingPlanEditorViewModel
 import com.lukasz.witkowski.training.planner.training.presentation.list.TrainingsScreen
-import com.lukasz.witkowski.training.planner.training.trainingSession.TrainingSessionScreen
+import com.lukasz.witkowski.training.planner.session.presentation.TrainingSessionScreen
 import com.lukasz.witkowski.training.planner.user.presentation.UserProfileScreen
 import kotlinx.serialization.serializer
 import org.koin.compose.viewmodel.koinViewModel
@@ -175,11 +175,13 @@ fun Navigation(
 //                navigateToPickExercise = { backStack.add(PickExercise) }
 //            )
 
-            entry<TrainingSession> {
-                TrainingSessionScreen(
-                    viewModel = koinViewModel(),
-                    navigateBack = { navigator.goBack() }
-                )
+            entry<TrainingSession> { key ->
+                TrainingPlannerTheme2 {
+                    TrainingSessionScreen(
+                        viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
+                        navigateBack = { navigator.goBack() }
+                    )
+                }
             }
         }
     )
