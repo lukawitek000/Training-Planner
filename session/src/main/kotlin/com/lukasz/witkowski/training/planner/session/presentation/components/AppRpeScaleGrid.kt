@@ -1,0 +1,174 @@
+package com.lukasz.witkowski.training.planner.session.presentation.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import com.lukasz.witkowski.training.planner.session.R
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
+import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
+
+/**
+ * 1-10 Rate of Perceived Exertion (RPE) rating selector with dynamic descriptive feedback.
+ */
+@Composable
+fun AppRpeScaleGrid(
+    selectedRpe: Int?,
+    onRpeSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AppCard(
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimens2.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.rpe_scale_title),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                if (selectedRpe != null) {
+                    Text(
+                        text = stringResource(R.string.rpe_scale_score_format, selectedRpe),
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+            }
+
+            // Top row: 1 to 5
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            ) {
+                (1..5).forEach { rpe ->
+                    RpeCell(
+                        value = rpe,
+                        isSelected = selectedRpe == rpe,
+                        onClick = { onRpeSelected(rpe) },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            // Bottom row: 6 to 10
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
+            ) {
+                (6..10).forEach { rpe ->
+                    RpeCell(
+                        value = rpe,
+                        isSelected = selectedRpe == rpe,
+                        onClick = { onRpeSelected(rpe) },
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+            }
+
+            val descriptor = getRpeDescription(selectedRpe)
+            Text(
+                text = descriptor,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = Dimens2.spaceXs)
+            )
+        }
+    }
+}
+
+@Composable
+private fun RpeCell(
+    value: Int,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val backgroundColor = if (isSelected) {
+        MaterialTheme.colorScheme.primaryContainer
+    } else {
+        MaterialTheme.colorScheme.surfaceContainerHighest
+    }
+    val textColor = if (isSelected) {
+        MaterialTheme.colorScheme.onPrimaryContainer
+    } else {
+        MaterialTheme.colorScheme.onSurface
+    }
+    val borderColor = if (isSelected) {
+        MaterialTheme.colorScheme.primary
+    } else {
+        MaterialTheme.colorScheme.outlineVariant
+    }
+
+    Box(
+        modifier = modifier
+            .size(Dimens2.rpeCellSize)
+            .clip(MaterialTheme.shapes.small)
+            .background(backgroundColor)
+            .border(
+                width = if (isSelected) Dimens2.mediumBorder else Dimens2.thinBorder,
+                color = borderColor,
+                shape = MaterialTheme.shapes.small
+            )
+            .clickable(
+                role = Role.RadioButton,
+                onClick = onClick
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = value.toString(),
+            style = MaterialTheme.typography.titleMedium,
+            color = textColor
+        )
+    }
+}
+
+@Composable
+private fun getRpeDescription(rpe: Int?): String = when (rpe) {
+    1, 2 -> stringResource(R.string.rpe_desc_warmup)
+    3, 4 -> stringResource(R.string.rpe_desc_light)
+    5, 6 -> stringResource(R.string.rpe_desc_challenging)
+    7, 8 -> stringResource(R.string.rpe_desc_hard)
+    9 -> stringResource(R.string.rpe_desc_near_limit)
+    10 -> stringResource(R.string.rpe_desc_max_effort)
+    else -> stringResource(R.string.rpe_desc_prompt)
+}
+
+@AppPreview
+@Composable
+private fun AppRpeScaleGridPreview() {
+    TrainingPlannerTheme2 {
+        AppRpeScaleGrid(
+            selectedRpe = 8,
+            onRpeSelected = {},
+            modifier = Modifier.padding(Dimens2.spaceMd)
+        )
+    }
+}
