@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.statistics.presentation.TrainingSessionState
+import com.lukasz.witkowski.training.planner.session.presentation.TrainingSessionState
 import com.lukasz.witkowski.training.planner.training.trainingSession.components.FabTextWithIcon
 import com.lukasz.witkowski.training.planner.ui.components.LoadingScreen
 

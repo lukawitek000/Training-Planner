@@ -30,9 +30,9 @@ import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.shared.time.formatToString
 import com.lukasz.witkowski.training.planner.shared.utils.toPercentage
-import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseAttemptStatistics
-import com.lukasz.witkowski.training.planner.statistics.domain.models.ExerciseStatistics
-import com.lukasz.witkowski.training.planner.statistics.domain.models.TrainingStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.trainingSession.components.FabTextWithIcon
