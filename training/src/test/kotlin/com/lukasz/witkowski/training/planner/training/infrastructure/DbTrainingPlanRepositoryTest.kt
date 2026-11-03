@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.training.infrastructure
 
 import android.content.Context
 import androidx.room3.Room
+import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.training.TestData
 import com.lukasz.witkowski.training.planner.training.TestData.CATEGORY_LEGS
@@ -490,6 +491,32 @@ class DbTrainingPlanRepositoryTest {
 
         val afterDelete = repository.getTrainingPlanById(emptyPlanId).first()
         assertEquals(null, afterDelete)
+    }
+
+    @Test
+    fun `exercise snapshot imageIds are saved and restored from DB`() = runTest {
+        val imageId1 = ImageId.create()
+        val imageId2 = ImageId.create()
+        val exerciseWithImages = TestData.createTrainingExercise(
+            exercise = TestData.createExerciseSnapshot(
+                imageIds = listOf(imageId1, imageId2)
+            )
+        )
+        val trainingPlan = TestData.createTrainingPlan(
+            exercises = listOf(exerciseWithImages)
+        )
+
+        val saveResult = repository.save(
+            trainingPlanConfiguration = trainingPlan.toTrainingPlanConfiguration(),
+            id = trainingPlan.id
+        )
+        assertTrue(saveResult.isSuccess)
+
+        val loaded = repository.getTrainingPlanById(trainingPlan.id).first()
+        assertNotNull(loaded)
+        val loadedExercise = loaded.exercises.first()
+        assertEquals(listOf(imageId1, imageId2), loadedExercise.exercise.imageIds)
+        assertEquals(imageId1, loadedExercise.exercise.imageId)
     }
 
     private suspend fun givenSaveTrainingPlansList(preSave: (TrainingPlan) -> Unit = {}) {

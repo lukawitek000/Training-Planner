@@ -12,6 +12,7 @@ import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryNam
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+import kotlin.time.Duration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -79,6 +80,7 @@ class TrainingExerciseConfigurationViewModel(
             repetitions = parameters.value.reps!!,
             restTime = parameters.value.restTime!!,
             weightInKg = parameters.value.weightInKg,
+            time = parameters.value.time ?: Duration.ZERO
         )
     }
 
@@ -86,6 +88,7 @@ class TrainingExerciseConfigurationViewModel(
         id = id,
         name = name,
         description = description,
-        categories = categories.map { ExerciseCategoryName(it.name) }.toSet()
+        categories = categories.map { ExerciseCategoryName(it.name) }.toSet(),
+        imageIds = images.map { it.imageId }
     )
 }
