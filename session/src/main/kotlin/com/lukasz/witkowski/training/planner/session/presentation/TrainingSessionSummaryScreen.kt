@@ -21,15 +21,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
@@ -59,20 +57,14 @@ import kotlin.time.Instant
  */
 @Composable
 fun TrainingSessionSummaryScreen(
-    statistics: TrainingStatistics,
-    trainingPlan: TrainingPlan,
-    onSaveWorkout: (note: String?, rpe: Int?) -> Unit,
+    state: TrainingSessionState.SummaryState,
+    onRpeSelected: (Int) -> Unit,
+    onNotesChanged: (String) -> Unit,
+    onSaveWorkout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
-    var selectedRpe by remember { mutableStateOf<Int?>(statistics.rpe) }
-    var notes by remember { mutableStateOf(statistics.note ?: "") }
-
-    val allAttempts = statistics.exercisesStatistics.flatMap { it.attemptsStatistics }
-    val totalVolumeKg = allAttempts.sumOf { (it.actualWeightInKg ?: 0.0) * it.actualReps }
-    val totalReps = allAttempts.sumOf { it.actualReps }
-    val completedSetsCount = allAttempts.count { it.completed }
-    val totalSetsCount = allAttempts.size
+    val statistics = state.statistics
 
     Column(
         modifier = modifier
@@ -83,47 +75,45 @@ fun TrainingSessionSummaryScreen(
     ) {
         // Celebration Banner
         CelebrationBanner(
-            planTitle = trainingPlan.title,
+            planTitle = state.trainingPlan.title,
             date = statistics.date
         )
 
         // Bento Metrics Grid
         BentoMetricsGrid(
             totalTime = statistics.totalTime,
-            volumeKg = totalVolumeKg,
-            completedSets = completedSetsCount,
-            totalSets = totalSetsCount,
-            totalReps = totalReps
+            volumeKg = statistics.totalVolumeKg,
+            completedSets = statistics.completedSetsCount,
+            totalSets = statistics.totalSetsCount,
+            totalReps = statistics.totalReps
         )
 
         // RPE Assessment Grid
         AppRpeScaleGrid(
-            selectedRpe = selectedRpe,
-            onRpeSelected = { selectedRpe = it }
+            selectedRpe = state.selectedOverallRpe,
+            onRpeSelected = onRpeSelected
         )
 
         // Workout Notes Input
         AppLabeledTextField(
-            label = "WORKOUT NOTES",
-            value = notes,
-            onValueChange = { notes = it },
-            placeholder = "Add observations, fatigue level, or progression goals...",
+            label = stringResource(R.string.session_summary_notes_label),
+            value = state.notes,
+            onValueChange = onNotesChanged,
+            placeholder = stringResource(R.string.session_summary_notes_placeholder),
             singleLine = false
         )
 
         // Exercises Breakdown Section
         ExercisesBreakdownSection(
             statistics = statistics,
-            trainingPlan = trainingPlan
+            trainingPlan = state.trainingPlan
         )
 
         // Save Button
         AppPrimaryButton(
-            text = "Save & Finish Workout",
+            text = stringResource(R.string.session_save_and_finish),
             leadingIcon = Icons.Default.Save,
-            onClick = {
-                onSaveWorkout(notes.ifBlank { null }, selectedRpe)
-            }
+            onClick = onSaveWorkout
         )
     }
 }
@@ -144,14 +134,14 @@ private fun CelebrationBanner(planTitle: String, date: Date, modifier: Modifier 
         ) {
             Icon(
                 imageVector = Icons.Default.EmojiEvents,
-                contentDescription = "Workout Complete",
+                contentDescription = stringResource(R.string.session_workout_complete),
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier.size(Dimens2.iconSize30)
             )
         }
 
         Text(
-            text = "WORKOUT COMPLETE!",
+            text = stringResource(R.string.session_workout_complete),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
@@ -184,15 +174,19 @@ private fun BentoMetricsGrid(
             horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
         ) {
             AppBentoTile(
-                label = "Total Duration",
+                label = stringResource(R.string.session_bento_duration_label),
                 value = formatDuration(totalTime),
-                subtitle = "Active + rest",
+                subtitle = stringResource(R.string.session_bento_duration_sub),
                 modifier = Modifier.weight(1f)
             )
             AppBentoTile(
-                label = "Total Volume",
-                value = if (volumeKg > 0) "${volumeKg.toInt()} kg" else "Bodyweight",
-                subtitle = "Sum of all sets",
+                label = stringResource(R.string.session_bento_volume_label),
+                value = if (volumeKg > 0) {
+                    stringResource(R.string.session_kg_suffix, volumeKg.toInt())
+                } else {
+                    stringResource(R.string.session_bodyweight)
+                },
+                subtitle = stringResource(R.string.session_bento_volume_sub),
                 modifier = Modifier.weight(1f)
             )
         }
@@ -202,15 +196,15 @@ private fun BentoMetricsGrid(
             horizontalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
         ) {
             AppBentoTile(
-                label = "Sets Completed",
+                label = stringResource(R.string.session_bento_sets_label),
                 value = "$completedSets / $totalSets",
-                subtitle = "Total volume sets",
+                subtitle = stringResource(R.string.session_bento_sets_sub),
                 modifier = Modifier.weight(1f)
             )
             AppBentoTile(
-                label = "Total Repetitions",
-                value = "$totalReps reps",
-                subtitle = "Across all exercises",
+                label = stringResource(R.string.session_bento_reps_label),
+                value = stringResource(R.string.session_reps_suffix, totalReps),
+                subtitle = stringResource(R.string.session_bento_reps_sub),
                 modifier = Modifier.weight(1f)
             )
         }
@@ -228,15 +222,14 @@ private fun ExercisesBreakdownSection(
         verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
     ) {
         Text(
-            text = "EXERCISE BREAKDOWN",
+            text = stringResource(R.string.session_exercise_breakdown),
             style = MaterialTheme.typography.labelSmall,
             color = MaterialTheme.colorScheme.primary
         )
 
         statistics.exercisesStatistics.forEach { exerciseStats ->
             val exercise = trainingPlan.exercises.firstOrNull {
-                it.id ==
-                    exerciseStats.trainingExerciseId
+                it.id == exerciseStats.trainingExerciseId
             }
             val exerciseName = exercise?.exercise?.name ?: "Exercise"
 
@@ -257,32 +250,59 @@ private fun ExercisesBreakdownSection(
                         color = MaterialTheme.colorScheme.onSurface
                     )
 
-                    exerciseStats.attemptsStatistics.forEachIndexed { index, attempt ->
+                    exerciseStats.attemptsStatistics.forEach { attempt ->
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            val setLabel = stringResource(
+                                R.string.session_set_format,
+                                attempt.set
+                            )
                             Text(
-                                text = "Set ${attempt.set}",
+                                text = setLabel,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
 
                             val weight = attempt.actualWeightInKg
+                            val weightSuffix =
+                                if (weight != null && weight > 0.0) {
+                                    stringResource(
+                                        R.string.session_target_weight_suffix,
+                                        weight.toString()
+                                    )
+                                } else {
+                                    ""
+                                }
+                            val repsText = stringResource(
+                                R.string.session_reps_suffix,
+                                attempt.actualReps
+                            )
                             Text(
-                                text = "${attempt.actualReps} reps" +
-                                    if (weight != null && weight > 0.0) " • $weight kg" else "",
+                                text = repsText + weightSuffix,
                                 style = MaterialTheme.typography.bodyMedium,
                                 fontWeight = FontWeight.Medium,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
 
+                            val isCompleted = attempt.completed
                             val icon =
-                                if (attempt.completed) Icons.Default.Check else Icons.Default.Close
-                            val desc = if (attempt.completed) "Completed" else "Skipped"
+                                if (isCompleted) {
+                                    Icons.Default.Check
+                                } else {
+                                    Icons.Default.Close
+                                }
+                            val descRes =
+                                if (isCompleted) {
+                                    R.string.session_status_completed
+                                } else {
+                                    R.string.session_status_skipped
+                                }
+                            val desc = stringResource(descRes)
                             val tint =
-                                if (attempt.completed) {
+                                if (isCompleted) {
                                     MaterialTheme.colorScheme.primary
                                 } else {
                                     MaterialTheme.colorScheme.error
@@ -372,9 +392,13 @@ private fun TrainingSessionSummaryScreenPreview() {
 
     TrainingPlannerTheme2 {
         TrainingSessionSummaryScreen(
-            statistics = stats,
-            trainingPlan = plan,
-            onSaveWorkout = { _, _ -> }
+            state = TrainingSessionState.SummaryState(
+                statistics = stats,
+                trainingPlan = plan
+            ),
+            onRpeSelected = {},
+            onNotesChanged = {},
+            onSaveWorkout = {}
         )
     }
 }

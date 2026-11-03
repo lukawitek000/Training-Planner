@@ -14,4 +14,69 @@
     <!-- Stepper -->
     <string name="stepper_decrease_cd">Decrease</string>
     <string name="stepper_increase_cd">Increase</string>
+
+    <!-- Workout Session Coordinator -->
+    <string name="session_exit_dialog_title">Exit Workout Session?</string>
+    <string name="session_exit_dialog_message">Are you sure you want to exit? Your progress in this workout will not be saved.</string>
+    <string name="session_exit_dialog_confirm">Exit Workout</string>
+    <string name="session_exit_dialog_dismiss">Continue</string>
+    <string name="session_loading_title">Loading Session...</string>
+    <string name="session_loading_subtitle">Preparing workout plan progression and exercise metrics.</string>
+
+    <!-- Active Exercise Screen -->
+    <string name="session_category_general">General</string>
+    <string name="session_exercise_progress_format">EXERCISE %1$d OF %2$d</string>
+    <string name="session_up_next_format">Up next: %1$s (%2$d sets)</string>
+    <string name="session_active_set_format">ACTIVE SET %1$d</string>
+    <string name="session_target_hold_format">%1$d s hold</string>
+    <string name="session_target_reps_format">%1$d reps</string>
+    <string name="session_target_summary_format">Target: %1$s</string>
+    <string name="session_target_weight_suffix">" • %1$s kg"</string>
+    <string name="session_reps_label">reps</string>
+    <string name="session_kg_label">kg</string>
+    <string name="session_sec_hold_label">sec hold</string>
+    <string name="session_timer_remaining_format">%1$02d:%2$02d remaining</string>
+    <string name="session_pause_hold_timer">Pause Hold Timer</string>
+    <string name="session_start_hold_timer">Start Hold Timer</string>
+    <string name="session_reset_hold_timer">Reset Hold Timer</string>
+    <string name="session_add_extra_set">Add Extra Set</string>
+    <string name="session_skip_exercise">Skip Exercise</string>
+    <string name="session_complete_set">Complete Set</string>
+    <string name="session_skip_set">Skip Set</string>
+    <string name="session_completed_set_cd">Completed set %1$d</string>
+
+    <!-- Rest Interval Screen -->
+    <string name="session_rest_interval">REST INTERVAL</string>
+    <string name="session_rest_remaining">Remaining</string>
+    <string name="session_feedback_prompt">HOW DID THAT SET FEEL?</string>
+    <string name="session_feedback_easy">Easy</string>
+    <string name="session_feedback_good">Good</string>
+    <string name="session_feedback_hard">Hard</string>
+    <string name="session_feedback_limit">Limit</string>
+    <string name="session_up_next">UP NEXT</string>
+    <string name="session_set_progress_format">Set %1$d of %2$d</string>
+    <string name="session_following_format">Following: %1$s (%2$d sets)</string>
+    <string name="session_start_next_set_now">Start Next Set Now</string>
+    <string name="session_skip_rest">Skip Rest</string>
+
+    <!-- Summary Screen -->
+    <string name="session_workout_complete">WORKOUT COMPLETE!</string>
+    <string name="session_summary_notes_label">WORKOUT NOTES</string>
+    <string name="session_summary_notes_placeholder">Add observations, fatigue level, or progression goals...</string>
+    <string name="session_save_and_finish">Save &amp; Finish Workout</string>
+    <string name="session_bento_duration_label">Total Duration</string>
+    <string name="session_bento_duration_sub">Active + rest</string>
+    <string name="session_bento_volume_label">Total Volume</string>
+    <string name="session_bento_volume_sub">Sum of all sets</string>
+    <string name="session_bento_sets_label">Sets Completed</string>
+    <string name="session_bento_sets_sub">Total volume sets</string>
+    <string name="session_bento_reps_label">Total Repetitions</string>
+    <string name="session_bento_reps_sub">Across all exercises</string>
+    <string name="session_bodyweight">Bodyweight</string>
+    <string name="session_reps_suffix">%1$d reps</string>
+    <string name="session_kg_suffix">%1$d kg</string>
+    <string name="session_exercise_breakdown">EXERCISE BREAKDOWN</string>
+    <string name="session_set_format">Set %1$d</string>
+    <string name="session_status_completed">Completed</string>
+    <string name="session_status_skipped">Skipped</string>
 </resources>

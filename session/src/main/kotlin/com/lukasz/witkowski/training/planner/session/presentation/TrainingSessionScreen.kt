@@ -13,10 +13,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import com.lukasz.witkowski.training.planner.session.presentation.TrainingSessionState
+import androidx.compose.ui.res.stringResource
+import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
+import com.lukasz.witkowski.training.planner.shared.time.Time
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.dialogs.AppConfirmationDialog
 import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingState
+import kotlin.time.Duration
 
 /**
  * Main coordinator screen for the workout session.
@@ -38,12 +42,10 @@ fun TrainingSessionScreen(
 
     if (showExitConfirmationDialog) {
         AppConfirmationDialog(
-            title = "Exit Workout Session?",
-            message =
-            "Are you sure you want to exit? " +
-                "Your progress in this workout will not be saved.",
-            confirmText = "Exit Workout",
-            dismissText = "Continue",
+            title = stringResource(R.string.session_exit_dialog_title),
+            message = stringResource(R.string.session_exit_dialog_message),
+            confirmText = stringResource(R.string.session_exit_dialog_confirm),
+            dismissText = stringResource(R.string.session_exit_dialog_dismiss),
             isDestructive = true,
             onConfirm = {
                 // TODO: Stop foreground service and cancel ongoing notifications before exiting session
@@ -66,52 +68,123 @@ fun TrainingSessionScreen(
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                when (val state = trainingSessionState) {
-                    is TrainingSessionState.ExerciseState -> {
-                        TrainingExerciseScreen(
-                            state = state,
-                            onCompleteSet = { reps, weight, time ->
-                                viewModel.completed(
-                                    actualReps = reps,
-                                    actualWeightInKg = weight,
-                                    actualTime = time
-                                )
-                            },
-                            onSkipSet = { viewModel.skip() },
-                            onSkipExercise = { viewModel.skipExercise() },
-                            onAddExtraSet = { viewModel.addExtraSet() }
-                        )
+                TrainingSessionContent(
+                    trainingSessionState = trainingSessionState,
+                    time = time,
+                    onRepsChanged = viewModel::onRepsChanged,
+                    onWeightChanged = viewModel::onWeightChanged,
+                    onHoldDurationChanged = viewModel::onHoldDurationChanged,
+                    onToggleHoldTimer = viewModel::toggleHoldTimer,
+                    onResetHoldTimer = viewModel::resetHoldTimer,
+                    onCompleteSet = viewModel::completed,
+                    onSkipSet = viewModel::skip,
+                    onSkipExercise = viewModel::skipExercise,
+                    onAddExtraSet = viewModel::addExtraSet,
+                    onFeedbackSelected = viewModel::onFeedbackSelected,
+                    onStartNextSet = viewModel::completed,
+                    onSkipRest = viewModel::skip,
+                    onSummaryRpeSelected = viewModel::onSummaryRpeSelected,
+                    onSummaryNotesChanged = viewModel::onSummaryNotesChanged,
+                    onSaveWorkout = {
+                        viewModel.saveStatistics()
+                        navigateBack()
                     }
-
-                    is TrainingSessionState.RestTimeState -> {
-                        RestTimeScreen(
-                            state = state,
-                            timeLeft = time,
-                            totalTime = state.time,
-                            onStartNextSet = { viewModel.completed() },
-                            onSkipRest = { viewModel.skip() }
-                        )
-                    }
-
-                    is TrainingSessionState.SummaryState -> {
-                        TrainingSessionSummaryScreen(
-                            statistics = state.statistics,
-                            trainingPlan = state.trainingPlan,
-                            onSaveWorkout = { note, rpe ->
-                                viewModel.saveStatistics(note, rpe)
-                                navigateBack()
-                            }
-                        )
-                    }
-
-                    else -> {
-                        AppLoadingState(
-                            title = "Loading Session...",
-                            subtitle = "Preparing workout plan progression and exercise metrics."
-                        )
-                    }
-                }
+                )
             }
         }
+    }
+}
+
+@Composable
+fun TrainingSessionContent(
+    trainingSessionState: TrainingSessionState,
+    time: Time,
+    onRepsChanged: (Int) -> Unit,
+    onWeightChanged: (Double) -> Unit,
+    onHoldDurationChanged: (Duration) -> Unit,
+    onToggleHoldTimer: () -> Unit,
+    onResetHoldTimer: () -> Unit,
+    onCompleteSet: () -> Unit,
+    onSkipSet: () -> Unit,
+    onSkipExercise: () -> Unit,
+    onAddExtraSet: () -> Unit,
+    onFeedbackSelected: (Int) -> Unit,
+    onStartNextSet: () -> Unit,
+    onSkipRest: () -> Unit,
+    onSummaryRpeSelected: (Int) -> Unit,
+    onSummaryNotesChanged: (String) -> Unit,
+    onSaveWorkout: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(modifier = modifier.fillMaxSize()) {
+        when (val state = trainingSessionState) {
+            is TrainingSessionState.ExerciseState -> {
+                TrainingExerciseScreen(
+                    state = state,
+                    onRepsChanged = onRepsChanged,
+                    onWeightChanged = onWeightChanged,
+                    onHoldDurationChanged = onHoldDurationChanged,
+                    onToggleHoldTimer = onToggleHoldTimer,
+                    onResetHoldTimer = onResetHoldTimer,
+                    onCompleteSet = onCompleteSet,
+                    onSkipSet = onSkipSet,
+                    onSkipExercise = onSkipExercise,
+                    onAddExtraSet = onAddExtraSet
+                )
+            }
+
+            is TrainingSessionState.RestTimeState -> {
+                RestTimeScreen(
+                    state = state,
+                    timeLeft = time,
+                    totalTime = state.time,
+                    onFeedbackSelected = onFeedbackSelected,
+                    onStartNextSet = onStartNextSet,
+                    onSkipRest = onSkipRest
+                )
+            }
+
+            is TrainingSessionState.SummaryState -> {
+                TrainingSessionSummaryScreen(
+                    state = state,
+                    onRpeSelected = onSummaryRpeSelected,
+                    onNotesChanged = onSummaryNotesChanged,
+                    onSaveWorkout = onSaveWorkout
+                )
+            }
+
+            else -> {
+                AppLoadingState(
+                    title = stringResource(R.string.session_loading_title),
+                    subtitle = stringResource(R.string.session_loading_subtitle)
+                )
+            }
+        }
+    }
+}
+
+@AppPreview
+@Composable
+private fun TrainingSessionContentLoadingPreview() {
+    TrainingPlannerTheme2 {
+        TrainingSessionContent(
+            trainingSessionState = TrainingSessionState.IdleState,
+            time = Time.ZERO,
+            onRepsChanged = {},
+            onWeightChanged = {},
+            onHoldDurationChanged = {},
+            onToggleHoldTimer = {},
+            onResetHoldTimer = {},
+            onCompleteSet = {},
+            onSkipSet = {},
+            onSkipExercise = {},
+            onAddExtraSet = {},
+            onFeedbackSelected = {},
+            onStartNextSet = {},
+            onSkipRest = {},
+            onSummaryRpeSelected = {},
+            onSummaryNotesChanged = {},
+            onSaveWorkout = {}
+        )
     }
 }

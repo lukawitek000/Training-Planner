@@ -25,7 +25,6 @@ dependencies {
     implementation(libs.timber)
 
     implementation(libs.coil.compose)
-    implementation(libs.bytebeats.charts)
 
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)

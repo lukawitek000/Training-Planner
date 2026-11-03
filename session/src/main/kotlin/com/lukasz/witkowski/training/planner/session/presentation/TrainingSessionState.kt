@@ -8,12 +8,12 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlin.time.Duration
 
 sealed class TrainingSessionState(
-    val exercise: TrainingExercise? = null,
-    val time: Time = Time.ZERO
+    open val exercise: TrainingExercise? = null,
+    open val time: Time = Time.ZERO
 ) {
-    object IdleState : TrainingSessionState()
+    data object IdleState : TrainingSessionState()
 
-    class ExerciseState(
+    data class ExerciseState(
         val currentExercise: TrainingExercise,
         val currentSet: Int = 1,
         val totalSets: Int = currentExercise.sets,
@@ -24,19 +24,25 @@ sealed class TrainingSessionState(
         val exerciseIndex: Int = 1,
         val totalExercises: Int = 1,
         val setsLeftInWorkout: Int = 0,
-        val followingExerciseName: String? = null
+        val followingExercise: TrainingExercise? = null,
+        val selectedReps: Int = targetReps,
+        val selectedWeightInKg: Double? = targetWeightInKg,
+        val selectedHoldDuration: Duration = targetTime,
+        val remainingHoldTime: Duration = targetTime,
+        val isHoldTimerRunning: Boolean = false
     ) : TrainingSessionState(currentExercise, Time.ZERO) {
         val isIsometric: Boolean
             get() = targetTime > Duration.ZERO
     }
 
-    class RestTimeState(
+    data class RestTimeState(
         val nextExercise: TrainingExercise,
         val restTime: Time,
         val nextSet: Int = 1,
         val totalSetsForNextExercise: Int = nextExercise.sets,
         val lastCompletedAttempt: ExerciseAttemptStatistics? = null,
-        val followingExerciseName: String? = null
+        val followingExercise: TrainingExercise? = null,
+        val selectedFeedback: Int? = null
     ) : TrainingSessionState(nextExercise, restTime)
 
     data class SummaryState(

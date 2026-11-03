@@ -11,6 +11,7 @@ import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
 import org.junit.Rule
@@ -36,12 +37,19 @@ class RestTimeScreenTest {
             weightInKg = 100,
             restTime = 90.seconds
         )
+        val followingExercise = TrainingExercise(
+            id = TrainingExerciseId.create(),
+            exercise = createDummyExercise("Romanian Deadlift"),
+            sets = 3,
+            repetitions = 10,
+            restTime = 60.seconds
+        )
         val state = RestTimeState(
             nextExercise = nextExercise,
             restTime = Time(90000L),
             nextSet = 2,
             totalSetsForNextExercise = 4,
-            followingExerciseName = "Romanian Deadlift"
+            followingExercise = followingExercise
         )
 
         composeTestRule.setContent {
@@ -50,6 +58,7 @@ class RestTimeScreenTest {
                     state = state,
                     timeLeft = Time(45000L),
                     totalTime = Time(90000L),
+                    onFeedbackSelected = {},
                     onStartNextSet = {},
                     onSkipRest = {}
                 )
@@ -63,9 +72,14 @@ class RestTimeScreenTest {
         composeTestRule.onNodeWithText("UP NEXT").performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText("Barbell Squat").performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText("Set 2 of 4").performScrollTo().assertIsDisplayed()
-        composeTestRule.onNodeWithText("8 reps • 100 kg").performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText(
-            "Following: Romanian Deadlift"
+            "8 reps",
+            substring = true
+        ).performScrollTo().assertIsDisplayed()
+        composeTestRule.onNodeWithText("100 kg", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText(
+            "Romanian Deadlift",
+            substring = true
         ).performScrollTo().assertIsDisplayed()
     }
 
@@ -85,12 +99,15 @@ class RestTimeScreenTest {
             totalSetsForNextExercise = 3
         )
 
+        var selectedRpe: Int? = null
+
         composeTestRule.setContent {
             TrainingPlannerTheme2 {
                 RestTimeScreen(
                     state = state,
                     timeLeft = Time(60000L),
                     totalTime = Time(60000L),
+                    onFeedbackSelected = { selectedRpe = it },
                     onStartNextSet = {},
                     onSkipRest = {}
                 )
@@ -98,22 +115,22 @@ class RestTimeScreenTest {
         }
 
         composeTestRule.onNodeWithText("Good").assertIsDisplayed().performClick()
-        composeTestRule.onNodeWithText("Hard").assertIsDisplayed().performClick()
+        assertEquals(7, selectedRpe)
     }
 
     @Test
-    fun triggersStartNextSetAndSkipRestCallbacks() {
+    fun triggersStartNextSetAndSkipRest() {
         val nextExercise = TrainingExercise(
             id = TrainingExerciseId.create(),
-            exercise = createDummyExercise("Bench Press"),
+            exercise = createDummyExercise("Overhead Press"),
             sets = 3,
-            repetitions = 10,
+            repetitions = 6,
             restTime = 60.seconds
         )
         val state = RestTimeState(
             nextExercise = nextExercise,
             restTime = Time(60000L),
-            nextSet = 3,
+            nextSet = 1,
             totalSetsForNextExercise = 3
         )
 
@@ -124,8 +141,9 @@ class RestTimeScreenTest {
             TrainingPlannerTheme2 {
                 RestTimeScreen(
                     state = state,
-                    timeLeft = Time(30000L),
+                    timeLeft = Time(60000L),
                     totalTime = Time(60000L),
+                    onFeedbackSelected = {},
                     onStartNextSet = { startNextSetClicked = true },
                     onSkipRest = { skipRestClicked = true }
                 )

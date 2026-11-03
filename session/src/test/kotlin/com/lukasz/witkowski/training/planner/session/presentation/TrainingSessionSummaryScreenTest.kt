@@ -20,6 +20,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import java.util.Date
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
 import org.junit.Rule
 import org.junit.Test
@@ -76,12 +77,18 @@ class TrainingSessionSummaryScreenTest {
             )
         )
 
+        val state = TrainingSessionState.SummaryState(
+            statistics = statistics,
+            trainingPlan = plan
+        )
+
         composeTestRule.setContent {
             TrainingPlannerTheme2 {
                 TrainingSessionSummaryScreen(
-                    statistics = statistics,
-                    trainingPlan = plan,
-                    onSaveWorkout = { _, _ -> }
+                    state = state,
+                    onRpeSelected = {},
+                    onNotesChanged = {},
+                    onSaveWorkout = {}
                 )
             }
         }
@@ -118,18 +125,22 @@ class TrainingSessionSummaryScreenTest {
             exercisesStatistics = emptyList()
         )
 
-        var savedNote: String? = null
-        var savedRpe: Int? = null
+        var selectedRpe: Int? = null
+        var notes = ""
+        var savedCalled = false
 
         composeTestRule.setContent {
             TrainingPlannerTheme2 {
                 TrainingSessionSummaryScreen(
-                    statistics = statistics,
-                    trainingPlan = plan,
-                    onSaveWorkout = { note, rpe ->
-                        savedNote = note
-                        savedRpe = rpe
-                    }
+                    state = TrainingSessionState.SummaryState(
+                        statistics = statistics,
+                        trainingPlan = plan,
+                        selectedOverallRpe = selectedRpe,
+                        notes = notes
+                    ),
+                    onRpeSelected = { selectedRpe = it },
+                    onNotesChanged = { notes = it },
+                    onSaveWorkout = { savedCalled = true }
                 )
             }
         }
@@ -142,7 +153,8 @@ class TrainingSessionSummaryScreenTest {
 
         composeTestRule.onNodeWithText("Save & Finish Workout").performScrollTo().performClick()
 
-        assertEquals("Hit target reps with clean form", savedNote)
-        assertEquals(8, savedRpe)
+        assertEquals("Hit target reps with clean form", notes)
+        assertEquals(8, selectedRpe)
+        assertTrue(savedCalled)
     }
 }

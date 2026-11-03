@@ -29,18 +29,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableDoubleStateOf
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import com.lukasz.witkowski.training.planner.session.presentation.TrainingSessionState
+import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppIntStepper
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppStepper
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
@@ -57,8 +51,6 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 
 /**
  * Active workout session screen displaying current exercise, offline image illustration,
@@ -67,45 +59,18 @@ import kotlinx.coroutines.isActive
 @Composable
 fun TrainingExerciseScreen(
     state: TrainingSessionState.ExerciseState,
-    onCompleteSet: (actualReps: Int, actualWeight: Double?, actualTime: Duration?) -> Unit,
+    onRepsChanged: (Int) -> Unit,
+    onWeightChanged: (Double) -> Unit,
+    onHoldDurationChanged: (Duration) -> Unit,
+    onToggleHoldTimer: () -> Unit,
+    onResetHoldTimer: () -> Unit,
+    onCompleteSet: () -> Unit,
     onSkipSet: () -> Unit,
     onSkipExercise: () -> Unit,
     onAddExtraSet: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
-
-    var reps by remember(state.currentExercise.id, state.currentSet) {
-        mutableIntStateOf(state.targetReps)
-    }
-    var weight by remember(state.currentExercise.id, state.currentSet) {
-        mutableDoubleStateOf(state.targetWeightInKg ?: 0.0)
-    }
-    var holdSeconds by remember(state.currentExercise.id, state.currentSet) {
-        mutableIntStateOf(state.targetTime.inWholeSeconds.toInt())
-    }
-    var isHoldTimerRunning by remember(state.currentExercise.id, state.currentSet) {
-        mutableStateOf(false)
-    }
-    var countdownRemaining by remember(state.currentExercise.id, state.currentSet) {
-        mutableIntStateOf(state.targetTime.inWholeSeconds.toInt())
-    }
-
-    LaunchedEffect(isHoldTimerRunning, state.currentExercise.id, state.currentSet) {
-        if (isHoldTimerRunning) {
-            while (isActive && countdownRemaining > 0) {
-                delay(1000L)
-                countdownRemaining--
-                holdSeconds =
-                    (state.targetTime.inWholeSeconds.toInt() - countdownRemaining).coerceAtLeast(0)
-            }
-            if (countdownRemaining == 0) {
-                isHoldTimerRunning = false
-                holdSeconds = state.targetTime.inWholeSeconds.toInt()
-                // TODO: Play audio chime and trigger haptic vibration when isometric hold countdown completes
-            }
-        }
-    }
 
     Column(
         modifier = modifier
@@ -120,7 +85,7 @@ fun TrainingExerciseScreen(
             categories = state.currentExercise.exercise.categories.map { it.name },
             exerciseIndex = state.exerciseIndex,
             totalExercises = state.totalExercises,
-            followingExerciseName = state.followingExerciseName
+            followingExercise = state.followingExercise
         )
 
         // Exercise Illustration Hero Card
@@ -160,60 +125,67 @@ fun TrainingExerciseScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = "ACTIVE SET ${state.currentSet}",
+                        text = stringResource(R.string.session_active_set_format, state.currentSet),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    val targetSummary = if (state.isIsometric) {
-                        "${state.targetTime.inWholeSeconds}s hold"
-                    } else {
-                        "${state.targetReps} reps"
-                    }
+                    val targetMetric =
+                        if (state.isIsometric) {
+                            stringResource(
+                                R.string.session_target_hold_format,
+                                state.targetTime.inWholeSeconds
+                            )
+                        } else {
+                            stringResource(
+                                R.string.session_target_reps_format,
+                                state.targetReps
+                            )
+                        }
+                    val weight = state.targetWeightInKg
+                    val weightSuffix =
+                        if (weight != null && weight > 0.0) {
+                            stringResource(
+                                R.string.session_target_weight_suffix,
+                                weight.toString()
+                            )
+                        } else {
+                            ""
+                        }
+                    val summary = stringResource(
+                        R.string.session_target_summary_format,
+                        targetMetric
+                    )
                     Text(
-                        text = "Target: $targetSummary" +
-                            if (state.targetWeightInKg != null &&
-                                state.targetWeightInKg > 0.0
-                            ) {
-                                " • ${state.targetWeightInKg} kg"
-                            } else {
-                                ""
-                            },
+                        text = summary + weightSuffix,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
 
                 if (state.isIsometric) {
-                    // Isometric Hold Timer & Stepper Controls
                     IsometricHoldControls(
-                        countdownRemaining = countdownRemaining,
-                        isHoldTimerRunning = isHoldTimerRunning,
-                        onToggleTimer = { isHoldTimerRunning = !isHoldTimerRunning },
-                        onResetTimer = {
-                            isHoldTimerRunning = false
-                            countdownRemaining = state.targetTime.inWholeSeconds.toInt()
-                            holdSeconds = state.targetTime.inWholeSeconds.toInt()
-                        },
-                        holdSeconds = holdSeconds,
-                        onHoldSecondsChange = { holdSeconds = it }
+                        countdownRemaining = state.remainingHoldTime.inWholeSeconds.toInt(),
+                        isHoldTimerRunning = state.isHoldTimerRunning,
+                        onToggleTimer = onToggleHoldTimer,
+                        onResetTimer = onResetHoldTimer,
+                        holdSeconds = state.selectedHoldDuration.inWholeSeconds.toInt(),
+                        onHoldSecondsChange = { onHoldDurationChanged(it.seconds) }
                     )
                 } else {
-                    // Reps Stepper
                     AppIntStepper(
-                        value = reps,
-                        onValueChange = { reps = it },
-                        label = "reps",
+                        value = state.selectedReps,
+                        onValueChange = onRepsChanged,
+                        label = stringResource(R.string.session_reps_label),
                         minValue = 0
                     )
                 }
 
-                // Weight Stepper
                 AppStepper(
-                    value = weight,
-                    onValueChange = { weight = it },
+                    value = state.selectedWeightInKg ?: 0.0,
+                    onValueChange = onWeightChanged,
                     step = 2.5,
-                    label = "kg",
+                    label = stringResource(R.string.session_kg_label),
                     minValue = 0.0
                 )
             }
@@ -226,14 +198,14 @@ fun TrainingExerciseScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AppTertiaryButton(
-                text = "Add Extra Set",
+                text = stringResource(R.string.session_add_extra_set),
                 leadingIcon = Icons.Default.Add,
                 onClick = onAddExtraSet,
                 modifier = Modifier.weight(1f)
             )
 
             AppTertiaryButton(
-                text = "Skip Exercise",
+                text = stringResource(R.string.session_skip_exercise),
                 leadingIcon = Icons.Default.FastForward,
                 onClick = onSkipExercise,
                 modifier = Modifier.weight(1f)
@@ -248,18 +220,13 @@ fun TrainingExerciseScreen(
             verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
         ) {
             AppPrimaryButton(
-                text = "Complete Set",
+                text = stringResource(R.string.session_complete_set),
                 leadingIcon = Icons.Default.Check,
-                onClick = {
-                    val actualReps = if (state.isIsometric) 1 else reps
-                    val actualWeight = if (weight > 0.0) weight else null
-                    val actualTime = if (state.isIsometric) holdSeconds.seconds else null
-                    onCompleteSet(actualReps, actualWeight, actualTime)
-                }
+                onClick = onCompleteSet
             )
 
             AppSecondaryButton(
-                text = "Skip Set",
+                text = stringResource(R.string.session_skip_set),
                 leadingIcon = Icons.Default.SkipNext,
                 onClick = onSkipSet
             )
@@ -281,7 +248,6 @@ private fun IsometricHoldControls(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
     ) {
-        // Live Hold Countdown Bar
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -302,7 +268,8 @@ private fun IsometricHoldControls(
                     modifier = Modifier.size(Dimens2.iconSize24)
                 )
                 Text(
-                    text = "%02d:%02d remaining".format(
+                    text = stringResource(
+                        R.string.session_timer_remaining_format,
                         countdownRemaining / 60,
                         countdownRemaining % 60
                     ),
@@ -318,8 +285,18 @@ private fun IsometricHoldControls(
             ) {
                 IconButton(onClick = onToggleTimer) {
                     val icon =
-                        if (isHoldTimerRunning) Icons.Default.Pause else Icons.Default.PlayArrow
-                    val desc = if (isHoldTimerRunning) "Pause Hold Timer" else "Start Hold Timer"
+                        if (isHoldTimerRunning) {
+                            Icons.Default.Pause
+                        } else {
+                            Icons.Default.PlayArrow
+                        }
+                    val descRes =
+                        if (isHoldTimerRunning) {
+                            R.string.session_pause_hold_timer
+                        } else {
+                            R.string.session_start_hold_timer
+                        }
+                    val desc = stringResource(descRes)
                     Icon(
                         imageVector = icon,
                         contentDescription = desc,
@@ -329,19 +306,18 @@ private fun IsometricHoldControls(
                 IconButton(onClick = onResetTimer) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
-                        contentDescription = "Reset Hold Timer",
+                        contentDescription = stringResource(R.string.session_reset_hold_timer),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
         }
 
-        // Hold Seconds Stepper
         AppIntStepper(
             value = holdSeconds,
             onValueChange = onHoldSecondsChange,
             step = 5,
-            label = "sec hold",
+            label = stringResource(R.string.session_sec_hold_label),
             minValue = 0
         )
     }
@@ -353,7 +329,7 @@ private fun ExerciseHeader(
     categories: List<String>,
     exerciseIndex: Int,
     totalExercises: Int,
-    followingExerciseName: String?,
+    followingExercise: TrainingExercise?,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -365,11 +341,16 @@ private fun ExerciseHeader(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val categoryLabel = categories.firstOrNull() ?: "General"
+            val defaultCategory = stringResource(R.string.session_category_general)
+            val categoryLabel = categories.firstOrNull() ?: defaultCategory
             AppCategoryPill(text = categoryLabel)
 
             Text(
-                text = "EXERCISE $exerciseIndex OF $totalExercises",
+                text = stringResource(
+                    R.string.session_exercise_progress_format,
+                    exerciseIndex,
+                    totalExercises
+                ),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -382,9 +363,13 @@ private fun ExerciseHeader(
             color = MaterialTheme.colorScheme.onSurface
         )
 
-        if (followingExerciseName != null) {
+        if (followingExercise != null) {
             Text(
-                text = "Up next: $followingExerciseName",
+                text = stringResource(
+                    R.string.session_up_next_format,
+                    followingExercise.exercise.name,
+                    followingExercise.sets
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
@@ -434,7 +419,10 @@ private fun SetsProgressStrip(currentSet: Int, totalSets: Int, modifier: Modifie
                 if (isCompleted) {
                     Icon(
                         imageVector = Icons.Default.Check,
-                        contentDescription = "Completed set $setIndex",
+                        contentDescription = stringResource(
+                            R.string.session_completed_set_cd,
+                            setIndex
+                        ),
                         tint = textColor,
                         modifier = Modifier.size(Dimens2.iconSize16)
                     )
@@ -476,14 +464,66 @@ private fun TrainingExerciseScreenPreview() {
         completedSets = emptyList(),
         exerciseIndex = 1,
         totalExercises = 4,
-        setsLeftInWorkout = 10,
-        followingExerciseName = "Incline Dumbbell Press (3 sets)"
+        setsLeftInWorkout = 10
     )
 
     TrainingPlannerTheme2 {
         TrainingExerciseScreen(
             state = state,
-            onCompleteSet = { _, _, _ -> },
+            onRepsChanged = {},
+            onWeightChanged = {},
+            onHoldDurationChanged = {},
+            onToggleHoldTimer = {},
+            onResetHoldTimer = {},
+            onCompleteSet = {},
+            onSkipSet = {},
+            onSkipExercise = {},
+            onAddExtraSet = {}
+        )
+    }
+}
+
+@AppPreview
+@Composable
+private fun TrainingExerciseScreenHoldTimePreview() {
+    val dummyExercise = TrainingExercise(
+        id = TrainingExerciseId.create(),
+        exercise = ExerciseSnapshot(
+            id = com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId.create(),
+            name = "Plank",
+            description = "Hold a straight body position resting on forearms and toes",
+            categories = setOf(ExerciseCategoryName("Core")),
+            imageId = null
+        ),
+        repetitions = 0,
+        sets = 3,
+        time = 60.seconds,
+        restTime = 45.seconds
+    )
+    val state = TrainingSessionState.ExerciseState(
+        currentExercise = dummyExercise,
+        currentSet = 1,
+        totalSets = 3,
+        targetReps = 0,
+        targetWeightInKg = 0.0,
+        completedSets = emptyList(),
+        exerciseIndex = 2,
+        totalExercises = 4,
+        setsLeftInWorkout = 6,
+        targetTime = 60.seconds,
+        remainingHoldTime = 42.seconds,
+        isHoldTimerRunning = true
+    )
+
+    TrainingPlannerTheme2 {
+        TrainingExerciseScreen(
+            state = state,
+            onRepsChanged = {},
+            onWeightChanged = {},
+            onHoldDurationChanged = {},
+            onToggleHoldTimer = {},
+            onResetHoldTimer = {},
+            onCompleteSet = {},
             onSkipSet = {},
             onSkipExercise = {},
             onAddExtraSet = {}

@@ -20,15 +20,12 @@ import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import com.lukasz.witkowski.training.planner.session.presentation.TrainingSessionState
+import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppFeedbackChips
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens2
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
@@ -44,6 +41,8 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlin.time.Duration.Companion.seconds
 
+private data class FeedbackChipOption(val rpe: Int, val label: String)
+
 /**
  * Rest interval screen displaying circular countdown ring, set difficulty feedback chips,
  * and up-next exercise preview.
@@ -53,12 +52,19 @@ fun RestTimeScreen(
     state: TrainingSessionState.RestTimeState,
     timeLeft: Time,
     totalTime: Time,
+    onFeedbackSelected: (Int) -> Unit,
     onStartNextSet: () -> Unit,
     onSkipRest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
-    var selectedFeedback by remember { mutableStateOf<String?>(null) }
+
+    val feedbackChipOptions = listOf(
+        FeedbackChipOption(6, stringResource(R.string.session_feedback_easy)),
+        FeedbackChipOption(7, stringResource(R.string.session_feedback_good)),
+        FeedbackChipOption(8, stringResource(R.string.session_feedback_hard)),
+        FeedbackChipOption(10, stringResource(R.string.session_feedback_limit))
+    )
 
     val progress = if (totalTime.timeInMillis > 0) {
         timeLeft.timeInMillis.toFloat() / totalTime.timeInMillis.toFloat()
@@ -82,7 +88,7 @@ fun RestTimeScreen(
                 .padding(horizontal = Dimens2.spaceMd, vertical = Dimens2.spaceXs)
         ) {
             Text(
-                text = "REST INTERVAL",
+                text = stringResource(R.string.session_rest_interval),
                 style = MaterialTheme.typography.labelSmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -94,7 +100,7 @@ fun RestTimeScreen(
         AppCircularTimer(
             timeFormatted = formatRemainingTime(timeLeft),
             progress = progress,
-            label = "Remaining"
+            label = stringResource(R.string.session_rest_remaining)
         )
 
         // Preceding Set Feedback Section
@@ -103,15 +109,17 @@ fun RestTimeScreen(
             verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
         ) {
             Text(
-                text = "HOW DID THAT SET FEEL?",
+                text = stringResource(R.string.session_feedback_prompt),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.primary
             )
             AppFeedbackChips(
-                options = listOf("Easy", "Good", "Hard", "Limit"),
-                selectedOption = selectedFeedback,
-                onOptionSelected = { selectedFeedback = it },
-                labelProvider = { it }
+                options = feedbackChipOptions,
+                selectedOption = feedbackChipOptions.firstOrNull {
+                    it.rpe == state.selectedFeedback
+                },
+                onOptionSelected = { onFeedbackSelected(it.rpe) },
+                labelProvider = { it.label }
             )
         }
 
@@ -138,7 +146,7 @@ fun RestTimeScreen(
                     verticalArrangement = Arrangement.spacedBy(Dimens2.spaceXs)
                 ) {
                     Text(
-                        text = "UP NEXT",
+                        text = stringResource(R.string.session_up_next),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary
                     )
@@ -155,28 +163,48 @@ fun RestTimeScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Set ${state.nextSet} of ${state.totalSetsForNextExercise}",
+                            text = stringResource(
+                                R.string.session_set_progress_format,
+                                state.nextSet,
+                                state.totalSetsForNextExercise
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
-                        val targetSummary = if (state.nextExercise.isIsometric) {
-                            "${state.nextExercise.time.inWholeSeconds}s hold"
-                        } else {
-                            "${state.nextExercise.repetitions} reps"
-                        }
+                        val nextExercise = state.nextExercise
+                        val targetMetric =
+                            if (nextExercise.isIsometric) {
+                                stringResource(
+                                    R.string.session_target_hold_format,
+                                    nextExercise.time.inWholeSeconds
+                                )
+                            } else {
+                                stringResource(
+                                    R.string.session_target_reps_format,
+                                    nextExercise.repetitions
+                                )
+                            }
                         val weight = state.nextExercise.weightInKg
+                        val weightSuffix = if (weight != null && weight > 0) {
+                            stringResource(R.string.session_target_weight_suffix, weight.toString())
+                        } else {
+                            ""
+                        }
                         Text(
-                            text = targetSummary +
-                                if (weight != null && weight > 0.0) " • $weight kg" else "",
+                            text = targetMetric + weightSuffix,
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                     }
 
-                    if (state.followingExerciseName != null) {
+                    if (state.followingExercise != null) {
                         Text(
-                            text = "Following: ${state.followingExerciseName}",
+                            text = stringResource(
+                                R.string.session_following_format,
+                                state.followingExercise.exercise.name,
+                                state.followingExercise.sets
+                            ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -193,13 +221,13 @@ fun RestTimeScreen(
             verticalArrangement = Arrangement.spacedBy(Dimens2.spaceSm)
         ) {
             AppPrimaryButton(
-                text = "Start Next Set Now",
+                text = stringResource(R.string.session_start_next_set_now),
                 leadingIcon = Icons.Default.PlayArrow,
                 onClick = onStartNextSet
             )
 
             AppSecondaryButton(
-                text = "Skip Rest",
+                text = stringResource(R.string.session_skip_rest),
                 leadingIcon = Icons.Default.SkipNext,
                 onClick = onSkipRest
             )
@@ -235,8 +263,7 @@ private fun RestTimeScreenPreview() {
         restTime = Time(60000L),
         nextSet = 2,
         totalSetsForNextExercise = 3,
-        lastCompletedAttempt = null,
-        followingExerciseName = "Cable Fly (3 sets)"
+        lastCompletedAttempt = null
     )
 
     TrainingPlannerTheme2 {
@@ -244,6 +271,7 @@ private fun RestTimeScreenPreview() {
             state = state,
             timeLeft = Time(42000L),
             totalTime = Time(60000L),
+            onFeedbackSelected = {},
             onStartNextSet = {},
             onSkipRest = {}
         )

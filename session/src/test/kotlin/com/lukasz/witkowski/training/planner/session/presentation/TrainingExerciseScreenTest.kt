@@ -10,9 +10,7 @@ import com.lukasz.witkowski.training.planner.session.presentation.TrainingSessio
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme2
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import org.junit.Rule
 import org.junit.Test
@@ -43,22 +41,23 @@ class TrainingExerciseScreenTest {
             totalSets = 3,
             exerciseIndex = 1,
             totalExercises = 4,
-            followingExerciseName = "Incline Dumbbell Press"
+            followingExercise = null,
+            selectedReps = 10,
+            selectedWeightInKg = 60.0
         )
 
-        var completedReps: Int? = null
-        var completedWeight: Double? = null
-        var completedTime: Duration? = null
+        var completedCalled = false
 
         composeTestRule.setContent {
             TrainingPlannerTheme2 {
                 TrainingExerciseScreen(
                     state = state,
-                    onCompleteSet = { reps, weight, time ->
-                        completedReps = reps
-                        completedWeight = weight
-                        completedTime = time
-                    },
+                    onRepsChanged = {},
+                    onWeightChanged = {},
+                    onHoldDurationChanged = {},
+                    onToggleHoldTimer = {},
+                    onResetHoldTimer = {},
+                    onCompleteSet = { completedCalled = true },
                     onSkipSet = {},
                     onSkipExercise = {},
                     onAddExtraSet = {}
@@ -72,9 +71,7 @@ class TrainingExerciseScreenTest {
             "Complete Set"
         ).performScrollTo().assertIsDisplayed().performClick()
 
-        assertEquals(10, completedReps)
-        assertEquals(60.0, completedWeight)
-        assertEquals(null, completedTime)
+        assertTrue(completedCalled)
     }
 
     @Test
@@ -93,22 +90,24 @@ class TrainingExerciseScreenTest {
             totalSets = 3,
             exerciseIndex = 2,
             totalExercises = 4,
-            followingExerciseName = null
+            followingExercise = null,
+            targetTime = 45.seconds,
+            selectedHoldDuration = 45.seconds,
+            remainingHoldTime = 45.seconds
         )
 
-        var completedReps: Int? = null
-        var completedWeight: Double? = null
-        var completedTime: Duration? = null
+        var completedCalled = false
 
         composeTestRule.setContent {
             TrainingPlannerTheme2 {
                 TrainingExerciseScreen(
                     state = state,
-                    onCompleteSet = { reps, weight, time ->
-                        completedReps = reps
-                        completedWeight = weight
-                        completedTime = time
-                    },
+                    onRepsChanged = {},
+                    onWeightChanged = {},
+                    onHoldDurationChanged = {},
+                    onToggleHoldTimer = {},
+                    onResetHoldTimer = {},
+                    onCompleteSet = { completedCalled = true },
                     onSkipSet = {},
                     onSkipExercise = {},
                     onAddExtraSet = {}
@@ -118,14 +117,12 @@ class TrainingExerciseScreenTest {
 
         composeTestRule.onNodeWithText("Plank").assertIsDisplayed()
         composeTestRule.onNodeWithText("ACTIVE SET 2").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Target: 45s hold").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Target: 45 s hold").assertIsDisplayed()
         composeTestRule.onNodeWithText(
             "Complete Set"
         ).performScrollTo().assertIsDisplayed().performClick()
 
-        assertEquals(1, completedReps)
-        assertEquals(null, completedWeight)
-        assertEquals(45.seconds, completedTime)
+        assertTrue(completedCalled)
     }
 
     @Test
@@ -143,7 +140,7 @@ class TrainingExerciseScreenTest {
             totalSets = 4,
             exerciseIndex = 1,
             totalExercises = 3,
-            followingExerciseName = null
+            followingExercise = null
         )
 
         var skipSetClicked = false
@@ -154,7 +151,12 @@ class TrainingExerciseScreenTest {
             TrainingPlannerTheme2 {
                 TrainingExerciseScreen(
                     state = state,
-                    onCompleteSet = { _, _, _ -> },
+                    onRepsChanged = {},
+                    onWeightChanged = {},
+                    onHoldDurationChanged = {},
+                    onToggleHoldTimer = {},
+                    onResetHoldTimer = {},
+                    onCompleteSet = {},
                     onSkipSet = { skipSetClicked = true },
                     onSkipExercise = { skipExerciseClicked = true },
                     onAddExtraSet = { addExtraSetClicked = true }
