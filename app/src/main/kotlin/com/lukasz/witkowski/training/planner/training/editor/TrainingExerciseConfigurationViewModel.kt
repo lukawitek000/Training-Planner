@@ -16,59 +16,69 @@ import kotlin.time.Duration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class TrainingExerciseConfigurationViewModel(
     service: ExerciseService,
     exerciseId: ExerciseId,
 ) : ExerciseDetailsViewModel(service, exerciseId) {
-    private val initialParams = RecommendedParameters()
-    private val _parameters = MutableStateFlow<RecommendedParameters?>(null)
+    private val _parameters = MutableStateFlow(ParametersEditorState())
 
-    val parameters = combine(state, _parameters) { detailsState, params ->
-        if (detailsState is ExerciseDetailsState.Success && params == null) {
-            detailsState.details.recommendations.first().parameters
-        } else {
-            params ?: initialParams
+    init {
+        viewModelScope.launch {
+            state.collect {
+                if (it is ExerciseDetailsState.Success) {
+                    val recommendedParameters = it.details.recommendations.first().parameters
+                    _parameters.update { current ->
+                        if (current.wasModifiedByUser) {
+                            current
+                        } else {
+                            current.copy(value = recommendedParameters)
+                        }
+                    }
+                }
+            }
         }
-    }.stateIn(
+    }
+
+    val parameters = _parameters.map { params -> params.value }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000L),
-        initialParams
+        _parameters.value.value
     )
 
     fun processParametersIntent(intent: ExerciseParametersIntent) {
         when (intent) {
             is ExerciseParametersIntent.RepsChanged -> _parameters.update {
-                it?.copy(reps = intent.reps) ?: RecommendedParameters(reps = intent.reps)
+                it.copy(value = it.value.copy(reps = intent.reps), wasModifiedByUser = true)
             }
 
             is ExerciseParametersIntent.SetsChanged -> _parameters.update {
-                it?.copy(sets = intent.sets) ?: RecommendedParameters(sets = intent.sets)
+                it.copy(value = it.value.copy(sets = intent.sets), wasModifiedByUser = true)
             }
 
             is ExerciseParametersIntent.RestTimeChanged -> _parameters.update {
-                it?.copy(restTime = intent.restTime)
-                    ?: RecommendedParameters(restTime = intent.restTime)
+                it.copy(value = it.value.copy(restTime = intent.restTime), wasModifiedByUser = true)
             }
 
             is ExerciseParametersIntent.WeightChanged -> _parameters.update {
-                it?.copy(weightInKg = intent.weight) ?: RecommendedParameters(
-                    weightInKg = intent.weight
-                )
+                it.copy(value = it.value.copy(weightInKg = intent.weight), wasModifiedByUser = true)
             }
 
             is ExerciseParametersIntent.TimeChanged -> _parameters.update {
-                it?.copy(time = intent.time) ?: RecommendedParameters(
-                    time = intent.time
-                )
+                it.copy(value = it.value.copy(time = intent.time), wasModifiedByUser = true)
             }
         }
     }
 
     fun recommendationSelected(recommendedParameters: RecommendedParameters) {
-        _parameters.value = recommendedParameters
+        _parameters.update {
+            it.copy(value = recommendedParameters, wasModifiedByUser = true)
+        }
     }
 
     fun createTrainingExercise(): TrainingExercise {
@@ -92,3 +102,8 @@ class TrainingExerciseConfigurationViewModel(
         imageIds = images.map { it.imageId }
     )
 }
+
+private data class ParametersEditorState(
+    val value: RecommendedParameters = RecommendedParameters(),
+    val wasModifiedByUser: Boolean = false,
+)
