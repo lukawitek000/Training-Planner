@@ -37,7 +37,7 @@ androidx-roomKtx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-roomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-recyclerView = { module = "androidx.recyclerview:recyclerview", version = "1.3.2" }
 androidx-percentLayout = { module = "androidx.percentlayout:percentlayout", version = "1.0.0" }
-androidx-wear = { module = "androidx.wear:wear", version = "1.3.0" }
+androidx-wear = { module = "androidx.wear:wear", version = "1.4.0" }
 androidx-wearOngoing = { module = "androidx.wear:wear-ongoing", version = "1.0.0" }
 androidx-activityKtx = { module = "androidx.activity:activity-ktx", version = "1.8.0" }
 androidx-fragmentKtx = { module = "androidx.fragment:fragment-ktx", version = "1.6.1" }
