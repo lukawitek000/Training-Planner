@@ -84,3 +84,43 @@ Always scope Gradle tasks to the modified module(s) rather than running full-rep
 - **Gemini Flash (`flash`):** Use for standard feature implementation, Compose UI + `@AppPreview` rendering, ViewModel/DAO unit tests (`MockK`, `Turbine`), and Ktor route tests.
 - **Gemini Flash-Lite (`flash_lite`):** Use for `ktlintCheck`/`detekt` fixes, DTO boilerplate, string resource extraction, and quick symbol lookups.
 - **Subagent Threshold:** Spawn a subagent (`research`, `self`, or custom `module-auditor` / `sync-and-concurrency-breaker` / `gradle-verifier`) whenever a task requires reading **> 4 files across 2+ modules**, running noisy multi-module Gradle test suites, or performing an adversarial code review.
+
+---
+
+## 6. Project Management & Trello MCP Integration
+
+The project uses a dedicated Trello board connected via the **Trello MCP Server** (`trello_trello`) as the Single Source of Truth for task tracking, sprints, and release roadmaps.
+
+### Board Information
+- **Board Name:** `Training planner`
+- **Board URL:** [https://trello.com/b/zjq2abOe/training-planner](https://trello.com/b/zjq2abOe/training-planner)
+- **Board ARI:** `ari:cloud:trello::board/workspace/5fbaf67243d7e809f33838b9/6006a7645cfe7526312e4cc7`
+
+### List Lifecycle & ARIs
+1. **`🎯 MVP To Do (Release Blockers)`**
+   `ari:cloud:trello::list/workspace/5fbaf67243d7e809f33838b9/644a82a044597230ac19c488`
+   Release blocker tickets required for shipping the offline-first MVP to Google Play Alpha.
+2. **`🚧 In Progress`**
+   `ari:cloud:trello::list/workspace/5fbaf67243d7e809f33838b9/6006a77d909263370183ee2f`
+   Active work items currently being implemented.
+3. **`👀 In Review / Verification`**
+   `ari:cloud:trello::list/workspace/5fbaf67243d7e809f33838b9/63c30594ef489e0264df63de`
+   Implemented features awaiting manual review, Compose Preview inspection, or PR verification.
+4. **`✅ Done (Develop)`**
+   `ari:cloud:trello::list/workspace/5fbaf67243d7e809f33838b9/6006a787eb47362c821da3bd`
+   Completed, tested, and merged into the `develop` branch.
+5. **`📦 Post-MVP Backlog (Online, KMP, Enhancements)`**
+   `ari:cloud:trello::list/workspace/5fbaf67243d7e809f33838b9/6006a77120acbd76a9b217f5`
+   Post-MVP enhancements (cloud sync engine, KMP migration, test coverage tooling).
+6. **`❄️ Icebox / Wearable & Obsolete`**
+   `ari:cloud:trello::list/workspace/5fbaf67243d7e809f33838b9/63c44d78a1530b00f1436348`
+   Archived wearable companion app tickets and deprecated spikes.
+
+### Rules for Agents Working on Tickets
+- **Card Synchronization:** Always inspect the board via `trelloReadCard` / `trelloSearch` before picking up or proposing work.
+- **Lifecycle Transition:**
+  - Move the active card to `🚧 In Progress` when starting implementation (`trelloWriteCard` with `action: "move"`).
+  - Move to `👀 In Review / Verification` when code changes and unit tests are complete.
+  - Move to `✅ Done (Develop)` once verified with the user.
+- **Traceability:** Document any major architectural decisions, caveats, or test findings on the card using `trelloWriteCard` (`action: "add_comment"`).
+- **ARI Requirement:** Always use the full entity ARI (e.g., `ari:cloud:trello::card/...`) when interacting with Trello MCP tools, never short URLs.
