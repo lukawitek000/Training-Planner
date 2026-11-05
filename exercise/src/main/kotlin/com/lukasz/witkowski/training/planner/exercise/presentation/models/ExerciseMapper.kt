@@ -1,8 +1,8 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation.models
 
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2 as DomainExercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails as DomainExerciseDetails
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview as DomainExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRecommendation
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
 import com.lukasz.witkowski.training.planner.image.ImageReference
@@ -23,20 +23,29 @@ fun DomainExercise.toPresentationExercise(imageReference: ImageReference?): Exer
     image = imageReference
 )
 
-fun DomainExercise2.toPresentationExercise2(thumbnail: ImageReference? = null): Exercise2 =
-    Exercise2(
-        id = id,
-        name = name,
-        description = description,
-        categories = categories.toList(),
-        thumbnail = thumbnail,
-        metadata = metadata
-    )
+fun DomainExerciseOverview.toPresentationExerciseOverview(
+    thumbnail: ImageReference? = null
+): ExerciseOverview = ExerciseOverview(
+    id = id,
+    name = name,
+    description = description,
+    categories = categories.toList(),
+    thumbnail = thumbnail,
+    metadata = metadata
+)
+
+@Deprecated(
+    message = "Use toPresentationExerciseOverview instead",
+    replaceWith = ReplaceWith("toPresentationExerciseOverview(thumbnail)")
+)
+fun DomainExerciseOverview.toPresentationExercise2(
+    thumbnail: ImageReference? = null
+): ExerciseOverview = toPresentationExerciseOverview(thumbnail)
 
 fun DomainExerciseDetails.toPresentationExerciseDetails(
     images: List<ImageReference> = emptyList()
 ): ExerciseDetails = ExerciseDetails(
-    exercise = this.exercise.toPresentationExercise2(images.firstOrNull()),
+    exercise = this.exercise.toPresentationExerciseOverview(images.firstOrNull()),
     recommendations =
     listOf(
         beginnerRecommendation.toRecommendation(RecommendationLevel.BEGINNER),

@@ -13,7 +13,7 @@ data class Exercise(
     val image: ImageReference? = null
 )
 
-data class Exercise2(
+data class ExerciseOverview(
     val id: ExerciseId,
     val name: String,
     val description: String,
@@ -21,3 +21,6 @@ data class Exercise2(
     val thumbnail: ImageReference? = null,
     val metadata: ExerciseMetadata = ExerciseMetadata()
 )
+
+@Deprecated("Use ExerciseOverview instead", ReplaceWith("ExerciseOverview"))
+typealias Exercise2 = ExerciseOverview

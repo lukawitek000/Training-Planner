@@ -5,11 +5,11 @@ import com.lukasz.witkowski.training.planner.dto.exercise.CreateExerciseRequestD
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseRecommendationDto
 import com.lukasz.witkowski.training.planner.dto.exercise.UpdateExerciseRequestDto
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRecommendation
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSharing
@@ -25,11 +25,11 @@ internal fun ExerciseDto.toExerciseDetails(
     currentUserId: String? = null,
     existingImageIds: List<ImageId> = emptyList()
 ): ExerciseDetails {
-    val domainExercise = toExercise2(currentUserId).let {
+    val domainExercise = toExerciseOverview(currentUserId).let {
         if (existingImageIds.isNotEmpty() &&
-            it.thumbnailId == null
+            it.imageIds.isEmpty()
         ) {
-            it.copy(thumbnailId = existingImageIds.firstOrNull())
+            it.copy(imageIds = existingImageIds)
         } else {
             it
         }
@@ -61,12 +61,11 @@ internal fun ExerciseDto.toExerciseDetails(
         exercise = domainExercise,
         beginnerRecommendation = getRec("BEGINNER"),
         intermediateRecommendation = getRec("INTERMEDIATE"),
-        advancedRecommendation = getRec("ADVANCED"),
-        images = existingImageIds
+        advancedRecommendation = getRec("ADVANCED")
     )
 }
 
-internal fun ExerciseDto.toExercise2(currentUserId: String? = null): Exercise2 {
+internal fun ExerciseDto.toExerciseOverview(currentUserId: String? = null): ExerciseOverview {
     val sourceObj = when (source) {
         "USER_CREATED" -> {
             val ownerObj = if (owner != null) {
@@ -92,7 +91,7 @@ internal fun ExerciseDto.toExercise2(currentUserId: String? = null): Exercise2 {
         syncState = ExerciseSyncState.SYNCED
     )
 
-    return Exercise2(
+    return ExerciseOverview(
         id = ExerciseId(id),
         name = name,
         description = description,
@@ -103,12 +102,15 @@ internal fun ExerciseDto.toExercise2(currentUserId: String? = null): Exercise2 {
         } else {
             categoriesSet
         },
-        thumbnailId = images.firstOrNull()?.let { ImageId(it) },
+        imageIds = images?.map { ImageId(it) } ?: emptyList(),
         metadata = metadataObj
     )
 }
 
-internal fun Exercise2.toCreateExerciseRequestDto(): CreateExerciseRequestDto =
+internal fun ExerciseDto.toExercise2(currentUserId: String? = null): ExerciseOverview =
+    toExerciseOverview(currentUserId)
+
+internal fun ExerciseOverview.toCreateExerciseRequestDto(): CreateExerciseRequestDto =
     CreateExerciseRequestDto(
         name = name,
         description = description,
@@ -119,10 +121,10 @@ internal fun Exercise2.toCreateExerciseRequestDto(): CreateExerciseRequestDto =
             else -> "PRIVATE"
         },
         recommendations = null,
-        images = emptyList() // TODO
+        images = imageIds.map { it.value.toString() }
     )
 
-internal fun Exercise2.toUpdateExerciseRequestDto(
+internal fun ExerciseOverview.toUpdateExerciseRequestDto(
     expectedVersion: Long? = null,
     idempotencyKey: String? = null
 ): UpdateExerciseRequestDto = UpdateExerciseRequestDto(
@@ -137,7 +139,7 @@ internal fun Exercise2.toUpdateExerciseRequestDto(
     expectedVersion = expectedVersion ?: metadata.revision,
     idempotencyKey = idempotencyKey,
     recommendations = null,
-    images = emptyList() // TODO
+    images = imageIds.map { it.value.toString() }
 )
 
 internal fun ExerciseDetails.toCreateExerciseRequestDto(
@@ -181,7 +183,7 @@ internal fun ExerciseDetails.toCreateExerciseRequestDto(
         recommendations = recList,
         id = exercise.id.toString(),
         idempotencyKey = idempotencyKey,
-        images = emptyList() // TODO
+        images = exercise.imageIds.map { it.value.toString() }
     )
 }
 

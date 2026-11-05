@@ -19,7 +19,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategor
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesScreenContent
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.asPreviewPagerFlow
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseOverview
 import kotlin.test.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -87,7 +87,7 @@ class ExercisesScreenTest {
 
     @Test
     fun no_data_message_is_displayed_when_no_data_is_provided() {
-        val exercisesList = emptyList<Exercise2>()
+        val exercisesList = emptyList<ExerciseOverview>()
         composeTestRule.setContent {
             ExercisesScreenContent(
                 exercisesList = exercisesList.asPreviewPagerFlow().collectAsLazyPagingItems(),

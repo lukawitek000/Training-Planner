@@ -1,10 +1,10 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRecommendation
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSharing
@@ -13,7 +13,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.image.ImageId
 import kotlin.time.Duration.Companion.seconds
 
-internal fun Exercise2.toDbExercise(): DbExercise {
+internal fun ExerciseOverview.toDbExercise(): DbExercise {
     val (sourceTypeStr, dbOwner) = when (val s = metadata.source) {
         is ExerciseSource.Bundled -> DbExercise.SOURCE_TYPE_BUNDLED to null
         is ExerciseSource.Organization -> DbExercise.SOURCE_TYPE_ORGANIZATION to null
@@ -48,7 +48,7 @@ internal fun Exercise2.toDbExercise(): DbExercise {
 internal fun DbExercise.toExercise(
     categories: List<ExerciseCategory>,
     images: List<DbExerciseImage> = emptyList()
-): Exercise2 {
+): ExerciseOverview {
     val sourceObj = toExerciseSource()
     val sharingObj = toExerciseSharing()
     val syncStateObj = toExerciseSyncState()
@@ -64,17 +64,17 @@ internal fun DbExercise.toExercise(
     } else {
         listOfNotNull(imageId?.let { ImageId(it) })
     }
-    return Exercise2(
+    return ExerciseOverview(
         id = ExerciseId(exerciseId),
         name = name,
         description = description,
         categories = categoriesSet,
-        thumbnailId = imageIds.firstOrNull(),
+        imageIds = imageIds,
         metadata = metadataObj
     )
 }
 
-internal fun DbExerciseWithCategories.toExercise(): Exercise2 =
+internal fun DbExerciseWithCategories.toExercise(): ExerciseOverview =
     exercise.toExercise(categories.map { it.toExerciseCategory() }, images)
 
 private fun DbExercise.toExerciseSource(): ExerciseSource = when (sourceType) {
@@ -123,7 +123,7 @@ internal fun ExerciseDetails.toDbExerciseDetails(): DbExerciseDetails = DbExerci
             level = RecommendationLevel.ADVANCED
         )
     ),
-    images = images.mapIndexed { index, imageId ->
+    images = exercise.imageIds.mapIndexed { index, imageId ->
         DbExerciseImage(
             exerciseId = exercise.id.toString(),
             imageId = imageId.toString(),
@@ -147,10 +147,8 @@ internal fun ExerciseRecommendation.toDbExerciseRecommendation(
 
 internal fun DbExerciseDetails.toExerciseDetails(): ExerciseDetails {
     val categories = categories.map { it.toExerciseCategory() }
-    val imageIds = images.sortedBy { it.orderIndex }.map { ImageId(it.imageId) }
     return ExerciseDetails(
         exercise = exercise.toExercise(categories, images),
-        images = imageIds,
         beginnerRecommendation = recommendations.toExerciseRecommendation(
             RecommendationLevel.BEGINNER
         ),

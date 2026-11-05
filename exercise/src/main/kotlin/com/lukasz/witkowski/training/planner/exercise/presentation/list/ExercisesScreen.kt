@@ -59,9 +59,9 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_CATEGORIES
-import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PULL_UP_IMAGES
-import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PULL_UP_THUMBNAIL
+import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_THUMBNAIL
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseOverview
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
 import com.lukasz.witkowski.training.planner.shared.featureflags.LocalFeatureFlagProvider
@@ -104,7 +104,7 @@ fun ExercisesScreen(
 
 @Composable
 fun ExercisesScreenContent(
-    exercisesList: LazyPagingItems<Exercise2>,
+    exercisesList: LazyPagingItems<ExerciseOverview>,
     filteringState: FilteringState,
     toggleCategory: (ExerciseCategory) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
@@ -132,9 +132,9 @@ fun ExercisesScreenContent(
 
         when (val loadState = exercisesList.loadState.refresh) {
             is LoadState.Loading -> AppLoadingState(
-                    title = stringResource(R.string.loading_exercises),
-                    modifier = Modifier.fillMaxSize()
-                )
+                title = stringResource(R.string.loading_exercises),
+                modifier = Modifier.fillMaxSize()
+            )
             is LoadState.Error -> AppErrorState(
                 title = stringResource(R.string.failed_to_load_exercises),
                 subtitle = loadState.error.localizedMessage.orEmpty(),
@@ -152,11 +152,11 @@ fun ExercisesScreenContent(
                     filteringState.isAnyCategorySelected || filteringState.searchQuery.isNotBlank()
                 AppEmptyState(
                     title =
-                        if (filteringState.isAnyCategorySelected) {
-                            stringResource(id = R.string.no_exercises_for_categories)
-                        } else {
-                            stringResource(id = R.string.no_exercises)
-                        },
+                    if (filteringState.isAnyCategorySelected) {
+                        stringResource(id = R.string.no_exercises_for_categories)
+                    } else {
+                        stringResource(id = R.string.no_exercises)
+                    },
                     subtitle = stringResource(id = R.string.no_exercises_subtitle),
                     actionLabel = if (hasActiveFilters) {
                         stringResource(
@@ -167,9 +167,9 @@ fun ExercisesScreenContent(
                     },
                     onActionClick = if (hasActiveFilters) onResetFilters else null,
                     modifier =
-                        Modifier
-                            .weight(1f)
-                            .testTag("NoDataMessage")
+                    Modifier
+                        .weight(1f)
+                        .testTag("NoDataMessage")
                 )
             }
         }
@@ -232,7 +232,7 @@ private fun ExercisesSearchAndFilterHeader(
 
 @Composable
 private fun ExercisesList(
-    exercisesList: LazyPagingItems<Exercise2>,
+    exercisesList: LazyPagingItems<ExerciseOverview>,
     onExerciseClicked: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
     itemTrailingIcon: (@Composable (ExerciseId) -> Unit)? = null
@@ -270,7 +270,7 @@ private fun ExercisesList(
 
 @Composable
 fun ExerciseListItemContent(
-    exercise: Exercise2,
+    exercise: ExerciseOverview,
     onClick: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
     itemTrailingIcon: (@Composable (ExerciseId) -> Unit)? = null
@@ -336,7 +336,7 @@ fun ExerciseListItemContent(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ExerciseInformation(
-    exercise: Exercise2,
+    exercise: ExerciseOverview,
     isOnlineSyncEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -536,24 +536,24 @@ fun <T : Any> List<T>.asPreviewPagerFlow(): Flow<PagingData<T>> = flowOf(PagingD
 
 val PREVIEW_EXERCISES =
     listOf(
-        Exercise2(
+        ExerciseOverview(
             id = ExerciseId.create(),
             name = "Push ups",
             description = "Compound upper-body pushing movement",
             categories = listOf(ExerciseCategory("Chest"), ExerciseCategory("Shoulders")),
-            thumbnail = PREVIEW_PUSH_UP_IMAGES.firstOrNull(),
+            thumbnail = PREVIEW_PUSH_UP_THUMBNAIL,
             metadata =
             ExerciseMetadata(
                 source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
                 syncState = ExerciseSyncState.CONFLICT
             )
         ),
-        Exercise2(
+        ExerciseOverview(
             id = ExerciseId.create(),
             name = "Pull up",
             description = "Vertical pulling exercise for lats and biceps",
             categories = listOf(ExerciseCategory("Back"), ExerciseCategory("Biceps")),
-            thumbnail = PREVIEW_PULL_UP_IMAGES.firstOrNull(),
+            thumbnail = PREVIEW_PULL_UP_THUMBNAIL,
             metadata =
             ExerciseMetadata(
                 source = ExerciseSource.Bundled,

@@ -1,12 +1,12 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure.sync
 
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseFailure
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRecommendation
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
@@ -159,9 +159,9 @@ internal class DefaultExerciseSyncRepository(
             ?.map { ImageId(it.imageId) }
             ?: emptyList()
         val detailsToSave = if (existingImageIds.isNotEmpty() &&
-            serverDetails.images.isEmpty()
+            serverDetails.exercise.imageIds.isEmpty()
         ) {
-            serverDetails.copy(images = existingImageIds)
+            serverDetails.copy(exercise = serverDetails.exercise.copy(imageIds = existingImageIds))
         } else {
             serverDetails
         }
@@ -233,12 +233,12 @@ internal class DefaultExerciseSyncRepository(
             .toSet()
             .ifEmpty { setOf(ExerciseCategory("Other")) }
 
-        val domainExercise = Exercise2(
+        val domainExercise = ExerciseOverview(
             id = ExerciseId(mutation.exerciseId),
             name = mutation.name,
             description = mutation.description,
             categories = categories,
-            thumbnailId = existingImageIds.firstOrNull(),
+            imageIds = existingImageIds,
             metadata = ExerciseMetadata(
                 revision = mutation.expectedVersion,
                 syncState = ExerciseSyncState.PENDING_UPLOAD
@@ -271,8 +271,7 @@ internal class DefaultExerciseSyncRepository(
             exercise = domainExercise,
             beginnerRecommendation = beginnerRec,
             intermediateRecommendation = intermediateRec,
-            advancedRecommendation = advancedRec,
-            images = existingImageIds
+            advancedRecommendation = advancedRec
         )
 
         val result = if (mutation.type == DbExerciseMutation.TYPE_CREATE) {

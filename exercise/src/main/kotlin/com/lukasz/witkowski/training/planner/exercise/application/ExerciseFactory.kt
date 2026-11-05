@@ -1,9 +1,9 @@
 package com.lukasz.witkowski.training.planner.exercise.application
 
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSharing
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
@@ -23,15 +23,14 @@ internal object ExerciseFactory {
         )
     ): ExerciseDetails = ExerciseDetails(
         exercise =
-        Exercise2(
+        ExerciseOverview(
             id = exerciseId,
             name = exerciseConfiguration.name,
             description = exerciseConfiguration.description,
             categories = exerciseConfiguration.categories.toSet(),
-            thumbnailId = imageIds.firstOrNull(),
+            imageIds = imageIds,
             metadata = metadata
         ),
-        images = imageIds,
         beginnerRecommendation = exerciseConfiguration.beginnerRecommendation,
         intermediateRecommendation = exerciseConfiguration.intermediateRecommendation,
         advancedRecommendation = exerciseConfiguration.advancedRecommendation

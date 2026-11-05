@@ -123,7 +123,7 @@ class ExerciseDetailsViewModelTest {
         vm.state.test {
             assertEquals(ExerciseDetailsState.Loading, awaitItem())
             val success = awaitItem() as ExerciseDetailsState.Success
-            assertEquals(imageReferences, success.details.exercise.images)
+            assertEquals(imageReferences, success.details.images)
         }
     }
 

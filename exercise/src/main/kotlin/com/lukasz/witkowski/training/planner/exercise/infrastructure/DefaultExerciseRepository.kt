@@ -4,10 +4,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
@@ -41,7 +41,7 @@ internal class DefaultExerciseRepository(
             it?.toExerciseDetails()
         }
 
-    override fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise2>> = Pager(
+    override fun queryExercises(query: ExerciseQuery): Flow<PagingData<ExerciseOverview>> = Pager(
         config = pagingConfig,
         pagingSourceFactory = {
             localDataSource.getExercisesWithCategories(
@@ -213,11 +213,11 @@ internal class DefaultExerciseRepository(
         val preservedImageIds = existingDbDetails?.images?.sortedBy { it.orderIndex }
             ?.map { ImageId(it.imageId) }
             ?: emptyList()
-        val mergedServerDetails = if (serverExerciseDetails.images.isEmpty() &&
+        val mergedServerDetails = if (serverExerciseDetails.exercise.imageIds.isEmpty() &&
             preservedImageIds.isNotEmpty()
         ) {
             serverExerciseDetails.copy(
-                images = preservedImageIds,
+                exercise = serverExerciseDetails.exercise.copy(imageIds = preservedImageIds)
             )
         } else {
             serverExerciseDetails

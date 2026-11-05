@@ -24,7 +24,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.list.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesScreenContent
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.PREVIEW_EXERCISES
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.asPreviewPagerFlow
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
@@ -50,7 +50,7 @@ fun AddTrainingExerciseScreen(
 @Composable
 fun AddTrainingExerciseScreenContent(
     onExerciseSelected: (ExerciseId) -> Unit,
-    exercisesList: LazyPagingItems<Exercise2>,
+    exercisesList: LazyPagingItems<ExerciseOverview>,
     filteringState: FilteringState,
     toggleCategory: (ExerciseCategory) -> Unit,
     onSearchQueryChanged: (String) -> Unit,

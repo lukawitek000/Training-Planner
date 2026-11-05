@@ -23,20 +23,26 @@ data class ExerciseMetadata(
     val syncState: ExerciseSyncState = ExerciseSyncState.SYNCED
 )
 
-data class Exercise2(
+data class ExerciseOverview(
     val id: ExerciseId,
     val name: String,
     val description: String,
     val categories: Set<ExerciseCategory>,
-    val thumbnailId: ImageId? = null,
+    val imageIds: List<ImageId> = emptyList(),
     val metadata: ExerciseMetadata = ExerciseMetadata()
 ) {
+    val thumbnailId: ImageId?
+        get() = imageIds.firstOrNull()
+
     init {
         require(categories.isNotEmpty()) {
             "Exercise should have at least one category"
         }
     }
 }
+
+@Deprecated("Use ExerciseOverview instead", ReplaceWith("ExerciseOverview"))
+typealias Exercise2 = ExerciseOverview
 
 sealed interface ExerciseSource {
     data object Bundled : ExerciseSource

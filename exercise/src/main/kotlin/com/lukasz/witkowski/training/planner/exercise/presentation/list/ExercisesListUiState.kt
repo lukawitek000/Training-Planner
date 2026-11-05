@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation.list
 
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseOverview
 
 sealed interface ExercisesListUiState {
     val filteringState: FilteringState
@@ -9,7 +9,7 @@ sealed interface ExercisesListUiState {
     data class Loading(override val filteringState: FilteringState) : ExercisesListUiState
     data class Success(
         override val filteringState: FilteringState,
-        val plans: List<Exercise2>
+        val exercises: List<ExerciseOverview>
     ) : ExercisesListUiState
 
     data class Failure(override val filteringState: FilteringState, val message: String?) :

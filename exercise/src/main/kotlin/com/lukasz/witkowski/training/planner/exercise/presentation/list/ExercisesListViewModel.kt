@@ -9,21 +9,20 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController2
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExerciseOverview
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
-import kotlin.time.Duration
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class ExercisesListViewModel(
@@ -67,7 +66,7 @@ class ExercisesListViewModel(
                     val thumbnailReference = exercise.thumbnailId?.let {
                         exerciseService.readExerciseThumbnail(it)
                     }
-                    exercise.toPresentationExercise2(thumbnailReference)
+                    exercise.toPresentationExerciseOverview(thumbnailReference)
                 }
             }.cachedIn(viewModelScope)
 

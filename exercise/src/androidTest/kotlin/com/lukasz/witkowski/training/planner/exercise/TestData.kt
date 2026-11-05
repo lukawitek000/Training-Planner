@@ -244,7 +244,7 @@ object TestData {
             name = "Push-up",
             description = "Standard push-up focusing on chest and triceps, BODYWEIGHT",
             categories = listOf(CATEGORY_CHEST, CATEGORY_TRICEPS, CATEGORY_BICEPS),
-            images = emptyList()
+            thumbnail = null
         )
 
     val PRESENTATION_PUSH_UPS_DETAILS =

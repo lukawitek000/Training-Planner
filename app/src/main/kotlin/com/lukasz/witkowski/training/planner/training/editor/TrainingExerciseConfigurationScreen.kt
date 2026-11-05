@@ -22,8 +22,8 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.editor.Exerci
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseParametersIntent
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.PREVIEW_RECOMMENDED_PARAMETERS
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.RecommendedParametersCardHeader
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
@@ -178,7 +178,7 @@ private fun TrainingExerciseConfigurationScreenContentSelectedRecommendationPrev
 
 private val PREVIEW_SUCCESS_STATE = ExerciseDetailsState.Success(
     details = ExerciseDetails(
-        exercise = Exercise2(
+        exercise = ExerciseOverview(
             id = ExerciseId.create(),
             name = "Push ups",
             description = "Some long description in here",
@@ -187,7 +187,6 @@ private val PREVIEW_SUCCESS_STATE = ExerciseDetailsState.Success(
                 ExerciseCategory("Shoulder")
             )
         ),
-        recommendations = PREVIEW_RECOMMENDED_PARAMETERS,
-        images = emptyList()
+        recommendations = PREVIEW_RECOMMENDED_PARAMETERS
     ),
 )

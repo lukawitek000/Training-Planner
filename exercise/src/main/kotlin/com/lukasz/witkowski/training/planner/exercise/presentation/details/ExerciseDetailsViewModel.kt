@@ -7,7 +7,6 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExerciseDetails
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
@@ -47,18 +46,13 @@ open class ExerciseDetailsViewModel(
                 ) {
                     loadConflictServerDetails()
                 }
-                val imageReferences = if (domainDetails.images.isNotEmpty()) {
+                val imageReferences = if (domainDetails.exercise.imageIds.isNotEmpty()) {
                     service.readImageReferences(exerciseId)
                 } else {
                     emptyList()
                 }
-                val presentationExercise = domainDetails.exercise.toPresentationExercise2(
-                    imageReferences.firstOrNull()
-                )
-                val presentationDetails = ExerciseDetails(
-                    exercise = presentationExercise,
-                    recommendations = domainDetails.toPresentationExerciseDetails().recommendations,
-                    images = imageReferences
+                val presentationDetails = domainDetails.toPresentationExerciseDetails(
+                    imageReferences
                 )
                 ExerciseDetailsState.Success(presentationDetails)
             }
