@@ -3,6 +3,8 @@ package com.lukasz.witkowski.training.planner
 import android.app.Application
 import com.lukasz.witkowski.training.planner.di.appModule
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlagProvider
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -11,6 +13,7 @@ import timber.log.Timber
 
 class TrainingPlannerApplication : Application() {
     private val syncScheduler: SyncScheduler by inject()
+    private val featureFlagProvider: FeatureFlagProvider by inject()
 
     override fun onCreate() {
         super.onCreate()
@@ -21,7 +24,9 @@ class TrainingPlannerApplication : Application() {
             androidContext(this@TrainingPlannerApplication)
             modules(appModule)
         }
-        syncScheduler.enqueueRemoteChangeSync(force = false)
-        syncScheduler.enqueueMutationSync()
+        if (featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
+            syncScheduler.enqueueRemoteChangeSync(force = false)
+            syncScheduler.enqueueMutationSync()
+        }
     }
 }

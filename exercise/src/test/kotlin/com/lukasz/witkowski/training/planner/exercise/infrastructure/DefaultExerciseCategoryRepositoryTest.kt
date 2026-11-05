@@ -3,6 +3,8 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.ExerciseCategoryLocalDataSource
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.ExerciseRemoteDataSource
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -21,14 +23,19 @@ class DefaultExerciseCategoryRepositoryTest {
     private val remoteDataSource = mockk<ExerciseRemoteDataSource>()
     private val testDispatcher = UnconfinedTestDispatcher()
 
-    private val repository = DefaultExerciseCategoryRepository(
-        localDataSource = localDataSource,
-        remoteDataSource = remoteDataSource,
-        ioDispatcher = testDispatcher
-    )
+    private fun createRepository(onlineSyncEnabled: Boolean = true) =
+        DefaultExerciseCategoryRepository(
+            localDataSource = localDataSource,
+            remoteDataSource = remoteDataSource,
+            ioDispatcher = testDispatcher,
+            featureFlagProvider = DefaultFeatureFlagProvider(
+                overrides = mapOf(FeatureFlag.ONLINE_SYNC to onlineSyncEnabled)
+            )
+        )
 
     @Test
-    fun `getAll emits local categories and syncs remote categories to Room`() = runTest {
+    fun `getAll syncs remote categories when online sync is enabled`() = runTest {
+        val repository = createRepository(onlineSyncEnabled = true)
         val dbCategories = listOf(
             DbExerciseCategory("Chest"),
             DbExerciseCategory("Back")
@@ -42,5 +49,21 @@ class DefaultExerciseCategoryRepositoryTest {
 
         assertEquals(listOf(ExerciseCategory("Chest"), ExerciseCategory("Back")), categories)
         coVerify { localDataSource.insertCategories(any()) }
+    }
+
+    @Test
+    fun `getAll skips remote sync when online sync is disabled`() = runTest {
+        val repository = createRepository(onlineSyncEnabled = false)
+        val dbCategories = listOf(
+            DbExerciseCategory("Chest"),
+            DbExerciseCategory("Back")
+        )
+        coEvery { localDataSource.getAllCategories() } returns flowOf(dbCategories)
+
+        val categories = repository.getAll().first()
+
+        assertEquals(listOf(ExerciseCategory("Chest"), ExerciseCategory("Back")), categories)
+        coVerify(exactly = 0) { remoteDataSource.getCategories() }
+        coVerify(exactly = 0) { localDataSource.insertCategories(any()) }
     }
 }

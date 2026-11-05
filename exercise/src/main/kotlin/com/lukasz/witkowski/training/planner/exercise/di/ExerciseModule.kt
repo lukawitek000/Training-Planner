@@ -32,6 +32,7 @@ import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.network.networkModule
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
+import com.lukasz.witkowski.training.planner.shared.featureflags.featureFlagsModule
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import org.koin.android.ext.koin.androidContext
@@ -46,7 +47,7 @@ import retrofit2.Retrofit
 
 val exerciseModule =
     module {
-        includes(dispatchersModule, imageModule, networkModule)
+        includes(dispatchersModule, imageModule, networkModule, featureFlagsModule)
 
         single {
             get<Retrofit>().create(ExerciseApi::class.java)
@@ -76,6 +77,7 @@ val exerciseModule =
                 context = androidContext(),
                 authSessionProvider = get(),
                 syncPreferencesStorage = get(),
+                featureFlagProvider = get(),
                 coroutineScope = CoroutineScope(
                     kotlinx.coroutines.SupervisorJob() +
                         get<CoroutineDispatcher>(named(CoroutineDispatcherQualifiers.IO))
@@ -114,7 +116,8 @@ val exerciseModule =
             DefaultExerciseCategoryRepository(
                 localDataSource = get(),
                 remoteDataSource = get(),
-                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
+                featureFlagProvider = get()
             )
         } bind ExerciseCategoryRepository::class
 
