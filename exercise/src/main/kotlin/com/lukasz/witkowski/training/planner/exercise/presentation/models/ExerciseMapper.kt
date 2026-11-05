@@ -1,30 +1,12 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation.models
 
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2 as DomainExercise2
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails as DomainExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRecommendation
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
 import com.lukasz.witkowski.training.planner.image.ImageReference
 
-fun Exercise.toDomainExercise(): DomainExercise = DomainExercise(
-    id = id,
-    name = name,
-    description = description,
-    categories = categories.map { it.toExerciseCategory() },
-    imageId = image?.imageId
-)
-
-fun DomainExercise.toPresentationExercise(imageReference: ImageReference?): Exercise = Exercise(
-    id = id,
-    name = name,
-    description = description,
-    categories = categories.map { it.toCategory() },
-    image = imageReference
-)
-
-fun DomainExercise2.toPresentationExercise2(images: List<ImageReference> = emptyList()): Exercise2 =
-    Exercise2(
+fun DomainExercise.toPresentationExercise(images: List<ImageReference> = emptyList()): Exercise =
+    Exercise(
         id = id,
         name = name,
         description = description,
@@ -36,7 +18,7 @@ fun DomainExercise2.toPresentationExercise2(images: List<ImageReference> = empty
 fun DomainExerciseDetails.toPresentationExerciseDetails(
     images: List<ImageReference> = emptyList()
 ): ExerciseDetails = ExerciseDetails(
-    exercise = this.exercise.toPresentationExercise2(images),
+    exercise = this.exercise.toPresentationExercise(images),
     recommendations =
     listOf(
         beginnerRecommendation.toRecommendation(RecommendationLevel.BEGINNER),

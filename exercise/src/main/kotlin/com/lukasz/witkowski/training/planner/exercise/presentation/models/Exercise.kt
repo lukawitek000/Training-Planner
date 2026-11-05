@@ -9,14 +9,6 @@ data class Exercise(
     val id: ExerciseId,
     val name: String,
     val description: String,
-    val categories: List<Category>,
-    val image: ImageReference? = null
-)
-
-data class Exercise2(
-    val id: ExerciseId,
-    val name: String,
-    val description: String,
     val categories: List<ExerciseCategory>,
     val images: List<ImageReference> = emptyList(),
     val metadata: ExerciseMetadata = ExerciseMetadata()

@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.exercise
 
 import androidx.paging.PagingData
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
@@ -33,7 +33,7 @@ class FakeExerciseRepository : ExerciseRepository {
         emit(exerciseDetails)
     }
 
-    override fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise2>> = flow {}
+    override fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise>> = flow {}
 
     override suspend fun insert(exercise: ExerciseDetails): Boolean = _exercises.add(exercise)
 

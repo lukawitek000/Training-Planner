@@ -24,11 +24,10 @@
 ## 3. Target Direction & Known Tech Debt (`KEEP / REFACTOR / EXPAND`)
 - **MOVE:** Bring `AddTrainingExerciseScreen` and `TrainingExerciseConfigurationScreen`/`ViewModel` from `:app` into `:training`.
 - **EXPAND:**
-  1. Add exercise update detection & explicit user inspection/upgrade flow when a newer `Exercise2.metadata.revision` arrives from the backend.
+  1. Add exercise update detection & explicit user inspection/upgrade flow when a newer `Exercise.metadata.revision` arrives from the backend.
   2. Support predefined/community plans that can be customized (cloning into a user-owned plan without destroying the predefined plan).
   3. Introduce `ScheduledTraining` (intention to perform a `TrainingPlan` at a date/time/location, one-off or recurring) or create a dedicated scheduling package.
   4. Add local-first backend synchronization for user/community training plans (following `:exercise`'s Outbox pattern).
-- **CLEANUP:** `training/build.gradle.kts` currently declares `projects.synchronization` and `playServicesWearable`—remove or isolate until watch plan transfer is wired.
 
 ## 4. Verification Commands
 ```bash

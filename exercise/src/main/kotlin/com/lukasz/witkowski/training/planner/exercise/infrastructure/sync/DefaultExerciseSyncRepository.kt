@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure.sync
 
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseFailure
@@ -233,7 +233,7 @@ internal class DefaultExerciseSyncRepository(
             .toSet()
             .ifEmpty { setOf(ExerciseCategory("Other")) }
 
-        val domainExercise = Exercise2(
+        val domainExercise = Exercise(
             id = ExerciseId(mutation.exerciseId),
             name = mutation.name,
             description = mutation.description,

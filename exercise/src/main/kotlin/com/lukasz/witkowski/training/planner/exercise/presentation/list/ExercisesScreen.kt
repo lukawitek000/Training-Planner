@@ -60,7 +60,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringStat
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_CATEGORIES
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PULL_UP_IMAGES
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
 import com.lukasz.witkowski.training.planner.shared.featureflags.LocalFeatureFlagProvider
@@ -101,7 +101,7 @@ fun ExercisesScreen(
 
 @Composable
 fun ExercisesScreenContent(
-    exercisesList: LazyPagingItems<Exercise2>,
+    exercisesList: LazyPagingItems<Exercise>,
     filteringState: FilteringState,
     toggleCategory: (ExerciseCategory) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
@@ -218,7 +218,7 @@ private fun ExercisesSearchAndFilterHeader(
 
 @Composable
 private fun ExercisesList(
-    exercisesList: LazyPagingItems<Exercise2>,
+    exercisesList: LazyPagingItems<Exercise>,
     onExerciseClicked: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
     itemTrailingIcon: (@Composable (ExerciseId) -> Unit)? = null
@@ -256,7 +256,7 @@ private fun ExercisesList(
 
 @Composable
 fun ExerciseListItemContent(
-    exercise: Exercise2,
+    exercise: Exercise,
     onClick: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
     itemTrailingIcon: (@Composable (ExerciseId) -> Unit)? = null
@@ -322,7 +322,7 @@ fun ExerciseListItemContent(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ExerciseInformation(
-    exercise: Exercise2,
+    exercise: Exercise,
     isOnlineSyncEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -522,7 +522,7 @@ fun <T : Any> List<T>.asPreviewPagerFlow(): Flow<PagingData<T>> = flowOf(PagingD
 
 val PREVIEW_EXERCISES =
     listOf(
-        Exercise2(
+        Exercise(
             id = ExerciseId.create(),
             name = "Push ups",
             description = "Compound upper-body pushing movement",
@@ -534,7 +534,7 @@ val PREVIEW_EXERCISES =
                 syncState = ExerciseSyncState.CONFLICT
             )
         ),
-        Exercise2(
+        Exercise(
             id = ExerciseId.create(),
             name = "Pull up",
             description = "Vertical pulling exercise for lats and biceps",

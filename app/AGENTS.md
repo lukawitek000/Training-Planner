@@ -14,7 +14,6 @@
 ## 3. Target Direction & Known Tech Debt (`KEEP / REFACTOR / MOVE`)
 - **MOVE:** `AddTrainingExerciseScreen` and `TrainingExerciseConfigurationScreen`/`ViewModel` belong in `:training` (or a feature navigation builder).
 - **REFACTOR:** `:session-service` and `:image` are not directly wired in `AppModule.kt` (`imageModule` is transitive via `exerciseModule`). Wire `:session-service` when refactoring foreground workout execution.
-- **REMOVE:** Unused `libs.androidx.compose.navigation` (Navigation 2) and `libs.google.playServicesWearable` dependencies in `app/build.gradle.kts` once verified.
 
 ## 4. Verification Commands
 ```bash
