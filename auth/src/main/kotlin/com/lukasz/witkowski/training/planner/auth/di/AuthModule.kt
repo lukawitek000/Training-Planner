@@ -17,6 +17,7 @@ import com.lukasz.witkowski.training.planner.network.TokenStorage
 import com.lukasz.witkowski.training.planner.network.networkModule
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
+import com.lukasz.witkowski.training.planner.shared.featureflags.featureFlagsModule
 import com.lukasz.witkowski.training.planner.shared.time.SystemTimeProvider
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
@@ -27,7 +28,7 @@ import retrofit2.Retrofit
 
 val authModule =
     module {
-        includes(dispatchersModule, networkModule)
+        includes(dispatchersModule, networkModule, featureFlagsModule)
 
         single {
             get<Retrofit>(NetworkQualifiers.UNAUTHENTICATED).create(AuthenticationApi::class.java)
@@ -50,7 +51,12 @@ val authModule =
         } bind TokenRefreshRemoteDataSource::class
 
         single { AndroidSecureTokenStorage(androidContext()) } bind SecureTokenStorage::class
-        single { DefaultTokenStorage(secureTokenStorage = get()) }
+        single {
+            DefaultTokenStorage(
+                secureTokenStorage = get(),
+                featureFlagProvider = get()
+            )
+        }
         single<TokenStorage> { get<DefaultTokenStorage>() }
         single<AuthSessionProvider> { get<DefaultTokenStorage>() }
 
@@ -58,7 +64,8 @@ val authModule =
             DefaultAuthenticationRepository(
                 tokenStorage = get(),
                 remoteDataSource = get(),
-                syncScheduler = get()
+                syncScheduler = get(),
+                featureFlagProvider = get()
             )
         } bind AuthenticationRepository::class
 

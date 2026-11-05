@@ -12,6 +12,8 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.RoomExerciseLocalDataSource
 import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
 import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -57,7 +59,10 @@ class DefaultExerciseRepositoryTest {
             DefaultExerciseRepository(
                 localDataSource = localDataSource,
                 mutationScheduler = mutationScheduler,
-                ioDispatcher = ioDispatcher
+                ioDispatcher = ioDispatcher,
+                featureFlagProvider = DefaultFeatureFlagProvider(
+                    overrides = mapOf(FeatureFlag.ONLINE_SYNC to true)
+                )
             )
     }
 
@@ -355,6 +360,65 @@ class DefaultExerciseRepositoryTest {
             assertNotNull(loadedDetails)
             assertEquals(listOf(imageId1, imageId2), loadedDetails.exercise.imageIds)
         }
+
+    @Test
+    fun `when ONLINE_SYNC is false, insert and update keep LOCAL_ONLY and skip mutations`() =
+        runTest {
+            val offlineRepo = DefaultExerciseRepository(
+                localDataSource = RoomExerciseLocalDataSource(exerciseDao, mutationDao),
+                mutationScheduler = mockk(relaxed = true),
+                ioDispatcher = ioDispatcher,
+                featureFlagProvider = DefaultFeatureFlagProvider(
+                    overrides = mapOf(FeatureFlag.ONLINE_SYNC to false)
+                )
+            )
+            val details = TestData.SQUATS_DETAILS.copy(
+                exercise = TestData.SQUATS_EXERCISE.copy(
+                    metadata = ExerciseMetadata(
+                        source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
+                        syncState = ExerciseSyncState.PENDING_UPLOAD
+                    )
+                )
+            )
+            assertTrue(offlineRepo.insert(details))
+            val loaded = offlineRepo.getExerciseDetailsById(details.exercise.id).first()
+            assertNotNull(loaded)
+            assertEquals(ExerciseSyncState.LOCAL_ONLY, loaded.exercise.metadata.syncState)
+            assertNull(mutationDao.getMutationByExerciseIdOnce(details.exercise.id.toString()))
+
+            val updated = offlineRepo.updateExercise(
+                loaded.copy(exercise = loaded.exercise.copy(name = "Offline Squat"))
+            )
+            assertTrue(updated)
+            assertNull(mutationDao.getMutationByExerciseIdOnce(details.exercise.id.toString()))
+        }
+
+    @Test
+    fun `when ONLINE_SYNC is false, delete synced exercise hard-deletes immediately`() = runTest {
+        val offlineRepo = DefaultExerciseRepository(
+            localDataSource = RoomExerciseLocalDataSource(exerciseDao, mutationDao),
+            mutationScheduler = mockk(relaxed = true),
+            ioDispatcher = ioDispatcher,
+            featureFlagProvider = DefaultFeatureFlagProvider(
+                overrides = mapOf(FeatureFlag.ONLINE_SYNC to false)
+            )
+        )
+        val syncedDetails = TestData.SQUATS_DETAILS.copy(
+            exercise = TestData.SQUATS_EXERCISE.copy(
+                metadata = ExerciseMetadata(
+                    source = ExerciseSource.UserCreated(ExerciseOwner.User("u1", "User")),
+                    syncState = ExerciseSyncState.SYNCED,
+                    revision = 2L
+                )
+            )
+        )
+        offlineRepo.saveExerciseLocally(syncedDetails)
+        val id = syncedDetails.exercise.id
+
+        assertTrue(offlineRepo.delete(id))
+        assertNull(exerciseDao.getExerciseByIdOnce(id.toString()))
+        assertNull(mutationDao.getMutationByExerciseIdOnce(id.toString()))
+    }
 
     private suspend fun insertAllTestExercises() {
         TestData.EXERCISE_DETAILS_LIST.forEach {

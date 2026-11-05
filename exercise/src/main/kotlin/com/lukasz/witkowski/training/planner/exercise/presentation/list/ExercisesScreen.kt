@@ -62,6 +62,8 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PULL_
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.image.ImageReference
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.featureflags.LocalFeatureFlagProvider
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.Info
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
@@ -259,22 +261,30 @@ fun ExerciseListItemContent(
     modifier: Modifier = Modifier,
     itemTrailingIcon: (@Composable (ExerciseId) -> Unit)? = null
 ) {
+    val isOnlineSyncEnabled = LocalFeatureFlagProvider.current.isEnabled(FeatureFlag.ONLINE_SYNC)
     val imageDescription = stringResource(id = R.string.image_description, exercise.name)
     val syncState = exercise.metadata.syncState
     val borderStroke =
-        when (syncState) {
-            ExerciseSyncState.CONFLICT ->
-                BorderStroke(Dimens.thinBorder, Warning.copy(alpha = 0.45f))
-            ExerciseSyncState.ERROR ->
-                BorderStroke(
-                    Dimens.thinBorder,
-                    MaterialTheme.colorScheme.error.copy(alpha = 0.45f)
-                )
-            else ->
-                BorderStroke(
-                    Dimens.thinBorder,
-                    MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
-                )
+        if (isOnlineSyncEnabled) {
+            when (syncState) {
+                ExerciseSyncState.CONFLICT ->
+                    BorderStroke(Dimens.thinBorder, Warning.copy(alpha = 0.45f))
+                ExerciseSyncState.ERROR ->
+                    BorderStroke(
+                        Dimens.thinBorder,
+                        MaterialTheme.colorScheme.error.copy(alpha = 0.45f)
+                    )
+                else ->
+                    BorderStroke(
+                        Dimens.thinBorder,
+                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
+                    )
+            }
+        } else {
+            BorderStroke(
+                Dimens.thinBorder,
+                MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)
+            )
         }
 
     Surface(
@@ -298,7 +308,8 @@ fun ExerciseListItemContent(
             Spacer(modifier = Modifier.width(Dimens.spaceMd))
             ExerciseInformation(
                 modifier = Modifier.weight(1f),
-                exercise = exercise
+                exercise = exercise,
+                isOnlineSyncEnabled = isOnlineSyncEnabled
             )
             itemTrailingIcon?.let { icon ->
                 Spacer(modifier = Modifier.width(Dimens.spaceSm))
@@ -310,7 +321,11 @@ fun ExerciseListItemContent(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ExerciseInformation(exercise: Exercise2, modifier: Modifier = Modifier) {
+private fun ExerciseInformation(
+    exercise: Exercise2,
+    isOnlineSyncEnabled: Boolean,
+    modifier: Modifier = Modifier
+) {
     val categories = exercise.categories
     val metadata = exercise.metadata
 
@@ -335,8 +350,10 @@ private fun ExerciseInformation(exercise: Exercise2, modifier: Modifier = Modifi
                     .weight(1f)
                     .testTag("ExerciseItemName-${exercise.name}")
             )
-            Spacer(modifier = Modifier.width(Dimens.spaceXs))
-            ExerciseSyncBadge(syncState = metadata.syncState)
+            if (isOnlineSyncEnabled) {
+                Spacer(modifier = Modifier.width(Dimens.spaceXs))
+                ExerciseSyncBadge(syncState = metadata.syncState)
+            }
         }
 
         if (categories.isNotEmpty()) {

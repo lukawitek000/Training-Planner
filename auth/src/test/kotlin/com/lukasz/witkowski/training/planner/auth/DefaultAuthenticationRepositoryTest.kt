@@ -11,6 +11,9 @@ import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.Authenti
 import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.RetrofitAuthenticationRemoteDataSource
 import com.lukasz.witkowski.training.planner.network.NetworkConfig
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.network.NetworkFailure
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -56,13 +59,17 @@ class DefaultAuthenticationRepositoryTest {
                 timeProvider = timeProvider,
                 ioDispatcher = testDispatcher
             )
-        val tokenStorage = DefaultTokenStorage(mockSecureTokenStorage)
+        val onlineFlags = DefaultFeatureFlagProvider(
+            overrides = mapOf(FeatureFlag.ONLINE_SYNC to true)
+        )
+        val tokenStorage = DefaultTokenStorage(mockSecureTokenStorage, onlineFlags)
 
         repository =
             DefaultAuthenticationRepository(
                 tokenStorage = tokenStorage,
                 remoteDataSource = remoteDataSource,
-                syncScheduler = syncScheduler
+                syncScheduler = syncScheduler,
+                featureFlagProvider = onlineFlags
             )
     }
 
@@ -157,4 +164,37 @@ class DefaultAuthenticationRepositoryTest {
         verify { syncScheduler.cancelMutationSync() }
         coVerify { syncScheduler.clearLocalSyncData(keepLocalData = false) }
     }
+
+    @Test
+    fun `when ONLINE_SYNC is false, signIn and signUp fail closed without network call`() =
+        runTest {
+            val offlineFlags = DefaultFeatureFlagProvider(
+                overrides = mapOf(FeatureFlag.ONLINE_SYNC to false)
+            )
+            val offlineRepo = DefaultAuthenticationRepository(
+                tokenStorage = DefaultTokenStorage(mockSecureTokenStorage, offlineFlags),
+                remoteDataSource = mockk(),
+                syncScheduler = syncScheduler,
+                featureFlagProvider = offlineFlags
+            )
+
+            val signInResult = offlineRepo.signIn(SignInForm("test@example.com", "password123"))
+            val signUpResult = offlineRepo.signUp(
+                SignUpForm("User", "test@example.com", "password123")
+            )
+
+            assertEquals(
+                AuthenticationResult.Failure(
+                    AuthenticationFailure.NetworkError(NetworkFailure.NoInternet)
+                ),
+                signInResult
+            )
+            assertEquals(
+                AuthenticationResult.Failure(
+                    AuthenticationFailure.NetworkError(NetworkFailure.NoInternet)
+                ),
+                signUpResult
+            )
+            assertEquals(0, mockWebServer.requestCount)
+        }
 }

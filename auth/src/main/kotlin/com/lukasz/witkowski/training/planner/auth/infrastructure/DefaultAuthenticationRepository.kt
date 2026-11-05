@@ -9,6 +9,10 @@ import com.lukasz.witkowski.training.planner.auth.infrastructure.remote.Authenti
 import com.lukasz.witkowski.training.planner.network.AuthTokens
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.network.TokenStorage
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.network.NetworkFailure
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import com.lukasz.witkowski.training.planner.shared.utils.fold
 import com.lukasz.witkowski.training.planner.shared.utils.runCatchingCancellable
@@ -17,14 +21,27 @@ import timber.log.Timber
 class DefaultAuthenticationRepository(
     private val tokenStorage: TokenStorage,
     private val remoteDataSource: AuthenticationRemoteDataSource,
-    private val syncScheduler: SyncScheduler
+    private val syncScheduler: SyncScheduler,
+    private val featureFlagProvider: FeatureFlagProvider = DefaultFeatureFlagProvider()
 ) : AuthenticationRepository {
     override suspend fun signUp(form: SignUpForm): AuthenticationResult {
+        if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
+            Timber.i("signUp blocked: ONLINE_SYNC is disabled")
+            return AuthenticationResult.Failure(
+                AuthenticationFailure.NetworkError(NetworkFailure.NoInternet)
+            )
+        }
         Timber.i("Repository signUp called for email: %s, username: %s", form.email, form.username)
         return remoteDataSource.signUp(form).processResult()
     }
 
     override suspend fun signIn(form: SignInForm): AuthenticationResult {
+        if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
+            Timber.i("signIn blocked: ONLINE_SYNC is disabled")
+            return AuthenticationResult.Failure(
+                AuthenticationFailure.NetworkError(NetworkFailure.NoInternet)
+            )
+        }
         Timber.i("Repository signIn called for email: %s", form.email)
         return remoteDataSource.signIn(form).processResult()
     }

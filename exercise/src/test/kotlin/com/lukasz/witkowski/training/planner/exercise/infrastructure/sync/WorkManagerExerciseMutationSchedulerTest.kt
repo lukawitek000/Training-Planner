@@ -3,6 +3,8 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure.sync
 import android.content.Context
 import com.lukasz.witkowski.training.planner.network.AuthSessionProvider
 import com.lukasz.witkowski.training.planner.network.SyncPreferencesStorage
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlin.test.Test
@@ -20,16 +22,21 @@ class WorkManagerExerciseMutationSchedulerTest {
     private val testDispatcher = UnconfinedTestDispatcher()
     private val testScope = TestScope(testDispatcher)
 
-    private val scheduler = WorkManagerExerciseMutationScheduler(
-        context = context,
-        authSessionProvider = authSessionProvider,
-        syncPreferencesStorage = syncPreferencesStorage,
-        exerciseSyncRepositoryProvider = { mockk(relaxed = true) },
-        coroutineScope = testScope
-    )
+    private fun createScheduler(onlineSyncEnabled: Boolean = true) =
+        WorkManagerExerciseMutationScheduler(
+            context = context,
+            authSessionProvider = authSessionProvider,
+            syncPreferencesStorage = syncPreferencesStorage,
+            featureFlagProvider = DefaultFeatureFlagProvider(
+                overrides = mapOf(FeatureFlag.ONLINE_SYNC to onlineSyncEnabled)
+            ),
+            exerciseSyncRepositoryProvider = { mockk(relaxed = true) },
+            coroutineScope = testScope
+        )
 
     @Test
     fun `enqueueMutationSync does not throw exception when user is unauthenticated`() = runTest {
+        val scheduler = createScheduler(onlineSyncEnabled = true)
         coEvery { authSessionProvider.isLoggedIn() } returns false
         coEvery { syncPreferencesStorage.autoSyncEnabled } returns flowOf(true)
 
@@ -39,9 +46,23 @@ class WorkManagerExerciseMutationSchedulerTest {
     @Test
     fun `enqueueMutationSync does not throw exception when auto cloud sync is disabled`() =
         runTest {
+            val scheduler = createScheduler(onlineSyncEnabled = true)
             coEvery { authSessionProvider.isLoggedIn() } returns true
             coEvery { syncPreferencesStorage.autoSyncEnabled } returns flowOf(false)
 
             scheduler.enqueueMutationSync()
+        }
+
+    @Test
+    fun `enqueueMutationSync short-circuits safely when online sync flag is disabled`() = runTest {
+        val scheduler = createScheduler(onlineSyncEnabled = false)
+        scheduler.enqueueMutationSync()
+    }
+
+    @Test
+    fun `enqueueRemoteChangeSync short-circuits safely when online sync flag is disabled`() =
+        runTest {
+            val scheduler = createScheduler(onlineSyncEnabled = false)
+            scheduler.enqueueRemoteChangeSync(force = true)
         }
 }

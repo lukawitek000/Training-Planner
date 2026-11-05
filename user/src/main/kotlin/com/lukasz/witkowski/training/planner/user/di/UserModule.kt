@@ -4,6 +4,7 @@ import com.lukasz.witkowski.training.planner.network.SyncPreferencesStorage
 import com.lukasz.witkowski.training.planner.network.networkModule
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
+import com.lukasz.witkowski.training.planner.shared.featureflags.featureFlagsModule
 import com.lukasz.witkowski.training.planner.user.domain.UserRepository
 import com.lukasz.witkowski.training.planner.user.infrastructure.DefaultUserRepository
 import com.lukasz.witkowski.training.planner.user.infrastructure.local.AndroidUserPreferencesStorage
@@ -21,7 +22,7 @@ import retrofit2.Retrofit
 
 val userModule =
     module {
-        includes(dispatchersModule, networkModule)
+        includes(dispatchersModule, networkModule, featureFlagsModule)
 
         single {
             get<Retrofit>().create(UserApi::class.java)
@@ -43,7 +44,8 @@ val userModule =
                 tokenStorage = get(),
                 userRemoteDataSource = get(),
                 userPreferencesStorage = get(),
-                syncScheduler = getOrNull()
+                syncScheduler = getOrNull(),
+                featureFlagProvider = get()
             )
         } bind UserRepository::class
 

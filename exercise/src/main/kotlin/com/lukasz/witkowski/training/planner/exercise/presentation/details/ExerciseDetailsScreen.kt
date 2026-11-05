@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -51,6 +52,9 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.editor.Recomm
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
 import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.featureflags.LocalFeatureFlagProvider
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.Info
 import com.lukasz.witkowski.training.planner.shared.theme.Success
@@ -64,6 +68,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppErrorState
 
 @Composable
 fun ExerciseDetailsScreen(viewModel: ExerciseDetailsViewModel, modifier: Modifier = Modifier) {
+    val isOnlineSyncEnabled = LocalFeatureFlagProvider.current.isEnabled(FeatureFlag.ONLINE_SYNC)
     val state by viewModel.state.collectAsState()
     val showConflictDialog by viewModel.showConflictDialog.collectAsState()
     val conflictServerDetails by viewModel.conflictServerDetails.collectAsState()
@@ -75,7 +80,7 @@ fun ExerciseDetailsScreen(viewModel: ExerciseDetailsViewModel, modifier: Modifie
     )
 
     val currentState = state
-    if (showConflictDialog && currentState is ExerciseDetailsState.Success) {
+    if (isOnlineSyncEnabled && showConflictDialog && currentState is ExerciseDetailsState.Success) {
         ExerciseConflictDialog(
             localDetails = currentState.details,
             serverDetails = conflictServerDetails,
@@ -148,6 +153,7 @@ private fun ExerciseDetailsBody(
     footer: @Composable ColumnScope.(ExerciseDetails) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isOnlineSyncEnabled = LocalFeatureFlagProvider.current.isEnabled(FeatureFlag.ONLINE_SYNC)
     val exercise = details.exercise
     val metadata = exercise.metadata
     Box(modifier = modifier.fillMaxSize()) {
@@ -187,7 +193,11 @@ private fun ExerciseDetailsBody(
                 }
             }
 
-            ExerciseSyncStatusCard(metadata = metadata)
+            if (isOnlineSyncEnabled) {
+                ExerciseSyncStatusCard(metadata = metadata)
+            } else {
+                ExerciseSourceMetadataRow(metadata = metadata)
+            }
 
             Surface(
                 modifier = Modifier.fillMaxWidth(),
@@ -218,43 +228,84 @@ private fun ExerciseDetailsBody(
 
             footer(details)
 
-            if (metadata.syncState == ExerciseSyncState.CONFLICT ||
-                metadata.syncState == ExerciseSyncState.ERROR
+            if (isOnlineSyncEnabled &&
+                (
+                    metadata.syncState == ExerciseSyncState.CONFLICT ||
+                        metadata.syncState == ExerciseSyncState.ERROR
+                    )
             ) {
                 Spacer(modifier = Modifier.height(Dimens.spaceXl * 3))
             }
         }
 
-        when (metadata.syncState) {
-            ExerciseSyncState.CONFLICT -> {
-                SyncActionBottomBanner(
-                    title = stringResource(R.string.conflict_banner_title),
-                    subtitle = stringResource(R.string.conflict_banner_subtitle),
-                    actionLabel = stringResource(R.string.conflict_resolve_action),
-                    isWarning = true,
-                    onActionClick = onResolveConflictClick,
-                    actionTestTag = "ResolveConflictButton",
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(Dimens.spaceMd)
+        if (isOnlineSyncEnabled) {
+            when (metadata.syncState) {
+                ExerciseSyncState.CONFLICT -> {
+                    SyncActionBottomBanner(
+                        title = stringResource(R.string.conflict_banner_title),
+                        subtitle = stringResource(R.string.conflict_banner_subtitle),
+                        actionLabel = stringResource(R.string.conflict_resolve_action),
+                        isWarning = true,
+                        onActionClick = onResolveConflictClick,
+                        actionTestTag = "ResolveConflictButton",
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(Dimens.spaceMd)
+                    )
+                }
+
+                ExerciseSyncState.ERROR -> {
+                    SyncActionBottomBanner(
+                        title = stringResource(R.string.sync_error_banner_title),
+                        subtitle = stringResource(R.string.sync_error_banner_subtitle),
+                        actionLabel = stringResource(R.string.sync_retry_action),
+                        isWarning = false,
+                        onActionClick = onRetrySyncClick,
+                        actionTestTag = "RetrySyncButton",
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(Dimens.spaceMd)
+                    )
+                }
+
+                else -> Unit
+            }
+        }
+    }
+}
+
+@Composable
+private fun ExerciseSourceMetadataRow(metadata: ExerciseMetadata, modifier: Modifier = Modifier) {
+    FlowRow(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
+    ) {
+        when (metadata.source) {
+            ExerciseSource.Bundled -> {
+                AppMetadataPill(
+                    text = stringResource(R.string.source_bundled),
+                    leadingIcon = Icons.Default.Shield
+                )
+                AppMetadataPill(
+                    text = stringResource(R.string.bundled_read_only_badge),
+                    leadingIcon = Icons.Default.Lock
                 )
             }
 
-            ExerciseSyncState.ERROR -> {
-                SyncActionBottomBanner(
-                    title = stringResource(R.string.sync_error_banner_title),
-                    subtitle = stringResource(R.string.sync_error_banner_subtitle),
-                    actionLabel = stringResource(R.string.sync_retry_action),
-                    isWarning = false,
-                    onActionClick = onRetrySyncClick,
-                    actionTestTag = "RetrySyncButton",
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(Dimens.spaceMd)
+            is ExerciseSource.UserCreated -> {
+                AppMetadataPill(
+                    text = stringResource(R.string.source_owned_by_me),
+                    leadingIcon = Icons.Default.Person
                 )
             }
 
-            else -> Unit
+            ExerciseSource.Organization -> {
+                AppMetadataPill(
+                    text = stringResource(R.string.source_organization),
+                    leadingIcon = Icons.Default.CloudDone
+                )
+            }
         }
     }
 }
@@ -460,6 +511,44 @@ private fun ExerciseDetailsScreenContentPreview() {
                 ),
                 modifier = Modifier.fillMaxSize()
             )
+        }
+    }
+}
+
+@Composable
+@Preview
+private fun ExerciseDetailsScreenOnlineConflictPreview() {
+    TrainingPlannerTheme {
+        CompositionLocalProvider(
+            LocalFeatureFlagProvider provides DefaultFeatureFlagProvider(
+                mapOf(FeatureFlag.ONLINE_SYNC to true)
+            )
+        ) {
+            Surface {
+                ExerciseDetailsScreenContent(
+                    state = ExerciseDetailsState.Success(
+                        details = ExerciseDetails(
+                            exercise = Exercise2(
+                                id = ExerciseId.create(),
+                                name = "Push ups",
+                                description = "Some long description in here",
+                                categories = listOf(
+                                    ExerciseCategory("Chest"),
+                                    ExerciseCategory("Shoulder")
+                                ),
+                                images = PREVIEW_PUSH_UP_IMAGES,
+                                metadata = ExerciseMetadata(
+                                    source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
+                                    syncState = ExerciseSyncState.CONFLICT,
+                                    revision = 3
+                                )
+                            ),
+                            recommendations = PREVIEW_RECOMMENDED_PARAMETERS
+                        )
+                    ),
+                    modifier = Modifier.fillMaxSize()
+                )
+            }
         }
     }
 }
