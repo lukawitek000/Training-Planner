@@ -67,7 +67,6 @@ fun ExerciseDetailsScreen(viewModel: ExerciseDetailsViewModel, modifier: Modifie
     val state by viewModel.state.collectAsState()
     val showConflictDialog by viewModel.showConflictDialog.collectAsState()
     val conflictServerDetails by viewModel.conflictServerDetails.collectAsState()
-
     ExerciseDetailsScreenContent(
         state = state,
         modifier = modifier.fillMaxSize(),

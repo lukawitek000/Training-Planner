@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandLess
@@ -35,13 +36,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import com.lukasz.witkowski.training.planner.exercise.R
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recommendation
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
@@ -50,6 +53,7 @@ import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.Success
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.theme.Warning
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.timepicker.AppTimePickerBottomSheet
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
@@ -174,7 +178,7 @@ fun ExerciseParametersInputFields(
 ) {
     var showRestTimePicker by rememberSaveable { mutableStateOf(false) }
     var showHoldTimePicker by rememberSaveable { mutableStateOf(false) }
-
+    val focusManager = LocalFocusManager.current
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
@@ -188,6 +192,13 @@ fun ExerciseParametersInputFields(
                 value = parameters.sets,
                 onValueChange = { onParametersIntent(ExerciseParametersIntent.SetsChanged(it)) },
                 label = buildRequiredString(stringResource(R.string.sets)),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Next) }
+                ),
                 modifier = Modifier.weight(1f),
                 testTag = "${testTagPrefix}_SetsField"
             )
@@ -195,6 +206,13 @@ fun ExerciseParametersInputFields(
                 value = parameters.reps,
                 onValueChange = { onParametersIntent(ExerciseParametersIntent.RepsChanged(it)) },
                 label = buildRequiredString(stringResource(R.string.reps)),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Next) }
+                ),
                 modifier = Modifier.weight(1f),
                 testTag = "${testTagPrefix}_RepsField"
             )
@@ -203,6 +221,13 @@ fun ExerciseParametersInputFields(
                 onValueChange = { onParametersIntent(ExerciseParametersIntent.WeightChanged(it)) },
                 label = stringResource(R.string.weight),
                 unit = stringResource(R.string.kg),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Decimal,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Next) }
+                ),
                 modifier = Modifier.weight(1f),
                 testTag = "${testTagPrefix}_WeightField"
             )
@@ -220,6 +245,13 @@ fun ExerciseParametersInputFields(
                 },
                 label = stringResource(R.string.hold_time),
                 unit = stringResource(R.string.second_abbrv),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = { focusManager.moveFocus(FocusDirection.Next) }
+                ),
                 modifier = Modifier.weight(1f),
                 testTag = "${testTagPrefix}_HoldTimeField",
                 trailingIcon = {
@@ -245,6 +277,13 @@ fun ExerciseParametersInputFields(
                 },
                 label = buildRequiredString(stringResource(R.string.rest_time)),
                 unit = stringResource(R.string.second_abbrv),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = { focusManager.clearFocus() }
+                ),
                 modifier = Modifier.weight(1f),
                 testTag = "${testTagPrefix}_RestTimeField",
                 trailingIcon = {
@@ -267,7 +306,9 @@ fun ExerciseParametersInputFields(
 
         // Row 3: Helper note
         Row(
-            modifier = Modifier.fillMaxWidth().padding(top = Dimens.spaceXs),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = Dimens.spaceXs),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
         ) {
@@ -442,6 +483,7 @@ fun buildStringOverview(
             weightInKg
         )
     }
+
     time != null -> {
         stringResource(
             R.string.recommendation_with_hold_no_weight,
@@ -451,6 +493,7 @@ fun buildStringOverview(
             restTime.inWholeSeconds
         )
     }
+
     weightInKg != null -> {
         stringResource(
             R.string.recommendation_overview,
@@ -460,6 +503,7 @@ fun buildStringOverview(
             weightInKg
         )
     }
+
     else -> {
         stringResource(
             R.string.recommendation_no_weight,
@@ -478,6 +522,8 @@ private fun ParameterInputField(
     modifier: Modifier = Modifier,
     unit: String = "",
     testTag: String = "",
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     trailingIcon: (@Composable () -> Unit)? = null
 ) {
     Column(modifier = modifier) {
@@ -500,10 +546,10 @@ private fun ParameterInputField(
                 }
                 onValueChange(sanitized.toIntOrNull())
             },
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number
-            ),
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
             singleLine = true,
+            maxLines = 1,
             shape = MaterialTheme.shapes.small,
             colors = OutlinedTextFieldDefaults.colors(
                 focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -598,7 +644,7 @@ private fun ParameterOverview(
     }
 }
 
-@Preview
+@AppPreview
 @Composable
 private fun RecommendedParametersFormPreview() {
     TrainingPlannerTheme {
@@ -609,13 +655,26 @@ private fun RecommendedParametersFormPreview() {
     }
 }
 
-@Preview
+@AppPreview
 @Composable
 private fun RecommendedParametersOverviewPreview() {
     TrainingPlannerTheme {
         RecommendedParametersOverview(
             recommendations = PREVIEW_RECOMMENDED_PARAMETERS,
             modifier = Modifier
+        )
+    }
+}
+
+
+@AppPreview
+@Composable
+private fun ExerciseParametersInputFieldsPreview() {
+    TrainingPlannerTheme {
+        ExerciseParametersInputFields(
+            parameters = PREVIEW_RECOMMENDED_PARAMETERS.first().parameters,
+            testTagPrefix = "",
+            onParametersIntent = {}
         )
     }
 }
