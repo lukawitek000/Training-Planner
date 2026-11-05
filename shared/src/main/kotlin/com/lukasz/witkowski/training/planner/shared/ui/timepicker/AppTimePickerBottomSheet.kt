@@ -1,6 +1,13 @@
 package com.lukasz.witkowski.training.planner.shared.ui.timepicker
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -132,6 +139,7 @@ fun AppTimePickerBottomSheet(
     minutesPresets: List<Int> = DEFAULT_MINUTES_PRESETS
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val scope = rememberCoroutineScope()
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -164,8 +172,25 @@ fun AppTimePickerBottomSheet(
     ) {
         AppTimePickerSheetContent(
             initialSeconds = initialSeconds,
-            onSecondsConfirmed = onSecondsConfirmed,
-            onDismissRequest = onDismissRequest,
+            onSecondsConfirmed = { seconds ->
+                onSecondsConfirmed(seconds)
+                scope.launch {
+                    sheetState.hide()
+                }.invokeOnCompletion {
+                    if (!sheetState.isVisible) {
+                        onDismissRequest()
+                    }
+                }
+            },
+            onDismissRequest = {
+                scope.launch {
+                    sheetState.hide()
+                }.invokeOnCompletion {
+                    if (!sheetState.isVisible) {
+                        onDismissRequest()
+                    }
+                }
+            },
             title = title,
             subtitle = subtitle,
             contextBadgeText = contextBadgeText,
@@ -197,9 +222,11 @@ fun AppTimePickerSheetContent(
             when {
                 initialSeconds == null || initialSeconds in secondsPresets ->
                     AppTimePickerTab.SECONDS
+
                 initialSeconds % SECONDS_PER_MINUTE == 0 &&
                     (initialSeconds / SECONDS_PER_MINUTE) in minutesPresets ->
                     AppTimePickerTab.MINUTES
+
                 else -> AppTimePickerTab.CUSTOM
             }
         }
@@ -361,53 +388,17 @@ fun AppTimePickerSheetContent(
 
         Spacer(modifier = Modifier.height(Dimens.spaceMd))
 
-        // Mode Views
-        when (selectedTab) {
-            AppTimePickerTab.SECONDS -> {
-                TimePresetGrid(
-                    presets = secondsPresets,
-                    selectedValue = selectedSeconds,
-                    formatLabel = { value ->
-                        stringResource(R.string.time_picker_seconds_preset, value)
-                    },
-                    onPresetClick = { value ->
-                        selectedSeconds = value
-                    }
-                )
-            }
-
-            AppTimePickerTab.MINUTES -> {
-                val selectedMinutePreset =
-                    selectedSeconds?.takeIf {
-                        it % SECONDS_PER_MINUTE == 0
-                    }?.div(SECONDS_PER_MINUTE)
-                TimePresetGrid(
-                    presets = minutesPresets,
-                    selectedValue = selectedMinutePreset,
-                    formatLabel = { value ->
-                        stringResource(R.string.time_picker_minutes_preset, value)
-                    },
-                    onPresetClick = { minutes ->
-                        selectedSeconds = minutes * SECONDS_PER_MINUTE
-                    }
-                )
-            }
-
-            AppTimePickerTab.CUSTOM -> {
-                CustomTimeWheelSelector(
-                    minutes = customMinutes,
-                    seconds = customRemainderSeconds,
-                    onMinutesChanged = { newMinutes ->
-                        customMinutes = newMinutes
-                        selectedSeconds = newMinutes * SECONDS_PER_MINUTE + customRemainderSeconds
-                    },
-                    onSecondsChanged = { newSeconds ->
-                        customRemainderSeconds = newSeconds
-                        selectedSeconds = customMinutes * SECONDS_PER_MINUTE + newSeconds
-                    }
-                )
-            }
-        }
+        TimePickerTabs(
+            selectedTab = selectedTab,
+            secondsPresets = secondsPresets,
+            selectedSeconds = selectedSeconds,
+            minutesPresets = minutesPresets,
+            customMinutes = customMinutes,
+            customRemainderSeconds = customRemainderSeconds,
+            onSelectedSeconds = { selectedSeconds = it },
+            onSelectedCustomMinute = { customMinutes = it },
+            onCustomRemainderSecond = { customRemainderSeconds = it }
+        )
 
         Spacer(modifier = Modifier.height(Dimens.spaceLg))
 
@@ -442,6 +433,91 @@ fun AppTimePickerSheetContent(
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
+        }
+    }
+}
+
+@Composable
+private fun TimePickerTabs(
+    selectedTab: AppTimePickerTab,
+    secondsPresets: List<Int>,
+    selectedSeconds: Int?,
+    minutesPresets: List<Int>,
+    customMinutes: Int,
+    customRemainderSeconds: Int,
+    onSelectedSeconds: (Int) -> Unit,
+    onSelectedCustomMinute: (Int) -> Unit,
+    onCustomRemainderSecond: (Int) -> Unit
+) {
+    Box(
+        modifier = Modifier.animateContentSize(
+            animationSpec = tween(durationMillis = 200, easing = LinearEasing)
+        ),
+        contentAlignment = Alignment.Center
+    ) {
+        AnimatedContent(
+            targetState = selectedTab,
+            transitionSpec = {
+                fadeIn(
+                    animationSpec = tween(
+                        durationMillis = 200,
+                        easing = LinearEasing
+                    )
+                ) togetherWith fadeOut(
+                    animationSpec = tween(
+                        durationMillis = 200,
+                        easing = LinearEasing
+                    )
+                )
+            },
+            label = "TimePickerContent"
+        ) { tab ->
+            when (tab) {
+                AppTimePickerTab.SECONDS -> {
+                    TimePresetGrid(
+                        presets = secondsPresets,
+                        selectedValue = selectedSeconds,
+                        formatLabel = { value ->
+                            stringResource(R.string.time_picker_seconds_preset, value)
+                        },
+                        onPresetClick = onSelectedSeconds
+                    )
+                }
+
+                AppTimePickerTab.MINUTES -> {
+                    val selectedMinutePreset =
+                        selectedSeconds?.takeIf {
+                            it % SECONDS_PER_MINUTE == 0
+                        }?.div(SECONDS_PER_MINUTE)
+                    TimePresetGrid(
+                        presets = minutesPresets,
+                        selectedValue = selectedMinutePreset,
+                        formatLabel = { value ->
+                            stringResource(R.string.time_picker_minutes_preset, value)
+                        },
+                        onPresetClick = { minutes ->
+                            onSelectedSeconds(minutes * SECONDS_PER_MINUTE)
+                        }
+                    )
+                }
+
+                AppTimePickerTab.CUSTOM -> {
+                    CustomTimeWheelSelector(
+                        minutes = customMinutes,
+                        seconds = customRemainderSeconds,
+                        onMinutesChanged = { newMinutes ->
+                            onSelectedCustomMinute(newMinutes)
+                            onSelectedSeconds(
+                                newMinutes * SECONDS_PER_MINUTE + customRemainderSeconds
+                            )
+                        },
+                        onSecondsChanged = { newSeconds ->
+                            onCustomRemainderSecond(newSeconds)
+                            onSelectedSeconds(customMinutes * SECONDS_PER_MINUTE + newSeconds)
+                        }
+                    )
+                }
+            }
         }
     }
 }
@@ -706,11 +782,15 @@ private fun formatDurationLabel(seconds: Int?): String {
     val remSecs = seconds % SECONDS_PER_MINUTE
     return when {
         mins > 0 && remSecs > 0 ->
-            "$mins ${stringResource(
-                R.string.minutes_shortcut
-            )} $remSecs ${stringResource(R.string.seconds_shortcut)}"
+            "$mins ${
+                stringResource(
+                    R.string.minutes_shortcut
+                )
+            } $remSecs ${stringResource(R.string.seconds_shortcut)}"
+
         mins > 0 && seconds !in DEFAULT_SECONDS_PRESETS ->
             stringResource(R.string.time_picker_minutes_preset, mins)
+
         else ->
             stringResource(R.string.time_picker_seconds_preset, seconds)
     }

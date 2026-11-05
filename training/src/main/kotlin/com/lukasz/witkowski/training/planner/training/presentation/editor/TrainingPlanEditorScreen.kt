@@ -21,6 +21,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.Add
@@ -40,15 +42,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.buildStringOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
@@ -66,6 +71,7 @@ import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryNam
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -111,7 +117,7 @@ fun TrainingPlanEditorScreenContent(
     modifier: Modifier = Modifier,
     isEditMode: Boolean = false
 ) {
-    var showRestTimePicker by remember { mutableStateOf(false) }
+    var showRestTimePicker by rememberSaveable { mutableStateOf(false) }
     val lazyListState = rememberLazyListState()
     val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
         val fromIndex = state.exercises.indexOfFirst { it.id.toString() == from.key }
@@ -191,14 +197,10 @@ fun TrainingPlanEditorScreenContent(
                 if (selectedTime != null) {
                     onIntent(
                         TrainingPlanEditingIntent.RestTimeChanged(
-                            (
-                                selectedTime.timeInMillis /
-                                    1000
-                                ).seconds
+                            selectedTime.timeInMillis.milliseconds
                         )
                     )
                 }
-                showRestTimePicker = false
             },
             onDismissRequest = { showRestTimePicker = false }
         )
@@ -212,6 +214,7 @@ private fun TextInputForm(
     onUserInputChange: (TrainingPlanEditingIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val focusManager = LocalFocusManager.current
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
@@ -221,7 +224,13 @@ private fun TextInputForm(
             value = title,
             onValueChange = { onUserInputChange(TrainingPlanEditingIntent.TitleChanged(it)) },
             placeholder = stringResource(R.string.training_plan_title),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            keyboardActions = KeyboardActions(
+                onNext = { focusManager.moveFocus(FocusDirection.Down) }
+            ),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            )
         )
         AppLabeledTextField(
             label = stringResource(R.string.training_plan_description_label),
@@ -229,7 +238,14 @@ private fun TextInputForm(
             onValueChange = { onUserInputChange(TrainingPlanEditingIntent.DescriptionChanged(it)) },
             placeholder = stringResource(R.string.training_plan_description),
             singleLine = false,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            minLines = 3,
+            keyboardActions = KeyboardActions(
+                onDone = { focusManager.clearFocus() }
+            ),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            )
         )
     }
 }

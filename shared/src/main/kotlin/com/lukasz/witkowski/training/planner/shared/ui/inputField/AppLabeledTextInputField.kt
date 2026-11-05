@@ -36,7 +36,8 @@ fun AppLabeledTextField(
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    minLines: Int = 1
 ) {
     Column(modifier = modifier) {
         AppInputLabel(text = label)
@@ -52,7 +53,8 @@ fun AppLabeledTextField(
             visualTransformation = visualTransformation,
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
-            interactionSource = interactionSource
+            interactionSource = interactionSource,
+            minLines = minLines
         )
     }
 }

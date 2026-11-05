@@ -42,6 +42,7 @@
     <string name="failed_to_load_training_plans">Failed to load training plans</string>
     <string name="no_trainings_info">No trainings. Create your first training</string>
     <string name="create_training">Create training</string>
+    <string name="configure_exercise">Configure Exercise</string>
     <string name="last_modified">Last modified %1$s</string>
     <string name="last_session">Last session %1$s</string>
     <string name="training_plan_title_label">Training Plan title *</string>
