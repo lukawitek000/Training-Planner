@@ -2,20 +2,6 @@ package com.lukasz.witkowski.training.planner.exercise.domain
 
 import com.lukasz.witkowski.training.planner.image.ImageId
 
-data class Exercise(
-    val id: ExerciseId,
-    val name: String,
-    val description: String,
-    val categories: List<ExerciseCategoryLegacy>,
-    val imageId: ImageId? = null
-) {
-    init {
-        require(categories.isNotEmpty()) {
-            "Exercise should have at least one category"
-        }
-    }
-}
-
 data class ExerciseMetadata(
     val source: ExerciseSource = ExerciseSource.Bundled,
     val sharing: ExerciseSharing = ExerciseSharing.Private,
@@ -34,12 +20,17 @@ data class ExerciseOverview(
     val thumbnailId: ImageId?
         get() = imageIds.firstOrNull()
 
+    val imageId: ImageId?
+        get() = thumbnailId
+
     init {
         require(categories.isNotEmpty()) {
             "Exercise should have at least one category"
         }
     }
 }
+
+typealias Exercise = ExerciseOverview
 
 @Deprecated("Use ExerciseOverview instead", ReplaceWith("ExerciseOverview"))
 typealias Exercise2 = ExerciseOverview

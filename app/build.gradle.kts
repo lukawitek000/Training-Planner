@@ -86,7 +86,6 @@ dependencies {
     // navigation3 libraries
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.navigation3.runtime)
-    implementation(libs.androidx.compose.navigation)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
     // koin
@@ -97,9 +96,6 @@ dependencies {
 
     // Needed for the themes.xml
     implementation(libs.google.material)
-
-    // Without this dependency there is a build error
-    implementation(libs.google.playServicesWearable)
 
     testImplementation(libs.kotlinTestJunit)
     testImplementation(libs.kotlinx.coroutines.test)

@@ -22,8 +22,7 @@ internal object ExerciseFactory {
             syncState = ExerciseSyncState.PENDING_UPLOAD
         )
     ): ExerciseDetails = ExerciseDetails(
-        exercise =
-        ExerciseOverview(
+        exercise = ExerciseOverview(
             id = exerciseId,
             name = exerciseConfiguration.name,
             description = exerciseConfiguration.description,

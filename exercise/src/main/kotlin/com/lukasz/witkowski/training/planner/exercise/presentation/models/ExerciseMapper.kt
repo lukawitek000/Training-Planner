@@ -1,27 +1,9 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation.models
 
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails as DomainExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview as DomainExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRecommendation
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
 import com.lukasz.witkowski.training.planner.image.ImageReference
-
-fun Exercise.toDomainExercise(): DomainExercise = DomainExercise(
-    id = id,
-    name = name,
-    description = description,
-    categories = categories.map { it.toExerciseCategory() },
-    imageId = image?.imageId
-)
-
-fun DomainExercise.toPresentationExercise(imageReference: ImageReference?): Exercise = Exercise(
-    id = id,
-    name = name,
-    description = description,
-    categories = categories.map { it.toCategory() },
-    image = imageReference
-)
 
 fun DomainExerciseOverview.toPresentationExerciseOverview(
     thumbnail: ImageReference? = null
@@ -33,6 +15,10 @@ fun DomainExerciseOverview.toPresentationExerciseOverview(
     thumbnail = thumbnail,
     metadata = metadata
 )
+
+fun DomainExerciseOverview.toPresentationExercise(
+    thumbnail: ImageReference? = null
+): ExerciseOverview = toPresentationExerciseOverview(thumbnail)
 
 @Deprecated(
     message = "Use toPresentationExerciseOverview instead",

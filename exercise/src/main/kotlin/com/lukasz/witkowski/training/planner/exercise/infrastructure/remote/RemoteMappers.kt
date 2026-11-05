@@ -107,6 +107,10 @@ internal fun ExerciseDto.toExerciseOverview(currentUserId: String? = null): Exer
     )
 }
 
+internal fun ExerciseDto.toExercise(currentUserId: String? = null): ExerciseOverview =
+    toExerciseOverview(currentUserId)
+
+@Deprecated("Use toExerciseOverview instead", ReplaceWith("toExerciseOverview(currentUserId)"))
 internal fun ExerciseDto.toExercise2(currentUserId: String? = null): ExerciseOverview =
     toExerciseOverview(currentUserId)
 
