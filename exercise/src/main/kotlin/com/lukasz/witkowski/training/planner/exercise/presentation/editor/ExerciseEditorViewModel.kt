@@ -220,7 +220,7 @@ class ExerciseEditorViewModel(
             runCatching {
                 val exerciseDetails = exerciseService.getExerciseDetailsById(exerciseId).first()
                 if (exerciseDetails != null) {
-                    val loadedImages = if (exerciseDetails.exercise.imageIds.isNotEmpty()) {
+                    val loadedImages = if (exerciseDetails.images.isNotEmpty()) {
                         runCatching {
                             exerciseService.readImageReferences(exerciseId)
                         }.getOrDefault(emptyList())

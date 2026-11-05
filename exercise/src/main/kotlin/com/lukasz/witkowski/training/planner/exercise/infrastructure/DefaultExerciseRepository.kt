@@ -213,11 +213,11 @@ internal class DefaultExerciseRepository(
         val preservedImageIds = existingDbDetails?.images?.sortedBy { it.orderIndex }
             ?.map { ImageId(it.imageId) }
             ?: emptyList()
-        val mergedServerDetails = if (serverExerciseDetails.exercise.imageIds.isEmpty() &&
+        val mergedServerDetails = if (serverExerciseDetails.images.isEmpty() &&
             preservedImageIds.isNotEmpty()
         ) {
             serverExerciseDetails.copy(
-                exercise = serverExerciseDetails.exercise.copy(imageIds = preservedImageIds)
+                images = preservedImageIds,
             )
         } else {
             serverExerciseDetails

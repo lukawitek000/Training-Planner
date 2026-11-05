@@ -296,7 +296,8 @@ private fun ExerciseConflictDialogPreview() {
                         revision = 3
                     )
                 ),
-                recommendations = sampleRecs
+                recommendations = sampleRecs,
+                images = emptyList(),
             ),
             serverDetails = ExerciseDetails(
                 exercise = Exercise2(
@@ -306,7 +307,8 @@ private fun ExerciseConflictDialogPreview() {
                     categories = listOf(ExerciseCategory("Chest")),
                     metadata = ExerciseMetadata(syncState = ExerciseSyncState.SYNCED, revision = 4)
                 ),
-                recommendations = sampleRecs
+                recommendations = sampleRecs,
+                images = emptyList(),
             ),
             onKeepLocal = {},
             onAcceptServer = {},

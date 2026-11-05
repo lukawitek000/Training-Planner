@@ -47,17 +47,18 @@ open class ExerciseDetailsViewModel(
                 ) {
                     loadConflictServerDetails()
                 }
-                val imageReferences = if (domainDetails.exercise.imageIds.isNotEmpty()) {
+                val imageReferences = if (domainDetails.images.isNotEmpty()) {
                     service.readImageReferences(exerciseId)
                 } else {
                     emptyList()
                 }
                 val presentationExercise = domainDetails.exercise.toPresentationExercise2(
-                    imageReferences
+                    imageReferences.firstOrNull()
                 )
                 val presentationDetails = ExerciseDetails(
                     exercise = presentationExercise,
-                    recommendations = domainDetails.toPresentationExerciseDetails().recommendations
+                    recommendations = domainDetails.toPresentationExerciseDetails().recommendations,
+                    images = imageReferences
                 )
                 ExerciseDetailsState.Success(presentationDetails)
             }

@@ -159,9 +159,9 @@ internal class DefaultExerciseSyncRepository(
             ?.map { ImageId(it.imageId) }
             ?: emptyList()
         val detailsToSave = if (existingImageIds.isNotEmpty() &&
-            serverDetails.exercise.imageIds.isEmpty()
+            serverDetails.images.isEmpty()
         ) {
-            serverDetails.copy(exercise = serverDetails.exercise.copy(imageIds = existingImageIds))
+            serverDetails.copy(images = existingImageIds)
         } else {
             serverDetails
         }
@@ -238,7 +238,7 @@ internal class DefaultExerciseSyncRepository(
             name = mutation.name,
             description = mutation.description,
             categories = categories,
-            imageIds = existingImageIds,
+            thumbnailId = existingImageIds.firstOrNull(),
             metadata = ExerciseMetadata(
                 revision = mutation.expectedVersion,
                 syncState = ExerciseSyncState.PENDING_UPLOAD
@@ -271,7 +271,8 @@ internal class DefaultExerciseSyncRepository(
             exercise = domainExercise,
             beginnerRecommendation = beginnerRec,
             intermediateRecommendation = intermediateRec,
-            advancedRecommendation = advancedRec
+            advancedRecommendation = advancedRec,
+            images = existingImageIds
         )
 
         val result = if (mutation.type == DbExerciseMutation.TYPE_CREATE) {

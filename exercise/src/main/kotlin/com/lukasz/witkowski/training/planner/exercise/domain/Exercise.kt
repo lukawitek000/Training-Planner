@@ -28,12 +28,9 @@ data class Exercise2(
     val name: String,
     val description: String,
     val categories: Set<ExerciseCategory>,
-    val imageIds: List<ImageId> = emptyList(),
+    val thumbnailId: ImageId? = null,
     val metadata: ExerciseMetadata = ExerciseMetadata()
 ) {
-    val imageId: ImageId?
-        get() = imageIds.firstOrNull()
-
     init {
         require(categories.isNotEmpty()) {
             "Exercise should have at least one category"

@@ -187,6 +187,7 @@ private val PREVIEW_SUCCESS_STATE = ExerciseDetailsState.Success(
                 ExerciseCategory("Shoulder")
             )
         ),
-        recommendations = PREVIEW_RECOMMENDED_PARAMETERS
+        recommendations = PREVIEW_RECOMMENDED_PARAMETERS,
+        images = emptyList()
     ),
 )

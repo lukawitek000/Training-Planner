@@ -165,9 +165,9 @@ private fun ExerciseDetailsBody(
                 .testTag("ExerciseDetails"),
             verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
         ) {
-            if (exercise.images.isNotEmpty()) {
+            if (details.images.isNotEmpty()) {
                 ImageGallery(
-                    images = exercise.images,
+                    images = details.images,
                     modifier = Modifier.padding(bottom = Dimens.spaceSm)
                 )
             }
@@ -499,14 +499,15 @@ private fun ExerciseDetailsScreenContentPreview() {
                                 ExerciseCategory("Chest"),
                                 ExerciseCategory("Shoulder")
                             ),
-                            images = PREVIEW_PUSH_UP_IMAGES,
+                            thumbnail = PREVIEW_PUSH_UP_IMAGES.firstOrNull(),
                             metadata = ExerciseMetadata(
                                 source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
                                 syncState = ExerciseSyncState.CONFLICT,
                                 revision = 3
                             )
                         ),
-                        recommendations = PREVIEW_RECOMMENDED_PARAMETERS
+                        recommendations = PREVIEW_RECOMMENDED_PARAMETERS,
+                        images = PREVIEW_PUSH_UP_IMAGES,
                     )
                 ),
                 modifier = Modifier.fillMaxSize()
@@ -536,14 +537,15 @@ private fun ExerciseDetailsScreenOnlineConflictPreview() {
                                     ExerciseCategory("Chest"),
                                     ExerciseCategory("Shoulder")
                                 ),
-                                images = PREVIEW_PUSH_UP_IMAGES,
+                                thumbnail = PREVIEW_PUSH_UP_IMAGES.firstOrNull(),
                                 metadata = ExerciseMetadata(
                                     source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
                                     syncState = ExerciseSyncState.CONFLICT,
                                     revision = 3
                                 )
                             ),
-                            recommendations = PREVIEW_RECOMMENDED_PARAMETERS
+                            recommendations = PREVIEW_RECOMMENDED_PARAMETERS,
+                            images = PREVIEW_PUSH_UP_IMAGES,
                         )
                     ),
                     modifier = Modifier.fillMaxSize()

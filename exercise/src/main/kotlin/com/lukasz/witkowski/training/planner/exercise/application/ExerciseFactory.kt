@@ -28,9 +28,10 @@ internal object ExerciseFactory {
             name = exerciseConfiguration.name,
             description = exerciseConfiguration.description,
             categories = exerciseConfiguration.categories.toSet(),
-            imageIds = imageIds,
+            thumbnailId = imageIds.firstOrNull(),
             metadata = metadata
         ),
+        images = imageIds,
         beginnerRecommendation = exerciseConfiguration.beginnerRecommendation,
         intermediateRecommendation = exerciseConfiguration.intermediateRecommendation,
         advancedRecommendation = exerciseConfiguration.advancedRecommendation

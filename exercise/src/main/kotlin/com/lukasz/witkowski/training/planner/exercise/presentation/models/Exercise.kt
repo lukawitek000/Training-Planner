@@ -18,9 +18,6 @@ data class Exercise2(
     val name: String,
     val description: String,
     val categories: List<ExerciseCategory>,
-    val images: List<ImageReference> = emptyList(),
+    val thumbnail: ImageReference? = null,
     val metadata: ExerciseMetadata = ExerciseMetadata()
-) {
-    val image: ImageReference?
-        get() = images.firstOrNull()
-}
+)

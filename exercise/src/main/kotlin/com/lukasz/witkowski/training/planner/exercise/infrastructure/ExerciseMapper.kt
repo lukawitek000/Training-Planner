@@ -36,7 +36,7 @@ internal fun Exercise2.toDbExercise(): DbExercise {
         exerciseId = id.toString(),
         name = name,
         description = description,
-        imageId = imageId?.toString(),
+        imageId = thumbnailId?.toString(),
         owner = dbOwner,
         sourceType = sourceTypeStr,
         sharing = sharingStr,
@@ -69,7 +69,7 @@ internal fun DbExercise.toExercise(
         name = name,
         description = description,
         categories = categoriesSet,
-        imageIds = imageIds,
+        thumbnailId = imageIds.firstOrNull(),
         metadata = metadataObj
     )
 }
@@ -123,7 +123,7 @@ internal fun ExerciseDetails.toDbExerciseDetails(): DbExerciseDetails = DbExerci
             level = RecommendationLevel.ADVANCED
         )
     ),
-    images = exercise.imageIds.mapIndexed { index, imageId ->
+    images = images.mapIndexed { index, imageId ->
         DbExerciseImage(
             exerciseId = exercise.id.toString(),
             imageId = imageId.toString(),
@@ -147,8 +147,10 @@ internal fun ExerciseRecommendation.toDbExerciseRecommendation(
 
 internal fun DbExerciseDetails.toExerciseDetails(): ExerciseDetails {
     val categories = categories.map { it.toExerciseCategory() }
+    val imageIds = images.sortedBy { it.orderIndex }.map { ImageId(it.imageId) }
     return ExerciseDetails(
         exercise = exercise.toExercise(categories, images),
+        images = imageIds,
         beginnerRecommendation = recommendations.toExerciseRecommendation(
             RecommendationLevel.BEGINNER
         ),

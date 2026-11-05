@@ -6,21 +6,19 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsState
 import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsViewModel
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseParametersIntent
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
-import kotlin.time.Duration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
 
 class TrainingExerciseConfigurationViewModel(
     service: ExerciseService,
@@ -82,10 +80,10 @@ class TrainingExerciseConfigurationViewModel(
     }
 
     fun createTrainingExercise(): TrainingExercise {
-        val exercise = (state.value as ExerciseDetailsState.Success).details.exercise
+        val details = (state.value as ExerciseDetailsState.Success).details
         return TrainingExercise(
             id = TrainingExerciseId.create(),
-            exercise = exercise.toExerciseSnapshot(),
+            exercise = details.toExerciseSnapshot(),
             sets = parameters.value.sets!!,
             repetitions = parameters.value.reps!!,
             restTime = parameters.value.restTime!!,
@@ -94,11 +92,11 @@ class TrainingExerciseConfigurationViewModel(
         )
     }
 
-    private fun Exercise2.toExerciseSnapshot() = ExerciseSnapshot(
-        id = id,
-        name = name,
-        description = description,
-        categories = categories.map { ExerciseCategoryName(it.name) }.toSet(),
+    private fun ExerciseDetails.toExerciseSnapshot() = ExerciseSnapshot(
+        id = exercise.id,
+        name = exercise.name,
+        description = exercise.description,
+        categories = exercise.categories.map { ExerciseCategoryName(it.name) }.toSet(),
         imageIds = images.map { it.imageId }
     )
 }

@@ -64,12 +64,10 @@ class ExercisesListViewModel(
                 exerciseService.queryExercises(state.toExerciseQuery())
             }.map { pagingData ->
                 pagingData.map { exercise ->
-                    val imageReferences = if (exercise.imageIds.isNotEmpty()) {
-                        exerciseService.readImageReferences(exercise.id)
-                    } else {
-                        emptyList()
+                    val thumbnailReference = exercise.thumbnailId?.let {
+                        exerciseService.readExerciseThumbnail(it)
                     }
-                    exercise.toPresentationExercise2(imageReferences)
+                    exercise.toPresentationExercise2(thumbnailReference)
                 }
             }.cachedIn(viewModelScope)
 

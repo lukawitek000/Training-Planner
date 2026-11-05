@@ -54,7 +54,7 @@ class ExerciseService(
         val imageIds = if (exerciseConfiguration.images.isNotEmpty()) {
             saveImages(exerciseConfiguration.images, exerciseId).map { it.imageId }
         } else {
-            existing?.exercise?.imageIds ?: emptyList()
+            existing?.images ?: emptyList()
         }
         val metadata = existing?.exercise?.metadata?.copy(
             syncState = ExerciseSyncState.PENDING_UPLOAD
@@ -96,6 +96,11 @@ class ExerciseService(
 
     suspend fun readImage(imageId: ImageId): Image = imageStorage.readImage(imageId)
 
+    suspend fun readExerciseThumbnail(imageId: ImageId): ImageReference? =
+        runCatchingCancellable {
+            imageStorage.readImageReference(imageId)
+        }.getOrDefault(null)
+
     suspend fun readImageReferences(exerciseId: ExerciseId): List<ImageReference> =
         runCatchingCancellable {
             val fromStorage = imageStorage.readImageReferences(exerciseId.value)
@@ -103,7 +108,7 @@ class ExerciseService(
                 return@runCatchingCancellable fromStorage
             }
             val details = exerciseRepository.getExerciseDetailsById(exerciseId).firstOrNull()
-            details?.exercise?.imageIds?.mapNotNull { imageId ->
+            details?.images?.mapNotNull { imageId ->
                 imageStorage.readImageReference(imageId)
             } ?: emptyList()
         }.getOrDefault(emptyList())

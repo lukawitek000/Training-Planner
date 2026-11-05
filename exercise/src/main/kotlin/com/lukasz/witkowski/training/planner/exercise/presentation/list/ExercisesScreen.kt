@@ -317,7 +317,7 @@ fun ExerciseListItemContent(
         ) {
             ExerciseThumbnail(
                 imageDescription = imageDescription,
-                imageReference = exercise.image
+                imageReference = exercise.thumbnail
             )
             Spacer(modifier = Modifier.width(Dimens.spaceMd))
             ExerciseInformation(
@@ -541,7 +541,7 @@ val PREVIEW_EXERCISES =
             name = "Push ups",
             description = "Compound upper-body pushing movement",
             categories = listOf(ExerciseCategory("Chest"), ExerciseCategory("Shoulders")),
-            images = PREVIEW_PUSH_UP_IMAGES,
+            thumbnail = PREVIEW_PUSH_UP_IMAGES.firstOrNull(),
             metadata =
             ExerciseMetadata(
                 source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
@@ -553,7 +553,7 @@ val PREVIEW_EXERCISES =
             name = "Pull up",
             description = "Vertical pulling exercise for lats and biceps",
             categories = listOf(ExerciseCategory("Back"), ExerciseCategory("Biceps")),
-            images = PREVIEW_PULL_UP_IMAGES,
+            thumbnail = PREVIEW_PULL_UP_IMAGES.firstOrNull(),
             metadata =
             ExerciseMetadata(
                 source = ExerciseSource.Bundled,
