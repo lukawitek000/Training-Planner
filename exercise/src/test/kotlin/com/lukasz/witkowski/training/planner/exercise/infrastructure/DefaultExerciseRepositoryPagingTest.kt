@@ -5,7 +5,7 @@ import androidx.paging.PagingData
 import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
 import com.lukasz.witkowski.training.planner.exercise.TestResourceReader
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
@@ -38,7 +38,7 @@ class DefaultExerciseRepositoryPagingTest {
     @Test
     fun `queryExercises returns flow of PagingData`() = runTest {
         val query = ExerciseQuery(categories = listOf(ExerciseCategory("Chest")), query = "push")
-        val resultFlow: Flow<PagingData<Exercise2>> = repository.queryExercises(query)
+        val resultFlow: Flow<PagingData<Exercise>> = repository.queryExercises(query)
 
         val pagingData = resultFlow.first()
         assertNotNull(pagingData)

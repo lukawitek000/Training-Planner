@@ -7,7 +7,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExerciseDetails
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
@@ -52,7 +52,7 @@ open class ExerciseDetailsViewModel(
                 } else {
                     emptyList()
                 }
-                val presentationExercise = domainDetails.exercise.toPresentationExercise2(
+                val presentationExercise = domainDetails.exercise.toPresentationExercise(
                     imageReferences
                 )
                 val presentationDetails = ExerciseDetails(

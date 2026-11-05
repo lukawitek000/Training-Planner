@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.application
 
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
@@ -23,7 +23,7 @@ internal object ExerciseFactory {
         )
     ): ExerciseDetails = ExerciseDetails(
         exercise =
-        Exercise2(
+        Exercise(
             id = exerciseId,
             name = exerciseConfiguration.name,
             description = exerciseConfiguration.description,

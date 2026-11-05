@@ -9,7 +9,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController2
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -67,7 +67,7 @@ class ExercisesListViewModel(
                     } else {
                         emptyList()
                     }
-                    exercise.toPresentationExercise2(imageReferences)
+                    exercise.toPresentationExercise(imageReferences)
                 }
             }.cachedIn(viewModelScope)
 

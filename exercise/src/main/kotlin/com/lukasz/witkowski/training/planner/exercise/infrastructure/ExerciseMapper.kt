@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
@@ -13,7 +13,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.image.ImageId
 import kotlin.time.Duration.Companion.seconds
 
-internal fun Exercise2.toDbExercise(): DbExercise {
+internal fun Exercise.toDbExercise(): DbExercise {
     val (sourceTypeStr, dbOwner) = when (val s = metadata.source) {
         is ExerciseSource.Bundled -> DbExercise.SOURCE_TYPE_BUNDLED to null
         is ExerciseSource.Organization -> DbExercise.SOURCE_TYPE_ORGANIZATION to null
@@ -48,7 +48,7 @@ internal fun Exercise2.toDbExercise(): DbExercise {
 internal fun DbExercise.toExercise(
     categories: List<ExerciseCategory>,
     images: List<DbExerciseImage> = emptyList()
-): Exercise2 {
+): Exercise {
     val sourceObj = toExerciseSource()
     val sharingObj = toExerciseSharing()
     val syncStateObj = toExerciseSyncState()
@@ -64,7 +64,7 @@ internal fun DbExercise.toExercise(
     } else {
         listOfNotNull(imageId?.let { ImageId(it) })
     }
-    return Exercise2(
+    return Exercise(
         id = ExerciseId(exerciseId),
         name = name,
         description = description,
@@ -74,7 +74,7 @@ internal fun DbExercise.toExercise(
     )
 }
 
-internal fun DbExerciseWithCategories.toExercise(): Exercise2 =
+internal fun DbExerciseWithCategories.toExercise(): Exercise =
     exercise.toExercise(categories.map { it.toExerciseCategory() }, images)
 
 private fun DbExercise.toExerciseSource(): ExerciseSource = when (sourceType) {

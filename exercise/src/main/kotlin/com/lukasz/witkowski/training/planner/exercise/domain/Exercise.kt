@@ -2,20 +2,6 @@ package com.lukasz.witkowski.training.planner.exercise.domain
 
 import com.lukasz.witkowski.training.planner.image.ImageId
 
-data class Exercise(
-    val id: ExerciseId,
-    val name: String,
-    val description: String,
-    val categories: List<ExerciseCategoryLegacy>,
-    val imageId: ImageId? = null
-) {
-    init {
-        require(categories.isNotEmpty()) {
-            "Exercise should have at least one category"
-        }
-    }
-}
-
 data class ExerciseMetadata(
     val source: ExerciseSource = ExerciseSource.Bundled,
     val sharing: ExerciseSharing = ExerciseSharing.Private,
@@ -23,7 +9,7 @@ data class ExerciseMetadata(
     val syncState: ExerciseSyncState = ExerciseSyncState.SYNCED
 )
 
-data class Exercise2(
+data class Exercise(
     val id: ExerciseId,
     val name: String,
     val description: String,

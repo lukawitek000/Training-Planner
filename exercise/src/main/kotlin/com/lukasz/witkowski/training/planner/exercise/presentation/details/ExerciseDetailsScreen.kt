@@ -49,7 +49,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.PREVIEW_RECOMMENDED_PARAMETERS
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.RecommendedParametersOverview
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
 import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
 import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
@@ -491,7 +491,7 @@ private fun ExerciseDetailsScreenContentPreview() {
             ExerciseDetailsScreenContent(
                 state = ExerciseDetailsState.Success(
                     details = ExerciseDetails(
-                        exercise = Exercise2(
+                        exercise = Exercise(
                             id = ExerciseId.create(),
                             name = "Push ups",
                             description = "Some long description in here",
@@ -528,7 +528,7 @@ private fun ExerciseDetailsScreenOnlineConflictPreview() {
                 ExerciseDetailsScreenContent(
                     state = ExerciseDetailsState.Success(
                         details = ExerciseDetails(
-                            exercise = Exercise2(
+                            exercise = Exercise(
                                 id = ExerciseId.create(),
                                 name = "Push ups",
                                 description = "Some long description in here",

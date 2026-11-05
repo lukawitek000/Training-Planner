@@ -40,7 +40,7 @@ When designing, implementing, or refactoring non-trivial code, you **MUST**:
 - **[`:app`](app/AGENTS.md)** — Android application entry point, Koin `appModule`, and Jetpack Navigation 3 root graph.
 - **[`:shared`](shared/AGENTS.md)** — Design system (`App*` composables), `Dimens`, `TrainingPlannerTheme`, `@AppPreview`, `AppResult`, `TimeProvider`, and coroutine dispatchers.
 - **[`:dto`](dto/AGENTS.md)** — Pure Kotlin/JVM `@Serializable` network contracts and `ApiRoutes` shared between Android and `:backend`.
-- **[`:exercise`](exercise/AGENTS.md)** — **Reference Module:** Exercise catalog (`Exercise2`), Room 3 + Paging 3, WorkManager outbox sync (`DbExerciseMutation`), and conflict resolution.
+- **[`:exercise`](exercise/AGENTS.md)** — **Reference Module:** Exercise catalog (`Exercise`), Room 3 + Paging 3, WorkManager outbox sync (`DbExerciseMutation`), and conflict resolution.
 - **[`:training`](training/AGENTS.md)** — `TrainingPlan` (Intent), `TrainingExercise`, `ExerciseSnapshot`, `TrainingPlanDatabase`, and MVI editor reducer.
 - **[`:session`](session/AGENTS.md)** — Live workout execution state machine (`TrainingSession`, `StraightSetsPolicy`, `CircuitSetsPolicy`, `Timer`) and execution Compose UI.
 - **[`:session-service`](session-service/AGENTS.md)** — Android Foreground Service (`SessionService`) and ongoing workout notifications.

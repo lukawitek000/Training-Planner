@@ -4,7 +4,7 @@ import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.CategoryDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.OwnerDto
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseFailure
@@ -93,7 +93,7 @@ class RetrofitExerciseRemoteDataSourceTest {
     }
 
     @Test
-    fun `getExerciseById returns Exercise2 when API succeeds`() = runTest {
+    fun `getExerciseById returns Exercise when API succeeds`() = runTest {
         val exerciseId = ExerciseId.create()
         val exerciseDto = ExerciseDto(
             id = exerciseId.toString(),
@@ -119,7 +119,7 @@ class RetrofitExerciseRemoteDataSourceTest {
     fun `createExercise returns ExerciseDto when API succeeds`() = runTest {
         val exerciseId = ExerciseId.create()
         val dummyRec = ExerciseRecommendation(0, 0, 0.seconds, null)
-        val domainExercise = Exercise2(
+        val domainExercise = Exercise(
             id = exerciseId,
             name = "Lunges",
             description = "Legs exercise",
@@ -166,7 +166,7 @@ class RetrofitExerciseRemoteDataSourceTest {
     fun `updateExercise returns ExerciseDto when API succeeds`() = runTest {
         val exerciseId = ExerciseId.create()
         val dummyRec = ExerciseRecommendation(0, 0, 0.seconds, null)
-        val domainExercise = Exercise2(
+        val domainExercise = Exercise(
             id = exerciseId,
             name = "Updated Lunges",
             description = "Legs exercise updated",

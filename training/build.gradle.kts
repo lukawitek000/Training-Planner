@@ -12,7 +12,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.synchronization)
     api(projects.shared)
     api(projects.exercise)
 
@@ -34,8 +33,6 @@ dependencies {
     // Reorderable list for editor
     implementation(libs.calvin.reorderable)
 
-    implementation(libs.kotlinx.coroutines.playServices)
-    implementation(libs.google.playServicesWearable)
     implementation(libs.timber)
     implementation(libs.androidx.roomRuntime)
     ksp(libs.androidx.roomCompiler)

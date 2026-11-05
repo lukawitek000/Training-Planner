@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.exercise.application
 
 import androidx.paging.PagingData
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
@@ -80,7 +80,7 @@ class ExerciseService(
         return imageStorage.saveImages(imageConfigurations)
     }
 
-    fun queryExercises(exerciseQuery: ExerciseQuery): Flow<PagingData<Exercise2>> =
+    fun queryExercises(exerciseQuery: ExerciseQuery): Flow<PagingData<Exercise>> =
         exerciseRepository.queryExercises(exerciseQuery)
 
     suspend fun deleteExercise(exerciseId: ExerciseId) {

@@ -6,7 +6,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsState
 import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsViewModel
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseParametersIntent
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise2
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
@@ -94,7 +94,7 @@ class TrainingExerciseConfigurationViewModel(
         )
     }
 
-    private fun Exercise2.toExerciseSnapshot() = ExerciseSnapshot(
+    private fun Exercise.toExerciseSnapshot() = ExerciseSnapshot(
         id = id,
         name = name,
         description = description,

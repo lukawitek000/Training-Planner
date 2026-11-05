@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.training.domain
 
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import kotlin.time.Duration
 
 /**
