@@ -4,6 +4,8 @@ import com.lukasz.witkowski.training.planner.network.AccessToken
 import com.lukasz.witkowski.training.planner.network.AuthTokens
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.network.TokenStorage
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import com.lukasz.witkowski.training.planner.user.domain.model.User
@@ -45,7 +47,10 @@ class DefaultUserRepositoryTest {
                 tokenStorage = mockTokenStorage,
                 userRemoteDataSource = mockUserRemoteDataSource,
                 userPreferencesStorage = mockUserPreferencesStorage,
-                syncScheduler = mockSyncScheduler
+                syncScheduler = mockSyncScheduler,
+                featureFlagProvider = DefaultFeatureFlagProvider(
+                    overrides = mapOf(FeatureFlag.ONLINE_SYNC to true)
+                )
             )
     }
 
@@ -55,6 +60,32 @@ class DefaultUserRepositoryTest {
             coEvery { mockTokenStorage.getTokens() } returns null
 
             val result = repository.getUserProfile()
+
+            assertEquals(AppResult.Error(UserFailure.NotSignedIn), result)
+            coVerify(exactly = 0) { mockUserRemoteDataSource.getUserProfile() }
+        }
+
+    @Test
+    fun `getUserProfile returns NotSignedIn without calling remote data source when online sync flag is disabled`() =
+        runTest {
+            val tokens =
+                AuthTokens(
+                    accessToken = AccessToken("valid-access-token", timeProvider.currentInstant()),
+                    refreshToken = "valid-refresh-token"
+                )
+            coEvery { mockTokenStorage.getTokens() } returns tokens
+
+            val offlineRepo = DefaultUserRepository(
+                tokenStorage = mockTokenStorage,
+                userRemoteDataSource = mockUserRemoteDataSource,
+                userPreferencesStorage = mockUserPreferencesStorage,
+                syncScheduler = mockSyncScheduler,
+                featureFlagProvider = DefaultFeatureFlagProvider(
+                    overrides = mapOf(FeatureFlag.ONLINE_SYNC to false)
+                )
+            )
+
+            val result = offlineRepo.getUserProfile()
 
             assertEquals(AppResult.Error(UserFailure.NotSignedIn), result)
             coVerify(exactly = 0) { mockUserRemoteDataSource.getUserProfile() }

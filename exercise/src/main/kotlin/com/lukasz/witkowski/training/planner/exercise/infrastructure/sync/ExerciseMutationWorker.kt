@@ -6,6 +6,8 @@ import androidx.work.ListenableWorker.Result
 import androidx.work.WorkerParameters
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.isRetryable
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlagProvider
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -16,8 +18,13 @@ class ExerciseMutationWorker(appContext: Context, workerParams: WorkerParameters
     KoinComponent {
 
     private val syncRepository: ExerciseSyncRepository by inject()
+    private val featureFlagProvider: FeatureFlagProvider by inject()
 
     override suspend fun doWork(): Result {
+        if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
+            Timber.d("Skipping ExerciseMutationWorker: ONLINE_SYNC is disabled")
+            return Result.success()
+        }
         Timber.d("ExerciseMutationWorker executing pending mutations")
         return when (val result = syncRepository.processPendingMutations()) {
             is AppResult.Success -> Result.success()

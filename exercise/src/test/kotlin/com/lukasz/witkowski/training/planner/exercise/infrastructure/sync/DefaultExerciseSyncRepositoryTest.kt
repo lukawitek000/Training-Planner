@@ -14,6 +14,8 @@ import com.lukasz.witkowski.training.planner.exercise.infrastructure.DbExerciseM
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.ExerciseMutationDao
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.ExerciseRemoteDataSource
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -39,7 +41,10 @@ class DefaultExerciseSyncRepositoryTest {
         mutationDao = mutationDao,
         remoteDataSource = remoteDataSource,
         json = json,
-        ioDispatcher = testDispatcher
+        ioDispatcher = testDispatcher,
+        featureFlagProvider = DefaultFeatureFlagProvider(
+            overrides = mapOf(FeatureFlag.ONLINE_SYNC to true)
+        )
     )
 
     companion object {
@@ -421,5 +426,30 @@ class DefaultExerciseSyncRepositoryTest {
                     }
                 )
             }
+        }
+
+    @Test
+    fun `when ONLINE_SYNC is false, sync and conflict server fetch do not call remoteDataSource`() =
+        runTest {
+            val offlineRepo = DefaultExerciseSyncRepository(
+                exerciseDao = exerciseDao,
+                mutationDao = mutationDao,
+                remoteDataSource = remoteDataSource,
+                json = json,
+                ioDispatcher = testDispatcher,
+                featureFlagProvider = DefaultFeatureFlagProvider(
+                    overrides = mapOf(FeatureFlag.ONLINE_SYNC to false)
+                )
+            )
+            coEvery { mutationDao.getMutationByExerciseIdOnce(EX_ID_1) } returns null
+
+            assertTrue(offlineRepo.synchronizeExercises() is AppResult.Success)
+            assertTrue(offlineRepo.processPendingMutations() is AppResult.Success)
+            assertTrue(
+                offlineRepo.getConflictServerExercise(ExerciseId(EX_ID_1)) is AppResult.Error
+            )
+
+            coVerify(exactly = 0) { remoteDataSource.getExerciseChanges(any()) }
+            coVerify(exactly = 0) { remoteDataSource.getExerciseDetailsById(any()) }
         }
 }

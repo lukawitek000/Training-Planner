@@ -2,6 +2,9 @@ package com.lukasz.witkowski.training.planner.user.infrastructure
 
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.network.TokenStorage
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlagProvider
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import com.lukasz.witkowski.training.planner.user.domain.UserRepository
 import com.lukasz.witkowski.training.planner.user.domain.model.User
@@ -16,9 +19,14 @@ class DefaultUserRepository(
     private val tokenStorage: TokenStorage,
     private val userRemoteDataSource: UserRemoteDataSource,
     private val userPreferencesStorage: UserPreferencesStorage,
-    private val syncScheduler: SyncScheduler? = null
+    private val syncScheduler: SyncScheduler? = null,
+    private val featureFlagProvider: FeatureFlagProvider = DefaultFeatureFlagProvider()
 ) : UserRepository {
     override suspend fun getUserProfile(): AppResult<User, UserFailure> {
+        if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
+            Timber.i("getUserProfile: Online sync feature flag disabled, returning NotSignedIn")
+            return AppResult.Error(UserFailure.NotSignedIn)
+        }
         val refreshToken = tokenStorage.getTokens()?.refreshToken
         if (refreshToken.isNullOrBlank()) {
             Timber.i("getUserProfile: No refresh token present, returning NotSignedIn")
@@ -40,6 +48,9 @@ class DefaultUserRepository(
     override suspend fun setAutoSyncEnabled(enabled: Boolean) {
         Timber.d("setAutoSyncEnabled: Setting auto sync enabled to %s", enabled)
         userPreferencesStorage.setAutoSyncEnabled(enabled)
+        if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
+            return
+        }
         if (enabled) {
             syncScheduler?.enqueueMutationSync()
             syncScheduler?.enqueueRemoteChangeSync(force = true)

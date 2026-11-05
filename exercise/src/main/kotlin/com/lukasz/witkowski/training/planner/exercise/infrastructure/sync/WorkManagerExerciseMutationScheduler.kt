@@ -13,6 +13,8 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncReposit
 import com.lukasz.witkowski.training.planner.network.AuthSessionProvider
 import com.lukasz.witkowski.training.planner.network.SyncPreferencesStorage
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlagProvider
 import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.first
@@ -23,6 +25,7 @@ class WorkManagerExerciseMutationScheduler(
     private val context: Context,
     private val authSessionProvider: AuthSessionProvider,
     private val syncPreferencesStorage: SyncPreferencesStorage,
+    private val featureFlagProvider: FeatureFlagProvider,
     private val coroutineScope: CoroutineScope,
     private val exerciseSyncRepositoryProvider: (() -> ExerciseSyncRepository)? = null
 ) : ExerciseMutationScheduler,
@@ -33,6 +36,10 @@ class WorkManagerExerciseMutationScheduler(
 
     override fun enqueueMutationSync() {
         coroutineScope.launch {
+            if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
+                Timber.d("Worker not queued: Online sync feature flag disabled")
+                return@launch
+            }
             if (!authSessionProvider.isLoggedIn()) {
                 Timber.d("Worker not queued: User is not logged in")
                 return@launch
@@ -71,6 +78,10 @@ class WorkManagerExerciseMutationScheduler(
 
     override fun enqueueRemoteChangeSync(force: Boolean) {
         coroutineScope.launch {
+            if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
+                Timber.d("Remote change sync worker not queued: Online sync feature flag disabled")
+                return@launch
+            }
             if (!authSessionProvider.isLoggedIn()) {
                 Timber.d("Remote change sync worker not queued: User not logged in")
                 return@launch

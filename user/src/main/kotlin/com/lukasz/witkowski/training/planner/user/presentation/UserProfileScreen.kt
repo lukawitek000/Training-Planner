@@ -31,6 +31,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,6 +43,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.featureflags.LocalFeatureFlagProvider
 import com.lukasz.witkowski.training.planner.shared.network.NetworkFailure
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.OrangeContainer
@@ -91,6 +95,8 @@ private fun UserProfileScreenContent(
     onSignOutWithPolicy: (keepLocalData: Boolean) -> Unit = { onSignOutClick() },
     modifier: Modifier = Modifier
 ) {
+    val isOnlineSyncEnabled = LocalFeatureFlagProvider.current.isEnabled(FeatureFlag.ONLINE_SYNC)
+
     Box(
         modifier = modifier.fillMaxSize()
     ) {
@@ -117,8 +123,8 @@ private fun UserProfileScreenContent(
                         is ProfileUiState.OfflineProfileLoaded -> uiState.weightUnit
                     }
 
-                var showReauthSheet by rememberSaveable(failure) {
-                    mutableStateOf(failure != null)
+                var showReauthSheet by rememberSaveable(failure, isOnlineSyncEnabled) {
+                    mutableStateOf(failure != null && isOnlineSyncEnabled)
                 }
                 var showSignOutSheet by rememberSaveable {
                     mutableStateOf(false)
@@ -134,20 +140,23 @@ private fun UserProfileScreenContent(
                 ) {
                     UserIdentitySection(
                         isOnline = isOnline,
+                        isOnlineSyncEnabled = isOnlineSyncEnabled,
                         failure = failure,
                         username = username,
                         subtitle = subtitle,
                         onReauthPillClick = { showReauthSheet = true }
                     )
 
-                    if (isOnline) {
-                        SignOutCard(
-                            onSignOutClick = { showSignOutSheet = true }
-                        )
-                    } else {
-                        CloudSyncCtaCard(
-                            onSignInClick = onSignInClick
-                        )
+                    if (isOnlineSyncEnabled) {
+                        if (isOnline) {
+                            SignOutCard(
+                                onSignOutClick = { showSignOutSheet = true }
+                            )
+                        } else {
+                            CloudSyncCtaCard(
+                                onSignInClick = onSignInClick
+                            )
+                        }
                     }
 
                     OfflinePreferencesCard(
@@ -158,7 +167,7 @@ private fun UserProfileScreenContent(
                     EngineFootnote()
                 }
 
-                if (showSignOutSheet) {
+                if (isOnlineSyncEnabled && showSignOutSheet) {
                     SignOutBottomSheet(
                         onKeepLocalDataClick = {
                             showSignOutSheet = false
@@ -174,7 +183,7 @@ private fun UserProfileScreenContent(
                     )
                 }
 
-                if ((!isOnline) && (failure != null) && showReauthSheet) {
+                if (isOnlineSyncEnabled && (!isOnline) && (failure != null) && showReauthSheet) {
                     ReauthBottomSheet(
                         onSignInClick = {
                             showReauthSheet = false
@@ -194,6 +203,7 @@ private fun UserProfileScreenContent(
 @Composable
 private fun UserIdentitySection(
     isOnline: Boolean,
+    isOnlineSyncEnabled: Boolean,
     failure: UserFailure?,
     username: String,
     subtitle: String,
@@ -217,14 +227,14 @@ private fun UserIdentitySection(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector =
-                        if (isOnline) {
+                        if (isOnline || !isOnlineSyncEnabled) {
                             Icons.Default.AccountCircle
                         } else {
                             Icons.Default.NoAccounts
                         },
                         contentDescription = "User Avatar",
                         tint =
-                        if (isOnline) {
+                        if (isOnline || !isOnlineSyncEnabled) {
                             MaterialTheme.colorScheme.primary
                         } else {
                             MaterialTheme.colorScheme.outline
@@ -234,40 +244,42 @@ private fun UserIdentitySection(
                 }
             }
 
-            Surface(
-                modifier = Modifier.size(Dimens.avatarBadgeSize),
-                shape = CircleShape,
-                color =
-                if (isOnline) {
-                    MaterialTheme.colorScheme.primaryContainer
-                } else if (failure != null) {
-                    MaterialTheme.colorScheme.error
-                } else {
-                    OrangeContainer
-                },
-                shadowElevation = Dimens.shadowSm
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector =
-                        if (isOnline) {
-                            Icons.Default.CloudDone
-                        } else if (failure != null) {
-                            Icons.Default.CloudOff
-                        } else {
-                            Icons.Default.WifiOff
-                        },
-                        contentDescription = "Status Badge",
-                        tint =
-                        if (isOnline) {
-                            MaterialTheme.colorScheme.onPrimaryContainer
-                        } else if (failure != null) {
-                            MaterialTheme.colorScheme.onError
-                        } else {
-                            OrangeLight
-                        },
-                        modifier = Modifier.size(Dimens.iconSize15)
-                    )
+            if (isOnlineSyncEnabled) {
+                Surface(
+                    modifier = Modifier.size(Dimens.avatarBadgeSize),
+                    shape = CircleShape,
+                    color =
+                    if (isOnline) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else if (failure != null) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        OrangeContainer
+                    },
+                    shadowElevation = Dimens.shadowSm
+                ) {
+                    Box(contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector =
+                            if (isOnline) {
+                                Icons.Default.CloudDone
+                            } else if (failure != null) {
+                                Icons.Default.CloudOff
+                            } else {
+                                Icons.Default.WifiOff
+                            },
+                            contentDescription = "Status Badge",
+                            tint =
+                            if (isOnline) {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            } else if (failure != null) {
+                                MaterialTheme.colorScheme.onError
+                            } else {
+                                OrangeLight
+                            },
+                            modifier = Modifier.size(Dimens.iconSize15)
+                        )
+                    }
                 }
             }
         }
@@ -312,7 +324,7 @@ private fun UserIdentitySection(
             )
         }
 
-        if ((!isOnline) && (failure != null)) {
+        if (isOnlineSyncEnabled && (!isOnline) && (failure != null)) {
             Surface(
                 onClick = onReauthPillClick,
                 shape = CircleShape,
@@ -628,16 +640,22 @@ private fun UserProfileScreenOfflinePreview() {
 @Composable
 private fun UserProfileScreenOfflineFailurePreview() {
     TrainingPlannerTheme {
-        UserProfileScreenContent(
-            uiState =
-            ProfileUiState.OfflineProfileLoaded(
-                weightUnit = WeightUnit.KG,
-                failure = UserFailure.NetworkError(networkFailure = NetworkFailure.NoInternet)
-            ),
-            onWeightUnitChanged = {},
-            onSignInClick = {},
-            onSignOutClick = {}
-        )
+        CompositionLocalProvider(
+            LocalFeatureFlagProvider provides DefaultFeatureFlagProvider(
+                mapOf(FeatureFlag.ONLINE_SYNC to true)
+            )
+        ) {
+            UserProfileScreenContent(
+                uiState =
+                ProfileUiState.OfflineProfileLoaded(
+                    weightUnit = WeightUnit.KG,
+                    failure = UserFailure.NetworkError(networkFailure = NetworkFailure.NoInternet)
+                ),
+                onWeightUnitChanged = {},
+                onSignInClick = {},
+                onSignOutClick = {}
+            )
+        }
     }
 }
 
@@ -645,16 +663,22 @@ private fun UserProfileScreenOfflineFailurePreview() {
 @Composable
 private fun UserProfileScreenOnlinePreview() {
     TrainingPlannerTheme {
-        UserProfileScreenContent(
-            uiState =
-            ProfileUiState.OnlineProfileLoaded(
-                email = "athlete@example.com",
-                username = "John Doe",
-                weightUnit = WeightUnit.KG
-            ),
-            onWeightUnitChanged = {},
-            onSignInClick = {},
-            onSignOutClick = {}
-        )
+        CompositionLocalProvider(
+            LocalFeatureFlagProvider provides DefaultFeatureFlagProvider(
+                mapOf(FeatureFlag.ONLINE_SYNC to true)
+            )
+        ) {
+            UserProfileScreenContent(
+                uiState =
+                ProfileUiState.OnlineProfileLoaded(
+                    email = "athlete@example.com",
+                    username = "John Doe",
+                    weightUnit = WeightUnit.KG
+                ),
+                onWeightUnitChanged = {},
+                onSignInClick = {},
+                onSignOutClick = {}
+            )
+        }
     }
 }
