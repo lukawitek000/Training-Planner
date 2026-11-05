@@ -334,7 +334,6 @@ fun ExerciseParametersInputFields(
             onDismissRequest = { showHoldTimePicker = false },
             onSecondsConfirmed = { selectedSeconds ->
                 onParametersIntent(ExerciseParametersIntent.TimeChanged(selectedSeconds?.seconds))
-                showHoldTimePicker = false
             }
         )
     }
@@ -349,7 +348,6 @@ fun ExerciseParametersInputFields(
                 onParametersIntent(
                     ExerciseParametersIntent.RestTimeChanged(selectedSeconds?.seconds)
                 )
-                showRestTimePicker = false
             }
         )
     }

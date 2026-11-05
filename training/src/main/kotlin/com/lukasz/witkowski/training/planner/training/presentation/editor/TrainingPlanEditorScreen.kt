@@ -43,6 +43,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,6 +75,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 fun TrainingPlanEditorScreen(
@@ -116,7 +118,7 @@ fun TrainingPlanEditorScreenContent(
     modifier: Modifier = Modifier,
     isEditMode: Boolean = false
 ) {
-    var showRestTimePicker by remember { mutableStateOf(false) }
+    var showRestTimePicker by rememberSaveable { mutableStateOf(false) }
     val lazyListState = rememberLazyListState()
     val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
         val fromIndex = state.exercises.indexOfFirst { it.id.toString() == from.key }
@@ -196,14 +198,10 @@ fun TrainingPlanEditorScreenContent(
                 if (selectedTime != null) {
                     onIntent(
                         TrainingPlanEditingIntent.RestTimeChanged(
-                            (
-                                selectedTime.timeInMillis /
-                                    1000
-                                ).seconds
+                            selectedTime.timeInMillis.milliseconds
                         )
                     )
                 }
-                showRestTimePicker = false
             },
             onDismissRequest = { showRestTimePicker = false }
         )
