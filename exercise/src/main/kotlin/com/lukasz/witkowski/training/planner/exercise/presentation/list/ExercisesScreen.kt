@@ -43,6 +43,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.paging.LoadState
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
@@ -75,7 +76,9 @@ import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPillStyle
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppFilterChip
 import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppEmptyState
+import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppErrorState
 import com.lukasz.witkowski.training.planner.shared.ui.inputField.AppSearchBar
+import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -127,37 +130,48 @@ fun ExercisesScreenContent(
             onClearCategories = onClearCategories
         )
 
-        if (exercisesList.itemCount != 0) {
-            ExercisesList(
-                exercisesList = exercisesList,
-                onExerciseClicked = onExerciseClicked,
-                itemTrailingIcon = itemTrailingIcon,
-                modifier = Modifier.weight(1f)
+        when (val loadState = exercisesList.loadState.refresh) {
+            is LoadState.Loading -> AppLoadingState(
+                    title = stringResource(R.string.loading_exercises),
+                    modifier = Modifier.fillMaxSize()
+                )
+            is LoadState.Error -> AppErrorState(
+                title = stringResource(R.string.failed_to_load_exercises),
+                subtitle = loadState.error.localizedMessage.orEmpty(),
+                modifier = Modifier.fillMaxSize()
             )
-        } else {
-            val hasActiveFilters =
-                filteringState.isAnyCategorySelected || filteringState.searchQuery.isNotBlank()
-            AppEmptyState(
-                title =
-                if (filteringState.isAnyCategorySelected) {
-                    stringResource(id = R.string.no_exercises_for_categories)
-                } else {
-                    stringResource(id = R.string.no_exercises)
-                },
-                subtitle = stringResource(id = R.string.no_exercises_subtitle),
-                actionLabel = if (hasActiveFilters) {
-                    stringResource(
-                        id = R.string.reset_filters
-                    )
-                } else {
-                    null
-                },
-                onActionClick = if (hasActiveFilters) onResetFilters else null,
-                modifier =
-                Modifier
-                    .weight(1f)
-                    .testTag("NoDataMessage")
-            )
+            is LoadState.NotLoading -> if (exercisesList.itemCount != 0) {
+                ExercisesList(
+                    exercisesList = exercisesList,
+                    onExerciseClicked = onExerciseClicked,
+                    itemTrailingIcon = itemTrailingIcon,
+                    modifier = Modifier.weight(1f)
+                )
+            } else {
+                val hasActiveFilters =
+                    filteringState.isAnyCategorySelected || filteringState.searchQuery.isNotBlank()
+                AppEmptyState(
+                    title =
+                        if (filteringState.isAnyCategorySelected) {
+                            stringResource(id = R.string.no_exercises_for_categories)
+                        } else {
+                            stringResource(id = R.string.no_exercises)
+                        },
+                    subtitle = stringResource(id = R.string.no_exercises_subtitle),
+                    actionLabel = if (hasActiveFilters) {
+                        stringResource(
+                            id = R.string.reset_filters
+                        )
+                    } else {
+                        null
+                    },
+                    onActionClick = if (hasActiveFilters) onResetFilters else null,
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .testTag("NoDataMessage")
+                )
+            }
         }
     }
 }

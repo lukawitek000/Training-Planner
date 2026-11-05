@@ -17,6 +17,8 @@
 
     <!-- Exercise Screens -->
     <string name="exercises">Exercises</string>
+    <string name="loading_exercises">Loading exercises…</string>
+    <string name="failed_to_load_exercises">Failed to load exercises</string>
     <string name="create_exercise">Create exercise</string>
     <string name="update_exercise">Update exercise</string>
     <string name="exercise_details">Exercise details</string>
