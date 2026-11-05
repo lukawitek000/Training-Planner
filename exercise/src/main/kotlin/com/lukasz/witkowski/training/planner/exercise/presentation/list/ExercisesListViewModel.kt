@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import timber.log.Timber
+import kotlin.time.Duration
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class ExercisesListViewModel(
@@ -58,7 +59,7 @@ class ExercisesListViewModel(
 
     val exercises =
         filteringState
-            .debounce(300.milliseconds)
+            .debounce { if (it.searchQuery.isEmpty()) Duration.ZERO else 300.milliseconds }
             .flatMapLatest { state ->
                 exerciseService.queryExercises(state.toExerciseQuery())
             }.map { pagingData ->

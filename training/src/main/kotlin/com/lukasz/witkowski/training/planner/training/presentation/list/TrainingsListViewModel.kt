@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlin.time.Duration
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class TrainingsListViewModel(
@@ -36,7 +37,7 @@ class TrainingsListViewModel(
         combine(query, categoryController.filterCategories) { searchQuery, filterCategories ->
             FilteringState(searchQuery, filterCategories)
         }
-            .debounce(300.milliseconds)
+            .debounce { if (it.searchQuery.isEmpty()) Duration.ZERO else 300.milliseconds }
             .flatMapLatest { filteringState ->
                 val trainingQuery = filteringState.toTrainingQuery()
                 service.getTrainingPlansOverviews(trainingQuery)
