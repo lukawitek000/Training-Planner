@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.network
 
+import com.lukasz.witkowski.training.planner.shared.featureflags.featureFlagsModule
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -28,8 +29,15 @@ object NetworkConfig {
 
     val contentType = "application/json".toMediaType()
 
-    fun createUnauthenticatedOkHttpClient(): OkHttpClient = OkHttpClient
+    fun createUnauthenticatedOkHttpClient(
+        offlineModeInterceptor: OfflineModeInterceptor? = null
+    ): OkHttpClient = OkHttpClient
         .Builder()
+        .apply {
+            if (offlineModeInterceptor != null) {
+                addInterceptor(offlineModeInterceptor)
+            }
+        }
         .connectTimeout(30.seconds)
         .readTimeout(30.seconds)
         .writeTimeout(30.seconds)
@@ -37,8 +45,9 @@ object NetworkConfig {
 
     fun createAuthenticatedOkHttpClient(
         authInterceptor: AuthInterceptor,
-        tokenAuthenticator: TokenAuthenticator
-    ): OkHttpClient = createUnauthenticatedOkHttpClient()
+        tokenAuthenticator: TokenAuthenticator,
+        offlineModeInterceptor: OfflineModeInterceptor? = null
+    ): OkHttpClient = createUnauthenticatedOkHttpClient(offlineModeInterceptor)
         .newBuilder()
         .addInterceptor(authInterceptor)
         .authenticator(tokenAuthenticator)
@@ -61,10 +70,16 @@ object NetworkConfig {
 
 val networkModule =
     module {
+        includes(featureFlagsModule)
+
         single<Json> { NetworkConfig.defaultJson }
 
+        single { OfflineModeInterceptor(featureFlagProvider = get()) }
+
         single(NetworkQualifiers.UNAUTHENTICATED) {
-            NetworkConfig.createUnauthenticatedOkHttpClient()
+            NetworkConfig.createUnauthenticatedOkHttpClient(
+                offlineModeInterceptor = get()
+            )
         }
 
         single(NetworkQualifiers.UNAUTHENTICATED) {
@@ -86,7 +101,8 @@ val networkModule =
         single(NetworkQualifiers.AUTHENTICATED) {
             NetworkConfig.createAuthenticatedOkHttpClient(
                 authInterceptor = get(),
-                tokenAuthenticator = get()
+                tokenAuthenticator = get(),
+                offlineModeInterceptor = get()
             )
         }
 

@@ -92,7 +92,8 @@ val exerciseModule =
             DefaultExerciseRepository(
                 localDataSource = get(),
                 mutationScheduler = get(),
-                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
+                featureFlagProvider = get()
             )
         } bind ExerciseRepository::class
 
@@ -102,7 +103,8 @@ val exerciseModule =
                 mutationDao = get(),
                 remoteDataSource = get(),
                 json = get(),
-                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
+                ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
+                featureFlagProvider = get()
             )
         } bind ExerciseSyncRepository::class
         single<ExerciseService>()
@@ -138,7 +140,8 @@ val exerciseModule =
                 service = get(),
                 exerciseId = params.get(),
                 syncRepository = get(),
-                syncScheduler = get()
+                syncScheduler = get(),
+                featureFlagProvider = get()
             )
         }
         viewModel { params ->

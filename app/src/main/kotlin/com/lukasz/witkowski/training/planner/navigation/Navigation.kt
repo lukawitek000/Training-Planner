@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
@@ -20,6 +21,8 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.details.Exerc
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.CreateExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.EditExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesScreen
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.featureflags.LocalFeatureFlagProvider
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.editor.AddTrainingExerciseScreen
 import com.lukasz.witkowski.training.planner.training.editor.TrainingExerciseConfigurationScreen
@@ -72,11 +75,20 @@ fun Navigation(
             }
 
             entry<Authentication> {
-                AuthenticationScreen(
-                    viewModel = koinViewModel(),
-                    onContinueAsGuestClick = { navigator.goBack() },
-                    onAuthSuccess = { navigator.goBack() },
+                val isOnlineSyncEnabled = LocalFeatureFlagProvider.current.isEnabled(
+                    FeatureFlag.ONLINE_SYNC
                 )
+                if (isOnlineSyncEnabled) {
+                    AuthenticationScreen(
+                        viewModel = koinViewModel(),
+                        onContinueAsGuestClick = { navigator.goBack() },
+                        onAuthSuccess = { navigator.goBack() },
+                    )
+                } else {
+                    LaunchedEffect(Unit) {
+                        navigator.goBack()
+                    }
+                }
             }
 
             entry<CreateTrainingPlan> {

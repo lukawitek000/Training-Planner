@@ -5,7 +5,11 @@ import com.lukasz.witkowski.training.planner.exercise.TestData
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncRepository
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlagProvider
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -43,12 +47,17 @@ class ExerciseDetailsViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun givenVm() {
+    private fun givenVm(
+        featureFlagProvider: FeatureFlagProvider = DefaultFeatureFlagProvider(
+            overrides = mapOf(FeatureFlag.ONLINE_SYNC to true)
+        )
+    ) {
         vm = ExerciseDetailsViewModel(
             service = service,
             exerciseId = id,
             syncRepository = syncRepository,
-            syncScheduler = syncScheduler
+            syncScheduler = syncScheduler,
+            featureFlagProvider = featureFlagProvider
         )
     }
 
@@ -144,4 +153,38 @@ class ExerciseDetailsViewModelTest {
 
         coVerify(exactly = 1) { syncRepository.resolveConflictAcceptServer(id) }
     }
+
+    @Test
+    fun `when ONLINE_SYNC is false, conflict exercise does not trigger server fetch or actions`() =
+        runTest {
+            val conflictDetails = TestData.PUSH_UPS_DETAILS.copy(
+                exercise = TestData.PUSH_UPS_EXERCISE.copy(
+                    metadata = TestData.PUSH_UPS_EXERCISE.metadata.copy(
+                        syncState = ExerciseSyncState.CONFLICT
+                    )
+                )
+            )
+            coEvery { service.getExerciseDetailsById(any()) } returns flowOf(conflictDetails)
+            coEvery { service.readImageReferences(any()) } returns emptyList()
+            givenVm(
+                featureFlagProvider = DefaultFeatureFlagProvider(
+                    overrides = mapOf(FeatureFlag.ONLINE_SYNC to false)
+                )
+            )
+
+            vm.state.test {
+                assertEquals(ExerciseDetailsState.Loading, awaitItem())
+                awaitItem()
+            }
+            vm.openConflictDialog()
+            vm.resolveConflictKeepLocal()
+            vm.resolveConflictAcceptServer()
+            vm.retrySync()
+            advanceUntilIdle()
+
+            coVerify(exactly = 0) { syncRepository.getConflictServerExercise(any()) }
+            coVerify(exactly = 0) { syncRepository.resolveConflictKeepLocal(any()) }
+            coVerify(exactly = 0) { syncRepository.resolveConflictAcceptServer(any()) }
+            verify(exactly = 0) { syncScheduler.enqueueMutationSync() }
+        }
 }

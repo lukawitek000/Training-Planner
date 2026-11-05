@@ -14,6 +14,9 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.ExerciseLocalDataSource
 import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlagProvider
 import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -29,7 +32,8 @@ internal class DefaultExerciseRepository(
     private val pagingConfig: PagingConfig = PagingConfig(
         pageSize = DEFAULT_PAGE_SIZE,
         prefetchDistance = DEFAULT_PREFETCH_DISTANCE
-    )
+    ),
+    private val featureFlagProvider: FeatureFlagProvider = DefaultFeatureFlagProvider()
 ) : ExerciseRepository {
 
     override fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails?> =
@@ -53,9 +57,18 @@ internal class DefaultExerciseRepository(
     }
 
     override suspend fun insert(exercise: ExerciseDetails): Boolean = withContext(ioDispatcher) {
-        val dbExerciseDetails = exercise.toDbExerciseDetails()
+        val isOnlineSyncEnabled = featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)
+        val exerciseToSave = if (!isOnlineSyncEnabled &&
+            exercise.exercise.metadata.syncState == ExerciseSyncState.PENDING_UPLOAD
+        ) {
+            exercise.toLocalOnlyDetails()
+        } else {
+            exercise
+        }
+        val dbExerciseDetails = exerciseToSave.toDbExerciseDetails()
         val inserted = localDataSource.insertExerciseDetails(dbExerciseDetails)
         if (inserted &&
+            isOnlineSyncEnabled &&
             (
                 exercise.exercise.metadata.source is ExerciseSource.UserCreated ||
                     exercise.exercise.metadata.syncState == ExerciseSyncState.PENDING_UPLOAD
@@ -76,8 +89,10 @@ internal class DefaultExerciseRepository(
         val existingDbDetails =
             localDataSource.getExerciseDetailsById(exerciseId.toString()).firstOrNull()
                 ?: return@withContext false
+        val isOnlineSyncEnabled = featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)
         val existingMutation = localDataSource.getMutationByExerciseIdOnce(exerciseId.toString())
-        val isUnsyncedLocal = existingMutation?.type == DbExerciseMutation.TYPE_CREATE ||
+        val isUnsyncedLocal = !isOnlineSyncEnabled ||
+            existingMutation?.type == DbExerciseMutation.TYPE_CREATE ||
             existingDbDetails.exercise.syncState == DbExercise.SYNC_STATE_LOCAL_ONLY ||
             existingDbDetails.exercise.owner == null ||
             existingDbDetails.exercise.owner.ownerName == "Local"
@@ -107,6 +122,19 @@ internal class DefaultExerciseRepository(
                     exercise.exercise.id.toString()
                 ).firstOrNull()
                     ?: return@withContext false
+
+            if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
+                val localExerciseDetails = if (
+                    exercise.exercise.metadata.syncState == ExerciseSyncState.PENDING_UPLOAD
+                ) {
+                    exercise.toLocalOnlyDetails()
+                } else {
+                    exercise
+                }
+                localDataSource.insertExerciseDetails(localExerciseDetails.toDbExerciseDetails())
+                return@withContext true
+            }
+
             val existingMutation = localDataSource.getMutationByExerciseIdOnce(
                 exercise.exercise.id.toString()
             )
@@ -243,6 +271,12 @@ private fun ExerciseDetails.toPendingMutation(
 private fun ExerciseDetails.toPendingUploadDetails(): ExerciseDetails = copy(
     exercise = exercise.copy(
         metadata = exercise.metadata.copy(syncState = ExerciseSyncState.PENDING_UPLOAD)
+    )
+)
+
+private fun ExerciseDetails.toLocalOnlyDetails(): ExerciseDetails = copy(
+    exercise = exercise.copy(
+        metadata = exercise.metadata.copy(syncState = ExerciseSyncState.LOCAL_ONLY)
     )
 )
 

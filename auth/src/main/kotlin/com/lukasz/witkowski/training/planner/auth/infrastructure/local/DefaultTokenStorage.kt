@@ -4,9 +4,14 @@ import com.lukasz.witkowski.training.planner.network.AccessToken
 import com.lukasz.witkowski.training.planner.network.AuthSessionProvider
 import com.lukasz.witkowski.training.planner.network.AuthTokens
 import com.lukasz.witkowski.training.planner.network.TokenStorage
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlagProvider
 
-class DefaultTokenStorage(private val secureTokenStorage: SecureTokenStorage) :
-    TokenStorage,
+class DefaultTokenStorage(
+    private val secureTokenStorage: SecureTokenStorage,
+    private val featureFlagProvider: FeatureFlagProvider = DefaultFeatureFlagProvider()
+) : TokenStorage,
     AuthSessionProvider {
     @Volatile
     private var accessToken: AccessToken? = null
@@ -31,5 +36,7 @@ class DefaultTokenStorage(private val secureTokenStorage: SecureTokenStorage) :
         secureTokenStorage.clear()
     }
 
-    override suspend fun isLoggedIn(): Boolean = secureTokenStorage.getRefreshToken() != null
+    override suspend fun isLoggedIn(): Boolean =
+        featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC) &&
+            secureTokenStorage.getRefreshToken() != null
 }

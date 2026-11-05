@@ -47,7 +47,10 @@ class DefaultUserRepositoryTest {
                 tokenStorage = mockTokenStorage,
                 userRemoteDataSource = mockUserRemoteDataSource,
                 userPreferencesStorage = mockUserPreferencesStorage,
-                syncScheduler = mockSyncScheduler
+                syncScheduler = mockSyncScheduler,
+                featureFlagProvider = DefaultFeatureFlagProvider(
+                    overrides = mapOf(FeatureFlag.ONLINE_SYNC to true)
+                )
             )
     }
 

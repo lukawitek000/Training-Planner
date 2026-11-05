@@ -68,6 +68,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppErrorState
 
 @Composable
 fun ExerciseDetailsScreen(viewModel: ExerciseDetailsViewModel, modifier: Modifier = Modifier) {
+    val isOnlineSyncEnabled = LocalFeatureFlagProvider.current.isEnabled(FeatureFlag.ONLINE_SYNC)
     val state by viewModel.state.collectAsState()
     val showConflictDialog by viewModel.showConflictDialog.collectAsState()
     val conflictServerDetails by viewModel.conflictServerDetails.collectAsState()
@@ -80,7 +81,7 @@ fun ExerciseDetailsScreen(viewModel: ExerciseDetailsViewModel, modifier: Modifie
     )
 
     val currentState = state
-    if (showConflictDialog && currentState is ExerciseDetailsState.Success) {
+    if (isOnlineSyncEnabled && showConflictDialog && currentState is ExerciseDetailsState.Success) {
         ExerciseConflictDialog(
             localDetails = currentState.details,
             serverDetails = conflictServerDetails,

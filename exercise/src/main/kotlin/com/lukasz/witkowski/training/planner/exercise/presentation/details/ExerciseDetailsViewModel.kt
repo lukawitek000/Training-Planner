@@ -10,6 +10,9 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exerci
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise2
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExerciseDetails
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlagProvider
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,7 +27,8 @@ open class ExerciseDetailsViewModel(
     private val service: ExerciseService,
     private val exerciseId: ExerciseId,
     private val syncRepository: ExerciseSyncRepository? = null,
-    private val syncScheduler: SyncScheduler? = null
+    private val syncScheduler: SyncScheduler? = null,
+    private val featureFlagProvider: FeatureFlagProvider = DefaultFeatureFlagProvider()
 ) : ViewModel() {
 
     private val _conflictServerDetails = MutableStateFlow<ExerciseDetails?>(null)
@@ -38,7 +42,9 @@ open class ExerciseDetailsViewModel(
             if (domainDetails == null) {
                 ExerciseDetailsState.Failure("Exercise not found")
             } else {
-                if (domainDetails.exercise.metadata.syncState == ExerciseSyncState.CONFLICT) {
+                if (featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC) &&
+                    domainDetails.exercise.metadata.syncState == ExerciseSyncState.CONFLICT
+                ) {
                     loadConflictServerDetails()
                 }
                 val imageReferences = if (domainDetails.exercise.imageIds.isNotEmpty()) {
@@ -65,6 +71,7 @@ open class ExerciseDetailsViewModel(
         )
 
     fun openConflictDialog() {
+        if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) return
         loadConflictServerDetails()
         _showConflictDialog.value = true
     }
@@ -74,6 +81,7 @@ open class ExerciseDetailsViewModel(
     }
 
     fun resolveConflictKeepLocal() {
+        if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) return
         val repo = syncRepository ?: return
         viewModelScope.launch {
             repo.resolveConflictKeepLocal(exerciseId)
@@ -83,6 +91,7 @@ open class ExerciseDetailsViewModel(
     }
 
     fun resolveConflictAcceptServer() {
+        if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) return
         val repo = syncRepository ?: return
         viewModelScope.launch {
             repo.resolveConflictAcceptServer(exerciseId)
@@ -91,10 +100,12 @@ open class ExerciseDetailsViewModel(
     }
 
     fun retrySync() {
+        if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) return
         syncScheduler?.enqueueMutationSync()
     }
 
     private fun loadConflictServerDetails() {
+        if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) return
         val repo = syncRepository ?: return
         viewModelScope.launch {
             when (val result = repo.getConflictServerExercise(exerciseId)) {

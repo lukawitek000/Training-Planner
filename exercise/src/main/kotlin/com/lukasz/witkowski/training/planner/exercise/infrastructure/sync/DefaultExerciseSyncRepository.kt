@@ -19,6 +19,10 @@ import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.Exer
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.remote.toExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.infrastructure.toDbExerciseDetails
 import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.network.NetworkFailure
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineDispatcher
@@ -32,11 +36,16 @@ internal class DefaultExerciseSyncRepository(
     private val mutationDao: ExerciseMutationDao,
     private val remoteDataSource: ExerciseRemoteDataSource,
     private val json: Json,
-    private val ioDispatcher: CoroutineDispatcher
+    private val ioDispatcher: CoroutineDispatcher,
+    private val featureFlagProvider: FeatureFlagProvider = DefaultFeatureFlagProvider()
 ) : ExerciseSyncRepository {
 
     override suspend fun synchronizeExercises(): AppResult<Unit, ExerciseFailure> =
         withContext(ioDispatcher) {
+            if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
+                Timber.d("Skipping synchronizeExercises: ONLINE_SYNC is disabled")
+                return@withContext AppResult.Success(Unit)
+            }
             val currentVersion = exerciseDao.getSyncVersion() ?: 0L
             Timber.d("Starting exercise sync from version $currentVersion")
             when (val result = remoteDataSource.getExerciseChanges(currentVersion)) {
@@ -66,6 +75,10 @@ internal class DefaultExerciseSyncRepository(
 
     override suspend fun processPendingMutations(): AppResult<Unit, ExerciseFailure> =
         withContext(ioDispatcher) {
+            if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
+                Timber.d("Skipping processPendingMutations: ONLINE_SYNC is disabled")
+                return@withContext AppResult.Success(Unit)
+            }
             val pendingMutations = mutationDao.getPendingMutations()
             if (pendingMutations.isEmpty()) {
                 return@withContext AppResult.Success(Unit)
@@ -99,6 +112,11 @@ internal class DefaultExerciseSyncRepository(
             } catch (e: Exception) {
                 Timber.w(e, "Failed to decode cached conflictServerJson for %s", exerciseId)
             }
+        }
+        if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
+            return@withContext AppResult.Error(
+                ExerciseFailure.NetworkError(NetworkFailure.NoInternet)
+            )
         }
         remoteDataSource.getExerciseDetailsById(exerciseId)
     }

@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.user.infrastructure
 
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.network.TokenStorage
+import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
 import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
 import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlagProvider
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
@@ -19,10 +20,10 @@ class DefaultUserRepository(
     private val userRemoteDataSource: UserRemoteDataSource,
     private val userPreferencesStorage: UserPreferencesStorage,
     private val syncScheduler: SyncScheduler? = null,
-    private val featureFlagProvider: FeatureFlagProvider? = null
+    private val featureFlagProvider: FeatureFlagProvider = DefaultFeatureFlagProvider()
 ) : UserRepository {
     override suspend fun getUserProfile(): AppResult<User, UserFailure> {
-        if (featureFlagProvider?.isEnabled(FeatureFlag.ONLINE_SYNC) == false) {
+        if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
             Timber.i("getUserProfile: Online sync feature flag disabled, returning NotSignedIn")
             return AppResult.Error(UserFailure.NotSignedIn)
         }
@@ -47,7 +48,7 @@ class DefaultUserRepository(
     override suspend fun setAutoSyncEnabled(enabled: Boolean) {
         Timber.d("setAutoSyncEnabled: Setting auto sync enabled to %s", enabled)
         userPreferencesStorage.setAutoSyncEnabled(enabled)
-        if (featureFlagProvider?.isEnabled(FeatureFlag.ONLINE_SYNC) == false) {
+        if (!featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
             return
         }
         if (enabled) {

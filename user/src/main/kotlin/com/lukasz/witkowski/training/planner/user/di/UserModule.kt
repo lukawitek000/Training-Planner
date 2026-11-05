@@ -45,7 +45,7 @@ val userModule =
                 userRemoteDataSource = get(),
                 userPreferencesStorage = get(),
                 syncScheduler = getOrNull(),
-                featureFlagProvider = getOrNull()
+                featureFlagProvider = get()
             )
         } bind UserRepository::class
 

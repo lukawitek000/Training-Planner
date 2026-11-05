@@ -27,6 +27,8 @@ class TrainingPlannerApplication : Application() {
         if (featureFlagProvider.isEnabled(FeatureFlag.ONLINE_SYNC)) {
             syncScheduler.enqueueRemoteChangeSync(force = false)
             syncScheduler.enqueueMutationSync()
+        } else {
+            syncScheduler.cancelMutationSync()
         }
     }
 }
