@@ -664,7 +664,6 @@ private fun RecommendedParametersOverviewPreview() {
     }
 }
 
-
 @AppPreview
 @Composable
 private fun ExerciseParametersInputFieldsPreview() {

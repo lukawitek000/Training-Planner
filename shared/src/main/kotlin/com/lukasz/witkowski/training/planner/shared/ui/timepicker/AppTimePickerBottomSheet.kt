@@ -2,7 +2,6 @@ package com.lukasz.witkowski.training.planner.shared.ui.timepicker
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -139,7 +138,7 @@ fun AppTimePickerBottomSheet(
     secondsPresets: List<Int> = DEFAULT_SECONDS_PRESETS,
     minutesPresets: List<Int> = DEFAULT_MINUTES_PRESETS
 ) {
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true,)
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
 
     ModalBottomSheet(
@@ -147,27 +146,27 @@ fun AppTimePickerBottomSheet(
         sheetState = sheetState,
         modifier = modifier,
         shape =
-            RoundedCornerShape(
-                topStart = Dimens.bottomSheetCornerRadius,
-                topEnd = Dimens.bottomSheetCornerRadius
-            ),
+        RoundedCornerShape(
+            topStart = Dimens.bottomSheetCornerRadius,
+            topEnd = Dimens.bottomSheetCornerRadius
+        ),
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
         dragHandle = {
             Box(
                 modifier =
-                    Modifier
-                        .padding(
-                            top = Dimens.spaceGapIconTextMedium,
-                            bottom = Dimens.spaceSm
-                        )
-                        .size(
-                            width = Dimens.bottomSheetDragHandleWidth,
-                            height = Dimens.bottomSheetDragHandleHeight
-                        )
-                        .background(
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
-                            shape = CircleShape
-                        )
+                Modifier
+                    .padding(
+                        top = Dimens.spaceGapIconTextMedium,
+                        bottom = Dimens.spaceSm
+                    )
+                    .size(
+                        width = Dimens.bottomSheetDragHandleWidth,
+                        height = Dimens.bottomSheetDragHandleHeight
+                    )
+                    .background(
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f),
+                        shape = CircleShape
+                    )
             )
         }
     ) {
@@ -182,9 +181,8 @@ fun AppTimePickerBottomSheet(
                         onDismissRequest()
                     }
                 }
-
             },
-            onDismissRequest =  {
+            onDismissRequest = {
                 scope.launch {
                     sheetState.hide()
                 }.invokeOnCompletion {
@@ -226,7 +224,7 @@ fun AppTimePickerSheetContent(
                     AppTimePickerTab.SECONDS
 
                 initialSeconds % SECONDS_PER_MINUTE == 0 &&
-                        (initialSeconds / SECONDS_PER_MINUTE) in minutesPresets ->
+                    (initialSeconds / SECONDS_PER_MINUTE) in minutesPresets ->
                     AppTimePickerTab.MINUTES
 
                 else -> AppTimePickerTab.CUSTOM
@@ -267,14 +265,14 @@ fun AppTimePickerSheetContent(
 
     Column(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(
-                    start = Dimens.spaceMd,
-                    end = Dimens.spaceMd,
-                    bottom = Dimens.spaceLg
-                )
-                .testTag("TimePickerBottomSheet")
+        modifier
+            .fillMaxWidth()
+            .padding(
+                start = Dimens.spaceMd,
+                end = Dimens.spaceMd,
+                bottom = Dimens.spaceLg
+            )
+            .testTag("TimePickerBottomSheet")
     ) {
         // Header Row
         Row(
@@ -319,31 +317,31 @@ fun AppTimePickerSheetContent(
                     onClick = { selectedSeconds = null },
                     shape = CircleShape,
                     color =
-                        if (isNoneSelected) {
-                            MaterialTheme.colorScheme.primaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.surfaceContainerHighest
-                        },
+                    if (isNoneSelected) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.surfaceContainerHighest
+                    },
                     contentColor =
-                        if (isNoneSelected) {
-                            MaterialTheme.colorScheme.onPrimary
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        },
+                    if (isNoneSelected) {
+                        MaterialTheme.colorScheme.onPrimary
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    },
                     border =
-                        BorderStroke(
-                            width = Dimens.thinBorder,
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
-                        ),
+                    BorderStroke(
+                        width = Dimens.thinBorder,
+                        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.6f)
+                    ),
                     shadowElevation = Dimens.shadowSm,
                     modifier = Modifier.testTag("TimePickerNoTimeButton")
                 ) {
                     Row(
                         modifier =
-                            Modifier.padding(
-                                horizontal = Dimens.inputHorizontalPadding,
-                                vertical = Dimens.spaceGapLabelInput
-                            ),
+                        Modifier.padding(
+                            horizontal = Dimens.inputHorizontalPadding,
+                            vertical = Dimens.spaceGapLabelInput
+                        ),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
                     ) {
@@ -351,19 +349,19 @@ fun AppTimePickerSheetContent(
                             imageVector = Icons.Default.Block,
                             contentDescription = null,
                             tint =
-                                if (isNoneSelected) {
-                                    MaterialTheme.colorScheme.onPrimary
-                                } else {
-                                    MaterialTheme.colorScheme.error
-                                },
+                            if (isNoneSelected) {
+                                MaterialTheme.colorScheme.onPrimary
+                            } else {
+                                MaterialTheme.colorScheme.error
+                            },
                             modifier = Modifier.size(Dimens.iconSize16)
                         )
                         Text(
                             text = stringResource(R.string.time_picker_no_time),
                             style =
-                                MaterialTheme.typography.labelMedium.copy(
-                                    fontWeight = FontWeight.SemiBold
-                                )
+                            MaterialTheme.typography.labelMedium.copy(
+                                fontWeight = FontWeight.SemiBold
+                            )
                         )
                     }
                 }
@@ -426,9 +424,9 @@ fun AppTimePickerSheetContent(
         TextButton(
             onClick = onDismissRequest,
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .testTag("TimePickerCancelButton")
+            Modifier
+                .fillMaxWidth()
+                .testTag("TimePickerCancelButton")
         ) {
             Text(
                 text = stringResource(R.string.cancel),
@@ -509,7 +507,9 @@ private fun TimePickerTabs(
                         seconds = customRemainderSeconds,
                         onMinutesChanged = { newMinutes ->
                             onSelectedCustomMinute(newMinutes)
-                            onSelectedSeconds(newMinutes * SECONDS_PER_MINUTE + customRemainderSeconds)
+                            onSelectedSeconds(
+                                newMinutes * SECONDS_PER_MINUTE + customRemainderSeconds
+                            )
                         },
                         onSecondsChanged = { newSeconds ->
                             onCustomRemainderSecond(newSeconds)
@@ -546,33 +546,33 @@ private fun TimePresetGrid(
                     Surface(
                         onClick = { onPresetClick(preset) },
                         modifier =
-                            Modifier
-                                .weight(1f)
-                                .height(Dimens.buttonHeight)
-                                .testTag("TimePreset_$preset"),
+                        Modifier
+                            .weight(1f)
+                            .height(Dimens.buttonHeight)
+                            .testTag("TimePreset_$preset"),
                         shape = MaterialTheme.shapes.medium,
                         color =
-                            if (isSelected) {
-                                MaterialTheme.colorScheme.primaryContainer
-                            } else {
-                                MaterialTheme.colorScheme.surfaceContainer
-                            },
+                        if (isSelected) {
+                            MaterialTheme.colorScheme.primaryContainer
+                        } else {
+                            MaterialTheme.colorScheme.surfaceContainer
+                        },
                         contentColor =
-                            if (isSelected) {
-                                MaterialTheme.colorScheme.onPrimary
-                            } else {
-                                MaterialTheme.colorScheme.onSurface
-                            },
+                        if (isSelected) {
+                            MaterialTheme.colorScheme.onPrimary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        },
                         shadowElevation = if (isSelected) Dimens.shadowSm else Dimens.zeroDp
                     ) {
                         Box(contentAlignment = Alignment.Center) {
                             Text(
                                 text = label,
                                 style =
-                                    MaterialTheme.typography.titleMedium.copy(
-                                        fontWeight =
-                                            if (isSelected) FontWeight.Bold else FontWeight.Medium
-                                    )
+                                MaterialTheme.typography.titleMedium.copy(
+                                    fontWeight =
+                                    if (isSelected) FontWeight.Bold else FontWeight.Medium
+                                )
                             )
                         }
                     }
@@ -604,12 +604,12 @@ private fun CustomTimeWheelSelector(
     ) {
         Column(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        horizontal = Dimens.spaceLg,
-                        vertical = Dimens.spaceGapIconTextMedium
-                    ),
+            Modifier
+                .fillMaxWidth()
+                .padding(
+                    horizontal = Dimens.spaceLg,
+                    vertical = Dimens.spaceGapIconTextMedium
+                ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Row(
@@ -636,17 +636,17 @@ private fun CustomTimeWheelSelector(
 
             Box(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(Dimens.wheelPickerHeight),
+                Modifier
+                    .fillMaxWidth()
+                    .height(Dimens.wheelPickerHeight),
                 contentAlignment = Alignment.Center
             ) {
                 // Center Selection Highlight Bar
                 Surface(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(Dimens.wheelPickerRowHeight),
+                    Modifier
+                        .fillMaxWidth()
+                        .height(Dimens.wheelPickerRowHeight),
                     shape = MaterialTheme.shapes.medium,
                     color = MaterialTheme.colorScheme.surfaceContainerHighest
                 ) {}
@@ -731,8 +731,8 @@ private fun WheelColumnPicker(
         contentPadding = PaddingValues(vertical = verticalPadding),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier =
-            modifier
-                .height(Dimens.wheelPickerHeight)
+        modifier
+            .height(Dimens.wheelPickerHeight)
     ) {
         itemsIndexed(items) { index, item ->
             val isSelected = index == currentIndex
@@ -743,31 +743,31 @@ private fun WheelColumnPicker(
 
             Box(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(Dimens.wheelPickerRowHeight)
-                        .clickable {
-                            onItemSelected(item)
-                            coroutineScope.launch {
-                                listState.animateScrollToItem(index)
-                            }
-                        },
+                Modifier
+                    .fillMaxWidth()
+                    .height(Dimens.wheelPickerRowHeight)
+                    .clickable {
+                        onItemSelected(item)
+                        coroutineScope.launch {
+                            listState.animateScrollToItem(index)
+                        }
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = formatItem(item),
                     style =
-                        if (isSelected) {
-                            MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-                        } else {
-                            MaterialTheme.typography.titleSmall
-                        },
+                    if (isSelected) {
+                        MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
+                    } else {
+                        MaterialTheme.typography.titleSmall
+                    },
                     color =
-                        if (isSelected) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        },
+                    if (isSelected) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
                     modifier = Modifier.alpha(animatedAlpha)
                 )
             }
@@ -803,10 +803,10 @@ private fun AppTimePickerSecondsPreview() {
         Surface(
             color = MaterialTheme.colorScheme.surfaceContainerLow,
             shape =
-                RoundedCornerShape(
-                    topStart = Dimens.bottomSheetCornerRadius,
-                    topEnd = Dimens.bottomSheetCornerRadius
-                )
+            RoundedCornerShape(
+                topStart = Dimens.bottomSheetCornerRadius,
+                topEnd = Dimens.bottomSheetCornerRadius
+            )
         ) {
             AppTimePickerSheetContent(
                 initialSeconds = 45,
@@ -826,10 +826,10 @@ private fun AppTimePickerCustomPreview() {
         Surface(
             color = MaterialTheme.colorScheme.surfaceContainerLow,
             shape =
-                RoundedCornerShape(
-                    topStart = Dimens.bottomSheetCornerRadius,
-                    topEnd = Dimens.bottomSheetCornerRadius
-                )
+            RoundedCornerShape(
+                topStart = Dimens.bottomSheetCornerRadius,
+                topEnd = Dimens.bottomSheetCornerRadius
+            )
         ) {
             AppTimePickerSheetContent(
                 initialSeconds = 95,

@@ -18,7 +18,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
-import kotlin.math.min
 
 /**
  * Combined label and text input field composable styled according to design specification.
@@ -38,7 +37,7 @@ fun AppLabeledTextField(
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    minLines: Int = 1,
+    minLines: Int = 1
 ) {
     Column(modifier = modifier) {
         AppInputLabel(text = label)
