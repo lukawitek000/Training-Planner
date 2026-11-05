@@ -310,7 +310,7 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
 
         is TrainingExerciseConfiguration -> UiConfig(
             topBarConfig = TopBarConfig(
-                title = "Configure Exercise",
+                title = context.getString(R.string.configure_exercise),
                 hasBackArrow = true
             )
         )
