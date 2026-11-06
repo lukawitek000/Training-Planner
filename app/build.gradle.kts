@@ -1,9 +1,42 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.serialization)
     id("io.insert-koin.compiler.plugin")
 }
+
+val resolvedVersionCode = (project.findProperty("versionCodeOverride") as? String)?.toIntOrNull()
+    ?: ConfigData.versionCode
+val resolvedVersionName = (project.findProperty("versionNameOverride") as? String)
+    ?: ConfigData.versionName
+
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties().apply {
+    if (keystorePropertiesFile.exists()) {
+        keystorePropertiesFile.inputStream().use { load(it) }
+    }
+}
+
+val releaseStoreFilePath = System.getenv("SIGNING_STORE_FILE")
+    ?: keystoreProperties.getProperty("storeFile")
+val releaseStorePassword = System.getenv("SIGNING_STORE_PASSWORD")
+    ?: keystoreProperties.getProperty("storePassword")
+val releaseKeyAlias = System.getenv("SIGNING_KEY_ALIAS")
+    ?: keystoreProperties.getProperty("keyAlias")
+val releaseKeyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+    ?: keystoreProperties.getProperty("keyPassword")
+
+val releaseStoreFile = releaseStoreFilePath?.let { path ->
+    val file = File(path)
+    if (file.isAbsolute) file else rootProject.file(path)
+}
+
+val hasValidReleaseSigning = releaseStoreFile?.exists() == true &&
+    !releaseStorePassword.isNullOrBlank() &&
+    !releaseKeyAlias.isNullOrBlank() &&
+    !releaseKeyPassword.isNullOrBlank()
 
 android {
     compileSdk = ConfigData.compileSdk
@@ -13,8 +46,8 @@ android {
         applicationId = ConfigData.applicationId
         minSdk = ConfigData.minSdk
         targetSdk = ConfigData.targetSdk
-        versionCode = ConfigData.versionCode
-        versionName = ConfigData.versionName
+        versionCode = resolvedVersionCode
+        versionName = resolvedVersionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -22,14 +55,38 @@ android {
         }
     }
 
+    signingConfigs {
+        if (hasValidReleaseSigning) {
+            create("release") {
+                storeFile = releaseStoreFile
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         getByName("debug") {
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+            resValue("string", "app_name", "Training Planner (Debug)")
+
             // Local Ktor backend server for Emulator
             buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8080/\"")
         }
         getByName("release") {
-            isMinifyEnabled = false
+            resValue("string", "app_name", "Training Planner")
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+
+            if (hasValidReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                logger.info("Release signing credentials not found; release build will remain unsigned or use default fallback.")
+            }
+
             // Production server URL (replace with actual production endpoint in the future)
             buildConfigField("String", "BASE_URL", "\"https://api.trainingplanner.com/\"")
         }
@@ -43,6 +100,7 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
+        resValues = true
     }
 
     packaging {
