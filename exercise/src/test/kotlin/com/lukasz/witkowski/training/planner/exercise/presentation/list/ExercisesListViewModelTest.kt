@@ -127,6 +127,8 @@ class ExercisesListViewModelTest {
 
     @Test
     fun `when search query change while query is executed request is cancelled`() = runTest {
+        coEvery { service.queryExercises(match { it.query.isEmpty() }) } returns
+            flowOf(PagingData.empty())
         val firstQuery = "Pull"
         var isFirstQueryCancelled = false
         coEvery { service.queryExercises(match { it.query == firstQuery }) } returns flow {

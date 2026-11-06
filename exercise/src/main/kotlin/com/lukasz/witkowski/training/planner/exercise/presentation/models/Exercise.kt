@@ -5,14 +5,19 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.image.ImageReference
 
-data class Exercise(
+data class ExerciseOverview(
     val id: ExerciseId,
     val name: String,
     val description: String,
     val categories: List<ExerciseCategory>,
-    val images: List<ImageReference> = emptyList(),
+    val thumbnail: ImageReference? = null,
     val metadata: ExerciseMetadata = ExerciseMetadata()
 ) {
     val image: ImageReference?
-        get() = images.firstOrNull()
+        get() = thumbnail
 }
+
+typealias Exercise = ExerciseOverview
+
+@Deprecated("Use ExerciseOverview instead", ReplaceWith("ExerciseOverview"))
+typealias Exercise2 = ExerciseOverview

@@ -39,8 +39,8 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recommendation
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
@@ -286,7 +286,7 @@ private fun ExerciseConflictDialogPreview() {
         )
         ExerciseConflictDialog(
             localDetails = ExerciseDetails(
-                exercise = Exercise(
+                exercise = ExerciseOverview(
                     id = ExerciseId.create(),
                     name = "Barbell Bench Press (Heavy)",
                     description = "Updated local notes with pause at bottom",
@@ -299,7 +299,7 @@ private fun ExerciseConflictDialogPreview() {
                 recommendations = sampleRecs
             ),
             serverDetails = ExerciseDetails(
-                exercise = Exercise(
+                exercise = ExerciseOverview(
                     id = ExerciseId.create(),
                     name = "Barbell Bench Press",
                     description = "Cloud description updated from another device",

@@ -1,30 +1,44 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation.models
 
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise as DomainExercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails as DomainExerciseDetails
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview as DomainExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRecommendation
 import com.lukasz.witkowski.training.planner.image.ImageReference
 
-fun DomainExercise.toPresentationExercise(images: List<ImageReference> = emptyList()): Exercise =
-    Exercise(
-        id = id,
-        name = name,
-        description = description,
-        categories = categories.toList(),
-        images = images,
-        metadata = metadata
-    )
+fun DomainExerciseOverview.toPresentationExerciseOverview(
+    thumbnail: ImageReference? = null
+): ExerciseOverview = ExerciseOverview(
+    id = id,
+    name = name,
+    description = description,
+    categories = categories.toList(),
+    thumbnail = thumbnail,
+    metadata = metadata
+)
+
+fun DomainExerciseOverview.toPresentationExercise(
+    thumbnail: ImageReference? = null
+): ExerciseOverview = toPresentationExerciseOverview(thumbnail)
+
+@Deprecated(
+    message = "Use toPresentationExerciseOverview instead",
+    replaceWith = ReplaceWith("toPresentationExerciseOverview(thumbnail)")
+)
+fun DomainExerciseOverview.toPresentationExercise2(
+    thumbnail: ImageReference? = null
+): ExerciseOverview = toPresentationExerciseOverview(thumbnail)
 
 fun DomainExerciseDetails.toPresentationExerciseDetails(
     images: List<ImageReference> = emptyList()
 ): ExerciseDetails = ExerciseDetails(
-    exercise = this.exercise.toPresentationExercise(images),
+    exercise = this.exercise.toPresentationExerciseOverview(images.firstOrNull()),
     recommendations =
     listOf(
         beginnerRecommendation.toRecommendation(RecommendationLevel.BEGINNER),
         intermediateRecommendation.toRecommendation(RecommendationLevel.INTERMEDIATE),
         advancedRecommendation.toRecommendation(RecommendationLevel.ADVANCED)
-    )
+    ),
+    images = images
 )
 
 fun ExerciseRecommendation.toRecommendation(level: RecommendationLevel): Recommendation =

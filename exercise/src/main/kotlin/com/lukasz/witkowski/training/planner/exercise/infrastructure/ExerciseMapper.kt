@@ -1,10 +1,10 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure
 
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRecommendation
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSharing
@@ -13,7 +13,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.image.ImageId
 import kotlin.time.Duration.Companion.seconds
 
-internal fun Exercise.toDbExercise(): DbExercise {
+internal fun ExerciseOverview.toDbExercise(): DbExercise {
     val (sourceTypeStr, dbOwner) = when (val s = metadata.source) {
         is ExerciseSource.Bundled -> DbExercise.SOURCE_TYPE_BUNDLED to null
         is ExerciseSource.Organization -> DbExercise.SOURCE_TYPE_ORGANIZATION to null
@@ -36,7 +36,7 @@ internal fun Exercise.toDbExercise(): DbExercise {
         exerciseId = id.toString(),
         name = name,
         description = description,
-        imageId = imageId?.toString(),
+        imageId = thumbnailId?.toString(),
         owner = dbOwner,
         sourceType = sourceTypeStr,
         sharing = sharingStr,
@@ -48,7 +48,7 @@ internal fun Exercise.toDbExercise(): DbExercise {
 internal fun DbExercise.toExercise(
     categories: List<ExerciseCategory>,
     images: List<DbExerciseImage> = emptyList()
-): Exercise {
+): ExerciseOverview {
     val sourceObj = toExerciseSource()
     val sharingObj = toExerciseSharing()
     val syncStateObj = toExerciseSyncState()
@@ -64,7 +64,7 @@ internal fun DbExercise.toExercise(
     } else {
         listOfNotNull(imageId?.let { ImageId(it) })
     }
-    return Exercise(
+    return ExerciseOverview(
         id = ExerciseId(exerciseId),
         name = name,
         description = description,
@@ -74,7 +74,7 @@ internal fun DbExercise.toExercise(
     )
 }
 
-internal fun DbExerciseWithCategories.toExercise(): Exercise =
+internal fun DbExerciseWithCategories.toExercise(): ExerciseOverview =
     exercise.toExercise(categories.map { it.toExerciseCategory() }, images)
 
 private fun DbExercise.toExerciseSource(): ExerciseSource = when (sourceType) {

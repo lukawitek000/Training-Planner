@@ -9,7 +9,7 @@ data class ExerciseMetadata(
     val syncState: ExerciseSyncState = ExerciseSyncState.SYNCED
 )
 
-data class Exercise(
+data class ExerciseOverview(
     val id: ExerciseId,
     val name: String,
     val description: String,
@@ -17,8 +17,11 @@ data class Exercise(
     val imageIds: List<ImageId> = emptyList(),
     val metadata: ExerciseMetadata = ExerciseMetadata()
 ) {
-    val imageId: ImageId?
+    val thumbnailId: ImageId?
         get() = imageIds.firstOrNull()
+
+    val imageId: ImageId?
+        get() = thumbnailId
 
     init {
         require(categories.isNotEmpty()) {
@@ -26,6 +29,11 @@ data class Exercise(
         }
     }
 }
+
+typealias Exercise = ExerciseOverview
+
+@Deprecated("Use ExerciseOverview instead", ReplaceWith("ExerciseOverview"))
+typealias Exercise2 = ExerciseOverview
 
 sealed interface ExerciseSource {
     data object Bundled : ExerciseSource

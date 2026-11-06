@@ -47,10 +47,11 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
+import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_THUMBNAIL
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.PREVIEW_RECOMMENDED_PARAMETERS
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.RecommendedParametersOverview
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseOverview
 import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
 import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
 import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
@@ -165,9 +166,9 @@ private fun ExerciseDetailsBody(
                 .testTag("ExerciseDetails"),
             verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
         ) {
-            if (exercise.images.isNotEmpty()) {
+            if (details.images.isNotEmpty()) {
                 ImageGallery(
-                    images = exercise.images,
+                    images = details.images,
                     modifier = Modifier.padding(bottom = Dimens.spaceSm)
                 )
             }
@@ -491,7 +492,7 @@ private fun ExerciseDetailsScreenContentPreview() {
             ExerciseDetailsScreenContent(
                 state = ExerciseDetailsState.Success(
                     details = ExerciseDetails(
-                        exercise = Exercise(
+                        exercise = ExerciseOverview(
                             id = ExerciseId.create(),
                             name = "Push ups",
                             description = "Some long description in here",
@@ -499,14 +500,15 @@ private fun ExerciseDetailsScreenContentPreview() {
                                 ExerciseCategory("Chest"),
                                 ExerciseCategory("Shoulder")
                             ),
-                            images = PREVIEW_PUSH_UP_IMAGES,
+                            thumbnail = PREVIEW_PUSH_UP_THUMBNAIL,
                             metadata = ExerciseMetadata(
                                 source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
                                 syncState = ExerciseSyncState.CONFLICT,
                                 revision = 3
                             )
                         ),
-                        recommendations = PREVIEW_RECOMMENDED_PARAMETERS
+                        recommendations = PREVIEW_RECOMMENDED_PARAMETERS,
+                        images = PREVIEW_PUSH_UP_IMAGES
                     )
                 ),
                 modifier = Modifier.fillMaxSize()
@@ -528,7 +530,7 @@ private fun ExerciseDetailsScreenOnlineConflictPreview() {
                 ExerciseDetailsScreenContent(
                     state = ExerciseDetailsState.Success(
                         details = ExerciseDetails(
-                            exercise = Exercise(
+                            exercise = ExerciseOverview(
                                 id = ExerciseId.create(),
                                 name = "Push ups",
                                 description = "Some long description in here",
@@ -536,14 +538,15 @@ private fun ExerciseDetailsScreenOnlineConflictPreview() {
                                     ExerciseCategory("Chest"),
                                     ExerciseCategory("Shoulder")
                                 ),
-                                images = PREVIEW_PUSH_UP_IMAGES,
+                                thumbnail = PREVIEW_PUSH_UP_THUMBNAIL,
                                 metadata = ExerciseMetadata(
                                     source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
                                     syncState = ExerciseSyncState.CONFLICT,
                                     revision = 3
                                 )
                             ),
-                            recommendations = PREVIEW_RECOMMENDED_PARAMETERS
+                            recommendations = PREVIEW_RECOMMENDED_PARAMETERS,
+                            images = PREVIEW_PUSH_UP_IMAGES
                         )
                     ),
                     modifier = Modifier.fillMaxSize()

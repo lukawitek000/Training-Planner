@@ -1,10 +1,10 @@
 package com.lukasz.witkowski.training.planner.exercise.application
 
 import androidx.paging.PagingData
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
@@ -54,7 +54,7 @@ class ExerciseService(
         val imageIds = if (exerciseConfiguration.images.isNotEmpty()) {
             saveImages(exerciseConfiguration.images, exerciseId).map { it.imageId }
         } else {
-            existing?.exercise?.imageIds ?: emptyList()
+            existing?.images ?: emptyList()
         }
         val metadata = existing?.exercise?.metadata?.copy(
             syncState = ExerciseSyncState.PENDING_UPLOAD
@@ -80,7 +80,7 @@ class ExerciseService(
         return imageStorage.saveImages(imageConfigurations)
     }
 
-    fun queryExercises(exerciseQuery: ExerciseQuery): Flow<PagingData<Exercise>> =
+    fun queryExercises(exerciseQuery: ExerciseQuery): Flow<PagingData<ExerciseOverview>> =
         exerciseRepository.queryExercises(exerciseQuery)
 
     suspend fun deleteExercise(exerciseId: ExerciseId) {
@@ -96,6 +96,10 @@ class ExerciseService(
 
     suspend fun readImage(imageId: ImageId): Image = imageStorage.readImage(imageId)
 
+    suspend fun readExerciseThumbnail(imageId: ImageId): ImageReference? = runCatchingCancellable {
+        imageStorage.readImageReference(imageId)
+    }.getOrDefault(null)
+
     suspend fun readImageReferences(exerciseId: ExerciseId): List<ImageReference> =
         runCatchingCancellable {
             val fromStorage = imageStorage.readImageReferences(exerciseId.value)
@@ -103,7 +107,7 @@ class ExerciseService(
                 return@runCatchingCancellable fromStorage
             }
             val details = exerciseRepository.getExerciseDetailsById(exerciseId).firstOrNull()
-            details?.exercise?.imageIds?.mapNotNull { imageId ->
+            details?.images?.mapNotNull { imageId ->
                 imageStorage.readImageReference(imageId)
             } ?: emptyList()
         }.getOrDefault(emptyList())

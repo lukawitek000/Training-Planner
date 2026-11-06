@@ -9,8 +9,9 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.presentation.CategoryController2
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExercise
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.toPresentationExerciseOverview
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -57,17 +58,15 @@ class ExercisesListViewModel(
 
     val exercises =
         filteringState
-            .debounce(300.milliseconds)
+            .debounce { if (it.searchQuery.isEmpty()) Duration.ZERO else 300.milliseconds }
             .flatMapLatest { state ->
                 exerciseService.queryExercises(state.toExerciseQuery())
             }.map { pagingData ->
                 pagingData.map { exercise ->
-                    val imageReferences = if (exercise.imageIds.isNotEmpty()) {
-                        exerciseService.readImageReferences(exercise.id)
-                    } else {
-                        emptyList()
+                    val thumbnailReference = exercise.thumbnailId?.let {
+                        exerciseService.readExerciseThumbnail(it)
                     }
-                    exercise.toPresentationExercise(imageReferences)
+                    exercise.toPresentationExerciseOverview(thumbnailReference)
                 }
             }.cachedIn(viewModelScope)
 

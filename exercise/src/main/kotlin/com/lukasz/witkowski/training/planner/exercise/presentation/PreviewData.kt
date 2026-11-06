@@ -18,6 +18,8 @@ val PREVIEW_PUSH_UP_IMAGES = listOf(
     )
 )
 
+val PREVIEW_PUSH_UP_THUMBNAIL = PREVIEW_PUSH_UP_IMAGES.firstOrNull()
+
 val PREVIEW_PULL_UP_IMAGES = listOf(
     ImageReference(
         imageId = ImageId("34bb3160-dc35-5a49-9783-e1a1238defbf"),
@@ -28,3 +30,5 @@ val PREVIEW_PULL_UP_IMAGES = listOf(
         path = "file:///android_asset/exercise_images/5d5e606e-f0bb-58b2-8e82-961b0d07384d.webp"
     )
 )
+
+val PREVIEW_PULL_UP_THUMBNAIL = PREVIEW_PULL_UP_IMAGES.firstOrNull()
