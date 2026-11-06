@@ -97,9 +97,7 @@ class UserProfileViewModel(
 sealed interface ProfileUiState {
     val appVersion: String
 
-    data class Loading(
-        override val appVersion: String
-    ) : ProfileUiState
+    data class Loading(override val appVersion: String) : ProfileUiState
 
     data class OnlineProfileLoaded(
         val email: String,

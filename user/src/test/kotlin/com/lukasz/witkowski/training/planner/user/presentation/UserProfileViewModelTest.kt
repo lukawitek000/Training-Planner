@@ -50,6 +50,13 @@ class UserProfileViewModelTest {
     }
 
     @Test
+    fun `initial uiState is Loading with appVersion`() =
+        runTest {
+            viewModel = UserProfileViewModel(userRepository, appVersionProvider)
+            assertEquals(ProfileUiState.Loading(testVersionName), viewModel.uiState.value)
+        }
+
+    @Test
     fun `when profile loading succeeds, uiState emits OnlineProfileLoaded with weightUnit and appVersion`() =
         runTest {
             val user = User("1", "test@example.com", "testuser")

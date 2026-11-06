@@ -14,7 +14,7 @@
 # ----------------------------------------------------------------------------------
 # Kotlinx Serialization
 # ----------------------------------------------------------------------------------
-# Preserve Companion objects and serializer generation methods for @Serializable classes
+# Preserve Companion objects, serializer generation methods, and synthetic constructors for @Serializable classes
 -keepclassmembers class * {
     *** Companion;
 }
@@ -25,13 +25,18 @@
     <fields>;
     <methods>;
 }
+-keepclassmembers class * {
+    synthetic <init>(int, ...);
+}
 
 # Preserve shared DTO models (allowing shrinking and obfuscation)
 -keep,allowobfuscation,allowshrinking class com.lukasz.witkowski.training.planner.dto.** { *; }
 
 # Preserve Navigation 3 NavKey implementations and custom serializers
 # Required for polymorphic serialization in rememberTrainingPlannerNavBackStack
--keep,allowobfuscation class com.lukasz.witkowski.training.planner.navigation.** implements androidx.navigation3.runtime.NavKey { *; }
+# Keep class names intact to prevent deserialization crashes across app updates
+-keepnames class com.lukasz.witkowski.training.planner.navigation.** implements androidx.navigation3.runtime.NavKey
+-keepclassmembers class com.lukasz.witkowski.training.planner.navigation.** implements androidx.navigation3.runtime.NavKey { *; }
 -keep class com.lukasz.witkowski.training.planner.navigation.*Serializer { *; }
 -keep class androidx.navigation3.** { *; }
 

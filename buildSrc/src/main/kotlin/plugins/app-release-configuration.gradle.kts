@@ -10,11 +10,13 @@ plugins {
     id("com.android.application")
 }
 
-val gitCommitCount = providers.of(GitCommitCountValueSource::class) {}.get()
+val gitCommitCount = providers.of(GitCommitCountValueSource::class) {
+    parameters.rootDir.set(rootProject.layout.projectDirectory)
+}.get()
 
-val resolvedVersionCode = (project.findProperty("versionCodeOverride") as? String)?.toIntOrNull()
+val resolvedVersionCode = providers.gradleProperty("versionCodeOverride").map { it.toInt() }.orNull
     ?: ConfigData.calculateVersionCode(gitCommitCount)
-val resolvedVersionName = (project.findProperty("versionNameOverride") as? String)
+val resolvedVersionName = providers.gradleProperty("versionNameOverride").orNull
     ?: ConfigData.calculateVersionName(gitCommitCount)
 
 val keystorePropertiesFile = rootProject.file("keystore.properties")
@@ -24,13 +26,13 @@ val keystoreProperties = Properties().apply {
     }
 }
 
-val releaseStoreFilePath = System.getenv("SIGNING_STORE_FILE")
+val releaseStoreFilePath = providers.environmentVariable("SIGNING_STORE_FILE").orNull
     ?: keystoreProperties.getProperty("storeFile")
-val releaseStorePassword = System.getenv("SIGNING_STORE_PASSWORD")
+val releaseStorePassword = providers.environmentVariable("SIGNING_STORE_PASSWORD").orNull
     ?: keystoreProperties.getProperty("storePassword")
-val releaseKeyAlias = System.getenv("SIGNING_KEY_ALIAS")
+val releaseKeyAlias = providers.environmentVariable("SIGNING_KEY_ALIAS").orNull
     ?: keystoreProperties.getProperty("keyAlias")
-val releaseKeyPassword = System.getenv("SIGNING_KEY_PASSWORD")
+val releaseKeyPassword = providers.environmentVariable("SIGNING_KEY_PASSWORD").orNull
     ?: keystoreProperties.getProperty("keyPassword")
 
 val releaseStoreFile = releaseStoreFilePath?.let { path ->
@@ -56,17 +58,20 @@ extensions.configure<ApplicationExtension> {
                 storePassword = releaseStorePassword
                 keyAlias = releaseKeyAlias
                 keyPassword = releaseKeyPassword
+                enableV1Signing = true
+                enableV2Signing = true
             }
         }
     }
 
     buildTypes {
-        named("debug") {
+        getByName("debug") {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             resValue("string", "app_name", "Training Planner (Debug)")
         }
-        named("release") {
+
+        getByName("release") {
             resValue("string", "app_name", "Training Planner")
             isMinifyEnabled = true
             isShrinkResources = true
@@ -75,8 +80,16 @@ extensions.configure<ApplicationExtension> {
                 "proguard-rules.pro"
             )
 
+            val isCi = providers.environmentVariable("CI").isPresent
+            val hasAnySigningEnv = providers.environmentVariable("SIGNING_STORE_FILE").isPresent ||
+                providers.environmentVariable("SIGNING_STORE_PASSWORD").isPresent ||
+                providers.environmentVariable("SIGNING_KEY_ALIAS").isPresent ||
+                providers.environmentVariable("SIGNING_KEY_PASSWORD").isPresent
+
             if (hasValidReleaseSigning) {
                 signingConfig = signingConfigs.getByName("release")
+            } else if (isCi && hasAnySigningEnv) {
+                logger.warn("WARNING: Incomplete release signing environment variables detected on CI. Release build will remain unsigned.")
             } else {
                 logger.info("Release signing credentials not found; release build will remain unsigned or use default fallback.")
             }

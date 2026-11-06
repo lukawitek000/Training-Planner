@@ -579,10 +579,7 @@ private fun OfflinePreferencesCard(
 }
 
 @Composable
-private fun EngineFootnote(
-    appVersion: String,
-    modifier: Modifier = Modifier
-) {
+private fun EngineFootnote(appVersion: String, modifier: Modifier = Modifier) {
     Column(
         modifier =
         modifier
