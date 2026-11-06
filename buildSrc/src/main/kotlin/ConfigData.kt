@@ -10,16 +10,21 @@ object ConfigData {
     const val VERSION_MAJOR = 0
     const val VERSION_MINOR = 1
     const val VERSION_PATCH = 0
-    const val VERSION_BUILD = 1
-    const val VERSION_STAGE = "alpha01"
+    const val VERSION_STAGE = "alpha"
 
-    val versionCode: Int
-        get() = VERSION_MAJOR * 1_000_000 + VERSION_MINOR * 10_000 + VERSION_PATCH * 100 + VERSION_BUILD
+    fun calculateVersionCode(commitCount: Int): Int =
+        VERSION_MAJOR * 1_000_000 + VERSION_MINOR * 10_000 + commitCount
 
-    val versionName: String
-        get() = if (VERSION_STAGE.isEmpty()) {
+    fun calculateVersionName(commitCount: Int): String =
+        if (VERSION_STAGE.isEmpty()) {
             "$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH"
         } else {
-            "$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH-$VERSION_STAGE"
+            "$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH-$VERSION_STAGE.$commitCount"
         }
+
+    val versionCode: Int
+        get() = calculateVersionCode(1)
+
+    val versionName: String
+        get() = calculateVersionName(1)
 }
