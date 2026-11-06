@@ -49,5 +49,10 @@ val userModule =
             )
         } bind UserRepository::class
 
-        viewModel { UserProfileViewModel(userRepository = get()) }
+        viewModel {
+            UserProfileViewModel(
+                userRepository = get(),
+                appVersionProvider = get()
+            )
+        }
     }

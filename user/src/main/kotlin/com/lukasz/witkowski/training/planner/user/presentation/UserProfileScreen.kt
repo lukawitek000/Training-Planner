@@ -123,6 +123,12 @@ private fun UserProfileScreenContent(
                         is ProfileUiState.OfflineProfileLoaded -> uiState.weightUnit
                     }
 
+                val appVersion =
+                    when (uiState) {
+                        is ProfileUiState.OnlineProfileLoaded -> uiState.appVersion
+                        is ProfileUiState.OfflineProfileLoaded -> uiState.appVersion
+                    }
+
                 var showReauthSheet by rememberSaveable(failure, isOnlineSyncEnabled) {
                     mutableStateOf(failure != null && isOnlineSyncEnabled)
                 }
@@ -164,7 +170,7 @@ private fun UserProfileScreenContent(
                         onWeightUnitChanged = onWeightUnitChanged
                     )
 
-                    EngineFootnote()
+                    EngineFootnote(appVersion = appVersion)
                 }
 
                 if (isOnlineSyncEnabled && showSignOutSheet) {
@@ -579,7 +585,10 @@ private fun OfflinePreferencesCard(
 }
 
 @Composable
-private fun EngineFootnote(modifier: Modifier = Modifier) {
+private fun EngineFootnote(
+    appVersion: String,
+    modifier: Modifier = Modifier
+) {
     Column(
         modifier =
         modifier
@@ -598,8 +607,13 @@ private fun EngineFootnote(modifier: Modifier = Modifier) {
                 tint = MaterialTheme.colorScheme.outline,
                 modifier = Modifier.size(Dimens.iconSize14)
             )
+            val footnoteText = if (appVersion.isNotBlank()) {
+                stringResource(id = R.string.user_profile_engine_footnote_build, appVersion)
+            } else {
+                stringResource(id = R.string.user_profile_engine_footnote_default)
+            }
             Text(
-                text = stringResource(id = R.string.user_profile_engine_footnote_build),
+                text = footnoteText,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.outline
             )
