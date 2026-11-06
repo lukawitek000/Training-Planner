@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder
 
+import android.os.SystemClock
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import java.util.Date
 
@@ -10,4 +11,8 @@ class SystemTimeProvider : TimeProvider {
     }
 
     override fun currentDate(): Date = Date()
+
+    override fun elapsedTimeMillis(): Long {
+        return SystemClock.elapsedRealtime()
+    }
 }

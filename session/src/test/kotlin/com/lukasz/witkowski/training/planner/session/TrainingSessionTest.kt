@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.session
 
-import com.lukasz.witkowski.training.planner.session.domain.session.CircuitSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSession
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSetsPolicy

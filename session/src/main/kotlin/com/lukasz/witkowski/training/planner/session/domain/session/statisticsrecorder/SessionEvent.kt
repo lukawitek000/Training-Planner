@@ -4,6 +4,7 @@ import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttem
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
 
 /**
@@ -13,8 +14,7 @@ import java.util.Date
  */
 sealed class SessionEvent {
     data class SessionStarted(
-        val trainingPlan: TrainingPlan,
-        val startTime: Time,
+        val trainingPlanId: TrainingPlan,
         val date: Date = Date()
     ) : SessionEvent()
 

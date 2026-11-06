@@ -6,7 +6,6 @@ import com.lukasz.witkowski.training.planner.session.TrainingSessionTest
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
-import com.lukasz.witkowski.training.planner.session.domain.session.CircuitSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSession
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSetsPolicy

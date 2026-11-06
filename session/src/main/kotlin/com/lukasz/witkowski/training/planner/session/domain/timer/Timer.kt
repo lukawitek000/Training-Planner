@@ -1,95 +1,78 @@
 package com.lukasz.witkowski.training.planner.session.domain.timer
 
+import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SystemTimeProvider
+import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.TimeProvider
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 class Timer(
-    private val tickDelayInMillis: Long = DELAY_IN_MILLIS,
+    initialState: TimerState,
+    private val allowOverflow: Boolean = false,
+    private val tickDelayInMillis: Duration = TICK_DELAY,
+    private val timeProvider: TimeProvider = SystemTimeProvider(),
     timerDispatcher: CoroutineDispatcher = Dispatchers.Default
-) {
+): AutoCloseable {
     private val coroutineScope: CoroutineScope =
         CoroutineScope(timerDispatcher + CoroutineName("Timer"))
     private var timerJob: Job? = null
-    private var initialTime = Time.ZERO
 
-    private val _time = MutableStateFlow(Time.ZERO)
-    val time: StateFlow<Time>
-        get() = _time
-
-    private val _hasFinished = MutableStateFlow(false)
-    val hasFinished: StateFlow<Boolean>
-        get() = _hasFinished
-
-    private var _isRunning = MutableStateFlow(false)
-    val isRunning: StateFlow<Boolean>
-        get() = _isRunning
-
-    var isPaused = false
-        private set
-
-    fun setTime(startTime: Time) {
-        isPaused = false
-        initialTime = startTime
-        _time.value = initialTime
-    }
+    val state : StateFlow<TimerState>
+        field = MutableStateFlow<TimerState>(initialState)
 
     fun start() {
-        start(initialTime)
+        state.value.let {
+            check(it is TimerState.Ready) {
+                "Cannot start the Timer it is already running"
+            }
+            start(it.duration)
+        }
     }
 
-    fun stop() {
-        pause()
-        setTime(initialTime)
-        isPaused = false
+    fun changeTime(duration: Duration) {
+        state.value = TimerState.Ready(duration)
     }
 
-    fun resume() {
-        start(_time.value)
+    override fun close() {
+        coroutineScope.cancel()
     }
 
-    fun pause() {
-        isPaused = true
-        _isRunning.value = false
-        timerJob?.cancel()
-    }
-
-    private fun start(initTime: Time) {
-        setUpInitialFlags()
-        _time.value = initTime
+    private fun start(initTime: Duration) {
+        val startTimestampMillis = timeProvider.elapsedTimeMillis()
+        state.update { TimerState.Running(initTime) }
         timerJob =
             coroutineScope.launch {
-                while (_isRunning.value) {
+                while (state.value is TimerState.Running) {
                     delay(tickDelayInMillis)
-                    _time.value = Time(time.value.timeInMillis - tickDelayInMillis)
-                    if (time.value.timeInMillis < tickDelayInMillis) {
-                        timerFinished()
-                        break
+                    val elapsed = (timeProvider.elapsedTimeMillis() - startTimestampMillis).milliseconds
+                    val remaining = initTime - elapsed
+                    state.update {
+                        if (remaining.isNegative()) {
+                            if (allowOverflow) {
+                                TimerState.OverflowRunning(remaining)
+                            } else {
+                                TimerState.Finished
+                            }
+                        } else {
+                            TimerState.Running(remaining)
+                        }
                     }
                 }
             }
     }
 
-    private fun timerFinished() {
-        _hasFinished.value = true
-        _isRunning.value = false
-        isPaused = false
-    }
-
-    private fun setUpInitialFlags() {
-        isPaused = false
-        _isRunning.value = true
-        _hasFinished.value = false
-    }
-
     private companion object {
-        const val DELAY_IN_MILLIS = 10L
+        val TICK_DELAY = 100.milliseconds
     }
 }

@@ -4,7 +4,6 @@ import com.lukasz.witkowski.training.planner.session.TRAINING_EXERCISES
 import com.lukasz.witkowski.training.planner.session.TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.session.TrainingSessionTest
 import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedListener
-import com.lukasz.witkowski.training.planner.session.domain.session.CircuitSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider

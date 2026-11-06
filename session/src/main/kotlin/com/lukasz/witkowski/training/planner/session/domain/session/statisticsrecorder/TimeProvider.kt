@@ -10,4 +10,6 @@ interface TimeProvider {
     fun currentTime(): Time
 
     fun currentDate(): Date
+
+    fun elapsedTimeMillis(): Long
 }

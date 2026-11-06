@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.session.domain
 
 import com.lukasz.witkowski.training.planner.session.createDummyExercise
-import com.lukasz.witkowski.training.planner.session.domain.session.CircuitSetsPolicy
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan

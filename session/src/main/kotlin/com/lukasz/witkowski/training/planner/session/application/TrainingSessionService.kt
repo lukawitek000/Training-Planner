@@ -5,6 +5,7 @@ import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStati
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.session.StraightSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSession
+import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionFactory
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.CompositeStatisticsRecorder
@@ -66,9 +67,9 @@ class TrainingSessionService(
         policy: TrainingSetsPolicy = trainingSetsStrategy
     ) {
         this.trainingPlan = trainingPlan
-        trainingSession = TrainingSession(
+        trainingSession = TrainingSessionFactory.create(
             trainingPlan = trainingPlan,
-            trainingSetsPolicy = policy,
+            policy = policy,
             statisticsRecorder = sessionStatisticsRecorder,
             timeProvider = timeProvider
         )
