@@ -1,5 +1,6 @@
 plugins {
     id("com.android.application")
+    id(BuildPlugins.appReleasePlugin)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.jetbrains.kotlin.serialization)
     id("io.insert-koin.compiler.plugin")
@@ -13,8 +14,6 @@ android {
         applicationId = ConfigData.applicationId
         minSdk = ConfigData.minSdk
         targetSdk = ConfigData.targetSdk
-        versionCode = ConfigData.versionCode
-        versionName = ConfigData.versionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -28,8 +27,6 @@ android {
             buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8080/\"")
         }
         getByName("release") {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             // Production server URL (replace with actual production endpoint in the future)
             buildConfigField("String", "BASE_URL", "\"https://api.trainingplanner.com/\"")
         }

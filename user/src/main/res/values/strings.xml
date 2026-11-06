@@ -27,7 +27,8 @@
     <string name="unit_lbs">LBS</string>
 
     <!-- Engine Footnote -->
-    <string name="user_profile_engine_footnote_build">Training Planner Engine • Build TODO</string>
+    <string name="user_profile_engine_footnote_build">Training Planner Engine • v%1$s</string>
+    <string name="user_profile_engine_footnote_default">Training Planner Engine</string>
 
     <!-- Failure General Messages -->
     <string name="user_failure_unauthorized">Session expired. Please sign in again.</string>

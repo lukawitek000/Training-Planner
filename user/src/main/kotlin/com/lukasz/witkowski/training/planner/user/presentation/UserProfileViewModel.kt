@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.user.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
+import com.lukasz.witkowski.training.planner.shared.utils.AppVersionProvider
 import com.lukasz.witkowski.training.planner.user.domain.UserRepository
 import com.lukasz.witkowski.training.planner.user.domain.model.User
 import com.lukasz.witkowski.training.planner.user.domain.model.UserFailure
@@ -15,7 +16,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class UserProfileViewModel(private val userRepository: UserRepository) : ViewModel() {
+class UserProfileViewModel(
+    private val userRepository: UserRepository,
+    private val appVersionProvider: AppVersionProvider
+) : ViewModel() {
     private val userProfileResult = MutableStateFlow<AppResult<User, UserFailure>?>(null)
 
     val uiState: StateFlow<ProfileUiState> =
@@ -23,8 +27,9 @@ class UserProfileViewModel(private val userRepository: UserRepository) : ViewMod
             userRepository.weightUnit,
             userProfileResult
         ) { weightUnit, profileResult ->
+            val appVersion = appVersionProvider.versionName
             when (profileResult) {
-                null -> ProfileUiState.Loading
+                null -> ProfileUiState.Loading(appVersion)
                 is AppResult.Success -> {
                     val user = profileResult.value
                     Timber.i(
@@ -35,7 +40,8 @@ class UserProfileViewModel(private val userRepository: UserRepository) : ViewMod
                     ProfileUiState.OnlineProfileLoaded(
                         email = user.email,
                         username = user.username,
-                        weightUnit = weightUnit
+                        weightUnit = weightUnit,
+                        appVersion = appVersion
                     )
                 }
                 is AppResult.Error -> {
@@ -44,14 +50,16 @@ class UserProfileViewModel(private val userRepository: UserRepository) : ViewMod
                             Timber.i("User profile state: Not signed in")
                             ProfileUiState.OfflineProfileLoaded(
                                 weightUnit = weightUnit,
-                                failure = null
+                                failure = null,
+                                appVersion = appVersion
                             )
                         }
                         else -> {
                             Timber.w("User profile state error: %s", failure)
                             ProfileUiState.OfflineProfileLoaded(
                                 weightUnit = weightUnit,
-                                failure = failure
+                                failure = failure,
+                                appVersion = appVersion
                             )
                         }
                     }
@@ -60,7 +68,7 @@ class UserProfileViewModel(private val userRepository: UserRepository) : ViewMod
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = ProfileUiState.Loading
+            initialValue = ProfileUiState.Loading(appVersionProvider.versionName)
         )
 
     fun loadUserProfile() {
@@ -87,14 +95,20 @@ class UserProfileViewModel(private val userRepository: UserRepository) : ViewMod
 }
 
 sealed interface ProfileUiState {
-    data object Loading : ProfileUiState
+    val appVersion: String
+
+    data class Loading(override val appVersion: String) : ProfileUiState
 
     data class OnlineProfileLoaded(
         val email: String,
         val username: String,
-        val weightUnit: WeightUnit
+        val weightUnit: WeightUnit,
+        override val appVersion: String
     ) : ProfileUiState
 
-    data class OfflineProfileLoaded(val weightUnit: WeightUnit, val failure: UserFailure? = null) :
-        ProfileUiState
+    data class OfflineProfileLoaded(
+        val weightUnit: WeightUnit,
+        val failure: UserFailure? = null,
+        override val appVersion: String
+    ) : ProfileUiState
 }
