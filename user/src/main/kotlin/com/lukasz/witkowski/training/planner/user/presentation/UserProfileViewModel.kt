@@ -98,19 +98,19 @@ sealed interface ProfileUiState {
     val appVersion: String
 
     data class Loading(
-        override val appVersion: String = ""
+        override val appVersion: String
     ) : ProfileUiState
 
     data class OnlineProfileLoaded(
         val email: String,
         val username: String,
         val weightUnit: WeightUnit,
-        override val appVersion: String = ""
+        override val appVersion: String
     ) : ProfileUiState
 
     data class OfflineProfileLoaded(
         val weightUnit: WeightUnit,
         val failure: UserFailure? = null,
-        override val appVersion: String = ""
+        override val appVersion: String
     ) : ProfileUiState
 }

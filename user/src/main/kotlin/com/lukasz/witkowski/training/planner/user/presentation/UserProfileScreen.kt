@@ -620,7 +620,7 @@ private fun EngineFootnote(
 private fun UserProfileLoadingPreview() {
     TrainingPlannerTheme {
         UserProfileScreenContent(
-            uiState = ProfileUiState.Loading(),
+            uiState = ProfileUiState.Loading(appVersion = "0.1.0-alpha.400"),
             onWeightUnitChanged = {},
             onSignInClick = {},
             onSignOutClick = {}
@@ -635,7 +635,8 @@ private fun UserProfileScreenOfflinePreview() {
         UserProfileScreenContent(
             uiState =
             ProfileUiState.OfflineProfileLoaded(
-                weightUnit = WeightUnit.KG
+                weightUnit = WeightUnit.KG,
+                appVersion = "0.1.0-alpha.400"
             ),
             onWeightUnitChanged = {},
             onSignInClick = {},
@@ -657,7 +658,8 @@ private fun UserProfileScreenOfflineFailurePreview() {
                 uiState =
                 ProfileUiState.OfflineProfileLoaded(
                     weightUnit = WeightUnit.KG,
-                    failure = UserFailure.NetworkError(networkFailure = NetworkFailure.NoInternet)
+                    failure = UserFailure.NetworkError(networkFailure = NetworkFailure.NoInternet),
+                    appVersion = "0.1.0-alpha.400"
                 ),
                 onWeightUnitChanged = {},
                 onSignInClick = {},
@@ -681,7 +683,8 @@ private fun UserProfileScreenOnlinePreview() {
                 ProfileUiState.OnlineProfileLoaded(
                     email = "athlete@example.com",
                     username = "John Doe",
-                    weightUnit = WeightUnit.KG
+                    weightUnit = WeightUnit.KG,
+                    appVersion = "0.1.0-alpha.400"
                 ),
                 onWeightUnitChanged = {},
                 onSignInClick = {},
