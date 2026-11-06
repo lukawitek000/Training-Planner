@@ -4,8 +4,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.lukasz.witkowski.training.planner.session.R
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
@@ -58,38 +57,33 @@ fun TrainingSessionScreen(
         )
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.background
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            TrainingSessionContent(
-                trainingSessionState = trainingSessionState,
-                time = time,
-                onRepsChanged = viewModel::onRepsChanged,
-                onWeightChanged = viewModel::onWeightChanged,
-                onHoldDurationChanged = viewModel::onHoldDurationChanged,
-                onToggleHoldTimer = viewModel::toggleHoldTimer,
-                onResetHoldTimer = viewModel::resetHoldTimer,
-                onCompleteSet = viewModel::completed,
-                onSkipSet = viewModel::skip,
-                onSkipExercise = viewModel::skipExercise,
-                onAddExtraSet = viewModel::addExtraSet,
-                onFeedbackSelected = viewModel::onFeedbackSelected,
-                onStartNextSet = viewModel::completed,
-                onSkipRest = viewModel::skip,
-                onSummaryRpeSelected = viewModel::onSummaryRpeSelected,
-                onSummaryNotesChanged = viewModel::onSummaryNotesChanged,
-                onSaveWorkout = {
-                    viewModel.saveStatistics()
-                    navigateBack()
-                }
-            )
-        }
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(Dimens.spaceMd)
+    ) {
+        TrainingSessionContent(
+            trainingSessionState = trainingSessionState,
+            time = time,
+            onRepsChanged = viewModel::onRepsChanged,
+            onWeightChanged = viewModel::onWeightChanged,
+            onHoldDurationChanged = viewModel::onHoldDurationChanged,
+            onToggleHoldTimer = viewModel::toggleHoldTimer,
+            onResetHoldTimer = viewModel::resetHoldTimer,
+            onCompleteSet = viewModel::completed,
+            onSkipSet = viewModel::skip,
+            onSkipExercise = viewModel::skipExercise,
+            onAddExtraSet = viewModel::addExtraSet,
+            onFeedbackSelected = viewModel::onFeedbackSelected,
+            onStartNextSet = viewModel::completed,
+            onSkipRest = viewModel::skip,
+            onSummaryRpeSelected = viewModel::onSummaryRpeSelected,
+            onSummaryNotesChanged = viewModel::onSummaryNotesChanged,
+            onSaveWorkout = {
+                viewModel.saveStatistics()
+                navigateBack()
+            }
+        )
     }
 }
 
@@ -115,10 +109,10 @@ fun TrainingSessionContent(
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
-        when (val state = trainingSessionState) {
+        when (trainingSessionState) {
             is TrainingSessionState.ExerciseState -> {
                 TrainingExerciseScreen(
-                    state = state,
+                    state = trainingSessionState,
                     onRepsChanged = onRepsChanged,
                     onWeightChanged = onWeightChanged,
                     onHoldDurationChanged = onHoldDurationChanged,
@@ -133,9 +127,9 @@ fun TrainingSessionContent(
 
             is TrainingSessionState.RestTimeState -> {
                 RestTimeScreen(
-                    state = state,
+                    state = trainingSessionState,
                     timeLeft = time,
-                    totalTime = state.time,
+                    totalTime = trainingSessionState.time,
                     onFeedbackSelected = onFeedbackSelected,
                     onStartNextSet = onStartNextSet,
                     onSkipRest = onSkipRest
@@ -144,7 +138,7 @@ fun TrainingSessionContent(
 
             is TrainingSessionState.SummaryState -> {
                 TrainingSessionSummaryScreen(
-                    state = state,
+                    state = trainingSessionState,
                     onRpeSelected = onSummaryRpeSelected,
                     onNotesChanged = onSummaryNotesChanged,
                     onSaveWorkout = onSaveWorkout
