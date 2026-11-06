@@ -29,7 +29,7 @@ class UserProfileViewModel(
         ) { weightUnit, profileResult ->
             val appVersion = appVersionProvider.versionName
             when (profileResult) {
-                null -> ProfileUiState.Loading
+                null -> ProfileUiState.Loading(appVersion)
                 is AppResult.Success -> {
                     val user = profileResult.value
                     Timber.i(
@@ -68,7 +68,7 @@ class UserProfileViewModel(
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = ProfileUiState.Loading
+            initialValue = ProfileUiState.Loading(appVersionProvider.versionName)
         )
 
     fun loadUserProfile() {
@@ -95,18 +95,22 @@ class UserProfileViewModel(
 }
 
 sealed interface ProfileUiState {
-    data object Loading : ProfileUiState
+    val appVersion: String
+
+    data class Loading(
+        override val appVersion: String = ""
+    ) : ProfileUiState
 
     data class OnlineProfileLoaded(
         val email: String,
         val username: String,
         val weightUnit: WeightUnit,
-        val appVersion: String = ""
+        override val appVersion: String = ""
     ) : ProfileUiState
 
     data class OfflineProfileLoaded(
         val weightUnit: WeightUnit,
         val failure: UserFailure? = null,
-        val appVersion: String = ""
+        override val appVersion: String = ""
     ) : ProfileUiState
 }

@@ -101,7 +101,7 @@ private fun UserProfileScreenContent(
         modifier = modifier.fillMaxSize()
     ) {
         when (uiState) {
-            ProfileUiState.Loading -> {
+            is ProfileUiState.Loading -> {
                 AppLoadingState()
             }
 
@@ -121,12 +121,6 @@ private fun UserProfileScreenContent(
                     when (uiState) {
                         is ProfileUiState.OnlineProfileLoaded -> uiState.weightUnit
                         is ProfileUiState.OfflineProfileLoaded -> uiState.weightUnit
-                    }
-
-                val appVersion =
-                    when (uiState) {
-                        is ProfileUiState.OnlineProfileLoaded -> uiState.appVersion
-                        is ProfileUiState.OfflineProfileLoaded -> uiState.appVersion
                     }
 
                 var showReauthSheet by rememberSaveable(failure, isOnlineSyncEnabled) {
@@ -170,7 +164,7 @@ private fun UserProfileScreenContent(
                         onWeightUnitChanged = onWeightUnitChanged
                     )
 
-                    EngineFootnote(appVersion = appVersion)
+                    EngineFootnote(appVersion = uiState.appVersion)
                 }
 
                 if (isOnlineSyncEnabled && showSignOutSheet) {
@@ -626,7 +620,7 @@ private fun EngineFootnote(
 private fun UserProfileLoadingPreview() {
     TrainingPlannerTheme {
         UserProfileScreenContent(
-            uiState = ProfileUiState.Loading,
+            uiState = ProfileUiState.Loading(),
             onWeightUnitChanged = {},
             onSignInClick = {},
             onSignOutClick = {}
