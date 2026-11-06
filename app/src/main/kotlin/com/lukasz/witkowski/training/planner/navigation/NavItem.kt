@@ -167,7 +167,7 @@ data class BottomBarConfig(
 )
 
 data class UiConfig(
-    val topBarConfig: TopBarConfig,
+    val topBarConfig: TopBarConfig?,
     val bottomBarConfig: BottomBarConfig? = null,
     val fabConfig: FabConfig? = null,
 )
@@ -355,14 +355,5 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
             )
         )
 
-        is TrainingSession -> UiConfig(
-            topBarConfig = TopBarConfig(
-                title = context.getString(R.string.start_training_session),
-                hasBackArrow = true
-            )
-        )
-
-        else -> UiConfig(
-            topBarConfig = TopBarConfig(title = "TODO", hasBackArrow = false)
-        )
+        is TrainingSession -> UiConfig(topBarConfig = null)
     }

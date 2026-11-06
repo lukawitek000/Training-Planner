@@ -32,10 +32,11 @@ import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 @Composable
 fun TopBar(
     modifier: Modifier = Modifier,
-    config: TopBarConfig,
+    config: TopBarConfig?,
     onAction: (TopBarAction) -> Unit,
     navigateBack: () -> Unit
 ) {
+    if (config == null) return
     TopAppBar(
         modifier = modifier,
         navigationIcon = {
