@@ -7,10 +7,12 @@ import kotlin.time.Duration
 data class ExerciseAttemptStatistics(
     val id: ExerciseAttemptStatisticsId = ExerciseAttemptStatisticsId.create(),
     val trainingExerciseId: TrainingExerciseId,
+    val time: Time = Time.ZERO,
     val set: Int,
     val completed: Boolean,
     val actualReps: Int = 0,
     val actualWeightInKg: Double? = null,
     val actualTime: Duration? = null,
-    val rpe: Float? = null
+    val rpe: Float? = null,
+    val restTime: Duration? = null
 )

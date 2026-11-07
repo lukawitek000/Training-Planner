@@ -1,36 +1,48 @@
 package com.lukasz.witkowski.training.planner.session.domain.session.phases
 
 import com.lukasz.witkowski.training.planner.session.domain.session.queue.ExerciseQueue
-import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.CompositeStatisticsRecorder
-import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
+import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsProvider
+import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
+import kotlin.time.Duration
 
 internal class NextPhaseProvider(
     private val exerciseQueue: ExerciseQueue,
-    private val statisticsRecorder: SessionStatisticsRecorder = CompositeStatisticsRecorder(),
+    private val statisticsProvider: SessionStatisticsProvider,
+    private val timerFactory: TimerFactory = TimerFactory()
 ) {
     fun nextPhase(currentPhase: SessionPhase): SessionPhase = when (currentPhase) {
         is IdlePhase, is RestPhase -> {
             if (exerciseQueue.isEmpty()) {
-                SummaryPhase()
+                SummaryPhase(statisticsProvider)
             } else {
                 ExercisePhase(
                     loadedExercise = exerciseQueue.poll(),
-                    statisticsRecorder = statisticsRecorder
+                    timerFactory = timerFactory
                 )
             }
         }
+
         is ExercisePhase -> {
             val nextExercise = exerciseQueue.peek()
-            if (nextExercise == null) {
-                SummaryPhase()
-            } else {
-                RestPhase(
-                    restTime = currentPhase.restTime,
-                    nextExercise = nextExercise
-                )
+            when {
+                nextExercise == null -> SummaryPhase(statisticsProvider)
+                currentPhase.restTime <= Duration.ZERO ->
+                    ExercisePhase(
+                        loadedExercise = exerciseQueue.poll(),
+                        timerFactory = timerFactory
+                    )
+                else ->
+                    RestPhase(
+                        initialRestTime = currentPhase.restTime,
+                        nextExercise = nextExercise,
+                        timerFactory = timerFactory
+                    )
             }
         }
+
         is SummaryPhase -> currentPhase
         else -> throw IllegalStateException("Invalid phase: $currentPhase")
     }
+
+    fun summaryPhase(): SummaryPhase = SummaryPhase(statisticsProvider)
 }

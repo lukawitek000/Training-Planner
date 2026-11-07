@@ -1,39 +1,33 @@
 package com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder
 
-import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
-import com.lukasz.witkowski.training.planner.shared.time.Time
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import java.util.Date
+import kotlin.time.Duration
 
 /**
  * Domain events emitted during an active training session.
  * Used by [SessionStatisticsRecorder] implementations to capture metrics, sensor telemetry,
  * heart rate, velocity, or user performance.
  */
-sealed class SessionEvent {
-    data class SessionStarted(
-        val trainingPlanId: TrainingPlan,
-        val date: Date = Date()
-    ) : SessionEvent()
+sealed interface SessionEvent {
+    data class SessionStarted(val trainingPlanId: TrainingPlanId) : SessionEvent
 
-    data class ExerciseStarted(val exercise: TrainingExercise, val set: Int, val startTime: Time) :
-        SessionEvent()
+    data class ExerciseStarted(val exercise: SessionExercise) : SessionEvent
 
-    data class ExerciseCompleted(val attempt: ExerciseAttemptStatistics, val stopTime: Time) :
-        SessionEvent()
+    data class ExerciseCompleted(val exercise: SessionExercise) : SessionEvent
 
-    data class ExerciseSkipped(val exercise: TrainingExercise, val set: Int, val time: Time) :
-        SessionEvent()
+    data class ExerciseSkipped(val exercise: SessionExercise) : SessionEvent
 
-    data class RestStarted(val restTime: Time, val startTime: Time) : SessionEvent()
+    data class RestStarted(val restTime: Duration) : SessionEvent
 
-    data class RestCompleted(val time: Time) : SessionEvent()
+    data class RestCompleted(val rpeFeedback: Int? = null) : SessionEvent
 
-    data class RestSkipped(val time: Time) : SessionEvent()
+    data class RestSkipped(val rpeFeedback: Int? = null) : SessionEvent
 
-    data class ExtraSetAdded(val exercise: TrainingExercise, val newSetIndex: Int) : SessionEvent()
+    data class ExtraSetAdded(val exercise: SessionExercise, val newSetIndex: Int) : SessionEvent
 
-    data class SessionFinished(val totalTime: Time, val endTime: Time) : SessionEvent()
+    data object SessionFinished : SessionEvent
+
+    data class SummaryCompleted(val overallRpe: Int? = null, val notes: String? = null) :
+        SessionEvent
 }

@@ -5,7 +5,6 @@ import com.lukasz.witkowski.training.planner.session.domain.session.models.Sessi
 import com.lukasz.witkowski.training.planner.session.domain.session.models.TrainingExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import org.koin.core.qualifier.named
 import kotlin.time.Duration
 
 /**
@@ -31,30 +30,26 @@ class StraightSetsPolicy : TrainingSetsPolicy {
         return allExercises
     }
 
-    private fun TrainingExercise.toSessionExercise(restTime: Duration): SessionExercise {
-        return SessionExercise(
+    private fun TrainingExercise.toSessionExercise(restTime: Duration): SessionExercise =
+        SessionExercise(
             snapshot = toSnapshot(),
             currentConfig = toConfig(),
             restTime = restTime
         )
-    }
 
-    private fun TrainingExercise.toSnapshot(): TrainingExerciseSnapshot {
-        return TrainingExerciseSnapshot(
-            id = id,
-            name = exercise.name,
-            description = exercise.description,
-            categories = exercise.categories,
-            imageIds = exercise.imageIds,
-            plannedConfig = toConfig()
-        )
-    }
+    private fun TrainingExercise.toSnapshot(): TrainingExerciseSnapshot = TrainingExerciseSnapshot(
+        id = id,
+        name = exercise.name,
+        description = exercise.description,
+        categories = exercise.categories,
+        imageIds = exercise.imageIds,
+        plannedConfig = toConfig()
+    )
 
-    private fun TrainingExercise.toConfig(): SessionExerciseConfiguration {
-        return SessionExerciseConfiguration(
+    private fun TrainingExercise.toConfig(): SessionExerciseConfiguration =
+        SessionExerciseConfiguration(
             reps = repetitions,
-            weightInKg = weightInKg,
-            holdTime = time,
+            weightInKg = weightInKg?.toDouble(),
+            holdTime = time.takeIf { it > Duration.ZERO }
         )
-    }
 }

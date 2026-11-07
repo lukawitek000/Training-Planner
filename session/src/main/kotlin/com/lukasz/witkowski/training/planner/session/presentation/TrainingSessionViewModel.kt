@@ -48,12 +48,16 @@ class TrainingSessionViewModel(
         val isSameExercise =
             when (domainState) {
                 is DomainState.ExerciseState -> {
-                    val key = "${domainState.currentExercise.id.value}_${domainState.currentSet}"
+                    val totalSets = domainState.progress.currentExerciseTotalSets
+                    val remainingSets = domainState.progress.remainingExerciseSets
+                    val currentSet = (totalSets - remainingSets).coerceAtLeast(1)
+                    val key = "${domainState.sessionExercise.exerciseId.value}_$currentSet"
                     inputs.exerciseKey == key
                 }
                 else -> false
             }
         domainState.toPresentationTrainingSessionState(
+            trainingPlan = trainingSessionService.trainingPlan,
             time = timeVal,
             isTimerRunning = isRunning,
             selectedReps = if (isSameExercise) inputs.reps else null,

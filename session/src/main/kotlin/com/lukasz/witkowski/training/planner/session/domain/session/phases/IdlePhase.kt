@@ -4,12 +4,8 @@ import com.lukasz.witkowski.training.planner.session.domain.session.SessionComma
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-internal data object IdlePhase: SessionPhase {
+internal data object IdlePhase : SessionPhase {
     override val state: StateFlow<PhaseState> = MutableStateFlow(PhaseState.Idle)
-
-    override fun complete() = Unit
-
-    override fun skip() = Unit
 
     override fun handle(command: SessionCommand) = Unit
 

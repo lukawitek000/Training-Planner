@@ -4,11 +4,11 @@ import com.lukasz.witkowski.training.planner.session.TRAINING_EXERCISES
 import com.lukasz.witkowski.training.planner.session.TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.session.TrainingSessionTest
 import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedListener
+import com.lukasz.witkowski.training.planner.session.domain.session.StraightSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider
-import com.lukasz.witkowski.training.planner.session.domain.timer.Timer
-import com.lukasz.witkowski.training.planner.shared.time.Time
+import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import io.mockk.coEvery
@@ -16,6 +16,7 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import io.mockk.verify
 import kotlin.test.assertFailsWith
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
@@ -32,7 +33,7 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class TrainingSessionServiceTest : TrainingSessionTest() {
     private val timeProvider: FixedTimeProvider = FixedTimeProvider()
-    private val trainingSetsPolicy: TrainingSetsPolicy = CircuitSetsPolicy()
+    private val trainingSetsPolicy: TrainingSetsPolicy = StraightSetsPolicy()
 
     private lateinit var trainingExercises: List<TrainingExercise>
     private lateinit var trainingPlan: TrainingPlan
@@ -50,10 +51,15 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
         trainingSessionService =
             TrainingSessionService(
                 timeProvider = timeProvider,
-                timer = Timer(timerDispatcher = testDispatcher),
+                timerFactory =
+                TimerFactory(
+                    timeProvider = timeProvider,
+                    tickDelay = 1.seconds,
+                    timerDispatcher = testDispatcher
+                ),
                 sessionCompletedListener = sessionCompletedListener,
                 trainingSetsStrategy = trainingSetsPolicy,
-                backgroundDispatcher = testDispatcher
+                backgroundDispatcher = UnconfinedTestDispatcher(scheduler)
             )
     }
 
@@ -63,50 +69,47 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
         val state = trainingSessionService.trainingSessionState.first()
 
         assertExerciseState(
-            expectedState = TrainingSessionState.ExerciseState(trainingExercises.first()),
+            expectedExerciseId = trainingExercises.first().id,
             trainingSessionState = state
         )
     }
 
     @Test
     @Suppress("LongMethod")
-    fun `emit 1st exercise, rest time and 2nd exercise`() = runTest(UnconfinedTestDispatcher()) {
-        val testResult = mutableListOf<TrainingSessionState>()
-        val job =
-            launch {
-                trainingSessionService.trainingSessionState.toList(testResult)
-            }
-        whenStartTrainingSession()
-        // complete 1st exercise
-        trainingSessionService.completed()
-        // skip rest time
-        trainingSessionService.skip()
+    fun `emit 1st exercise set, rest time and 2nd exercise set`() =
+        runTest(UnconfinedTestDispatcher(scheduler)) {
+            val testResult = mutableListOf<TrainingSessionState>()
+            val job =
+                launch {
+                    trainingSessionService.trainingSessionState.toList(testResult)
+                }
+            whenStartTrainingSession()
+            // complete 1st exercise set
+            trainingSessionService.completed()
+            // skip rest time
+            trainingSessionService.skip()
 
-        val firstExercise = trainingExercises.first()
-        assert(testResult.first() is TrainingSessionState.IdleState)
-        assertExerciseState(
-            expectedState = TrainingSessionState.ExerciseState(trainingExercises.first()),
-            trainingSessionState = testResult[1]
-        )
-        val secondExercise = trainingExercises[1]
-        assertRestTimeState(
-            expectedState =
-            TrainingSessionState.RestTimeState(
-                secondExercise,
-                Time(firstExercise.restTime.inWholeMilliseconds)
-            ),
-            trainingSessionState = testResult[2]
-        )
-        assertExerciseState(
-            expectedState = TrainingSessionState.ExerciseState(secondExercise),
-            trainingSessionState = testResult[3]
-        )
-        job.cancel()
-    }
+            val firstExercise = trainingExercises.first()
+            assertTrue(testResult.first() is TrainingSessionState.IdleState)
+            assertExerciseState(
+                expectedExerciseId = firstExercise.id,
+                trainingSessionState = testResult[1]
+            )
+            assertRestTimeState(
+                expectedNextExerciseId = firstExercise.id,
+                expectedTotalRestTime = firstExercise.restTime,
+                trainingSessionState = testResult[2]
+            )
+            assertExerciseState(
+                expectedExerciseId = firstExercise.id,
+                trainingSessionState = testResult[3]
+            )
+            job.cancel()
+        }
 
     @Test
     fun `call skip method without starting training session`() {
-        assertFailsWith<UninitializedPropertyAccessException> {
+        assertFailsWith<IllegalStateException> {
             trainingSessionService.skip()
         }
     }
@@ -116,26 +119,9 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
         whenStartTrainingSession()
         trainingSessionService.stopTraining()
 
-        assertFailsWith<Exception> {
+        assertFailsWith<IllegalStateException> {
             trainingSessionService.skip()
         }
-    }
-
-    @Test
-    fun `timer is running after starting it`() {
-        whenStartTrainingSession()
-        trainingSessionService.startTimer()
-
-        assert(trainingSessionService.isTimerRunning.value)
-    }
-
-    @Test
-    fun `timer is not running after starting and stopping it`() {
-        whenStartTrainingSession()
-        trainingSessionService.startTimer()
-        trainingSessionService.stopTimer()
-
-        assert(!trainingSessionService.isTimerRunning.value)
     }
 
     @Test
@@ -143,7 +129,7 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
         whenStartTrainingSession()
 
         val isStarted = trainingSessionService.isTrainingSessionStarted()
-        assert(isStarted)
+        assertTrue(isStarted)
     }
 
     @Test
@@ -151,7 +137,7 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
         whenStartTrainingSession()
         trainingSessionService.stopTraining()
 
-        assertFailsWith<Exception> {
+        assertFailsWith<IllegalStateException> {
             trainingSessionService.completed()
         }
     }
@@ -161,7 +147,7 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
         whenStartTrainingSession()
         trainingSessionService.completed()
 
-        assert(trainingSessionService.isTimerRunning.value)
+        assertTrue(trainingSessionService.isTimerRunning.value)
     }
 
     @Test
@@ -170,20 +156,20 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
             whenStartTrainingSession()
             trainingSessionService.completed()
 
-            val firstExerciseRestMillis = trainingExercises.first().restTime.inWholeMilliseconds
+            val firstExercise = trainingExercises.first()
             assertRestTimeState(
-                TrainingSessionState.RestTimeState(
-                    trainingExercises[1],
-                    Time(firstExerciseRestMillis)
-                ),
-                trainingSessionService.trainingSessionState.value
+                expectedNextExerciseId = firstExercise.id,
+                expectedTotalRestTime = firstExercise.restTime,
+                trainingSessionState = trainingSessionService.trainingSessionState.value
             )
 
-            assert(trainingSessionService.isTimerRunning.value)
-            scheduler.advanceTimeBy(firstExerciseRestMillis + 1)
+            assertTrue(trainingSessionService.isTimerRunning.value)
+            timeProvider.advanceBy(firstExercise.restTime)
+            scheduler.advanceTimeBy(1000L)
+            scheduler.runCurrent()
 
             assertExerciseState(
-                expectedState = TrainingSessionState.ExerciseState(trainingExercises[1]),
+                expectedExerciseId = firstExercise.id,
                 trainingSessionState = trainingSessionService.trainingSessionState.value
             )
         }
@@ -237,18 +223,11 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
     }
 
     private fun whenAllTrainingExercisesCompleted() {
-        val steps =
-            TRAINING_EXERCISES
-                .fold(0) { acc, trainingExercise ->
-                    val restTime = if (trainingExercise.hasRestTime()) 1 else 0
-                    acc + (restTime + 1) * trainingExercise.sets
-                }.let {
-                    if (TRAINING_EXERCISES.last().hasRestTime()) it - 1 else it
-                }
-        for (i in 0 until steps) {
+        do {
             trainingSessionService.completed()
-        }
+        } while (
+            trainingSessionService.trainingSessionState.value !is
+                TrainingSessionState.SummaryState
+        )
     }
-
-    private fun TrainingExercise.hasRestTime() = restTime.isPositive()
 }

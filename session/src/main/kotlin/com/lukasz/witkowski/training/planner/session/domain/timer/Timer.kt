@@ -2,7 +2,8 @@ package com.lukasz.witkowski.training.planner.session.domain.timer
 
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SystemTimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.TimeProvider
-import com.lukasz.witkowski.training.planner.shared.time.Time
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.CoroutineScope
@@ -14,8 +15,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 
 class Timer(
     initialState: TimerState,
@@ -23,12 +22,12 @@ class Timer(
     private val tickDelayInMillis: Duration = TICK_DELAY,
     private val timeProvider: TimeProvider = SystemTimeProvider(),
     timerDispatcher: CoroutineDispatcher = Dispatchers.Default
-): AutoCloseable {
+) : AutoCloseable {
     private val coroutineScope: CoroutineScope =
         CoroutineScope(timerDispatcher + CoroutineName("Timer"))
     private var timerJob: Job? = null
 
-    val state : StateFlow<TimerState>
+    val state: StateFlow<TimerState>
         field = MutableStateFlow<TimerState>(initialState)
 
     fun start() {
@@ -41,6 +40,7 @@ class Timer(
     }
 
     fun changeTime(duration: Duration) {
+        timerJob?.cancel()
         state.value = TimerState.Ready(duration)
     }
 
@@ -53,9 +53,13 @@ class Timer(
         state.update { TimerState.Running(initTime) }
         timerJob =
             coroutineScope.launch {
-                while (state.value is TimerState.Running) {
+                while (
+                    state.value is TimerState.Running ||
+                    state.value is TimerState.OverflowRunning
+                ) {
                     delay(tickDelayInMillis)
-                    val elapsed = (timeProvider.elapsedTimeMillis() - startTimestampMillis).milliseconds
+                    val elapsed =
+                        (timeProvider.elapsedTimeMillis() - startTimestampMillis).milliseconds
                     val remaining = initTime - elapsed
                     state.update {
                         if (remaining.isNegative()) {
@@ -64,6 +68,8 @@ class Timer(
                             } else {
                                 TimerState.Finished
                             }
+                        } else if (remaining == Duration.ZERO && !allowOverflow) {
+                            TimerState.Finished
                         } else {
                             TimerState.Running(remaining)
                         }

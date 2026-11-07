@@ -12,7 +12,5 @@ class SystemTimeProvider : TimeProvider {
 
     override fun currentDate(): Date = Date()
 
-    override fun elapsedTimeMillis(): Long {
-        return SystemClock.elapsedRealtime()
-    }
+    override fun elapsedTimeMillis(): Long = SystemClock.elapsedRealtime()
 }

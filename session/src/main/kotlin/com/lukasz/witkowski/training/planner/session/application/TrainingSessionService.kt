@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.session.application
 import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedListener
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
+import com.lukasz.witkowski.training.planner.session.domain.session.SessionCommand
 import com.lukasz.witkowski.training.planner.session.domain.session.StraightSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSession
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionFactory
@@ -12,53 +13,86 @@ import com.lukasz.witkowski.training.planner.session.domain.session.statisticsre
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SystemTimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.TimeProvider
-import com.lukasz.witkowski.training.planner.session.domain.timer.Timer
+import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
+import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
+@OptIn(ExperimentalCoroutinesApi::class)
+@Suppress("TooManyFunctions")
 class TrainingSessionService(
     private val timeProvider: TimeProvider = SystemTimeProvider(),
-    private val timer: Timer = Timer(),
+    private val timerFactory: TimerFactory = TimerFactory(timeProvider = timeProvider),
     private val sessionCompletedListener: SessionCompletedListener? = null,
     private val trainingSetsStrategy: TrainingSetsPolicy = StraightSetsPolicy(),
     backgroundDispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val sessionStatisticsRecorder: SessionStatisticsRecorder = CompositeStatisticsRecorder()
 ) {
+    private val activeSession = MutableStateFlow<TrainingSession?>(null)
     private lateinit var trainingSession: TrainingSession
     private val scope = CoroutineScope(backgroundDispatcher)
 
-    init {
-        observeTimerFinished()
-    }
+    val trainingSessionState: StateFlow<TrainingSessionState> =
+        activeSession
+            .flatMapLatest { session ->
+                session?.state ?: flowOf(TrainingSessionState.IdleState)
+            }.stateIn(
+                scope = scope,
+                started = SharingStarted.Eagerly,
+                initialValue = TrainingSessionState.IdleState
+            )
 
-    val isTimerRunning: StateFlow<Boolean>
-        get() = timer.isRunning
+    val isTimerRunning: StateFlow<Boolean> =
+        trainingSessionState
+            .map { state ->
+                val timerState =
+                    when (state) {
+                        is TrainingSessionState.ExerciseState -> state.timerState
+                        is TrainingSessionState.RestTimeState -> state.timerState
+                        else -> null
+                    }
+                timerState is TimerState.Running || timerState is TimerState.OverflowRunning
+            }.stateIn(
+                scope = scope,
+                started = SharingStarted.Eagerly,
+                initialValue = false
+            )
 
-    private var state: TrainingSessionState
-        private set(value) {
-            configureTimer(value)
-            _trainingSessionState.value = value
-        }
-        get() = _trainingSessionState.value
-
-    private val _trainingSessionState =
-        MutableStateFlow<TrainingSessionState>(TrainingSessionState.IdleState)
-    val trainingSessionState: StateFlow<TrainingSessionState>
-        get() = _trainingSessionState
+    val time: StateFlow<Time> =
+        trainingSessionState
+            .map { state ->
+                val timerState =
+                    when (state) {
+                        is TrainingSessionState.ExerciseState -> state.timerState
+                        is TrainingSessionState.RestTimeState -> state.timerState
+                        else -> null
+                    }
+                when (timerState) {
+                    is TimerState.Running -> Time(timerState.remaining.inWholeMilliseconds)
+                    is TimerState.Ready -> Time(timerState.duration.inWholeMilliseconds)
+                    is TimerState.OverflowRunning -> Time(timerState.overflow.inWholeMilliseconds)
+                    else -> Time.ZERO
+                }
+            }.stateIn(
+                scope = scope,
+                started = SharingStarted.Eagerly,
+                initialValue = Time.ZERO
+            )
 
     var trainingPlan: TrainingPlan? = null
         private set
-
-    val time: StateFlow<Time>
-        get() = timer.time
 
     private val trainingSessionFinishedListeners = mutableSetOf<SessionFinishedListener>()
 
@@ -67,32 +101,46 @@ class TrainingSessionService(
         policy: TrainingSetsPolicy = trainingSetsStrategy
     ) {
         this.trainingPlan = trainingPlan
-        trainingSession = TrainingSessionFactory.create(
-            trainingPlan = trainingPlan,
-            policy = policy,
-            statisticsRecorder = sessionStatisticsRecorder,
-            timeProvider = timeProvider
-        )
-        state = trainingSession.start(timeProvider.currentTime())
+        trainingSession =
+            TrainingSessionFactory.create(
+                trainingPlan = trainingPlan,
+                policy = policy,
+                statisticsRecorder = sessionStatisticsRecorder,
+                timeProvider = timeProvider,
+                timerFactory = timerFactory,
+                scope = scope
+            )
+        activeSession.value = trainingSession
+        trainingSession.start()
     }
 
     fun skip() {
-        stopTimer()
-        state = trainingSession.skip(timeProvider.currentTime())
+        requireActiveSession().skip()
     }
 
     fun skipExercise() {
-        stopTimer()
-        state = trainingSession.skipExercise(timeProvider.currentTime())
+        requireActiveSession().skip()
     }
 
     fun addExtraSet() {
-        state = trainingSession.addExtraSet()
+        requireActiveSession().addExtraSet()
+    }
+
+    fun removeExtraSet() {
+        requireActiveSession().removeExtraSet()
+    }
+
+    fun endEarly() {
+        requireActiveSession().endEarly()
+    }
+
+    fun handle(command: SessionCommand) {
+        requireActiveSession().handle(command)
     }
 
     fun updateLastAttemptRpe(rpe: Float) {
         if (::trainingSession.isInitialized) {
-            trainingSession.updateLastAttemptRpe(rpe)
+            trainingSession.handle(SessionCommand.RestTime.UpdateRpeFeedback(rpe.toInt()))
         }
     }
 
@@ -102,47 +150,60 @@ class TrainingSessionService(
         rpe: Float? = null,
         actualTime: Duration? = null
     ) {
-        stopTimer()
-        state = trainingSession.completed(
-            time = timeProvider.currentTime(),
-            actualReps = actualReps,
-            actualWeightInKg = actualWeightInKg,
-            rpe = rpe,
-            actualTime = actualTime
-        )
+        val session = requireActiveSession()
+        if (actualReps != null) {
+            session.handle(SessionCommand.Exercise.UpdateReps(actualReps))
+        }
+        if (actualWeightInKg != null) {
+            session.handle(SessionCommand.Exercise.UpdateWeight(actualWeightInKg))
+        }
+        if (actualTime != null) {
+            session.handle(SessionCommand.Exercise.UpdateHoldDuration(actualTime))
+        }
+        if (rpe != null) {
+            session.handle(SessionCommand.RestTime.UpdateRpeFeedback(rpe.toInt()))
+        }
+        session.complete()
     }
 
     fun stopTraining() {
         if (::trainingSession.isInitialized) {
             trainingSession.stop()
         }
-        state = TrainingSessionState.IdleState
+        activeSession.value = null
     }
 
     fun isTrainingSessionStarted() = trainingSessionState.value !is TrainingSessionState.IdleState
 
     fun startTimer() {
-        if (timer.isPaused) {
-            timer.resume()
-        } else {
-            timer.start()
+        if (::trainingSession.isInitialized) {
+            trainingSession.handle(SessionCommand.Exercise.StartTimer)
         }
     }
 
-    fun stopTimer() {
-        timer.stop()
-    }
+    fun stopTimer() = Unit
 
-    fun pauseTimer() {
-        timer.pause()
-    }
+    fun pauseTimer() = Unit
 
-    fun resetTimer() {
-        configureTimer(state)
-    }
+    fun resetTimer() = Unit
 
     suspend fun finishSession(note: String? = null, rpe: Int? = null): TrainingStatistics {
-        val stats = trainingSession.finalizeStatistics(note, rpe)
+        val session = requireActiveSession()
+        if (note != null) {
+            session.handle(SessionCommand.Summary.UpdateNotes(note))
+        }
+        if (rpe != null) {
+            session.handle(SessionCommand.Summary.UpdateOverallRpe(rpe))
+        }
+        val summaryState =
+            session.state.value as? TrainingSessionState.SummaryState
+                ?: throw IllegalStateException(
+                    "Cannot finalize session that is not in SummaryState"
+                )
+        session.complete()
+        val finalNote = note ?: summaryState.notes.ifBlank { null }
+        val finalRpe = rpe ?: summaryState.selectedOverallRpe
+        val stats = summaryState.statistics.copy(note = finalNote, rpe = finalRpe)
         sessionCompletedListener?.onSessionCompleted(stats)
         notifySessionFinished(stats.id)
         return stats
@@ -164,43 +225,11 @@ class TrainingSessionService(
         }
     }
 
-    private fun observeTimerFinished() {
-        scope.launch {
-            timer.hasFinished.collectLatest { finished ->
-                if (finished) {
-                    navigateNextIfRestTimeElapsed()
-                    resetTimerIfExerciseTimeElapsed()
-                }
-            }
+    private fun requireActiveSession(): TrainingSession {
+        check(::trainingSession.isInitialized && activeSession.value != null) {
+            "Training session has not been started or was stopped"
         }
-    }
-
-    private fun resetTimerIfExerciseTimeElapsed() {
-        if (state is TrainingSessionState.ExerciseState) {
-            timer.stop()
-        }
-    }
-
-    private fun navigateNextIfRestTimeElapsed() {
-        if (state is TrainingSessionState.RestTimeState) {
-            skip()
-        }
-    }
-
-    private fun configureTimer(value: TrainingSessionState) {
-        stopTimer()
-        when (value) {
-            is TrainingSessionState.RestTimeState -> {
-                timer.setTime(value.restTime)
-                startTimer()
-            }
-            is TrainingSessionState.ExerciseState -> {
-                if (value.isIsometric) {
-                    timer.setTime(Time(value.targetTime.inWholeMilliseconds))
-                }
-            }
-            else -> Unit
-        }
+        return trainingSession
     }
 
     companion object {

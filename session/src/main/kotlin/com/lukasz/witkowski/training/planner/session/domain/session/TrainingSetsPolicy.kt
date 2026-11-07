@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.session.domain.session
 
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 
 /**

@@ -22,5 +22,5 @@ data class TrainingExerciseSnapshot(
     val description: String,
     val categories: Set<ExerciseCategoryName>,
     val imageIds: List<ImageId> = emptyList(),
-    val plannedConfig: SessionExerciseConfiguration,
+    val plannedConfig: SessionExerciseConfiguration
 )

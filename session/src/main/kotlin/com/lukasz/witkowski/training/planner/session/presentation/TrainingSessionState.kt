@@ -8,14 +8,34 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlin.time.Duration
 
-sealed interface TrainingSessionState {
-    data object IdleState : TrainingSessionState
+sealed class TrainingSessionState(
+    open val exercise: TrainingExercise? = null,
+    open val time: Time = Time.ZERO
+) {
+    data object IdleState : TrainingSessionState()
 
     data class ExerciseState(
-        val currentExercise: SessionExercise,
-        val currentSet: Int,
-        val totalSets: Int,
-    ) : TrainingSessionState
+        val currentExercise: TrainingExercise,
+        val sessionExercise: SessionExercise? = null,
+        val currentSet: Int = 1,
+        val totalSets: Int = currentExercise.sets,
+        val targetReps: Int = currentExercise.repetitions,
+        val targetWeightInKg: Double? = currentExercise.weightInKg?.toDouble(),
+        val targetTime: Duration = currentExercise.time,
+        val completedSets: List<ExerciseAttemptStatistics> = emptyList(),
+        val exerciseIndex: Int = 1,
+        val totalExercises: Int = 1,
+        val setsLeftInWorkout: Int = 0,
+        val followingExercise: TrainingExercise? = null,
+        val selectedReps: Int = targetReps,
+        val selectedWeightInKg: Double? = targetWeightInKg,
+        val selectedHoldDuration: Duration = targetTime,
+        val remainingHoldTime: Duration = targetTime,
+        val isHoldTimerRunning: Boolean = false
+    ) : TrainingSessionState(currentExercise, Time.ZERO) {
+        val isIsometric: Boolean
+            get() = targetTime > Duration.ZERO
+    }
 
     data class RestTimeState(
         val nextExercise: TrainingExercise,
@@ -25,12 +45,12 @@ sealed interface TrainingSessionState {
         val lastCompletedAttempt: ExerciseAttemptStatistics? = null,
         val followingExercise: TrainingExercise? = null,
         val selectedFeedback: Int? = null
-    ) : TrainingSessionState
+    ) : TrainingSessionState(nextExercise, restTime)
 
     data class SummaryState(
         val statistics: TrainingStatistics,
         val trainingPlan: TrainingPlan,
         val selectedOverallRpe: Int? = null,
         val notes: String = ""
-    ) : TrainingSessionState
+    ) : TrainingSessionState(time = statistics.totalTime)
 }

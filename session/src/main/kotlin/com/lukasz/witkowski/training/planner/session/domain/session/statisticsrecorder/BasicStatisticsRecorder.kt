@@ -2,32 +2,143 @@ package com.lukasz.witkowski.training.planner.session.domain.session.statisticsr
 
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * [BasicStatisticsRecorder] records standard session metrics:
  *  * Total training time
- *  * Exercise and rest durations
- *  * Attempt sets, reps, load, and completion status
+ *  * Exercise attempt durations
+ *  * Attempt sets, reps, load, hold time, rest time, RPE, and completion status
  *  * Date of the workout session
  */
-class BasicStatisticsRecorder() : SessionStatisticsRecorder {
+class BasicStatisticsRecorder(
+    private var trainingPlanId: TrainingPlanId? = null,
+    private val timeProvider: TimeProvider = SystemTimeProvider()
+) : SessionStatisticsRecorder,
+    SessionStatisticsProvider {
+    private var statisticsId: TrainingStatisticsId = TrainingStatisticsId.create()
+    private var startTrainingTime = Time.ZERO
+    private var stopTrainingTime: Time? = null
+    private var sessionDate: Date = timeProvider.currentDate()
+    private val exercisesAttemptsStatistics = mutableListOf<ExerciseAttemptStatistics>()
+    private val exerciseStatisticsIds = mutableMapOf<TrainingExerciseId, ExerciseStatisticsId>()
+    private val setCountsByExercise = mutableMapOf<TrainingExerciseId, Int>()
+    private var currentExerciseStartTime = Time.ZERO
+    private var currentRestStartTime = Time.ZERO
+    private var overallRpe: Int? = null
+    private var notes: String? = null
 
     override fun onEvent(event: SessionEvent) {
         when (event) {
-            is SessionEvent.SessionStarted -> {}
-            is SessionEvent.ExerciseStarted -> {}
-            is SessionEvent.ExerciseCompleted -> {}
-            is SessionEvent.ExerciseSkipped -> {}
-            is SessionEvent.RestStarted -> {}
-            is SessionEvent.RestCompleted -> {}
-            is SessionEvent.RestSkipped -> {}
-            is SessionEvent.ExtraSetAdded -> {}
-            is SessionEvent.SessionFinished -> {}
+            is SessionEvent.SessionStarted -> {
+                statisticsId = TrainingStatisticsId.create()
+                trainingPlanId = event.trainingPlanId
+                startTrainingTime = timeProvider.currentTime()
+                stopTrainingTime = null
+                sessionDate = timeProvider.currentDate()
+                exercisesAttemptsStatistics.clear()
+                exerciseStatisticsIds.clear()
+                setCountsByExercise.clear()
+                overallRpe = null
+                notes = null
+            }
+
+            is SessionEvent.ExerciseStarted -> {
+                currentExerciseStartTime = timeProvider.currentTime()
+            }
+
+            is SessionEvent.ExerciseCompleted -> {
+                recordExerciseAttempt(event.exercise, completed = true)
+            }
+
+            is SessionEvent.ExerciseSkipped -> {
+                recordExerciseAttempt(event.exercise, completed = false)
+            }
+
+            is SessionEvent.RestStarted -> {
+                currentRestStartTime = timeProvider.currentTime()
+            }
+
+            is SessionEvent.RestCompleted -> {
+                recordRestFinished(event.rpeFeedback)
+            }
+
+            is SessionEvent.RestSkipped -> {
+                recordRestFinished(event.rpeFeedback)
+            }
+
+            is SessionEvent.ExtraSetAdded -> Unit
+
+            is SessionEvent.SessionFinished -> {
+                stopTrainingTime = timeProvider.currentTime()
+            }
+
+            is SessionEvent.SummaryCompleted -> {
+                overallRpe = event.overallRpe
+                notes = event.notes?.ifBlank { null }
+            }
         }
+    }
+
+    override fun getStatistics(): TrainingStatistics {
+        val endTime = stopTrainingTime ?: timeProvider.currentTime()
+        val exercisesStatisticsMap = exercisesAttemptsStatistics.groupBy { it.trainingExerciseId }
+        val exercisesStatistics =
+            exercisesStatisticsMap.map { (exerciseId, attemptsStatistics) ->
+                ExerciseStatistics(
+                    id = exerciseStatisticsIds.getOrPut(exerciseId) {
+                        ExerciseStatisticsId.create()
+                    },
+                    trainingExerciseId = exerciseId,
+                    attemptsStatistics = attemptsStatistics
+                )
+            }
+        return TrainingStatistics(
+            id = statisticsId,
+            trainingPlanId = trainingPlanId ?: TrainingPlanId.create(),
+            totalTime = endTime - startTrainingTime,
+            date = sessionDate,
+            exercisesStatistics = exercisesStatistics,
+            note = notes,
+            rpe = overallRpe
+        )
+    }
+
+    private fun recordExerciseAttempt(exercise: SessionExercise, completed: Boolean) {
+        val stopTime = timeProvider.currentTime()
+        val setNumber = (setCountsByExercise[exercise.exerciseId] ?: 0) + 1
+        setCountsByExercise[exercise.exerciseId] = setNumber
+        val attempt =
+            ExerciseAttemptStatistics(
+                trainingExerciseId = exercise.exerciseId,
+                time = stopTime - currentExerciseStartTime,
+                set = setNumber,
+                completed = completed,
+                actualReps = exercise.currentConfig.reps,
+                actualWeightInKg = exercise.currentConfig.weightInKg,
+                actualTime = exercise.currentConfig.holdTime
+            )
+        exercisesAttemptsStatistics.add(attempt)
+    }
+
+    private fun recordRestFinished(rpeFeedback: Int?) {
+        if (exercisesAttemptsStatistics.isEmpty()) return
+        val elapsedRest = timeProvider.currentTime() - currentRestStartTime
+        val restDuration = elapsedRest.timeInMillis.milliseconds
+        val lastIndex = exercisesAttemptsStatistics.lastIndex
+        val lastAttempt = exercisesAttemptsStatistics[lastIndex]
+        exercisesAttemptsStatistics[lastIndex] =
+            lastAttempt.copy(
+                rpe = rpeFeedback?.toFloat() ?: lastAttempt.rpe,
+                restTime = restDuration
+            )
     }
 }

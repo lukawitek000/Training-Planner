@@ -4,6 +4,6 @@ import kotlin.time.Duration
 
 data class SessionExerciseConfiguration(
     val reps: Int,
-    val weightInKg: Int?,
+    val weightInKg: Double?,
     val holdTime: Duration?
 )

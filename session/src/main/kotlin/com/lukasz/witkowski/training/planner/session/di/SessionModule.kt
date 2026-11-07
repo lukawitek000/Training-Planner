@@ -6,7 +6,7 @@ import com.lukasz.witkowski.training.planner.session.domain.session.StraightSets
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.CompositeStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SystemTimeProvider
-import com.lukasz.witkowski.training.planner.session.domain.timer.Timer
+import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
 import com.lukasz.witkowski.training.planner.session.presentation.TrainingSessionViewModel
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
@@ -20,12 +20,21 @@ val sessionModule =
 
         single<SessionStatisticsRecorder> { CompositeStatisticsRecorder() }
         single {
+            val timeProvider = SystemTimeProvider()
+            val backgroundDispatcher =
+                get<kotlinx.coroutines.CoroutineDispatcher>(
+                    named(CoroutineDispatcherQualifiers.DEFAULT)
+                )
             TrainingSessionService(
-                timeProvider = SystemTimeProvider(),
-                timer = Timer(),
+                timeProvider = timeProvider,
+                timerFactory =
+                TimerFactory(
+                    timeProvider = timeProvider,
+                    timerDispatcher = backgroundDispatcher
+                ),
                 sessionCompletedListener = getOrNull<SessionCompletedListener>(),
                 trainingSetsStrategy = StraightSetsPolicy(),
-                backgroundDispatcher = get(named(CoroutineDispatcherQualifiers.DEFAULT)),
+                backgroundDispatcher = backgroundDispatcher,
                 sessionStatisticsRecorder = get()
             )
         }
