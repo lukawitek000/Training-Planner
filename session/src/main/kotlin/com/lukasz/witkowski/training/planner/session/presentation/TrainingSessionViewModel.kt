@@ -75,89 +75,8 @@ class TrainingSessionViewModel(
         fetchTrainingPlan()
     }
 
-    fun onRepsChanged(reps: Int) {
-        val current = trainingSessionState.value as? TrainingSessionState.ExerciseState ?: return
-        userInputs.update {
-            it.copy(
-                exerciseKey = "${current.currentExercise.id.value}_${current.currentSet}",
-                reps = reps,
-                weightInKg = it.weightInKg ?: current.selectedWeightInKg,
-                holdDuration = it.holdDuration ?: current.selectedHoldDuration
-            )
-        }
-    }
+    fun onIntent(intent: SessionIntent) {
 
-    fun onWeightChanged(weight: Double) {
-        val current = trainingSessionState.value as? TrainingSessionState.ExerciseState ?: return
-        userInputs.update {
-            it.copy(
-                exerciseKey = "${current.currentExercise.id.value}_${current.currentSet}",
-                weightInKg = weight,
-                reps = it.reps ?: current.selectedReps,
-                holdDuration = it.holdDuration ?: current.selectedHoldDuration
-            )
-        }
-    }
-
-    fun onHoldDurationChanged(duration: Duration) {
-        val current = trainingSessionState.value as? TrainingSessionState.ExerciseState ?: return
-        userInputs.update {
-            it.copy(
-                exerciseKey = "${current.currentExercise.id.value}_${current.currentSet}",
-                holdDuration = duration,
-                reps = it.reps ?: current.selectedReps,
-                weightInKg = it.weightInKg ?: current.selectedWeightInKg
-            )
-        }
-    }
-
-    fun toggleHoldTimer() {
-        if (isTimerRunning.value) {
-            trainingSessionService.pauseTimer()
-        } else {
-            trainingSessionService.startTimer()
-        }
-    }
-
-    fun resetHoldTimer() {
-        trainingSessionService.resetTimer()
-    }
-
-    fun completed() {
-        val current = trainingSessionState.value as? TrainingSessionState.ExerciseState
-        val reps = current?.selectedReps
-        val weight = current?.selectedWeightInKg
-        val time = if (current?.isIsometric == true) current.selectedHoldDuration else null
-        trainingSessionService.completed(
-            actualReps = reps,
-            actualWeightInKg = weight,
-            actualTime = time
-        )
-    }
-
-    fun skip() {
-        trainingSessionService.skip()
-    }
-
-    fun skipExercise() {
-        trainingSessionService.skipExercise()
-    }
-
-    fun addExtraSet() {
-        trainingSessionService.addExtraSet()
-    }
-
-    fun onFeedbackSelected(effort: SetEffort) {
-        userInputs.update { it.copy(restFeedback = effort) }
-        trainingSessionService.updateLastAttemptEffort(effort)
-    }
-
-    fun onSummaryRpeSelected(rpe: SessionRpe) {
-        userInputs.update { it.copy(summaryRpe = rpe) }
-    }
-
-    fun onSummaryNotesChanged(notes: String) {
-        userInputs.update { it.copy(summaryNotes = notes) }
     }
 
     fun saveStatistics() {
@@ -182,21 +101,26 @@ class TrainingSessionViewModel(
         }
     }
 
-    fun startTimer() {
-        trainingSessionService.startTimer()
-    }
-
-    fun pauseTimer() {
-        trainingSessionService.pauseTimer()
-    }
-
-    fun stopTimer() {
-        trainingSessionService.stopTimer()
-    }
-
     override fun onCleared() {
         // TODO: Foreground Service Lifecycle Management:
         // When the user navigates away or backgrounding occurs, handle binding/unbinding to SessionService
         // and keep ongoing notifications active. Only call stopTraining() if the session was explicitly canceled.
     }
+}
+
+sealed interface SessionIntent {
+    data class RepsChanged(val reps: Int) : SessionIntent
+    data class WeightChanged(val weight: Double) : SessionIntent
+    data class HoldTimeChanged(val time: Duration) : SessionIntent
+    data object SetAdded : SessionIntent
+    data object SetRemoved : SessionIntent
+    data object SetCompleted: SessionIntent
+    data object SetSkipped: SessionIntent
+
+    data object RestSkipped: SessionIntent
+    data class SetFeedbackSelected(val effort: SetEffort) : SessionIntent
+
+    data class SessionNotesChanged(val notes: String) : SessionIntent
+    data class SessionFeedbackSelected(val rpe: SessionRpe) : SessionIntent
+    data object SessionEnd: SessionIntent
 }

@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Icon
@@ -34,6 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
+import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppIntStepper
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppStepper
@@ -59,15 +62,7 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun TrainingExerciseScreen(
     state: TrainingSessionState.ExerciseState,
-    onRepsChanged: (Int) -> Unit,
-    onWeightChanged: (Double) -> Unit,
-    onHoldDurationChanged: (Duration) -> Unit,
-    onToggleHoldTimer: () -> Unit,
-    onResetHoldTimer: () -> Unit,
-    onCompleteSet: () -> Unit,
-    onSkipSet: () -> Unit,
-    onSkipExercise: () -> Unit,
-    onAddExtraSet: () -> Unit,
+    onSessionIntent: (SessionIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -79,7 +74,6 @@ fun TrainingExerciseScreen(
             .padding(horizontal = Dimens.margin, vertical = Dimens.spaceMd),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
-        // Exercise Header
         ExerciseHeader(
             exerciseName = state.currentExercise.exercise.name,
             categories = state.currentExercise.exercise.categories.map { it.name },
@@ -88,149 +82,153 @@ fun TrainingExerciseScreen(
             followingExercise = state.followingExercise
         )
 
-        // Exercise Illustration Hero Card
-        AppCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(Dimens.heroImageHeightCompact),
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ) {
-            AppExerciseImage(
-                imageIds = state.currentExercise.exercise.imageIds,
-                contentDescription = state.currentExercise.exercise.name,
-                modifier = Modifier.fillMaxSize()
+        if (state.images.isNotEmpty()) {
+            ImageGallery(
+                images = state.images,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(Dimens.heroImageHeightCompact),
             )
         }
 
-        // Sets Progress Strip
         SetsProgressStrip(
             currentSet = state.currentSet,
             totalSets = state.totalSets
         )
 
-        // Active Set Card
-        AppCard(
-            modifier = Modifier.fillMaxWidth(),
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(Dimens.spaceMd),
-                verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.session_active_set_format, state.currentSet),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    val targetMetric =
-                        if (state.isIsometric) {
-                            stringResource(
-                                R.string.session_target_hold_format,
-                                state.targetTime.inWholeSeconds
-                            )
-                        } else {
-                            stringResource(
-                                R.string.session_target_reps_format,
-                                state.targetReps
-                            )
-                        }
-                    val weight = state.targetWeightInKg
-                    val weightSuffix =
-                        if (weight != null && weight > 0.0) {
-                            stringResource(
-                                R.string.session_target_weight_suffix,
-                                weight.toString()
-                            )
-                        } else {
-                            ""
-                        }
-                    val summary = stringResource(
-                        R.string.session_target_summary_format,
-                        targetMetric
-                    )
-                    Text(
-                        text = summary + weightSuffix,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
+        ActiveSetCard(state, onSessionIntent)
 
-                if (state.isIsometric) {
-                    IsometricHoldControls(
-                        countdownRemaining = state.remainingHoldTime.inWholeSeconds.toInt(),
-                        isHoldTimerRunning = state.isHoldTimerRunning,
-                        onToggleTimer = onToggleHoldTimer,
-                        onResetTimer = onResetHoldTimer,
-                        holdSeconds = state.selectedHoldDuration.inWholeSeconds.toInt(),
-                        onHoldSecondsChange = { onHoldDurationChanged(it.seconds) }
-                    )
-                } else {
-                    AppIntStepper(
-                        value = state.selectedReps,
-                        onValueChange = onRepsChanged,
-                        label = stringResource(R.string.session_reps_label),
-                        minValue = 0
-                    )
-                }
-
-                AppStepper(
-                    value = state.selectedWeightInKg ?: 0.0,
-                    onValueChange = onWeightChanged,
-                    step = 2.5,
-                    label = stringResource(R.string.session_kg_label),
-                    minValue = 0.0
-                )
-            }
-        }
-
-        // Secondary Actions (Add extra set, skip exercise)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AppTertiaryButton(
-                text = stringResource(R.string.session_add_extra_set),
-                leadingIcon = Icons.Default.Add,
-                onClick = onAddExtraSet,
-                modifier = Modifier.weight(1f)
-            )
-
-            AppTertiaryButton(
-                text = stringResource(R.string.session_skip_exercise),
-                leadingIcon = Icons.Default.FastForward,
-                onClick = onSkipExercise,
-                modifier = Modifier.weight(1f)
-            )
-        }
+        ExerciseSetsModification(onSessionIntent)
 
         Spacer(modifier = Modifier.height(Dimens.spaceMd))
 
-        // Main CTA Area
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
         ) {
             AppPrimaryButton(
                 text = stringResource(R.string.session_complete_set),
                 leadingIcon = Icons.Default.Check,
-                onClick = onCompleteSet
+                onClick = { onSessionIntent(SessionIntent.SetCompleted) }
             )
 
             AppSecondaryButton(
                 text = stringResource(R.string.session_skip_set),
                 leadingIcon = Icons.Default.SkipNext,
-                onClick = onSkipSet
+                onClick = { onSessionIntent(SessionIntent.SetSkipped) }
             )
         }
+    }
+}
+
+@Composable
+private fun ActiveSetCard(
+    state: TrainingSessionState.ExerciseState,
+    onSessionIntent: (SessionIntent) -> Unit
+) {
+    AppCard(
+        modifier = Modifier.fillMaxWidth(),
+        containerColor = MaterialTheme.colorScheme.surfaceContainer
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimens.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(R.string.session_active_set_format, state.currentSet),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                val targetMetric =
+                    if (state.isIsometric) {
+                        stringResource(
+                            R.string.session_target_hold_format,
+                            state.targetTime.inWholeSeconds
+                        )
+                    } else {
+                        stringResource(
+                            R.string.session_target_reps_format,
+                            state.targetReps
+                        )
+                    }
+                val weight = state.targetWeightInKg
+                val weightSuffix =
+                    if (weight != null && weight > 0.0) {
+                        stringResource(
+                            R.string.session_target_weight_suffix,
+                            weight.toString()
+                        )
+                    } else {
+                        ""
+                    }
+                val summary = stringResource(
+                    R.string.session_target_summary_format,
+                    targetMetric
+                )
+                Text(
+                    text = summary + weightSuffix,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+
+            if (state.isIsometric) {
+//                    IsometricHoldControls(
+//                        countdownRemaining = state.remainingHoldTime.inWholeSeconds.toInt(),
+//                        isHoldTimerRunning = state.isHoldTimerRunning,
+//                        onToggleTimer = onToggleHoldTimer,
+//                        onResetTimer = onResetHoldTimer,
+//                        holdSeconds = state.selectedHoldDuration.inWholeSeconds.toInt(),
+//                        onHoldSecondsChange = { onHoldDurationChanged(it.seconds) }
+//                    )
+            } else {
+                AppIntStepper(
+                    value = state.selectedReps,
+                    onValueChange = { onSessionIntent(SessionIntent.RepsChanged(it)) },
+                    label = stringResource(R.string.session_reps_label),
+                    minValue = 0
+                )
+            }
+
+            AppStepper(
+                value = state.selectedWeightInKg ?: 0.0,
+                onValueChange = { onSessionIntent(SessionIntent.WeightChanged(it)) },
+                step = 2.5,
+                label = stringResource(R.string.session_kg_label),
+                minValue = 0.0
+            )
+        }
+    }
+}
+
+@Composable
+private fun ExerciseSetsModification(onSessionIntent: (SessionIntent) -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AppTertiaryButton(
+            text = stringResource(R.string.session_add_extra_set),
+            leadingIcon = Icons.Default.Add,
+            onClick = { onSessionIntent(SessionIntent.SetAdded) },
+            modifier = Modifier.weight(1f)
+        )
+
+        AppTertiaryButton(
+            text = stringResource(R.string.session_remove_set),
+            leadingIcon = Icons.Default.Remove,
+            onClick = { onSessionIntent(SessionIntent.SetRemoved) },
+            modifier = Modifier.weight(1f)
+        )
     }
 }
 
@@ -457,6 +455,7 @@ private fun TrainingExerciseScreenPreview() {
     )
     val state = TrainingSessionState.ExerciseState(
         currentExercise = dummyExercise,
+        images = PREVIEW_PUSH_UP_IMAGES,
         currentSet = 2,
         totalSets = 4,
         targetReps = 10,
@@ -470,15 +469,7 @@ private fun TrainingExerciseScreenPreview() {
     TrainingPlannerTheme {
         TrainingExerciseScreen(
             state = state,
-            onRepsChanged = {},
-            onWeightChanged = {},
-            onHoldDurationChanged = {},
-            onToggleHoldTimer = {},
-            onResetHoldTimer = {},
-            onCompleteSet = {},
-            onSkipSet = {},
-            onSkipExercise = {},
-            onAddExtraSet = {}
+            onSessionIntent = {}
         )
     }
 }
@@ -518,15 +509,7 @@ private fun TrainingExerciseScreenHoldTimePreview() {
     TrainingPlannerTheme {
         TrainingExerciseScreen(
             state = state,
-            onRepsChanged = {},
-            onWeightChanged = {},
-            onHoldDurationChanged = {},
-            onToggleHoldTimer = {},
-            onResetHoldTimer = {},
-            onCompleteSet = {},
-            onSkipSet = {},
-            onSkipExercise = {},
-            onAddExtraSet = {}
+            onSessionIntent = {}
         )
     }
 }

@@ -53,9 +53,7 @@ fun RestTimeScreen(
     state: TrainingSessionState.RestTimeState,
     timeLeft: Time,
     totalTime: Time,
-    onFeedbackSelected: (SetEffort) -> Unit,
-    onStartNextSet: () -> Unit,
-    onSkipRest: () -> Unit,
+    onSessionIntent: (SessionIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -119,7 +117,7 @@ fun RestTimeScreen(
                 selectedOption = feedbackChipOptions.firstOrNull {
                     it.effort == state.selectedFeedback
                 },
-                onOptionSelected = { onFeedbackSelected(it.effort) },
+                onOptionSelected = { onSessionIntent(SessionIntent.SetFeedbackSelected(it.effort)) },
                 labelProvider = { it.label }
             )
         }
@@ -216,23 +214,11 @@ fun RestTimeScreen(
 
         Spacer(modifier = Modifier.height(Dimens.spaceMd))
 
-        // CTA Buttons
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
-        ) {
-            AppPrimaryButton(
-                text = stringResource(R.string.session_start_next_set_now),
-                leadingIcon = Icons.Default.PlayArrow,
-                onClick = onStartNextSet
-            )
-
-            AppSecondaryButton(
-                text = stringResource(R.string.session_skip_rest),
-                leadingIcon = Icons.Default.SkipNext,
-                onClick = onSkipRest
-            )
-        }
+        AppPrimaryButton(
+            text = stringResource(R.string.session_start_next_set_now),
+            leadingIcon = Icons.Default.PlayArrow,
+            onClick = { onSessionIntent(SessionIntent.RestSkipped) }
+        )
     }
 }
 
@@ -272,9 +258,7 @@ private fun RestTimeScreenPreview() {
             state = state,
             timeLeft = Time(42000L),
             totalTime = Time(60000L),
-            onFeedbackSelected = {},
-            onStartNextSet = {},
-            onSkipRest = {}
+            onSessionIntent = {}
         )
     }
 }

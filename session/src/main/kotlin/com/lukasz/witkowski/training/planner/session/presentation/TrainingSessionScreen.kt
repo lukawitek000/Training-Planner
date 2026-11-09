@@ -67,20 +67,7 @@ fun TrainingSessionScreen(
         TrainingSessionContent(
             trainingSessionState = trainingSessionState,
             time = time,
-            onRepsChanged = viewModel::onRepsChanged,
-            onWeightChanged = viewModel::onWeightChanged,
-            onHoldDurationChanged = viewModel::onHoldDurationChanged,
-            onToggleHoldTimer = viewModel::toggleHoldTimer,
-            onResetHoldTimer = viewModel::resetHoldTimer,
-            onCompleteSet = viewModel::completed,
-            onSkipSet = viewModel::skip,
-            onSkipExercise = viewModel::skipExercise,
-            onAddExtraSet = viewModel::addExtraSet,
-            onFeedbackSelected = viewModel::onFeedbackSelected,
-            onStartNextSet = viewModel::completed,
-            onSkipRest = viewModel::skip,
-            onSummaryRpeSelected = viewModel::onSummaryRpeSelected,
-            onSummaryNotesChanged = viewModel::onSummaryNotesChanged,
+            onSessionIntent = viewModel::onIntent,
             onSaveWorkout = {
                 viewModel.saveStatistics()
                 navigateBack()
@@ -93,20 +80,7 @@ fun TrainingSessionScreen(
 fun TrainingSessionContent(
     trainingSessionState: TrainingSessionState,
     time: Time,
-    onRepsChanged: (Int) -> Unit,
-    onWeightChanged: (Double) -> Unit,
-    onHoldDurationChanged: (Duration) -> Unit,
-    onToggleHoldTimer: () -> Unit,
-    onResetHoldTimer: () -> Unit,
-    onCompleteSet: () -> Unit,
-    onSkipSet: () -> Unit,
-    onSkipExercise: () -> Unit,
-    onAddExtraSet: () -> Unit,
-    onFeedbackSelected: (SetEffort) -> Unit,
-    onStartNextSet: () -> Unit,
-    onSkipRest: () -> Unit,
-    onSummaryRpeSelected: (SessionRpe) -> Unit,
-    onSummaryNotesChanged: (String) -> Unit,
+    onSessionIntent: (SessionIntent) -> Unit,
     onSaveWorkout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -115,15 +89,7 @@ fun TrainingSessionContent(
             is TrainingSessionState.ExerciseState -> {
                 TrainingExerciseScreen(
                     state = trainingSessionState,
-                    onRepsChanged = onRepsChanged,
-                    onWeightChanged = onWeightChanged,
-                    onHoldDurationChanged = onHoldDurationChanged,
-                    onToggleHoldTimer = onToggleHoldTimer,
-                    onResetHoldTimer = onResetHoldTimer,
-                    onCompleteSet = onCompleteSet,
-                    onSkipSet = onSkipSet,
-                    onSkipExercise = onSkipExercise,
-                    onAddExtraSet = onAddExtraSet
+                    onSessionIntent = onSessionIntent
                 )
             }
 
@@ -132,17 +98,14 @@ fun TrainingSessionContent(
                     state = trainingSessionState,
                     timeLeft = time,
                     totalTime = trainingSessionState.time,
-                    onFeedbackSelected = onFeedbackSelected,
-                    onStartNextSet = onStartNextSet,
-                    onSkipRest = onSkipRest
+                    onSessionIntent = onSessionIntent,
                 )
             }
 
             is TrainingSessionState.SummaryState -> {
                 TrainingSessionSummaryScreen(
                     state = trainingSessionState,
-                    onRpeSelected = onSummaryRpeSelected,
-                    onNotesChanged = onSummaryNotesChanged,
+                    onSessionIntent = onSessionIntent,
                     onSaveWorkout = onSaveWorkout
                 )
             }
@@ -164,20 +127,7 @@ private fun TrainingSessionContentLoadingPreview() {
         TrainingSessionContent(
             trainingSessionState = TrainingSessionState.IdleState,
             time = Time.ZERO,
-            onRepsChanged = {},
-            onWeightChanged = {},
-            onHoldDurationChanged = {},
-            onToggleHoldTimer = {},
-            onResetHoldTimer = {},
-            onCompleteSet = {},
-            onSkipSet = {},
-            onSkipExercise = {},
-            onAddExtraSet = {},
-            onFeedbackSelected = {},
-            onStartNextSet = {},
-            onSkipRest = {},
-            onSummaryRpeSelected = {},
-            onSummaryNotesChanged = {},
+            onSessionIntent = {},
             onSaveWorkout = {}
         )
     }

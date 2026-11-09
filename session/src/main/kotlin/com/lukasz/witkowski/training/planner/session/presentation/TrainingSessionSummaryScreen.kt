@@ -59,8 +59,7 @@ import kotlin.time.Instant
 @Composable
 fun TrainingSessionSummaryScreen(
     state: TrainingSessionState.SummaryState,
-    onRpeSelected: (SessionRpe) -> Unit,
-    onNotesChanged: (String) -> Unit,
+    onSessionIntent: (SessionIntent) -> Unit,
     onSaveWorkout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -92,14 +91,14 @@ fun TrainingSessionSummaryScreen(
         // RPE Assessment Grid
         AppRpeScaleGrid(
             selectedRpe = state.selectedOverallRpe,
-            onRpeSelected = onRpeSelected
+            onRpeSelected = { onSessionIntent(SessionIntent.SessionFeedbackSelected(it)) }
         )
 
         // Workout Notes Input
         AppLabeledTextField(
             label = stringResource(R.string.session_summary_notes_label),
             value = state.notes,
-            onValueChange = onNotesChanged,
+            onValueChange = { onSessionIntent(SessionIntent.SessionNotesChanged(it)) },
             placeholder = stringResource(R.string.session_summary_notes_placeholder),
             singleLine = false
         )
@@ -397,8 +396,7 @@ private fun TrainingSessionSummaryScreenPreview() {
                 statistics = stats,
                 trainingPlan = plan
             ),
-            onRpeSelected = {},
-            onNotesChanged = {},
+            onSessionIntent = {},
             onSaveWorkout = {}
         )
     }
