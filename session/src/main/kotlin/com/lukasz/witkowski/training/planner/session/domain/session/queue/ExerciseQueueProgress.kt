@@ -6,4 +6,7 @@ data class ExerciseQueueProgress(
     val totalExercises: Int,
     val remainingExercises: Int,
     val remainingSetsInWorkout: Int
-)
+) {
+    val exerciseIndex = totalExercises - remainingExercises
+    val currentExerciseSet = currentExerciseTotalSets - remainingExercises
+}

@@ -91,6 +91,14 @@ internal class TrainingSession(
         currentPhase.value.handle(command)
     }
 
+    fun updateReps(newReps: Int) {
+        currentPhase.value.handle(SessionCommand.Exercise.UpdateReps(newReps))
+    }
+
+    fun updateWeight(weight: Double) {
+        currentPhase.value.handle(SessionCommand.Exercise.UpdateWeight(weight))
+    }
+
     fun stop() {
         currentPhase.value.close()
         currentPhase.value = IdlePhase

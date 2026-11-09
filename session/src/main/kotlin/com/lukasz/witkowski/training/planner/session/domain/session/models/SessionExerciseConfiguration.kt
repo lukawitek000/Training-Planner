@@ -6,4 +6,6 @@ data class SessionExerciseConfiguration(
     val reps: Int,
     val weightInKg: Double?,
     val holdTime: Duration?
-)
+) {
+    val isIsometric = holdTime != null
+}

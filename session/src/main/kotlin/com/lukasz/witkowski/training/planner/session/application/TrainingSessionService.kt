@@ -56,43 +56,6 @@ class TrainingSessionService(
                 initialValue = TrainingSessionState.IdleState
             )
 
-    val isTimerRunning: StateFlow<Boolean> =
-        trainingSessionState
-            .map { state ->
-                val timerState =
-                    when (state) {
-                        is TrainingSessionState.ExerciseState -> state.timerState
-                        is TrainingSessionState.RestTimeState -> state.timerState
-                        else -> null
-                    }
-                timerState is TimerState.Running || timerState is TimerState.OverflowRunning
-            }.stateIn(
-                scope = scope,
-                started = SharingStarted.Eagerly,
-                initialValue = false
-            )
-
-    val time: StateFlow<Time> =
-        trainingSessionState
-            .map { state ->
-                val timerState =
-                    when (state) {
-                        is TrainingSessionState.ExerciseState -> state.timerState
-                        is TrainingSessionState.RestTimeState -> state.timerState
-                        else -> null
-                    }
-                when (timerState) {
-                    is TimerState.Running -> Time(timerState.remaining.inWholeMilliseconds)
-                    is TimerState.Ready -> Time(timerState.duration.inWholeMilliseconds)
-                    is TimerState.OverflowRunning -> Time(timerState.overflow.inWholeMilliseconds)
-                    else -> Time.ZERO
-                }
-            }.stateIn(
-                scope = scope,
-                started = SharingStarted.Eagerly,
-                initialValue = Time.ZERO
-            )
-
     var trainingPlan: TrainingPlan? = null
         private set
 
@@ -120,8 +83,16 @@ class TrainingSessionService(
         requireActiveSession().skip()
     }
 
-    fun skipExercise() {
-        requireActiveSession().skip()
+    fun completed() {
+        requireActiveSession().complete()
+    }
+
+    fun changeReps(newReps: Int) {
+        requireActiveSession().updateReps(newReps)
+    }
+
+    fun changeWeight(weight: Double) {
+        requireActiveSession().updateWeight(weight)
     }
 
     fun addExtraSet() {
@@ -146,28 +117,6 @@ class TrainingSessionService(
         }
     }
 
-    fun completed(
-        actualReps: Int? = null,
-        actualWeightInKg: Double? = null,
-        effort: SetEffort? = null,
-        actualTime: Duration? = null
-    ) {
-        val session = requireActiveSession()
-        if (actualReps != null) {
-            session.handle(SessionCommand.Exercise.UpdateReps(actualReps))
-        }
-        if (actualWeightInKg != null) {
-            session.handle(SessionCommand.Exercise.UpdateWeight(actualWeightInKg))
-        }
-        if (actualTime != null) {
-            session.handle(SessionCommand.Exercise.UpdateHoldDuration(actualTime))
-        }
-        if (effort != null) {
-            session.handle(SessionCommand.RestTime.UpdateFeedback(effort))
-        }
-        session.complete()
-    }
-
     fun stopTraining() {
         if (::trainingSession.isInitialized) {
             trainingSession.stop()
@@ -176,18 +125,6 @@ class TrainingSessionService(
     }
 
     fun isTrainingSessionStarted() = trainingSessionState.value !is TrainingSessionState.IdleState
-
-    fun startTimer() {
-        if (::trainingSession.isInitialized) {
-            trainingSession.handle(SessionCommand.Exercise.StartTimer)
-        }
-    }
-
-    fun stopTimer() = Unit
-
-    fun pauseTimer() = Unit
-
-    fun resetTimer() = Unit
 
     suspend fun finishSession(note: String? = null, rpe: SessionRpe? = null): TrainingStatistics {
         val session = requireActiveSession()

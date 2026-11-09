@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,19 +26,22 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
+import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
+import com.lukasz.witkowski.training.planner.session.domain.session.models.TrainingExerciseSnapshot
+import com.lukasz.witkowski.training.planner.session.domain.session.queue.ExerciseQueueProgress
+import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppFeedbackChips
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
-import com.lukasz.witkowski.training.planner.shared.ui.button.AppSecondaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.timer.AppCircularTimer
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
-import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 private data class FeedbackChipOption(val effort: SetEffort, val label: String)
@@ -51,8 +53,8 @@ private data class FeedbackChipOption(val effort: SetEffort, val label: String)
 @Composable
 fun RestTimeScreen(
     state: TrainingSessionState.RestTimeState,
-    timeLeft: Time,
-    totalTime: Time,
+    timeLeft: Duration,
+    totalTime: Duration,
     onSessionIntent: (SessionIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -65,8 +67,8 @@ fun RestTimeScreen(
         FeedbackChipOption(SetEffort.MAXIMAL, stringResource(R.string.session_feedback_limit))
     )
 
-    val progress = if (totalTime.timeInMillis > 0) {
-        timeLeft.timeInMillis.toFloat() / totalTime.timeInMillis.toFloat()
+    val progress = if (totalTime.inWholeMilliseconds > 0) {
+        timeLeft.inWholeMilliseconds.toFloat() / totalTime.inWholeMilliseconds.toFloat()
     } else {
         0f
     }
@@ -135,8 +137,8 @@ fun RestTimeScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AppExerciseImage(
-                    imageIds = state.nextExercise.exercise.imageIds,
-                    contentDescription = state.nextExercise.exercise.name,
+                    imageIds = state.nextExercise.snapshot.imageIds,
+                    contentDescription = state.nextExercise.snapshot.name,
                     modifier = Modifier.size(Dimens.listItemThumbnailSize)
                 )
 
@@ -151,7 +153,7 @@ fun RestTimeScreen(
                     )
 
                     Text(
-                        text = state.nextExercise.exercise.name,
+                        text = state.nextExercise.snapshot.name,
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onSurface
@@ -164,26 +166,26 @@ fun RestTimeScreen(
                         Text(
                             text = stringResource(
                                 R.string.session_set_progress_format,
-                                state.nextSet,
-                                state.totalSetsForNextExercise
+                                state.progress.currentExerciseSet,
+                                state.progress.currentExerciseTotalSets
                             ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         val nextExercise = state.nextExercise
                         val targetMetric =
-                            if (nextExercise.isIsometric) {
+                            if (nextExercise.currentConfig.isIsometric) {
                                 stringResource(
                                     R.string.session_target_hold_format,
-                                    nextExercise.time.inWholeSeconds
+                                    nextExercise.currentConfig.holdTime!!.inWholeSeconds
                                 )
                             } else {
                                 stringResource(
                                     R.string.session_target_reps_format,
-                                    nextExercise.repetitions
+                                    nextExercise.currentConfig.reps
                                 )
                             }
-                        val weight = state.nextExercise.weightInKg
+                        val weight = state.nextExercise.currentConfig.weightInKg
                         val weightSuffix = if (weight != null && weight > 0) {
                             stringResource(R.string.session_target_weight_suffix, weight.toString())
                         } else {
@@ -194,18 +196,6 @@ fun RestTimeScreen(
                             style = MaterialTheme.typography.bodySmall,
                             fontWeight = FontWeight.Medium,
                             color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-
-                    if (state.followingExercise != null) {
-                        Text(
-                            text = stringResource(
-                                R.string.session_following_format,
-                                state.followingExercise.exercise.name,
-                                state.followingExercise.sets
-                            ),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
@@ -222,8 +212,8 @@ fun RestTimeScreen(
     }
 }
 
-private fun formatRemainingTime(time: Time): String {
-    val totalSeconds = (time.timeInMillis / 1000).toInt()
+private fun formatRemainingTime(time: Duration): String {
+    val totalSeconds = time.inWholeSeconds
     val minutes = totalSeconds / 60
     val seconds = totalSeconds % 60
     return "%02d:%02d".format(minutes, seconds)
@@ -232,32 +222,44 @@ private fun formatRemainingTime(time: Time): String {
 @AppPreview
 @Composable
 private fun RestTimeScreenPreview() {
-    val dummyExercise = TrainingExercise(
+    val dummyConfig = SessionExerciseConfiguration(
+        reps = 12,
+        weightInKg = 50.0,
+        holdTime = null
+    )
+    val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
-        exercise = ExerciseSnapshot(
-            id = com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId.create(),
-            name = "Incline Dumbbell Press",
-            description = "Press dumbbells at incline",
-            categories = setOf(ExerciseCategoryName("Chest")),
-            imageIds = emptyList()
-        ),
-        repetitions = 12,
-        sets = 3,
+        name = "Incline Dumbbell Press",
+        description = "Press dumbbells at incline",
+        categories = setOf(ExerciseCategoryName("Chest")),
+        imageIds = emptyList(),
+        plannedConfig = dummyConfig
+    )
+    val nextSessionExercise = SessionExercise(
+        snapshot = dummySnapshot,
+        currentConfig = dummyConfig,
         restTime = 60.seconds
     )
+    val progress = ExerciseQueueProgress(
+        remainingExerciseSets = 2,
+        currentExerciseTotalSets = 3,
+        totalExercises = 4,
+        remainingExercises = 2,
+        remainingSetsInWorkout = 6
+    )
     val state = TrainingSessionState.RestTimeState(
-        nextExercise = dummyExercise,
-        restTime = Time(60000L),
-        nextSet = 2,
-        totalSetsForNextExercise = 3,
-        lastCompletedAttempt = null
+        nextExercise = nextSessionExercise,
+        timerState = TimerState.Running(42.seconds),
+        totalRestTime = 60.seconds,
+        progress = progress,
+        selectedFeedback = null
     )
 
     TrainingPlannerTheme {
         RestTimeScreen(
             state = state,
-            timeLeft = Time(42000L),
-            totalTime = Time(60000L),
+            timeLeft = 42.seconds,
+            totalTime = 60.seconds,
             onSessionIntent = {}
         )
     }

@@ -33,17 +33,10 @@ internal object TrainingSessionFactory {
                 timeProvider = timeProvider
             )
         val compositeRecorder =
-            if (statisticsRecorder is BasicStatisticsRecorder) {
-                statisticsRecorder
-            } else {
-                CompositeStatisticsRecorder(basicRecorder, statisticsRecorder)
-            }
+            statisticsRecorder as? BasicStatisticsRecorder
+                ?: CompositeStatisticsRecorder(basicRecorder, statisticsRecorder)
         val statisticsProvider =
-            if (statisticsRecorder is BasicStatisticsRecorder) {
-                statisticsRecorder
-            } else {
-                basicRecorder
-            }
+            statisticsRecorder as? BasicStatisticsRecorder ?: basicRecorder
         return TrainingSession(
             trainingPlanId = trainingPlan.id,
             exerciseQueue = exerciseQueue,

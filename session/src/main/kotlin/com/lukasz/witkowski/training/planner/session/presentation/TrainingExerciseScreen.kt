@@ -38,6 +38,12 @@ import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
 import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
 import com.lukasz.witkowski.training.planner.session.R
+import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
+import com.lukasz.witkowski.training.planner.session.domain.session.models.TrainingExerciseSnapshot
+import com.lukasz.witkowski.training.planner.session.domain.session.queue.ExerciseQueueProgress
+import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppIntStepper
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppStepper
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
@@ -49,8 +55,6 @@ import com.lukasz.witkowski.training.planner.shared.ui.button.AppTertiaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
-import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -71,29 +75,28 @@ fun TrainingExerciseScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(horizontal = Dimens.margin, vertical = Dimens.spaceMd),
+            .padding(Dimens.spaceMd),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
         ExerciseHeader(
-            exerciseName = state.currentExercise.exercise.name,
-            categories = state.currentExercise.exercise.categories.map { it.name },
-            exerciseIndex = state.exerciseIndex,
-            totalExercises = state.totalExercises,
-            followingExercise = state.followingExercise
+            exerciseName = state.sessionExercise.snapshot.name,
+            categories = state.sessionExercise.snapshot.categories.map { it.name },
+            exerciseIndex = state.progress.exerciseIndex,
+            totalExercises = state.progress.totalExercises,
         )
 
-        if (state.images.isNotEmpty()) {
-            ImageGallery(
-                images = state.images,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(Dimens.heroImageHeightCompact),
-            )
-        }
+//        if (state.images.isNotEmpty()) {
+//            ImageGallery(
+//                images = state.images,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(Dimens.heroImageHeightCompact),
+//            )
+//        }
 
         SetsProgressStrip(
-            currentSet = state.currentSet,
-            totalSets = state.totalSets
+            currentSet = state.progress.currentExerciseSet,
+            totalSets = state.progress.currentExerciseTotalSets
         )
 
         ActiveSetCard(state, onSessionIntent)
@@ -142,24 +145,24 @@ private fun ActiveSetCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(R.string.session_active_set_format, state.currentSet),
+                    text = stringResource(R.string.session_active_set_format, state.progress.currentExerciseSet),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
                 val targetMetric =
-                    if (state.isIsometric) {
+                    if (state.sessionExercise.currentConfig.isIsometric) {
                         stringResource(
                             R.string.session_target_hold_format,
-                            state.targetTime.inWholeSeconds
+                            state.sessionExercise.currentConfig.holdTime!!.inWholeSeconds
                         )
                     } else {
                         stringResource(
                             R.string.session_target_reps_format,
-                            state.targetReps
+                            state.sessionExercise.currentConfig.reps
                         )
                     }
-                val weight = state.targetWeightInKg
+                val weight = state.sessionExercise.currentConfig.weightInKg
                 val weightSuffix =
                     if (weight != null && weight > 0.0) {
                         stringResource(
@@ -180,7 +183,7 @@ private fun ActiveSetCard(
                 )
             }
 
-            if (state.isIsometric) {
+            if (state.sessionExercise.currentConfig.isIsometric) {
 //                    IsometricHoldControls(
 //                        countdownRemaining = state.remainingHoldTime.inWholeSeconds.toInt(),
 //                        isHoldTimerRunning = state.isHoldTimerRunning,
@@ -191,7 +194,7 @@ private fun ActiveSetCard(
 //                    )
             } else {
                 AppIntStepper(
-                    value = state.selectedReps,
+                    value = state.sessionExercise.currentConfig.reps,
                     onValueChange = { onSessionIntent(SessionIntent.RepsChanged(it)) },
                     label = stringResource(R.string.session_reps_label),
                     minValue = 0
@@ -199,7 +202,7 @@ private fun ActiveSetCard(
             }
 
             AppStepper(
-                value = state.selectedWeightInKg ?: 0.0,
+                value = state.sessionExercise.currentConfig.weightInKg ?: 0.0,
                 onValueChange = { onSessionIntent(SessionIntent.WeightChanged(it)) },
                 step = 2.5,
                 label = stringResource(R.string.session_kg_label),
@@ -327,7 +330,6 @@ private fun ExerciseHeader(
     categories: List<String>,
     exerciseIndex: Int,
     totalExercises: Int,
-    followingExercise: TrainingExercise?,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -360,18 +362,6 @@ private fun ExerciseHeader(
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
         )
-
-        if (followingExercise != null) {
-            Text(
-                text = stringResource(
-                    R.string.session_up_next_format,
-                    followingExercise.exercise.name,
-                    followingExercise.sets
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
     }
 }
 
@@ -440,30 +430,35 @@ private fun SetsProgressStrip(currentSet: Int, totalSets: Int, modifier: Modifie
 @AppPreview
 @Composable
 private fun TrainingExerciseScreenPreview() {
-    val dummyExercise = TrainingExercise(
+    val dummyConfig = SessionExerciseConfiguration(
+        reps = 10,
+        weightInKg = 85.0,
+        holdTime = null
+    )
+    val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
-        exercise = ExerciseSnapshot(
-            id = com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId.create(),
-            name = "Barbell Bench Press",
-            description = "Lie on bench, press bar upwards",
-            categories = setOf(ExerciseCategoryName("Chest")),
-            imageIds = emptyList()
-        ),
-        repetitions = 10,
-        sets = 4,
+        name = "Barbell Bench Press",
+        description = "Lie on bench, press bar upwards",
+        categories = setOf(ExerciseCategoryName("Chest")),
+        imageIds = PREVIEW_PUSH_UP_IMAGES.map { it.imageId },
+        plannedConfig = dummyConfig
+    )
+    val sessionExercise = SessionExercise(
+        snapshot = dummySnapshot,
+        currentConfig = dummyConfig,
         restTime = 90.seconds
     )
-    val state = TrainingSessionState.ExerciseState(
-        currentExercise = dummyExercise,
-        images = PREVIEW_PUSH_UP_IMAGES,
-        currentSet = 2,
-        totalSets = 4,
-        targetReps = 10,
-        targetWeightInKg = 85.0,
-        completedSets = emptyList(),
-        exerciseIndex = 1,
+    val progress = ExerciseQueueProgress(
+        remainingExerciseSets = 2,
+        currentExerciseTotalSets = 4,
         totalExercises = 4,
-        setsLeftInWorkout = 10
+        remainingExercises = 3,
+        remainingSetsInWorkout = 10
+    )
+    val state = TrainingSessionState.ExerciseState(
+        sessionExercise = sessionExercise,
+        timerState = TimerState.NotSet,
+        progress = progress
     )
 
     TrainingPlannerTheme {
@@ -477,33 +472,35 @@ private fun TrainingExerciseScreenPreview() {
 @AppPreview
 @Composable
 private fun TrainingExerciseScreenHoldTimePreview() {
-    val dummyExercise = TrainingExercise(
+    val dummyConfig = SessionExerciseConfiguration(
+        reps = 0,
+        weightInKg = null,
+        holdTime = 60.seconds
+    )
+    val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
-        exercise = ExerciseSnapshot(
-            id = com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId.create(),
-            name = "Plank",
-            description = "Hold a straight body position resting on forearms and toes",
-            categories = setOf(ExerciseCategoryName("Core")),
-            imageIds = emptyList()
-        ),
-        repetitions = 0,
-        sets = 3,
-        time = 60.seconds,
+        name = "Plank",
+        description = "Hold a straight body position resting on forearms and toes",
+        categories = setOf(ExerciseCategoryName("Core")),
+        imageIds = emptyList(),
+        plannedConfig = dummyConfig
+    )
+    val sessionExercise = SessionExercise(
+        snapshot = dummySnapshot,
+        currentConfig = dummyConfig,
         restTime = 45.seconds
     )
-    val state = TrainingSessionState.ExerciseState(
-        currentExercise = dummyExercise,
-        currentSet = 1,
-        totalSets = 3,
-        targetReps = 0,
-        targetWeightInKg = 0.0,
-        completedSets = emptyList(),
-        exerciseIndex = 2,
+    val progress = ExerciseQueueProgress(
+        remainingExerciseSets = 2,
+        currentExerciseTotalSets = 3,
         totalExercises = 4,
-        setsLeftInWorkout = 6,
-        targetTime = 60.seconds,
-        remainingHoldTime = 42.seconds,
-        isHoldTimerRunning = true
+        remainingExercises = 2,
+        remainingSetsInWorkout = 6
+    )
+    val state = TrainingSessionState.ExerciseState(
+        sessionExercise = sessionExercise,
+        timerState = TimerState.Running(42.seconds),
+        progress = progress
     )
 
     TrainingPlannerTheme {

@@ -15,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
+import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.Time
@@ -34,7 +35,6 @@ fun TrainingSessionScreen(
     modifier: Modifier = Modifier
 ) {
     val trainingSessionState by viewModel.trainingSessionState.collectAsState()
-    val time by viewModel.time.collectAsState()
     var showExitConfirmationDialog by remember { mutableStateOf(false) }
 
     BackHandler(enabled = trainingSessionState !is TrainingSessionState.SummaryState) {
@@ -66,7 +66,6 @@ fun TrainingSessionScreen(
     ) {
         TrainingSessionContent(
             trainingSessionState = trainingSessionState,
-            time = time,
             onSessionIntent = viewModel::onIntent,
             onSaveWorkout = {
                 viewModel.saveStatistics()
@@ -79,7 +78,6 @@ fun TrainingSessionScreen(
 @Composable
 fun TrainingSessionContent(
     trainingSessionState: TrainingSessionState,
-    time: Time,
     onSessionIntent: (SessionIntent) -> Unit,
     onSaveWorkout: () -> Unit,
     modifier: Modifier = Modifier
@@ -96,8 +94,8 @@ fun TrainingSessionContent(
             is TrainingSessionState.RestTimeState -> {
                 RestTimeScreen(
                     state = trainingSessionState,
-                    timeLeft = time,
-                    totalTime = trainingSessionState.time,
+                    timeLeft = Duration.ZERO,
+                    totalTime = trainingSessionState.totalRestTime,
                     onSessionIntent = onSessionIntent,
                 )
             }
@@ -126,7 +124,6 @@ private fun TrainingSessionContentLoadingPreview() {
     TrainingPlannerTheme {
         TrainingSessionContent(
             trainingSessionState = TrainingSessionState.IdleState,
-            time = Time.ZERO,
             onSessionIntent = {},
             onSaveWorkout = {}
         )

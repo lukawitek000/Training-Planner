@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -26,66 +27,45 @@ class TrainingSessionViewModel(
     private val trainingPlanId: TrainingPlanId
 ) : ViewModel() {
 
-    private data class UserInputs(
-        val exerciseKey: String? = null,
-        val reps: Int? = null,
-        val weightInKg: Double? = null,
-        val holdDuration: Duration? = null,
-        val restFeedback: SetEffort? = null,
-        val summaryRpe: SessionRpe? = null,
-        val summaryNotes: String = ""
-    )
-
-    private val userInputs = MutableStateFlow(UserInputs())
-
-    val isTimerRunning: StateFlow<Boolean> = trainingSessionService.isTimerRunning
-    val time: StateFlow<Time> = trainingSessionService.time
-
-    val trainingSessionState: StateFlow<TrainingSessionState> = combine(
-        trainingSessionService.trainingSessionState,
-        trainingSessionService.time,
-        trainingSessionService.isTimerRunning,
-        userInputs
-    ) { domainState, timeVal, isRunning, inputs ->
-        val isSameExercise =
-            when (domainState) {
-                is DomainState.ExerciseState -> {
-                    val totalSets = domainState.progress.currentExerciseTotalSets
-                    val remainingSets = domainState.progress.remainingExerciseSets
-                    val currentSet = (totalSets - remainingSets).coerceAtLeast(1)
-                    val key = "${domainState.sessionExercise.exerciseId.value}_$currentSet"
-                    inputs.exerciseKey == key
-                }
-                else -> false
-            }
-        domainState.toPresentationTrainingSessionState(
-            trainingPlan = trainingSessionService.trainingPlan,
-            time = timeVal,
-            isTimerRunning = isRunning,
-            selectedReps = if (isSameExercise) inputs.reps else null,
-            selectedWeightInKg = if (isSameExercise) inputs.weightInKg else null,
-            selectedHoldDuration = if (isSameExercise) inputs.holdDuration else null,
-            selectedFeedback = inputs.restFeedback,
-            summaryRpe = inputs.summaryRpe,
-            summaryNotes = inputs.summaryNotes
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TrainingSessionState.IdleState)
+    val trainingSessionState: StateFlow<DomainState> = trainingSessionService.trainingSessionState
 
     init {
         fetchTrainingPlan()
     }
 
     fun onIntent(intent: SessionIntent) {
-
+        when (intent) {
+            is SessionIntent.RepsChanged -> {
+                trainingSessionService.changeReps(intent.reps)
+            }
+            is SessionIntent.WeightChanged -> {
+                trainingSessionService.changeWeight(intent.weight)
+            }
+            is SessionIntent.HoldTimeChanged -> {
+                // TODO
+            }
+            is SessionIntent.SetAdded -> {
+                trainingSessionService.addExtraSet()
+            }
+            is SessionIntent.SetRemoved -> {
+                trainingSessionService.removeExtraSet()
+            }
+            is SessionIntent.SetCompleted -> {
+                trainingSessionService.completed()
+            }
+            is SessionIntent.SetSkipped -> {
+                trainingSessionService.skip()
+            }
+            is SessionIntent.RestSkipped -> Unit
+            is SessionIntent.SetFeedbackSelected -> Unit
+            is SessionIntent.SessionNotesChanged -> Unit
+            is SessionIntent.SessionFeedbackSelected -> Unit
+            is SessionIntent.SessionEnd -> Unit
+        }
     }
 
     fun saveStatistics() {
-        val summaryState = trainingSessionState.value as? TrainingSessionState.SummaryState
-        val note = summaryState?.notes?.ifEmpty { null }
-        val rpe = summaryState?.selectedOverallRpe
-        viewModelScope.launch {
-            trainingSessionService.finishSession(note = note, rpe = rpe)
-        }
+
     }
 
     private fun fetchTrainingPlan() {

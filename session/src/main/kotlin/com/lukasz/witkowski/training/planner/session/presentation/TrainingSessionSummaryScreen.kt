@@ -32,6 +32,8 @@ import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttem
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
+import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppRpeScaleGrid
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
@@ -73,11 +75,10 @@ fun TrainingSessionSummaryScreen(
             .padding(horizontal = Dimens.margin, vertical = Dimens.spaceMd),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceLg)
     ) {
-        // Celebration Banner
-        CelebrationBanner(
-            planTitle = state.trainingPlan.title,
-            date = statistics.date
-        )
+//        CelebrationBanner(
+//            planTitle = state.statistics,
+//            date = statistics.date
+//        )
 
         // Bento Metrics Grid
         BentoMetricsGrid(
@@ -104,10 +105,10 @@ fun TrainingSessionSummaryScreen(
         )
 
         // Exercises Breakdown Section
-        ExercisesBreakdownSection(
-            statistics = statistics,
-            trainingPlan = state.trainingPlan
-        )
+//        ExercisesBreakdownSection(
+//            statistics = statistics,
+//            trainingPlan = state.trainingPlan
+//        )
 
         // Save Button
         AppPrimaryButton(
@@ -331,70 +332,20 @@ private fun formatDuration(time: Time): String {
 @AppPreview
 @Composable
 private fun TrainingSessionSummaryScreenPreview() {
-    val exercise = TrainingExercise(
-        id = TrainingExerciseId.create(),
-        exercise = ExerciseSnapshot(
-            id = com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId.create(),
-            name = "Barbell Bench Press",
-            description = "Chest press",
-            categories = setOf(ExerciseCategoryName("Chest")),
-            imageIds = emptyList()
-        ),
-        repetitions = 10,
-        sets = 3,
-        restTime = 60.seconds
-    )
-    val plan = TrainingPlan(
-        id = TrainingPlanId.create(),
-        title = "Upper Body Hypertrophy",
-        description = "Chest and triceps workout",
-        exercises = listOf(exercise),
-        restTime = 60.seconds,
-        lastModification = Instant.DISTANT_PAST,
-        lastSession = null
-    )
     val stats = TrainingStatistics(
-        trainingPlanId = plan.id,
+        id = TrainingStatisticsId.create(),
+        trainingPlanId = TrainingPlanId.create(),
         totalTime = Time(2700000L),
         date = Date(),
-        exercisesStatistics = listOf(
-            ExerciseStatistics(
-                trainingExerciseId = exercise.id,
-                attemptsStatistics = listOf(
-                    ExerciseAttemptStatistics(
-                        trainingExerciseId = exercise.id,
-                        time = Time(45000L),
-                        set = 1,
-                        completed = true,
-                        actualReps = 10,
-                        actualWeightInKg = 85.0
-                    ),
-                    ExerciseAttemptStatistics(
-                        trainingExerciseId = exercise.id,
-                        time = Time(45000L),
-                        set = 2,
-                        completed = true,
-                        actualReps = 10,
-                        actualWeightInKg = 85.0
-                    ),
-                    ExerciseAttemptStatistics(
-                        trainingExerciseId = exercise.id,
-                        time = Time(45000L),
-                        set = 3,
-                        completed = true,
-                        actualReps = 9,
-                        actualWeightInKg = 85.0
-                    )
-                )
-            )
-        )
+        exercisesStatistics = emptyList()
     )
 
     TrainingPlannerTheme {
         TrainingSessionSummaryScreen(
             state = TrainingSessionState.SummaryState(
                 statistics = stats,
-                trainingPlan = plan
+                selectedOverallRpe = SessionRpe.VERY_HARD,
+                notes = "Great workout!"
             ),
             onSessionIntent = {},
             onSaveWorkout = {}

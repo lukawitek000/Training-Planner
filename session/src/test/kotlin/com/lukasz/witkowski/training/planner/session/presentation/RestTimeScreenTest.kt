@@ -7,7 +7,6 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.lukasz.witkowski.training.planner.session.createDummyExercise
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
-import com.lukasz.witkowski.training.planner.session.presentation.TrainingSessionState.RestTimeState
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
