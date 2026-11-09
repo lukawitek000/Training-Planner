@@ -6,6 +6,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import timber.log.Timber
 
 internal class ExerciseQueue(loadedExercises: List<SessionExercise>) {
     init {
@@ -35,16 +36,14 @@ internal class ExerciseQueue(loadedExercises: List<SessionExercise>) {
             "Exercise queue is empty, cannot load next exercise"
         }
         return remainingExercises.removeAt(0).also { polled ->
+            Timber.i("Polled exercise ${activeExercise.exerciseId}")
             activeExercise = polled
             activeExerciseId = polled.exerciseId
+            updateProgress(activeExerciseId)
         }
     }
 
     fun peek(): SessionExercise? = remainingExercises.firstOrNull()
-
-    fun refreshProgress() {
-        updateProgress(activeExerciseId)
-    }
 
     fun addExtraSet(): Pair<SessionExercise, Int> {
         val exerciseId = activeExercise.exerciseId
@@ -95,6 +94,8 @@ internal class ExerciseQueue(loadedExercises: List<SessionExercise>) {
             remainingExercises = groupedExercises.size,
             totalExercises = totalDistinctExercises,
             remainingSetsInWorkout = remainingExercises.size
-        )
+        ).also {
+            Timber.d("Calculated queue progress $it")
+        }
     }
 }

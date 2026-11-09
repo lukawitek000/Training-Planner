@@ -18,7 +18,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
@@ -36,7 +35,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
-import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
@@ -56,7 +54,6 @@ import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 /**
@@ -139,49 +136,7 @@ private fun ActiveSetCard(
                 .padding(Dimens.spaceMd),
             verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.session_active_set_format, state.progress.currentExerciseSet),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                val targetMetric =
-                    if (state.sessionExercise.currentConfig.isIsometric) {
-                        stringResource(
-                            R.string.session_target_hold_format,
-                            state.sessionExercise.currentConfig.holdTime!!.inWholeSeconds
-                        )
-                    } else {
-                        stringResource(
-                            R.string.session_target_reps_format,
-                            state.sessionExercise.currentConfig.reps
-                        )
-                    }
-                val weight = state.sessionExercise.currentConfig.weightInKg
-                val weightSuffix =
-                    if (weight != null && weight > 0.0) {
-                        stringResource(
-                            R.string.session_target_weight_suffix,
-                            weight.toString()
-                        )
-                    } else {
-                        ""
-                    }
-                val summary = stringResource(
-                    R.string.session_target_summary_format,
-                    targetMetric
-                )
-                Text(
-                    text = summary + weightSuffix,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+            ActiveSetHeader(state)
 
             if (state.sessionExercise.currentConfig.isIsometric) {
 //                    IsometricHoldControls(
@@ -210,6 +165,61 @@ private fun ActiveSetCard(
             )
         }
     }
+}
+
+@Composable
+private fun ActiveSetHeader(state: TrainingSessionState.ExerciseState) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(
+                R.string.session_active_set_format,
+                state.progress.currentExerciseSet
+            ),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
+        )
+        PlannedConfiguration(state)
+    }
+}
+
+@Composable
+private fun PlannedConfiguration(state: TrainingSessionState.ExerciseState) {
+    val targetMetric =
+        if (state.sessionExercise.snapshot.plannedConfig.isIsometric) {
+            stringResource(
+                R.string.session_target_hold_format,
+                state.sessionExercise.snapshot.plannedConfig.holdTime!!.inWholeSeconds
+            )
+        } else {
+            stringResource(
+                R.string.session_target_reps_format,
+                state.sessionExercise.snapshot.plannedConfig.reps
+            )
+        }
+    val weight = state.sessionExercise.snapshot.plannedConfig.weightInKg
+    val weightSuffix =
+        if (weight != null && weight > 0.0) {
+            stringResource(
+                R.string.session_target_weight_suffix,
+                weight.toString()
+            )
+        } else {
+            ""
+        }
+    val summary = stringResource(
+        R.string.session_target_summary_format,
+        targetMetric
+    )
+    Text(
+        text = summary + weightSuffix,
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant
+    )
 }
 
 @Composable

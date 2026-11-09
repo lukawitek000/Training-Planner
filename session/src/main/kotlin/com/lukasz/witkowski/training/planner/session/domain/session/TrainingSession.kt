@@ -40,7 +40,6 @@ internal class TrainingSession(
     val state: StateFlow<TrainingSessionState> =
         currentPhase
             .flatMapLatest { phase ->
-                exerciseQueue.refreshProgress()
                 combine(phase.state, exerciseQueue.progress) { phaseState, queueProgress ->
                     phaseState.toTrainingSessionState(queueProgress)
                 }

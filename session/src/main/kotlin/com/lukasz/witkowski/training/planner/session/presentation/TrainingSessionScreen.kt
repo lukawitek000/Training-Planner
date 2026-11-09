@@ -4,6 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,6 +30,7 @@ import kotlin.time.Duration
  * Main coordinator screen for the workout session.
  * Switches between [TrainingExerciseScreen], [RestTimeScreen], and [TrainingSessionSummaryScreen].
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainingSessionScreen(
     viewModel: TrainingSessionViewModel,
@@ -39,6 +42,20 @@ fun TrainingSessionScreen(
 
     BackHandler(enabled = trainingSessionState !is TrainingSessionState.SummaryState) {
         showExitConfirmationDialog = true
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        TrainingSessionContent(
+            trainingSessionState = trainingSessionState,
+            onSessionIntent = viewModel::onIntent,
+            onSaveWorkout = {
+                viewModel.saveStatistics()
+                navigateBack()
+            }
+        )
     }
 
     if (showExitConfirmationDialog) {
@@ -55,21 +72,6 @@ fun TrainingSessionScreen(
             },
             onDismiss = {
                 showExitConfirmationDialog = false
-            }
-        )
-    }
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(Dimens.spaceMd)
-    ) {
-        TrainingSessionContent(
-            trainingSessionState = trainingSessionState,
-            onSessionIntent = viewModel::onIntent,
-            onSaveWorkout = {
-                viewModel.saveStatistics()
-                navigateBack()
             }
         )
     }

@@ -1,5 +1,7 @@
 package com.lukasz.witkowski.training.planner.session.domain.session.queue
 
+import timber.log.Timber
+
 data class ExerciseQueueProgress(
     val remainingExerciseSets: Int,
     val currentExerciseTotalSets: Int,
@@ -7,6 +9,6 @@ data class ExerciseQueueProgress(
     val remainingExercises: Int,
     val remainingSetsInWorkout: Int
 ) {
-    val exerciseIndex = totalExercises - remainingExercises
-    val currentExerciseSet = currentExerciseTotalSets - remainingExercises
+    val exerciseIndex = totalExercises - remainingExercises + 1
+    val currentExerciseSet = currentExerciseTotalSets - remainingExerciseSets
 }

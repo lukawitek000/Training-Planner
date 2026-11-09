@@ -30,7 +30,7 @@
     <string name="session_active_set_format">ACTIVE SET %1$d</string>
     <string name="session_target_hold_format">%1$d s hold</string>
     <string name="session_target_reps_format">%1$d reps</string>
-    <string name="session_target_summary_format">Target: %1$s</string>
+    <string name="session_target_summary_format">Planned Target: %1$s</string>
     <string name="session_target_weight_suffix">" • %1$s kg"</string>
     <string name="session_reps_label">reps</string>
     <string name="session_kg_label">kg</string>
