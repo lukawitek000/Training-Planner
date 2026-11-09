@@ -96,8 +96,6 @@ fun TrainingSessionContent(
             is TrainingSessionState.RestTimeState -> {
                 RestTimeScreen(
                     state = trainingSessionState,
-                    timeLeft = Duration.ZERO,
-                    totalTime = trainingSessionState.totalRestTime,
                     onSessionIntent = onSessionIntent,
                 )
             }

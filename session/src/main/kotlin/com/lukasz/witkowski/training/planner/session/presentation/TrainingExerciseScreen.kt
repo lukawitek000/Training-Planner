@@ -44,6 +44,7 @@ import com.lukasz.witkowski.training.planner.session.domain.session.queue.Exerci
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppIntStepper
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppStepper
+import com.lukasz.witkowski.training.planner.session.presentation.components.TargetMetricsOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
@@ -183,43 +184,8 @@ private fun ActiveSetHeader(state: TrainingSessionState.ExerciseState) {
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary
         )
-        PlannedConfiguration(state)
+        TargetMetricsOverview(state.sessionExercise)
     }
-}
-
-@Composable
-private fun PlannedConfiguration(state: TrainingSessionState.ExerciseState) {
-    val targetMetric =
-        if (state.sessionExercise.snapshot.plannedConfig.isIsometric) {
-            stringResource(
-                R.string.session_target_hold_format,
-                state.sessionExercise.snapshot.plannedConfig.holdTime!!.inWholeSeconds
-            )
-        } else {
-            stringResource(
-                R.string.session_target_reps_format,
-                state.sessionExercise.snapshot.plannedConfig.reps
-            )
-        }
-    val weight = state.sessionExercise.snapshot.plannedConfig.weightInKg
-    val weightSuffix =
-        if (weight != null && weight > 0.0) {
-            stringResource(
-                R.string.session_target_weight_suffix,
-                weight.toString()
-            )
-        } else {
-            ""
-        }
-    val summary = stringResource(
-        R.string.session_target_summary_format,
-        targetMetric
-    )
-    Text(
-        text = summary + weightSuffix,
-        style = MaterialTheme.typography.bodySmall,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
-    )
 }
 
 @Composable
@@ -463,7 +429,8 @@ private fun TrainingExerciseScreenPreview() {
         currentExerciseTotalSets = 4,
         totalExercises = 4,
         remainingExercises = 3,
-        remainingSetsInWorkout = 10
+        remainingSetsInWorkout = 10,
+        nextSetQueueProgress = null,
     )
     val state = TrainingSessionState.ExerciseState(
         sessionExercise = sessionExercise,
@@ -505,7 +472,8 @@ private fun TrainingExerciseScreenHoldTimePreview() {
         currentExerciseTotalSets = 3,
         totalExercises = 4,
         remainingExercises = 2,
-        remainingSetsInWorkout = 6
+        remainingSetsInWorkout = 6,
+        nextSetQueueProgress = null
     )
     val state = TrainingSessionState.ExerciseState(
         sessionExercise = sessionExercise,

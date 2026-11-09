@@ -37,7 +37,7 @@ internal sealed interface PhaseState {
                 nextExercise = nextExercise,
                 timerState = timerState,
                 totalRestTime = totalRestTime,
-                progress = progress,
+                nextSetQueueProgress = progress.nextSetQueueProgress,
                 selectedFeedback = selectedFeedback
             )
     }

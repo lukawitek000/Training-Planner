@@ -21,7 +21,7 @@ sealed interface TrainingSessionState {
         val nextExercise: SessionExercise,
         val timerState: TimerState,
         val totalRestTime: Duration,
-        val progress: ExerciseQueueProgress,
+        val nextSetQueueProgress: ExerciseQueueProgress?,
         val selectedFeedback: SetEffort? = null
     ) : TrainingSessionState
 

@@ -103,18 +103,16 @@ class TrainingSessionService(
         requireActiveSession().removeExtraSet()
     }
 
+    fun setExerciseSetFeedback(effort: SetEffort) {
+        requireActiveSession().handle(SessionCommand.RestTime.UpdateFeedback(effort))
+    }
+
     fun endEarly() {
         requireActiveSession().endEarly()
     }
 
     fun handle(command: SessionCommand) {
         requireActiveSession().handle(command)
-    }
-
-    fun updateLastAttemptEffort(effort: SetEffort) {
-        if (::trainingSession.isInitialized) {
-            trainingSession.handle(SessionCommand.RestTime.UpdateFeedback(effort))
-        }
     }
 
     fun stopTraining() {

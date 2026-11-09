@@ -56,8 +56,12 @@ class TrainingSessionViewModel(
             is SessionIntent.SetSkipped -> {
                 trainingSessionService.skip()
             }
-            is SessionIntent.RestSkipped -> Unit
-            is SessionIntent.SetFeedbackSelected -> Unit
+            is SessionIntent.RestSkipped -> {
+                trainingSessionService.skip()
+            }
+            is SessionIntent.SetFeedbackSelected -> {
+                trainingSessionService.setExerciseSetFeedback(intent.effort)
+            }
             is SessionIntent.SessionNotesChanged -> Unit
             is SessionIntent.SessionFeedbackSelected -> Unit
             is SessionIntent.SessionEnd -> Unit

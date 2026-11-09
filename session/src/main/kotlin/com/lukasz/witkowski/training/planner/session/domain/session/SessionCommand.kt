@@ -16,7 +16,7 @@ sealed interface SessionCommand {
     }
 
     sealed interface RestTime : SessionCommand {
-        data class UpdateFeedback(val effort: SetEffort?) : RestTime
+        data class UpdateFeedback(val effort: SetEffort) : RestTime
     }
 
     sealed interface Summary : SessionCommand {
