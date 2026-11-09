@@ -40,6 +40,7 @@
     <string name="session_start_hold_timer">Start Hold Timer</string>
     <string name="session_reset_hold_timer">Reset Hold Timer</string>
     <string name="session_add_extra_set">Add Extra Set</string>
+    <string name="session_remove_set">Remove Set</string>
     <string name="session_skip_exercise">Skip Exercise</string>
     <string name="session_complete_set">Complete Set</string>
     <string name="session_skip_set">Skip Set</string>

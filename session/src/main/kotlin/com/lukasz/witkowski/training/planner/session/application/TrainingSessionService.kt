@@ -43,7 +43,7 @@ class TrainingSessionService(
     private val activeSession = MutableStateFlow<TrainingSession?>(null)
     private lateinit var trainingSession: TrainingSession
     private val scope = CoroutineScope(backgroundDispatcher)
-
+// TODO rework the service and the UI together with viewmodel for the session running
     val trainingSessionState: StateFlow<TrainingSessionState> =
         activeSession
             .flatMapLatest { session ->

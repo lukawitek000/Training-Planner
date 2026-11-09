@@ -120,7 +120,7 @@ fun TrainingSessionContent(
                     onResetHoldTimer = onResetHoldTimer,
                     onCompleteSet = onCompleteSet,
                     onSkipSet = onSkipSet,
-                    onSkipExercise = onSkipExercise,
+                    onRemoveSet = {  },
                     onAddExtraSet = onAddExtraSet
                 )
             }

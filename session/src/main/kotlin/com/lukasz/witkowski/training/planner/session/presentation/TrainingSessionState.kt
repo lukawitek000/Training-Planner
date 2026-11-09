@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.session.presentation
 
+import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
@@ -16,6 +17,7 @@ sealed class TrainingSessionState(
 
     data class ExerciseState(
         val currentExercise: TrainingExercise,
+        val exerciseImages: List<ImageReference> = emptyList(),
         val sessionExercise: SessionExercise? = null,
         val currentSet: Int = 1,
         val totalSets: Int = currentExercise.sets,
