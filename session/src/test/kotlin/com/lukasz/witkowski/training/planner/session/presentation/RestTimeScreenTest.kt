@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.lukasz.witkowski.training.planner.session.createDummyExercise
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.presentation.TrainingSessionState.RestTimeState
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.Time
@@ -99,7 +100,7 @@ class RestTimeScreenTest {
             totalSetsForNextExercise = 3
         )
 
-        var selectedRpe: Int? = null
+        var selectedFeedback: SetEffort? = null
 
         composeTestRule.setContent {
             TrainingPlannerTheme {
@@ -107,7 +108,7 @@ class RestTimeScreenTest {
                     state = state,
                     timeLeft = Time(60000L),
                     totalTime = Time(60000L),
-                    onFeedbackSelected = { selectedRpe = it },
+                    onFeedbackSelected = { selectedFeedback = it },
                     onStartNextSet = {},
                     onSkipRest = {}
                 )
@@ -115,7 +116,7 @@ class RestTimeScreenTest {
         }
 
         composeTestRule.onNodeWithText("Good").assertIsDisplayed().performClick()
-        assertEquals(7, selectedRpe)
+        assertEquals(SetEffort.MODERATE, selectedFeedback)
     }
 
     @Test

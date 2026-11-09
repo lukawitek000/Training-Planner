@@ -4,6 +4,7 @@ import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.models.
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatisticsId
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 
@@ -18,7 +19,7 @@ internal fun ExerciseAttemptStatistics.toDbExerciseAttemptStatistics(
     completed = completed,
     actualReps = actualReps,
     actualWeightInKg = actualWeightInKg,
-    rpe = rpe
+    rpe = effort?.score
 )
 
 internal fun DbExerciseAttemptStatistics.toExerciseAttemptStatistics(): ExerciseAttemptStatistics =
@@ -30,5 +31,5 @@ internal fun DbExerciseAttemptStatistics.toExerciseAttemptStatistics(): Exercise
         completed = completed,
         actualReps = actualReps,
         actualWeightInKg = actualWeightInKg,
-        rpe = rpe
+        effort = SetEffort.fromNumeric(rpe)
     )

@@ -1,7 +1,8 @@
 package com.lukasz.witkowski.training.planner.session.presentation
 
-import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
 import com.lukasz.witkowski.training.planner.shared.time.Time
@@ -17,7 +18,6 @@ sealed class TrainingSessionState(
 
     data class ExerciseState(
         val currentExercise: TrainingExercise,
-        val exerciseImages: List<ImageReference> = emptyList(),
         val sessionExercise: SessionExercise? = null,
         val currentSet: Int = 1,
         val totalSets: Int = currentExercise.sets,
@@ -46,13 +46,13 @@ sealed class TrainingSessionState(
         val totalSetsForNextExercise: Int = nextExercise.sets,
         val lastCompletedAttempt: ExerciseAttemptStatistics? = null,
         val followingExercise: TrainingExercise? = null,
-        val selectedFeedback: Int? = null
+        val selectedFeedback: SetEffort? = null
     ) : TrainingSessionState(nextExercise, restTime)
 
     data class SummaryState(
         val statistics: TrainingStatistics,
         val trainingPlan: TrainingPlan,
-        val selectedOverallRpe: Int? = null,
+        val selectedOverallRpe: SessionRpe? = null,
         val notes: String = ""
     ) : TrainingSessionState(time = statistics.totalTime)
 }

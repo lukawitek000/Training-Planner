@@ -14,5 +14,5 @@ data class DbExerciseAttemptStatistics(
     val completed: Boolean,
     val actualReps: Int = 0,
     val actualWeightInKg: Double? = null,
-    val rpe: Float? = null
+    val rpe: Int? = null
 )

@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.FastForward
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Icon
@@ -35,8 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
-import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppIntStepper
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppStepper
@@ -69,46 +66,130 @@ fun TrainingExerciseScreen(
     onResetHoldTimer: () -> Unit,
     onCompleteSet: () -> Unit,
     onSkipSet: () -> Unit,
-    onRemoveSet: () -> Unit,
+    onSkipExercise: () -> Unit,
     onAddExtraSet: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
+            .verticalScroll(scrollState)
             .padding(horizontal = Dimens.margin, vertical = Dimens.spaceMd),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
+        // Exercise Header
         ExerciseHeader(
             exerciseName = state.currentExercise.exercise.name,
             categories = state.currentExercise.exercise.categories.map { it.name },
             exerciseIndex = state.exerciseIndex,
             totalExercises = state.totalExercises,
+            followingExercise = state.followingExercise
         )
 
-        if (state.exerciseImages.isNotEmpty()) {
-            ImageGallery(
-                images = state.exerciseImages,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(Dimens.heroImageHeightCompact),
+        // Exercise Illustration Hero Card
+        AppCard(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimens.heroImageHeightCompact),
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ) {
+            AppExerciseImage(
+                imageIds = state.currentExercise.exercise.imageIds,
+                contentDescription = state.currentExercise.exercise.name,
+                modifier = Modifier.fillMaxSize()
             )
         }
 
+        // Sets Progress Strip
         SetsProgressStrip(
             currentSet = state.currentSet,
             totalSets = state.totalSets
         )
 
-        ActiveSetDetails(
-            state = state,
-            onToggleHoldTimer = onToggleHoldTimer,
-            onResetHoldTimer = onResetHoldTimer,
-            onHoldDurationChanged = onHoldDurationChanged,
-            onRepsChanged = onRepsChanged,
-            onWeightChanged = onWeightChanged
-        )
+        // Active Set Card
+        AppCard(
+            modifier = Modifier.fillMaxWidth(),
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Dimens.spaceMd),
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.session_active_set_format, state.currentSet),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    val targetMetric =
+                        if (state.isIsometric) {
+                            stringResource(
+                                R.string.session_target_hold_format,
+                                state.targetTime.inWholeSeconds
+                            )
+                        } else {
+                            stringResource(
+                                R.string.session_target_reps_format,
+                                state.targetReps
+                            )
+                        }
+                    val weight = state.targetWeightInKg
+                    val weightSuffix =
+                        if (weight != null && weight > 0.0) {
+                            stringResource(
+                                R.string.session_target_weight_suffix,
+                                weight.toString()
+                            )
+                        } else {
+                            ""
+                        }
+                    val summary = stringResource(
+                        R.string.session_target_summary_format,
+                        targetMetric
+                    )
+                    Text(
+                        text = summary + weightSuffix,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+
+                if (state.isIsometric) {
+                    IsometricHoldControls(
+                        countdownRemaining = state.remainingHoldTime.inWholeSeconds.toInt(),
+                        isHoldTimerRunning = state.isHoldTimerRunning,
+                        onToggleTimer = onToggleHoldTimer,
+                        onResetTimer = onResetHoldTimer,
+                        holdSeconds = state.selectedHoldDuration.inWholeSeconds.toInt(),
+                        onHoldSecondsChange = { onHoldDurationChanged(it.seconds) }
+                    )
+                } else {
+                    AppIntStepper(
+                        value = state.selectedReps,
+                        onValueChange = onRepsChanged,
+                        label = stringResource(R.string.session_reps_label),
+                        minValue = 0
+                    )
+                }
+
+                AppStepper(
+                    value = state.selectedWeightInKg ?: 0.0,
+                    onValueChange = onWeightChanged,
+                    step = 2.5,
+                    label = stringResource(R.string.session_kg_label),
+                    minValue = 0.0
+                )
+            }
+        }
 
         // Secondary Actions (Add extra set, skip exercise)
         Row(
@@ -124,9 +205,9 @@ fun TrainingExerciseScreen(
             )
 
             AppTertiaryButton(
-                text = stringResource(R.string.session_remove_set),
-                leadingIcon = Icons.Default.Remove,
-                onClick = onRemoveSet,
+                text = stringResource(R.string.session_skip_exercise),
+                leadingIcon = Icons.Default.FastForward,
+                onClick = onSkipExercise,
                 modifier = Modifier.weight(1f)
             )
         }
@@ -136,7 +217,7 @@ fun TrainingExerciseScreen(
         // Main CTA Area
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             AppPrimaryButton(
                 text = stringResource(R.string.session_complete_set),
@@ -148,98 +229,6 @@ fun TrainingExerciseScreen(
                 text = stringResource(R.string.session_skip_set),
                 leadingIcon = Icons.Default.SkipNext,
                 onClick = onSkipSet
-            )
-        }
-    }
-}
-
-@Composable
-private fun ActiveSetDetails(
-    state: TrainingSessionState.ExerciseState,
-    onToggleHoldTimer: () -> Unit,
-    onResetHoldTimer: () -> Unit,
-    onHoldDurationChanged: (Duration) -> Unit,
-    onRepsChanged: (Int) -> Unit,
-    onWeightChanged: (Double) -> Unit
-) {
-    AppCard(
-        modifier = Modifier.fillMaxWidth(),
-        containerColor = MaterialTheme.colorScheme.surfaceContainer
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(Dimens.spaceMd),
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.session_active_set_format, state.currentSet),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                val targetMetric =
-                    if (state.isIsometric) {
-                        stringResource(
-                            R.string.session_target_hold_format,
-                            state.targetTime.inWholeSeconds
-                        )
-                    } else {
-                        stringResource(
-                            R.string.session_target_reps_format,
-                            state.targetReps
-                        )
-                    }
-                val weight = state.targetWeightInKg
-                val weightSuffix =
-                    if (weight != null && weight > 0.0) {
-                        stringResource(
-                            R.string.session_target_weight_suffix,
-                            weight.toString()
-                        )
-                    } else {
-                        ""
-                    }
-                val summary = stringResource(
-                    R.string.session_target_summary_format,
-                    targetMetric
-                )
-                Text(
-                    text = summary + weightSuffix,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            if (state.isIsometric) {
-                IsometricHoldControls(
-                    countdownRemaining = state.remainingHoldTime.inWholeSeconds.toInt(),
-                    isHoldTimerRunning = state.isHoldTimerRunning,
-                    onToggleTimer = onToggleHoldTimer,
-                    onResetTimer = onResetHoldTimer,
-                    holdSeconds = state.selectedHoldDuration.inWholeSeconds.toInt(),
-                    onHoldSecondsChange = { onHoldDurationChanged(it.seconds) }
-                )
-            } else {
-                AppIntStepper(
-                    value = state.selectedReps,
-                    onValueChange = onRepsChanged,
-                    label = stringResource(R.string.session_reps_label),
-                    minValue = 0
-                )
-            }
-
-            AppStepper(
-                value = state.selectedWeightInKg ?: 0.0,
-                onValueChange = onWeightChanged,
-                step = 2.5,
-                label = stringResource(R.string.session_kg_label),
-                minValue = 0.0
             )
         }
     }
@@ -289,24 +278,38 @@ private fun IsometricHoldControls(
                     color = MaterialTheme.colorScheme.onSurface
                 )
             }
-            IconButton(onClick = onToggleTimer) {
-                val icon =
-                    if (isHoldTimerRunning) {
-                        Icons.Default.Pause
-                    } else {
-                        Icons.Default.PlayArrow
-                    }
-                val descRes =
-                    if (isHoldTimerRunning) {
-                        R.string.session_pause_hold_timer
-                    } else {
-                        R.string.session_start_hold_timer
-                    }
-                Icon(
-                    imageVector = icon,
-                    contentDescription = stringResource(descRes),
-                    tint = MaterialTheme.colorScheme.primary
-                )
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onToggleTimer) {
+                    val icon =
+                        if (isHoldTimerRunning) {
+                            Icons.Default.Pause
+                        } else {
+                            Icons.Default.PlayArrow
+                        }
+                    val descRes =
+                        if (isHoldTimerRunning) {
+                            R.string.session_pause_hold_timer
+                        } else {
+                            R.string.session_start_hold_timer
+                        }
+                    val desc = stringResource(descRes)
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = desc,
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                IconButton(onClick = onResetTimer) {
+                    Icon(
+                        imageVector = Icons.Default.Refresh,
+                        contentDescription = stringResource(R.string.session_reset_hold_timer),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
         }
 
@@ -326,6 +329,7 @@ private fun ExerciseHeader(
     categories: List<String>,
     exerciseIndex: Int,
     totalExercises: Int,
+    followingExercise: TrainingExercise?,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -358,6 +362,18 @@ private fun ExerciseHeader(
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
         )
+
+        if (followingExercise != null) {
+            Text(
+                text = stringResource(
+                    R.string.session_up_next_format,
+                    followingExercise.exercise.name,
+                    followingExercise.sets
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
     }
 }
 
@@ -433,7 +449,7 @@ private fun TrainingExerciseScreenPreview() {
             name = "Barbell Bench Press",
             description = "Lie on bench, press bar upwards",
             categories = setOf(ExerciseCategoryName("Chest")),
-            imageIds = PREVIEW_PUSH_UP_IMAGES.map { it.imageId }
+            imageIds = emptyList()
         ),
         repetitions = 10,
         sets = 4,
@@ -441,7 +457,6 @@ private fun TrainingExerciseScreenPreview() {
     )
     val state = TrainingSessionState.ExerciseState(
         currentExercise = dummyExercise,
-        exerciseImages = PREVIEW_PUSH_UP_IMAGES,
         currentSet = 2,
         totalSets = 4,
         targetReps = 10,
@@ -462,7 +477,7 @@ private fun TrainingExerciseScreenPreview() {
             onResetHoldTimer = {},
             onCompleteSet = {},
             onSkipSet = {},
-            onRemoveSet = {},
+            onSkipExercise = {},
             onAddExtraSet = {}
         )
     }
@@ -487,7 +502,6 @@ private fun TrainingExerciseScreenHoldTimePreview() {
     )
     val state = TrainingSessionState.ExerciseState(
         currentExercise = dummyExercise,
-        exerciseImages = emptyList(),
         currentSet = 1,
         totalSets = 3,
         targetReps = 0,
@@ -511,7 +525,7 @@ private fun TrainingExerciseScreenHoldTimePreview() {
             onResetHoldTimer = {},
             onCompleteSet = {},
             onSkipSet = {},
-            onRemoveSet = {},
+            onSkipExercise = {},
             onAddExtraSet = {}
         )
     }

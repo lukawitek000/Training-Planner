@@ -1,5 +1,7 @@
 package com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder
 
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlin.time.Duration
@@ -20,14 +22,14 @@ sealed interface SessionEvent {
 
     data class RestStarted(val restTime: Duration) : SessionEvent
 
-    data class RestCompleted(val rpeFeedback: Int? = null) : SessionEvent
+    data class RestCompleted(val feedback: SetEffort? = null) : SessionEvent
 
-    data class RestSkipped(val rpeFeedback: Int? = null) : SessionEvent
+    data class RestSkipped(val feedback: SetEffort? = null) : SessionEvent
 
     data class ExtraSetAdded(val exercise: SessionExercise, val newSetIndex: Int) : SessionEvent
 
     data object SessionFinished : SessionEvent
 
-    data class SummaryCompleted(val overallRpe: Int? = null, val notes: String? = null) :
+    data class SummaryCompleted(val overallRpe: SessionRpe? = null, val notes: String? = null) :
         SessionEvent
 }

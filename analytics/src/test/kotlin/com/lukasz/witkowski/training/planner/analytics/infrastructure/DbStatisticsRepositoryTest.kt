@@ -7,6 +7,8 @@ import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttem
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatisticsId
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.shared.time.Time
@@ -64,7 +66,7 @@ class DbStatisticsRepositoryTest {
                 completed = true,
                 actualReps = 12,
                 actualWeightInKg = 85.5,
-                rpe = 8.5f
+                effort = SetEffort.HARD
             )
 
         val exerciseStatistics =
@@ -82,7 +84,7 @@ class DbStatisticsRepositoryTest {
                 date = Date(1_000_000L),
                 exercisesStatistics = listOf(exerciseStatistics),
                 note = "Strong session, felt good on bench press",
-                rpe = 8
+                rpe = SessionRpe.VERY_HARD
             )
 
         repository.save(statistics)
@@ -92,7 +94,7 @@ class DbStatisticsRepositoryTest {
         assertEquals(statisticsId, retrieved.id)
         assertEquals(trainingPlanId, retrieved.trainingPlanId)
         assertEquals("Strong session, felt good on bench press", retrieved.note)
-        assertEquals(8, retrieved.rpe)
+        assertEquals(SessionRpe.VERY_HARD, retrieved.rpe)
         assertEquals(1, retrieved.exercisesStatistics.size)
 
         val retrievedExercise = retrieved.exercisesStatistics.first()
@@ -103,7 +105,7 @@ class DbStatisticsRepositoryTest {
         assertEquals(attemptId, retrievedAttempt.id)
         assertEquals(12, retrievedAttempt.actualReps)
         assertEquals(85.5, retrievedAttempt.actualWeightInKg)
-        assertEquals(8.5f, retrievedAttempt.rpe)
+        assertEquals(SetEffort.HARD, retrievedAttempt.effort)
         assertEquals(true, retrievedAttempt.completed)
     }
 

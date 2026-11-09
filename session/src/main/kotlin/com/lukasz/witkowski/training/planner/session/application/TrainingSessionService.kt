@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.session.application
 
 import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedListener
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.session.SessionCommand
@@ -43,7 +45,7 @@ class TrainingSessionService(
     private val activeSession = MutableStateFlow<TrainingSession?>(null)
     private lateinit var trainingSession: TrainingSession
     private val scope = CoroutineScope(backgroundDispatcher)
-// TODO rework the service and the UI together with viewmodel for the session running
+
     val trainingSessionState: StateFlow<TrainingSessionState> =
         activeSession
             .flatMapLatest { session ->
@@ -138,16 +140,16 @@ class TrainingSessionService(
         requireActiveSession().handle(command)
     }
 
-    fun updateLastAttemptRpe(rpe: Float) {
+    fun updateLastAttemptEffort(effort: SetEffort) {
         if (::trainingSession.isInitialized) {
-            trainingSession.handle(SessionCommand.RestTime.UpdateRpeFeedback(rpe.toInt()))
+            trainingSession.handle(SessionCommand.RestTime.UpdateFeedback(effort))
         }
     }
 
     fun completed(
         actualReps: Int? = null,
         actualWeightInKg: Double? = null,
-        rpe: Float? = null,
+        effort: SetEffort? = null,
         actualTime: Duration? = null
     ) {
         val session = requireActiveSession()
@@ -160,8 +162,8 @@ class TrainingSessionService(
         if (actualTime != null) {
             session.handle(SessionCommand.Exercise.UpdateHoldDuration(actualTime))
         }
-        if (rpe != null) {
-            session.handle(SessionCommand.RestTime.UpdateRpeFeedback(rpe.toInt()))
+        if (effort != null) {
+            session.handle(SessionCommand.RestTime.UpdateFeedback(effort))
         }
         session.complete()
     }
@@ -187,7 +189,7 @@ class TrainingSessionService(
 
     fun resetTimer() = Unit
 
-    suspend fun finishSession(note: String? = null, rpe: Int? = null): TrainingStatistics {
+    suspend fun finishSession(note: String? = null, rpe: SessionRpe? = null): TrainingStatistics {
         val session = requireActiveSession()
         if (note != null) {
             session.handle(SessionCommand.Summary.UpdateNotes(note))

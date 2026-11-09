@@ -2,6 +2,8 @@ package com.lukasz.witkowski.training.planner.session.domain
 
 import com.lukasz.witkowski.training.planner.session.createTrainingExercise
 import com.lukasz.witkowski.training.planner.session.createTrainingPlan
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.SessionCommand
 import com.lukasz.witkowski.training.planner.session.domain.session.StraightSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionFactory
@@ -32,7 +34,7 @@ class SessionStatisticsRecorderTest {
         val recorder2 = SessionStatisticsRecorder { receivedEvents2.add(it) }
 
         val composite = CompositeStatisticsRecorder(recorder1, recorder2)
-        val event = SessionEvent.RestCompleted(rpeFeedback = 8)
+        val event = SessionEvent.RestCompleted(feedback = SetEffort.HARD)
 
         composite.onEvent(event)
 
@@ -153,7 +155,7 @@ class SessionStatisticsRecorderTest {
             session.complete() // Set 1 -> Rest
 
             fixedTimeProvider.advanceBy(Time(25000L))
-            session.handle(SessionCommand.RestTime.UpdateRpeFeedback(8))
+            session.handle(SessionCommand.RestTime.UpdateFeedback(SetEffort.HARD))
             session.skip() // Skip rest after 25s -> Set 2
 
             fixedTimeProvider.advanceBy(Time(35000L))
@@ -161,18 +163,18 @@ class SessionStatisticsRecorderTest {
 
             val statsBeforeSummaryComplete = recorder.getStatistics()
 
-            session.handle(SessionCommand.Summary.UpdateOverallRpe(9))
+            session.handle(SessionCommand.Summary.UpdateOverallRpe(SessionRpe.NEAR_LIMIT))
             session.handle(SessionCommand.Summary.UpdateNotes("Solid session"))
             session.complete() // Complete summary
 
             val finalStats = recorder.getStatistics()
 
             assertEquals(statsBeforeSummaryComplete.id, finalStats.id)
-            assertEquals(9, finalStats.rpe)
+            assertEquals(SessionRpe.NEAR_LIMIT, finalStats.rpe)
             assertEquals("Solid session", finalStats.note)
 
             val firstAttempt = finalStats.exercisesStatistics.first().attemptsStatistics.first()
             assertEquals(25.seconds, firstAttempt.restTime)
-            assertEquals(8.0f, firstAttempt.rpe!!, 0.01f)
+            assertEquals(SetEffort.HARD, firstAttempt.effort)
         }
 }

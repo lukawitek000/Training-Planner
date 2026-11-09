@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.session.domain.session.phases
 
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.SessionCommand
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionEvent
@@ -20,18 +21,18 @@ internal class RestPhase(
     val restTimeDuration: Duration
         get() = initialRestTime
     private val timer = timerFactory.create(TimerState.Ready(initialRestTime))
-    private val selectedRpe = MutableStateFlow<Int?>(null)
+    private val selectedFeedback = MutableStateFlow<SetEffort?>(null)
 
     override val state: Flow<PhaseState> =
         combine(
             timer.state,
-            selectedRpe
-        ) { timerState, rpe ->
+            selectedFeedback
+        ) { timerState, feedback ->
             PhaseState.RestTime(
                 nextExercise = nextExercise,
                 timerState = timerState,
                 totalRestTime = initialRestTime,
-                selectedFeedback = rpe
+                selectedFeedback = feedback
             )
         }
 
@@ -45,12 +46,12 @@ internal class RestPhase(
 
     override fun complete(): SessionEvent.RestCompleted {
         close()
-        return SessionEvent.RestCompleted(selectedRpe.value)
+        return SessionEvent.RestCompleted(selectedFeedback.value)
     }
 
     override fun skip(): SessionEvent.RestSkipped {
         close()
-        return SessionEvent.RestSkipped(selectedRpe.value)
+        return SessionEvent.RestSkipped(selectedFeedback.value)
     }
 
     override fun endEarly(): SessionEvent.RestCompleted = complete()
@@ -61,8 +62,8 @@ internal class RestPhase(
             return
         }
         when (command) {
-            is SessionCommand.RestTime.UpdateRpeFeedback -> {
-                selectedRpe.value = command.rpe
+            is SessionCommand.RestTime.UpdateFeedback -> {
+                selectedFeedback.value = command.effort
             }
         }
     }

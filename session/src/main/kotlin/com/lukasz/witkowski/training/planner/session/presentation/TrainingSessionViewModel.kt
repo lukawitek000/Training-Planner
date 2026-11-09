@@ -3,6 +3,8 @@ package com.lukasz.witkowski.training.planner.session.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.session.application.TrainingSessionService
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState as DomainState
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
@@ -29,8 +31,8 @@ class TrainingSessionViewModel(
         val reps: Int? = null,
         val weightInKg: Double? = null,
         val holdDuration: Duration? = null,
-        val restFeedback: Int? = null,
-        val summaryRpe: Int? = null,
+        val restFeedback: SetEffort? = null,
+        val summaryRpe: SessionRpe? = null,
         val summaryNotes: String = ""
     )
 
@@ -145,12 +147,12 @@ class TrainingSessionViewModel(
         trainingSessionService.addExtraSet()
     }
 
-    fun onFeedbackSelected(rpe: Int) {
-        userInputs.update { it.copy(restFeedback = rpe) }
-        trainingSessionService.updateLastAttemptRpe(rpe.toFloat())
+    fun onFeedbackSelected(effort: SetEffort) {
+        userInputs.update { it.copy(restFeedback = effort) }
+        trainingSessionService.updateLastAttemptEffort(effort)
     }
 
-    fun onSummaryRpeSelected(rpe: Int) {
+    fun onSummaryRpeSelected(rpe: SessionRpe) {
         userInputs.update { it.copy(summaryRpe = rpe) }
     }
 

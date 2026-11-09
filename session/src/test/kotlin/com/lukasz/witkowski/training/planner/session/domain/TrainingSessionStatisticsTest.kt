@@ -5,6 +5,7 @@ import com.lukasz.witkowski.training.planner.session.TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.session.TrainingSessionTest
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.session.SessionCommand
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSession
@@ -156,12 +157,12 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
             completeRestOfTheTraining(trainingSession, timeProvider)
 
             // when
-            trainingSession.handle(SessionCommand.Summary.UpdateOverallRpe(9))
+            trainingSession.handle(SessionCommand.Summary.UpdateOverallRpe(SessionRpe.NEAR_LIMIT))
             trainingSession.handle(SessionCommand.Summary.UpdateNotes("Felt strong"))
 
             // then: SummaryState holds selectedOverallRpe & notes, while statistics remains unmutated
             val summaryState = trainingSession.state.value as TrainingSessionState.SummaryState
-            assertEquals(9, summaryState.selectedOverallRpe)
+            assertEquals(SessionRpe.NEAR_LIMIT, summaryState.selectedOverallRpe)
             assertEquals("Felt strong", summaryState.notes)
             assertNull(summaryState.statistics.rpe)
             assertNull(summaryState.statistics.note)

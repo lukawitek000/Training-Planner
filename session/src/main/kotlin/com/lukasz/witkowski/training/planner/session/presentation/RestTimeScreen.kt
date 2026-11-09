@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.session.R
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppFeedbackChips
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
@@ -41,7 +42,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlin.time.Duration.Companion.seconds
 
-private data class FeedbackChipOption(val rpe: Int, val label: String)
+private data class FeedbackChipOption(val effort: SetEffort, val label: String)
 
 /**
  * Rest interval screen displaying circular countdown ring, set difficulty feedback chips,
@@ -52,7 +53,7 @@ fun RestTimeScreen(
     state: TrainingSessionState.RestTimeState,
     timeLeft: Time,
     totalTime: Time,
-    onFeedbackSelected: (Int) -> Unit,
+    onFeedbackSelected: (SetEffort) -> Unit,
     onStartNextSet: () -> Unit,
     onSkipRest: () -> Unit,
     modifier: Modifier = Modifier
@@ -60,10 +61,10 @@ fun RestTimeScreen(
     val scrollState = rememberScrollState()
 
     val feedbackChipOptions = listOf(
-        FeedbackChipOption(6, stringResource(R.string.session_feedback_easy)),
-        FeedbackChipOption(7, stringResource(R.string.session_feedback_good)),
-        FeedbackChipOption(8, stringResource(R.string.session_feedback_hard)),
-        FeedbackChipOption(10, stringResource(R.string.session_feedback_limit))
+        FeedbackChipOption(SetEffort.EASY, stringResource(R.string.session_feedback_easy)),
+        FeedbackChipOption(SetEffort.MODERATE, stringResource(R.string.session_feedback_good)),
+        FeedbackChipOption(SetEffort.HARD, stringResource(R.string.session_feedback_hard)),
+        FeedbackChipOption(SetEffort.MAXIMAL, stringResource(R.string.session_feedback_limit))
     )
 
     val progress = if (totalTime.timeInMillis > 0) {
@@ -116,9 +117,9 @@ fun RestTimeScreen(
             AppFeedbackChips(
                 options = feedbackChipOptions,
                 selectedOption = feedbackChipOptions.firstOrNull {
-                    it.rpe == state.selectedFeedback
+                    it.effort == state.selectedFeedback
                 },
-                onOptionSelected = { onFeedbackSelected(it.rpe) },
+                onOptionSelected = { onFeedbackSelected(it.effort) },
                 labelProvider = { it.label }
             )
         }

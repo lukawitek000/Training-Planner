@@ -12,6 +12,7 @@ import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttem
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatisticsId
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
@@ -125,7 +126,7 @@ class TrainingSessionSummaryScreenTest {
             exercisesStatistics = emptyList()
         )
 
-        var selectedRpe: Int? = null
+        var selectedRpe: SessionRpe? = null
         var notes = ""
         var savedCalled = false
 
@@ -154,7 +155,7 @@ class TrainingSessionSummaryScreenTest {
         composeTestRule.onNodeWithText("Save & Finish Workout").performScrollTo().performClick()
 
         assertEquals("Hit target reps with clean form", notes)
-        assertEquals(8, selectedRpe)
+        assertEquals(SessionRpe.VERY_HARD, selectedRpe)
         assertTrue(savedCalled)
     }
 }

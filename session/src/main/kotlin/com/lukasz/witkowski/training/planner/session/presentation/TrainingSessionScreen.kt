@@ -13,6 +13,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.lukasz.witkowski.training.planner.session.R
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.Time
@@ -100,10 +102,10 @@ fun TrainingSessionContent(
     onSkipSet: () -> Unit,
     onSkipExercise: () -> Unit,
     onAddExtraSet: () -> Unit,
-    onFeedbackSelected: (Int) -> Unit,
+    onFeedbackSelected: (SetEffort) -> Unit,
     onStartNextSet: () -> Unit,
     onSkipRest: () -> Unit,
-    onSummaryRpeSelected: (Int) -> Unit,
+    onSummaryRpeSelected: (SessionRpe) -> Unit,
     onSummaryNotesChanged: (String) -> Unit,
     onSaveWorkout: () -> Unit,
     modifier: Modifier = Modifier
@@ -120,7 +122,7 @@ fun TrainingSessionContent(
                     onResetHoldTimer = onResetHoldTimer,
                     onCompleteSet = onCompleteSet,
                     onSkipSet = onSkipSet,
-                    onRemoveSet = {  },
+                    onSkipExercise = onSkipExercise,
                     onAddExtraSet = onAddExtraSet
                 )
             }

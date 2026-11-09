@@ -1,5 +1,7 @@
 package com.lukasz.witkowski.training.planner.session.domain.session
 
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
 import com.lukasz.witkowski.training.planner.session.domain.session.queue.ExerciseQueueProgress
@@ -20,12 +22,12 @@ sealed interface TrainingSessionState {
         val timerState: TimerState,
         val totalRestTime: Duration,
         val progress: ExerciseQueueProgress,
-        val selectedFeedback: Int? = null
+        val selectedFeedback: SetEffort? = null
     ) : TrainingSessionState
 
     data class SummaryState(
         val statistics: TrainingStatistics,
-        val selectedOverallRpe: Int? = null,
+        val selectedOverallRpe: SessionRpe? = null,
         val notes: String = ""
     ) : TrainingSessionState
 }

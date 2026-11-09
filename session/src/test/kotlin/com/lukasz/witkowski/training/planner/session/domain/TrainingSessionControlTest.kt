@@ -5,6 +5,7 @@ import com.lukasz.witkowski.training.planner.session.TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.session.TrainingSessionTest
 import com.lukasz.witkowski.training.planner.session.createDummyExercise
 import com.lukasz.witkowski.training.planner.session.createTrainingPlan
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.SessionCommand
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider
@@ -281,11 +282,11 @@ internal class TrainingSessionControlTest : TrainingSessionTest() {
             trainingSession.start()
             trainingSession.complete() // Set 1 completed -> RestPhase
 
-            // when: select RPE feedback during RestPhase and end early
-            trainingSession.handle(SessionCommand.RestTime.UpdateRpeFeedback(8))
+            // when: select feedback during RestPhase and end early
+            trainingSession.handle(SessionCommand.RestTime.UpdateFeedback(SetEffort.HARD))
             trainingSession.endEarly()
 
-            // then: transitions to SummaryState and Set 1 retains RPE = 8.0
+            // then: transitions to SummaryState and Set 1 retains effort = SetEffort.HARD
             val summaryState = trainingSession.state.value as TrainingSessionState.SummaryState
             val attempt =
                 summaryState.statistics.exercisesStatistics
@@ -293,6 +294,6 @@ internal class TrainingSessionControlTest : TrainingSessionTest() {
                     .attemptsStatistics
                     .first()
             assertTrue(attempt.completed)
-            assertEquals(8.0f, attempt.rpe!!, 0.01f)
+            assertEquals(SetEffort.HARD, attempt.effort)
         }
 }

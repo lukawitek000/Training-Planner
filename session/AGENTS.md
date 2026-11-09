@@ -10,7 +10,7 @@
   - `session/TrainingSetsPolicy.kt`: `StraightSetsPolicy`.
   - `session/statisticsrecorder/`: `SessionStatisticsRecorder`, `SessionStatisticsProvider`, `CompositeStatisticsRecorder`, `BasicStatisticsRecorder`, `SessionEvent`, and `TimeProvider`.
   - `timer/`: `Timer`, `TimerFactory`, and `TimerState` (monotonic `elapsedTimeMillis()` countdown/overflow timer).
-  - `models/`: `TrainingStatistics`, `ExerciseStatistics`, `ExerciseAttemptStatistics` (actual reps, actual weight in `Double?`, hold duration, rest duration, attempt time, RPE, notes).
+  - `models/`: `TrainingStatistics`, `ExerciseStatistics`, `ExerciseAttemptStatistics` (actual reps, actual weight in `Double?`, hold duration, rest duration, attempt time, `SetEffort`, `SessionRpe`, notes), `SessionRpe` (1–10 Foster scale), and `SetEffort` (`EASY`, `MODERATE`, `HARD`, `MAXIMAL` mapped directly to `SessionRpe`).
   - `SessionCompletedListener.kt`: Interface implemented by `:analytics` (`AnalyticsSessionCompletedListener`) to persist completed `TrainingStatistics`.
 - **Application (`application/`):** `TrainingSessionService` (coordinates `TrainingSession`, `TimerFactory`, and `SessionCompletedListener`).
 - **Presentation (`presentation/`):** `TrainingSessionScreen`, `TrainingExerciseScreen`, `RestTimeScreen`, `TrainingSessionSummaryScreen`, `TrainingSessionViewModel`, and custom execution components (`AppStepper`, `AppRpeScaleGrid`, `AppFeedbackChips`).

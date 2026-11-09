@@ -4,6 +4,7 @@ import com.lukasz.witkowski.training.planner.session.TRAINING_EXERCISES
 import com.lukasz.witkowski.training.planner.session.TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.session.TrainingSessionTest
 import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedListener
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.session.StraightSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSetsPolicy
@@ -208,12 +209,12 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
         assertTrue(state is TrainingSessionState.SummaryState)
         val summaryState = state as TrainingSessionState.SummaryState
 
-        trainingSessionService.finishSession(note = "Great workout", rpe = 8)
+        trainingSessionService.finishSession(note = "Great workout", rpe = SessionRpe.VERY_HARD)
 
         verify(exactly = 1) { listener.onSessionFinished(summaryState.statistics.id) }
         coVerify(exactly = 1) {
             sessionCompletedListener.onSessionCompleted(
-                match { it.note == "Great workout" && it.rpe == 8 }
+                match { it.note == "Great workout" && it.rpe == SessionRpe.VERY_HARD }
             )
         }
     }

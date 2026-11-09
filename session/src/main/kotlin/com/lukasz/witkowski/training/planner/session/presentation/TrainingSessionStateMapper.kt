@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.session.presentation
 
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState as DomainState
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
@@ -20,8 +22,8 @@ fun DomainState.toPresentationTrainingSessionState(
     selectedReps: Int? = null,
     selectedWeightInKg: Double? = null,
     selectedHoldDuration: Duration? = null,
-    selectedFeedback: Int? = null,
-    summaryRpe: Int? = null,
+    selectedFeedback: SetEffort? = null,
+    summaryRpe: SessionRpe? = null,
     summaryNotes: String = ""
 ): PresentationState = when (this) {
     is DomainState.ExerciseState -> {

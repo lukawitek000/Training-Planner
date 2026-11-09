@@ -30,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppRpeScaleGrid
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
@@ -58,7 +59,7 @@ import kotlin.time.Instant
 @Composable
 fun TrainingSessionSummaryScreen(
     state: TrainingSessionState.SummaryState,
-    onRpeSelected: (Int) -> Unit,
+    onRpeSelected: (SessionRpe) -> Unit,
     onNotesChanged: (String) -> Unit,
     onSaveWorkout: () -> Unit,
     modifier: Modifier = Modifier

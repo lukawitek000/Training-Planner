@@ -3,6 +3,8 @@ package com.lukasz.witkowski.training.planner.session.domain.session.statisticsr
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatisticsId
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
@@ -33,7 +35,7 @@ class BasicStatisticsRecorder(
     private val setCountsByExercise = mutableMapOf<TrainingExerciseId, Int>()
     private var currentExerciseStartTime = Time.ZERO
     private var currentRestStartTime = Time.ZERO
-    private var overallRpe: Int? = null
+    private var overallRpe: SessionRpe? = null
     private var notes: String? = null
 
     override fun onEvent(event: SessionEvent) {
@@ -68,11 +70,11 @@ class BasicStatisticsRecorder(
             }
 
             is SessionEvent.RestCompleted -> {
-                recordRestFinished(event.rpeFeedback)
+                recordRestFinished(event.feedback)
             }
 
             is SessionEvent.RestSkipped -> {
-                recordRestFinished(event.rpeFeedback)
+                recordRestFinished(event.feedback)
             }
 
             is SessionEvent.ExtraSetAdded -> Unit
@@ -129,7 +131,7 @@ class BasicStatisticsRecorder(
         exercisesAttemptsStatistics.add(attempt)
     }
 
-    private fun recordRestFinished(rpeFeedback: Int?) {
+    private fun recordRestFinished(feedback: SetEffort?) {
         if (exercisesAttemptsStatistics.isEmpty()) return
         val elapsedRest = timeProvider.currentTime() - currentRestStartTime
         val restDuration = elapsedRest.timeInMillis.milliseconds
@@ -137,7 +139,7 @@ class BasicStatisticsRecorder(
         val lastAttempt = exercisesAttemptsStatistics[lastIndex]
         exercisesAttemptsStatistics[lastIndex] =
             lastAttempt.copy(
-                rpe = rpeFeedback?.toFloat() ?: lastAttempt.rpe,
+                effort = feedback ?: lastAttempt.effort,
                 restTime = restDuration
             )
     }
