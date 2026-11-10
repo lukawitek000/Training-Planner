@@ -5,8 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +20,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Remove
@@ -32,13 +31,13 @@ import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -56,6 +55,7 @@ import com.lukasz.witkowski.training.planner.session.presentation.components.Tar
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
+import com.lukasz.witkowski.training.planner.shared.ui.button.AppButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppSecondaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppTertiaryButton
@@ -63,7 +63,6 @@ import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
-import kotlin.concurrent.timer
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -75,6 +74,7 @@ import kotlin.time.Duration.Companion.seconds
 fun TrainingExerciseScreen(
     state: TrainingSessionState.ExerciseState,
     onSessionIntent: (SessionIntent) -> Unit,
+    onEndClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -83,7 +83,7 @@ fun TrainingExerciseScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(Dimens.spaceMd),
+            .padding(horizontal = Dimens.spaceMd),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
         ExerciseHeader(
@@ -91,6 +91,7 @@ fun TrainingExerciseScreen(
             categories = state.sessionExercise.snapshot.categories.map { it.name },
             exerciseIndex = state.progress.exerciseIndex,
             totalExercises = state.progress.totalExercises,
+            onEndClicked = onEndClicked
         )
 
 //        if (state.images.isNotEmpty()) {
@@ -120,13 +121,15 @@ fun TrainingExerciseScreen(
             AppPrimaryButton(
                 text = stringResource(R.string.session_complete_set),
                 leadingIcon = Icons.Default.Check,
-                onClick = { onSessionIntent(SessionIntent.SetCompleted) }
+                onClick = { onSessionIntent(SessionIntent.SetCompleted) },
+                modifier = Modifier.fillMaxWidth()
             )
 
             AppSecondaryButton(
                 text = stringResource(R.string.session_skip_set),
                 leadingIcon = Icons.Default.SkipNext,
-                onClick = { onSessionIntent(SessionIntent.SetSkipped) }
+                onClick = { onSessionIntent(SessionIntent.SetSkipped) },
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
@@ -201,17 +204,19 @@ private fun ExerciseSetsModification(onSessionIntent: (SessionIntent) -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
         verticalAlignment = Alignment.CenterVertically
     ) {
+        AppButton(
+            text = stringResource(R.string.session_remove_set),
+            leadingIcon = Icons.Default.Remove,
+            onClick = { onSessionIntent(SessionIntent.SetRemoved) },
+            modifier = Modifier.weight(1f),
+            containerColor = MaterialTheme.colorScheme.error,
+            contentColor = MaterialTheme.colorScheme.onError,
+        )
+
         AppTertiaryButton(
             text = stringResource(R.string.session_add_extra_set),
             leadingIcon = Icons.Default.Add,
             onClick = { onSessionIntent(SessionIntent.SetAdded) },
-            modifier = Modifier.weight(1f)
-        )
-
-        AppTertiaryButton(
-            text = stringResource(R.string.session_remove_set),
-            leadingIcon = Icons.Default.Remove,
-            onClick = { onSessionIntent(SessionIntent.SetRemoved) },
             modifier = Modifier.weight(1f)
         )
     }
@@ -223,7 +228,8 @@ private fun IsometricHoldControls(
     onSessionIntent: (SessionIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val holdTimeState = HoldTimeState.create(state.timerState, state.sessionExercise.currentConfig.holdTime)
+    val holdTimeState =
+        HoldTimeState.create(state.timerState, state.sessionExercise.currentConfig.holdTime)
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
@@ -240,9 +246,15 @@ private fun IsometricHoldControls(
                 imageVector = Icons.Default.Timer,
                 contentDescription = null,
                 tint = holdTimeState.iconsColor,
-                modifier = Modifier.size(Dimens.iconSize30).weight(0.25f)
+                modifier = Modifier
+                    .size(Dimens.iconSize30)
+                    .weight(0.25f)
             )
-            TimerClock(holdTimeState.remainingTime, holdTimeState.timerColor, modifier = Modifier.weight(1f))
+            TimerClock(
+                holdTimeState.remainingTime,
+                holdTimeState.timerColor,
+                modifier = Modifier.weight(1f)
+            )
 
             Box(
                 modifier = Modifier.weight(0.25f),
@@ -374,29 +386,28 @@ private fun ExerciseHeader(
     categories: List<String>,
     exerciseIndex: Int,
     totalExercises: Int,
+    onEndClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val defaultCategory = stringResource(R.string.session_category_general)
-            val categoryLabel = categories.firstOrNull() ?: defaultCategory
-            AppCategoryPill(text = categoryLabel)
-
             Text(
                 text = stringResource(
                     R.string.session_exercise_progress_format,
                     exerciseIndex,
                     totalExercises
                 ),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                textAlign = TextAlign.Left,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f)
+            )
+            EndEarlySessionButton(
+                onEndClicked = onEndClicked,
             )
         }
 
@@ -404,8 +415,18 @@ private fun ExerciseHeader(
             text = exerciseName,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface,
         )
+        Spacer(Modifier.height(Dimens.spaceSm))
+
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
+        ) {
+            categories.forEach { category ->
+                AppCategoryPill(text = category,)
+            }
+        }
     }
 }
 
@@ -509,7 +530,8 @@ private fun TrainingExerciseScreenPreview() {
     TrainingPlannerTheme {
         TrainingExerciseScreen(
             state = state,
-            onSessionIntent = {}
+            onSessionIntent = {},
+            onEndClicked = {}
         )
     }
 }
@@ -526,7 +548,11 @@ private fun TrainingExerciseScreenHoldTimePreview() {
         id = TrainingExerciseId.create(),
         name = "Plank",
         description = "Hold a straight body position resting on forearms and toes",
-        categories = setOf(ExerciseCategoryName("Core")),
+        categories = setOf(
+            ExerciseCategoryName("Core"),
+            ExerciseCategoryName("Chest"),
+            ExerciseCategoryName("Biceps")
+        ),
         imageIds = emptyList(),
         plannedConfig = dummyConfig
     )
@@ -552,7 +578,8 @@ private fun TrainingExerciseScreenHoldTimePreview() {
     TrainingPlannerTheme {
         TrainingExerciseScreen(
             state = state,
-            onSessionIntent = {}
+            onSessionIntent = {},
+            onEndClicked = {}
         )
     }
 }

@@ -41,7 +41,7 @@ fun TrainingSessionScreen(
     var showExitConfirmationDialog by remember { mutableStateOf(false) }
 
     BackHandler(enabled = trainingSessionState !is TrainingSessionState.SummaryState) {
-        showExitConfirmationDialog = true
+        showExitConfirmationDialog = !showExitConfirmationDialog
     }
 
     Box(
@@ -54,26 +54,24 @@ fun TrainingSessionScreen(
             onSaveWorkout = {
                 viewModel.saveStatistics()
                 navigateBack()
-            }
-        )
-    }
-
-    if (showExitConfirmationDialog) {
-        AppConfirmationDialog(
-            title = stringResource(R.string.session_exit_dialog_title),
-            message = stringResource(R.string.session_exit_dialog_message),
-            confirmText = stringResource(R.string.session_exit_dialog_confirm),
-            dismissText = stringResource(R.string.session_exit_dialog_dismiss),
-            isDestructive = true,
-            onConfirm = {
-                // TODO: Stop foreground service and cancel ongoing notifications before exiting session
-                showExitConfirmationDialog = false
-                navigateBack()
             },
-            onDismiss = {
-                showExitConfirmationDialog = false
+            onEndClicked = {
+                showExitConfirmationDialog = true
             }
         )
+        if (showExitConfirmationDialog) {
+            EndEarlySessionDialog(
+                onConfirm = {
+                    // TODO: Stop foreground service and cancel ongoing notifications before exiting session
+                    showExitConfirmationDialog = false
+                    navigateBack()
+                },
+                onDismiss = {
+                    showExitConfirmationDialog = false
+                },
+                modifier = Modifier,
+            )
+        }
     }
 }
 
@@ -82,6 +80,7 @@ fun TrainingSessionContent(
     trainingSessionState: TrainingSessionState,
     onSessionIntent: (SessionIntent) -> Unit,
     onSaveWorkout: () -> Unit,
+    onEndClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
@@ -89,7 +88,8 @@ fun TrainingSessionContent(
             is TrainingSessionState.ExerciseState -> {
                 TrainingExerciseScreen(
                     state = trainingSessionState,
-                    onSessionIntent = onSessionIntent
+                    onSessionIntent = onSessionIntent,
+                    onEndClicked = onEndClicked
                 )
             }
 
@@ -125,7 +125,8 @@ private fun TrainingSessionContentLoadingPreview() {
         TrainingSessionContent(
             trainingSessionState = TrainingSessionState.IdleState,
             onSessionIntent = {},
-            onSaveWorkout = {}
+            onSaveWorkout = {},
+            onEndClicked = {}
         )
     }
 }

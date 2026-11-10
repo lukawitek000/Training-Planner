@@ -53,7 +53,6 @@ fun AppButton(
         onClick = onClick,
         modifier =
         modifier
-            .fillMaxWidth()
             .height(Dimens.buttonHeight),
         enabled = enabled,
         shape = MaterialTheme.shapes.medium,
