@@ -7,7 +7,7 @@ import kotlin.time.Duration
 data class ExerciseAttemptStatistics(
     val id: ExerciseAttemptStatisticsId = ExerciseAttemptStatisticsId.create(),
     val trainingExerciseId: TrainingExerciseId,
-    val time: Time = Time.ZERO,
+    val time: Time = Time.ZERO, // TODo convert to Duration and remove Time from the project
     val set: Int,
     val completed: Boolean,
     val actualReps: Int = 0,

@@ -76,6 +76,7 @@ internal class TrainingSession(
         val event = currentPhase.value.endEarly() ?: return
         recordPhaseEvent(event)
         transitionToPhase(nextPhaseProvider.summaryPhase())
+        currentPhase.value = IdlePhase
     }
 
     fun addExtraSet() {
@@ -97,11 +98,6 @@ internal class TrainingSession(
 
     fun updateWeight(weight: Double) {
         currentPhase.value.handle(SessionCommand.Exercise.UpdateWeight(weight))
-    }
-
-    fun stop() {
-        currentPhase.value.close()
-        currentPhase.value = IdlePhase
     }
 
     private fun onPhaseFinished(event: SessionEvent?) {

@@ -72,6 +72,15 @@ internal class DbTrainingPlanRepository(
         }
     }
 
+    override suspend fun fetchTrainingPlanById(trainingPlanId: TrainingPlanId): Result<TrainingPlan> = withContext(dispatcher) {
+        val id = trainingPlanId.toString()
+        runCatchingCancellable {
+            checkNotNull(trainingPlanDao.getTrainingPlanById(id)) {
+                "TrainingPlan not found for id: $trainingPlanId"
+            }.toTrainingPlan()
+        }
+    }
+
     override suspend fun update(
         trainingPlanConfiguration: TrainingPlanConfiguration,
         id: TrainingPlanId

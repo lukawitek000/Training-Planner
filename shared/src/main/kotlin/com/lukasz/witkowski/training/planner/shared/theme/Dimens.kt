@@ -52,9 +52,11 @@ object Dimens {
 
     /** Loading spinner container size - 112dp */
     val spinnerSize: Dp = 112.dp
+    val smallSpinnerSize: Dp = 70.dp
 
     /** Loading spinner inner icon container size - 64dp */
     val spinnerIconContainerSize: Dp = 64.dp
+    val smallSpinnerIconContainerSize: Dp = 48.dp
 
     /** Loading spinner stroke width - 4dp */
     val spinnerStrokeWidth: Dp = 4.dp

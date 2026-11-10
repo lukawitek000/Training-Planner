@@ -14,6 +14,8 @@ interface TrainingPlanRepository {
 
     fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan?>
 
+    suspend fun fetchTrainingPlanById(trainingPlanId: TrainingPlanId): Result<TrainingPlan>
+
     suspend fun update(
         trainingPlanConfiguration: TrainingPlanConfiguration,
         id: TrainingPlanId

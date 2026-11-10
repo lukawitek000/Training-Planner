@@ -39,6 +39,7 @@ class StraightSetsPolicy : TrainingSetsPolicy {
 
     private fun TrainingExercise.toSnapshot(): TrainingExerciseSnapshot = TrainingExerciseSnapshot(
         id = id,
+        exerciseId = exercise.id,
         name = exercise.name,
         description = exercise.description,
         categories = exercise.categories,

@@ -26,10 +26,10 @@ internal class TrainingSessionController(
     }
 
     fun onServiceCreate() {
-        trainingSessionService.removeSessionFinishedListener(this)
+//        trainingSessionService.removeSessionFinishedListener(this)
     }
 
     fun onServiceDestroy() {
-        trainingSessionService.addSessionFinishedListener(this)
+//        trainingSessionService.addSessionFinishedListener(this)
     }
 }

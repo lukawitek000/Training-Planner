@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
@@ -228,6 +229,7 @@ private fun RestTimeScreenPreview() {
     )
     val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
+        exerciseId = ExerciseId.create(),
         name = "Incline Dumbbell Press",
         description = "Press dumbbells at incline",
         categories = setOf(ExerciseCategoryName("Chest")),

@@ -356,13 +356,13 @@ private fun TrainingPlanDetailsScreenContentFailurePreview() {
 private fun TrainingPlanDetailsScreenContentPreview() {
     TrainingPlannerTheme {
         TrainingPlanDetailsScreenContent(
-            trainingPlanState = ResultHandler.Success(value = previewTrainingPlan),
+            trainingPlanState = ResultHandler.Success(value = PREVIEW_TRAINING_PLAN),
             modifier = Modifier.fillMaxSize()
         )
     }
 }
 
-private val previewTrainingPlan = TrainingPlan(
+private val PREVIEW_TRAINING_PLAN = TrainingPlan(
     id = TrainingPlanId.create(),
     title = "Full Body Workout",
     description = "A comprehensive full body routine covering chest, legs, back, and core.",

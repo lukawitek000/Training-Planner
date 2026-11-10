@@ -32,7 +32,6 @@ val sessionModule =
                     timeProvider = timeProvider,
                     timerDispatcher = backgroundDispatcher
                 ),
-                sessionCompletedListener = getOrNull<SessionCompletedListener>(),
                 trainingSetsStrategy = StraightSetsPolicy(),
                 backgroundDispatcher = backgroundDispatcher,
                 sessionStatisticsRecorder = get()
@@ -43,6 +42,7 @@ val sessionModule =
             TrainingSessionViewModel(
                 trainingPlanService = get(),
                 trainingSessionService = get(),
+                exerciseService = get(),
                 trainingPlanId = params.get()
             )
         }

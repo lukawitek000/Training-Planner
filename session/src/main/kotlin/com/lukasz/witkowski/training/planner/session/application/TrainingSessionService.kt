@@ -1,10 +1,6 @@
 package com.lukasz.witkowski.training.planner.session.application
 
-import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedListener
-import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
-import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
-import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.session.SessionCommand
 import com.lukasz.witkowski.training.planner.session.domain.session.StraightSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSession
@@ -16,10 +12,7 @@ import com.lukasz.witkowski.training.planner.session.domain.session.statisticsre
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SystemTimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.TimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
-import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,15 +22,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlin.time.Duration
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("TooManyFunctions")
 class TrainingSessionService(
     private val timeProvider: TimeProvider = SystemTimeProvider(),
     private val timerFactory: TimerFactory = TimerFactory(timeProvider = timeProvider),
-    private val sessionCompletedListener: SessionCompletedListener? = null,
     private val trainingSetsStrategy: TrainingSetsPolicy = StraightSetsPolicy(),
     backgroundDispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val sessionStatisticsRecorder: SessionStatisticsRecorder = CompositeStatisticsRecorder()
@@ -59,7 +51,6 @@ class TrainingSessionService(
     var trainingPlan: TrainingPlan? = null
         private set
 
-    private val trainingSessionFinishedListeners = mutableSetOf<SessionFinishedListener>()
 
     fun startTraining(
         trainingPlan: TrainingPlan,
@@ -127,62 +118,10 @@ class TrainingSessionService(
         requireActiveSession().handle(command)
     }
 
-    fun stopTraining() {
-        if (::trainingSession.isInitialized) {
-            trainingSession.stop()
-        }
-        activeSession.value = null
-    }
-
-    fun isTrainingSessionStarted() = trainingSessionState.value !is TrainingSessionState.IdleState
-
-    suspend fun finishSession(note: String? = null, rpe: SessionRpe? = null): TrainingStatistics {
-        val session = requireActiveSession()
-        if (note != null) {
-            session.handle(SessionCommand.Summary.UpdateNotes(note))
-        }
-        if (rpe != null) {
-            session.handle(SessionCommand.Summary.UpdateOverallRpe(rpe))
-        }
-        val summaryState =
-            session.state.value as? TrainingSessionState.SummaryState
-                ?: throw IllegalStateException(
-                    "Cannot finalize session that is not in SummaryState"
-                )
-        session.complete()
-        val finalNote = note ?: summaryState.notes.ifBlank { null }
-        val finalRpe = rpe ?: summaryState.selectedOverallRpe
-        val stats = summaryState.statistics.copy(note = finalNote, rpe = finalRpe)
-        sessionCompletedListener?.onSessionCompleted(stats)
-        notifySessionFinished(stats.id)
-        return stats
-    }
-
-    fun addSessionFinishedListener(sessionFinishedListener: SessionFinishedListener) {
-        require(trainingSessionFinishedListeners.add(sessionFinishedListener)) {
-            LISTENER_ALREADY_ADDED_MESSAGE
-        }
-    }
-
-    fun removeSessionFinishedListener(sessionFinishedListener: SessionFinishedListener) {
-        trainingSessionFinishedListeners.remove(sessionFinishedListener)
-    }
-
-    private fun notifySessionFinished(trainingStatisticsId: TrainingStatisticsId) {
-        trainingSessionFinishedListeners.forEach {
-            it.onSessionFinished(trainingStatisticsId)
-        }
-    }
-
     private fun requireActiveSession(): TrainingSession {
         check(::trainingSession.isInitialized && activeSession.value != null) {
             "Training session has not been started or was stopped"
         }
         return trainingSession
-    }
-
-    companion object {
-        private const val LISTENER_ALREADY_ADDED_MESSAGE =
-            "The SessionFinishedListener was already added"
     }
 }

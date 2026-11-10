@@ -29,14 +29,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppRpeScaleGrid
+import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.Time
@@ -46,6 +51,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.bento.AppBentoTile
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.inputField.AppLabeledTextField
+import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -53,6 +59,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
+import kotlin.math.acos
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
@@ -62,12 +69,13 @@ import kotlin.time.Instant
  */
 @Composable
 fun TrainingSessionSummaryScreen(
-    state: TrainingSessionState.SummaryState,
+    uiState: TrainingSessionUiState.Summary,
     onSessionIntent: (SessionIntent) -> Unit,
     onFinishWorkout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
+    val state = uiState.domainState
     val statistics = state.statistics
 
     Column(
@@ -78,13 +86,12 @@ fun TrainingSessionSummaryScreen(
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceLg)
     ) {
         CelebrationBanner(
-            planTitle = "Some plan name",
+            trainingPlanResult = uiState.trainingPlan,
             date = statistics.date
         )
 
         BentoMetricsGrid(statistics = statistics)
 
-        // RPE Assessment Grid
         AppRpeScaleGrid(
             selectedRpe = state.selectedOverallRpe,
             onRpeSelected = { onSessionIntent(SessionIntent.SessionFeedbackSelected(it)) }
@@ -99,10 +106,10 @@ fun TrainingSessionSummaryScreen(
             minLines = 3
         )
 
-//        ExercisesBreakdownSection(
-//            statistics = statistics,
-//            trainingPlan = state.trainingPlan
-//        )
+        ExercisesBreakdownSection(
+            statistics = statistics,
+            trainingPlanResult = uiState.trainingPlan
+        )
 
         AppPrimaryButton(
             text = stringResource(R.string.session_finish),
@@ -114,7 +121,11 @@ fun TrainingSessionSummaryScreen(
 }
 
 @Composable
-private fun CelebrationBanner(planTitle: String, date: Date, modifier: Modifier = Modifier) {
+private fun CelebrationBanner(
+    trainingPlanResult: ResultHandler<TrainingPlan>,
+    date: Date,
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -142,8 +153,13 @@ private fun CelebrationBanner(planTitle: String, date: Date, modifier: Modifier 
             color = MaterialTheme.colorScheme.onSurface
         )
 
+        val text = if (trainingPlanResult is ResultHandler.Success) {
+            "${trainingPlanResult.value.title} • ${date.formatToString()}"
+        } else {
+            date.formatToString()
+        }
         Text(
-            text = "$planTitle • ${date.formatToString()}",
+            text = text,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
@@ -205,111 +221,10 @@ private fun BentoMetricsGrid(
 @Composable
 private fun ExercisesBreakdownSection(
     statistics: TrainingStatistics,
-    trainingPlan: TrainingPlan,
+    trainingPlanResult: ResultHandler<TrainingPlan>,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
-    ) {
-        Text(
-            text = stringResource(R.string.session_exercise_breakdown),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.primary
-        )
-
-        statistics.exercisesStatistics.forEach { exerciseStats ->
-            val exercise = trainingPlan.exercises.firstOrNull {
-                it.id == exerciseStats.trainingExerciseId
-            }
-            val exerciseName = exercise?.exercise?.name ?: "Exercise"
-
-            AppCard(
-                modifier = Modifier.fillMaxWidth(),
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(Dimens.spaceMd),
-                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
-                ) {
-                    Text(
-                        text = exerciseName,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-
-                    exerciseStats.attemptsStatistics.forEach { attempt ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            val setLabel = stringResource(
-                                R.string.session_set_format,
-                                attempt.set
-                            )
-                            Text(
-                                text = setLabel,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-
-                            val weight = attempt.actualWeightInKg
-                            val weightSuffix =
-                                if (weight != null && weight > 0.0) {
-                                    stringResource(
-                                        R.string.session_target_weight_suffix,
-                                        weight.toString()
-                                    )
-                                } else {
-                                    ""
-                                }
-                            val repsText = stringResource(
-                                R.string.session_reps_suffix,
-                                attempt.actualReps
-                            )
-                            Text(
-                                text = repsText + weightSuffix,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-
-                            val isCompleted = attempt.completed
-                            val icon =
-                                if (isCompleted) {
-                                    Icons.Default.Check
-                                } else {
-                                    Icons.Default.Close
-                                }
-                            val descRes =
-                                if (isCompleted) {
-                                    R.string.session_status_completed
-                                } else {
-                                    R.string.session_status_skipped
-                                }
-                            val desc = stringResource(descRes)
-                            val tint =
-                                if (isCompleted) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.error
-                                }
-                            Icon(
-                                imageVector = icon,
-                                contentDescription = desc,
-                                tint = tint,
-                                modifier = Modifier.size(Dimens.iconSize16)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-    }
+    // TODO implement when working on statistics
 }
 
 private fun formatDuration(time: Time): String {
@@ -327,18 +242,113 @@ private fun TrainingSessionSummaryScreenPreview() {
         trainingPlanId = TrainingPlanId.create(),
         totalTime = Time(2700000L),
         date = Date(),
-        exercisesStatistics = emptyList()
+        exercisesStatistics = listOf(
+            ExerciseStatistics(
+                id = ExerciseStatisticsId.create(),
+                trainingExerciseId = TrainingExerciseId.create(),
+                attemptsStatistics = listOf(
+                    ExerciseAttemptStatistics(
+                        id = ExerciseAttemptStatisticsId.create(),
+                        trainingExerciseId = TrainingExerciseId.create(),
+                        time = Time(12_000L),
+                        set = 1,
+                        completed = true,
+                        actualReps = 10,
+                        actualTime = 30.seconds,
+                        effort = SetEffort.HARD,
+                        restTime = 30.seconds
+                    ),
+                    ExerciseAttemptStatistics(
+                        id = ExerciseAttemptStatisticsId.create(),
+                        trainingExerciseId = TrainingExerciseId.create(),
+                        time = Time(12_000L),
+                        set = 2,
+                        completed = false,
+                        actualReps = 10,
+                        actualTime = 30.seconds,
+                        effort = SetEffort.HARD,
+                        restTime = 30.seconds
+                    ),
+                )
+            ),
+            ExerciseStatistics(
+                id = ExerciseStatisticsId.create(),
+                trainingExerciseId = TrainingExerciseId.create(),
+                attemptsStatistics = listOf(
+                    ExerciseAttemptStatistics(
+                        id = ExerciseAttemptStatisticsId.create(),
+                        trainingExerciseId = TrainingExerciseId.create(),
+                        time = Time(12_000L),
+                        set = 1,
+                        completed = true,
+                        actualReps = 10,
+                        actualTime = 30.seconds,
+                        effort = SetEffort.HARD,
+                        restTime = 30.seconds
+                    ),
+                    ExerciseAttemptStatistics(
+                        id = ExerciseAttemptStatisticsId.create(),
+                        trainingExerciseId = TrainingExerciseId.create(),
+                        time = Time(12_000L),
+                        set = 2,
+                        completed = false,
+                        actualReps = 10,
+                        actualTime = 30.seconds,
+                        effort = SetEffort.HARD,
+                        restTime = 30.seconds
+                    ),
+                )
+            )
+        )
     )
 
     TrainingPlannerTheme {
         TrainingSessionSummaryScreen(
-            state = TrainingSessionState.SummaryState(
-                statistics = stats,
-                selectedOverallRpe = SessionRpe.VERY_HARD,
-                notes = "Great workout!"
+            uiState = TrainingSessionUiState.Summary(
+                TrainingSessionState.SummaryState(
+                    statistics = stats,
+                    selectedOverallRpe = SessionRpe.VERY_HARD,
+                    notes = "Great workout!"
+                ),
+                trainingPlan = ResultHandler.Success(PREVIEW_TRAINING_PLAN)
             ),
             onSessionIntent = {},
             onFinishWorkout = {}
         )
     }
 }
+
+private val PREVIEW_TRAINING_PLAN = TrainingPlan(
+    id = TrainingPlanId.create(),
+    title = "Full Body Workout",
+    description = "A comprehensive full body routine covering chest, legs, back, and core.",
+    exercises = listOf(
+        TrainingExercise(
+            id = TrainingExerciseId.create(),
+            exercise = ExerciseSnapshot(
+                id = ExerciseId.create(),
+                name = "Push ups",
+                description = "Chest exercise",
+                categories = setOf(ExerciseCategoryName("Chest"), ExerciseCategoryName("Arms"))
+            ),
+            repetitions = 10,
+            sets = 3,
+            restTime = 60.seconds
+        ),
+        TrainingExercise(
+            id = TrainingExerciseId.create(),
+            exercise = ExerciseSnapshot(
+                id = ExerciseId.create(),
+                name = "Squats",
+                description = "Leg exercise",
+                categories = setOf(ExerciseCategoryName("Legs"))
+            ),
+            repetitions = 12,
+            sets = 4,
+            restTime = 60.seconds
+        )
+    ),
+    restTime = 60.seconds,
+    lastModification = Instant.parse("2026-10-01T12:00:00Z"),
+    lastSession = Instant.parse("2026-10-05T12:00:00Z")
+)

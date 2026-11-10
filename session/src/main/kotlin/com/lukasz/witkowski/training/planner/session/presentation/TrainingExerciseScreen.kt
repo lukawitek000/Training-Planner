@@ -41,7 +41,10 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
+import com.lukasz.witkowski.training.planner.image.ImageReference
+import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
@@ -52,6 +55,7 @@ import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppIntStepper
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppStepper
 import com.lukasz.witkowski.training.planner.session.presentation.components.TargetMetricsOverview
+import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
@@ -61,6 +65,9 @@ import com.lukasz.witkowski.training.planner.shared.ui.button.AppSecondaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppTertiaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
+import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingIndicator
+import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingState
+import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlin.time.Duration
@@ -72,12 +79,13 @@ import kotlin.time.Duration.Companion.seconds
  */
 @Composable
 fun TrainingExerciseScreen(
-    state: TrainingSessionState.ExerciseState,
+    uiState: TrainingSessionUiState.Exercise,
     onSessionIntent: (SessionIntent) -> Unit,
     onEndClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
+    val state = uiState.domainState
 
     Column(
         modifier = modifier
@@ -94,14 +102,12 @@ fun TrainingExerciseScreen(
             onEndClicked = onEndClicked
         )
 
-//        if (state.images.isNotEmpty()) {
-//            ImageGallery(
-//                images = state.images,
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(Dimens.heroImageHeightCompact),
-//            )
-//        }
+        ExerciseImages(
+            images = uiState.imagesReferences,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimens.heroImageHeightCompact),
+        )
 
         SetsProgressStrip(
             currentSet = state.progress.currentExerciseSet,
@@ -424,7 +430,7 @@ private fun ExerciseHeader(
             verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             categories.forEach { category ->
-                AppCategoryPill(text = category,)
+                AppCategoryPill(text = category)
             }
         }
     }
@@ -492,6 +498,46 @@ private fun SetsProgressStrip(currentSet: Int, totalSets: Int, modifier: Modifie
     }
 }
 
+@Composable
+private fun ExerciseImages(
+    images: ResultHandler<List<ImageReference>>,
+    modifier: Modifier = Modifier,
+) {
+    when (images) {
+        is ResultHandler.Loading -> {
+            Column(
+                modifier = modifier,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                AppLoadingIndicator(
+                    modifier = Modifier,
+                    spinnerSize = Dimens.smallSpinnerSize,
+                    spinnerIconContainerSize = Dimens.smallSpinnerIconContainerSize
+                )
+                Spacer(Modifier.height(Dimens.spaceMd))
+                Text(
+                    text = "Loading exercise images",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
+
+        is ResultHandler.Success<List<ImageReference>> -> {
+            if (images.value.isNotEmpty()) {
+                ImageGallery(
+                    images = images.value,
+                    modifier = modifier,
+                )
+            }
+        }
+
+        is ResultHandler.Idle -> {}
+        is ResultHandler.Error -> {}
+    }
+}
+
 @AppPreview
 @Composable
 private fun TrainingExerciseScreenPreview() {
@@ -502,6 +548,7 @@ private fun TrainingExerciseScreenPreview() {
     )
     val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
+        exerciseId = ExerciseId.create(),
         name = "Barbell Bench Press",
         description = "Lie on bench, press bar upwards",
         categories = setOf(ExerciseCategoryName("Chest")),
@@ -526,10 +573,13 @@ private fun TrainingExerciseScreenPreview() {
         timerState = TimerState.NotSet,
         progress = progress
     )
+    val uiState = TrainingSessionUiState.Exercise(
+        state, ResultHandler.Success(PREVIEW_PUSH_UP_IMAGES)
+    )
 
     TrainingPlannerTheme {
         TrainingExerciseScreen(
-            state = state,
+            uiState = uiState,
             onSessionIntent = {},
             onEndClicked = {}
         )
@@ -546,6 +596,7 @@ private fun TrainingExerciseScreenHoldTimePreview() {
     )
     val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
+        exerciseId = ExerciseId.create(),
         name = "Plank",
         description = "Hold a straight body position resting on forearms and toes",
         categories = setOf(
@@ -574,10 +625,14 @@ private fun TrainingExerciseScreenHoldTimePreview() {
         timerState = TimerState.Ready(68.seconds),
         progress = progress
     )
+    val uiState = TrainingSessionUiState.Exercise(
+        domainState = state,
+        imagesReferences = ResultHandler.Loading
+    )
 
     TrainingPlannerTheme {
         TrainingExerciseScreen(
-            state = state,
+            uiState = uiState,
             onSessionIntent = {},
             onEndClicked = {}
         )
@@ -594,6 +649,7 @@ private fun TrainingExerciseScreenNegativeHoldTimePreview() {
     )
     val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
+        exerciseId = ExerciseId.create(),
         name = "Plank",
         description = "Hold a straight body position resting on forearms and toes",
         categories = setOf(ExerciseCategoryName("Core")),

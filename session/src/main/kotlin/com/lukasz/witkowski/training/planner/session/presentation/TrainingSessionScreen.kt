@@ -19,6 +19,7 @@ import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
+import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.Time
@@ -41,7 +42,7 @@ fun TrainingSessionScreen(
     val trainingSessionState by viewModel.trainingSessionState.collectAsState()
     var showExitConfirmationDialog by rememberSaveable { mutableStateOf(false) }
 
-    BackHandler(enabled = trainingSessionState !is TrainingSessionState.SummaryState) {
+    BackHandler(enabled = trainingSessionState !is TrainingSessionUiState.Summary) {
         showExitConfirmationDialog = !showExitConfirmationDialog
     }
 
@@ -50,7 +51,7 @@ fun TrainingSessionScreen(
             .fillMaxSize()
     ) {
         TrainingSessionContent(
-            trainingSessionState = trainingSessionState,
+            trainingSessionUiState = trainingSessionState,
             onSessionIntent = viewModel::onIntent,
             onFinishWorkout = { navigateBack() },
             onEndClicked = { showExitConfirmationDialog = true }
@@ -74,33 +75,33 @@ fun TrainingSessionScreen(
 
 @Composable
 fun TrainingSessionContent(
-    trainingSessionState: TrainingSessionState,
+    trainingSessionUiState: TrainingSessionUiState,
     onSessionIntent: (SessionIntent) -> Unit,
     onFinishWorkout: () -> Unit,
     onEndClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
-        when (trainingSessionState) {
-            is TrainingSessionState.ExerciseState -> {
+        when (trainingSessionUiState) {
+            is TrainingSessionUiState.Exercise -> {
                 TrainingExerciseScreen(
-                    state = trainingSessionState,
+                    uiState = trainingSessionUiState,
                     onSessionIntent = onSessionIntent,
                     onEndClicked = onEndClicked
                 )
             }
 
-            is TrainingSessionState.RestTimeState -> {
+            is TrainingSessionUiState.RestTime -> {
                 RestTimeScreen(
-                    state = trainingSessionState,
+                    state = trainingSessionUiState.domainState,
                     onSessionIntent = onSessionIntent,
                     onEndClicked = onEndClicked
                 )
             }
 
-            is TrainingSessionState.SummaryState -> {
+            is TrainingSessionUiState.Summary -> {
                 TrainingSessionSummaryScreen(
-                    state = trainingSessionState,
+                    uiState = trainingSessionUiState,
                     onSessionIntent = onSessionIntent,
                     onFinishWorkout = onFinishWorkout
                 )
@@ -121,7 +122,7 @@ fun TrainingSessionContent(
 private fun TrainingSessionContentLoadingPreview() {
     TrainingPlannerTheme {
         TrainingSessionContent(
-            trainingSessionState = TrainingSessionState.IdleState,
+            trainingSessionUiState = TrainingSessionUiState.Idle,
             onSessionIntent = {},
             onFinishWorkout = {},
             onEndClicked = {}
