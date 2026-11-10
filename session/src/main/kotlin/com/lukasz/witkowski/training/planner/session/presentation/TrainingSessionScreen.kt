@@ -97,6 +97,7 @@ fun TrainingSessionContent(
                 RestTimeScreen(
                     state = trainingSessionState,
                     onSessionIntent = onSessionIntent,
+                    onEndClicked = onEndClicked
                 )
             }
 

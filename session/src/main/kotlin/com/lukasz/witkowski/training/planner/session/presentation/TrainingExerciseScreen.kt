@@ -83,7 +83,7 @@ fun TrainingExerciseScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(horizontal = Dimens.spaceMd),
+            .padding(start = Dimens.spaceMd, end = Dimens.spaceMd, bottom = Dimens.spaceMd),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
         ExerciseHeader(

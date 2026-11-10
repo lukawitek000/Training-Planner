@@ -55,6 +55,7 @@ private data class FeedbackChipOption(val effort: SetEffort, val label: String)
 fun RestTimeScreen(
     state: TrainingSessionState.RestTimeState,
     onSessionIntent: (SessionIntent) -> Unit,
+    onEndClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val feedbackChipOptions = listOf(
@@ -74,11 +75,13 @@ fun RestTimeScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = Dimens.margin, vertical = Dimens.spaceMd),
+            .padding(start = Dimens.spaceMd, end = Dimens.spaceMd, bottom = Dimens.spaceMd),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
-        RestHeader()
+        RestHeader(
+            onEndClicked = onEndClicked
+        )
         // TODO: Play 3-2-1 audio beeps and trigger vibration haptic pulses as rest interval finishes
         AppCircularTimer(
             timeFormatted = formatRemainingTime(remainingTime),
@@ -89,12 +92,13 @@ fun RestTimeScreen(
 
         NextExercisePreview(state)
 
-        Spacer(modifier = Modifier.height(Dimens.spaceMd))
+        Spacer(modifier = Modifier.height(Dimens.spaceSm))
 
         AppPrimaryButton(
             text = stringResource(R.string.session_start_next_set_now),
             leadingIcon = Icons.Default.PlayArrow,
-            onClick = { onSessionIntent(SessionIntent.RestSkipped) }
+            onClick = { onSessionIntent(SessionIntent.RestSkipped) },
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -120,11 +124,11 @@ private fun NextExercisePreview(state: TrainingSessionState.RestTimeState) {
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
             ) {
                 Text(
                     text = stringResource(R.string.session_up_next),
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
 
@@ -160,20 +164,32 @@ private fun NextExercisePreview(state: TrainingSessionState.RestTimeState) {
 }
 
 @Composable
-private fun RestHeader() {
-    Box(
-        modifier = Modifier
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceXs)
-    ) {
-        Text(
-            text = stringResource(R.string.session_rest_interval),
-            style = MaterialTheme.typography.labelSmall,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimaryContainer
+private fun RestHeader(
+    onEndClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .padding(horizontal = Dimens.spaceXl)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceXs)
+                .align(Alignment.Center)
+        ) {
+            Text(
+                text = stringResource(R.string.session_rest_interval),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+        EndEarlySessionButton(
+            onEndClicked = onEndClicked,
+            modifier = Modifier.align(Alignment.CenterEnd)
         )
     }
+
 }
 
 @Composable
@@ -184,7 +200,7 @@ private fun SetFeedbackForm(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Text(
             text = stringResource(R.string.session_feedback_prompt),
@@ -242,7 +258,8 @@ private fun RestTimeScreenPreview() {
     TrainingPlannerTheme {
         RestTimeScreen(
             state = state,
-            onSessionIntent = {}
+            onSessionIntent = {},
+            onEndClicked = {}
         )
     }
 }
