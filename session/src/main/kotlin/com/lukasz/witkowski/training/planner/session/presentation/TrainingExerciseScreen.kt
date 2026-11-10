@@ -84,13 +84,11 @@ fun TrainingExerciseScreen(
     onEndClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scrollState = rememberScrollState()
     val state = uiState.domainState
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
             .padding(start = Dimens.spaceMd, end = Dimens.spaceMd, bottom = Dimens.spaceMd),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
@@ -102,23 +100,29 @@ fun TrainingExerciseScreen(
             onEndClicked = onEndClicked
         )
 
-        ExerciseImages(
-            images = uiState.imagesReferences,
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(Dimens.heroImageHeightCompact),
-        )
+                .weight(1f)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
+        ) {
+            ExerciseImages(
+                images = uiState.imagesReferences,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(Dimens.heroImageHeightCompact),
+            )
 
-        SetsProgressStrip(
-            currentSet = state.progress.currentExerciseSet,
-            totalSets = state.progress.currentExerciseTotalSets
-        )
+            SetsProgressStrip(
+                currentSet = state.progress.currentExerciseSet,
+                totalSets = state.progress.currentExerciseTotalSets
+            )
 
-        ActiveSetCard(state, onSessionIntent)
+            ActiveSetCard(state, onSessionIntent)
 
-        ExerciseSetsModification(onSessionIntent)
-
-        Spacer(modifier = Modifier.height(Dimens.spaceMd))
+            ExerciseSetsModification(onSessionIntent)
+        }
 
         Column(
             modifier = Modifier.fillMaxWidth(),
