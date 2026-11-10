@@ -6,18 +6,39 @@ import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 
 interface TrainingSessionUiState {
-    data object Idle : TrainingSessionUiState
-    data object Loading : TrainingSessionUiState
+    val phaseKey: TrainingSessionPhaseKey
+    data object Loading : TrainingSessionUiState {
+        override val phaseKey = TrainingSessionPhaseKey.Loading
+    }
     data class Exercise(
         val domainState: TrainingSessionState.ExerciseState,
         val imagesReferences: ResultHandler<List<ImageReference>>
-    ) : TrainingSessionUiState
+    ) : TrainingSessionUiState {
+        override val phaseKey = TrainingSessionPhaseKey.Exercise(domainState.toUniqueId())
+
+        private fun TrainingSessionState.ExerciseState.toUniqueId(): String {
+            val id = domainState.sessionExercise.exerciseId
+            val sets = domainState.progress.remainingExerciseSets
+            return "${id}_$sets"
+        }
+    }
 
     data class RestTime(val domainState: TrainingSessionState.RestTimeState) :
-        TrainingSessionUiState
+        TrainingSessionUiState {
+        override val phaseKey = TrainingSessionPhaseKey.RestTime
+    }
 
     data class Summary(
         val domainState: TrainingSessionState.SummaryState,
         val trainingPlan: ResultHandler<TrainingPlan>
-    ) : TrainingSessionUiState
+    ) : TrainingSessionUiState {
+        override val phaseKey = TrainingSessionPhaseKey.Summary
+    }
+}
+
+sealed interface TrainingSessionPhaseKey {
+    data object Loading : TrainingSessionPhaseKey
+    data class Exercise(val exerciseSessionId: String) : TrainingSessionPhaseKey
+    data object RestTime : TrainingSessionPhaseKey
+    data object Summary : TrainingSessionPhaseKey
 }

@@ -74,7 +74,6 @@ fun RestTimeScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
             .padding(start = Dimens.spaceMd, end = Dimens.spaceMd, bottom = Dimens.spaceMd),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
@@ -92,7 +91,7 @@ fun RestTimeScreen(
 
         NextExercisePreview(state)
 
-        Spacer(modifier = Modifier.height(Dimens.spaceSm))
+        Spacer(modifier = Modifier.weight(1f))
 
         AppPrimaryButton(
             text = stringResource(R.string.session_start_next_set_now),

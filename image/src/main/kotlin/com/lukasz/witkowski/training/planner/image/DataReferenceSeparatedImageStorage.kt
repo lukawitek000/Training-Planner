@@ -95,16 +95,12 @@ internal class DataReferenceSeparatedImageStorage constructor(
         }
             .fold(
                 onSuccess = {
-                    Timber.d("onSuccess $it")
                     ResultHandler.Success(it)
                 },
                 onFailure = {
-                    Timber.d("onFailure ${it.message}")
                     ResultHandler.Error(it.message ?: "")
                 }
             )
-
-        Timber.d("Emit result $result")
         emit(result)
     }
 

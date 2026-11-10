@@ -79,11 +79,11 @@ class TrainingSessionService(
     }
 
     fun changeReps(newReps: Int) {
-        requireActiveSession().updateReps(newReps)
+        requireActiveSession().handle(SessionCommand.Exercise.UpdateReps(newReps))
     }
 
     fun changeWeight(weight: Double) {
-        requireActiveSession().updateWeight(weight)
+        requireActiveSession().handle(SessionCommand.Exercise.UpdateWeight(weight))
     }
 
     fun addExtraSet() {

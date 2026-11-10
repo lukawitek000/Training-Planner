@@ -65,7 +65,10 @@ fun AppLoadingState(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        AppLoadingIndicator()
+        AppLoadingIndicator(
+            icon = icon,
+            iconContentDescription = iconContentDescription
+        )
 
         Spacer(modifier = Modifier.height(Dimens.spaceLg))
 

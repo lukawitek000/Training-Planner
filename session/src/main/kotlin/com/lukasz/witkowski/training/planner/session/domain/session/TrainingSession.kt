@@ -91,14 +91,6 @@ internal class TrainingSession(
         currentPhase.value.handle(command)
     }
 
-    fun updateReps(newReps: Int) {
-        currentPhase.value.handle(SessionCommand.Exercise.UpdateReps(newReps))
-    }
-
-    fun updateWeight(weight: Double) {
-        currentPhase.value.handle(SessionCommand.Exercise.UpdateWeight(weight))
-    }
-
     private fun onPhaseFinished(event: SessionEvent?) {
         if (event == null) return
         recordPhaseEvent(event)

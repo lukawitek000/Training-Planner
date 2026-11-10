@@ -33,7 +33,7 @@ class TrainingSessionViewModel(
     val trainingSessionState: StateFlow<TrainingSessionUiState> =
         trainingSessionService.trainingSessionState.flatMapLatest { domainState ->
             when (domainState) {
-                is TrainingSessionState.IdleState -> flowOf(TrainingSessionUiState.Idle)
+                is TrainingSessionState.IdleState -> flowOf(TrainingSessionUiState.Loading)
                 is TrainingSessionState.RestTimeState -> flowOf(
                     TrainingSessionUiState.RestTime(
                         domainState
