@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.session.application
 
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.SessionCommand
 import com.lukasz.witkowski.training.planner.session.domain.session.StraightSetsPolicy
@@ -108,6 +109,14 @@ class TrainingSessionService(
 
     fun resetTimer() {
         requireActiveSession().handle(SessionCommand.Exercise.ResetTimer)
+    }
+
+    fun updateSessionNotes(notes: String) {
+        requireActiveSession().handle(SessionCommand.Summary.UpdateNotes(notes))
+    }
+
+    fun updateSessionFeedback(rpe: SessionRpe) {
+        requireActiveSession().handle(SessionCommand.Summary.UpdateOverallRpe(rpe))
     }
 
     fun endEarly() {

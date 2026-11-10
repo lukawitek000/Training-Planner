@@ -144,8 +144,12 @@ class TrainingSessionViewModel(
                 trainingSessionService.setExerciseSetFeedback(intent.effort)
             }
 
-            is SessionIntent.SessionNotesChanged -> Unit
-            is SessionIntent.SessionFeedbackSelected -> Unit
+            is SessionIntent.SessionNotesChanged -> {
+                trainingSessionService.updateSessionNotes(intent.notes)
+            }
+            is SessionIntent.SessionFeedbackSelected -> {
+                trainingSessionService.updateSessionFeedback(intent.rpe)
+            }
             is SessionIntent.SessionEndEarly -> {
                 trainingSessionService.endEarly()
             }
