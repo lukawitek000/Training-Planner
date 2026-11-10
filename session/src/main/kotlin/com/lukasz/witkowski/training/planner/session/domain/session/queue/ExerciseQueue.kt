@@ -94,13 +94,17 @@ internal class ExerciseQueue(loadedExercises: List<SessionExercise>) {
             remainingExercises = groupedExercises.size,
             totalExercises = totalDistinctExercises,
             remainingSetsInWorkout = remainingExercises.size,
-            nextSetQueueProgress = remainingExercises.firstOrNull()?.exerciseId?.let { calculateNextSetProgress(it) }
+            nextSetQueueProgress = remainingExercises.firstOrNull()?.exerciseId?.let {
+                calculateNextSetProgress(it)
+            }
         ).also {
             Timber.d("Calculated queue progress $it")
         }
     }
 
-    private fun calculateNextSetProgress(nextExerciseId: TrainingExerciseId): ExerciseQueueProgress {
+    private fun calculateNextSetProgress(
+        nextExerciseId: TrainingExerciseId
+    ): ExerciseQueueProgress {
         val nextRemaining = remainingExercises.takeLast(remainingExercises.size - 1)
         val groupedNextRemaining = nextRemaining.groupBy { it.exerciseId }
         return ExerciseQueueProgress(

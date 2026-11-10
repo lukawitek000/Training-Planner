@@ -8,24 +8,19 @@ import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
-import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
-import com.lukasz.witkowski.training.planner.shared.utils.runCatchingCancellable
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import kotlin.time.Duration
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 class TrainingSessionViewModel(
     private val trainingPlanService: TrainingPlanService,
@@ -46,11 +41,13 @@ class TrainingSessionViewModel(
                 )
 
                 is TrainingSessionState.ExerciseState ->
-                    exerciseService.loadImageReferences(domainState.sessionExercise.snapshot.imageIds)
+                    exerciseService.loadImageReferences(
+                        domainState.sessionExercise.snapshot.imageIds
+                    )
                         .map { referencesResult ->
                             TrainingSessionUiState.Exercise(
                                 domainState,
-                                referencesResult,
+                                referencesResult
                             )
                         }
 
@@ -63,7 +60,7 @@ class TrainingSessionViewModel(
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000L),
-            initialValue = TrainingSessionUiState.Loading,
+            initialValue = TrainingSessionUiState.Loading
         )
 
     init {

@@ -1,7 +1,6 @@
 package com.lukasz.witkowski.training.planner.session.di
 
 import com.lukasz.witkowski.training.planner.session.application.TrainingSessionService
-import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedListener
 import com.lukasz.witkowski.training.planner.session.domain.session.StraightSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.CompositeStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder

@@ -14,11 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Celebration
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.EmojiEvents
-import androidx.compose.material.icons.filled.LocalFireDepartment
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -49,7 +45,6 @@ import com.lukasz.witkowski.training.planner.shared.time.formatToString
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.bento.AppBentoTile
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
-import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.inputField.AppLabeledTextField
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
@@ -59,7 +54,6 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
-import kotlin.math.acos
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
@@ -124,7 +118,7 @@ fun TrainingSessionSummaryScreen(
 private fun CelebrationBanner(
     trainingPlanResult: ResultHandler<TrainingPlan>,
     date: Date,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -168,10 +162,7 @@ private fun CelebrationBanner(
 }
 
 @Composable
-private fun BentoMetricsGrid(
-    statistics: TrainingStatistics,
-    modifier: Modifier = Modifier
-) {
+private fun BentoMetricsGrid(statistics: TrainingStatistics, modifier: Modifier = Modifier) {
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
@@ -268,7 +259,7 @@ private fun TrainingSessionSummaryScreenPreview() {
                         actualTime = 30.seconds,
                         effort = SetEffort.HARD,
                         restTime = 30.seconds
-                    ),
+                    )
                 )
             ),
             ExerciseStatistics(
@@ -296,7 +287,7 @@ private fun TrainingSessionSummaryScreenPreview() {
                         actualTime = 30.seconds,
                         effort = SetEffort.HARD,
                         restTime = 30.seconds
-                    ),
+                    )
                 )
             )
         )

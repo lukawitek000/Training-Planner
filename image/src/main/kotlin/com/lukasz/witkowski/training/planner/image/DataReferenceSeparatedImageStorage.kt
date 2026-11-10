@@ -1,10 +1,14 @@
 package com.lukasz.witkowski.training.planner.image
 
 import com.lukasz.witkowski.training.planner.image.domain.ChecksumCalculator
+import com.lukasz.witkowski.training.planner.image.domain.Image as DomainImage
+import com.lukasz.witkowski.training.planner.image.domain.ImageReference as DomainImageReference
 import com.lukasz.witkowski.training.planner.image.domain.ImageReferenceRepository
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.shared.utils.runCatchingCancellable
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -13,10 +17,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
-import java.util.UUID
-import java.util.concurrent.ConcurrentHashMap
-import com.lukasz.witkowski.training.planner.image.domain.Image as DomainImage
-import com.lukasz.witkowski.training.planner.image.domain.ImageReference as DomainImageReference
 
 /**
  * Image storage that uses two repositories to store image and its reference.
@@ -76,36 +76,37 @@ internal class DataReferenceSeparatedImageStorage constructor(
         return domainImageReferences.map { it.toImageReference() }
     }
 
-    override suspend fun loadImageReferences(images: List<ImageId>): Flow<ResultHandler<List<ImageReference>>> =
-        flow {
-            if (cacheRefsState.keys.containsAll(images)) {
-                val references = images.mapNotNull { cacheRefsState[it] }
-                emit(ResultHandler.Success(references))
-            }
-            emit(ResultHandler.Loading)
-            val result = runCatchingCancellable {
-                coroutineScope {
-                    images.map { imageId ->
-                        async {
-                            fetchOrGetSingle(imageId)
-                        }
-                    }.awaitAll()
-                }
-            }
-                .fold(
-                    onSuccess = {
-                        Timber.d("onSuccess $it")
-                        ResultHandler.Success(it)
-                    },
-                    onFailure = {
-                        Timber.d("onFailure ${it.message}")
-                        ResultHandler.Error(it.message ?: "")
-                    }
-                )
-
-            Timber.d("Emit result $result")
-            emit(result)
+    override suspend fun loadImageReferences(
+        images: List<ImageId>
+    ): Flow<ResultHandler<List<ImageReference>>> = flow {
+        if (cacheRefsState.keys.containsAll(images)) {
+            val references = images.mapNotNull { cacheRefsState[it] }
+            emit(ResultHandler.Success(references))
         }
+        emit(ResultHandler.Loading)
+        val result = runCatchingCancellable {
+            coroutineScope {
+                images.map { imageId ->
+                    async {
+                        fetchOrGetSingle(imageId)
+                    }
+                }.awaitAll()
+            }
+        }
+            .fold(
+                onSuccess = {
+                    Timber.d("onSuccess $it")
+                    ResultHandler.Success(it)
+                },
+                onFailure = {
+                    Timber.d("onFailure ${it.message}")
+                    ResultHandler.Error(it.message ?: "")
+                }
+            )
+
+        Timber.d("Emit result $result")
+        emit(result)
+    }
 
     private suspend fun fetchOrGetSingle(id: ImageId): ImageReference {
         cacheRefsState[id]?.let { return it }

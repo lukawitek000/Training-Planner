@@ -106,10 +106,10 @@ fun AppLoadingIndicator(
         initialValue = 0.88f,
         targetValue = 1.12f,
         animationSpec =
-            infiniteRepeatable(
-                animation = tween(durationMillis = 1200, easing = LinearEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
+        infiniteRepeatable(
+            animation = tween(durationMillis = 1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
         label = "AppLoadingStatePulseScale"
     )
 
@@ -117,10 +117,10 @@ fun AppLoadingIndicator(
         initialValue = 0.15f,
         targetValue = 0.35f,
         animationSpec =
-            infiniteRepeatable(
-                animation = tween(durationMillis = 1200, easing = LinearEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
+        infiniteRepeatable(
+            animation = tween(durationMillis = 1200, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
         label = "AppLoadingStatePulseAlpha"
     )
 
@@ -128,10 +128,10 @@ fun AppLoadingIndicator(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec =
-            infiniteRepeatable(
-                animation = tween(durationMillis = 2200, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            ),
+        infiniteRepeatable(
+            animation = tween(durationMillis = 2200, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
         label = "AppLoadingStateRotation"
     )
     Box(
@@ -141,9 +141,9 @@ fun AppLoadingIndicator(
         // Soft Ambient Pulse Glow
         Surface(
             modifier =
-                Modifier
-                    .size(spinnerSize)
-                    .scale(pulseScale),
+            Modifier
+                .size(spinnerSize)
+                .scale(pulseScale),
             shape = CircleShape,
             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = pulseAlpha)
         ) {}
@@ -151,9 +151,9 @@ fun AppLoadingIndicator(
         // Spinner Ring
         CircularProgressIndicator(
             modifier =
-                Modifier
-                    .size(spinnerSize)
-                    .rotate(rotation),
+            Modifier
+                .size(spinnerSize)
+                .rotate(rotation),
             color = MaterialTheme.colorScheme.primaryContainer,
             trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             strokeWidth = Dimens.spinnerStrokeWidth,
@@ -166,10 +166,10 @@ fun AppLoadingIndicator(
             shape = CircleShape,
             color = MaterialTheme.colorScheme.surfaceContainerHigh,
             border =
-                BorderStroke(
-                    width = Dimens.thinBorder,
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
-                ),
+            BorderStroke(
+                width = Dimens.thinBorder,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+            ),
             shadowElevation = Dimens.shadowLg
         ) {
             Box(contentAlignment = Alignment.Center) {

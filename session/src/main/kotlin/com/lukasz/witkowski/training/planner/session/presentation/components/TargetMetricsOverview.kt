@@ -9,9 +9,7 @@ import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
 
 @Composable
-fun TargetMetricsOverview(
-    sessionExercise: SessionExercise
-) {
+fun TargetMetricsOverview(sessionExercise: SessionExercise) {
     val targetMetric =
         if (sessionExercise.currentConfig.isIsometric) {
             stringResource(

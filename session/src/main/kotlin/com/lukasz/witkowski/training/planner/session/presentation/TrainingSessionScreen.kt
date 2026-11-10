@@ -3,30 +3,20 @@ package com.lukasz.witkowski.training.planner.session.presentation
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.lukasz.witkowski.training.planner.session.R
-import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
-import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
-import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
-import com.lukasz.witkowski.training.planner.shared.ui.dialogs.AppConfirmationDialog
 import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingState
-import kotlin.time.Duration
 
 /**
  * Main coordinator screen for the workout session.
@@ -67,7 +57,7 @@ fun TrainingSessionScreen(
                 onDismiss = {
                     showExitConfirmationDialog = false
                 },
-                modifier = Modifier,
+                modifier = Modifier
             )
         }
     }

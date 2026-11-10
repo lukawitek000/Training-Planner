@@ -14,6 +14,7 @@ import com.lukasz.witkowski.training.planner.session.domain.session.statisticsre
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.TimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +25,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
-import kotlin.time.Duration
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("TooManyFunctions")
@@ -51,7 +51,6 @@ class TrainingSessionService(
 
     var trainingPlan: TrainingPlan? = null
         private set
-
 
     fun startTraining(
         trainingPlan: TrainingPlan,

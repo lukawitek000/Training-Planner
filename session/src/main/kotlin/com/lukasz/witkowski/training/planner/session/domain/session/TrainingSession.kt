@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.session.domain.session
 
-import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.phases.IdlePhase
 import com.lukasz.witkowski.training.planner.session.domain.session.phases.NextPhaseProvider
 import com.lukasz.witkowski.training.planner.session.domain.session.phases.SessionPhase

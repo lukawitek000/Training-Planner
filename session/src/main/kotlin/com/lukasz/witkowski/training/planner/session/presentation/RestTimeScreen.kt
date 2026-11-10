@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
@@ -67,7 +66,7 @@ fun RestTimeScreen(
     )
     val remainingTime = (state.timerState as? TimerState.Running)?.remaining ?: Duration.ZERO
     val progress = if (state.totalRestTime.inWholeMilliseconds > 0) {
-        (remainingTime/ state.totalRestTime).toFloat()
+        (remainingTime / state.totalRestTime).toFloat()
     } else {
         0f
     }
@@ -165,10 +164,7 @@ private fun NextExercisePreview(state: TrainingSessionState.RestTimeState) {
 }
 
 @Composable
-private fun RestHeader(
-    onEndClicked: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun RestHeader(onEndClicked: () -> Unit, modifier: Modifier = Modifier) {
     Box(modifier = modifier.fillMaxWidth()) {
         Box(
             modifier = Modifier
@@ -190,7 +186,6 @@ private fun RestHeader(
             modifier = Modifier.align(Alignment.CenterEnd)
         )
     }
-
 }
 
 @Composable

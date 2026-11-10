@@ -113,6 +113,7 @@ class ExerciseService(
             } ?: emptyList()
         }.getOrDefault(emptyList())
 
-    suspend fun loadImageReferences(images: List<ImageId>): Flow<ResultHandler<List<ImageReference>>> =
-        imageStorage.loadImageReferences(images)
+    suspend fun loadImageReferences(
+        images: List<ImageId>
+    ): Flow<ResultHandler<List<ImageReference>>> = imageStorage.loadImageReferences(images)
 }

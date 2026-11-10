@@ -15,6 +15,7 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toT
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toTrainingPlanOverview
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlanWithExercises
+import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -22,7 +23,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import java.util.concurrent.ConcurrentHashMap
 
 internal class DbTrainingPlanRepository(
     private val trainingPlanDao: TrainingPlanDao,
@@ -79,7 +79,9 @@ internal class DbTrainingPlanRepository(
         }
     }
 
-    override suspend fun fetchTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<ResultHandler<TrainingPlan>> = flow {
+    override suspend fun fetchTrainingPlanById(
+        trainingPlanId: TrainingPlanId
+    ): Flow<ResultHandler<TrainingPlan>> = flow {
         cachePlans[trainingPlanId]?.let { cached ->
             emit(cached)
             if (cached is ResultHandler.Success) return@flow
@@ -92,10 +94,12 @@ internal class DbTrainingPlanRepository(
                     "TrainingPlan not found for id: $trainingPlanId"
                 }.toTrainingPlan()
             }.fold(
-                onSuccess = { ResultHandler.Success(it).also {
-                    cachePlans[trainingPlanId] = it
-                } },
-                onFailure = { ResultHandler.Error(it.message ?: "")}
+                onSuccess = {
+                    ResultHandler.Success(it).also {
+                        cachePlans[trainingPlanId] = it
+                    }
+                },
+                onFailure = { ResultHandler.Error(it.message ?: "") }
             )
         }
         emit(result)

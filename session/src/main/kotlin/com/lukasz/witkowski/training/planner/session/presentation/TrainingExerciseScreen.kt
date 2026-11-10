@@ -137,7 +137,7 @@ private fun TrainingExerciseContent(
             images = uiState.imagesReferences,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(Dimens.heroImageHeightCompact),
+                .height(Dimens.heroImageHeightCompact)
         )
 
         SetsProgressStrip(
@@ -226,7 +226,7 @@ private fun ExerciseSetsModification(onSessionIntent: (SessionIntent) -> Unit) {
             onClick = { onSessionIntent(SessionIntent.SetRemoved) },
             modifier = Modifier.weight(1f),
             containerColor = MaterialTheme.colorScheme.error,
-            contentColor = MaterialTheme.colorScheme.onError,
+            contentColor = MaterialTheme.colorScheme.onError
         )
 
         AppTertiaryButton(
@@ -308,13 +308,9 @@ private fun IsometricHoldControls(
 }
 
 @Composable
-private fun TimerClock(
-    remainingTime: Duration,
-    timerColor: Color,
-    modifier: Modifier = Modifier
-) {
+private fun TimerClock(remainingTime: Duration, timerColor: Color, modifier: Modifier = Modifier) {
     val style = MaterialTheme.typography.headlineLarge.copy(
-        fontWeight = FontWeight.Bold,
+        fontWeight = FontWeight.Bold
     )
     Row(
         modifier = modifier,
@@ -350,7 +346,7 @@ private data class HoldTimeState(
     val timerColor: Color,
     val backgroundColor: Color,
     val icon: ImageVector,
-    val sessionIntentFactory: () -> SessionIntent,
+    val sessionIntentFactory: () -> SessionIntent
 ) {
     companion object {
         @Composable
@@ -406,7 +402,7 @@ private fun ExerciseHeader(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -423,7 +419,7 @@ private fun ExerciseHeader(
                 modifier = Modifier.weight(1f)
             )
             EndEarlySessionButton(
-                onEndClicked = onEndClicked,
+                onEndClicked = onEndClicked
             )
         }
 
@@ -431,7 +427,7 @@ private fun ExerciseHeader(
             text = exerciseName,
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = MaterialTheme.colorScheme.onSurface
         )
         Spacer(Modifier.height(Dimens.spaceSm))
 
@@ -511,7 +507,7 @@ private fun SetsProgressStrip(currentSet: Int, totalSets: Int, modifier: Modifie
 @Composable
 private fun ExerciseImages(
     images: ResultHandler<List<ImageReference>>,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     when (images) {
         is ResultHandler.Loading -> {
@@ -529,7 +525,7 @@ private fun ExerciseImages(
                 Text(
                     text = "Loading exercise images",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
             }
         }
@@ -538,7 +534,7 @@ private fun ExerciseImages(
             if (images.value.isNotEmpty()) {
                 ImageGallery(
                     images = images.value,
-                    modifier = modifier,
+                    modifier = modifier
                 )
             }
         }
@@ -575,7 +571,7 @@ private fun TrainingExerciseScreenPreview() {
         totalExercises = 4,
         remainingExercises = 3,
         remainingSetsInWorkout = 10,
-        nextSetQueueProgress = null,
+        nextSetQueueProgress = null
     )
     val state = TrainingSessionState.ExerciseState(
         sessionExercise = sessionExercise,
@@ -583,7 +579,8 @@ private fun TrainingExerciseScreenPreview() {
         progress = progress
     )
     val uiState = TrainingSessionUiState.Exercise(
-        state, ResultHandler.Success(PREVIEW_PUSH_UP_IMAGES)
+        state,
+        ResultHandler.Success(PREVIEW_PUSH_UP_IMAGES)
     )
 
     TrainingPlannerTheme {
