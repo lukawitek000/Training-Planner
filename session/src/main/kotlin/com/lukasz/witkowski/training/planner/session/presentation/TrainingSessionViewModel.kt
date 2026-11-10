@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
@@ -44,49 +45,20 @@ class TrainingSessionViewModel(
                     )
                 )
 
-                is TrainingSessionState.ExerciseState -> flow {
-                    emit(TrainingSessionUiState.Exercise(domainState, ResultHandler.Loading))
-                    val result = runCatchingCancellable {
-                        exerciseService.readImageReferences(domainState.sessionExercise.snapshot.exerciseId)
-                    }
-                    result.fold(
-                        onSuccess = { refs ->
-                            emit(
-                                TrainingSessionUiState.Exercise(
-                                    domainState,
-                                    ResultHandler.Success(refs),
-                                )
-                            )
-                        },
-                        onFailure = {
-                            emit(
-                                TrainingSessionUiState.Exercise(
-                                    domainState,
-                                    ResultHandler.Error("Failed to load image references"),
-                                )
+                is TrainingSessionState.ExerciseState ->
+                    exerciseService.loadImageReferences(domainState.sessionExercise.snapshot.imageIds)
+                        .map { referencesResult ->
+                            TrainingSessionUiState.Exercise(
+                                domainState,
+                                referencesResult,
                             )
                         }
-                    )
 
-                }
-
-                is TrainingSessionState.SummaryState -> flow {
-                    emit(TrainingSessionUiState.Summary(domainState, ResultHandler.Loading))
-                    val result =
-                        trainingPlanService.fetchTrainingPlanById(domainState.statistics.trainingPlanId)
-                    result.fold(
-                        onSuccess = {
-                            emit(
-                                TrainingSessionUiState.Summary(domainState, ResultHandler.Success(it))
-                            )
-                        },
-                        onFailure = {
-                            emit(
-                                TrainingSessionUiState.Summary(domainState, ResultHandler.Error("Failed to load training plan"))
-                            )
+                is TrainingSessionState.SummaryState ->
+                    trainingPlanService.fetchTrainingPlanById(domainState.statistics.trainingPlanId)
+                        .map { planResult ->
+                            TrainingSessionUiState.Summary(domainState, planResult)
                         }
-                    )
-                }
             }
         }.stateIn(
             scope = viewModelScope,
@@ -147,9 +119,11 @@ class TrainingSessionViewModel(
             is SessionIntent.SessionNotesChanged -> {
                 trainingSessionService.updateSessionNotes(intent.notes)
             }
+
             is SessionIntent.SessionFeedbackSelected -> {
                 trainingSessionService.updateSessionFeedback(intent.rpe)
             }
+
             is SessionIntent.SessionEndEarly -> {
                 trainingSessionService.endEarly()
             }

@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.domain
 
+import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import kotlinx.coroutines.flow.Flow
 
 interface TrainingPlanRepository {
@@ -14,7 +15,7 @@ interface TrainingPlanRepository {
 
     fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan?>
 
-    suspend fun fetchTrainingPlanById(trainingPlanId: TrainingPlanId): Result<TrainingPlan>
+    suspend fun fetchTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<ResultHandler<TrainingPlan>>
 
     suspend fun update(
         trainingPlanConfiguration: TrainingPlanConfiguration,

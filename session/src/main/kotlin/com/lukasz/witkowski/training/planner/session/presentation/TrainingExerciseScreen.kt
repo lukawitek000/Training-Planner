@@ -548,7 +548,6 @@ private fun TrainingExerciseScreenPreview() {
     )
     val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
-        exerciseId = ExerciseId.create(),
         name = "Barbell Bench Press",
         description = "Lie on bench, press bar upwards",
         categories = setOf(ExerciseCategoryName("Chest")),
@@ -596,7 +595,6 @@ private fun TrainingExerciseScreenHoldTimePreview() {
     )
     val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
-        exerciseId = ExerciseId.create(),
         name = "Plank",
         description = "Hold a straight body position resting on forearms and toes",
         categories = setOf(
@@ -649,7 +647,6 @@ private fun TrainingExerciseScreenNegativeHoldTimePreview() {
     )
     val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
-        exerciseId = ExerciseId.create(),
         name = "Plank",
         description = "Hold a straight body position resting on forearms and toes",
         categories = setOf(ExerciseCategoryName("Core")),

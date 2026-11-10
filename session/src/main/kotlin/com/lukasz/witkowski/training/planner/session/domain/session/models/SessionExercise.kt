@@ -19,7 +19,6 @@ data class SessionExercise(
 
 data class TrainingExerciseSnapshot(
     val id: TrainingExerciseId,
-    val exerciseId: ExerciseId,
     val name: String,
     val description: String,
     val categories: Set<ExerciseCategoryName>,

@@ -229,7 +229,6 @@ private fun RestTimeScreenPreview() {
     )
     val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
-        exerciseId = ExerciseId.create(),
         name = "Incline Dumbbell Press",
         description = "Press dumbbells at incline",
         categories = setOf(ExerciseCategoryName("Chest")),
