@@ -26,6 +26,7 @@ class Timer(
     private val coroutineScope: CoroutineScope =
         CoroutineScope(timerDispatcher + CoroutineName("Timer"))
     private var timerJob: Job? = null
+    private var initialTime: Duration = Duration.ZERO
 
     val state: StateFlow<TimerState>
         field = MutableStateFlow<TimerState>(initialState)
@@ -41,7 +42,13 @@ class Timer(
 
     fun changeTime(duration: Duration) {
         timerJob?.cancel()
+        initialTime = duration
         state.value = TimerState.Ready(duration)
+    }
+
+    fun reset() {
+        timerJob?.cancel()
+        state.value = TimerState.Ready(initialTime)
     }
 
     override fun close() {
@@ -49,6 +56,7 @@ class Timer(
     }
 
     private fun start(initTime: Duration) {
+        initialTime = initTime
         val startTimestampMillis = timeProvider.elapsedTimeMillis()
         state.update { TimerState.Running(initTime) }
         timerJob =

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
@@ -26,14 +28,20 @@ import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
@@ -55,6 +63,8 @@ import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+import kotlin.concurrent.timer
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 /**
@@ -140,14 +150,10 @@ private fun ActiveSetCard(
             ActiveSetHeader(state)
 
             if (state.sessionExercise.currentConfig.isIsometric) {
-//                    IsometricHoldControls(
-//                        countdownRemaining = state.remainingHoldTime.inWholeSeconds.toInt(),
-//                        isHoldTimerRunning = state.isHoldTimerRunning,
-//                        onToggleTimer = onToggleHoldTimer,
-//                        onResetTimer = onResetHoldTimer,
-//                        holdSeconds = state.selectedHoldDuration.inWholeSeconds.toInt(),
-//                        onHoldSecondsChange = { onHoldDurationChanged(it.seconds) }
-//                    )
+                IsometricHoldControls(
+                    state = state,
+                    onSessionIntent = onSessionIntent
+                )
             } else {
                 AppIntStepper(
                     value = state.sessionExercise.currentConfig.reps,
@@ -213,90 +219,152 @@ private fun ExerciseSetsModification(onSessionIntent: (SessionIntent) -> Unit) {
 
 @Composable
 private fun IsometricHoldControls(
-    countdownRemaining: Int,
-    isHoldTimerRunning: Boolean,
-    onToggleTimer: () -> Unit,
-    onResetTimer: () -> Unit,
-    holdSeconds: Int,
-    onHoldSecondsChange: (Int) -> Unit,
+    state: TrainingSessionState.ExerciseState,
+    onSessionIntent: (SessionIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val holdTimeState = HoldTimeState.create(state.timerState, state.sessionExercise.currentConfig.holdTime)
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.small)
-                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceSm),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .background(holdTimeState.backgroundColor)
+                .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceXl),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Timer,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(Dimens.iconSize24)
-                )
-                Text(
-                    text = stringResource(
-                        R.string.session_timer_remaining_format,
-                        countdownRemaining / 60,
-                        countdownRemaining % 60
-                    ),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
+            Icon(
+                imageVector = Icons.Default.Timer,
+                contentDescription = null,
+                tint = holdTimeState.iconsColor,
+                modifier = Modifier.size(Dimens.iconSize30).weight(0.25f)
+            )
+            TimerClock(holdTimeState.remainingTime, holdTimeState.timerColor, modifier = Modifier.weight(1f))
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier.weight(0.25f),
+                contentAlignment = Alignment.Center
             ) {
-                IconButton(onClick = onToggleTimer) {
-                    val icon =
-                        if (isHoldTimerRunning) {
-                            Icons.Default.Pause
-                        } else {
-                            Icons.Default.PlayArrow
-                        }
-                    val descRes =
-                        if (isHoldTimerRunning) {
-                            R.string.session_pause_hold_timer
-                        } else {
-                            R.string.session_start_hold_timer
-                        }
-                    val desc = stringResource(descRes)
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = desc,
-                        tint = MaterialTheme.colorScheme.primary
+                IconButton(
+                    onClick = { onSessionIntent(holdTimeState.sessionIntentFactory()) },
+                    modifier = Modifier,
+                    colors = IconButtonColors(
+                        contentColor = holdTimeState.iconsColor,
+                        disabledContentColor = holdTimeState.iconsColor.copy(alpha = 0.5f),
+                        containerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent
                     )
-                }
-                IconButton(onClick = onResetTimer) {
+                ) {
                     Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(R.string.session_reset_hold_timer),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        imageVector = holdTimeState.icon,
+                        contentDescription = stringResource(R.string.session_start_hold_timer),
+                        tint = holdTimeState.iconsColor,
+                        modifier = Modifier.size(Dimens.iconSize30)
                     )
                 }
             }
         }
 
         AppIntStepper(
-            value = holdSeconds,
-            onValueChange = onHoldSecondsChange,
+            value = state.sessionExercise.currentConfig.holdTime?.inWholeSeconds?.toInt() ?: 0,
+            onValueChange = { onSessionIntent(SessionIntent.HoldTimeChanged(it.seconds)) },
             step = 5,
             label = stringResource(R.string.session_sec_hold_label),
-            minValue = 0
+            minValue = 0,
+            enabled = state.timerState is TimerState.Ready || state.timerState is TimerState.NotSet
         )
+    }
+}
+
+@Composable
+private fun TimerClock(
+    remainingTime: Duration,
+    timerColor: Color,
+    modifier: Modifier = Modifier
+) {
+    val style = MaterialTheme.typography.headlineLarge.copy(
+        fontWeight = FontWeight.Bold,
+    )
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(R.string.session_timer_negative),
+            textAlign = TextAlign.End,
+            style = style,
+            color = timerColor,
+            modifier = Modifier.alpha(if (remainingTime.isNegative()) 1f else 0f)
+        )
+        Text(
+            text = formatRemainingTime(remainingTime),
+            style = style,
+            color = timerColor,
+            modifier = Modifier,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = stringResource(R.string.session_timer_negative),
+            style = style,
+            textAlign = TextAlign.Start,
+            modifier = Modifier.alpha(0f)
+        )
+    }
+}
+
+private data class HoldTimeState(
+    val remainingTime: Duration,
+    val iconsColor: Color,
+    val timerColor: Color,
+    val backgroundColor: Color,
+    val icon: ImageVector,
+    val sessionIntentFactory: () -> SessionIntent,
+) {
+    companion object {
+        @Composable
+        fun create(timerState: TimerState, initialHoldDuration: Duration?): HoldTimeState {
+            val remainingTime = when (timerState) {
+                is TimerState.Ready -> initialHoldDuration ?: Duration.ZERO
+                is TimerState.NotSet -> Duration.ZERO
+                is TimerState.Running -> timerState.remaining
+                is TimerState.OverflowRunning -> timerState.overflow
+                is TimerState.Finished -> Duration.ZERO
+            }
+            val icon = when (timerState) {
+                is TimerState.Ready -> Icons.Default.PlayArrow
+                is TimerState.NotSet -> Icons.Default.Error
+                else -> Icons.Default.Refresh
+            }
+            return HoldTimeState(
+                remainingTime = remainingTime,
+                iconsColor = if (remainingTime < Duration.ZERO) {
+                    MaterialTheme.colorScheme.onErrorContainer
+                } else {
+                    MaterialTheme.colorScheme.primary
+                },
+                timerColor = if (remainingTime < Duration.ZERO) {
+                    MaterialTheme.colorScheme.onErrorContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
+                backgroundColor = if (remainingTime < Duration.ZERO) {
+                    MaterialTheme.colorScheme.errorContainer
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerHighest
+                },
+                icon = icon,
+                sessionIntentFactory = {
+                    when (timerState) {
+                        is TimerState.Ready -> SessionIntent.StartTimer
+                        else -> SessionIntent.ResetTimer
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -452,7 +520,7 @@ private fun TrainingExerciseScreenHoldTimePreview() {
     val dummyConfig = SessionExerciseConfiguration(
         reps = 0,
         weightInKg = null,
-        holdTime = 60.seconds
+        holdTime = 68.seconds
     )
     val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
@@ -477,12 +545,55 @@ private fun TrainingExerciseScreenHoldTimePreview() {
     )
     val state = TrainingSessionState.ExerciseState(
         sessionExercise = sessionExercise,
-        timerState = TimerState.Running(42.seconds),
+        timerState = TimerState.Ready(68.seconds),
         progress = progress
     )
 
     TrainingPlannerTheme {
         TrainingExerciseScreen(
+            state = state,
+            onSessionIntent = {}
+        )
+    }
+}
+
+@AppPreview
+@Composable
+private fun TrainingExerciseScreenNegativeHoldTimePreview() {
+    val dummyConfig = SessionExerciseConfiguration(
+        reps = 0,
+        weightInKg = null,
+        holdTime = 20.seconds
+    )
+    val dummySnapshot = TrainingExerciseSnapshot(
+        id = TrainingExerciseId.create(),
+        name = "Plank",
+        description = "Hold a straight body position resting on forearms and toes",
+        categories = setOf(ExerciseCategoryName("Core")),
+        imageIds = emptyList(),
+        plannedConfig = dummyConfig
+    )
+    val sessionExercise = SessionExercise(
+        snapshot = dummySnapshot,
+        currentConfig = dummyConfig,
+        restTime = 45.seconds
+    )
+    val progress = ExerciseQueueProgress(
+        remainingExerciseSets = 2,
+        currentExerciseTotalSets = 3,
+        totalExercises = 4,
+        remainingExercises = 2,
+        remainingSetsInWorkout = 6,
+        nextSetQueueProgress = null
+    )
+    val state = TrainingSessionState.ExerciseState(
+        sessionExercise = sessionExercise,
+        timerState = TimerState.OverflowRunning(-20.seconds),
+        progress = progress
+    )
+
+    TrainingPlannerTheme {
+        IsometricHoldControls(
             state = state,
             onSessionIntent = {}
         )

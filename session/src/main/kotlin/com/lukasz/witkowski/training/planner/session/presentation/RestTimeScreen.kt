@@ -202,13 +202,6 @@ private fun SetFeedbackForm(
     }
 }
 
-private fun formatRemainingTime(time: Duration): String {
-    val totalSeconds = time.inWholeSeconds
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return "%02d:%02d".format(minutes, seconds)
-}
-
 @AppPreview
 @Composable
 private fun RestTimeScreenPreview() {

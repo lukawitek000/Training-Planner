@@ -13,6 +13,7 @@ sealed interface SessionCommand {
         data class UpdateHoldDuration(val duration: Duration) : Exercise
 
         data object StartTimer : Exercise
+        data object ResetTimer : Exercise
     }
 
     sealed interface RestTime : SessionCommand {

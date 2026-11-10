@@ -107,6 +107,18 @@ class TrainingSessionService(
         requireActiveSession().handle(SessionCommand.RestTime.UpdateFeedback(effort))
     }
 
+    fun updateHoldTime(time: Duration) {
+        requireActiveSession().handle(SessionCommand.Exercise.UpdateHoldDuration(time))
+    }
+
+    fun startTimer() {
+        requireActiveSession().handle(SessionCommand.Exercise.StartTimer)
+    }
+
+    fun resetTimer() {
+        requireActiveSession().handle(SessionCommand.Exercise.ResetTimer)
+    }
+
     fun endEarly() {
         requireActiveSession().endEarly()
     }

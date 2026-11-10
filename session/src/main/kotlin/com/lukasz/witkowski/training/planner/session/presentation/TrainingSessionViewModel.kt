@@ -42,7 +42,13 @@ class TrainingSessionViewModel(
                 trainingSessionService.changeWeight(intent.weight)
             }
             is SessionIntent.HoldTimeChanged -> {
-                // TODO
+                trainingSessionService.updateHoldTime(intent.time)
+            }
+            is SessionIntent.StartTimer -> {
+                trainingSessionService.startTimer()
+            }
+            is SessionIntent.ResetTimer -> {
+                trainingSessionService.resetTimer()
             }
             is SessionIntent.SetAdded -> {
                 trainingSessionService.addExtraSet()
@@ -100,6 +106,8 @@ sealed interface SessionIntent {
     data object SetRemoved : SessionIntent
     data object SetCompleted: SessionIntent
     data object SetSkipped: SessionIntent
+    data object StartTimer: SessionIntent
+    data object ResetTimer: SessionIntent
 
     data object RestSkipped: SessionIntent
     data class SetFeedbackSelected(val effort: SetEffort) : SessionIntent

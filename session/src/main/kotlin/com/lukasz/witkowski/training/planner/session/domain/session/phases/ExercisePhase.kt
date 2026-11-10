@@ -73,6 +73,10 @@ internal class ExercisePhase(
             is SessionCommand.Exercise.StartTimer -> {
                 timer.start()
             }
+
+            is SessionCommand.Exercise.ResetTimer -> {
+                timer.reset()
+            }
         }
     }
 
