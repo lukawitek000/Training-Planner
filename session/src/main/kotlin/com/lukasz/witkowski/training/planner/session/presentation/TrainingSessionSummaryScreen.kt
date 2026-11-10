@@ -13,9 +13,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Celebration
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -75,19 +77,12 @@ fun TrainingSessionSummaryScreen(
             .padding(horizontal = Dimens.margin, vertical = Dimens.spaceMd),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceLg)
     ) {
-//        CelebrationBanner(
-//            planTitle = state.statistics,
-//            date = statistics.date
-//        )
-
-        // Bento Metrics Grid
-        BentoMetricsGrid(
-            totalTime = statistics.totalTime,
-            volumeKg = statistics.totalVolumeKg,
-            completedSets = statistics.completedSetsCount,
-            totalSets = statistics.totalSetsCount,
-            totalReps = statistics.totalReps
+        CelebrationBanner(
+            planTitle = "Some plan name",
+            date = statistics.date
         )
+
+        BentoMetricsGrid(statistics = statistics)
 
         // RPE Assessment Grid
         AppRpeScaleGrid(
@@ -95,26 +90,25 @@ fun TrainingSessionSummaryScreen(
             onRpeSelected = { onSessionIntent(SessionIntent.SessionFeedbackSelected(it)) }
         )
 
-        // Workout Notes Input
         AppLabeledTextField(
             label = stringResource(R.string.session_summary_notes_label),
             value = state.notes,
             onValueChange = { onSessionIntent(SessionIntent.SessionNotesChanged(it)) },
             placeholder = stringResource(R.string.session_summary_notes_placeholder),
-            singleLine = false
+            singleLine = false,
+            minLines = 3
         )
 
-        // Exercises Breakdown Section
 //        ExercisesBreakdownSection(
 //            statistics = statistics,
 //            trainingPlan = state.trainingPlan
 //        )
 
-        // Save Button
         AppPrimaryButton(
-            text = stringResource(R.string.session_save_and_finish),
-            leadingIcon = Icons.Default.Save,
-            onClick = onSaveWorkout
+            text = stringResource(R.string.session_finish),
+            leadingIcon = Icons.Default.Celebration,
+            onClick = onSaveWorkout,
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
@@ -159,11 +153,7 @@ private fun CelebrationBanner(planTitle: String, date: Date, modifier: Modifier 
 
 @Composable
 private fun BentoMetricsGrid(
-    totalTime: Time,
-    volumeKg: Double,
-    completedSets: Int,
-    totalSets: Int,
-    totalReps: Int,
+    statistics: TrainingStatistics,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -176,14 +166,14 @@ private fun BentoMetricsGrid(
         ) {
             AppBentoTile(
                 label = stringResource(R.string.session_bento_duration_label),
-                value = formatDuration(totalTime),
+                value = formatDuration(statistics.totalTime),
                 subtitle = stringResource(R.string.session_bento_duration_sub),
                 modifier = Modifier.weight(1f)
             )
             AppBentoTile(
                 label = stringResource(R.string.session_bento_volume_label),
-                value = if (volumeKg > 0) {
-                    stringResource(R.string.session_kg_suffix, volumeKg.toInt())
+                value = if (statistics.totalVolumeKg > 0) {
+                    stringResource(R.string.session_kg_suffix, statistics.totalVolumeKg.toInt())
                 } else {
                     stringResource(R.string.session_bodyweight)
                 },
@@ -198,13 +188,13 @@ private fun BentoMetricsGrid(
         ) {
             AppBentoTile(
                 label = stringResource(R.string.session_bento_sets_label),
-                value = "$completedSets / $totalSets",
+                value = "${statistics.completedSetsCount} / ${statistics.totalSetsCount}",
                 subtitle = stringResource(R.string.session_bento_sets_sub),
                 modifier = Modifier.weight(1f)
             )
             AppBentoTile(
                 label = stringResource(R.string.session_bento_reps_label),
-                value = stringResource(R.string.session_reps_suffix, totalReps),
+                value = stringResource(R.string.session_reps_suffix, statistics.totalReps),
                 subtitle = stringResource(R.string.session_bento_reps_sub),
                 modifier = Modifier.weight(1f)
             )

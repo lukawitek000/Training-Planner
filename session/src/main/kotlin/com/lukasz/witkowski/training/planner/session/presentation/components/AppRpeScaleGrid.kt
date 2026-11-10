@@ -63,7 +63,6 @@ fun AppRpeScaleGrid(
                 }
             }
 
-            // Top row: 1 to 5
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
@@ -78,7 +77,6 @@ fun AppRpeScaleGrid(
                 }
             }
 
-            // Bottom row: 6 to 10
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)

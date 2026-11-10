@@ -61,7 +61,7 @@
     <string name="session_workout_complete">WORKOUT COMPLETE!</string>
     <string name="session_summary_notes_label">WORKOUT NOTES</string>
     <string name="session_summary_notes_placeholder">Add observations, fatigue level, or progression goals...</string>
-    <string name="session_save_and_finish">Save &amp; Finish Workout</string>
+    <string name="session_finish">Finish Workout</string>
     <string name="session_bento_duration_label">Total Duration</string>
     <string name="session_bento_duration_sub">Active + rest</string>
     <string name="session_bento_volume_label">Total Volume</string>
