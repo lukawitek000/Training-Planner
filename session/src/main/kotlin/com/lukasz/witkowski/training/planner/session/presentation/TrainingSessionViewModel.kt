@@ -71,6 +71,9 @@ class TrainingSessionViewModel(
             is SessionIntent.SessionNotesChanged -> Unit
             is SessionIntent.SessionFeedbackSelected -> Unit
             is SessionIntent.SessionEnd -> Unit
+            is SessionIntent.SessionEndEarly -> {
+                trainingSessionService.endEarly()
+            }
         }
     }
 
@@ -115,4 +118,6 @@ sealed interface SessionIntent {
     data class SessionNotesChanged(val notes: String) : SessionIntent
     data class SessionFeedbackSelected(val rpe: SessionRpe) : SessionIntent
     data object SessionEnd: SessionIntent
+
+    data object SessionEndEarly: SessionIntent
 }

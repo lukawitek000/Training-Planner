@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -38,7 +39,7 @@ fun TrainingSessionScreen(
     modifier: Modifier = Modifier
 ) {
     val trainingSessionState by viewModel.trainingSessionState.collectAsState()
-    var showExitConfirmationDialog by remember { mutableStateOf(false) }
+    var showExitConfirmationDialog by rememberSaveable { mutableStateOf(false) }
 
     BackHandler(enabled = trainingSessionState !is TrainingSessionState.SummaryState) {
         showExitConfirmationDialog = !showExitConfirmationDialog
@@ -63,6 +64,7 @@ fun TrainingSessionScreen(
             EndEarlySessionDialog(
                 onConfirm = {
                     // TODO: Stop foreground service and cancel ongoing notifications before exiting session
+                    viewModel.onIntent(SessionIntent.SessionEndEarly)
                     showExitConfirmationDialog = false
                     navigateBack()
                 },
