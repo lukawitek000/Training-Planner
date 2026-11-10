@@ -156,4 +156,6 @@ object Dimens {
 
     /** Set tracker indicator chip size - 32dp */
     val setChipSize: Dp = 32.dp
+
+    val shadowBoxHeight: Dp = 16.dp
 }

@@ -13,9 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -37,11 +35,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
@@ -66,7 +62,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.button.AppTertiaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
 import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingIndicator
-import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingState
+import com.lukasz.witkowski.training.planner.shared.ui.scrolling.ScrollColumn
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
@@ -100,29 +96,11 @@ fun TrainingExerciseScreen(
             onEndClicked = onEndClicked
         )
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
-        ) {
-            ExerciseImages(
-                images = uiState.imagesReferences,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(Dimens.heroImageHeightCompact),
-            )
-
-            SetsProgressStrip(
-                currentSet = state.progress.currentExerciseSet,
-                totalSets = state.progress.currentExerciseTotalSets
-            )
-
-            ActiveSetCard(state, onSessionIntent)
-
-            ExerciseSetsModification(onSessionIntent)
-        }
+        TrainingExerciseContent(
+            uiState = uiState,
+            onSessionIntent = onSessionIntent,
+            modifier = Modifier.weight(1f)
+        )
 
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -142,6 +120,34 @@ fun TrainingExerciseScreen(
                 modifier = Modifier.fillMaxWidth()
             )
         }
+    }
+}
+
+@Composable
+private fun TrainingExerciseContent(
+    uiState: TrainingSessionUiState.Exercise,
+    onSessionIntent: (SessionIntent) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val state = uiState.domainState
+    ScrollColumn(
+        modifier = modifier.fillMaxSize()
+    ) {
+        ExerciseImages(
+            images = uiState.imagesReferences,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimens.heroImageHeightCompact),
+        )
+
+        SetsProgressStrip(
+            currentSet = state.progress.currentExerciseSet,
+            totalSets = state.progress.currentExerciseTotalSets
+        )
+
+        ActiveSetCard(state, onSessionIntent)
+
+        ExerciseSetsModification(onSessionIntent)
     }
 }
 
