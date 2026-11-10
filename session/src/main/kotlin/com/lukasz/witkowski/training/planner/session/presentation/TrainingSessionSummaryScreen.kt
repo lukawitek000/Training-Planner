@@ -64,7 +64,7 @@ import kotlin.time.Instant
 fun TrainingSessionSummaryScreen(
     state: TrainingSessionState.SummaryState,
     onSessionIntent: (SessionIntent) -> Unit,
-    onSaveWorkout: () -> Unit,
+    onFinishWorkout: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val scrollState = rememberScrollState()
@@ -107,7 +107,7 @@ fun TrainingSessionSummaryScreen(
         AppPrimaryButton(
             text = stringResource(R.string.session_finish),
             leadingIcon = Icons.Default.Celebration,
-            onClick = onSaveWorkout,
+            onClick = onFinishWorkout,
             modifier = Modifier.fillMaxWidth()
         )
     }
@@ -338,7 +338,7 @@ private fun TrainingSessionSummaryScreenPreview() {
                 notes = "Great workout!"
             ),
             onSessionIntent = {},
-            onSaveWorkout = {}
+            onFinishWorkout = {}
         )
     }
 }

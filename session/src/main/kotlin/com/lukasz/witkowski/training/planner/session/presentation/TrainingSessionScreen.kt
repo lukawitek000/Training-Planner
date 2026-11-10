@@ -52,13 +52,8 @@ fun TrainingSessionScreen(
         TrainingSessionContent(
             trainingSessionState = trainingSessionState,
             onSessionIntent = viewModel::onIntent,
-            onSaveWorkout = {
-                viewModel.saveStatistics()
-                navigateBack()
-            },
-            onEndClicked = {
-                showExitConfirmationDialog = true
-            }
+            onFinishWorkout = { navigateBack() },
+            onEndClicked = { showExitConfirmationDialog = true }
         )
         if (showExitConfirmationDialog) {
             EndEarlySessionDialog(
@@ -81,7 +76,7 @@ fun TrainingSessionScreen(
 fun TrainingSessionContent(
     trainingSessionState: TrainingSessionState,
     onSessionIntent: (SessionIntent) -> Unit,
-    onSaveWorkout: () -> Unit,
+    onFinishWorkout: () -> Unit,
     onEndClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -107,7 +102,7 @@ fun TrainingSessionContent(
                 TrainingSessionSummaryScreen(
                     state = trainingSessionState,
                     onSessionIntent = onSessionIntent,
-                    onSaveWorkout = onSaveWorkout
+                    onFinishWorkout = onFinishWorkout
                 )
             }
 
@@ -128,7 +123,7 @@ private fun TrainingSessionContentLoadingPreview() {
         TrainingSessionContent(
             trainingSessionState = TrainingSessionState.IdleState,
             onSessionIntent = {},
-            onSaveWorkout = {},
+            onFinishWorkout = {},
             onEndClicked = {}
         )
     }
