@@ -17,7 +17,6 @@ import com.lukasz.witkowski.training.planner.session.domain.session.queue.Exerci
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionPhaseKey
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise

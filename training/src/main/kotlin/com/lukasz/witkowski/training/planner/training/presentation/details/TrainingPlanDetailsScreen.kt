@@ -37,8 +37,6 @@ import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.Time
-import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
@@ -215,8 +213,7 @@ private fun TrainingPlanInfoSection(trainingPlan: TrainingPlan, modifier: Modifi
 
 @Composable
 private fun TrainingPlanRestTimeInfo(restTime: Duration, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    val formattedRestTime = TimeFormatter(context).formatTime(Time(restTime.inWholeMilliseconds))
+    val formattedRestTime = restTime.toString()
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),

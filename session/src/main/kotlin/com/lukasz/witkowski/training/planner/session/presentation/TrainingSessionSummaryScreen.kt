@@ -40,7 +40,6 @@ import com.lukasz.witkowski.training.planner.session.presentation.components.App
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.time.formatToString
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.bento.AppBentoTile
@@ -54,6 +53,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
@@ -173,7 +173,7 @@ private fun BentoMetricsGrid(statistics: TrainingStatistics, modifier: Modifier 
         ) {
             AppBentoTile(
                 label = stringResource(R.string.session_bento_duration_label),
-                value = formatDuration(statistics.totalTime),
+                value = statistics.totalTime.toString(),
                 subtitle = stringResource(R.string.session_bento_duration_sub),
                 modifier = Modifier.weight(1f)
             )
@@ -218,20 +218,13 @@ private fun ExercisesBreakdownSection(
     // TODO implement when working on statistics
 }
 
-private fun formatDuration(time: Time): String {
-    val totalSeconds = (time.timeInMillis / 1000).toInt()
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return if (minutes > 0) "${minutes}m ${seconds}s" else "${seconds}s"
-}
-
 @AppPreview
 @Composable
 private fun TrainingSessionSummaryScreenPreview() {
     val stats = TrainingStatistics(
         id = TrainingStatisticsId.create(),
         trainingPlanId = TrainingPlanId.create(),
-        totalTime = Time(2700000L),
+        totalTime = 2700000L.milliseconds,
         date = Date(),
         exercisesStatistics = listOf(
             ExerciseStatistics(
@@ -241,7 +234,7 @@ private fun TrainingSessionSummaryScreenPreview() {
                     ExerciseAttemptStatistics(
                         id = ExerciseAttemptStatisticsId.create(),
                         trainingExerciseId = TrainingExerciseId.create(),
-                        time = Time(12_000L),
+                        time = 12_000L.milliseconds,
                         set = 1,
                         completed = true,
                         actualReps = 10,
@@ -252,7 +245,7 @@ private fun TrainingSessionSummaryScreenPreview() {
                     ExerciseAttemptStatistics(
                         id = ExerciseAttemptStatisticsId.create(),
                         trainingExerciseId = TrainingExerciseId.create(),
-                        time = Time(12_000L),
+                        time = 12_000L.milliseconds,
                         set = 2,
                         completed = false,
                         actualReps = 10,
@@ -269,7 +262,7 @@ private fun TrainingSessionSummaryScreenPreview() {
                     ExerciseAttemptStatistics(
                         id = ExerciseAttemptStatisticsId.create(),
                         trainingExerciseId = TrainingExerciseId.create(),
-                        time = Time(12_000L),
+                        time = 12_000L.milliseconds,
                         set = 1,
                         completed = true,
                         actualReps = 10,
@@ -280,7 +273,7 @@ private fun TrainingSessionSummaryScreenPreview() {
                     ExerciseAttemptStatistics(
                         id = ExerciseAttemptStatisticsId.create(),
                         trainingExerciseId = TrainingExerciseId.create(),
-                        time = Time(12_000L),
+                        time = 12_000L.milliseconds,
                         set = 2,
                         completed = false,
                         actualReps = 10,

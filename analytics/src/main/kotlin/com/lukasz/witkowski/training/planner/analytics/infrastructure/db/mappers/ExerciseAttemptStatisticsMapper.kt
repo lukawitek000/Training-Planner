@@ -5,8 +5,8 @@ import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttem
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+import kotlin.time.Duration.Companion.milliseconds
 
 internal fun ExerciseAttemptStatistics.toDbExerciseAttemptStatistics(
     exerciseStatisticsId: ExerciseStatisticsId
@@ -14,7 +14,7 @@ internal fun ExerciseAttemptStatistics.toDbExerciseAttemptStatistics(
     id = id.toString(),
     exerciseStatisticsId = exerciseStatisticsId.toString(),
     trainingExerciseId = trainingExerciseId.toString(),
-    time = time.timeInMillis,
+    time = time.inWholeMilliseconds,
     set = set,
     completed = completed,
     actualReps = actualReps,
@@ -26,7 +26,7 @@ internal fun DbExerciseAttemptStatistics.toExerciseAttemptStatistics(): Exercise
     ExerciseAttemptStatistics(
         id = ExerciseAttemptStatisticsId(id),
         trainingExerciseId = TrainingExerciseId(trainingExerciseId),
-        time = Time(time),
+        time = time.milliseconds,
         set = set,
         completed = completed,
         actualReps = actualReps,

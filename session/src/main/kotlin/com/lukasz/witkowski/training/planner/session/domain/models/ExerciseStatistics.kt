@@ -1,18 +1,15 @@
 package com.lukasz.witkowski.training.planner.session.domain.models
 
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+import kotlin.time.Duration
 
 data class ExerciseStatistics(
     val id: ExerciseStatisticsId = ExerciseStatisticsId.create(),
     val trainingExerciseId: TrainingExerciseId,
     val attemptsStatistics: List<ExerciseAttemptStatistics>
 ) {
-    val totalTime: Time
-        get() {
-            val timeInMillis = attemptsStatistics.sumOf { it.time.timeInMillis }
-            return Time(timeInMillis)
-        }
+    val totalTime: Duration
+        get()  = attemptsStatistics.fold(Duration.ZERO) { acc, value -> acc + value.time }
 
     val completenessRate: Double
         get() {

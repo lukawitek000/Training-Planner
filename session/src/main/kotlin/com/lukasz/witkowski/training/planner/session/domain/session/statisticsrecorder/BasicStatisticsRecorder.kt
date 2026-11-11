@@ -8,10 +8,10 @@ import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
 /**
@@ -27,14 +27,14 @@ class BasicStatisticsRecorder(
 ) : SessionStatisticsRecorder,
     SessionStatisticsProvider {
     private var statisticsId: TrainingStatisticsId = TrainingStatisticsId.create()
-    private var startTrainingTime = Time.ZERO
-    private var stopTrainingTime: Time? = null
+    private var startTrainingTime = timeProvider.currentTime()
+    private var stopTrainingTime: Long? = null
     private var sessionDate: Date = timeProvider.currentDate()
     private val exercisesAttemptsStatistics = mutableListOf<ExerciseAttemptStatistics>()
     private val exerciseStatisticsIds = mutableMapOf<TrainingExerciseId, ExerciseStatisticsId>()
     private val setCountsByExercise = mutableMapOf<TrainingExerciseId, Int>()
-    private var currentExerciseStartTime = Time.ZERO
-    private var currentRestStartTime = Time.ZERO
+    private var currentExerciseStartTime = 0L
+    private var currentRestStartTime = 0L
     private var overallRpe: SessionRpe? = null
     private var notes: String? = null
 
@@ -106,7 +106,7 @@ class BasicStatisticsRecorder(
         return TrainingStatistics(
             id = statisticsId,
             trainingPlanId = trainingPlanId ?: TrainingPlanId.create(),
-            totalTime = endTime - startTrainingTime,
+            totalTime = (endTime - startTrainingTime).milliseconds,
             date = sessionDate,
             exercisesStatistics = exercisesStatistics,
             note = notes,
@@ -115,13 +115,13 @@ class BasicStatisticsRecorder(
     }
 
     private fun recordExerciseAttempt(exercise: SessionExercise, completed: Boolean) {
-        val stopTime = timeProvider.currentTime()
+        val stopTime = timeProvider.currentTime().milliseconds
         val setNumber = (setCountsByExercise[exercise.exerciseId] ?: 0) + 1
         setCountsByExercise[exercise.exerciseId] = setNumber
         val attempt =
             ExerciseAttemptStatistics(
                 trainingExerciseId = exercise.exerciseId,
-                time = stopTime - currentExerciseStartTime,
+                time = stopTime - currentExerciseStartTime.milliseconds,
                 set = setNumber,
                 completed = completed,
                 actualReps = exercise.currentConfig.reps,
@@ -134,7 +134,7 @@ class BasicStatisticsRecorder(
     private fun recordRestFinished(feedback: SetEffort?) {
         if (exercisesAttemptsStatistics.isEmpty()) return
         val elapsedRest = timeProvider.currentTime() - currentRestStartTime
-        val restDuration = elapsedRest.timeInMillis.milliseconds
+        val restDuration = elapsedRest.milliseconds
         val lastIndex = exercisesAttemptsStatistics.lastIndex
         val lastAttempt = exercisesAttemptsStatistics[lastIndex]
         exercisesAttemptsStatistics[lastIndex] =

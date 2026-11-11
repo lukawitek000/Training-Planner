@@ -5,9 +5,9 @@ import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.models.
 import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
+import kotlin.time.Duration.Companion.milliseconds
 
 internal fun TrainingStatistics.toDbTrainingStatistics(): DbTrainingWithExercisesStatistics =
     DbTrainingWithExercisesStatistics(
@@ -15,7 +15,7 @@ internal fun TrainingStatistics.toDbTrainingStatistics(): DbTrainingWithExercise
         DbTrainingStatistics(
             id = id.toString(),
             trainingPlanId = trainingPlanId.toString(),
-            totalTime = totalTime.timeInMillis,
+            totalTime = totalTime.inWholeMilliseconds,
             date = date.time,
             note = note,
             rpe = rpe?.score
@@ -27,7 +27,7 @@ internal fun DbTrainingWithExercisesStatistics.toTrainingStatistics(): TrainingS
     TrainingStatistics(
         id = TrainingStatisticsId(trainingStatistics.id),
         trainingPlanId = TrainingPlanId(trainingStatistics.trainingPlanId),
-        totalTime = Time(trainingStatistics.totalTime),
+        totalTime = trainingStatistics.totalTime.milliseconds,
         date = Date(trainingStatistics.date),
         exercisesStatistics = exercisesStatistics.map { it.toExerciseStatistics() },
         note = trainingStatistics.note,
