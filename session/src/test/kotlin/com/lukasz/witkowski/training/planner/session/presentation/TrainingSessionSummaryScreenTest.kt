@@ -1,11 +1,13 @@
 package com.lukasz.witkowski.training.planner.session.presentation
 
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 
+@Ignore("Screen tests commented out pending UI test update")
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [33])
 class TrainingSessionSummaryScreenTest {

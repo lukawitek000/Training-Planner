@@ -18,7 +18,7 @@ interface TrainingSessionUiState {
 
         private fun TrainingSessionState.ExerciseState.toUniqueId(): String {
             val id = sessionExercise.exerciseId
-            return "Exercise_${id}"
+            return "Exercise_$id"
         }
     }
 

@@ -9,5 +9,11 @@ data class ExerciseQueueProgress(
     val nextSetQueueProgress: ExerciseQueueProgress?
 ) {
     val currentExerciseSet = currentExerciseTotalSets - remainingExerciseSets
-    val exerciseIndex = (totalExercises - remainingExercises) + (1.takeIf { remainingExerciseSets > 0 } ?: 0)
+    val exerciseIndex =
+        (totalExercises - remainingExercises) +
+            (
+                1.takeIf {
+                    remainingExerciseSets > 0
+                } ?: 0
+                )
 }

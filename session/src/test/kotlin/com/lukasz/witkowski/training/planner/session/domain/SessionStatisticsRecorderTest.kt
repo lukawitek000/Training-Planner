@@ -19,6 +19,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -43,19 +45,15 @@ class SessionStatisticsRecorderTest {
     }
 
     @Test
-    fun `training session dispatches lifecycle events to recorder`() =
+    fun `training session dispatches all lifecycle events in order to recorder`() =
         runTest(UnconfinedTestDispatcher()) {
             val events = mutableListOf<SessionEvent>()
             val recorder = SessionStatisticsRecorder { events.add(it) }
             val timeProvider = FixedTimeProvider()
 
-            val plan =
-                createTrainingPlan(
-                    listOf(
-                        createTrainingExercise(sets = 1, restTime = 60.seconds),
-                        createTrainingExercise(sets = 1, restTime = 0.seconds)
-                    )
-                )
+            val ex1 = createTrainingExercise(name = "Ex 1", sets = 1, restTime = 60.seconds)
+            val ex2 = createTrainingExercise(name = "Ex 2", sets = 1, restTime = 0.seconds)
+            val plan = createTrainingPlan(listOf(ex1, ex2), restTime = 45.seconds)
 
             val session =
                 TrainingSessionFactory.create(
@@ -66,30 +64,62 @@ class SessionStatisticsRecorderTest {
                     scope = backgroundScope
                 )
 
-            // 1. Start session
+            // 1. Start session -> SessionStarted, ExerciseStarted(Ex 1 Set 1)
             session.start()
-            assertTrue(events.any { it is SessionEvent.SessionStarted })
-            assertTrue(events.any { it is SessionEvent.ExerciseStarted })
+            assertEquals(SessionEvent.SessionStarted(plan.id), events[0])
+            assertTrue(events[1] is SessionEvent.ExerciseStarted)
 
-            // 2. Complete first exercise (triggers rest interval)
+            // 2. Add extra set -> ExtraSetAdded(Ex 1, 2)
+            session.addExtraSet()
+            val extraSetEvent = events[2] as SessionEvent.ExtraSetAdded
+            assertEquals(ex1.id, extraSetEvent.exercise.exerciseId)
+            assertEquals(2, extraSetEvent.newSetIndex)
+
+            // 3. Complete Ex 1 Set 1 -> ExerciseCompleted, RestStarted
             timeProvider.advanceBy(Time(30000L))
             session.handle(SessionCommand.Exercise.UpdateReps(10))
             session.handle(SessionCommand.Exercise.UpdateWeight(50.0))
             session.complete()
-            assertTrue(events.any { it is SessionEvent.ExerciseCompleted })
-            assertTrue(events.any { it is SessionEvent.RestStarted })
+            assertTrue(events[3] is SessionEvent.ExerciseCompleted)
+            assertEquals(SessionEvent.RestStarted(45.seconds), events[4])
 
-            // 3. Complete rest (transitions to next exercise)
-            timeProvider.advanceBy(Time(60000L))
+            // 4. Complete rest with feedback -> RestCompleted(MODERATE), ExerciseStarted(Ex 1 Set 2)
+            timeProvider.advanceBy(Time(45000L))
+            session.handle(SessionCommand.RestTime.UpdateFeedback(SetEffort.MODERATE))
             session.complete()
-            assertTrue(events.any { it is SessionEvent.RestCompleted })
+            assertEquals(SessionEvent.RestCompleted(SetEffort.MODERATE), events[5])
+            assertTrue(events[6] is SessionEvent.ExerciseStarted)
 
-            // 4. Complete second exercise (finishes session)
+            // 5. Skip Ex 1 Set 2 -> ExerciseSkipped, RestStarted
+            timeProvider.advanceBy(Time(10000L))
+            session.skip()
+            assertTrue(events[7] is SessionEvent.ExerciseSkipped)
+            assertEquals(SessionEvent.RestStarted(45.seconds), events[8])
+
+            // 6. Skip rest with feedback -> RestSkipped(HARD), ExerciseStarted(Ex 2 Set 1)
+            timeProvider.advanceBy(Time(20000L))
+            session.handle(SessionCommand.RestTime.UpdateFeedback(SetEffort.HARD))
+            session.skip()
+            assertEquals(SessionEvent.RestSkipped(SetEffort.HARD), events[9])
+            assertTrue(events[10] is SessionEvent.ExerciseStarted)
+
+            // 7. Complete Ex 2 Set 1 (final set) -> ExerciseCompleted, SessionFinished
             timeProvider.advanceBy(Time(30000L))
-            session.handle(SessionCommand.Exercise.UpdateReps(8))
-            session.handle(SessionCommand.Exercise.UpdateWeight(60.0))
             session.complete()
-            assertTrue(events.any { it is SessionEvent.SessionFinished })
+            assertTrue(events[11] is SessionEvent.ExerciseCompleted)
+            assertEquals(SessionEvent.SessionFinished, events[12])
+
+            // 8. Update summary RPE and notes and complete summary -> SummaryCompleted
+            session.handle(SessionCommand.Summary.UpdateOverallRpe(SessionRpe.VERY_HARD))
+            session.handle(SessionCommand.Summary.UpdateNotes("Great workout"))
+            session.complete()
+            assertEquals(
+                SessionEvent.SummaryCompleted(
+                    overallRpe = SessionRpe.VERY_HARD,
+                    notes = "Great workout"
+                ),
+                events[13]
+            )
         }
 
     @Test
@@ -131,7 +161,7 @@ class SessionStatisticsRecorderTest {
         }
 
     @Test
-    fun `basic recorder records rest duration, preserves id, and saves summary rpe and notes`() =
+    fun `basic recorder records rest, skipped sets, preserves id, and saves summary rpe`() =
         runTest(UnconfinedTestDispatcher()) {
             val fixedTimeProvider = FixedTimeProvider(time = Time(0L), date = Date(1000000L))
             val recorder = BasicStatisticsRecorder(timeProvider = fixedTimeProvider)
@@ -152,14 +182,14 @@ class SessionStatisticsRecorderTest {
 
             session.start()
             fixedTimeProvider.advanceBy(Time(30000L))
-            session.complete() // Set 1 -> Rest
+            session.complete() // Set 1 completed -> Rest
 
             fixedTimeProvider.advanceBy(Time(25000L))
             session.handle(SessionCommand.RestTime.UpdateFeedback(SetEffort.HARD))
             session.skip() // Skip rest after 25s -> Set 2
 
             fixedTimeProvider.advanceBy(Time(35000L))
-            session.complete() // Set 2 -> Summary
+            session.skip() // Set 2 skipped -> Summary
 
             val statsBeforeSummaryComplete = recorder.getStatistics()
 
@@ -170,11 +200,43 @@ class SessionStatisticsRecorderTest {
             val finalStats = recorder.getStatistics()
 
             assertEquals(statsBeforeSummaryComplete.id, finalStats.id)
+            assertEquals(
+                statsBeforeSummaryComplete.exercisesStatistics.first().id,
+                finalStats.exercisesStatistics.first().id
+            )
             assertEquals(SessionRpe.NEAR_LIMIT, finalStats.rpe)
             assertEquals("Solid session", finalStats.note)
 
-            val firstAttempt = finalStats.exercisesStatistics.first().attemptsStatistics.first()
-            assertEquals(25.seconds, firstAttempt.restTime)
-            assertEquals(SetEffort.HARD, firstAttempt.effort)
+            val attempts = finalStats.exercisesStatistics.first().attemptsStatistics
+            assertEquals(2, attempts.size)
+            assertTrue(attempts[0].completed)
+            assertEquals(25.seconds, attempts[0].restTime)
+            assertEquals(SetEffort.HARD, attempts[0].effort)
+            assertFalse(attempts[1].completed)
+            assertEquals(2, attempts[1].set)
+        }
+
+    @Test
+    fun `basic recorder normalizes blank summary notes to null`() =
+        runTest(UnconfinedTestDispatcher()) {
+            val fixedTimeProvider = FixedTimeProvider(time = Time(0L), date = Date(1000000L))
+            val recorder = BasicStatisticsRecorder(timeProvider = fixedTimeProvider)
+            val plan = createTrainingPlan(listOf(createTrainingExercise(sets = 1)))
+
+            val session =
+                TrainingSessionFactory.create(
+                    trainingPlan = plan,
+                    policy = StraightSetsPolicy(),
+                    statisticsRecorder = recorder,
+                    timeProvider = fixedTimeProvider,
+                    scope = backgroundScope
+                )
+
+            session.start()
+            session.complete() // Set 1 -> Summary
+            session.handle(SessionCommand.Summary.UpdateNotes("   "))
+            session.complete() // Complete summary
+
+            assertNull(recorder.getStatistics().note)
         }
 }
