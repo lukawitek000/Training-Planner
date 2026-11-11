@@ -1,0 +1,15 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 60,70 L 452,70" />
+    
+    <!-- Head -->
+    <circle cx="256" cy="140" r="24" stroke="#111111" stroke-width="8" fill="none" />
+    <!-- Arms reaching overhead to bar -->
+    <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 210,70 L 236,150" />
+    <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 302,70 L 276,150" />
+    <!-- Torso -->
+    <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 256,160 L 256,290" />
+    <!-- Legs straight down -->
+    <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 256,290 L 250,440" />
+    <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 256,290 L 262,440" />
+    <path stroke="#FF0000" stroke-width="6" stroke-linecap="round" d="M 220,180 L 235,230" /><path stroke="#FF0000" stroke-width="6" stroke-linecap="round" d="M 292,180 L 277,230" />
+</svg>

@@ -1,0 +1,13 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 160,250 L 160,450" /><path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 352,250 L 352,450" /><path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 120,250 L 392,250" />
+        <!-- Head -->
+        <circle cx="256" cy="110" r="24" stroke="#111111" stroke-width="8" fill="none" />
+        <!-- Arms locked out in support -->
+        <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 230,135 L 200,250" />
+        <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 282,135 L 312,250" />
+        <!-- Torso upright -->
+        <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 256,135 L 256,280" />
+        <!-- Legs bent at knees -->
+        <path stroke="#111111" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 256,280 L 246,360 L 290,400" />
+        <path stroke="#FF0000" stroke-width="6" stroke-linecap="round" d="M 215,170 L 205,230" /><path stroke="#FF0000" stroke-width="6" stroke-linecap="round" d="M 297,170 L 307,230" />
+</svg>

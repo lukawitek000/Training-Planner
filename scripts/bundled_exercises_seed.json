@@ -1,0 +1,2550 @@
+[
+  {
+    "id": "e7e1d50d-6419-5e57-a7fa-8ff029674842",
+    "name": "90\u00b0 Hold",
+    "description": "An advanced static pressing position requiring substantial shoulder, chest and triceps strength.",
+    "categories": [
+      "CHEST",
+      "SHOULDERS",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 150,
+        "weight": null,
+        "time": 5
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 180,
+        "weight": null,
+        "time": 10
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 210,
+        "weight": null,
+        "time": 20
+      }
+    },
+    "images": [
+      "6620de82-1892-59fc-9363-91e4bad1c60c",
+      "9dad1e64-6ad1-5c72-92ff-f3d8291754b8"
+    ]
+  },
+  {
+    "id": "31eb62bf-dbaf-5b98-a20c-b1a6a8073fb4",
+    "name": "90\u00b0 Push-Up",
+    "description": "An advanced pressing movement performed through a 90-degree body position with substantial forward lean.",
+    "categories": [
+      "CHEST",
+      "SHOULDERS",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 3,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 5,
+        "restTime": 180,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 8,
+        "restTime": 210,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "c4044131-c319-50ad-a1b4-fe990f060e91",
+      "62a05104-c4eb-5786-b360-0526f6949bac"
+    ]
+  },
+  {
+    "id": "b45a2768-a05b-5a5d-9d43-2fee3b1d2e82",
+    "name": "Arch Body Hold",
+    "description": "An isometric bodyline exercise performed face down with the chest, arms and legs lifted from the floor.",
+    "categories": [
+      "ABS",
+      "BACK"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 60,
+        "weight": null,
+        "time": 20
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 75,
+        "weight": null,
+        "time": 35
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 90,
+        "weight": null,
+        "time": 50
+      }
+    },
+    "images": [
+      "3b9d0320-1f8a-52f7-92bf-f366ac5e9f3f",
+      "de089f84-89d5-5223-bf7f-af54f743a675"
+    ]
+  },
+  {
+    "id": "1f3696f2-afa5-5eea-86d4-b4806d34fd04",
+    "name": "Archer Pull-Up",
+    "description": "An advanced pull-up where one arm performs most of the pulling while the other remains more extended.",
+    "categories": [
+      "BACK",
+      "BICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 3,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 5,
+        "restTime": 180,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 6,
+        "restTime": 180,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "34bb3160-dc35-5a49-9783-e1a1238defbf",
+      "5d5e606e-f0bb-58b2-8e82-961b0d07384d"
+    ]
+  },
+  {
+    "id": "a07dfd87-0cc9-5596-991d-dff92abf78c4",
+    "name": "Archer Push-Up",
+    "description": "An advanced push-up where one arm performs most of the pressing while the other remains more extended.",
+    "categories": [
+      "CHEST",
+      "SHOULDERS",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 4,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 7,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 10,
+        "restTime": 180,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "262ab8c5-90e1-5ff3-8802-a66949021afe",
+      "e0173da4-b3da-556b-9628-b3fe77296e83"
+    ]
+  },
+  {
+    "id": "967a2782-78c7-56f4-960e-da4495558ce6",
+    "name": "Assisted 90\u00b0 Hold",
+    "description": "A supported static hold in a 90-degree pressing position used to develop advanced pressing strength.",
+    "categories": [
+      "CHEST",
+      "SHOULDERS",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 90,
+        "weight": null,
+        "time": 10
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 120,
+        "weight": null,
+        "time": 20
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 150,
+        "weight": null,
+        "time": 30
+      }
+    },
+    "images": [
+      "436d4c86-c99c-570e-bae9-a25458760947",
+      "52753f41-20b0-585d-8b24-9d3cf0b067b7"
+    ]
+  },
+  {
+    "id": "f321be2e-134a-59d2-99d5-b1f382cf2af1",
+    "name": "Assisted Pistol Squat",
+    "description": "A single-leg squat variation using external support to assist balance and strength demands.",
+    "categories": [
+      "LEGS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 5,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 8,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 12,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "8ae0b522-d845-5c62-9f5c-466a12ab785e",
+      "e2a16048-0c06-5bd0-8d5b-8f38417ef1bd"
+    ]
+  },
+  {
+    "id": "76294ebd-bd75-5f30-90ca-e59c707c6fc0",
+    "name": "Australian Pull-Up",
+    "description": "A horizontal bodyweight pulling exercise performed with the feet supported on the ground.",
+    "categories": [
+      "BACK",
+      "BICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 10,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 15,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 20,
+        "restTime": 90,
+        "weight": 10,
+        "time": null
+      }
+    },
+    "images": [
+      "d9b8f5d4-a8c3-5433-b8cb-b30204cfd57f",
+      "61e605b9-9ac4-5708-922c-41fa4126710d"
+    ]
+  },
+  {
+    "id": "e5aeb15a-061e-5f1a-bdaa-d016aa74e980",
+    "name": "Bear Crawl",
+    "description": "A dynamic quadrupedal movement performed with the knees hovering above the ground while moving forward or backward.",
+    "categories": [
+      "ABS",
+      "CARDIO",
+      "SHOULDERS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 20,
+        "restTime": 45,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 30,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 40,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "c0757d2b-e9b1-5ddd-8361-e5ae000574c7",
+      "7818e4de-602f-5fc2-8089-c152b0ff9a36"
+    ]
+  },
+  {
+    "id": "0edb7fc2-648e-5131-8dd4-c5974f8e25b3",
+    "name": "Bent-Arm Tuck Press",
+    "description": "An advanced handstand pressing movement where the body passes through a bent-arm tuck position.",
+    "categories": [
+      "SHOULDERS",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 3,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 5,
+        "restTime": 180,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 8,
+        "restTime": 210,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "d09ad392-012d-5d93-bd3b-e04de01faa16",
+      "c55dec27-c3ae-5a81-8501-62a26df42f86"
+    ]
+  },
+  {
+    "id": "f1d5e023-c508-5357-8d8b-f45e959a7137",
+    "name": "Biceps Curl",
+    "description": "An isolation exercise that trains the biceps by curling a resistance toward the shoulders.",
+    "categories": [
+      "BICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 10,
+        "restTime": 60,
+        "weight": 5,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 10,
+        "restTime": 75,
+        "weight": 10,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 8,
+        "restTime": 90,
+        "weight": 15,
+        "time": null
+      }
+    },
+    "images": [
+      "dd0ea5cb-2c79-5fad-b6a3-b3385074a14d",
+      "d4146882-8f47-559c-89df-e6dcca15a811"
+    ]
+  },
+  {
+    "id": "5845cc2d-3f1a-5692-b899-e65f5998c8c1",
+    "name": "Bicycle Crunch",
+    "description": "A dynamic abdominal exercise combining trunk rotation with alternating knee drives.",
+    "categories": [
+      "ABS",
+      "CARDIO"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 20,
+        "restTime": 45,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 30,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 40,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "6a65ed9b-84b3-553b-a329-a9079b54067f",
+      "5ba00bd7-5bb8-5cf1-aaf6-d09f47b5d032"
+    ]
+  },
+  {
+    "id": "131fdde0-5a28-5484-b031-1629a022f585",
+    "name": "Bodyweight Squat",
+    "description": "A lower-body exercise performed by squatting down and standing while keeping control of the movement.",
+    "categories": [
+      "LEGS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 10,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 15,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 20,
+        "restTime": 90,
+        "weight": 10,
+        "time": null
+      }
+    },
+    "images": [
+      "155f1882-9e6d-5f07-9d31-3e07a1f4f162",
+      "ff5e3c83-88cc-590c-9183-ff9a187e4e8a"
+    ]
+  },
+  {
+    "id": "2cb00867-49bf-5ca1-af46-f3f2b8b7a998",
+    "name": "Bulgarian Split Squat",
+    "description": "A unilateral leg exercise performed with the rear foot elevated behind the body.",
+    "categories": [
+      "LEGS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 6,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 10,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 12,
+        "restTime": 150,
+        "weight": 10,
+        "time": null
+      }
+    },
+    "images": [
+      "525cff2f-ff5f-5dfc-9839-409fca317ba9",
+      "4acf08a9-2253-5a6b-8e66-1c11b23c234a"
+    ]
+  },
+  {
+    "id": "e05f0bfb-e27d-51b2-ab24-d699ccd17d45",
+    "name": "Calf Raise",
+    "description": "A lower-leg exercise performed by repeatedly raising the heels while standing.",
+    "categories": [
+      "LEGS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 12,
+        "restTime": 45,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 20,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 25,
+        "restTime": 75,
+        "weight": 10,
+        "time": null
+      }
+    },
+    "images": [
+      "eda17315-3525-5568-94cc-001bf2bf0fda",
+      "65d5fe7c-2970-5e88-82b8-cc21473fee53"
+    ]
+  },
+  {
+    "id": "f4b7b4e3-673b-5ab9-9ff5-857933a332f4",
+    "name": "Child's Pose",
+    "description": "A resting mobility position used to gently stretch the back, hips and shoulders.",
+    "categories": [
+      "STRETCHING"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 45,
+        "weight": null,
+        "time": 20
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 45,
+        "weight": null,
+        "time": 30
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 60,
+        "weight": null,
+        "time": 60
+      }
+    },
+    "images": [
+      "b4b9ab78-8324-5acd-bf10-89b3f6920a93",
+      "d3dab55b-1281-56e7-bc69-689b5ef51b80"
+    ]
+  },
+  {
+    "id": "851a98b1-f584-5a02-8bd2-59b8ecb26d82",
+    "name": "Chin-Up",
+    "description": "A bodyweight pulling exercise performed with an underhand grip, emphasizing the back and biceps.",
+    "categories": [
+      "BACK",
+      "BICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 5,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 8,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 10,
+        "restTime": 150,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "dae63d1d-e0f8-53cc-ab5d-345ab115d4c4",
+      "e1e2c56a-40f3-5926-8c35-8bf19ffaeb94"
+    ]
+  },
+  {
+    "id": "90f01d48-c9b2-5d23-9274-459f54e5176e",
+    "name": "Cobra Stretch",
+    "description": "A mobility exercise that gently extends the spine while stretching the front of the torso.",
+    "categories": [
+      "ABS",
+      "STRETCHING"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 45,
+        "weight": null,
+        "time": 20
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 45,
+        "weight": null,
+        "time": 30
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 60,
+        "weight": null,
+        "time": 45
+      }
+    },
+    "images": [
+      "0da16b23-036d-585c-a78c-91b5cfc88e79",
+      "64e6a419-1704-5493-9573-7e9b0c8dbf44"
+    ]
+  },
+  {
+    "id": "80c8239b-2e86-5d3f-9dd7-6136ac429db5",
+    "name": "Commando Pull-Up",
+    "description": "A pull-up performed with the hands close together and the body positioned to one side of the bar.",
+    "categories": [
+      "BACK",
+      "BICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 4,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 7,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 8,
+        "restTime": 180,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "b7963f66-9115-550b-9c9b-67d7d006c6c9",
+      "5fb901ac-b992-58fa-a24b-c78dcc4309a1"
+    ]
+  },
+  {
+    "id": "0c6e71c4-9e47-52a1-ad32-4f531d222b2b",
+    "name": "Crow Pose Hold",
+    "description": "A balance exercise performed by supporting the body on the hands with the knees resting against the upper arms.",
+    "categories": [
+      "ABS",
+      "SHOULDERS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 60,
+        "weight": null,
+        "time": 15
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 75,
+        "weight": null,
+        "time": 30
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 90,
+        "weight": null,
+        "time": 45
+      }
+    },
+    "images": [
+      "69466726-550c-567f-9922-30281acaeb85",
+      "e837291b-402e-5ba7-afc3-03a99e592d91"
+    ]
+  },
+  {
+    "id": "88cf8205-7747-520e-b089-2f3457881e4c",
+    "name": "Decline Push-Up",
+    "description": "A push-up performed with the feet elevated, increasing the demand on the upper chest and shoulders.",
+    "categories": [
+      "CHEST",
+      "SHOULDERS",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 6,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 12,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 18,
+        "restTime": 120,
+        "weight": 10,
+        "time": null
+      }
+    },
+    "images": [
+      "420ae8e1-9f49-5726-9ea1-5881032c885d",
+      "3551583a-34dd-534d-87c4-d7addba5ce88"
+    ]
+  },
+  {
+    "id": "f5fb977d-b44c-54de-af66-cc1df3b17c93",
+    "name": "Diamond Push-Up",
+    "description": "A push-up performed with the hands close together to place greater emphasis on the triceps.",
+    "categories": [
+      "CHEST",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 6,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 12,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 18,
+        "restTime": 120,
+        "weight": 10,
+        "time": null
+      }
+    },
+    "images": [
+      "97abe547-d2a0-5227-82c7-e48685e50f5b",
+      "8e372fc1-87f5-5465-9889-bd1fd45f4993"
+    ]
+  },
+  {
+    "id": "fec5aad9-41ca-5802-996e-5eaed5c9a08f",
+    "name": "Dumbbell Chest Press",
+    "description": "A resistance pushing exercise performed by pressing dumbbells upward from a lying position.",
+    "categories": [
+      "CHEST",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 8,
+        "restTime": 90,
+        "weight": 8,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 10,
+        "restTime": 120,
+        "weight": 15,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 8,
+        "restTime": 150,
+        "weight": 20,
+        "time": null
+      }
+    },
+    "images": [
+      "4e5421f6-79c1-5adc-8123-9ec6ebf59a2d",
+      "12a51aac-ee49-5626-8f6f-9dc067b5c53a"
+    ]
+  },
+  {
+    "id": "f53c190d-97ca-5ea4-8130-9db9adfad715",
+    "name": "Dumbbell Row",
+    "description": "A resistance pulling exercise performed by rowing a dumbbell toward the torso.",
+    "categories": [
+      "BACK",
+      "BICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 8,
+        "restTime": 90,
+        "weight": 8,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 10,
+        "restTime": 120,
+        "weight": 15,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 8,
+        "restTime": 150,
+        "weight": 20,
+        "time": null
+      }
+    },
+    "images": [
+      "7ec96d46-1f11-5b07-9c6f-43fba1e3f592",
+      "c7263863-9786-5173-85fd-dae5ac5cd882"
+    ]
+  },
+  {
+    "id": "3e1eb45b-59a0-5159-b2d8-3e34a9ae9803",
+    "name": "Dumbbell Shoulder Press",
+    "description": "A resistance exercise performed by pressing dumbbells overhead from shoulder level.",
+    "categories": [
+      "SHOULDERS",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 8,
+        "restTime": 90,
+        "weight": 5,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 10,
+        "restTime": 120,
+        "weight": 10,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 8,
+        "restTime": 150,
+        "weight": 15,
+        "time": null
+      }
+    },
+    "images": [
+      "c0c7f050-c1d0-5576-92e2-1a1da2c3ac7c",
+      "ac34d6f1-735b-5b85-91f2-b0eaa033a114"
+    ]
+  },
+  {
+    "id": "e435c1b5-0d47-546d-bc43-d9f0be528cb2",
+    "name": "Explosive Chest-to-Bar Pull-Up",
+    "description": "An explosive pull-up variation where the chest is driven toward the bar.",
+    "categories": [
+      "BACK",
+      "BICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 3,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 5,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 6,
+        "restTime": 180,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "1de320c7-d9bd-5cc8-882f-f51d0d7c5a1b",
+      "f767796f-9e1e-5c52-b48d-a462de9f8ab2"
+    ]
+  },
+  {
+    "id": "fecdbc81-83d2-5e72-bf3c-d971133358d7",
+    "name": "Face Pull",
+    "description": "A resistance exercise where a cable or band is pulled toward the face to train the upper back and shoulders.",
+    "categories": [
+      "BACK",
+      "SHOULDERS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60,
+        "weight": 5,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 15,
+        "restTime": 75,
+        "weight": 10,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 15,
+        "restTime": 90,
+        "weight": 15,
+        "time": null
+      }
+    },
+    "images": [
+      "60e608fa-e285-5dbd-a45f-27c213ce2f4b",
+      "eea97d4b-d51c-5a2d-beea-453fbcaebf80"
+    ]
+  },
+  {
+    "id": "2a8d4781-287b-5282-9e28-820f4b74dba0",
+    "name": "Frog Stand",
+    "description": "A hand-supported balance exercise where the knees rest on the upper arms while the feet are lifted from the floor.",
+    "categories": [
+      "ABS",
+      "SHOULDERS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 60,
+        "weight": null,
+        "time": 10
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 75,
+        "weight": null,
+        "time": 20
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 90,
+        "weight": null,
+        "time": 30
+      }
+    },
+    "images": [
+      "bd54825f-1d2a-56e5-8c86-727a6e922b58",
+      "06ae142a-b38e-5101-8b8c-40989e1df720"
+    ]
+  },
+  {
+    "id": "a5fe46ea-1f98-5c31-bbe8-ae30e62d1855",
+    "name": "Glute Bridge",
+    "description": "A hip extension exercise performed from the floor by lifting the hips while keeping the feet planted.",
+    "categories": [
+      "LEGS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 10,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 15,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 20,
+        "restTime": 90,
+        "weight": 10,
+        "time": null
+      }
+    },
+    "images": [
+      "3a5ef880-38c4-5b57-b316-e17cd4d3cf0a",
+      "4fdb28ce-59a7-5d02-b3c0-7ae79f2a8db4"
+    ]
+  },
+  {
+    "id": "9b4e7fce-b66f-5e25-a6e7-5e2da79478f9",
+    "name": "Handstand Hold",
+    "description": "An isometric exercise where the body is held upside down in a controlled handstand position.",
+    "categories": [
+      "ABS",
+      "SHOULDERS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 60,
+        "weight": null,
+        "time": 15
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 75,
+        "weight": null,
+        "time": 30
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 90,
+        "weight": null,
+        "time": 60
+      }
+    },
+    "images": [
+      "19f7b199-248d-5753-981e-5629dd8ba97f",
+      "1611bec2-e3c8-5d1c-9483-b757f0e58c75"
+    ]
+  },
+  {
+    "id": "0b92a64a-6b11-5cd4-93d4-fc117eabe9df",
+    "name": "Handstand Push-Up",
+    "description": "An overhead pushing exercise performed from a handstand by lowering and pressing the body using the shoulders and arms.",
+    "categories": [
+      "SHOULDERS",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 3,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 6,
+        "restTime": 180,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 8,
+        "restTime": 210,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "04a1c956-dbca-5076-8cfd-f5d101553526",
+      "627191aa-c103-5abe-8927-a794c690bdd9"
+    ]
+  },
+  {
+    "id": "e35ef1d6-9974-57f1-821d-a3575123026e",
+    "name": "Hanging Knee Raise",
+    "description": "A hanging core exercise performed by raising the knees toward the torso.",
+    "categories": [
+      "ABS",
+      "SHOULDERS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 8,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 12,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 15,
+        "restTime": 90,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "9d1d7449-c797-5b62-ad0d-387fd7c251d6",
+      "068563d0-8be1-5968-8208-1b747b1563c9"
+    ]
+  },
+  {
+    "id": "eda4194f-3b5f-5971-a360-c8b3ea5f3baf",
+    "name": "Hanging Leg Raise",
+    "description": "A hanging core exercise performed by raising the legs while controlling the trunk.",
+    "categories": [
+      "ABS",
+      "SHOULDERS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 5,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 10,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 15,
+        "restTime": 150,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "65474518-8efc-56f7-86cb-d180abf15e54",
+      "d63196f8-394d-5dd3-8130-f183072c7567"
+    ]
+  },
+  {
+    "id": "f6f75f75-0ca9-5db2-997f-b714b77b0e11",
+    "name": "Heavy Barbell Biceps Curl",
+    "description": "A loaded biceps curl performed with a barbell using heavier resistance.",
+    "categories": [
+      "BICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 8,
+        "restTime": 90,
+        "weight": 15,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 8,
+        "restTime": 120,
+        "weight": 25,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 6,
+        "restTime": 150,
+        "weight": 35,
+        "time": null
+      }
+    },
+    "images": [
+      "60c2067f-4ebe-5783-8615-e44c17ffad49",
+      "44bdc1ae-a640-56cf-9d39-8925c3434f8c"
+    ]
+  },
+  {
+    "id": "3e5e897b-8f9c-52ab-99bf-5a4fa2394697",
+    "name": "Hip Flexor Stretch",
+    "description": "A stretch targeting the muscles at the front of the hip.",
+    "categories": [
+      "LEGS",
+      "STRETCHING"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 45,
+        "weight": null,
+        "time": 20
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 45,
+        "weight": null,
+        "time": 30
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 60,
+        "weight": null,
+        "time": 45
+      }
+    },
+    "images": [
+      "f6f129ba-7062-516d-a081-9aa455a5aa69",
+      "695decba-39db-5763-994c-ab863210d47d"
+    ]
+  },
+  {
+    "id": "80bc0d43-368d-5215-8a48-c50c65f1856c",
+    "name": "Hollow Body Hold",
+    "description": "An isometric core exercise where the body is held in a hollow position with the lower back pressed toward the floor.",
+    "categories": [
+      "ABS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 60,
+        "weight": null,
+        "time": 20
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 75,
+        "weight": null,
+        "time": 35
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 90,
+        "weight": null,
+        "time": 50
+      }
+    },
+    "images": [
+      "fab4b384-c799-51a9-8d21-13d1b58aa4a9",
+      "95640d64-bd17-523f-ba9f-0e468260a29c"
+    ]
+  },
+  {
+    "id": "21a79ff4-bc41-5603-9386-635ee55c7386",
+    "name": "Hollow Body Rock",
+    "description": "A dynamic core exercise performed by maintaining a hollow body position while gently rocking.",
+    "categories": [
+      "ABS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 10,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 20,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 30,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "fe618a79-8041-5c33-b1b3-1cc20d545102",
+      "62a09810-1765-56ee-b3da-75a91e6aa124"
+    ]
+  },
+  {
+    "id": "0352dd71-7d22-581d-b40a-5975e94afc17",
+    "name": "Incline Push-Up",
+    "description": "A push-up performed with the hands elevated, reducing the load while training the chest and triceps.",
+    "categories": [
+      "CHEST",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 10,
+        "restTime": 45,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 15,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 20,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "3081fbcb-5a8a-5ec9-81a3-0fcd6f8bb914",
+      "90394e67-f819-52eb-99dd-ee899e3e07c5"
+    ]
+  },
+  {
+    "id": "02944ba3-419b-57e1-9307-7888982d2bd7",
+    "name": "Jump Squat",
+    "description": "An explosive squat variation where the movement finishes with a jump.",
+    "categories": [
+      "CARDIO",
+      "LEGS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 8,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 12,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 15,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "5b25d73b-e322-51e7-b209-c064cede2076",
+      "48a70060-1111-5ef0-8422-f3afa9075e0b"
+    ]
+  },
+  {
+    "id": "74734445-12ff-5735-9fa8-5acb305befc8",
+    "name": "L-Sit",
+    "description": "An isometric exercise where the legs are held straight in front of the body while supported on the hands or parallettes.",
+    "categories": [
+      "ABS",
+      "SHOULDERS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 60,
+        "weight": null,
+        "time": 10
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 75,
+        "weight": null,
+        "time": 20
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 90,
+        "weight": null,
+        "time": 30
+      }
+    },
+    "images": [
+      "175e94a9-d985-5b09-9e7f-5deff5c12c2c",
+      "bc3c445d-0f6d-5458-a89d-7c0d6016fb52"
+    ]
+  },
+  {
+    "id": "fe74a3da-8a64-582e-ad59-2c967c3660c4",
+    "name": "Mountain Climber",
+    "description": "A dynamic bodyweight exercise performed from a plank position by alternately driving the knees toward the chest.",
+    "categories": [
+      "ABS",
+      "CARDIO"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 20,
+        "restTime": 45,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 30,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 40,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "8a340d4e-b98d-5d38-a9a2-72313c4e549f",
+      "1708bd4b-8427-50dc-899c-c4fdbc1c9b04"
+    ]
+  },
+  {
+    "id": "3c308bb2-395c-5669-ac4c-16f393cf7b33",
+    "name": "Muscle-Up",
+    "description": "An advanced pulling and pushing movement transitioning from below a bar or rings to a supported position above it.",
+    "categories": [
+      "BACK",
+      "BICEPS",
+      "SHOULDERS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 2,
+        "restTime": 180,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 4,
+        "restTime": 210,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 6,
+        "restTime": 240,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "f7adbf01-96f3-5d7c-b35a-a5d7ce29d3a7",
+      "ab5a5816-1415-5e7c-ba70-a7d1fb819907"
+    ]
+  },
+  {
+    "id": "6a2710bd-9bcb-5a4b-9d99-4b42e49fe78e",
+    "name": "Neutral-Grip Pull-Up",
+    "description": "A pull-up performed with a neutral grip, training the back and elbow flexors.",
+    "categories": [
+      "BACK",
+      "BICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 5,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 8,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 10,
+        "restTime": 150,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "d4bbc924-7c1e-512a-b944-69a44cf9dcec",
+      "812c1022-0098-545a-a363-ece0999ffab8"
+    ]
+  },
+  {
+    "id": "8f3a7b68-5de6-58ed-873b-0d1e681cf4d1",
+    "name": "Pike Compression",
+    "description": "A compression exercise performed by actively lifting the legs toward the torso while maintaining a pike position.",
+    "categories": [
+      "ABS",
+      "LEGS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 10,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 15,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 20,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "2afcc614-50a7-5808-8ac4-464809493809",
+      "e333839a-a611-5f05-bedd-9c862e482629"
+    ]
+  },
+  {
+    "id": "cbbf70ee-b988-534e-94fc-0a4b3d193861",
+    "name": "Pike Push-Up",
+    "description": "A bodyweight shoulder exercise performed in a pike position by lowering and pressing the upper body.",
+    "categories": [
+      "SHOULDERS",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 6,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 10,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 15,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "ccab2301-c82e-5d97-b5fe-b356909b14df",
+      "4d4d2ecd-ef16-50f1-83b7-720cc6aaa0c1"
+    ]
+  },
+  {
+    "id": "777d74bf-d90b-50a1-a3a9-5cf29025307d",
+    "name": "Pistol Squat",
+    "description": "An advanced single-leg squat performed with the non-working leg extended forward.",
+    "categories": [
+      "LEGS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 3,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 5,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 8,
+        "restTime": 180,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "7e5863b4-7c85-51ac-8161-8ebeb3f98832",
+      "96dab8ac-89de-5b90-b4eb-4f347768855e"
+    ]
+  },
+  {
+    "id": "b666acd4-1098-5e9a-8ab5-d7c463416f04",
+    "name": "Planche Lean",
+    "description": "A straight-arm strength exercise performed by leaning the shoulders forward over the hands.",
+    "categories": [
+      "CHEST",
+      "SHOULDERS",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 75,
+        "weight": null,
+        "time": 15
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 90,
+        "weight": null,
+        "time": 25
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 120,
+        "weight": null,
+        "time": 40
+      }
+    },
+    "images": [
+      "8063d2ca-0731-5999-9539-eb335287b5b6",
+      "38cb0d25-ec6d-5681-a856-ce966342683b"
+    ]
+  },
+  {
+    "id": "aaca52e1-b500-510a-84a2-b3c117dbeae9",
+    "name": "Plank",
+    "description": "An isometric core exercise performed by maintaining a straight body position while supporting the body on the forearms or hands.",
+    "categories": [
+      "ABS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 45,
+        "weight": null,
+        "time": 30
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 60,
+        "weight": null,
+        "time": 60
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 75,
+        "weight": null,
+        "time": 90
+      }
+    },
+    "images": [
+      "b6449573-2aca-578b-b67d-85c9e03d530a",
+      "d5f069fb-31ef-5bae-88d2-64df10c06ccb"
+    ]
+  },
+  {
+    "id": "0cd70cc2-c7ba-5ca7-9e70-924702f971e7",
+    "name": "Pseudo Planche Push-Up",
+    "description": "A push-up performed with the shoulders positioned forward over the hands to increase upper-body demand.",
+    "categories": [
+      "CHEST",
+      "SHOULDERS",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 5,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 8,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 10,
+        "restTime": 180,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "bb4ba470-d6a8-5998-817b-a6274ab735ee",
+      "1d8babf8-cb0b-55aa-80ac-9d916e56834f"
+    ]
+  },
+  {
+    "id": "4572391a-6dde-5610-9500-373963c79135",
+    "name": "Pull-Up",
+    "description": "A bodyweight pulling exercise where you pull your body upward until your chin clears the bar.",
+    "categories": [
+      "BACK",
+      "BICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 5,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 8,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 10,
+        "restTime": 150,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "b19bd4f0-11d3-5753-bf94-b88dd9657693",
+      "03395b0a-3e98-5f7a-b632-245c102fb6cd"
+    ]
+  },
+  {
+    "id": "612b25cc-7f74-5798-80f4-7b5ece9899b9",
+    "name": "Push-Up",
+    "description": "A bodyweight pushing exercise performed by lowering and pressing the body while maintaining a straight body position.",
+    "categories": [
+      "CHEST",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 8,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 15,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 20,
+        "restTime": 90,
+        "weight": 10,
+        "time": null
+      }
+    },
+    "images": [
+      "d70a3a30-6b56-5ab3-8fff-c89f834c6e21",
+      "ec9dabc4-a601-5ab8-93c8-bde384068495"
+    ]
+  },
+  {
+    "id": "24b2853d-e94d-5fb3-8c35-94025eda0fe6",
+    "name": "Reverse Lunge",
+    "description": "A unilateral leg exercise performed by stepping backward into a lunge and returning to standing.",
+    "categories": [
+      "LEGS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 8,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 12,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 15,
+        "restTime": 120,
+        "weight": 10,
+        "time": null
+      }
+    },
+    "images": [
+      "d672aa0f-6215-5b71-853d-cecc8183a208",
+      "26562978-84e0-51a0-9433-4a372c2a9d60"
+    ]
+  },
+  {
+    "id": "311cdaf1-e7e9-5813-8377-78a2b7b882b4",
+    "name": "Reverse Plank Hold",
+    "description": "An isometric exercise performed face up while supporting the body on the hands and heels.",
+    "categories": [
+      "ABS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 60,
+        "weight": null,
+        "time": 20
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 75,
+        "weight": null,
+        "time": 40
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 90,
+        "weight": null,
+        "time": 60
+      }
+    },
+    "images": [
+      "1f5c5ae0-1d70-58d1-9c29-61f815989ba1",
+      "752935f2-3bc9-5041-97c0-2359300fc132"
+    ]
+  },
+  {
+    "id": "9603f1f5-0b46-5ed3-bda8-bce6cb06c6c3",
+    "name": "Ring-Assisted Muscle-Up Transition",
+    "description": "A muscle-up transition drill performed on rings with assistance to develop the transition phase.",
+    "categories": [
+      "BACK",
+      "BICEPS",
+      "SHOULDERS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 3,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 5,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 8,
+        "restTime": 180,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "5a554849-b4e4-562f-9ea6-b3f1d689489e",
+      "3b5f3c58-1494-5717-a44e-cbd3d6fe3911"
+    ]
+  },
+  {
+    "id": "98d67ab7-32b8-5c6e-9a58-11faa4967418",
+    "name": "Romanian Deadlift",
+    "description": "A hip-hinge resistance exercise emphasizing the posterior chain and hamstrings.",
+    "categories": [
+      "LEGS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 8,
+        "restTime": 120,
+        "weight": 20,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 10,
+        "restTime": 150,
+        "weight": 30,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 8,
+        "restTime": 180,
+        "weight": 50,
+        "time": null
+      }
+    },
+    "images": [
+      "6659284a-b464-5a62-aba2-2d7d7b1ddd7c",
+      "41628d49-6714-5b81-82c0-d2285ba502c4"
+    ]
+  },
+  {
+    "id": "14621c3f-ebdd-5841-ad59-1cc04e606851",
+    "name": "Russian Twist",
+    "description": "A seated rotational core exercise where the torso is rotated from side to side.",
+    "categories": [
+      "ABS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 12,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 20,
+        "restTime": 75,
+        "weight": 5,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 24,
+        "restTime": 90,
+        "weight": 10,
+        "time": null
+      }
+    },
+    "images": [
+      "c4b1e477-535d-58ee-9610-b7c47cc0724d",
+      "5e15043f-12dc-54fc-8e44-10226c145cb5"
+    ]
+  },
+  {
+    "id": "2a7a4234-c843-50c9-a86c-9cdb95720559",
+    "name": "Scapular Pull-Up",
+    "description": "A controlled pulling movement focused on depressing and retracting the shoulder blades.",
+    "categories": [
+      "BACK",
+      "SHOULDERS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 8,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 12,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 15,
+        "restTime": 90,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "f495f446-4a63-5b53-ba15-fdcb2f681a50",
+      "feb19ec1-0bb0-53ca-8f73-ba8608165c5b"
+    ]
+  },
+  {
+    "id": "fee32088-a4bf-5f76-8f51-91eac8581441",
+    "name": "Shoulder Dislocates",
+    "description": "A shoulder mobility exercise performed by moving a straight arm through a controlled overhead range.",
+    "categories": [
+      "SHOULDERS",
+      "STRETCHING"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 10,
+        "restTime": 45,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 15,
+        "restTime": 45,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 20,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "7b5364be-2edf-525f-8e47-896b14ca601b",
+      "956a8341-cf40-5bdb-aff6-f4f7a42744be"
+    ]
+  },
+  {
+    "id": "2c6cb0a8-db1c-575e-a5f8-f07adc2ef651",
+    "name": "Shoulder Taps",
+    "description": "A plank-based exercise where one hand at a time taps the opposite shoulder while the trunk remains controlled.",
+    "categories": [
+      "ABS",
+      "SHOULDERS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 10,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 20,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 30,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "661d27e6-4159-55a2-a26f-fd3707cc7346",
+      "810337c1-9e58-5ca6-8277-56af58d25d16"
+    ]
+  },
+  {
+    "id": "ba3d2196-cc26-5456-b7cc-67c70c76b69e",
+    "name": "Side Plank",
+    "description": "An isometric core exercise performed on one side of the body while maintaining a straight body position.",
+    "categories": [
+      "ABS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 45,
+        "weight": null,
+        "time": 20
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 60,
+        "weight": null,
+        "time": 40
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 75,
+        "weight": null,
+        "time": 60
+      }
+    },
+    "images": [
+      "d96d38cf-0f28-572a-833e-24bc38c5ca09",
+      "d2ad546c-a82e-53d6-b39d-c1ef2ca29953"
+    ]
+  },
+  {
+    "id": "89df64ba-b541-5fce-833d-e494c32e98d5",
+    "name": "Single-Leg Glute Bridge",
+    "description": "A unilateral hip extension exercise performed from the floor using one supporting leg.",
+    "categories": [
+      "LEGS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 6,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 10,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 15,
+        "restTime": 120,
+        "weight": 10,
+        "time": null
+      }
+    },
+    "images": [
+      "3e2d71e6-c482-53ed-8ab3-e3b35dc1f109",
+      "d67d9bbd-13f0-5a3a-9777-9efb0dd51dad"
+    ]
+  },
+  {
+    "id": "756bfe79-d1c2-5d63-a5d3-88ecd2f2868b",
+    "name": "Straddle Compression",
+    "description": "A compression exercise performed with the legs spread while actively lifting them toward the torso.",
+    "categories": [
+      "ABS",
+      "LEGS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 8,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 12,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 15,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      }
+    },
+    "images": [
+      "1cf0ca7a-fac6-5d4d-b95e-4cb079904019",
+      "15c4f834-55a9-5a41-ac78-f0d526dd85ef"
+    ]
+  },
+  {
+    "id": "99cee2f9-06a7-5d61-a350-47653331b578",
+    "name": "Toes-to-Bar",
+    "description": "A hanging exercise where the feet are raised to touch or approach the bar while maintaining control.",
+    "categories": [
+      "ABS",
+      "SHOULDERS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 5,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 10,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 15,
+        "restTime": 150,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "49d08d4b-1498-580a-b7e9-88c3c870896c",
+      "970dcf31-0384-5bc2-80c6-c28d233d02fb"
+    ]
+  },
+  {
+    "id": "932ef660-93bd-51ef-b536-9eab93fe191a",
+    "name": "Towel Pull-Up",
+    "description": "A pull-up performed while gripping a towel over the bar, adding a demanding grip component.",
+    "categories": [
+      "BACK",
+      "BICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 3,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 6,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 8,
+        "restTime": 180,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "4997a088-eba8-5402-a12c-a7c5409c717d",
+      "2a550d6f-1144-5a99-8270-8193c9621582"
+    ]
+  },
+  {
+    "id": "a7f62e48-be97-5eb4-9d6a-d3a7c0e465da",
+    "name": "Typewriter Pull-Up",
+    "description": "An advanced pull-up variation where the body moves laterally across the bar at the top position.",
+    "categories": [
+      "BACK",
+      "BICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 3,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 5,
+        "restTime": 180,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 6,
+        "restTime": 180,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "212cae63-a906-51c4-9646-0a5d1e5f4e01",
+      "d77b14d5-09f2-5f5b-b579-8e0ac718bfe3"
+    ]
+  },
+  {
+    "id": "c2272033-9b5a-5ff3-be07-01f6a7f4aabf",
+    "name": "Walking Lunge",
+    "description": "A dynamic lunge variation performed by alternating forward steps.",
+    "categories": [
+      "CARDIO",
+      "LEGS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 10,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 16,
+        "restTime": 90,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 20,
+        "restTime": 120,
+        "weight": 10,
+        "time": null
+      }
+    },
+    "images": [
+      "1ec9b625-f235-5b21-b933-011cf96acba6",
+      "1584f874-112c-52eb-82da-7e0bedb43a00"
+    ]
+  },
+  {
+    "id": "e8ff7aed-75b8-59eb-82cb-0cba6021dae4",
+    "name": "Wall Handstand Hold",
+    "description": "A handstand hold performed with the feet supported against a wall for balance and control.",
+    "categories": [
+      "ABS",
+      "SHOULDERS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 1,
+        "restTime": 45,
+        "weight": null,
+        "time": 30
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 1,
+        "restTime": 60,
+        "weight": null,
+        "time": 60
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 1,
+        "restTime": 75,
+        "weight": null,
+        "time": 90
+      }
+    },
+    "images": [
+      "1d78ece6-d64b-528d-8755-ee2fa0bd93ad",
+      "47b97ff8-ff53-566e-9a5b-2719017b6a06"
+    ]
+  },
+  {
+    "id": "4ee4d86d-e24b-5ad3-ac11-5749ecf905bf",
+    "name": "Wall-Assisted Handstand Push-Up",
+    "description": "A handstand push-up performed with the feet supported against a wall for balance.",
+    "categories": [
+      "SHOULDERS",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 4,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 8,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 10,
+        "restTime": 180,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "3e6dc567-702d-511f-8d4d-7a8b3f23535f",
+      "f4aacc0c-781a-587e-b389-25c90f802f07"
+    ]
+  },
+  {
+    "id": "2e9d31e0-87bd-5d69-b3da-ec794cfeb604",
+    "name": "Weighted Pull-Up",
+    "description": "A pull-up performed with additional external weight to increase pulling strength demands.",
+    "categories": [
+      "BACK",
+      "BICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 3,
+        "restTime": 150,
+        "weight": 5,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 5,
+        "restTime": 180,
+        "weight": 10,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 6,
+        "restTime": 210,
+        "weight": 20,
+        "time": null
+      }
+    },
+    "images": [
+      "853b6183-1434-5407-bdf5-30395809ce12",
+      "d0c4855f-3f8a-5b72-9ce9-2275acb44777"
+    ]
+  },
+  {
+    "id": "922113b1-77e7-5e04-836a-c3ca6c5c830c",
+    "name": "Wide Push-Up",
+    "description": "A push-up performed with a wider hand position to emphasize the chest.",
+    "categories": [
+      "CHEST",
+      "TRICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 8,
+        "restTime": 60,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 15,
+        "restTime": 75,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 20,
+        "restTime": 90,
+        "weight": 10,
+        "time": null
+      }
+    },
+    "images": [
+      "6c254531-b3a3-59cd-add7-0dc8e586e60d",
+      "22c889f5-cc48-5a89-952b-0850a75d17e4"
+    ]
+  },
+  {
+    "id": "7c615e24-a10e-58e2-b9a1-6628a32edd9f",
+    "name": "Wide-Grip Pull-Up",
+    "description": "A pull-up performed with a wider-than-shoulder-width grip to emphasize the upper back.",
+    "categories": [
+      "BACK",
+      "BICEPS"
+    ],
+    "recommendations": {
+      "BEGINNER": {
+        "sets": 3,
+        "reps": 4,
+        "restTime": 120,
+        "weight": null,
+        "time": null
+      },
+      "INTERMEDIATE": {
+        "sets": 4,
+        "reps": 7,
+        "restTime": 150,
+        "weight": null,
+        "time": null
+      },
+      "ADVANCED": {
+        "sets": 5,
+        "reps": 10,
+        "restTime": 180,
+        "weight": 5,
+        "time": null
+      }
+    },
+    "images": [
+      "111c683b-d831-5319-8a64-44f8f50eb0f2",
+      "6f0571ab-049e-512e-99eb-7c64787d3143"
+    ]
+  }
+]

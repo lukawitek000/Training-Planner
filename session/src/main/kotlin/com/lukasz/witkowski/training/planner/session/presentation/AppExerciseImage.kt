@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import coil3.compose.AsyncImage
 import com.lukasz.witkowski.training.planner.exercise.R
@@ -54,8 +56,15 @@ fun AppExerciseImage(
     containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     contentScale: ContentScale = ContentScale.Fit
 ) {
+    val context = LocalContext.current
     val model = if (imageId != null) {
-        "file:///android_asset/exercise_images/${imageId.value}.webp"
+        val hasSvg = remember(imageId) {
+            runCatching {
+                context.assets.list("exercise_images")?.contains("${imageId.value}.svg") == true
+            }.getOrDefault(false)
+        }
+        val ext = if (hasSvg) "svg" else "webp"
+        "file:///android_asset/exercise_images/${imageId.value}.$ext"
     } else {
         R.drawable.exercise_default
     }

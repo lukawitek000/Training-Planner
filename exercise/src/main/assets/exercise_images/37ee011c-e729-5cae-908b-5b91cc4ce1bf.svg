@@ -1,0 +1,13 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<path stroke="#888888" stroke-width="6" stroke-linecap="round" d="M 60,450 L 452,450" />
+    <circle cx="210" cy="210" r="24" stroke="#111111" stroke-width="8" fill="none" />
+    <!-- Torso angled forward -->
+    <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 225,230 L 285,320" />
+    <!-- Arms reaching forward for balance -->
+    <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 230,240 L 140,240" />
+    <!-- Thigh parallel to floor, knee flexed -->
+    <path stroke="#111111" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 285,320 L 190,320 L 210,445" />
+    <!-- Quads and glutes peak activation -->
+    <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 280,315 L 195,315" />
+    <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" fill="#FF0000" d="M 275,320 Q 295,340 280,350 Z" />
+</svg>

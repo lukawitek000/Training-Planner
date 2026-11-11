@@ -29,8 +29,8 @@ class TrainingPlannerNavigator(
 
     fun isExerciseList() = backStack.lastOrNull() == ExercisesList
 
-    fun exerciseDetails(exerciseId: ExerciseId) {
-        backStack.add(ExerciseDetails(exerciseId))
+    fun exerciseDetails(exerciseId: ExerciseId, isEditable: Boolean = false) {
+        backStack.add(ExerciseDetails(exerciseId, isEditable))
     }
 
     fun exerciseCreate() {
@@ -39,7 +39,7 @@ class TrainingPlannerNavigator(
 
     fun exerciseCreated(exerciseId: ExerciseId) {
         backStack.removeLastOrNull()
-        backStack.add(ExerciseDetails(exerciseId))
+        backStack.add(ExerciseDetails(exerciseId, isEditable = true))
     }
 
     fun exerciseEdit(exerciseId: ExerciseId) {

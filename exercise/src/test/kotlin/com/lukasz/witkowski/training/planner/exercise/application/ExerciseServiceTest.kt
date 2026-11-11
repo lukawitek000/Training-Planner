@@ -150,6 +150,37 @@ class ExerciseServiceTest {
     }
 
     @Test
+    fun `update exercise throws IllegalStateException for organization exercise`() = runTest {
+        val orgDetails = TestData.PUSH_UPS_DETAILS.copy(
+            exercise = TestData.PUSH_UPS_EXERCISE.copy(
+                metadata = ExerciseMetadata(source = ExerciseSource.Organization)
+            )
+        )
+        exerciseRepository.insert(orgDetails)
+
+        assertFailsWith<IllegalStateException> {
+            service.updateExercise(
+                exerciseConfiguration = TestData.PUSH_UPS_CONFIGURATION,
+                exerciseId = orgDetails.exercise.id
+            )
+        }
+    }
+
+    @Test
+    fun `delete exercise throws IllegalStateException for organization exercise`() = runTest {
+        val orgDetails = TestData.PUSH_UPS_DETAILS.copy(
+            exercise = TestData.PUSH_UPS_EXERCISE.copy(
+                metadata = ExerciseMetadata(source = ExerciseSource.Organization)
+            )
+        )
+        exerciseRepository.insert(orgDetails)
+
+        assertFailsWith<IllegalStateException> {
+            service.deleteExercise(orgDetails.exercise.id)
+        }
+    }
+
+    @Test
     fun `save exercise with multiple images calls saveImages with all image configurations`() =
         runTest {
             val imageRef1 = TestData.SAMPLE_IMAGE_REFERENCE

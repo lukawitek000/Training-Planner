@@ -1,0 +1,10 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 170,260 L 170,450" /><path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 130,260 L 230,260" />
+        <circle cx="210" cy="140" r="24" stroke="#111111" stroke-width="8" fill="none" />
+        <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 210,165 L 210,290" />
+        <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 210,190 L 180,260" />
+        <!-- Full L-Sit locked at 90 degrees -->
+        <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 210,290 L 390,290" />
+        <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 218,210 L 218,285" />
+        <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 220,285 L 300,285" />
+</svg>

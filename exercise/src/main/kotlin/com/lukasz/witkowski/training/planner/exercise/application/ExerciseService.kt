@@ -4,8 +4,6 @@ import androidx.paging.PagingData
 import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
@@ -48,18 +46,15 @@ class ExerciseService(
         exerciseId: ExerciseId
     ): ExerciseId {
         val existing = exerciseRepository.getExerciseDetailsById(exerciseId).firstOrNull()
-        if (existing?.exercise?.metadata?.source is ExerciseSource.Bundled) {
-            throw IllegalStateException("Bundled exercises cannot be modified")
+        if (existing?.exercise?.metadata?.source !is ExerciseSource.UserCreated) {
+            throw IllegalStateException("Only user-created exercises can be modified")
         }
         val imageIds = if (exerciseConfiguration.images.isNotEmpty()) {
             saveImages(exerciseConfiguration.images, exerciseId).map { it.imageId }
         } else {
-            existing?.exercise?.imageIds ?: emptyList()
+            existing.exercise.imageIds
         }
-        val metadata = existing?.exercise?.metadata?.copy(
-            syncState = ExerciseSyncState.PENDING_UPLOAD
-        ) ?: ExerciseMetadata(
-            source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
+        val metadata = existing.exercise.metadata.copy(
             syncState = ExerciseSyncState.PENDING_UPLOAD
         )
         val exerciseDetails = ExerciseFactory.create(
@@ -85,8 +80,8 @@ class ExerciseService(
 
     suspend fun deleteExercise(exerciseId: ExerciseId) {
         val existing = exerciseRepository.getExerciseDetailsById(exerciseId).firstOrNull()
-        if (existing?.exercise?.metadata?.source is ExerciseSource.Bundled) {
-            throw IllegalStateException("Bundled exercises cannot be deleted")
+        if (existing?.exercise?.metadata?.source !is ExerciseSource.UserCreated) {
+            throw IllegalStateException("Only user-created exercises can be deleted")
         }
         exerciseRepository.delete(exerciseId)
     }

@@ -1,0 +1,15 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 160,250 L 160,450" /><path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 352,250 L 352,450" /><path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 120,250 L 392,250" />
+        <!-- Head lowered, chest leaned forward -->
+        <circle cx="256" cy="180" r="24" stroke="#111111" stroke-width="8" fill="none" />
+        <!-- Arms bent at 90 deg dip -->
+        <path stroke="#111111" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 235,195 L 175,180 L 200,250" />
+        <path stroke="#111111" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 277,195 L 337,180 L 312,250" />
+        <!-- Torso lowered -->
+        <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 256,195 L 256,330" />
+        <path stroke="#111111" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 256,330 L 246,400 L 290,430" />
+        <!-- Chest and triceps peak activation -->
+        <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" fill="#FF0000" d="M 240,210 Q 256,225 272,210 Z" />
+        <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 225,195 L 180,185" />
+        <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 287,195 L 332,185" />
+</svg>

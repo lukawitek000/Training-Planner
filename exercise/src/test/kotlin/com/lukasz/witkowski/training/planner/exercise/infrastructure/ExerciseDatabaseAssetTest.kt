@@ -46,7 +46,7 @@ class ExerciseDatabaseAssetTest {
         val exerciseDao = db.exerciseDao()
         val allExercises = exerciseDao.getAll().first()
 
-        assertEquals("Should contain 71 bundled exercises", 71, allExercises.size)
+        assertEquals("Should contain 80 bundled exercises", 80, allExercises.size)
 
         allExercises.forEach { exercise ->
             assertNotNull(
@@ -109,6 +109,30 @@ class ExerciseDatabaseAssetTest {
     }
 
     @Test
+    fun verifyAllBundledExercisesHaveSvgImageFiles() = runTest {
+        val exerciseDao = db.exerciseDao()
+        val allExercises = exerciseDao.getAll().first()
+        val assetDir = File("src/main/assets/exercise_images")
+
+        allExercises.forEach { exercise ->
+            val details = exerciseDao.getExerciseDetailsById(exercise.exerciseId).first()
+            assertNotNull(details)
+            assertTrue(details!!.images.isNotEmpty())
+            details.images.forEach { img ->
+                val svgFile = File(assetDir, "${img.imageId}.svg")
+                assertTrue(
+                    "SVG asset must exist on disk: ${svgFile.name} for ${exercise.name}",
+                    svgFile.exists()
+                )
+                assertTrue(
+                    "SVG asset must not be empty: ${svgFile.name}",
+                    svgFile.length() > 0
+                )
+            }
+        }
+    }
+
+    @Test
     fun verifyHoldExercisesHaveTimeInSecondsAndSingleRep() = runTest {
         val exerciseDao = db.exerciseDao()
         val allExercises = exerciseDao.getAll().first()
@@ -142,6 +166,77 @@ class ExerciseDatabaseAssetTest {
         pullUpDetails.recommendations.forEach { recommendation ->
             assertTrue("Pull-Up reps should be > 1", recommendation.reps > 1)
             assertNull("Pull-Up timeInSeconds should be null", recommendation.timeInSeconds)
+        }
+    }
+
+    @Test
+    fun verifyCalisthenicsStaplesAndDipsArePresent() = runTest {
+        val exerciseDao = db.exerciseDao()
+        val allExercises = exerciseDao.getAll().first()
+        val names = allExercises.map { it.name }.toSet()
+
+        val expectedStaples = listOf(
+            "Parallel Bar Dip",
+            "Bench Dip",
+            "Straight Bar Dip",
+            "Ring Dip",
+            "Knee Push-Up",
+            "Active Dead Hang",
+            "Tuck Front Lever Hold",
+            "Tuck Planche Hold",
+            "Nordic Hamstring Curl"
+        )
+
+        expectedStaples.forEach { staple ->
+            assertTrue("Bundled exercises must include $staple", names.contains(staple))
+        }
+    }
+
+    @Test
+    fun verifyBodyweightCalisthenicsSkillsHaveNoAddedWeight() = runTest {
+        val exerciseDao = db.exerciseDao()
+        val allExercises = exerciseDao.getAll().first()
+
+        val bodyweightSkills = listOf(
+            "Archer Pull-Up",
+            "Archer Push-Up",
+            "Muscle-Up",
+            "Handstand Push-Up",
+            "Push-Up",
+            "Bodyweight Squat",
+            "Pistol Squat",
+            "Pseudo Planche Push-Up",
+            "Toes-to-Bar"
+        )
+
+        bodyweightSkills.forEach { skillName ->
+            val exercise = allExercises.firstOrNull { it.name == skillName }
+            assertNotNull("$skillName should be present", exercise)
+            val details = exerciseDao.getExerciseDetailsById(exercise!!.exerciseId).first()
+            assertNotNull("$skillName details should be present", details)
+
+            details!!.recommendations.forEach { rec ->
+                assertNull(
+                    "$skillName [${rec.level}] should not prescribe artificial weight",
+                    rec.weightInKg
+                )
+            }
+        }
+    }
+
+    @Test
+    fun verifyLegitimateWeightedExercisesPreserveWeight() = runTest {
+        val exerciseDao = db.exerciseDao()
+        val allExercises = exerciseDao.getAll().first()
+
+        val weightedPullUp = allExercises.firstOrNull { it.name == "Weighted Pull-Up" }
+        assertNotNull("Weighted Pull-Up should be present", weightedPullUp)
+        val details = exerciseDao.getExerciseDetailsById(weightedPullUp!!.exerciseId).first()
+        assertNotNull("Weighted Pull-Up details should be present", details)
+
+        details!!.recommendations.forEach { rec ->
+            assertNotNull("Weighted Pull-Up [${rec.level}] must have weight", rec.weightInKg)
+            assertTrue("Weighted Pull-Up [${rec.level}] weight must be > 0", rec.weightInKg!! > 0)
         }
     }
 }

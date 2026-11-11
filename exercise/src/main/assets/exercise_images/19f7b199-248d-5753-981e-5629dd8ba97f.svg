@@ -1,0 +1,16 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<path stroke="#888888" stroke-width="6" stroke-linecap="round" d="M 60,450 L 452,450" />
+    <!-- Hands on floor -->
+    <path stroke="#111111" stroke-width="8" stroke-linecap="round" d="M 200,450 L 230,450" />
+    <path stroke="#111111" stroke-width="8" stroke-linecap="round" d="M 282,450 L 312,450" />
+    <!-- Arms straight vertical -->
+    <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 215,450 L 235,320" />
+    <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 297,450 L 277,320" />
+    <!-- Head between shoulders -->
+    <circle cx="256" cy="345" r="24" stroke="#111111" stroke-width="8" fill="none" />
+    <!-- Torso inverted straight -->
+    <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 256,320 L 256,180" />
+    <!-- Legs vertical straight up -->
+    <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 256,180 L 256,60" />
+    <path stroke="#FF0000" stroke-width="6" stroke-linecap="round" d="M 230,340 L 220,400" /><path stroke="#FF0000" stroke-width="6" stroke-linecap="round" d="M 282,340 L 292,400" />
+</svg>

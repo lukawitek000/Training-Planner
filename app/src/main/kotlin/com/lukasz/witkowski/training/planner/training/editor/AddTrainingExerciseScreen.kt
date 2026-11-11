@@ -62,7 +62,7 @@ fun AddTrainingExerciseScreenContent(
         filteringState = filteringState,
         toggleCategory = toggleCategory,
         onSearchQueryChanged = onSearchQueryChanged,
-        onExerciseClicked = { onExerciseSelected(it) },
+        onExerciseClicked = { id, _ -> onExerciseSelected(id) },
         itemTrailingIcon = {
             IconButton(
                 onClick = { onExerciseSelected(it) },

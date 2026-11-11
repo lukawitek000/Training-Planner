@@ -1,0 +1,10 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 170,260 L 170,450" /><path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 130,260 L 230,260" />
+        <circle cx="210" cy="140" r="24" stroke="#111111" stroke-width="8" fill="none" />
+        <!-- Torso upright -->
+        <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 210,165 L 210,290" />
+        <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 210,190 L 180,260" />
+        <!-- Tuck L-Sit setup -->
+        <path stroke="#111111" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 210,290 L 260,290 L 260,360" />
+        <path stroke="#FF0000" stroke-width="6" stroke-linecap="round" d="M 215,220 L 215,280" />
+</svg>

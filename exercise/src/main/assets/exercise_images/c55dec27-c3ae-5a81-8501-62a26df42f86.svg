@@ -1,0 +1,16 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<path stroke="#888888" stroke-width="6" stroke-linecap="round" d="M 60,450 L 452,450" />
+    <path stroke="#111111" stroke-width="8" stroke-linecap="round" d="M 190,450 L 220,450" />
+    <path stroke="#111111" stroke-width="8" stroke-linecap="round" d="M 292,450 L 322,450" />
+    <!-- Arms bent at elbows in tripod -->
+    <path stroke="#111111" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 205,450 L 165,370 L 230,370" />
+    <path stroke="#111111" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 307,450 L 347,370 L 282,370" />
+    <!-- Head hovering at floor line -->
+    <circle cx="256" cy="415" r="24" stroke="#111111" stroke-width="8" fill="none" />
+    <!-- Torso inverted -->
+    <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 256,370 L 256,230" />
+    <!-- Legs vertical straight up -->
+    <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 256,230 L 256,90" />
+    <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 225,370 L 175,375" /><path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 287,370 L 337,375" />
+    <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 180,380 L 200,430" /><path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 332,380 L 312,430" />
+</svg>

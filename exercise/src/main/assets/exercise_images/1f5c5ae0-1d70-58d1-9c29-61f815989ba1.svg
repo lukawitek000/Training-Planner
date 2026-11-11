@@ -1,0 +1,9 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<path stroke="#888888" stroke-width="6" stroke-linecap="round" d="M 40,420 L 472,420" />
+        <circle cx="400" cy="270" r="24" stroke="#111111" stroke-width="8" fill="none" />
+        <!-- Torso facing upwards towards ceiling -->
+        <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 380,290 L 240,335" />
+        <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 360,295 L 360,420" />
+        <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 240,335 L 120,420" />
+        <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 250,330 L 370,290" />
+</svg>

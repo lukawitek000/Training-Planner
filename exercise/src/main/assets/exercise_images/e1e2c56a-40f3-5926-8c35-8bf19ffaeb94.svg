@@ -1,0 +1,14 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 60,70 L 452,70" />
+    <!-- Head above bar -->
+    <circle cx="256" cy="45" r="24" stroke="#111111" stroke-width="8" fill="none" />
+    <!-- Arms bent, elbows down and tucked -->
+    <path stroke="#111111" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 210,70 L 190,140 L 236,80" />
+    <path stroke="#111111" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 302,70 L 322,140 L 276,80" />
+    <!-- Torso elevated -->
+    <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 256,70 L 256,210" />
+    <!-- Legs hanging or knees slightly bent -->
+    <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 256,210 L 250,370" />
+    <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 256,210 L 262,370" />
+    <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" fill="#FF0000" d="M 205,85 Q 215,120 225,95 Z" /><path stroke="#FF0000" stroke-width="8" stroke-linecap="round" fill="#FF0000" d="M 307,85 Q 297,120 287,95 Z" />
+</svg>
