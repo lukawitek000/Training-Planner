@@ -1,12 +1,11 @@
 package com.lukasz.witkowski.training.planner.session.di
 
 import com.lukasz.witkowski.training.planner.session.application.TrainingSessionService
-import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedListener
 import com.lukasz.witkowski.training.planner.session.domain.session.StraightSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.CompositeStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SystemTimeProvider
-import com.lukasz.witkowski.training.planner.session.domain.timer.Timer
+import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
 import com.lukasz.witkowski.training.planner.session.presentation.TrainingSessionViewModel
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
@@ -20,12 +19,20 @@ val sessionModule =
 
         single<SessionStatisticsRecorder> { CompositeStatisticsRecorder() }
         single {
+            val timeProvider = SystemTimeProvider()
+            val backgroundDispatcher =
+                get<kotlinx.coroutines.CoroutineDispatcher>(
+                    named(CoroutineDispatcherQualifiers.DEFAULT)
+                )
             TrainingSessionService(
-                timeProvider = SystemTimeProvider(),
-                timer = Timer(),
-                sessionCompletedListener = getOrNull<SessionCompletedListener>(),
+                timeProvider = timeProvider,
+                timerFactory =
+                TimerFactory(
+                    timeProvider = timeProvider,
+                    timerDispatcher = backgroundDispatcher
+                ),
                 trainingSetsStrategy = StraightSetsPolicy(),
-                backgroundDispatcher = get(named(CoroutineDispatcherQualifiers.DEFAULT)),
+                backgroundDispatcher = backgroundDispatcher,
                 sessionStatisticsRecorder = get()
             )
         }
@@ -34,6 +41,7 @@ val sessionModule =
             TrainingSessionViewModel(
                 trainingPlanService = get(),
                 trainingSessionService = get(),
+                exerciseService = get(),
                 trainingPlanId = params.get()
             )
         }

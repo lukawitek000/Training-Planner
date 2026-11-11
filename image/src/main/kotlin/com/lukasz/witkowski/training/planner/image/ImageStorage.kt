@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.image
 
+import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import java.util.UUID
+import kotlinx.coroutines.flow.Flow
 
 interface ImageStorage {
     suspend fun saveImage(imageConfiguration: ImageConfiguration): ImageReference
@@ -25,6 +27,10 @@ interface ImageStorage {
      * @return List of [ImageReference] for the given [ownerId].
      */
     suspend fun readImageReferences(ownerId: UUID): List<ImageReference>
+
+    suspend fun loadImageReferences(
+        images: List<ImageId>
+    ): Flow<ResultHandler<List<ImageReference>>>
 
     /**
      * The update will be done for the owner specified in [newImageConfiguration].

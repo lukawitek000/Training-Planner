@@ -1,272 +1,122 @@
 package com.lukasz.witkowski.training.planner.session.domain.session
 
-import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
-import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
+import com.lukasz.witkowski.training.planner.session.domain.session.phases.IdlePhase
+import com.lukasz.witkowski.training.planner.session.domain.session.phases.NextPhaseProvider
+import com.lukasz.witkowski.training.planner.session.domain.session.phases.SessionPhase
+import com.lukasz.witkowski.training.planner.session.domain.session.queue.ExerciseQueue
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.CompositeStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionEvent
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
-import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SystemTimeProvider
-import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.TimeProvider
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import kotlin.time.Duration
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 
 /**
  * Training session aggregate - controls state and progression of the training session.
  * Requires [TrainingPlan] with at least one [TrainingExercise].
  */
+@OptIn(ExperimentalCoroutinesApi::class)
 @Suppress("TooManyFunctions")
 internal class TrainingSession(
-    private val trainingPlan: TrainingPlan,
-    private val trainingSetsPolicy: TrainingSetsPolicy = StraightSetsPolicy(),
+    private val trainingPlanId: TrainingPlanId,
+    private val exerciseQueue: ExerciseQueue,
+    private val nextPhaseProvider: NextPhaseProvider,
     private val statisticsRecorder: SessionStatisticsRecorder = CompositeStatisticsRecorder(),
-    private val timeProvider: TimeProvider = SystemTimeProvider()
+    scope: CoroutineScope
 ) {
-    private val exercises = mutableListOf<TrainingExercise>()
-    private val attempts = mutableListOf<ExerciseAttemptStatistics>()
-    private var state: TrainingSessionState = TrainingSessionState.IdleState
+    private val currentPhase = MutableStateFlow<SessionPhase>(IdlePhase)
 
-    private lateinit var exerciseSession: ExerciseSession
-    private lateinit var statisticsBuilder: SessionStatisticsBuilder
-    private var lastRecordedAttempt: ExerciseAttemptStatistics? = null
+    val state: StateFlow<TrainingSessionState> =
+        currentPhase
+            .flatMapLatest { phase ->
+                combine(phase.state, exerciseQueue.progress) { phaseState, queueProgress ->
+                    phaseState.toTrainingSessionState(queueProgress)
+                }
+            }.stateIn(
+                scope = scope,
+                started = SharingStarted.Eagerly,
+                initialValue = TrainingSessionState.IdleState
+            )
 
     init {
-        require(trainingPlan.exercises.isNotEmpty()) {
-            "Cannot start training session without exercises"
-        }
-        exercises.addAll(trainingSetsPolicy.loadExercises(trainingPlan))
+        currentPhase
+            .flatMapLatest { it.hasAutoFinished }
+            .filter { it }
+            .onEach { complete() }
+            .launchIn(scope)
     }
 
-    fun start(startTime: Time): TrainingSessionState {
-        statisticsRecorder.onEvent(SessionEvent.SessionStarted(trainingPlan, startTime))
-        statisticsBuilder = SessionStatisticsBuilder(trainingPlan, startTime, timeProvider)
-        val firstExercise = loadExercise()
-        val currentSet = getCurrentSet(firstExercise)
-        exerciseSession = ExerciseSession(firstExercise, startTime, currentSet)
-        statisticsRecorder.onEvent(
-            SessionEvent.ExerciseStarted(firstExercise, currentSet, startTime)
-        )
-        return createExerciseState(firstExercise, currentSet).also {
-            state = it
-        }
+    fun start() {
+        if (currentPhase.value !is IdlePhase) return
+        statisticsRecorder.onEvent(SessionEvent.SessionStarted(trainingPlanId))
+        transitionToNextPhase()
     }
 
-    fun skip(time: Time): TrainingSessionState {
-        if (isRestTimeState()) {
-            statisticsRecorder.onEvent(SessionEvent.RestSkipped(time))
-        }
-        stopRecordingExerciseStatistics(isCompleted = false, time = time)
-        return next(time)
+    fun complete() {
+        onPhaseFinished(currentPhase.value.complete())
     }
 
-    fun completed(
-        time: Time,
-        actualReps: Int? = null,
-        actualWeightInKg: Double? = null,
-        rpe: Float? = null,
-        actualTime: Duration? = null
-    ): TrainingSessionState {
-        if (isRestTimeState()) {
-            statisticsRecorder.onEvent(SessionEvent.RestCompleted(time))
-        }
-        stopRecordingExerciseStatistics(
-            isCompleted = true,
-            time = time,
-            actualReps = actualReps,
-            actualWeightInKg = actualWeightInKg,
-            rpe = rpe,
-            actualTime = actualTime
-        )
-        return next(time)
+    fun skip() {
+        onPhaseFinished(currentPhase.value.skip())
     }
 
-    fun skipExercise(time: Time): TrainingSessionState {
-        if (state is TrainingSessionState.ExerciseState) {
-            val currentExercise = exerciseSession.exercise
-            statisticsRecorder.onEvent(
-                SessionEvent.ExerciseSkipped(currentExercise, exerciseSession.set, time)
-            )
-            val currentExerciseId = currentExercise.id
-            exercises.removeAll { it.id == currentExerciseId }
-            stopRecordingExerciseStatistics(isCompleted = false, time = time)
-            return next(time)
-        }
-        return state
+    fun endEarly() {
+        val event = currentPhase.value.endEarly() ?: return
+        recordPhaseEvent(event)
+        transitionToPhase(nextPhaseProvider.summaryPhase())
+        currentPhase.value = IdlePhase
     }
 
-    fun addExtraSet(): TrainingSessionState {
-        if (state is TrainingSessionState.ExerciseState) {
-            val currentExercise = exerciseSession.exercise
-            val insertIndex = exercises.indexOfLast { it.id == currentExercise.id }.let {
-                if (it >= 0) it + 1 else 0
-            }
-            exercises.add(insertIndex, currentExercise)
-            val currentSet = exerciseSession.set
-            val updatedTotalSets = getTotalSetsForExercise(currentExercise)
-            statisticsRecorder.onEvent(
-                SessionEvent.ExtraSetAdded(
-                    currentExercise,
-                    updatedTotalSets
-                )
-            )
-            val updatedState = createExerciseState(currentExercise, currentSet)
-            state = updatedState
-            return updatedState
-        }
-        return state
+    fun addExtraSet() {
+        val (exercise, newTotal) = exerciseQueue.addExtraSet()
+        statisticsRecorder.onEvent(SessionEvent.ExtraSetAdded(exercise, newTotal))
     }
 
-    fun updateLastAttemptRpe(rpe: Float) {
-        lastRecordedAttempt?.let { attempt ->
-            val updated = attempt.copy(rpe = rpe)
-            val index = attempts.indexOfLast { it.id == attempt.id }
-            if (index >= 0) {
-                attempts[index] = updated
-            }
-            lastRecordedAttempt = updated
+    fun removeExtraSet() {
+        exerciseQueue.removeExtraSet()
+    }
+
+    fun handle(command: SessionCommand) {
+        currentPhase.value.handle(command)
+    }
+
+    private fun onPhaseFinished(event: SessionEvent?) {
+        if (event == null) return
+        recordPhaseEvent(event)
+        if (event !is SessionEvent.SummaryCompleted) {
+            transitionToNextPhase()
         }
     }
 
-    fun finalizeStatistics(note: String? = null, rpe: Int? = null): TrainingStatistics {
-        val summaryState = state as? TrainingSessionState.SummaryState
-            ?: throw IllegalStateException("Cannot finalize session that is not in SummaryState")
-        return summaryState.statistics.copy(note = note, rpe = rpe)
-    }
-
-    fun stop() {
-        exercises.clear()
-        attempts.clear()
-        state = TrainingSessionState.IdleState
-    }
-
-    private fun next(time: Time): TrainingSessionState = when {
-        isTrainingSessionFinished() && !isTrainingSessionStopped() -> {
-            val stats = this.statisticsBuilder.gatherTrainingStatistics(time)
-            statisticsRecorder.onEvent(SessionEvent.SessionFinished(stats.totalTime, time))
-            TrainingSessionState.SummaryState(stats, trainingPlan)
-        }
-        isExerciseState() && exerciseSession.hasRestTime() -> {
-            val nextExercise = getNextExerciseOverview()
-            val nextSet = getNextExerciseSet(nextExercise)
-            val following = getFollowingExercise(nextExercise)
-            statisticsRecorder.onEvent(SessionEvent.RestStarted(exerciseSession.restTime, time))
-            TrainingSessionState.RestTimeState(
-                nextExercise = nextExercise,
-                restTime = exerciseSession.restTime,
-                nextSet = nextSet,
-                totalSetsForNextExercise = getTotalSetsForExercise(nextExercise),
-                lastCompletedAttempt = lastRecordedAttempt,
-                followingExercise = following
+    private fun recordPhaseEvent(event: SessionEvent) {
+        if (event is SessionEvent.ExerciseCompleted) {
+            exerciseQueue.updateConfigForRemaining(
+                event.exercise.exerciseId,
+                event.exercise.currentConfig
             )
         }
-        isRestTimeState() || (isExerciseState() && !exerciseSession.hasRestTime()) -> {
-            val currentExercise = loadExercise()
-            val currentSet = getCurrentSet(currentExercise)
-            startRecordingExerciseStatistics(currentExercise, time, currentSet)
-            statisticsRecorder.onEvent(
-                SessionEvent.ExerciseStarted(currentExercise, currentSet, time)
-            )
-            createExerciseState(currentExercise, currentSet)
-        }
-        else -> throw UnknownTrainingSessionStateException("Unknown training session state.")
-    }.also { state = it }
-
-    private fun createExerciseState(
-        currentExercise: TrainingExercise,
-        currentSet: Int
-    ): TrainingSessionState.ExerciseState {
-        val exerciseCompletedSets = attempts.filter { it.trainingExerciseId == currentExercise.id }
-        val exerciseIndex = trainingPlan.exercises.indexOfFirst { it.id == currentExercise.id } + 1
-        val totalExercises = trainingPlan.exercises.size
-        val setsLeft = exercises.size
-        val following = getFollowingExercise(currentExercise)
-        val totalSets = getTotalSetsForExercise(currentExercise)
-
-        return TrainingSessionState.ExerciseState(
-            currentExercise = currentExercise,
-            currentSet = currentSet,
-            totalSets = totalSets,
-            targetReps = currentExercise.repetitions,
-            targetWeightInKg = currentExercise.weightInKg?.toDouble(),
-            completedSets = exerciseCompletedSets,
-            exerciseIndex = if (exerciseIndex > 0) exerciseIndex else 1,
-            totalExercises = totalExercises,
-            setsLeftInWorkout = setsLeft,
-            followingExercise = following
-        )
+        statisticsRecorder.onEvent(event)
     }
 
-    private fun getTotalSetsForExercise(exercise: TrainingExercise): Int {
-        val completed = attempts.count { it.trainingExerciseId == exercise.id }
-        val remaining = exercises.count { it.id == exercise.id }
-        val isInProgress = ::exerciseSession.isInitialized &&
-            exerciseSession.exercise.id == exercise.id &&
-            isExerciseState()
-        return completed + remaining + (if (isInProgress) 1 else 0)
+    private fun transitionToNextPhase() {
+        val nextPhase = nextPhaseProvider.nextPhase(currentPhase.value)
+        transitionToPhase(nextPhase)
     }
 
-    private fun startRecordingExerciseStatistics(
-        currentExercise: TrainingExercise,
-        time: Time,
-        currentSet: Int
-    ) {
-        exerciseSession = ExerciseSession(currentExercise, time, currentSet)
+    private fun transitionToPhase(nextPhase: SessionPhase) {
+        currentPhase.value.close()
+        nextPhase.start()?.let(statisticsRecorder::onEvent)
+        currentPhase.value = nextPhase
     }
-
-    private fun stopRecordingExerciseStatistics(
-        isCompleted: Boolean,
-        time: Time,
-        actualReps: Int? = null,
-        actualWeightInKg: Double? = null,
-        rpe: Float? = null,
-        actualTime: Duration? = null
-    ) {
-        if (isExerciseState()) {
-            val currentExercise = exerciseSession.exercise
-            val reps = actualReps ?: currentExercise.repetitions
-            val weight = actualWeightInKg ?: currentExercise.weightInKg?.toDouble()
-            val exerciseAttemptStatistics = exerciseSession.stop(
-                isCompleted = isCompleted,
-                stopTime = time,
-                actualReps = reps,
-                actualWeightInKg = weight,
-                rpe = rpe,
-                overrideDuration = actualTime
-            )
-            attempts.add(exerciseAttemptStatistics)
-            lastRecordedAttempt = exerciseAttemptStatistics
-            statisticsBuilder.addExerciseAttemptStatistics(exerciseAttemptStatistics)
-            statisticsRecorder.onEvent(
-                SessionEvent.ExerciseCompleted(exerciseAttemptStatistics, time)
-            )
-        }
-    }
-
-    private fun getNextExerciseOverview() = exercises.first()
-
-    private fun getNextExerciseSet(nextExercise: TrainingExercise): Int =
-        attempts.count { it.trainingExerciseId == nextExercise.id } + 1
-
-    private fun loadExercise(): TrainingExercise = exercises.removeAt(0)
-
-    private fun getCurrentSet(currentExercise: TrainingExercise): Int =
-        attempts.count { it.trainingExerciseId == currentExercise.id } + 1
-
-    private fun getFollowingExercise(currentExercise: TrainingExercise): TrainingExercise? {
-        val remaining = exercises.firstOrNull { it.id != currentExercise.id }
-        if (remaining != null) return remaining
-        return trainingPlan.exercises
-            .dropWhile { it.id != currentExercise.id }
-            .drop(1)
-            .firstOrNull()
-    }
-
-    private fun isTrainingSessionFinished(): Boolean = exercises.isEmpty()
-
-    private fun isRestTimeState() = state is TrainingSessionState.RestTimeState
-
-    private fun isExerciseState() = state is TrainingSessionState.ExerciseState
-
-    private fun isTrainingSessionStopped() = state is TrainingSessionState.IdleState
 }

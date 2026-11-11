@@ -58,7 +58,6 @@ fun AppStepper(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceSm),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             val canDecrement = enabled && value > minValue
@@ -71,12 +70,14 @@ fun AppStepper(
                 onClick = {
                     val newValue = (value - step).coerceAtLeast(minValue)
                     onValueChange(newValue)
-                }
+                },
+                modifier = Modifier.weight(0.25f)
             )
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.weight(1f)
             ) {
                 Text(
                     text = formatValue(value),
@@ -99,7 +100,8 @@ fun AppStepper(
                 onClick = {
                     val newValue = (value + step).coerceAtMost(maxValue)
                     onValueChange(newValue)
-                }
+                },
+                modifier = Modifier.weight(0.25f)
             )
         }
     }
@@ -151,29 +153,31 @@ private fun StepperActionButton(
         MaterialTheme.colorScheme.outline
     }
 
-    Box(
-        modifier = modifier
-            .size(Dimens.stepperButtonSize)
-            .clip(CircleShape)
-            .background(backgroundColor)
-            .border(
-                width = Dimens.thinBorder,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = CircleShape
+    Box(modifier, contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .size(Dimens.stepperButtonSize)
+                .clip(CircleShape)
+                .background(backgroundColor)
+                .border(
+                    width = Dimens.thinBorder,
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    shape = CircleShape
+                )
+                .clickable(
+                    enabled = enabled,
+                    role = Role.Button,
+                    onClick = onClick
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+                tint = iconColor,
+                modifier = Modifier.size(Dimens.iconSize24)
             )
-            .clickable(
-                enabled = enabled,
-                role = Role.Button,
-                onClick = onClick
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = contentDescription,
-            tint = iconColor,
-            modifier = Modifier.size(Dimens.iconSize24)
-        )
+        }
     }
 }
 

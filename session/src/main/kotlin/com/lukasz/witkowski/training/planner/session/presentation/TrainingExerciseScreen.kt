@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,42 +13,58 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.FastForward
-import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.Timer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
+import com.lukasz.witkowski.training.planner.image.ImageReference
+import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
 import com.lukasz.witkowski.training.planner.session.R
+import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
+import com.lukasz.witkowski.training.planner.session.domain.session.models.TrainingExerciseSnapshot
+import com.lukasz.witkowski.training.planner.session.domain.session.queue.ExerciseQueueProgress
+import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppIntStepper
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppStepper
+import com.lukasz.witkowski.training.planner.session.presentation.components.TargetMetricsOverview
+import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
+import com.lukasz.witkowski.training.planner.shared.ui.button.AppButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppSecondaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppTertiaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
+import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingIndicator
+import com.lukasz.witkowski.training.planner.shared.ui.scrolling.ScrollColumn
+import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
-import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -58,268 +75,320 @@ import kotlin.time.Duration.Companion.seconds
  */
 @Composable
 fun TrainingExerciseScreen(
-    state: TrainingSessionState.ExerciseState,
-    onRepsChanged: (Int) -> Unit,
-    onWeightChanged: (Double) -> Unit,
-    onHoldDurationChanged: (Duration) -> Unit,
-    onToggleHoldTimer: () -> Unit,
-    onResetHoldTimer: () -> Unit,
-    onCompleteSet: () -> Unit,
-    onSkipSet: () -> Unit,
-    onSkipExercise: () -> Unit,
-    onAddExtraSet: () -> Unit,
+    uiState: TrainingSessionUiState.Exercise,
+    onSessionIntent: (SessionIntent) -> Unit,
+    onEndClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scrollState = rememberScrollState()
+    val state = uiState.domainState
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(horizontal = Dimens.margin, vertical = Dimens.spaceMd),
+            .padding(start = Dimens.spaceMd, end = Dimens.spaceMd, bottom = Dimens.spaceMd),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
-        // Exercise Header
         ExerciseHeader(
-            exerciseName = state.currentExercise.exercise.name,
-            categories = state.currentExercise.exercise.categories.map { it.name },
-            exerciseIndex = state.exerciseIndex,
-            totalExercises = state.totalExercises,
-            followingExercise = state.followingExercise
+            exerciseName = state.sessionExercise.snapshot.name,
+            categories = state.sessionExercise.snapshot.categories.map { it.name },
+            exerciseIndex = state.progress.exerciseIndex,
+            totalExercises = state.progress.totalExercises,
+            onEndClicked = onEndClicked
         )
 
-        // Exercise Illustration Hero Card
-        AppCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(Dimens.heroImageHeightCompact),
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ) {
-            AppExerciseImage(
-                imageIds = state.currentExercise.exercise.imageIds,
-                contentDescription = state.currentExercise.exercise.name,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-
-        // Sets Progress Strip
-        SetsProgressStrip(
-            currentSet = state.currentSet,
-            totalSets = state.totalSets
+        TrainingExerciseContent(
+            uiState = uiState,
+            onSessionIntent = onSessionIntent,
+            modifier = Modifier.weight(1f)
         )
 
-        // Active Set Card
-        AppCard(
-            modifier = Modifier.fillMaxWidth(),
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(Dimens.spaceMd),
-                verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.session_active_set_format, state.currentSet),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    val targetMetric =
-                        if (state.isIsometric) {
-                            stringResource(
-                                R.string.session_target_hold_format,
-                                state.targetTime.inWholeSeconds
-                            )
-                        } else {
-                            stringResource(
-                                R.string.session_target_reps_format,
-                                state.targetReps
-                            )
-                        }
-                    val weight = state.targetWeightInKg
-                    val weightSuffix =
-                        if (weight != null && weight > 0.0) {
-                            stringResource(
-                                R.string.session_target_weight_suffix,
-                                weight.toString()
-                            )
-                        } else {
-                            ""
-                        }
-                    val summary = stringResource(
-                        R.string.session_target_summary_format,
-                        targetMetric
-                    )
-                    Text(
-                        text = summary + weightSuffix,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                if (state.isIsometric) {
-                    IsometricHoldControls(
-                        countdownRemaining = state.remainingHoldTime.inWholeSeconds.toInt(),
-                        isHoldTimerRunning = state.isHoldTimerRunning,
-                        onToggleTimer = onToggleHoldTimer,
-                        onResetTimer = onResetHoldTimer,
-                        holdSeconds = state.selectedHoldDuration.inWholeSeconds.toInt(),
-                        onHoldSecondsChange = { onHoldDurationChanged(it.seconds) }
-                    )
-                } else {
-                    AppIntStepper(
-                        value = state.selectedReps,
-                        onValueChange = onRepsChanged,
-                        label = stringResource(R.string.session_reps_label),
-                        minValue = 0
-                    )
-                }
-
-                AppStepper(
-                    value = state.selectedWeightInKg ?: 0.0,
-                    onValueChange = onWeightChanged,
-                    step = 2.5,
-                    label = stringResource(R.string.session_kg_label),
-                    minValue = 0.0
-                )
-            }
-        }
-
-        // Secondary Actions (Add extra set, skip exercise)
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            AppTertiaryButton(
-                text = stringResource(R.string.session_add_extra_set),
-                leadingIcon = Icons.Default.Add,
-                onClick = onAddExtraSet,
-                modifier = Modifier.weight(1f)
-            )
-
-            AppTertiaryButton(
-                text = stringResource(R.string.session_skip_exercise),
-                leadingIcon = Icons.Default.FastForward,
-                onClick = onSkipExercise,
-                modifier = Modifier.weight(1f)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(Dimens.spaceMd))
-
-        // Main CTA Area
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
         ) {
             AppPrimaryButton(
                 text = stringResource(R.string.session_complete_set),
                 leadingIcon = Icons.Default.Check,
-                onClick = onCompleteSet
+                onClick = { onSessionIntent(SessionIntent.SetCompleted) },
+                modifier = Modifier.fillMaxWidth()
             )
 
             AppSecondaryButton(
                 text = stringResource(R.string.session_skip_set),
                 leadingIcon = Icons.Default.SkipNext,
-                onClick = onSkipSet
+                onClick = { onSessionIntent(SessionIntent.SetSkipped) },
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
 }
 
 @Composable
-private fun IsometricHoldControls(
-    countdownRemaining: Int,
-    isHoldTimerRunning: Boolean,
-    onToggleTimer: () -> Unit,
-    onResetTimer: () -> Unit,
-    holdSeconds: Int,
-    onHoldSecondsChange: (Int) -> Unit,
+private fun TrainingExerciseContent(
+    uiState: TrainingSessionUiState.Exercise,
+    onSessionIntent: (SessionIntent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val state = uiState.domainState
+    ScrollColumn(
+        modifier = modifier.fillMaxSize()
+    ) {
+        ExerciseImages(
+            images = uiState.imagesReferences,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(Dimens.heroImageHeightCompact)
+        )
+
+        SetsProgressStrip(
+            currentSet = state.progress.currentExerciseSet,
+            totalSets = state.progress.currentExerciseTotalSets
+        )
+
+        ActiveSetCard(state, onSessionIntent)
+
+        ExerciseSetsModification(onSessionIntent)
+    }
+}
+
+@Composable
+private fun ActiveSetCard(
+    state: TrainingSessionState.ExerciseState,
+    onSessionIntent: (SessionIntent) -> Unit
+) {
+    AppCard(
+        modifier = Modifier.fillMaxWidth(),
+        containerColor = MaterialTheme.colorScheme.surfaceContainer
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimens.spaceMd),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
+        ) {
+            ActiveSetHeader(state)
+
+            if (state.sessionExercise.currentConfig.isIsometric) {
+                IsometricHoldControls(
+                    state = state,
+                    onSessionIntent = onSessionIntent
+                )
+            } else {
+                AppIntStepper(
+                    value = state.sessionExercise.currentConfig.reps,
+                    onValueChange = { onSessionIntent(SessionIntent.RepsChanged(it)) },
+                    label = stringResource(R.string.session_reps_label),
+                    minValue = 0
+                )
+            }
+
+            AppStepper(
+                value = state.sessionExercise.currentConfig.weightInKg ?: 0.0,
+                onValueChange = { onSessionIntent(SessionIntent.WeightChanged(it)) },
+                step = 2.5,
+                label = stringResource(R.string.session_kg_label),
+                minValue = 0.0
+            )
+        }
+    }
+}
+
+@Composable
+private fun ActiveSetHeader(state: TrainingSessionState.ExerciseState) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(
+                R.string.session_active_set_format,
+                state.progress.currentExerciseSet
+            ),
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary
+        )
+        TargetMetricsOverview(state.sessionExercise)
+    }
+}
+
+@Composable
+private fun ExerciseSetsModification(onSessionIntent: (SessionIntent) -> Unit) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        AppButton(
+            text = stringResource(R.string.session_remove_set),
+            leadingIcon = Icons.Default.Remove,
+            onClick = { onSessionIntent(SessionIntent.SetRemoved) },
+            modifier = Modifier.weight(1f),
+            containerColor = MaterialTheme.colorScheme.error,
+            contentColor = MaterialTheme.colorScheme.onError
+        )
+
+        AppTertiaryButton(
+            text = stringResource(R.string.session_add_extra_set),
+            leadingIcon = Icons.Default.Add,
+            onClick = { onSessionIntent(SessionIntent.SetAdded) },
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun IsometricHoldControls(
+    state: TrainingSessionState.ExerciseState,
+    onSessionIntent: (SessionIntent) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val holdTimeState =
+        HoldTimeState.create(state.timerState, state.sessionExercise.currentConfig.holdTime)
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.small)
-                .background(MaterialTheme.colorScheme.surfaceContainerHighest)
-                .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceSm),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .background(holdTimeState.backgroundColor)
+                .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceXl),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Timer,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(Dimens.iconSize24)
-                )
-                Text(
-                    text = stringResource(
-                        R.string.session_timer_remaining_format,
-                        countdownRemaining / 60,
-                        countdownRemaining % 60
-                    ),
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            }
+            Icon(
+                imageVector = Icons.Default.Timer,
+                contentDescription = null,
+                tint = holdTimeState.iconsColor,
+                modifier = Modifier
+                    .size(Dimens.iconSize30)
+                    .weight(0.25f)
+            )
+            TimerClock(
+                holdTimeState.remainingTime,
+                holdTimeState.timerColor,
+                modifier = Modifier.weight(1f)
+            )
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier.weight(0.25f),
+                contentAlignment = Alignment.Center
             ) {
-                IconButton(onClick = onToggleTimer) {
-                    val icon =
-                        if (isHoldTimerRunning) {
-                            Icons.Default.Pause
-                        } else {
-                            Icons.Default.PlayArrow
-                        }
-                    val descRes =
-                        if (isHoldTimerRunning) {
-                            R.string.session_pause_hold_timer
-                        } else {
-                            R.string.session_start_hold_timer
-                        }
-                    val desc = stringResource(descRes)
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = desc,
-                        tint = MaterialTheme.colorScheme.primary
+                IconButton(
+                    onClick = { onSessionIntent(holdTimeState.sessionIntentFactory()) },
+                    modifier = Modifier,
+                    colors = IconButtonColors(
+                        contentColor = holdTimeState.iconsColor,
+                        disabledContentColor = holdTimeState.iconsColor.copy(alpha = 0.5f),
+                        containerColor = Color.Transparent,
+                        disabledContainerColor = Color.Transparent
                     )
-                }
-                IconButton(onClick = onResetTimer) {
+                ) {
                     Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(R.string.session_reset_hold_timer),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        imageVector = holdTimeState.icon,
+                        contentDescription = stringResource(R.string.session_start_hold_timer),
+                        tint = holdTimeState.iconsColor,
+                        modifier = Modifier.size(Dimens.iconSize30)
                     )
                 }
             }
         }
 
         AppIntStepper(
-            value = holdSeconds,
-            onValueChange = onHoldSecondsChange,
+            value = state.sessionExercise.currentConfig.holdTime?.inWholeSeconds?.toInt() ?: 0,
+            onValueChange = { onSessionIntent(SessionIntent.HoldTimeChanged(it.seconds)) },
             step = 5,
             label = stringResource(R.string.session_sec_hold_label),
-            minValue = 0
+            minValue = 0,
+            enabled = state.timerState is TimerState.Ready || state.timerState is TimerState.NotSet
         )
+    }
+}
+
+@Composable
+private fun TimerClock(remainingTime: Duration, timerColor: Color, modifier: Modifier = Modifier) {
+    val style = MaterialTheme.typography.headlineLarge.copy(
+        fontWeight = FontWeight.Bold
+    )
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = stringResource(R.string.session_timer_negative),
+            textAlign = TextAlign.End,
+            style = style,
+            color = timerColor,
+            modifier = Modifier.alpha(if (remainingTime.isNegative()) 1f else 0f)
+        )
+        Text(
+            text = formatRemainingTime(remainingTime),
+            style = style,
+            color = timerColor,
+            modifier = Modifier,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            text = stringResource(R.string.session_timer_negative),
+            style = style,
+            textAlign = TextAlign.Start,
+            modifier = Modifier.alpha(0f)
+        )
+    }
+}
+
+private data class HoldTimeState(
+    val remainingTime: Duration,
+    val iconsColor: Color,
+    val timerColor: Color,
+    val backgroundColor: Color,
+    val icon: ImageVector,
+    val sessionIntentFactory: () -> SessionIntent
+) {
+    companion object {
+        @Composable
+        fun create(timerState: TimerState, initialHoldDuration: Duration?): HoldTimeState {
+            val remainingTime = when (timerState) {
+                is TimerState.Ready -> initialHoldDuration ?: Duration.ZERO
+                is TimerState.NotSet -> Duration.ZERO
+                is TimerState.Running -> timerState.remaining
+                is TimerState.OverflowRunning -> timerState.overflow
+                is TimerState.Finished -> Duration.ZERO
+            }
+            val icon = when (timerState) {
+                is TimerState.Ready -> Icons.Default.PlayArrow
+                is TimerState.NotSet -> Icons.Default.Error
+                else -> Icons.Default.Refresh
+            }
+            return HoldTimeState(
+                remainingTime = remainingTime,
+                iconsColor = if (remainingTime < Duration.ZERO) {
+                    MaterialTheme.colorScheme.onErrorContainer
+                } else {
+                    MaterialTheme.colorScheme.primary
+                },
+                timerColor = if (remainingTime < Duration.ZERO) {
+                    MaterialTheme.colorScheme.onErrorContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
+                backgroundColor = if (remainingTime < Duration.ZERO) {
+                    MaterialTheme.colorScheme.errorContainer
+                } else {
+                    MaterialTheme.colorScheme.surfaceContainerHighest
+                },
+                icon = icon,
+                sessionIntentFactory = {
+                    when (timerState) {
+                        is TimerState.Ready -> SessionIntent.StartTimer
+                        else -> SessionIntent.ResetTimer
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -329,30 +398,28 @@ private fun ExerciseHeader(
     categories: List<String>,
     exerciseIndex: Int,
     totalExercises: Int,
-    followingExercise: TrainingExercise?,
+    onEndClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val defaultCategory = stringResource(R.string.session_category_general)
-            val categoryLabel = categories.firstOrNull() ?: defaultCategory
-            AppCategoryPill(text = categoryLabel)
-
             Text(
                 text = stringResource(
                     R.string.session_exercise_progress_format,
                     exerciseIndex,
                     totalExercises
                 ),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                textAlign = TextAlign.Left,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.weight(1f)
+            )
+            EndEarlySessionButton(
+                onEndClicked = onEndClicked
             )
         }
 
@@ -362,17 +429,15 @@ private fun ExerciseHeader(
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface
         )
+        Spacer(Modifier.height(Dimens.spaceSm))
 
-        if (followingExercise != null) {
-            Text(
-                text = stringResource(
-                    R.string.session_up_next_format,
-                    followingExercise.exercise.name,
-                    followingExercise.sets
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
+        ) {
+            categories.forEach { category ->
+                AppCategoryPill(text = category)
+            }
         }
     }
 }
@@ -439,46 +504,90 @@ private fun SetsProgressStrip(currentSet: Int, totalSets: Int, modifier: Modifie
     }
 }
 
+@Composable
+private fun ExerciseImages(
+    images: ResultHandler<List<ImageReference>>,
+    modifier: Modifier = Modifier
+) {
+    when (images) {
+        is ResultHandler.Loading -> {
+            Column(
+                modifier = modifier,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                AppLoadingIndicator(
+                    modifier = Modifier,
+                    spinnerSize = Dimens.smallSpinnerSize,
+                    spinnerIconContainerSize = Dimens.smallSpinnerIconContainerSize
+                )
+                Spacer(Modifier.height(Dimens.spaceMd))
+                Text(
+                    text = "Loading exercise images",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
+        }
+
+        is ResultHandler.Success<List<ImageReference>> -> {
+            if (images.value.isNotEmpty()) {
+                ImageGallery(
+                    images = images.value,
+                    modifier = modifier
+                )
+            }
+        }
+
+        is ResultHandler.Idle -> {}
+        is ResultHandler.Error -> {}
+    }
+}
+
 @AppPreview
 @Composable
 private fun TrainingExerciseScreenPreview() {
-    val dummyExercise = TrainingExercise(
+    val dummyConfig = SessionExerciseConfiguration(
+        reps = 10,
+        weightInKg = 85.0,
+        holdTime = null
+    )
+    val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
-        exercise = ExerciseSnapshot(
-            id = com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId.create(),
-            name = "Barbell Bench Press",
-            description = "Lie on bench, press bar upwards",
-            categories = setOf(ExerciseCategoryName("Chest")),
-            imageIds = emptyList()
-        ),
-        repetitions = 10,
-        sets = 4,
+        name = "Barbell Bench Press",
+        description = "Lie on bench, press bar upwards",
+        categories = setOf(ExerciseCategoryName("Chest")),
+        imageIds = PREVIEW_PUSH_UP_IMAGES.map { it.imageId },
+        plannedConfig = dummyConfig
+    )
+    val sessionExercise = SessionExercise(
+        snapshot = dummySnapshot,
+        currentConfig = dummyConfig,
         restTime = 90.seconds
     )
-    val state = TrainingSessionState.ExerciseState(
-        currentExercise = dummyExercise,
-        currentSet = 2,
-        totalSets = 4,
-        targetReps = 10,
-        targetWeightInKg = 85.0,
-        completedSets = emptyList(),
-        exerciseIndex = 1,
+    val progress = ExerciseQueueProgress(
+        remainingExerciseSets = 2,
+        currentExerciseTotalSets = 4,
         totalExercises = 4,
-        setsLeftInWorkout = 10
+        remainingExercises = 3,
+        remainingSetsInWorkout = 10,
+        nextSetQueueProgress = null
+    )
+    val state = TrainingSessionState.ExerciseState(
+        sessionExercise = sessionExercise,
+        timerState = TimerState.NotSet,
+        progress = progress
+    )
+    val uiState = TrainingSessionUiState.Exercise(
+        state,
+        ResultHandler.Success(PREVIEW_PUSH_UP_IMAGES)
     )
 
     TrainingPlannerTheme {
         TrainingExerciseScreen(
-            state = state,
-            onRepsChanged = {},
-            onWeightChanged = {},
-            onHoldDurationChanged = {},
-            onToggleHoldTimer = {},
-            onResetHoldTimer = {},
-            onCompleteSet = {},
-            onSkipSet = {},
-            onSkipExercise = {},
-            onAddExtraSet = {}
+            uiState = uiState,
+            onSessionIntent = {},
+            onEndClicked = {}
         )
     }
 }
@@ -486,47 +595,94 @@ private fun TrainingExerciseScreenPreview() {
 @AppPreview
 @Composable
 private fun TrainingExerciseScreenHoldTimePreview() {
-    val dummyExercise = TrainingExercise(
+    val dummyConfig = SessionExerciseConfiguration(
+        reps = 0,
+        weightInKg = null,
+        holdTime = 68.seconds
+    )
+    val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
-        exercise = ExerciseSnapshot(
-            id = com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId.create(),
-            name = "Plank",
-            description = "Hold a straight body position resting on forearms and toes",
-            categories = setOf(ExerciseCategoryName("Core")),
-            imageIds = emptyList()
+        name = "Plank",
+        description = "Hold a straight body position resting on forearms and toes",
+        categories = setOf(
+            ExerciseCategoryName("Core"),
+            ExerciseCategoryName("Chest"),
+            ExerciseCategoryName("Biceps")
         ),
-        repetitions = 0,
-        sets = 3,
-        time = 60.seconds,
+        imageIds = emptyList(),
+        plannedConfig = dummyConfig
+    )
+    val sessionExercise = SessionExercise(
+        snapshot = dummySnapshot,
+        currentConfig = dummyConfig,
         restTime = 45.seconds
     )
-    val state = TrainingSessionState.ExerciseState(
-        currentExercise = dummyExercise,
-        currentSet = 1,
-        totalSets = 3,
-        targetReps = 0,
-        targetWeightInKg = 0.0,
-        completedSets = emptyList(),
-        exerciseIndex = 2,
+    val progress = ExerciseQueueProgress(
+        remainingExerciseSets = 2,
+        currentExerciseTotalSets = 3,
         totalExercises = 4,
-        setsLeftInWorkout = 6,
-        targetTime = 60.seconds,
-        remainingHoldTime = 42.seconds,
-        isHoldTimerRunning = true
+        remainingExercises = 2,
+        remainingSetsInWorkout = 6,
+        nextSetQueueProgress = null
+    )
+    val state = TrainingSessionState.ExerciseState(
+        sessionExercise = sessionExercise,
+        timerState = TimerState.Ready(68.seconds),
+        progress = progress
+    )
+    val uiState = TrainingSessionUiState.Exercise(
+        domainState = state,
+        imagesReferences = ResultHandler.Loading
     )
 
     TrainingPlannerTheme {
         TrainingExerciseScreen(
+            uiState = uiState,
+            onSessionIntent = {},
+            onEndClicked = {}
+        )
+    }
+}
+
+@AppPreview
+@Composable
+private fun TrainingExerciseScreenNegativeHoldTimePreview() {
+    val dummyConfig = SessionExerciseConfiguration(
+        reps = 0,
+        weightInKg = null,
+        holdTime = 20.seconds
+    )
+    val dummySnapshot = TrainingExerciseSnapshot(
+        id = TrainingExerciseId.create(),
+        name = "Plank",
+        description = "Hold a straight body position resting on forearms and toes",
+        categories = setOf(ExerciseCategoryName("Core")),
+        imageIds = emptyList(),
+        plannedConfig = dummyConfig
+    )
+    val sessionExercise = SessionExercise(
+        snapshot = dummySnapshot,
+        currentConfig = dummyConfig,
+        restTime = 45.seconds
+    )
+    val progress = ExerciseQueueProgress(
+        remainingExerciseSets = 2,
+        currentExerciseTotalSets = 3,
+        totalExercises = 4,
+        remainingExercises = 2,
+        remainingSetsInWorkout = 6,
+        nextSetQueueProgress = null
+    )
+    val state = TrainingSessionState.ExerciseState(
+        sessionExercise = sessionExercise,
+        timerState = TimerState.OverflowRunning(-20.seconds),
+        progress = progress
+    )
+
+    TrainingPlannerTheme {
+        IsometricHoldControls(
             state = state,
-            onRepsChanged = {},
-            onWeightChanged = {},
-            onHoldDurationChanged = {},
-            onToggleHoldTimer = {},
-            onResetHoldTimer = {},
-            onCompleteSet = {},
-            onSkipSet = {},
-            onSkipExercise = {},
-            onAddExtraSet = {}
+            onSessionIntent = {}
         )
     }
 }

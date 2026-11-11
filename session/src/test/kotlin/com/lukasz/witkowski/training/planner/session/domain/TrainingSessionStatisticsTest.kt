@@ -5,67 +5,82 @@ import com.lukasz.witkowski.training.planner.session.TRAINING_PLAN
 import com.lukasz.witkowski.training.planner.session.TrainingSessionTest
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
-import com.lukasz.witkowski.training.planner.session.domain.session.CircuitSetsPolicy
+import com.lukasz.witkowski.training.planner.session.domain.session.SessionCommand
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSession
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
-import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSetsPolicy
+import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider
 import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import java.util.Date
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Before
+import org.junit.Assert.assertNull
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
     private val trainingExercises: List<TrainingExercise> = TRAINING_EXERCISES
     private val trainingPlan: TrainingPlan = TRAINING_PLAN
-    private val trainingSetsPolicy: TrainingSetsPolicy = CircuitSetsPolicy()
-    private lateinit var trainingSession: TrainingSession
-
-    @Before
-    fun setUp() {
-        trainingSession = TrainingSession(trainingPlan, trainingSetsPolicy)
-    }
 
     @Test
-    fun `record single exercise attempt with completed status`() {
-        // given
-        val exerciseToRecordAttempt = trainingExercises.first()
+    fun `record single exercise attempt with completed status`() =
+        runTest(UnconfinedTestDispatcher()) {
+            // given
+            val timeProvider = FixedTimeProvider()
+            val trainingSession =
+                createTrainingSession(
+                    trainingPlan = trainingPlan,
+                    scope = backgroundScope,
+                    timeProvider = timeProvider
+                )
+            val exerciseToRecordAttempt = trainingExercises.first()
 
-        // when
-        trainingSession.start(Time.ZERO)
-        trainingSession.completed(TIME_10_SECONDS)
-        val trainingStatistics = completeRestOfTheTraining(trainingSession).statistics
-        val attemptStatistics =
-            trainingStatistics.exercisesStatistics
-                .first()
-                .attemptsStatistics
-                .first()
+            // when
+            trainingSession.start()
+            timeProvider.advanceBy(TIME_10_SECONDS)
+            trainingSession.complete()
+            val trainingStatistics =
+                completeRestOfTheTraining(trainingSession, timeProvider).statistics
+            val attemptStatistics =
+                trainingStatistics.exercisesStatistics
+                    .first()
+                    .attemptsStatistics
+                    .first()
 
-        // then
-        val expectedStatistics =
-            ExerciseAttemptStatistics(
-                trainingExerciseId = exerciseToRecordAttempt.id,
-                time = TIME_10_SECONDS,
-                set = 1,
-                completed = true,
-                actualReps = exerciseToRecordAttempt.repetitions,
-                actualWeightInKg = exerciseToRecordAttempt.weightInKg?.toDouble()
-            )
-        assertAttemptStatistics(expectedStatistics, attemptStatistics)
-    }
+            // then
+            val expectedStatistics =
+                ExerciseAttemptStatistics(
+                    trainingExerciseId = exerciseToRecordAttempt.id,
+                    time = TIME_10_SECONDS,
+                    set = 1,
+                    completed = true,
+                    actualReps = exerciseToRecordAttempt.repetitions,
+                    actualWeightInKg = exerciseToRecordAttempt.weightInKg?.toDouble()
+                )
+            assertAttemptStatistics(expectedStatistics, attemptStatistics)
+        }
 
     @Test
     @Suppress("LongMethod")
-    fun `record statistics for exercise from 3 attempts`() {
+    fun `record statistics for exercise from 3 attempts`() = runTest(UnconfinedTestDispatcher()) {
         // given
+        val timeProvider = FixedTimeProvider()
+        val trainingSession =
+            createTrainingSession(
+                trainingPlan = trainingPlan,
+                scope = backgroundScope,
+                timeProvider = timeProvider
+            )
         val exerciseToRecordStatistics = trainingExercises[1]
 
         // when
-        trainingSession.start(Time.ZERO)
-        val summaryState = completeRestOfTheTraining(trainingSession)
+        trainingSession.start()
+        val summaryState = completeRestOfTheTraining(trainingSession, timeProvider)
 
         val trainingStatistics = summaryState.statistics
         val exerciseStatistics = trainingStatistics.exercisesStatistics[1]
@@ -107,10 +122,19 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
     }
 
     @Test
-    fun `record statistics for completed training`() {
+    fun `record statistics for completed training`() = runTest(UnconfinedTestDispatcher()) {
+        // given
+        val timeProvider = FixedTimeProvider()
+        val trainingSession =
+            createTrainingSession(
+                trainingPlan = trainingPlan,
+                scope = backgroundScope,
+                timeProvider = timeProvider
+            )
+
         // when
-        trainingSession.start(Time.ZERO)
-        val summaryState = completeRestOfTheTraining(trainingSession)
+        trainingSession.start()
+        val summaryState = completeRestOfTheTraining(trainingSession, timeProvider)
         val statistics = summaryState.statistics
 
         // then
@@ -118,11 +142,37 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
         assertTrainingStatistics(expectedStatistics, statistics)
     }
 
+    @Test
+    fun `summary phase updates overall RPE and notes without mutating statistics directly`() =
+        runTest(UnconfinedTestDispatcher()) {
+            // given
+            val timeProvider = FixedTimeProvider()
+            val trainingSession =
+                createTrainingSession(
+                    trainingPlan = trainingPlan,
+                    scope = backgroundScope,
+                    timeProvider = timeProvider
+                )
+            trainingSession.start()
+            completeRestOfTheTraining(trainingSession, timeProvider)
+
+            // when
+            trainingSession.handle(SessionCommand.Summary.UpdateOverallRpe(SessionRpe.NEAR_LIMIT))
+            trainingSession.handle(SessionCommand.Summary.UpdateNotes("Felt strong"))
+
+            // then: SummaryState holds selectedOverallRpe & notes, while statistics remains unmutated
+            val summaryState = trainingSession.state.value as TrainingSessionState.SummaryState
+            assertEquals(SessionRpe.NEAR_LIMIT, summaryState.selectedOverallRpe)
+            assertEquals("Felt strong", summaryState.notes)
+            assertNull(summaryState.statistics.rpe)
+            assertNull(summaryState.statistics.note)
+        }
+
     @Suppress("LongMethod")
     private fun createExpectedStatisticsForCompletedTraining() = TrainingStatistics(
         trainingPlanId = trainingPlan.id,
-        totalTime = Time(seconds = 180),
-        date = Date(),
+        totalTime = Time(seconds = 190),
+        date = Date(0L),
         exercisesStatistics =
         listOf(
             ExerciseStatistics(
@@ -135,7 +185,8 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                         set = 1,
                         completed = true,
                         actualReps = trainingExercises.first().repetitions,
-                        actualWeightInKg = trainingExercises.first().weightInKg?.toDouble()
+                        actualWeightInKg =
+                        trainingExercises.first().weightInKg?.toDouble()
                     ),
                     ExerciseAttemptStatistics(
                         trainingExerciseId = trainingExercises.first().id,
@@ -143,7 +194,8 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                         set = 2,
                         completed = true,
                         actualReps = trainingExercises.first().repetitions,
-                        actualWeightInKg = trainingExercises.first().weightInKg?.toDouble()
+                        actualWeightInKg =
+                        trainingExercises.first().weightInKg?.toDouble()
                     )
                 )
             ),
@@ -242,15 +294,13 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
 
     private fun completeRestOfTheTraining(
         trainingSession: TrainingSession,
-        startTime: Time = Time.ZERO
+        timeProvider: FixedTimeProvider
     ): TrainingSessionState.SummaryState {
-        var time = startTime
-        var state: TrainingSessionState? = null
         do {
-            time += TIME_10_SECONDS
-            state = trainingSession.completed(time)
-        } while (state !is TrainingSessionState.SummaryState)
-        return state
+            timeProvider.advanceBy(TIME_10_SECONDS)
+            trainingSession.complete()
+        } while (trainingSession.state.value !is TrainingSessionState.SummaryState)
+        return trainingSession.state.value as TrainingSessionState.SummaryState
     }
 
     private fun assertTrainingStatistics(

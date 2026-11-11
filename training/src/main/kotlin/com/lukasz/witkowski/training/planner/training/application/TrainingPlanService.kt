@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.application
 
+import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
@@ -20,6 +21,11 @@ class TrainingPlanService(private val trainingPlanRepository: TrainingPlanReposi
 
     fun getTrainingPlanById(trainingPlanId: TrainingPlanId): Flow<TrainingPlan?> =
         trainingPlanRepository.getTrainingPlanById(trainingPlanId)
+
+    suspend fun fetchTrainingPlanById(
+        trainingPlanId: TrainingPlanId
+    ): Flow<ResultHandler<TrainingPlan>> =
+        trainingPlanRepository.fetchTrainingPlanById(trainingPlanId)
 
     suspend fun deleteTrainingPlan(trainingPlanId: TrainingPlanId): Result<Unit> =
         trainingPlanRepository.delete(trainingPlanId)

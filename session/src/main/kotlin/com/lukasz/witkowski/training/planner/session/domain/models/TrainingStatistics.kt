@@ -11,7 +11,7 @@ data class TrainingStatistics(
     val date: Date,
     val exercisesStatistics: List<ExerciseStatistics>,
     val note: String? = null,
-    val rpe: Int? = null
+    val rpe: SessionRpe? = null
 ) {
     val effectiveTime: Time
         get() {

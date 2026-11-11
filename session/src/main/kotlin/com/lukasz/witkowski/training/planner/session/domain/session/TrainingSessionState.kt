@@ -1,45 +1,33 @@
 package com.lukasz.witkowski.training.planner.session.domain.session
 
-import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
-import com.lukasz.witkowski.training.planner.shared.time.Time
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
+import com.lukasz.witkowski.training.planner.session.domain.session.queue.ExerciseQueueProgress
+import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import kotlin.time.Duration
 
-sealed class TrainingSessionState(val exercise: TrainingExercise? = null) {
-    object IdleState : TrainingSessionState()
+sealed interface TrainingSessionState {
+    data object IdleState : TrainingSessionState
 
-    class ExerciseState(
-        val currentExercise: TrainingExercise,
-        val currentSet: Int = 1,
-        val totalSets: Int = currentExercise.sets,
-        val targetReps: Int = currentExercise.repetitions,
-        val targetWeightInKg: Double? = currentExercise.weightInKg?.toDouble(),
-        val targetTime: Duration = currentExercise.time,
-        val completedSets: List<ExerciseAttemptStatistics> = emptyList(),
-        val exerciseIndex: Int = 1,
-        val totalExercises: Int = 1,
-        val setsLeftInWorkout: Int = 0,
-        val followingExercise: TrainingExercise? = null
-    ) : TrainingSessionState(currentExercise) {
-        val isIsometric: Boolean
-            get() = targetTime > Duration.ZERO
-    }
+    data class ExerciseState(
+        val sessionExercise: SessionExercise,
+        val timerState: TimerState,
+        val progress: ExerciseQueueProgress
+    ) : TrainingSessionState
 
-    class RestTimeState(
-        val nextExercise: TrainingExercise,
-        val restTime: Time,
-        val nextSet: Int = 1,
-        val totalSetsForNextExercise: Int = nextExercise.sets,
-        val lastCompletedAttempt: ExerciseAttemptStatistics? = null,
-        val followingExercise: TrainingExercise? = null
-    ) : TrainingSessionState(nextExercise)
+    data class RestTimeState(
+        val nextExercise: SessionExercise,
+        val timerState: TimerState,
+        val totalRestTime: Duration,
+        val nextSetQueueProgress: ExerciseQueueProgress?,
+        val selectedFeedback: SetEffort? = null
+    ) : TrainingSessionState
 
     data class SummaryState(
         val statistics: TrainingStatistics,
-        val trainingPlan: TrainingPlan,
-        val selectedOverallRpe: Int? = null,
+        val selectedOverallRpe: SessionRpe? = null,
         val notes: String = ""
-    ) : TrainingSessionState()
+    ) : TrainingSessionState
 }

@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.session.domain.session
 
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 
 /**
@@ -8,5 +8,5 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
  * Look at https://en.fitnessyard.com/the-knowledge/how-to-build-your-muscles/types-of-workout-sets
  */
 interface TrainingSetsPolicy {
-    fun loadExercises(trainingPlan: TrainingPlan): List<TrainingExercise>
+    fun loadExercises(trainingPlan: TrainingPlan): List<SessionExercise>
 }

@@ -8,15 +8,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,22 +22,27 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.session.R
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
+import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
+import com.lukasz.witkowski.training.planner.session.domain.session.models.TrainingExerciseSnapshot
+import com.lukasz.witkowski.training.planner.session.domain.session.queue.ExerciseQueueProgress
+import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import com.lukasz.witkowski.training.planner.session.presentation.components.AppFeedbackChips
+import com.lukasz.witkowski.training.planner.session.presentation.components.TargetMetricsOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
-import com.lukasz.witkowski.training.planner.shared.ui.button.AppSecondaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.timer.AppCircularTimer
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
-import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
-import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-private data class FeedbackChipOption(val rpe: Int, val label: String)
+private data class FeedbackChipOption(val effort: SetEffort, val label: String)
 
 /**
  * Rest interval screen displaying circular countdown ring, set difficulty feedback chips,
@@ -50,24 +51,19 @@ private data class FeedbackChipOption(val rpe: Int, val label: String)
 @Composable
 fun RestTimeScreen(
     state: TrainingSessionState.RestTimeState,
-    timeLeft: Time,
-    totalTime: Time,
-    onFeedbackSelected: (Int) -> Unit,
-    onStartNextSet: () -> Unit,
-    onSkipRest: () -> Unit,
+    onSessionIntent: (SessionIntent) -> Unit,
+    onEndClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scrollState = rememberScrollState()
-
     val feedbackChipOptions = listOf(
-        FeedbackChipOption(6, stringResource(R.string.session_feedback_easy)),
-        FeedbackChipOption(7, stringResource(R.string.session_feedback_good)),
-        FeedbackChipOption(8, stringResource(R.string.session_feedback_hard)),
-        FeedbackChipOption(10, stringResource(R.string.session_feedback_limit))
+        FeedbackChipOption(SetEffort.EASY, stringResource(R.string.session_feedback_easy)),
+        FeedbackChipOption(SetEffort.MODERATE, stringResource(R.string.session_feedback_good)),
+        FeedbackChipOption(SetEffort.HARD, stringResource(R.string.session_feedback_hard)),
+        FeedbackChipOption(SetEffort.MAXIMAL, stringResource(R.string.session_feedback_limit))
     )
-
-    val progress = if (totalTime.timeInMillis > 0) {
-        timeLeft.timeInMillis.toFloat() / totalTime.timeInMillis.toFloat()
+    val remainingTime = (state.timerState as? TimerState.Running)?.remaining ?: Duration.ZERO
+    val progress = if (state.totalRestTime.inWholeMilliseconds > 0) {
+        (remainingTime / state.totalRestTime).toFloat()
     } else {
         0f
     }
@@ -75,205 +71,187 @@ fun RestTimeScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(horizontal = Dimens.margin, vertical = Dimens.spaceMd),
+            .padding(start = Dimens.spaceMd, end = Dimens.spaceMd, bottom = Dimens.spaceMd),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
-        // Rest Header
-        Box(
-            modifier = Modifier
-                .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceXs)
-        ) {
-            Text(
-                text = stringResource(R.string.session_rest_interval),
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onPrimaryContainer
-            )
-        }
-
-        // Circular Timer Ring
+        RestHeader(
+            onEndClicked = onEndClicked
+        )
         // TODO: Play 3-2-1 audio beeps and trigger vibration haptic pulses as rest interval finishes
         AppCircularTimer(
-            timeFormatted = formatRemainingTime(timeLeft),
+            timeFormatted = formatRemainingTime(remainingTime),
             progress = progress,
             label = stringResource(R.string.session_rest_remaining)
         )
+        SetFeedbackForm(feedbackChipOptions, state, onSessionIntent)
 
-        // Preceding Set Feedback Section
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
-        ) {
-            Text(
-                text = stringResource(R.string.session_feedback_prompt),
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.primary
-            )
-            AppFeedbackChips(
-                options = feedbackChipOptions,
-                selectedOption = feedbackChipOptions.firstOrNull {
-                    it.rpe == state.selectedFeedback
-                },
-                onOptionSelected = { onFeedbackSelected(it.rpe) },
-                labelProvider = { it.label }
-            )
-        }
+        NextExercisePreview(state)
 
-        // Up-Next Preview Card
-        AppCard(
-            modifier = Modifier.fillMaxWidth(),
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        Spacer(modifier = Modifier.weight(1f))
+
+        AppPrimaryButton(
+            text = stringResource(R.string.session_start_next_set_now),
+            leadingIcon = Icons.Default.PlayArrow,
+            onClick = { onSessionIntent(SessionIntent.RestSkipped) },
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+private fun NextExercisePreview(state: TrainingSessionState.RestTimeState) {
+    AppCard(
+        modifier = Modifier.fillMaxWidth(),
+        containerColor = MaterialTheme.colorScheme.surfaceContainer
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimens.spaceMd),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(Dimens.spaceMd),
-                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd),
-                verticalAlignment = Alignment.CenterVertically
+            AppExerciseImage(
+                imageIds = state.nextExercise.snapshot.imageIds,
+                contentDescription = state.nextExercise.snapshot.name,
+                modifier = Modifier.size(Dimens.listItemThumbnailSize)
+            )
+
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
             ) {
-                AppExerciseImage(
-                    imageIds = state.nextExercise.exercise.imageIds,
-                    contentDescription = state.nextExercise.exercise.name,
-                    modifier = Modifier.size(Dimens.listItemThumbnailSize)
+                Text(
+                    text = stringResource(R.string.session_up_next),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary
                 )
 
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
+                Text(
+                    text = state.nextExercise.snapshot.name,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(
-                        text = stringResource(R.string.session_up_next),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-
-                    Text(
-                        text = state.nextExercise.exercise.name,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
+                    // TODO generate progress for the next exercise
+                    state.nextSetQueueProgress?.let { nextProgress ->
                         Text(
                             text = stringResource(
                                 R.string.session_set_progress_format,
-                                state.nextSet,
-                                state.totalSetsForNextExercise
-                            ),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        val nextExercise = state.nextExercise
-                        val targetMetric =
-                            if (nextExercise.isIsometric) {
-                                stringResource(
-                                    R.string.session_target_hold_format,
-                                    nextExercise.time.inWholeSeconds
-                                )
-                            } else {
-                                stringResource(
-                                    R.string.session_target_reps_format,
-                                    nextExercise.repetitions
-                                )
-                            }
-                        val weight = state.nextExercise.weightInKg
-                        val weightSuffix = if (weight != null && weight > 0) {
-                            stringResource(R.string.session_target_weight_suffix, weight.toString())
-                        } else {
-                            ""
-                        }
-                        Text(
-                            text = targetMetric + weightSuffix,
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
-
-                    if (state.followingExercise != null) {
-                        Text(
-                            text = stringResource(
-                                R.string.session_following_format,
-                                state.followingExercise.exercise.name,
-                                state.followingExercise.sets
+                                nextProgress.currentExerciseSet,
+                                nextProgress.currentExerciseTotalSets
                             ),
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
+                    val nextExercise = state.nextExercise
+                    TargetMetricsOverview(nextExercise)
                 }
             }
-        }
-
-        Spacer(modifier = Modifier.height(Dimens.spaceMd))
-
-        // CTA Buttons
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
-        ) {
-            AppPrimaryButton(
-                text = stringResource(R.string.session_start_next_set_now),
-                leadingIcon = Icons.Default.PlayArrow,
-                onClick = onStartNextSet
-            )
-
-            AppSecondaryButton(
-                text = stringResource(R.string.session_skip_rest),
-                leadingIcon = Icons.Default.SkipNext,
-                onClick = onSkipRest
-            )
         }
     }
 }
 
-private fun formatRemainingTime(time: Time): String {
-    val totalSeconds = (time.timeInMillis / 1000).toInt()
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return "%02d:%02d".format(minutes, seconds)
+@Composable
+private fun RestHeader(onEndClicked: () -> Unit, modifier: Modifier = Modifier) {
+    Box(modifier = modifier.fillMaxWidth()) {
+        Box(
+            modifier = Modifier
+                .padding(horizontal = Dimens.spaceXl)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceXs)
+                .align(Alignment.Center)
+        ) {
+            Text(
+                text = stringResource(R.string.session_rest_interval),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        }
+        EndEarlySessionButton(
+            onEndClicked = onEndClicked,
+            modifier = Modifier.align(Alignment.CenterEnd)
+        )
+    }
+}
+
+@Composable
+private fun SetFeedbackForm(
+    feedbackChipOptions: List<FeedbackChipOption>,
+    state: TrainingSessionState.RestTimeState,
+    onSessionIntent: (SessionIntent) -> Unit
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
+    ) {
+        Text(
+            text = stringResource(R.string.session_feedback_prompt),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.primary
+        )
+        AppFeedbackChips(
+            options = feedbackChipOptions,
+            selectedOption = feedbackChipOptions.firstOrNull {
+                it.effort == state.selectedFeedback
+            },
+            onOptionSelected = { onSessionIntent(SessionIntent.SetFeedbackSelected(it.effort)) },
+            labelProvider = { it.label }
+        )
+    }
 }
 
 @AppPreview
 @Composable
 private fun RestTimeScreenPreview() {
-    val dummyExercise = TrainingExercise(
+    val dummyConfig = SessionExerciseConfiguration(
+        reps = 12,
+        weightInKg = 50.0,
+        holdTime = null
+    )
+    val dummySnapshot = TrainingExerciseSnapshot(
         id = TrainingExerciseId.create(),
-        exercise = ExerciseSnapshot(
-            id = com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId.create(),
-            name = "Incline Dumbbell Press",
-            description = "Press dumbbells at incline",
-            categories = setOf(ExerciseCategoryName("Chest")),
-            imageIds = emptyList()
-        ),
-        repetitions = 12,
-        sets = 3,
+        name = "Incline Dumbbell Press",
+        description = "Press dumbbells at incline",
+        categories = setOf(ExerciseCategoryName("Chest")),
+        imageIds = emptyList(),
+        plannedConfig = dummyConfig
+    )
+    val nextSessionExercise = SessionExercise(
+        snapshot = dummySnapshot,
+        currentConfig = dummyConfig,
         restTime = 60.seconds
     )
+    val nextProgress = ExerciseQueueProgress(
+        remainingExerciseSets = 1,
+        currentExerciseTotalSets = 3,
+        totalExercises = 4,
+        remainingExercises = 1,
+        remainingSetsInWorkout = 6,
+        nextSetQueueProgress = null
+    )
     val state = TrainingSessionState.RestTimeState(
-        nextExercise = dummyExercise,
-        restTime = Time(60000L),
-        nextSet = 2,
-        totalSetsForNextExercise = 3,
-        lastCompletedAttempt = null
+        nextExercise = nextSessionExercise,
+        timerState = TimerState.Running(42.seconds),
+        totalRestTime = 60.seconds,
+        nextSetQueueProgress = nextProgress,
+        selectedFeedback = null
     )
 
     TrainingPlannerTheme {
         RestTimeScreen(
             state = state,
-            timeLeft = Time(42000L),
-            totalTime = Time(60000L),
-            onFeedbackSelected = {},
-            onStartNextSet = {},
-            onSkipRest = {}
+            onSessionIntent = {},
+            onEndClicked = {}
         )
     }
 }

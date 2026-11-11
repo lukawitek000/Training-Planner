@@ -2,164 +2,128 @@ package com.lukasz.witkowski.training.planner.session.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
 import com.lukasz.witkowski.training.planner.session.application.TrainingSessionService
-import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState as DomainState
-import com.lukasz.witkowski.training.planner.shared.time.Time
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
+import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
+import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlin.time.Duration
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class TrainingSessionViewModel(
     private val trainingPlanService: TrainingPlanService,
     private val trainingSessionService: TrainingSessionService,
+    private val exerciseService: ExerciseService,
     private val trainingPlanId: TrainingPlanId
 ) : ViewModel() {
 
-    private data class UserInputs(
-        val exerciseKey: String? = null,
-        val reps: Int? = null,
-        val weightInKg: Double? = null,
-        val holdDuration: Duration? = null,
-        val restFeedback: Int? = null,
-        val summaryRpe: Int? = null,
-        val summaryNotes: String = ""
-    )
-
-    private val userInputs = MutableStateFlow(UserInputs())
-
-    val isTimerRunning: StateFlow<Boolean> = trainingSessionService.isTimerRunning
-    val time: StateFlow<Time> = trainingSessionService.time
-
-    val trainingSessionState: StateFlow<TrainingSessionState> = combine(
-        trainingSessionService.trainingSessionState,
-        trainingSessionService.time,
-        trainingSessionService.isTimerRunning,
-        userInputs
-    ) { domainState, timeVal, isRunning, inputs ->
-        val isSameExercise =
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val trainingSessionState: StateFlow<TrainingSessionUiState> =
+        trainingSessionService.trainingSessionState.flatMapLatest { domainState ->
             when (domainState) {
-                is DomainState.ExerciseState -> {
-                    val key = "${domainState.currentExercise.id.value}_${domainState.currentSet}"
-                    inputs.exerciseKey == key
-                }
-                else -> false
+                is TrainingSessionState.IdleState -> flowOf(TrainingSessionUiState.Loading)
+                is TrainingSessionState.RestTimeState -> flowOf(
+                    TrainingSessionUiState.RestTime(
+                        domainState
+                    )
+                )
+
+                is TrainingSessionState.ExerciseState ->
+                    exerciseService.loadImageReferences(
+                        domainState.sessionExercise.snapshot.imageIds
+                    )
+                        .map { referencesResult ->
+                            TrainingSessionUiState.Exercise(
+                                domainState,
+                                referencesResult
+                            )
+                        }
+
+                is TrainingSessionState.SummaryState ->
+                    trainingPlanService.fetchTrainingPlanById(domainState.statistics.trainingPlanId)
+                        .map { planResult ->
+                            TrainingSessionUiState.Summary(domainState, planResult)
+                        }
             }
-        domainState.toPresentationTrainingSessionState(
-            time = timeVal,
-            isTimerRunning = isRunning,
-            selectedReps = if (isSameExercise) inputs.reps else null,
-            selectedWeightInKg = if (isSameExercise) inputs.weightInKg else null,
-            selectedHoldDuration = if (isSameExercise) inputs.holdDuration else null,
-            selectedFeedback = inputs.restFeedback,
-            summaryRpe = inputs.summaryRpe,
-            summaryNotes = inputs.summaryNotes
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000L),
+            initialValue = TrainingSessionUiState.Loading
         )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), TrainingSessionState.IdleState)
 
     init {
         fetchTrainingPlan()
     }
 
-    fun onRepsChanged(reps: Int) {
-        val current = trainingSessionState.value as? TrainingSessionState.ExerciseState ?: return
-        userInputs.update {
-            it.copy(
-                exerciseKey = "${current.currentExercise.id.value}_${current.currentSet}",
-                reps = reps,
-                weightInKg = it.weightInKg ?: current.selectedWeightInKg,
-                holdDuration = it.holdDuration ?: current.selectedHoldDuration
-            )
-        }
-    }
+    fun onIntent(intent: SessionIntent) {
+        when (intent) {
+            is SessionIntent.RepsChanged -> {
+                trainingSessionService.changeReps(intent.reps)
+            }
 
-    fun onWeightChanged(weight: Double) {
-        val current = trainingSessionState.value as? TrainingSessionState.ExerciseState ?: return
-        userInputs.update {
-            it.copy(
-                exerciseKey = "${current.currentExercise.id.value}_${current.currentSet}",
-                weightInKg = weight,
-                reps = it.reps ?: current.selectedReps,
-                holdDuration = it.holdDuration ?: current.selectedHoldDuration
-            )
-        }
-    }
+            is SessionIntent.WeightChanged -> {
+                trainingSessionService.changeWeight(intent.weight)
+            }
 
-    fun onHoldDurationChanged(duration: Duration) {
-        val current = trainingSessionState.value as? TrainingSessionState.ExerciseState ?: return
-        userInputs.update {
-            it.copy(
-                exerciseKey = "${current.currentExercise.id.value}_${current.currentSet}",
-                holdDuration = duration,
-                reps = it.reps ?: current.selectedReps,
-                weightInKg = it.weightInKg ?: current.selectedWeightInKg
-            )
-        }
-    }
+            is SessionIntent.HoldTimeChanged -> {
+                trainingSessionService.updateHoldTime(intent.time)
+            }
 
-    fun toggleHoldTimer() {
-        if (isTimerRunning.value) {
-            trainingSessionService.pauseTimer()
-        } else {
-            trainingSessionService.startTimer()
-        }
-    }
+            is SessionIntent.StartTimer -> {
+                trainingSessionService.startTimer()
+            }
 
-    fun resetHoldTimer() {
-        trainingSessionService.resetTimer()
-    }
+            is SessionIntent.ResetTimer -> {
+                trainingSessionService.resetTimer()
+            }
 
-    fun completed() {
-        val current = trainingSessionState.value as? TrainingSessionState.ExerciseState
-        val reps = current?.selectedReps
-        val weight = current?.selectedWeightInKg
-        val time = if (current?.isIsometric == true) current.selectedHoldDuration else null
-        trainingSessionService.completed(
-            actualReps = reps,
-            actualWeightInKg = weight,
-            actualTime = time
-        )
-    }
+            is SessionIntent.SetAdded -> {
+                trainingSessionService.addExtraSet()
+            }
 
-    fun skip() {
-        trainingSessionService.skip()
-    }
+            is SessionIntent.SetRemoved -> {
+                trainingSessionService.removeExtraSet()
+            }
 
-    fun skipExercise() {
-        trainingSessionService.skipExercise()
-    }
+            is SessionIntent.SetCompleted -> {
+                trainingSessionService.completed()
+            }
 
-    fun addExtraSet() {
-        trainingSessionService.addExtraSet()
-    }
+            is SessionIntent.SetSkipped -> {
+                trainingSessionService.skip()
+            }
 
-    fun onFeedbackSelected(rpe: Int) {
-        userInputs.update { it.copy(restFeedback = rpe) }
-        trainingSessionService.updateLastAttemptRpe(rpe.toFloat())
-    }
+            is SessionIntent.RestSkipped -> {
+                trainingSessionService.skip()
+            }
 
-    fun onSummaryRpeSelected(rpe: Int) {
-        userInputs.update { it.copy(summaryRpe = rpe) }
-    }
+            is SessionIntent.SetFeedbackSelected -> {
+                trainingSessionService.setExerciseSetFeedback(intent.effort)
+            }
 
-    fun onSummaryNotesChanged(notes: String) {
-        userInputs.update { it.copy(summaryNotes = notes) }
-    }
+            is SessionIntent.SessionNotesChanged -> {
+                trainingSessionService.updateSessionNotes(intent.notes)
+            }
 
-    fun saveStatistics() {
-        val summaryState = trainingSessionState.value as? TrainingSessionState.SummaryState
-        val note = summaryState?.notes?.ifEmpty { null }
-        val rpe = summaryState?.selectedOverallRpe
-        viewModelScope.launch {
-            trainingSessionService.finishSession(note = note, rpe = rpe)
+            is SessionIntent.SessionFeedbackSelected -> {
+                trainingSessionService.updateSessionFeedback(intent.rpe)
+            }
+
+            is SessionIntent.SessionEndEarly -> {
+                trainingSessionService.endEarly()
+            }
         }
     }
 
@@ -176,21 +140,29 @@ class TrainingSessionViewModel(
         }
     }
 
-    fun startTimer() {
-        trainingSessionService.startTimer()
-    }
-
-    fun pauseTimer() {
-        trainingSessionService.pauseTimer()
-    }
-
-    fun stopTimer() {
-        trainingSessionService.stopTimer()
-    }
-
     override fun onCleared() {
         // TODO: Foreground Service Lifecycle Management:
         // When the user navigates away or backgrounding occurs, handle binding/unbinding to SessionService
         // and keep ongoing notifications active. Only call stopTraining() if the session was explicitly canceled.
     }
+}
+
+sealed interface SessionIntent {
+    data class RepsChanged(val reps: Int) : SessionIntent
+    data class WeightChanged(val weight: Double) : SessionIntent
+    data class HoldTimeChanged(val time: Duration) : SessionIntent
+    data object SetAdded : SessionIntent
+    data object SetRemoved : SessionIntent
+    data object SetCompleted : SessionIntent
+    data object SetSkipped : SessionIntent
+    data object StartTimer : SessionIntent
+    data object ResetTimer : SessionIntent
+
+    data object RestSkipped : SessionIntent
+    data class SetFeedbackSelected(val effort: SetEffort) : SessionIntent
+
+    data class SessionNotesChanged(val notes: String) : SessionIntent
+    data class SessionFeedbackSelected(val rpe: SessionRpe) : SessionIntent
+
+    data object SessionEndEarly : SessionIntent
 }

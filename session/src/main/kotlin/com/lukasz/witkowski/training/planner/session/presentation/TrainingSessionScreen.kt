@@ -1,31 +1,36 @@
 package com.lukasz.witkowski.training.planner.session.presentation
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.lukasz.witkowski.training.planner.session.R
+import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionPhaseKey
+import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
-import com.lukasz.witkowski.training.planner.shared.ui.dialogs.AppConfirmationDialog
 import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingState
-import kotlin.time.Duration
 
 /**
  * Main coordinator screen for the workout session.
  * Switches between [TrainingExerciseScreen], [RestTimeScreen], and [TrainingSessionSummaryScreen].
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrainingSessionScreen(
     viewModel: TrainingSessionViewModel,
@@ -33,61 +38,34 @@ fun TrainingSessionScreen(
     modifier: Modifier = Modifier
 ) {
     val trainingSessionState by viewModel.trainingSessionState.collectAsState()
-    val time by viewModel.time.collectAsState()
-    var showExitConfirmationDialog by remember { mutableStateOf(false) }
+    var showExitConfirmationDialog by rememberSaveable { mutableStateOf(false) }
 
-    BackHandler(enabled = trainingSessionState !is TrainingSessionState.SummaryState) {
-        showExitConfirmationDialog = true
+    BackHandler(enabled = trainingSessionState !is TrainingSessionUiState.Summary) {
+        showExitConfirmationDialog = !showExitConfirmationDialog
     }
 
-    if (showExitConfirmationDialog) {
-        AppConfirmationDialog(
-            title = stringResource(R.string.session_exit_dialog_title),
-            message = stringResource(R.string.session_exit_dialog_message),
-            confirmText = stringResource(R.string.session_exit_dialog_confirm),
-            dismissText = stringResource(R.string.session_exit_dialog_dismiss),
-            isDestructive = true,
-            onConfirm = {
-                // TODO: Stop foreground service and cancel ongoing notifications before exiting session
-                showExitConfirmationDialog = false
-                navigateBack()
-            },
-            onDismiss = {
-                showExitConfirmationDialog = false
-            }
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        TrainingSessionContent(
+            trainingSessionUiState = trainingSessionState,
+            onSessionIntent = viewModel::onIntent,
+            onFinishWorkout = { navigateBack() },
+            onEndClicked = { showExitConfirmationDialog = true }
         )
-    }
-
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        containerColor = MaterialTheme.colorScheme.background
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            TrainingSessionContent(
-                trainingSessionState = trainingSessionState,
-                time = time,
-                onRepsChanged = viewModel::onRepsChanged,
-                onWeightChanged = viewModel::onWeightChanged,
-                onHoldDurationChanged = viewModel::onHoldDurationChanged,
-                onToggleHoldTimer = viewModel::toggleHoldTimer,
-                onResetHoldTimer = viewModel::resetHoldTimer,
-                onCompleteSet = viewModel::completed,
-                onSkipSet = viewModel::skip,
-                onSkipExercise = viewModel::skipExercise,
-                onAddExtraSet = viewModel::addExtraSet,
-                onFeedbackSelected = viewModel::onFeedbackSelected,
-                onStartNextSet = viewModel::completed,
-                onSkipRest = viewModel::skip,
-                onSummaryRpeSelected = viewModel::onSummaryRpeSelected,
-                onSummaryNotesChanged = viewModel::onSummaryNotesChanged,
-                onSaveWorkout = {
-                    viewModel.saveStatistics()
+        if (showExitConfirmationDialog) {
+            EndEarlySessionDialog(
+                onConfirm = {
+                    // TODO: Stop foreground service and cancel ongoing notifications before exiting session
+                    viewModel.onIntent(SessionIntent.SessionEndEarly)
+                    showExitConfirmationDialog = false
                     navigateBack()
-                }
+                },
+                onDismiss = {
+                    showExitConfirmationDialog = false
+                },
+                modifier = Modifier
             )
         }
     }
@@ -95,70 +73,87 @@ fun TrainingSessionScreen(
 
 @Composable
 fun TrainingSessionContent(
-    trainingSessionState: TrainingSessionState,
-    time: Time,
-    onRepsChanged: (Int) -> Unit,
-    onWeightChanged: (Double) -> Unit,
-    onHoldDurationChanged: (Duration) -> Unit,
-    onToggleHoldTimer: () -> Unit,
-    onResetHoldTimer: () -> Unit,
-    onCompleteSet: () -> Unit,
-    onSkipSet: () -> Unit,
-    onSkipExercise: () -> Unit,
-    onAddExtraSet: () -> Unit,
-    onFeedbackSelected: (Int) -> Unit,
-    onStartNextSet: () -> Unit,
-    onSkipRest: () -> Unit,
-    onSummaryRpeSelected: (Int) -> Unit,
-    onSummaryNotesChanged: (String) -> Unit,
-    onSaveWorkout: () -> Unit,
+    trainingSessionUiState: TrainingSessionUiState,
+    onSessionIntent: (SessionIntent) -> Unit,
+    onFinishWorkout: () -> Unit,
+    onEndClicked: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(modifier = modifier.fillMaxSize()) {
-        when (val state = trainingSessionState) {
-            is TrainingSessionState.ExerciseState -> {
-                TrainingExerciseScreen(
-                    state = state,
-                    onRepsChanged = onRepsChanged,
-                    onWeightChanged = onWeightChanged,
-                    onHoldDurationChanged = onHoldDurationChanged,
-                    onToggleHoldTimer = onToggleHoldTimer,
-                    onResetHoldTimer = onResetHoldTimer,
-                    onCompleteSet = onCompleteSet,
-                    onSkipSet = onSkipSet,
-                    onSkipExercise = onSkipExercise,
-                    onAddExtraSet = onAddExtraSet
-                )
-            }
+        AnimatedContent(
+            modifier = Modifier.fillMaxSize(),
+            targetState = trainingSessionUiState.phaseKey,
+            transitionSpec = {
+                slideInHorizontally { it } + fadeIn() togetherWith
+                    slideOutHorizontally { -it } + fadeOut()
+            },
+            label = "TrainingSessionPhasesAnimation"
+        ) { phaseKey ->
+            when (phaseKey) {
+                is TrainingSessionPhaseKey.Exercise -> {
+                    rememberPhaseState<TrainingSessionUiState.Exercise>(
+                        currentState = trainingSessionUiState,
+                        expectedKey = phaseKey
+                    )?.let { uiState ->
+                        TrainingExerciseScreen(
+                            uiState = uiState,
+                            onSessionIntent = onSessionIntent,
+                            onEndClicked = onEndClicked
+                        )
+                    }
+                }
 
-            is TrainingSessionState.RestTimeState -> {
-                RestTimeScreen(
-                    state = state,
-                    timeLeft = time,
-                    totalTime = state.time,
-                    onFeedbackSelected = onFeedbackSelected,
-                    onStartNextSet = onStartNextSet,
-                    onSkipRest = onSkipRest
-                )
-            }
+                TrainingSessionPhaseKey.RestTime -> {
+                    rememberPhaseState<TrainingSessionUiState.RestTime>(
+                        currentState = trainingSessionUiState,
+                        expectedKey = phaseKey
+                    )?.let { uiState ->
+                        RestTimeScreen(
+                            state = uiState.domainState,
+                            onSessionIntent = onSessionIntent,
+                            onEndClicked = onEndClicked
+                        )
+                    }
+                }
 
-            is TrainingSessionState.SummaryState -> {
-                TrainingSessionSummaryScreen(
-                    state = state,
-                    onRpeSelected = onSummaryRpeSelected,
-                    onNotesChanged = onSummaryNotesChanged,
-                    onSaveWorkout = onSaveWorkout
-                )
-            }
+                TrainingSessionPhaseKey.Summary -> {
+                    rememberPhaseState<TrainingSessionUiState.Summary>(
+                        currentState = trainingSessionUiState,
+                        expectedKey = phaseKey
+                    )?.let { uiState ->
+                        TrainingSessionSummaryScreen(
+                            uiState = uiState,
+                            onSessionIntent = onSessionIntent,
+                            onFinishWorkout = onFinishWorkout
+                        )
+                    }
+                }
 
-            else -> {
-                AppLoadingState(
-                    title = stringResource(R.string.session_loading_title),
-                    subtitle = stringResource(R.string.session_loading_subtitle)
-                )
+                TrainingSessionPhaseKey.Loading -> {
+                    AppLoadingState(
+                        title = stringResource(R.string.session_loading_title),
+                        subtitle = stringResource(R.string.session_loading_subtitle)
+                    )
+                }
             }
         }
     }
+}
+
+@Composable
+inline fun <reified T : TrainingSessionUiState> rememberPhaseState(
+    currentState: TrainingSessionUiState,
+    expectedKey: TrainingSessionPhaseKey
+): T? {
+    var cached by remember(expectedKey) {
+        mutableStateOf(
+            if (currentState is T && currentState.phaseKey == expectedKey) currentState else null
+        )
+    }
+    if (currentState is T && currentState.phaseKey == expectedKey) {
+        cached = currentState
+    }
+    return cached
 }
 
 @AppPreview
@@ -166,23 +161,10 @@ fun TrainingSessionContent(
 private fun TrainingSessionContentLoadingPreview() {
     TrainingPlannerTheme {
         TrainingSessionContent(
-            trainingSessionState = TrainingSessionState.IdleState,
-            time = Time.ZERO,
-            onRepsChanged = {},
-            onWeightChanged = {},
-            onHoldDurationChanged = {},
-            onToggleHoldTimer = {},
-            onResetHoldTimer = {},
-            onCompleteSet = {},
-            onSkipSet = {},
-            onSkipExercise = {},
-            onAddExtraSet = {},
-            onFeedbackSelected = {},
-            onStartNextSet = {},
-            onSkipRest = {},
-            onSummaryRpeSelected = {},
-            onSummaryNotesChanged = {},
-            onSaveWorkout = {}
+            trainingSessionUiState = TrainingSessionUiState.Loading,
+            onSessionIntent = {},
+            onFinishWorkout = {},
+            onEndClicked = {}
         )
     }
 }

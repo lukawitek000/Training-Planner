@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.training.infrastructure
 
 import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
+import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.shared.utils.runCatchingCancellable
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
@@ -14,9 +15,13 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toT
 import com.lukasz.witkowski.training.planner.training.infrastructure.mappers.toTrainingPlanOverview
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlan
 import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTrainingPlanWithExercises
+import java.util.concurrent.ConcurrentHashMap
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 internal class DbTrainingPlanRepository(
@@ -24,6 +29,8 @@ internal class DbTrainingPlanRepository(
     private val timeProvider: TimeProvider,
     private val dispatcher: CoroutineDispatcher
 ) : TrainingPlanRepository {
+    private val cachePlans = ConcurrentHashMap<TrainingPlanId, ResultHandler<TrainingPlan>>()
+    private val mutex = Mutex()
     override suspend fun save(
         trainingPlanConfiguration: TrainingPlanConfiguration,
         id: TrainingPlanId
@@ -70,6 +77,32 @@ internal class DbTrainingPlanRepository(
         return trainingPlanDao.getFlowTrainingPlanById(id).map {
             it?.toTrainingPlan()
         }
+    }
+
+    override suspend fun fetchTrainingPlanById(
+        trainingPlanId: TrainingPlanId
+    ): Flow<ResultHandler<TrainingPlan>> = flow {
+        cachePlans[trainingPlanId]?.let { cached ->
+            emit(cached)
+            if (cached is ResultHandler.Success) return@flow
+        }
+
+        val result = mutex.withLock {
+            val id = trainingPlanId.toString()
+            runCatchingCancellable {
+                checkNotNull(withContext(dispatcher) { trainingPlanDao.getTrainingPlanById(id) }) {
+                    "TrainingPlan not found for id: $trainingPlanId"
+                }.toTrainingPlan()
+            }.fold(
+                onSuccess = {
+                    ResultHandler.Success(it).also {
+                        cachePlans[trainingPlanId] = it
+                    }
+                },
+                onFailure = { ResultHandler.Error(it.message ?: "") }
+            )
+        }
+        emit(result)
     }
 
     override suspend fun update(

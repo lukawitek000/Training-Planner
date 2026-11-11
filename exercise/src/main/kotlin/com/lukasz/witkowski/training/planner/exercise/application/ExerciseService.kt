@@ -16,6 +16,7 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.ImageStorage
 import com.lukasz.witkowski.training.planner.image.toImageConfiguration
+import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.shared.utils.runCatchingCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -111,4 +112,8 @@ class ExerciseService(
                 imageStorage.readImageReference(imageId)
             } ?: emptyList()
         }.getOrDefault(emptyList())
+
+    suspend fun loadImageReferences(
+        images: List<ImageId>
+    ): Flow<ResultHandler<List<ImageReference>>> = imageStorage.loadImageReferences(images)
 }
