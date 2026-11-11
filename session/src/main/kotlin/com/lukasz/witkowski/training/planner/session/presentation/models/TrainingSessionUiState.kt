@@ -17,9 +17,8 @@ interface TrainingSessionUiState {
         override val phaseKey = TrainingSessionPhaseKey.Exercise(domainState.toUniqueId())
 
         private fun TrainingSessionState.ExerciseState.toUniqueId(): String {
-            val id = domainState.sessionExercise.exerciseId
-            val sets = domainState.progress.remainingExerciseSets
-            return "${id}_$sets"
+            val id = sessionExercise.exerciseId
+            return "Exercise_${id}"
         }
     }
 

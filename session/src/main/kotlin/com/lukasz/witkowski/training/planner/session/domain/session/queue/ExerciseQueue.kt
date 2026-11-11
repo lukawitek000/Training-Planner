@@ -115,7 +115,7 @@ internal class ExerciseQueue(loadedExercises: List<SessionExercise>) {
             remainingSetsInWorkout = nextRemaining.size,
             nextSetQueueProgress = null
         ).also {
-            Timber.d("Calculated queue progress $it")
+            Timber.d("Calculated next set queue progress $it")
         }
     }
 }
