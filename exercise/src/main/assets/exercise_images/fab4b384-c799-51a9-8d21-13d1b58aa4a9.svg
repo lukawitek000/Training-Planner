@@ -1,8 +1,26 @@
 <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-<path stroke="#888888" stroke-width="6" stroke-linecap="round" d="M 40,420 L 472,420" />
-        <circle cx="100" cy="360" r="22" stroke="#111111" stroke-width="8" fill="none" />
-        <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 120,365 L 250,380 L 380,365" />
-        <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 130,365 L 70,350" />
-        <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 380,365 L 440,350" />
-        <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 180,375 L 300,375" />
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#FF0000" />
+    </marker>
+    <marker id="arrow-neutral" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#888888" />
+    </marker>
+  </defs>
+  <!-- Background Badge / Stage -->
+  <circle cx="256" cy="256" r="230" fill="#111111" fill-opacity="0.035" stroke="#111111" stroke-width="1.5" stroke-opacity="0.08" />
+
+    <!-- Ground plane line with beveled ends and soft ground shadow -->
+    <ellipse cx="256" cy="436" rx="180" ry="12" fill="#888888" fill-opacity="0.15" />
+    <rect x="40" y="426" width="432" height="8" rx="4" fill="#888888" fill-opacity="0.6" stroke="#888888" stroke-width="2" />
+    
+        <!-- Head -->
+        <path d="M 85,340 C 85,325 95,315 105,315 C 115,315 125,325 125,340 C 125,355 115,365 105,365 C 95,365 85,355 85,340 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+        <!-- Banana Curved Torso & Pelvis -->
+        <path d="M 120,345 C 165,370 235,385 305,370 C 375,355 415,335 435,320 L 440,332 C 415,350 375,375 305,392 C 235,402 165,385 115,355 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+        <!-- Arms Reaching Overhead -->
+        <path d="M 115,348 L 50,330 C 45,330 45,320 50,318 L 115,335 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+        <!-- Abdominal Wall Full Compression Highlight -->
+        <path d="M 180,360 C 235,375 285,370 320,358 C 300,378 240,385 180,372 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+        
 </svg>

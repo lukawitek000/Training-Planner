@@ -1,10 +1,40 @@
 <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-<path stroke="#888888" stroke-width="6" stroke-linecap="round" d="M 40,420 L 472,420" />
-        <circle cx="110" cy="285" r="24" stroke="#111111" stroke-width="8" fill="none" />
-        <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 134,300 L 290,340" />
-        <!-- Forearms on floor -->
-        <path stroke="#111111" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 160,310 L 160,420 L 195,420" />
-        <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 290,340 L 420,400" />
-        <path stroke="#111111" stroke-width="10" stroke-linecap="round" d="M 420,400 L 440,420" />
-        <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 180,325 L 270,345" />
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#FF0000" />
+    </marker>
+    <marker id="arrow-neutral" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#888888" />
+    </marker>
+  </defs>
+  <!-- Background Badge / Stage -->
+  <circle cx="256" cy="256" r="230" fill="#111111" fill-opacity="0.035" stroke="#111111" stroke-width="1.5" stroke-opacity="0.08" />
+
+    <!-- Ground plane line with beveled ends and soft ground shadow -->
+    <ellipse cx="256" cy="446" rx="180" ry="12" fill="#888888" fill-opacity="0.15" />
+    <rect x="40" y="436" width="432" height="8" rx="4" fill="#888888" fill-opacity="0.6" stroke="#888888" stroke-width="2" />
+    
+    
+    <!-- Hands planted on floor -->
+    <rect x="200" y="432" width="35" height="8" rx="4" fill="#111111" fill-opacity="0.5" />
+    <rect x="277" y="432" width="35" height="8" rx="4" fill="#111111" fill-opacity="0.5" />
+    
+    <!-- Straight Supporting Arms Lockout -->
+    <path d="M 215,432 L 235,310 C 238,305 244,305 246,310 L 228,432 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    <path d="M 297,432 L 277,310 C 274,305 268,305 266,310 L 284,432 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Head Between Shoulders -->
+    <path d="M 242,330 C 242,315 250,305 256,305 C 262,305 270,315 270,330 C 270,345 262,355 256,355 C 250,355 242,345 242,330 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Inverted Torso -->
+    <path d="M 230,305 C 224,265 228,215 238,165 C 246,160 266,160 274,165 C 284,215 288,265 282,305 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Inverted Extended Legs Straight Up -->
+    <path d="M 238,165 C 236,130 234,90 238,60 L 250,60 C 248,90 248,130 252,165 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    <path d="M 274,165 C 276,130 278,90 274,60 L 262,60 C 264,90 264,130 260,165 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+
+    <!-- Deltoids / Traps Highlight -->
+    <path d="M 230,315 C 225,295 235,285 245,295 C 240,315 235,320 230,315 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+    <path d="M 282,315 C 287,295 277,285 267,295 C 272,315 277,320 282,315 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+    
 </svg>

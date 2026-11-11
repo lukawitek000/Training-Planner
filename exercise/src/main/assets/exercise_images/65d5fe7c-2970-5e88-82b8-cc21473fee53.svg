@@ -1,13 +1,39 @@
 <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-<path stroke="#888888" stroke-width="6" stroke-linecap="round" d="M 60,450 L 452,450" />
-    <circle cx="210" cy="210" r="24" stroke="#111111" stroke-width="8" fill="none" />
-    <!-- Torso angled forward -->
-    <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 225,230 L 285,320" />
-    <!-- Arms reaching forward for balance -->
-    <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 230,240 L 140,240" />
-    <!-- Thigh parallel to floor, knee flexed -->
-    <path stroke="#111111" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 285,320 L 190,320 L 210,445" />
-    <!-- Quads and glutes peak activation -->
-    <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 280,315 L 195,315" />
-    <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" fill="#FF0000" d="M 275,320 Q 295,340 280,350 Z" />
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#FF0000" />
+    </marker>
+    <marker id="arrow-neutral" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#888888" />
+    </marker>
+  </defs>
+  <!-- Background Badge / Stage -->
+  <circle cx="256" cy="256" r="230" fill="#111111" fill-opacity="0.035" stroke="#111111" stroke-width="1.5" stroke-opacity="0.08" />
+
+    <!-- Ground plane line with beveled ends and soft ground shadow -->
+    <ellipse cx="256" cy="446" rx="180" ry="12" fill="#888888" fill-opacity="0.15" />
+    <rect x="40" y="436" width="432" height="8" rx="4" fill="#888888" fill-opacity="0.6" stroke="#888888" stroke-width="2" />
+    
+    <!-- Motion Arrow (Upward drive from hole) -->
+    <path d="M 210,310 L 210,230" stroke="#FF0000" stroke-width="3" stroke-dasharray="6,4" marker-end="url(#arrow)" />
+
+    <!-- Head -->
+    <path d="M 198,190 C 198,175 206,165 212,165 C 218,165 226,175 226,190 C 226,205 218,215 212,215 C 206,215 198,205 198,190 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Torso Angled Forward 45 degrees -->
+    <path d="M 210,210 C 230,235 260,270 285,310 C 290,320 280,330 268,328 C 240,295 215,260 195,225 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Arms Extended Forward for Balance -->
+    <path d="M 215,225 L 130,225 C 125,225 125,215 130,215 L 215,215 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Thigh Parallel to Floor & Knee Flexed at 90+ deg -->
+    <path d="M 285,310 C 260,310 220,310 185,315 C 175,320 178,335 188,335 L 280,335 C 290,335 295,320 285,310 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Lower Shin & Foot -->
+    <path d="M 185,325 L 205,438 C 205,442 195,442 188,438 L 170,335 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+
+    <!-- Peak Glute & Quad Muscle Highlight -->
+    <path d="M 275,310 C 255,310 220,310 195,315 C 205,325 240,325 270,325 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+    <path d="M 275,312 C 292,320 292,340 278,345 C 270,335 272,322 275,312 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+    
 </svg>

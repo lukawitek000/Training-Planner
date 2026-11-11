@@ -1,8 +1,28 @@
 <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-<path stroke="#888888" stroke-width="6" stroke-linecap="round" d="M 40,420 L 472,420" />
-        <circle cx="140" cy="270" r="24" stroke="#111111" stroke-width="8" fill="none" />
-        <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 160,285 L 310,340" />
-        <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 180,290 L 180,420" />
-        <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 310,340 L 430,420" />
-        <path stroke="#FF0000" stroke-width="6" stroke-linecap="round" d="M 200,320 L 280,350" />
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#FF0000" />
+    </marker>
+    <marker id="arrow-neutral" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#888888" />
+    </marker>
+  </defs>
+  <!-- Background Badge / Stage -->
+  <circle cx="256" cy="256" r="230" fill="#111111" fill-opacity="0.035" stroke="#111111" stroke-width="1.5" stroke-opacity="0.08" />
+
+    <!-- Ground plane line with beveled ends and soft ground shadow -->
+    <ellipse cx="256" cy="436" rx="180" ry="12" fill="#888888" fill-opacity="0.15" />
+    <rect x="40" y="426" width="432" height="8" rx="4" fill="#888888" fill-opacity="0.6" stroke="#888888" stroke-width="2" />
+    
+        <!-- Head Profile -->
+        <path d="M 120,265 C 120,250 130,240 142,240 C 154,240 162,250 162,265 C 162,280 154,290 142,290 C 130,290 120,280 120,265 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+        <!-- Torso in Straight Side Line -->
+        <path d="M 155,270 C 205,295 255,320 310,345 C 315,355 305,370 290,365 C 235,340 185,315 145,285 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+        <!-- Supporting Forearm on Ground -->
+        <path d="M 175,285 L 175,425 L 210,425 L 210,415 L 188,415 L 188,290 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+        <!-- Legs Stacked Together -->
+        <path d="M 310,345 C 350,365 390,390 435,425 L 420,425 C 380,395 340,370 290,365 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+        <!-- Oblique Muscle Highlight -->
+        <path d="M 195,310 C 240,335 270,350 285,355 C 275,365 240,350 190,325 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+        
 </svg>

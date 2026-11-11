@@ -1,15 +1,40 @@
 <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-<path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 60,70 L 452,70" />
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#FF0000" />
+    </marker>
+    <marker id="arrow-neutral" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#888888" />
+    </marker>
+  </defs>
+  <!-- Background Badge / Stage -->
+  <circle cx="256" cy="256" r="230" fill="#111111" fill-opacity="0.035" stroke="#111111" stroke-width="1.5" stroke-opacity="0.08" />
+
+    <!-- Ceiling / Wall mount fixtures -->
+    <rect x="70" y="40" width="24" height="30" rx="4" fill="#888888" fill-opacity="0.4" stroke="#888888" stroke-width="3" />
+    <rect x="418" y="40" width="24" height="30" rx="4" fill="#888888" fill-opacity="0.4" stroke="#888888" stroke-width="3" />
+    <!-- Main Crossbar with grips -->
+    <rect x="50" y="62" width="412" height="16" rx="8" fill="#888888" fill-opacity="0.6" stroke="#888888" stroke-width="3" />
+    <rect x="180" y="60" width="45" height="20" rx="4" fill="#888888" fill-opacity="0.9" />
+    <rect x="287" y="60" width="45" height="20" rx="4" fill="#888888" fill-opacity="0.9" />
     
-    <!-- Head -->
-    <circle cx="256" cy="140" r="24" stroke="#111111" stroke-width="8" fill="none" />
-    <!-- Arms reaching overhead to bar -->
-    <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 210,70 L 236,150" />
-    <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 302,70 L 276,150" />
-    <!-- Torso -->
-    <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 256,160 L 256,290" />
-    <!-- Legs straight down -->
-    <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 256,290 L 250,440" />
-    <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 256,290 L 262,440" />
-    <path stroke="#FF0000" stroke-width="6" stroke-linecap="round" d="M 215,140 L 235,220" /><path stroke="#FF0000" stroke-width="6" stroke-linecap="round" d="M 297,140 L 277,220" />
+    <!-- Mannequin Head (Anatomical oval with jaw contour) -->
+    <path d="M 242,125 C 242,112 248,102 256,102 C 264,102 270,112 270,125 C 270,138 264,148 256,148 C 248,148 242,138 242,125 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Left & Right Contoured Arms Reaching Upwards -->
+    <path d="M 200,68 C 204,68 208,72 208,78 L 234,140 C 230,144 225,142 222,138 L 194,74 C 194,70 196,68 200,68 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    <path d="M 312,68 C 308,68 304,72 304,78 L 278,140 C 282,144 287,142 290,138 L 318,74 C 318,70 316,68 312,68 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Athletic V-Taper Torso (Back view) -->
+    <path d="M 226,148 C 218,175 224,225 238,275 C 246,280 266,280 274,275 C 288,225 294,175 286,148 C 274,152 238,152 226,148 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Volumetric Legs Straight Down (Quads & Calves) -->
+    <path d="M 238,275 C 236,310 234,350 236,380 C 234,405 236,440 240,460 L 252,460 C 250,440 248,405 248,380 C 248,350 248,310 252,275 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    <path d="M 274,275 C 276,310 278,350 276,380 C 278,405 276,440 272,460 L 260,460 C 262,440 264,405 264,380 C 264,350 264,310 260,275 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+
+    <!-- Active Muscle Highlight: Latissimus Wings or Forearms -->
+    
+        <path d="M 226,152 C 220,180 226,220 238,245 C 240,225 236,185 240,158 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+        <path d="M 286,152 C 292,180 286,220 274,245 C 272,225 276,185 272,158 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+        
 </svg>

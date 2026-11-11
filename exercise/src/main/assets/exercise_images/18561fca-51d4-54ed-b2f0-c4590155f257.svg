@@ -1,10 +1,47 @@
 <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-<path stroke="#888888" stroke-width="6" stroke-linecap="round" d="M 40,420 L 472,420" />
-        <circle cx="110" cy="285" r="24" stroke="#111111" stroke-width="8" fill="none" />
-        <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 134,300 L 290,340" />
-        <!-- Forearms on floor -->
-        <path stroke="#111111" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 160,310 L 160,420 L 195,420" />
-        <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 290,340 L 420,400" />
-        <path stroke="#111111" stroke-width="10" stroke-linecap="round" d="M 420,400 L 440,420" />
-        <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 180,325 L 270,345" />
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#FF0000" />
+    </marker>
+    <marker id="arrow-neutral" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#888888" />
+    </marker>
+  </defs>
+  <!-- Background Badge / Stage -->
+  <circle cx="256" cy="256" r="230" fill="#111111" fill-opacity="0.035" stroke="#111111" stroke-width="1.5" stroke-opacity="0.08" />
+
+    <!-- Ceiling / Wall mount fixtures -->
+    <rect x="70" y="40" width="24" height="30" rx="4" fill="#888888" fill-opacity="0.4" stroke="#888888" stroke-width="3" />
+    <rect x="418" y="40" width="24" height="30" rx="4" fill="#888888" fill-opacity="0.4" stroke="#888888" stroke-width="3" />
+    <!-- Main Crossbar with grips -->
+    <rect x="50" y="62" width="412" height="16" rx="8" fill="#888888" fill-opacity="0.6" stroke="#888888" stroke-width="3" />
+    <rect x="180" y="60" width="45" height="20" rx="4" fill="#888888" fill-opacity="0.9" />
+    <rect x="287" y="60" width="45" height="20" rx="4" fill="#888888" fill-opacity="0.9" />
+    
+    <!-- Motion Trajectory Arrow -->
+    <path d="M 256,190 L 256,120" stroke="#FF0000" stroke-width="3" stroke-dasharray="6,4" marker-end="url(#arrow)" />
+
+    <!-- Mannequin Head (Chin elevated above bar) -->
+    <path d="M 242,42 C 242,29 248,19 256,19 C 264,19 270,29 270,42 C 270,55 264,65 256,65 C 248,65 242,55 242,42 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Volumetric Bent Arms (Forearm to hand gripping bar, Bicep/Tricep flexed down) -->
+    <path d="M 200,68 C 205,68 208,72 206,78 L 180,135 C 176,140 170,140 166,134 L 160,126 C 158,120 160,115 166,110 L 194,70 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    <path d="M 312,68 C 307,68 304,72 306,78 L 332,135 C 336,140 342,140 346,134 L 352,126 C 354,120 352,115 346,110 L 318,70 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    <path d="M 166,130 C 172,135 180,132 188,124 L 232,80 C 235,76 232,70 228,68 L 222,68 C 218,68 215,72 210,76 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    <path d="M 346,130 C 340,135 332,132 324,124 L 280,80 C 277,76 280,70 284,68 L 290,68 C 294,68 297,72 302,76 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Elevated Torso -->
+    <path d="M 226,68 C 218,95 224,145 238,195 C 246,200 266,200 274,195 C 288,145 294,95 286,68 C 274,72 238,72 226,68 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Legs Hanging Slightly Bent at Knees -->
+    <path d="M 238,195 C 236,230 234,270 238,300 C 240,325 244,360 248,390 L 260,390 C 256,360 252,325 250,300 C 248,270 248,230 252,195 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    <path d="M 274,195 C 276,230 278,270 274,300 C 272,325 268,360 264,390 L 252,390 C 256,360 260,325 262,300 C 264,270 264,230 260,195 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+
+    <!-- Peak Active Muscle Highlights -->
+    <path d="M 225,72 C 214,100 220,140 236,170 C 238,150 234,115 238,82 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+    <path d="M 287,72 C 298,100 292,140 276,170 C 274,150 278,115 274,82 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+    <!-- Secondary Bicep Contraction -->
+    <path d="M 170,126 C 178,135 190,125 186,115 L 206,85 L 194,80 Z" fill="#0000FF" fill-opacity="0.8" stroke="#0000FF" stroke-width="1.5" />
+    <path d="M 342,126 C 334,135 322,125 326,115 L 306,85 L 318,80 Z" fill="#0000FF" fill-opacity="0.8" stroke="#0000FF" stroke-width="1.5" />
+    
 </svg>

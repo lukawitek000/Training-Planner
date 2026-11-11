@@ -1,9 +1,35 @@
 <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-<path stroke="#888888" stroke-width="6" stroke-linecap="round" d="M 60,450 L 452,450" />
-    <circle cx="256" cy="100" r="24" stroke="#111111" stroke-width="8" fill="none" />
-    <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 256,125 L 256,260" />
-    <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 256,150 L 220,230" /><path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 256,150 L 292,230" />
-    <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 256,260 L 235,445" />
-    <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 256,260 L 277,445" />
-    <path stroke="#FF0000" stroke-width="6" stroke-linecap="round" d="M 238,280 L 236,360" /><path stroke="#FF0000" stroke-width="6" stroke-linecap="round" d="M 274,280 L 276,360" />
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#FF0000" />
+    </marker>
+    <marker id="arrow-neutral" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#888888" />
+    </marker>
+  </defs>
+  <!-- Background Badge / Stage -->
+  <circle cx="256" cy="256" r="230" fill="#111111" fill-opacity="0.035" stroke="#111111" stroke-width="1.5" stroke-opacity="0.08" />
+
+    <!-- Ground plane line with beveled ends and soft ground shadow -->
+    <ellipse cx="256" cy="446" rx="180" ry="12" fill="#888888" fill-opacity="0.15" />
+    <rect x="40" y="436" width="432" height="8" rx="4" fill="#888888" fill-opacity="0.6" stroke="#888888" stroke-width="2" />
+    
+    <!-- Mannequin Head (Standing Upright) -->
+    <path d="M 242,85 C 242,70 250,60 256,60 C 262,60 270,70 270,85 C 270,100 262,110 256,110 C 250,110 242,100 242,85 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Torso Athletic Posture -->
+    <path d="M 226,115 C 220,150 224,195 236,240 C 244,245 268,245 276,240 C 288,195 292,150 286,115 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Arms Relaxed or Crossed at Chest -->
+    <path d="M 226,120 L 200,195 L 210,198 L 234,130 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    <path d="M 286,120 L 312,195 L 302,198 L 278,130 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Muscular Standing Legs (Quads & Calves) -->
+    <path d="M 236,240 C 230,285 225,335 228,375 C 226,400 228,425 230,438 L 246,438 C 244,425 242,400 242,375 C 244,335 248,285 252,240 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    <path d="M 276,240 C 282,285 287,335 284,375 C 286,400 284,425 282,438 L 266,438 C 268,425 270,400 270,375 C 268,335 264,285 260,240 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+
+    <!-- Quads Contour Highlight -->
+    <path d="M 232,250 C 226,290 228,330 236,365 C 242,330 242,290 246,250 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+    <path d="M 280,250 C 286,290 284,330 276,365 C 270,330 270,290 266,250 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+    
 </svg>

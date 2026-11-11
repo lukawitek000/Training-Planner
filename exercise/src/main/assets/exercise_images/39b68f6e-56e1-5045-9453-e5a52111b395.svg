@@ -1,13 +1,38 @@
 <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-<path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 160,250 L 160,450" /><path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 352,250 L 352,450" /><path stroke="#888888" stroke-width="8" stroke-linecap="round" d="M 120,250 L 392,250" />
-        <!-- Head -->
-        <circle cx="256" cy="110" r="24" stroke="#111111" stroke-width="8" fill="none" />
-        <!-- Arms locked out in support -->
-        <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 230,135 L 200,250" />
-        <path stroke="#111111" stroke-width="12" stroke-linecap="round" d="M 282,135 L 312,250" />
-        <!-- Torso upright -->
-        <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 256,135 L 256,280" />
-        <!-- Legs bent at knees -->
-        <path stroke="#111111" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 256,280 L 246,360 L 290,400" />
-        <path stroke="#FF0000" stroke-width="6" stroke-linecap="round" d="M 215,170 L 205,230" /><path stroke="#FF0000" stroke-width="6" stroke-linecap="round" d="M 297,170 L 307,230" />
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#FF0000" />
+    </marker>
+    <marker id="arrow-neutral" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#888888" />
+    </marker>
+  </defs>
+  <!-- Background Badge / Stage -->
+  <circle cx="256" cy="256" r="230" fill="#111111" fill-opacity="0.035" stroke="#111111" stroke-width="1.5" stroke-opacity="0.08" />
+
+    <!-- Ring Straps -->
+    <line x1="190" y1="30" x2="190" y2="160" stroke="#888888" stroke-width="6" stroke-dasharray="8,4" />
+    <line x1="322" y1="30" x2="322" y2="160" stroke="#888888" stroke-width="6" stroke-dasharray="8,4" />
+    <!-- Gymnastic Rings -->
+    <circle cx="190" cy="190" r="26" fill="none" stroke="#888888" stroke-width="8" />
+    <circle cx="322" cy="190" r="26" fill="none" stroke="#888888" stroke-width="8" />
+    
+        <!-- Head Upright -->
+        <path d="M 242,100 C 242,85 250,75 256,75 C 262,75 270,85 270,100 C 270,115 262,125 256,125 C 250,125 242,115 242,100 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+        
+        <!-- Torso Locked Out Upright -->
+        <path d="M 230,128 C 224,165 228,215 238,260 C 246,265 266,265 274,260 C 284,215 288,165 282,128 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+        
+        <!-- Arms Locked Out Supporting Weight -->
+        <path d="M 230,135 L 180,245 C 180,250 188,252 194,250 L 244,140 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+        <path d="M 282,135 L 332,245 C 332,250 324,252 318,250 L 268,140 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+        
+        <!-- Knees Bent Behind Body -->
+        <path d="M 238,260 C 235,290 230,320 240,350 C 245,360 265,390 280,390 L 285,380 C 272,375 258,350 252,320 C 248,290 248,260 250,260 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+        <path d="M 274,260 C 271,290 266,320 276,350 C 281,360 301,390 316,390 L 321,380 C 308,375 294,350 288,320 C 284,290 284,260 286,260 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+
+        <!-- Triceps Active Highlight -->
+        <path d="M 232,145 L 185,240 L 195,244 L 242,150 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+        <path d="M 280,145 L 327,240 L 317,244 L 270,150 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+        
 </svg>

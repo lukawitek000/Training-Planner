@@ -1,16 +1,44 @@
 <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-<path stroke="#888888" stroke-width="6" stroke-linecap="round" d="M 60,450 L 452,450" />
-    <path stroke="#111111" stroke-width="8" stroke-linecap="round" d="M 190,450 L 220,450" />
-    <path stroke="#111111" stroke-width="8" stroke-linecap="round" d="M 292,450 L 322,450" />
-    <!-- Arms bent at elbows in tripod -->
-    <path stroke="#111111" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 205,450 L 165,370 L 230,370" />
-    <path stroke="#111111" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" d="M 307,450 L 347,370 L 282,370" />
-    <!-- Head hovering at floor line -->
-    <circle cx="256" cy="415" r="24" stroke="#111111" stroke-width="8" fill="none" />
-    <!-- Torso inverted -->
-    <path stroke="#111111" stroke-width="16" stroke-linecap="round" d="M 256,370 L 256,230" />
-    <!-- Legs vertical straight up -->
-    <path stroke="#111111" stroke-width="14" stroke-linecap="round" d="M 256,230 L 256,90" />
-    <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 225,370 L 175,375" /><path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 287,370 L 337,375" />
-    <path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 180,380 L 200,430" /><path stroke="#FF0000" stroke-width="8" stroke-linecap="round" d="M 332,380 L 312,430" />
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#FF0000" />
+    </marker>
+    <marker id="arrow-neutral" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#888888" />
+    </marker>
+  </defs>
+  <!-- Background Badge / Stage -->
+  <circle cx="256" cy="256" r="230" fill="#111111" fill-opacity="0.035" stroke="#111111" stroke-width="1.5" stroke-opacity="0.08" />
+
+    <!-- Ground plane line with beveled ends and soft ground shadow -->
+    <ellipse cx="256" cy="446" rx="180" ry="12" fill="#888888" fill-opacity="0.15" />
+    <rect x="40" y="436" width="432" height="8" rx="4" fill="#888888" fill-opacity="0.6" stroke="#888888" stroke-width="2" />
+    
+    
+    <!-- Motion Arrow Upward -->
+    <path d="M 256,360 L 256,290" stroke="#FF0000" stroke-width="3" stroke-dasharray="6,4" marker-end="url(#arrow)" />
+
+    <rect x="190" y="432" width="35" height="8" rx="4" fill="#111111" fill-opacity="0.5" />
+    <rect x="287" y="432" width="35" height="8" rx="4" fill="#111111" fill-opacity="0.5" />
+    
+    <!-- Bent Arms in Tripod (Elbows flexed at 90 deg) -->
+    <path d="M 205,432 L 160,375 C 158,370 162,365 168,365 L 230,360 C 235,362 235,368 230,372 L 180,380 L 218,432 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    <path d="M 307,432 L 352,375 C 354,370 350,365 344,365 L 282,360 C 277,362 277,368 282,372 L 332,380 L 294,432 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Head Hovering 2 inches off floor -->
+    <path d="M 242,405 C 242,390 250,380 256,380 C 262,380 270,390 270,405 C 270,420 262,430 256,430 C 250,430 242,420 242,405 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Inverted Torso Lowered -->
+    <path d="M 230,360 C 224,320 228,270 238,220 C 246,215 266,215 274,220 C 284,270 288,320 282,360 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    
+    <!-- Legs Straight Up -->
+    <path d="M 238,220 C 236,185 234,145 238,115 L 250,115 C 248,145 248,185 252,220 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+    <path d="M 274,220 C 276,185 278,145 274,115 L 262,115 C 264,145 264,185 260,220 Z" fill="#111111" fill-opacity="0.22" stroke="#111111" stroke-width="2" stroke-opacity="0.6" />
+
+    <!-- Peak Deltoid & Tricep Activation -->
+    <path d="M 230,365 C 220,345 232,335 242,345 C 238,365 234,370 230,365 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+    <path d="M 282,365 C 292,345 280,335 270,345 C 274,365 278,370 282,365 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+    <path d="M 165,372 L 205,420 L 215,415 L 175,368 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+    <path d="M 347,372 L 307,420 L 297,415 L 337,368 Z" fill="#FF0000" fill-opacity="0.9" stroke="#FF0000" stroke-width="1.5" />
+    
 </svg>
