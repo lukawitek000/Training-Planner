@@ -320,3 +320,8 @@ hs_err_pid*
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,android,androidstudio,intellij,windows
+
+# Local Exercise Video Hunting & SVG Conversion Tools
+/tools/
+/comparison_images/
+*.mp4
