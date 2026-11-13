@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder
 
 import java.util.Date
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 interface TimeProvider {
     /**
@@ -11,4 +13,9 @@ interface TimeProvider {
     fun currentDate(): Date
 
     fun elapsedTimeMillis(): Long
+
+    /**
+     * Monotonic duration elapsed since device boot.
+     */
+    fun elapsedTime(): Duration = elapsedTimeMillis().milliseconds
 }

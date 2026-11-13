@@ -74,7 +74,8 @@ internal class TrainingSession(
     fun endEarly() {
         val event = currentPhase.value.endEarly() ?: return
         recordPhaseEvent(event)
-        transitionToPhase(nextPhaseProvider.summaryPhase())
+        currentPhase.value.close()
+        statisticsRecorder.onEvent(SessionEvent.SessionFinished)
         currentPhase.value = IdlePhase
     }
 

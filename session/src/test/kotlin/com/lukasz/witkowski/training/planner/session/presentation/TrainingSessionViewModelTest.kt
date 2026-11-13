@@ -177,7 +177,7 @@ class TrainingSessionViewModelTest {
                     statistics =
                     TrainingStatistics(
                         trainingPlanId = trainingPlanId,
-                        totalTime = Time(120_000L),
+                        totalTime = 120.seconds,
                         date = Date(0L),
                         exercisesStatistics = emptyList(),
                         note = "Done",

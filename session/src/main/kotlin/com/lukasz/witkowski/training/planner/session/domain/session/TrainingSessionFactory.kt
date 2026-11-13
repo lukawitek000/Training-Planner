@@ -4,6 +4,7 @@ import com.lukasz.witkowski.training.planner.session.domain.session.phases.NextP
 import com.lukasz.witkowski.training.planner.session.domain.session.queue.ExerciseQueue
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.BasicStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.CompositeStatisticsRecorder
+import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsProvider
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SystemTimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.TimeProvider
@@ -15,7 +16,8 @@ internal object TrainingSessionFactory {
     fun create(
         trainingPlan: TrainingPlan,
         policy: TrainingSetsPolicy = StraightSetsPolicy(),
-        statisticsRecorder: SessionStatisticsRecorder = CompositeStatisticsRecorder(),
+        statisticsRecorder: SessionStatisticsRecorder? = null,
+        additionalRecorders: List<SessionStatisticsRecorder> = emptyList(),
         timeProvider: TimeProvider = SystemTimeProvider(),
         timerFactory: TimerFactory = TimerFactory(timeProvider = timeProvider),
         scope: CoroutineScope
@@ -27,23 +29,28 @@ internal object TrainingSessionFactory {
             ExerciseQueue(
                 loadedExercises = policy.loadExercises(trainingPlan)
             )
-        val basicRecorder =
-            BasicStatisticsRecorder(
-                trainingPlanId = trainingPlan.id,
-                timeProvider = timeProvider
-            )
-        val compositeRecorder =
-            statisticsRecorder as? BasicStatisticsRecorder
-                ?: CompositeStatisticsRecorder(basicRecorder, statisticsRecorder)
-        val statisticsProvider =
-            statisticsRecorder as? BasicStatisticsRecorder ?: basicRecorder
+        val primaryProvider = (statisticsRecorder as? SessionStatisticsProvider)
+            ?: BasicStatisticsRecorder(timeProvider = timeProvider)
+        val allRecorders = buildList {
+            add(primaryProvider as SessionStatisticsRecorder)
+            if (statisticsRecorder != null && statisticsRecorder !== primaryProvider) {
+                add(statisticsRecorder)
+            }
+            addAll(additionalRecorders)
+        }.distinct()
+        val compositeRecorder = if (allRecorders.size == 1) {
+            allRecorders.first()
+        } else {
+            CompositeStatisticsRecorder(allRecorders)
+        }
+
         return TrainingSession(
             trainingPlanId = trainingPlan.id,
             exerciseQueue = exerciseQueue,
             nextPhaseProvider =
             NextPhaseProvider(
                 exerciseQueue = exerciseQueue,
-                statisticsProvider = statisticsProvider,
+                statisticsProvider = primaryProvider,
                 timerFactory = timerFactory
             ),
             statisticsRecorder = compositeRecorder,

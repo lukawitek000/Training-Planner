@@ -4,6 +4,7 @@ import com.lukasz.witkowski.training.planner.analytics.domain.StatisticsReposito
 import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.StatisticsDao
 import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.mappers.toDbTrainingStatistics
 import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.mappers.toTrainingStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
@@ -14,6 +15,10 @@ class DbStatisticsRepository(private val statisticsDao: StatisticsDao) : Statist
     override suspend fun save(trainingStatistics: TrainingStatistics) {
         val dbTrainingStatistics = trainingStatistics.toDbTrainingStatistics()
         statisticsDao.insertAllStatistics(dbTrainingStatistics)
+    }
+
+    override suspend fun updateMetadata(id: TrainingStatisticsId, rpe: SessionRpe?, note: String?) {
+        statisticsDao.updateMetadata(id.toString(), rpe?.score, note)
     }
 
     override fun delete(trainingStatistics: TrainingStatistics) {

@@ -17,6 +17,7 @@ import java.util.Date
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -60,7 +61,7 @@ class DbStatisticsRepositoryTest {
             ExerciseAttemptStatistics(
                 id = attemptId,
                 trainingExerciseId = trainingExerciseId,
-                time = Time(30_000L),
+                time = 30.seconds,
                 set = 1,
                 completed = true,
                 actualReps = 12,
@@ -79,7 +80,7 @@ class DbStatisticsRepositoryTest {
             TrainingStatistics(
                 id = statisticsId,
                 trainingPlanId = trainingPlanId,
-                totalTime = Time(120_000L),
+                totalTime = 120.seconds,
                 date = Date(1_000_000L),
                 exercisesStatistics = listOf(exerciseStatistics),
                 note = "Strong session, felt good on bench press",
@@ -117,7 +118,7 @@ class DbStatisticsRepositoryTest {
             TrainingStatistics(
                 id = TrainingStatisticsId.create(),
                 trainingPlanId = planId,
-                totalTime = Time(60_000L),
+                totalTime = 60.seconds,
                 date = Date(100L),
                 exercisesStatistics = emptyList(),
                 note = "Plan 1 Session 1"
@@ -126,7 +127,7 @@ class DbStatisticsRepositoryTest {
             TrainingStatistics(
                 id = TrainingStatisticsId.create(),
                 trainingPlanId = planId,
-                totalTime = Time(90_000L),
+                totalTime = 90.seconds,
                 date = Date(200L),
                 exercisesStatistics = emptyList(),
                 note = "Plan 1 Session 2"
@@ -135,7 +136,7 @@ class DbStatisticsRepositoryTest {
             TrainingStatistics(
                 id = TrainingStatisticsId.create(),
                 trainingPlanId = otherPlanId,
-                totalTime = Time(45_000L),
+                totalTime = 45.seconds,
                 date = Date(300L),
                 exercisesStatistics = emptyList(),
                 note = "Other Plan Session"

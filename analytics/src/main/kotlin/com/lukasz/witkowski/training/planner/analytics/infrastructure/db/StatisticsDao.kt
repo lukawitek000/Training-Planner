@@ -36,6 +36,9 @@ interface StatisticsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(dbExerciseStatistics: DbExerciseStatistics)
 
+    @Query("UPDATE TrainingStatistics SET rpe = :rpe, note = :note WHERE id = :id")
+    suspend fun updateMetadata(id: String, rpe: Int?, note: String?)
+
     @Transaction
     @Query("SELECT * FROM TrainingStatistics WHERE trainingPlanId=:trainingPlanId")
     fun getTrainingStatisticsByTrainingPlanId(

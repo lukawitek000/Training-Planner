@@ -9,7 +9,7 @@ data class ExerciseStatistics(
     val attemptsStatistics: List<ExerciseAttemptStatistics>
 ) {
     val totalTime: Duration
-        get()  = attemptsStatistics.fold(Duration.ZERO) { acc, value -> acc + value.time }
+        get() = attemptsStatistics.fold(Duration.ZERO) { acc, value -> acc + value.time }
 
     val completenessRate: Double
         get() {

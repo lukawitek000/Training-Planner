@@ -40,8 +40,13 @@ fun TrainingSessionScreen(
     val trainingSessionState by viewModel.trainingSessionState.collectAsState()
     var showExitConfirmationDialog by rememberSaveable { mutableStateOf(false) }
 
-    BackHandler(enabled = trainingSessionState !is TrainingSessionUiState.Summary) {
-        showExitConfirmationDialog = !showExitConfirmationDialog
+    BackHandler(enabled = true) {
+        if (trainingSessionState is TrainingSessionUiState.Summary) {
+            viewModel.onIntent(SessionIntent.FinishWorkout)
+            navigateBack()
+        } else {
+            showExitConfirmationDialog = !showExitConfirmationDialog
+        }
     }
 
     Box(
@@ -51,7 +56,10 @@ fun TrainingSessionScreen(
         TrainingSessionContent(
             trainingSessionUiState = trainingSessionState,
             onSessionIntent = viewModel::onIntent,
-            onFinishWorkout = { navigateBack() },
+            onFinishWorkout = {
+                viewModel.onIntent(SessionIntent.FinishWorkout)
+                navigateBack()
+            },
             onEndClicked = { showExitConfirmationDialog = true }
         )
         if (showExitConfirmationDialog) {

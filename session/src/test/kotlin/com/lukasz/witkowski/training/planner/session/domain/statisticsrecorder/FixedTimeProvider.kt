@@ -4,7 +4,8 @@ import com.lukasz.witkowski.training.planner.session.domain.session.statisticsre
 import java.util.Date
 import kotlin.time.Duration
 
-class FixedTimeProvider(var time: Duration = Duration.ZERO, var date: Date = Date(0L)) : TimeProvider {
+class FixedTimeProvider(var time: Duration = Duration.ZERO, var date: Date = Date(0L)) :
+    TimeProvider {
     override fun currentTime(): Long = time.inWholeMilliseconds
 
     override fun currentDate(): Date = date

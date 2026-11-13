@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.analytics.domain
 
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
@@ -7,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface StatisticsRepository {
     suspend fun save(trainingStatistics: TrainingStatistics)
+
+    suspend fun updateMetadata(id: TrainingStatisticsId, rpe: SessionRpe?, note: String?)
 
     fun delete(trainingStatistics: TrainingStatistics)
 

@@ -6,8 +6,11 @@ import com.lukasz.witkowski.training.planner.session.TrainingSessionTest
 import com.lukasz.witkowski.training.planner.session.createDummyExercise
 import com.lukasz.witkowski.training.planner.session.createTrainingExercise
 import com.lukasz.witkowski.training.planner.session.createTrainingPlan
+import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedListener
 import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
+import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
+import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.session.SessionCommand
 import com.lukasz.witkowski.training.planner.session.domain.session.StraightSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
@@ -37,6 +40,24 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
     private val timeProvider: FixedTimeProvider = FixedTimeProvider()
     private val trainingSetsPolicy: TrainingSetsPolicy = StraightSetsPolicy()
     private val recordedEvents = mutableListOf<SessionEvent>()
+    private val completedStatistics = mutableListOf<TrainingStatistics>()
+    private val updatedMetadata =
+        mutableListOf<Triple<TrainingStatisticsId, SessionRpe?, String?>>()
+
+    private val sessionCompletedListener =
+        object : SessionCompletedListener {
+            override suspend fun onSessionCompleted(statistics: TrainingStatistics) {
+                completedStatistics.add(statistics)
+            }
+
+            override suspend fun onSessionMetadataUpdated(
+                id: TrainingStatisticsId,
+                rpe: SessionRpe?,
+                note: String?
+            ) {
+                updatedMetadata.add(Triple(id, rpe, note))
+            }
+        }
 
     private lateinit var trainingExercises: List<TrainingExercise>
     private lateinit var trainingPlan: TrainingPlan
@@ -48,10 +69,13 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
     @Before
     fun setUp() {
         recordedEvents.clear()
+        completedStatistics.clear()
+        updatedMetadata.clear()
         trainingExercises = TRAINING_EXERCISES
         trainingPlan = TRAINING_PLAN
         trainingSessionService =
             TrainingSessionService(
+                sessionCompletedListener = sessionCompletedListener,
                 timeProvider = timeProvider,
                 timerFactory =
                 TimerFactory(
@@ -61,6 +85,7 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
                 ),
                 trainingSetsStrategy = trainingSetsPolicy,
                 backgroundDispatcher = UnconfinedTestDispatcher(scheduler),
+                ioDispatcher = UnconfinedTestDispatcher(scheduler),
                 sessionStatisticsRecorder = SessionStatisticsRecorder { recordedEvents.add(it) }
             )
     }
@@ -207,5 +232,54 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
             TrainingSessionState.IdleState,
             trainingSessionService.trainingSessionState.value
         )
+    }
+
+    @Test
+    fun `reaching summary state eagerly triggers onSessionCompleted on sessionCompletedListener`() {
+        // given
+        val exercise = createTrainingExercise(sets = 1)
+        val plan = createTrainingPlan(listOf(exercise))
+        trainingSessionService.startTraining(plan)
+
+        // when: complete Set 1 -> transitions to SummaryState
+        trainingSessionService.completed()
+
+        // then
+        assertTrue(
+            trainingSessionService.trainingSessionState.value is TrainingSessionState.SummaryState
+        )
+        assertEquals(1, completedStatistics.size)
+        assertEquals(plan.id, completedStatistics.first().trainingPlanId)
+        assertTrue(updatedMetadata.isEmpty())
+    }
+
+    @Test
+    fun `finishWorkout updates metadata and resets active session state to IdleState`() {
+        // given
+        val exercise = createTrainingExercise(sets = 1)
+        val plan = createTrainingPlan(listOf(exercise))
+        trainingSessionService.startTraining(plan)
+        trainingSessionService.completed() // reach summary
+        val summaryState =
+            trainingSessionService.trainingSessionState.value as TrainingSessionState.SummaryState
+        val statsId = summaryState.statistics.id
+
+        // when
+        trainingSessionService.updateSessionFeedback(SessionRpe.VERY_HARD)
+        trainingSessionService.updateSessionNotes("Challenging workout")
+        trainingSessionService.finishWorkout()
+
+        // then
+        assertEquals(1, completedStatistics.size)
+        assertEquals(1, updatedMetadata.size)
+        val (updatedId, updatedRpe, updatedNote) = updatedMetadata.first()
+        assertEquals(statsId, updatedId)
+        assertEquals(SessionRpe.VERY_HARD, updatedRpe)
+        assertEquals("Challenging workout", updatedNote)
+        assertEquals(
+            TrainingSessionState.IdleState,
+            trainingSessionService.trainingSessionState.value
+        )
+        assertNull(trainingSessionService.trainingPlan)
     }
 }
