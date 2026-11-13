@@ -6,6 +6,7 @@ import kotlin.time.Duration
 data class ExerciseStatistics(
     val id: ExerciseStatisticsId = ExerciseStatisticsId.create(),
     val trainingExerciseId: TrainingExerciseId,
+    val exerciseName: String = "",
     val attemptsStatistics: List<ExerciseAttemptStatistics>
 ) {
     val totalTime: Duration
@@ -14,6 +15,7 @@ data class ExerciseStatistics(
     val completenessRate: Double
         get() {
             val numberOfAttempts = attemptsStatistics.size
+            if (numberOfAttempts == 0) return 0.0
             val completedAttempts = attemptsStatistics.count { it.completed }
             return completedAttempts / numberOfAttempts.toDouble()
         }

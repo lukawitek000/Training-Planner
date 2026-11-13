@@ -14,7 +14,7 @@ import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.models.
         DbExerciseStatistics::class,
         DbExerciseAttemptStatistics::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class StatisticsDatabase : RoomDatabase() {

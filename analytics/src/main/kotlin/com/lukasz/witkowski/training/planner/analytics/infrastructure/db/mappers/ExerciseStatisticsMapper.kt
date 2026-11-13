@@ -14,7 +14,8 @@ internal fun ExerciseStatistics.toDbExerciseStatistics(
     DbExerciseStatistics(
         id = id.toString(),
         trainingStatisticsId = trainingStatisticsId.toString(),
-        trainingExerciseId = trainingExerciseId.toString()
+        trainingExerciseId = trainingExerciseId.toString(),
+        exerciseName = exerciseName
     ),
     exerciseAttemptsStatistics =
     attemptsStatistics.map {
@@ -26,8 +27,9 @@ internal fun DbExerciseWithAttemptsStatistics.toExerciseStatistics(): ExerciseSt
     ExerciseStatistics(
         id = ExerciseStatisticsId(exerciseStatistics.id),
         trainingExerciseId = TrainingExerciseId(exerciseStatistics.trainingExerciseId),
+        exerciseName = exerciseStatistics.exerciseName,
         attemptsStatistics =
-        exerciseAttemptsStatistics.map {
-            it.toExerciseAttemptStatistics()
-        }
+        exerciseAttemptsStatistics
+            .sortedBy { it.set }
+            .map { it.toExerciseAttemptStatistics() }
     )

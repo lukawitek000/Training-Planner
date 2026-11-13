@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.analytics.infrastructure
 
 import android.content.Context
+import androidx.paging.testing.asSnapshot
 import androidx.room3.Room
 import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.StatisticsDatabase
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
@@ -17,6 +18,8 @@ import java.util.Date
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -73,6 +76,7 @@ class DbStatisticsRepositoryTest {
             ExerciseStatistics(
                 id = exerciseStatisticsId,
                 trainingExerciseId = trainingExerciseId,
+                exerciseName = "Bench Press",
                 attemptsStatistics = listOf(attempt)
             )
 
@@ -99,6 +103,7 @@ class DbStatisticsRepositoryTest {
 
         val retrievedExercise = retrieved.exercisesStatistics.first()
         assertEquals(trainingExerciseId, retrievedExercise.trainingExerciseId)
+        assertEquals("Bench Press", retrievedExercise.exerciseName)
         assertEquals(1, retrievedExercise.attemptsStatistics.size)
 
         val retrievedAttempt = retrievedExercise.attemptsStatistics.first()
@@ -154,5 +159,182 @@ class DbStatisticsRepositoryTest {
                 it.note
             }.toSet()
         )
+    }
+
+    @Test
+    fun getOverviewsByTrainingPlanIdReturnsMostRecentFirstWithComputedMetrics() = runTest {
+        val targetPlanId = TrainingPlanId.create()
+        val otherPlanId = TrainingPlanId.create()
+        val holdExerciseId = TrainingExerciseId.create()
+        val pressExerciseId = TrainingExerciseId.create()
+
+        val olderStats =
+            TrainingStatistics(
+                id = TrainingStatisticsId.create(),
+                trainingPlanId = targetPlanId,
+                totalTime = 30.minutes,
+                date = Date(1_000L),
+                exercisesStatistics = listOf(
+                    ExerciseStatistics(
+                        id = ExerciseStatisticsId.create(),
+                        trainingExerciseId = holdExerciseId,
+                        exerciseName = "90° Hold",
+                        attemptsStatistics = emptyList()
+                    )
+                ),
+                note = "Older session",
+                rpe = SessionRpe.MODERATE
+            )
+
+        val newerStats =
+            TrainingStatistics(
+                id = TrainingStatisticsId.create(),
+                trainingPlanId = targetPlanId,
+                totalTime = 54.minutes,
+                date = Date(5_000L),
+                exercisesStatistics = listOf(
+                    ExerciseStatistics(
+                        id = ExerciseStatisticsId.create(),
+                        trainingExerciseId = holdExerciseId,
+                        exerciseName = "90° Hold",
+                        attemptsStatistics = listOf(
+                            ExerciseAttemptStatistics(
+                                id = ExerciseAttemptStatisticsId.create(),
+                                trainingExerciseId = holdExerciseId,
+                                time = 100.seconds,
+                                set = 1,
+                                completed = true,
+                                actualReps = 10,
+                                actualWeightInKg = 100.0
+                            ),
+                            ExerciseAttemptStatistics(
+                                id = ExerciseAttemptStatisticsId.create(),
+                                trainingExerciseId = holdExerciseId,
+                                time = 50.seconds,
+                                set = 2,
+                                completed = false,
+                                actualReps = 5,
+                                actualWeightInKg = 100.0
+                            )
+                        )
+                    ),
+                    ExerciseStatistics(
+                        id = ExerciseStatisticsId.create(),
+                        trainingExerciseId = pressExerciseId,
+                        exerciseName = "Incline DB Press",
+                        attemptsStatistics = listOf(
+                            ExerciseAttemptStatistics(
+                                id = ExerciseAttemptStatisticsId.create(),
+                                trainingExerciseId = pressExerciseId,
+                                time = 120.seconds,
+                                set = 1,
+                                completed = true,
+                                actualReps = 12,
+                                actualWeightInKg = 25.0
+                            )
+                        )
+                    )
+                ),
+                note = "Felt strong on bench",
+                rpe = SessionRpe.VERY_HARD
+            )
+
+        val otherPlanStats =
+            TrainingStatistics(
+                id = TrainingStatisticsId.create(),
+                trainingPlanId = otherPlanId,
+                totalTime = 20.minutes,
+                date = Date(9_000L),
+                exercisesStatistics = emptyList()
+            )
+
+        repository.save(olderStats)
+        repository.save(newerStats)
+        repository.save(otherPlanStats)
+
+        val overviews = repository.getOverviewsByTrainingPlanId(targetPlanId).asSnapshot()
+
+        assertEquals(2, overviews.size)
+        assertEquals(newerStats.id, overviews[0].id)
+        assertEquals(olderStats.id, overviews[1].id)
+
+        val latestOverview = overviews[0]
+        assertEquals(54.minutes, latestOverview.totalTime)
+        assertEquals(1800.0, latestOverview.totalVolumeKg, 0.01)
+        assertEquals(2, latestOverview.completedSetsCount)
+        assertEquals(3, latestOverview.totalSetsCount)
+        assertEquals(2.0 / 3.0, latestOverview.completenessRate, 0.001)
+        assertEquals(SessionRpe.VERY_HARD, latestOverview.rpe)
+        assertEquals("Felt strong on bench", latestOverview.note)
+        assertEquals(2, latestOverview.exerciseOverviews.size)
+
+        val holdOverview = latestOverview.exerciseOverviews.first {
+            it.trainingExerciseId == holdExerciseId
+        }
+        assertEquals("90° Hold", holdOverview.exerciseName)
+        assertEquals(150.seconds, holdOverview.totalTime)
+        assertEquals(0.5, holdOverview.completenessRate, 0.001)
+
+        val olderOverview = overviews[1]
+        assertEquals(0, olderOverview.totalSetsCount)
+        assertEquals(0.0, olderOverview.completenessRate, 0.001)
+        assertEquals(0.0, olderOverview.exerciseOverviews.single().completenessRate, 0.001)
+    }
+
+    @Test
+    fun getByTrainingStatisticsIdReturnsNullForUnknownIdAndSortsSetsAscending() = runTest {
+        assertNull(repository.getByTrainingStatisticsId(TrainingStatisticsId.create()).first())
+
+        val planId = TrainingPlanId.create()
+        val exerciseId = TrainingExerciseId.create()
+        val statsId = TrainingStatisticsId.create()
+
+        val statistics =
+            TrainingStatistics(
+                id = statsId,
+                trainingPlanId = planId,
+                totalTime = 10.minutes,
+                date = Date(2_000L),
+                exercisesStatistics = listOf(
+                    ExerciseStatistics(
+                        id = ExerciseStatisticsId.create(),
+                        trainingExerciseId = exerciseId,
+                        exerciseName = "Archer Push-Up",
+                        attemptsStatistics = listOf(
+                            ExerciseAttemptStatistics(
+                                id = ExerciseAttemptStatisticsId.create(),
+                                trainingExerciseId = exerciseId,
+                                time = 30.seconds,
+                                set = 3,
+                                completed = true,
+                                actualReps = 8
+                            ),
+                            ExerciseAttemptStatistics(
+                                id = ExerciseAttemptStatisticsId.create(),
+                                trainingExerciseId = exerciseId,
+                                time = 30.seconds,
+                                set = 1,
+                                completed = true,
+                                actualReps = 10
+                            ),
+                            ExerciseAttemptStatistics(
+                                id = ExerciseAttemptStatisticsId.create(),
+                                trainingExerciseId = exerciseId,
+                                time = 30.seconds,
+                                set = 2,
+                                completed = true,
+                                actualReps = 9
+                            )
+                        )
+                    )
+                )
+            )
+
+        repository.save(statistics)
+
+        val retrieved = repository.getByTrainingStatisticsId(statsId).first()
+        assertNotNull(retrieved)
+        val setsOrder = retrieved.exercisesStatistics.single().attemptsStatistics.map { it.set }
+        assertEquals(listOf(1, 2, 3), setsOrder)
     }
 }

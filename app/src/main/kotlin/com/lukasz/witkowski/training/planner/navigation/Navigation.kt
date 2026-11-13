@@ -210,7 +210,10 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.trainingPlanEntryBuilder(
     entry<TrainingPlanDetails> { key ->
         TrainingPlanDetailsScreen(
             viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
-            onStartTrainingSessionClicked = { navigator.trainingSession(it) }
+            onStartTrainingSessionClicked = { navigator.trainingSession(it) },
+            previousSessionsTabContent = { modifier ->
+
+            }
         )
     }
 

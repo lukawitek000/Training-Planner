@@ -61,6 +61,7 @@ import kotlin.time.Instant
 @Composable
 fun TrainingPlanDetailsScreen(
     viewModel: TrainingPlanDetailsViewModel,
+    previousSessionsTabContent: @Composable (Modifier) -> Unit,
     modifier: Modifier = Modifier,
     onStartTrainingSessionClicked: (TrainingPlanId) -> Unit = {}
 ) {
@@ -68,6 +69,7 @@ fun TrainingPlanDetailsScreen(
     TrainingPlanDetailsScreenContent(
         modifier = modifier.fillMaxSize(),
         trainingPlanState = trainingPlanState,
+        previousSessionsTabContent = previousSessionsTabContent,
         onStartTrainingSessionClicked = onStartTrainingSessionClicked
     )
 }
@@ -75,6 +77,7 @@ fun TrainingPlanDetailsScreen(
 @Composable
 fun TrainingPlanDetailsScreenContent(
     trainingPlanState: ResultHandler<TrainingPlan>,
+    previousSessionsTabContent: @Composable (Modifier) -> Unit,
     modifier: Modifier = Modifier,
     onStartTrainingSessionClicked: (TrainingPlanId) -> Unit = {}
 ) {
@@ -90,6 +93,7 @@ fun TrainingPlanDetailsScreenContent(
             TrainingPlanDetails(
                 modifier = modifier,
                 trainingPlan = trainingPlanState.value,
+                previousSessionsTabContent = previousSessionsTabContent,
                 onStartTrainingSessionClicked = onStartTrainingSessionClicked
             )
         }
@@ -109,6 +113,7 @@ fun TrainingPlanDetailsScreenContent(
 @Composable
 private fun TrainingPlanDetails(
     trainingPlan: TrainingPlan,
+    previousSessionsTabContent: @Composable (Modifier) -> Unit,
     modifier: Modifier = Modifier,
     onStartTrainingSessionClicked: (TrainingPlanId) -> Unit = {}
 ) {
@@ -153,9 +158,7 @@ private fun TrainingPlanDetails(
                 exercises = trainingPlan.exercises,
                 modifier = Modifier.weight(1f)
             )
-            1 -> PreviousSessionsTabContent(
-                modifier = Modifier.weight(1f)
-            )
+            1 -> previousSessionsTabContent(Modifier.weight(1f))
         }
     }
 }
@@ -318,21 +321,16 @@ private fun ExerciseListItem(
     }
 }
 
-@Composable
-private fun PreviousSessionsTabContent(modifier: Modifier = Modifier) {
-    AppEmptyState(
-        title = stringResource(id = R.string.no_previous_sessions),
-        modifier = modifier
-    )
-}
-
 @AppPreview
 @Composable
 private fun TrainingPlanDetailsScreenContentLoadingPreview() {
     TrainingPlannerTheme {
         TrainingPlanDetailsScreenContent(
             trainingPlanState = ResultHandler.Loading,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            previousSessionsTabContent = {
+                AppEmptyState("No Data", modifier = it)
+            }
         )
     }
 }
@@ -343,7 +341,10 @@ private fun TrainingPlanDetailsScreenContentFailurePreview() {
     TrainingPlannerTheme {
         TrainingPlanDetailsScreenContent(
             trainingPlanState = ResultHandler.Error("Some error"),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            previousSessionsTabContent = {
+                AppEmptyState("No Data", modifier = it)
+            }
         )
     }
 }
@@ -354,7 +355,10 @@ private fun TrainingPlanDetailsScreenContentPreview() {
     TrainingPlannerTheme {
         TrainingPlanDetailsScreenContent(
             trainingPlanState = ResultHandler.Success(value = PREVIEW_TRAINING_PLAN),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            previousSessionsTabContent = {
+                AppEmptyState("No Data", modifier = it)
+            }
         )
     }
 }

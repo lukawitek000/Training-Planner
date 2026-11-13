@@ -131,7 +131,7 @@ class SessionStatisticsRecorderTest {
 
             val plan =
                 createTrainingPlan(
-                    listOf(createTrainingExercise(sets = 1))
+                    listOf(createTrainingExercise(name = "90° Hold", sets = 1))
                 )
 
             val session =
@@ -152,6 +152,7 @@ class SessionStatisticsRecorderTest {
             val stats = recorder.getStatistics()
             assertEquals(45.seconds, stats.totalTime)
             assertEquals(1, stats.exercisesStatistics.size)
+            assertEquals("90° Hold", stats.exercisesStatistics[0].exerciseName)
             assertEquals(1, stats.exercisesStatistics[0].attemptsStatistics.size)
             assertEquals(12, stats.exercisesStatistics[0].attemptsStatistics[0].actualReps)
             assertEquals(

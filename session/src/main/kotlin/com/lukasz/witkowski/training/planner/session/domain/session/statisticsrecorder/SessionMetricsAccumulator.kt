@@ -23,6 +23,7 @@ internal data class SessionMetricsAccumulator(
     val stopElapsed: Duration? = null,
     val attempts: List<ExerciseAttemptStatistics> = emptyList(),
     val exerciseStatisticsIds: Map<TrainingExerciseId, ExerciseStatisticsId> = emptyMap(),
+    val exerciseNames: Map<TrainingExerciseId, String> = emptyMap(),
     val setCountsByExercise: Map<TrainingExerciseId, Int> = emptyMap(),
     val currentExerciseStartTime: Duration? = null,
     val currentRestStartTime: Duration? = null,
@@ -108,6 +109,7 @@ internal data class SessionMetricsAccumulator(
             attempts = attempts + attempt,
             setCountsByExercise = updatedSetCounts,
             exerciseStatisticsIds = updatedExerciseIds,
+            exerciseNames = exerciseNames + (exerciseId to exercise.snapshot.name),
             currentExerciseStartTime = null
         )
     }
@@ -148,6 +150,7 @@ internal data class SessionMetricsAccumulator(
             ExerciseStatistics(
                 id = exerciseStatsId,
                 trainingExerciseId = exerciseId,
+                exerciseName = exerciseNames[exerciseId].orEmpty(),
                 attemptsStatistics = attemptsStatistics
             )
         }

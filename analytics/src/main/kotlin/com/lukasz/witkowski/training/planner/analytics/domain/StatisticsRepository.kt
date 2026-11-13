@@ -1,5 +1,7 @@
 package com.lukasz.witkowski.training.planner.analytics.domain
 
+import androidx.paging.PagingData
+import com.lukasz.witkowski.training.planner.analytics.domain.models.TrainingStatisticsOverview
 import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
@@ -15,7 +17,11 @@ interface StatisticsRepository {
 
     fun getByTrainingPlanId(trainingPlanId: TrainingPlanId): Flow<List<TrainingStatistics>>
 
+    fun getOverviewsByTrainingPlanId(
+        trainingPlanId: TrainingPlanId
+    ): Flow<PagingData<TrainingStatisticsOverview>>
+
     fun getByTrainingStatisticsId(
         trainingStatisticsId: TrainingStatisticsId
-    ): Flow<TrainingStatistics>
+    ): Flow<TrainingStatistics?>
 }
