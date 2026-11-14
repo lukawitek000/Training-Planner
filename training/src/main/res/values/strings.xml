@@ -12,7 +12,6 @@
     <string name="training_plan_details">Training Plan Details</string>
     <string name="exercises_tab_title">Exercises</string>
     <string name="previous_sessions_tab_title">Previous sessions</string>
-    <string name="no_previous_sessions">No previous sessions available yet</string>
     <string name="training_plan_not_found">Training Plan not found</string>
     <string name="training_plan_loading_error">Failed to load Training Plan</string>
     <string name="loading_training_plan">Loading training plan…</string>

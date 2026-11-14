@@ -19,5 +19,5 @@ data class TrainingStatisticsOverview(
     val exerciseOverviews: List<ExerciseStatisticsOverview>
 ) {
     val completenessRate: Double
-        get() = if (totalSetsCount == 0) 0.0 else completedSetsCount / totalSetsCount.toDouble()
+        get() = if (totalSetsCount == 0) 0.0 else (completedSetsCount / totalSetsCount.toDouble()) * 100.0
 }

@@ -5,8 +5,10 @@ import com.lukasz.witkowski.training.planner.analytics.domain.StatisticsReposito
 import com.lukasz.witkowski.training.planner.analytics.infrastructure.AnalyticsSessionCompletedListener
 import com.lukasz.witkowski.training.planner.analytics.infrastructure.DbStatisticsRepository
 import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.StatisticsDatabase
+import com.lukasz.witkowski.training.planner.analytics.presentation.TrainingStatisticsViewModel
 import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedListener
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val analyticsModule = module {
@@ -18,5 +20,11 @@ val analyticsModule = module {
 
     single<SessionCompletedListener> {
         AnalyticsSessionCompletedListener(statisticsRepository = get())
+    }
+    viewModel { params ->
+        TrainingStatisticsViewModel(
+            trainingPlanId = params.get(),
+            service = get()
+        )
     }
 }

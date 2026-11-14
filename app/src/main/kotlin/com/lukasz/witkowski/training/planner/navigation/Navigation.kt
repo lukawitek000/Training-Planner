@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
@@ -15,6 +16,7 @@ import androidx.navigation3.runtime.result.ResultEffect
 import androidx.navigation3.runtime.result.rememberResultEventBusNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
+import com.lukasz.witkowski.training.planner.analytics.presentation.TrainingStatisticsTab
 import com.lukasz.witkowski.training.planner.auth.presentation.auth.AuthenticationScreen
 import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeleteExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsScreen
@@ -212,7 +214,10 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.trainingPlanEntryBuilder(
             viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
             onStartTrainingSessionClicked = { navigator.trainingSession(it) },
             previousSessionsTabContent = { modifier ->
-
+                TrainingStatisticsTab(
+                    viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
+                    modifier = modifier,
+                )
             }
         )
     }
