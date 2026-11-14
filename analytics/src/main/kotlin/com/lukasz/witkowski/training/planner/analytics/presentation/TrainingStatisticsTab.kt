@@ -127,134 +127,6 @@ private fun StatisticsOverviewsList(
     }
 }
 
-@Composable
-private fun StatisticOverviewItem(
-    overview: TrainingStatisticsOverview,
-    onItemClicked: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        OverviewHeader(
-            date = overview.date,
-            completenessRate = overview.completenessRate
-        )
-        AppCard() {
-            Row() {
-                Row() {
-                    Icon(Icons.Default.AccessTime, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                    Text(
-                        text = overview.totalTime.toString(),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-            }
-        }
-
-
-    }
-}
-
-@Composable
-private fun OverviewHeader(
-    date: Date,
-    completenessRate: Double
-) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        FormattedSessionDate(date)
-        Spacer(Modifier.weight(1f))
-        CompletenessPill(completenessRate)
-    }
-}
-
-@Composable
-private fun FormattedSessionDate(
-    date: Date,
-    modifier: Modifier = Modifier,
-) {
-    val context = LocalContext.current
-    val label = remember(date) { date.toFormattedDateLabel(context) }
-    Text(
-        modifier = modifier,
-        text = buildAnnotatedString {
-            withStyle(
-                SpanStyle(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            ) {
-                append(label.primary)
-            }
-            withStyle(
-                SpanStyle(
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            ) {
-                append(" · ")
-                append(label.secondary)
-            }
-        },
-    )
-}
-
-@Composable
-private fun CompletenessPill(
-    completenessRate: Double,
-    modifier: Modifier = Modifier,
-) {
-    val isCompleted = completenessRate >= 100
-    val contentColor = if (isCompleted) {
-        Color.Green
-    } else {
-        Warning
-    }
-    val backgroundColor = contentColor.copy(alpha = 0.2f)
-    val icon = if (isCompleted) {
-        Icons.Default.CheckCircle
-    } else {
-        Icons.Default.Timelapse
-    }
-    Row(
-        modifier = modifier
-            .background(
-                color = backgroundColor,
-                shape = ShapeFull
-            )
-            .padding(horizontal = Dimens.spaceSm, vertical = Dimens.spaceXs),
-        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            tint = contentColor
-        )
-        Text(
-            text = stringResource(
-                R.string.completeness,
-                completenessRate.formatUpToTwoDecimals()
-            ),
-            color = contentColor
-        )
-        Text(
-            text = stringResource(R.string.completed),
-            color = contentColor
-        )
-    }
-}
-
-fun Double.formatUpToTwoDecimals(locale: Locale = Locale.getDefault()): String {
-    val symbols = DecimalFormatSymbols(locale)
-    val formatter = DecimalFormat("#.##", symbols).apply {
-        roundingMode = RoundingMode.HALF_UP
-    }
-    return formatter.format(this)
-}
-
 private fun <T : Any> List<T>.asPreviewPagerFlow(): Flow<PagingData<T>> =
     flowOf(PagingData.from(this))
 
@@ -285,13 +157,13 @@ private val PREVIEW_EXERCISE_STATISTICS_OVERVIEWS = listOf(
     )
 )
 
-private val PREVIEW_TRAINING_STATISTICS_OVERVIEWS = listOf(
+internal val PREVIEW_TRAINING_STATISTICS_OVERVIEWS = listOf(
     TrainingStatisticsOverview(
         id = TrainingStatisticsId.create(),
         trainingPlanId = TrainingPlanId.create(),
         date = Date(),
         totalTime = 45.minutes,
-        totalVolumeKg = 3250.0,
+        totalVolumeKg = 0.0,
         completedSetsCount = 10,
         totalSetsCount = 11,
         rpe = SessionRpe.HARD,

@@ -3,6 +3,33 @@
     <string name="no_previous_sessions">No previous sessions available yet</string>
     <string name="completed">Completed</string>
     <string name="completeness">%1$s%%</string>
+    <string name="volume_summary">Volume: %1$s</string>
+    <string name="bodyweight">Bodyweight</string>
+    <string name="effort_long_summary">Effort: %1$s (%2$s)</string>
+
+    <!-- Session RPE Short Labels -->
+    <string name="rpe_very_light">Very light</string>
+    <string name="rpe_light">Light</string>
+    <string name="rpe_moderate_light">Moderate light</string>
+    <string name="rpe_moderate">Moderate</string>
+    <string name="rpe_somewhat_hard">Somewhat hard</string>
+    <string name="rpe_challenging">Challenging</string>
+    <string name="rpe_hard">Hard</string>
+    <string name="rpe_very_hard">Very hard</string>
+    <string name="rpe_near_limit">Near limit</string>
+    <string name="rpe_maximal">Maximal</string>
+
+    <!-- Optional: Session RPE Descriptions (for pickers/tooltips) -->
+    <string name="rpe_very_light_desc">Minimal effort, easy breathing, feels like rest</string>
+    <string name="rpe_light_desc">Comfortable pace, can hold a full conversation easily</string>
+    <string name="rpe_moderate_light_desc">Steady and relaxed, slight increase in breathing</string>
+    <string name="rpe_moderate_desc">Noticeable effort, still comfortable to sustain</string>
+    <string name="rpe_somewhat_hard_desc">Breathing deepens, speaking in shorter sentences</string>
+    <string name="rpe_challenging_desc">Sustained effort, requires focus to maintain pace</string>
+    <string name="rpe_hard_desc">Heavy breathing, difficult to speak more than a few words</string>
+    <string name="rpe_very_hard_desc">Intense effort, near maximum sustainable intensity</string>
+    <string name="rpe_near_limit_desc">Exhausting effort, can only be held briefly</string>
+    <string name="rpe_maximal_desc">All-out absolute limit, cannot continue further</string>
 
     <string name="date_today">Today</string>
     <string name="date_yesterday">Yesterday</string>
