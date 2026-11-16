@@ -1,8 +1,10 @@
 package com.lukasz.witkowski.training.planner.analytics.presentation
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,9 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.ShortText
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Comment
+import androidx.compose.material.icons.filled.Insights
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.ShortText
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,9 +32,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import com.lukasz.witkowski.training.planner.analytics.R
+import com.lukasz.witkowski.training.planner.analytics.domain.models.ExerciseStatisticsOverview
 import com.lukasz.witkowski.training.planner.analytics.domain.models.TrainingStatisticsOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
@@ -63,7 +70,12 @@ internal fun StatisticOverviewItem(
                         notes = it
                     )
                 }
-                // TODO continue work on the card and bottom sheet
+                ExercisesOverviews(
+                    overview.exerciseOverviews
+                )
+                DetailsButton(
+                    onClick = onItemClicked
+                )
             }
         }
 
@@ -151,6 +163,7 @@ private fun OverviewCardHeader(
             modifier = Modifier.weight(1f),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center
         )
         overview.rpe?.let {
             EffortPill(it, modifier = Modifier.padding(start = Dimens.spaceSm))
@@ -168,7 +181,9 @@ private fun SessionNotes(
         containerColor = MaterialTheme.colorScheme.background
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(Dimens.spaceSm),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(Dimens.spaceSm),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -207,6 +222,69 @@ private fun SessionNotes(
             )
         }
     }
+}
+
+@Composable
+private fun ExercisesOverviews(
+    overviews: List<ExerciseStatisticsOverview>,
+    modifier: Modifier = Modifier,
+) {
+    FlowRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
+        verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
+    ) {
+        overviews.forEach { overview ->
+            Row(
+                modifier = Modifier
+                    .background(
+                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    shape = MaterialTheme.shapes.medium
+                )
+                    .padding(horizontal = Dimens.spaceSm, vertical = Dimens.spaceXs)
+            ) {
+                Text(overview.exerciseName)
+                Spacer(Modifier.width(Dimens.spaceSm))
+                Text(
+                    stringResource(
+                        R.string.exercise_overview_summary,
+                        overview.completenessRate.formatUpToTwoDecimals(),
+                        overview.totalTime.toString()
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DetailsButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth().clickable(enabled = true, onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = Icons.Default.Insights,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary
+        )
+        Text(
+            text = stringResource(R.string.inspect_details),
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(horizontal = Dimens.spaceSm)
+        )
+        Spacer(Modifier.weight(1f))
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary
+        )
+    }
+
 }
 
 
