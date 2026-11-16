@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.analytics.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -7,8 +8,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Comment
+import androidx.compose.material.icons.automirrored.filled.ShortText
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Comment
+import androidx.compose.material.icons.filled.ShortText
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -46,13 +52,18 @@ internal fun StatisticOverviewItem(
             completenessRate = overview.completenessRate
         )
         Spacer(Modifier.height(Dimens.spaceSm))
-        AppCard(
-
-        ) {
+        AppCard() {
             Column(
-                modifier = Modifier.padding(Dimens.margin)
+                modifier = Modifier.padding(Dimens.margin),
+                verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
             ) {
                 OverviewCardHeader(overview)
+                overview.note?.takeIf { it.isNotBlank() }?.let {
+                    SessionNotes(
+                        notes = it
+                    )
+                }
+                // TODO continue work on the card and bottom sheet
             }
         }
 
@@ -132,21 +143,71 @@ private fun OverviewCardHeader(
             )
         }
 
-        val volumeText = overview.totalVolumeKg.takeIf { it > 0 }?.formatUpToTwoDecimals()?.plus(stringResource(R.string.kg))
+        val volumeText = overview.totalVolumeKg.takeIf { it > 0 }?.formatUpToTwoDecimals()
+            ?.plus(stringResource(R.string.kg))
             ?: stringResource(R.string.bodyweight)
         Text(
             text = stringResource(R.string.volume_summary, volumeText),
             modifier = Modifier.weight(1f),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-         )
+        )
         overview.rpe?.let {
             EffortPill(it, modifier = Modifier.padding(start = Dimens.spaceSm))
         }
     }
 }
 
-
+@Composable
+private fun SessionNotes(
+    notes: String,
+    modifier: Modifier = Modifier
+) {
+    AppCard(
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(Dimens.spaceSm),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.Comment,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary
+            )
+            Spacer(Modifier.width(Dimens.spaceMd))
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(
+                        SpanStyle(
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        append("\" ")
+                    }
+                    withStyle(
+                        SpanStyle(
+                            fontWeight = FontWeight.Normal,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    ) {
+                        append(notes)
+                    }
+                    withStyle(
+                        SpanStyle(
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    ) {
+                        append(" \"")
+                    }
+                }
+            )
+        }
+    }
+}
 
 
 @AppPreview
