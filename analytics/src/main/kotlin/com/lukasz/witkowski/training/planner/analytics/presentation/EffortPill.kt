@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.DirectionsRun
 import androidx.compose.material.icons.automirrored.rounded.DirectionsWalk
@@ -39,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.analytics.R
 import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.ShapeFull
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import kotlinx.coroutines.launch
@@ -71,18 +73,19 @@ internal fun EffortPill(
                     tooltipState.show()
                 }
             },
-            shape = MaterialTheme.shapes.small,
+            shape = ShapeFull,
             color = style.containerColor,
             contentColor = style.contentColor
         ) {
             Row(
                 modifier = Modifier.padding(all = Dimens.spaceXs),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
+                horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
             ) {
                 Icon(
                     imageVector = style.icon,
                     contentDescription = null,
+                    modifier = Modifier.size(Dimens.iconSize16)
                 )
                 Text(
                     text = text,

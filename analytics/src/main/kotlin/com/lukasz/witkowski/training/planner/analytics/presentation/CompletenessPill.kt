@@ -5,14 +5,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -30,6 +33,7 @@ internal fun CompletenessPill(
     modifier: Modifier = Modifier,
 ) {
     val completenessStyle = remember(completenessRate) { CompletenessStyle.create(completenessRate) }
+    val textStyle = MaterialTheme.typography.labelMedium
     Row(
         modifier = modifier
             .background(
@@ -37,23 +41,27 @@ internal fun CompletenessPill(
                 shape = ShapeFull
             )
             .padding(horizontal = Dimens.spaceSm, vertical = Dimens.spaceXs),
-        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
             imageVector = completenessStyle.icon,
             contentDescription = null,
-            tint = completenessStyle.contentColor
+            tint = completenessStyle.contentColor,
+            modifier = Modifier.size(Dimens.iconSize16)
         )
         Text(
             text = stringResource(
                 R.string.completeness,
                 completenessRate.formatUpToTwoDecimals()
             ),
-            color = completenessStyle.contentColor
+            color = completenessStyle.contentColor,
+            style = textStyle
         )
         Text(
             text = stringResource(R.string.completed),
-            color = completenessStyle.contentColor
+            color = completenessStyle.contentColor,
+            style = textStyle
         )
     }
 }

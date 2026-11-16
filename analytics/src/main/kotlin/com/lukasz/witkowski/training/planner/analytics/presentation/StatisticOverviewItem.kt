@@ -11,18 +11,23 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.automirrored.filled.ShortText
 import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Comment
+import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.MonitorWeight
 import androidx.compose.material.icons.filled.ShortText
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -35,6 +40,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.drawscope.DrawStyle
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalContext
@@ -42,6 +48,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
@@ -89,7 +96,12 @@ internal fun StatisticOverviewItem(
                 }
 
                 val center = Offset(x = gutterCenterX, y = dotCenterY)
-                val colors = listOf(dotColor, dotColor.copy(alpha = 0.9f), dotColor.copy(alpha = 0.6f), dotColor.copy(alpha = 0.2f))
+                val colors = listOf(
+                    dotColor,
+                    dotColor.copy(alpha = 0.9f),
+                    dotColor.copy(alpha = 0.6f),
+                    dotColor.copy(alpha = 0.2f)
+                )
                 drawCircle(
                     brush = Brush.radialGradient(
                         colors = colors,
@@ -99,7 +111,8 @@ internal fun StatisticOverviewItem(
                     radius = dotRadius,
                     center = center,
                 )
-            }.padding(
+            }
+            .padding(
                 start = Dimens.gutterWidth,
                 bottom = if (isLast) 0.dp else Dimens.spaceMd
             )
@@ -121,6 +134,7 @@ internal fun StatisticOverviewItem(
                 verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
             ) {
                 OverviewCardHeader(overview)
+                TrainingSessionSummary(overview)
                 overview.note?.takeIf { it.isNotBlank() }?.let {
                     SessionNotes(
                         notes = it
@@ -161,28 +175,26 @@ private fun FormattedSessionDate(
 ) {
     val context = LocalContext.current
     val label = remember(date) { date.toFormattedDateLabel(context) }
-    Text(
+    Row(
         modifier = modifier,
-        text = buildAnnotatedString {
-            withStyle(
-                SpanStyle(
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-            ) {
-                append(label.primary)
-            }
-            withStyle(
-                SpanStyle(
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            ) {
-                append(" · ")
-                append(label.secondary)
-            }
-        },
-    )
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
+    ) {
+        Text(
+            modifier = modifier,
+            text = label.primary,
+            fontWeight = FontWeight.Bold,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Text(
+            modifier = modifier,
+            text = label.secondary,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+
 }
 
 @Composable
@@ -197,34 +209,97 @@ private fun OverviewCardHeader(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
-            modifier = Modifier.padding(end = Dimens.spaceSm)
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
             Icon(
-                Icons.Default.AccessTime,
+                imageVector = Icons.Default.FitnessCenter,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(Dimens.iconSize24)
             )
             Text(
-                text = overview.totalTime.toString(),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                text = stringResource(R.string.session_stats),
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
             )
         }
-
-        val volumeText = overview.totalVolumeKg.takeIf { it > 0 }?.formatUpToTwoDecimals()
-            ?.plus(stringResource(R.string.kg))
-            ?: stringResource(R.string.bodyweight)
-        Text(
-            text = stringResource(R.string.volume_summary, volumeText),
-            modifier = Modifier.weight(1f),
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center
-        )
         overview.rpe?.let {
             EffortPill(it, modifier = Modifier.padding(start = Dimens.spaceSm))
         }
     }
+}
+
+@Composable
+private fun TrainingSessionSummary(
+    overview: TrainingStatisticsOverview,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth().background(
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            shape = MaterialTheme.shapes.medium
+        )
+            .padding(Dimens.spaceSm),
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        StatisticWithLabelAndIcon(
+            label = stringResource(R.string.duration_label),
+            icon = Icons.Default.AccessTime,
+            statistic = overview.totalTime.toString(),
+            modifier = Modifier.weight(1f)
+        )
+
+        val volumeText = overview.totalVolumeKg.takeIf { it > 0 }?.formatUpToTwoDecimals()
+            ?.plus(stringResource(R.string.kg))
+            ?: stringResource(R.string.bodyweight)
+        StatisticWithLabelAndIcon(
+            label = stringResource(R.string.volume_label),
+            icon = Icons.Default.BarChart,
+            statistic = volumeText,
+            modifier = Modifier.weight(1f)
+        )
+    }
+}
+
+@Composable
+private fun StatisticWithLabelAndIcon(
+    label: String,
+    icon: ImageVector,
+    statistic: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = modifier,
+    ) {
+        Surface(
+            shape = MaterialTheme.shapes.medium,
+            color = MaterialTheme.colorScheme.surfaceVariant,
+        ) {
+            Icon(
+                icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(Dimens.spaceSm)
+            )
+        }
+        Spacer(Modifier.width(Dimens.spaceSm))
+        Column() {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.titleSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Spacer(Modifier.height(Dimens.spaceXs))
+            Text(
+                text = statistic,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+    }
+
 }
 
 @Composable

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="no_previous_sessions">No previous sessions available yet</string>
+    <string name="session_stats">SESSION STATS</string>
     <string name="completed">Completed</string>
     <string name="completeness">%1$s%%</string>
     <string name="volume_summary">Volume: %1$s</string>
@@ -8,6 +9,8 @@
     <string name="effort_long_summary">Effort: %1$s (%2$s)</string>
     <string name="exercise_overview_summary">(%1$s%% · %2$s)</string>
     <string name="inspect_details">Inspect Set Attempts &amp; Effort</string>
+    <string name="duration_label">DURATION</string>
+    <string name="volume_label">VOLUME</string>
 
     <!-- Session RPE Short Labels -->
     <string name="rpe_very_light">Very light</string>
