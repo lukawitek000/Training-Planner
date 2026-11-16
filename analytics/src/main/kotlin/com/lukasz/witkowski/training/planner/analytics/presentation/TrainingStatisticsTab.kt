@@ -109,9 +109,9 @@ private fun StatisticsOverviewsList(
     onSessionClicked: (TrainingStatisticsId) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isEndReached = overviews.loadState.append.endOfPaginationReached
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
         items(
             count = overviews.itemCount,
@@ -120,6 +120,8 @@ private fun StatisticsOverviewsList(
             overviews[index]?.let {
                 StatisticOverviewItem(
                     overview = it,
+                    isFirst = index == 0,
+                    isLast = index == overviews.itemCount - 1 && isEndReached,
                     onItemClicked = { onSessionClicked(it.id) }
                 )
             }

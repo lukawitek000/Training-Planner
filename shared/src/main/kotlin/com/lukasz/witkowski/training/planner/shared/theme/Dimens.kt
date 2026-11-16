@@ -158,4 +158,8 @@ object Dimens {
     val setChipSize: Dp = 32.dp
 
     val shadowBoxHeight: Dp = 16.dp
+
+    val gutterWidth = 32.dp
+    val dotRadius = 8.dp
+    val timelineStrokeWidth = 2.dp
 }

@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.analytics.presentation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -24,9 +25,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.drawscope.DrawStyle
+import androidx.compose.ui.layout.boundsInParent
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -35,6 +45,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.times
 import com.lukasz.witkowski.training.planner.analytics.R
 import com.lukasz.witkowski.training.planner.analytics.domain.models.ExerciseStatisticsOverview
 import com.lukasz.witkowski.training.planner.analytics.domain.models.TrainingStatisticsOverview
@@ -44,24 +56,68 @@ import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import java.util.Date
 
-
 @Composable
 internal fun StatisticOverviewItem(
     overview: TrainingStatisticsOverview,
+    isFirst: Boolean,
+    isLast: Boolean,
     onItemClicked: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var dotCenterY by remember { mutableFloatStateOf(0f) }
+
+    val lineColor = MaterialTheme.colorScheme.outlineVariant
+    val dotColor = MaterialTheme.colorScheme.primaryContainer
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .drawBehind {
+                val gutterCenterX = (Dimens.gutterWidth - 2 * Dimens.spaceSm).toPx()
+                val dotRadius = Dimens.dotRadius.toPx()
+                val strokeWidth = Dimens.timelineStrokeWidth.toPx()
+
+                val lineStartY = if (isFirst) dotCenterY else 0f
+                val lineEndY = if (isLast) dotCenterY else size.height
+
+                if (lineEndY > lineStartY) {
+                    drawLine(
+                        color = lineColor,
+                        start = Offset(x = gutterCenterX, y = lineStartY),
+                        end = Offset(x = gutterCenterX, y = lineEndY),
+                        strokeWidth = strokeWidth
+                    )
+                }
+
+                val center = Offset(x = gutterCenterX, y = dotCenterY)
+                val colors = listOf(dotColor, dotColor.copy(alpha = 0.9f), dotColor.copy(alpha = 0.6f), dotColor.copy(alpha = 0.2f))
+                drawCircle(
+                    brush = Brush.radialGradient(
+                        colors = colors,
+                        center = center,
+                        radius = dotRadius
+                    ),
+                    radius = dotRadius,
+                    center = center,
+                )
+            }.padding(
+                start = Dimens.gutterWidth,
+                bottom = if (isLast) 0.dp else Dimens.spaceMd
+            )
     ) {
-        OverviewHeader(
-            date = overview.date,
-            completenessRate = overview.completenessRate
-        )
+        Box(
+            modifier = Modifier.onPlaced { coordinates ->
+                dotCenterY = coordinates.boundsInParent().center.y
+            }
+        ) {
+            OverviewHeader(
+                date = overview.date,
+                completenessRate = overview.completenessRate
+            )
+        }
         Spacer(Modifier.height(Dimens.spaceSm))
-        AppCard() {
+        AppCard {
             Column(
-                modifier = Modifier.padding(Dimens.margin),
+                modifier = Modifier.padding(Dimens.spaceSm),
                 verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
             ) {
                 OverviewCardHeader(overview)
@@ -238,9 +294,9 @@ private fun ExercisesOverviews(
             Row(
                 modifier = Modifier
                     .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = MaterialTheme.shapes.medium
-                )
+                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        shape = MaterialTheme.shapes.medium
+                    )
                     .padding(horizontal = Dimens.spaceSm, vertical = Dimens.spaceXs)
             ) {
                 Text(overview.exerciseName)
@@ -263,7 +319,9 @@ private fun DetailsButton(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().clickable(enabled = true, onClick = onClick),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable(enabled = true, onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
@@ -292,10 +350,12 @@ private fun DetailsButton(
 @Composable
 private fun StatisticOverviewItemsPreview() {
     TrainingPlannerTheme {
-        Column(verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)) {
-            PREVIEW_TRAINING_STATISTICS_OVERVIEWS.forEach {
+        Column {
+            PREVIEW_TRAINING_STATISTICS_OVERVIEWS.forEachIndexed { index, overview ->
                 StatisticOverviewItem(
-                    overview = it,
+                    overview = overview,
+                    isFirst = index == 0,
+                    isLast = index == PREVIEW_TRAINING_STATISTICS_OVERVIEWS.lastIndex,
                     onItemClicked = {}
                 )
             }
