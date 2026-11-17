@@ -1,34 +1,12 @@
 package com.lukasz.witkowski.training.planner.analytics.presentation
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Timelapse
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
@@ -45,32 +23,21 @@ import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
-import com.lukasz.witkowski.training.planner.shared.theme.Dimens
-import com.lukasz.witkowski.training.planner.shared.theme.ShapeFull
-import com.lukasz.witkowski.training.planner.shared.theme.Success
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.theme.Warning
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
-import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppEmptyState
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
-import java.math.RoundingMode
-import java.text.DecimalFormat
-import java.text.DecimalFormatSymbols
 import java.util.Date
-import java.util.Locale
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 
-// TODo convert it so that the TrainingPlandetails screen as a whole is a lazy column with sticky headers of the tabs
+// TODO convert it so that the TrainingPlanDetails screen as a whole is a lazy column with sticky headers of the tabs
 @Composable
-fun TrainingStatisticsTab(
-    viewModel: TrainingStatisticsViewModel,
-    modifier: Modifier = Modifier,
-) {
+fun TrainingStatisticsTab(viewModel: TrainingStatisticsViewModel, modifier: Modifier = Modifier) {
     val overviews = viewModel.statisticsOverviews.collectAsLazyPagingItems()
     val detailsUiState by viewModel.statisticsDetails.collectAsStateWithLifecycle()
     TrainingStatisticsTabContent(
@@ -78,7 +45,7 @@ fun TrainingStatisticsTab(
         detailsUiState = detailsUiState,
         onSessionClicked = viewModel::onSessionClicked,
         onDetailsDismiss = viewModel::onSessionDismissed,
-        modifier = modifier,
+        modifier = modifier
     )
 }
 
@@ -88,7 +55,7 @@ private fun TrainingStatisticsTabContent(
     detailsUiState: DetailsUiState,
     onSessionClicked: (TrainingStatisticsId) -> Unit,
     onDetailsDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     if (overviews.itemCount == 0) {
         AppEmptyState(
@@ -105,8 +72,7 @@ private fun TrainingStatisticsTabContent(
     if (detailsUiState is DetailsUiState.Success) {
         TrainingStatisticsDetailsSheet(
             statistics = detailsUiState.details,
-            onDismissRequest = onDetailsDismiss,
-
+            onDismissRequest = onDetailsDismiss
         )
     }
 }
@@ -115,11 +81,11 @@ private fun TrainingStatisticsTabContent(
 private fun StatisticsOverviewsList(
     overviews: LazyPagingItems<TrainingStatisticsOverview>,
     onSessionClicked: (TrainingStatisticsId) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val isEndReached = overviews.loadState.append.endOfPaginationReached
     LazyColumn(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
     ) {
         items(
             count = overviews.itemCount,
@@ -224,6 +190,7 @@ private val PREVIEW_EXERCISE_ATTEMPT_STATISTICS = listOf(
         actualTime = 45.seconds,
         effort = SetEffort.MODERATE,
         restTime = 90.seconds,
+        plannedRestTime = 90.seconds,
         time = 54.seconds
     ),
     ExerciseAttemptStatistics(
@@ -231,11 +198,12 @@ private val PREVIEW_EXERCISE_ATTEMPT_STATISTICS = listOf(
         trainingExerciseId = PREVIEW_TRAINING_EXERCISE_ID,
         set = 2,
         completed = true,
-        actualReps = 10,
+        actualReps = 9,
         actualWeightInKg = 80.0,
-        actualTime = 48.seconds,
+        actualTime = 42.seconds,
         effort = SetEffort.HARD,
         restTime = 90.seconds,
+        plannedRestTime = 90.seconds,
         time = 62.seconds
     ),
     ExerciseAttemptStatistics(
@@ -243,11 +211,12 @@ private val PREVIEW_EXERCISE_ATTEMPT_STATISTICS = listOf(
         trainingExerciseId = PREVIEW_TRAINING_EXERCISE_ID,
         set = 3,
         completed = true,
-        actualReps = 8,
+        actualReps = 6,
         actualWeightInKg = 80.0,
-        actualTime = 50.seconds,
+        actualTime = 30.seconds,
         effort = SetEffort.MAXIMAL,
         restTime = 120.seconds,
+        plannedRestTime = 90.seconds,
         time = 74.seconds
     )
 )
@@ -257,12 +226,26 @@ private val PREVIEW_EXERCISE_STATISTICS = listOf(
         id = ExerciseStatisticsId.create(),
         trainingExerciseId = PREVIEW_TRAINING_EXERCISE_ID,
         exerciseName = "Barbell Bench Press longer name",
+        plannedSets = 3,
+        plannedConfig = SessionExerciseConfiguration(
+            reps = 10,
+            weightInKg = 80.0,
+            holdTime = 45.seconds
+        ),
+        plannedRestTime = 90.seconds,
         attemptsStatistics = PREVIEW_EXERCISE_ATTEMPT_STATISTICS
     ),
     ExerciseStatistics(
         id = ExerciseStatisticsId.create(),
         trainingExerciseId = TrainingExerciseId.create(),
         exerciseName = "Push Ups",
+        plannedSets = 2,
+        plannedConfig = SessionExerciseConfiguration(
+            reps = 15,
+            weightInKg = null,
+            holdTime = null
+        ),
+        plannedRestTime = 60.seconds,
         attemptsStatistics = listOf(
             ExerciseAttemptStatistics(
                 id = ExerciseAttemptStatisticsId.create(),
@@ -271,9 +254,10 @@ private val PREVIEW_EXERCISE_STATISTICS = listOf(
                 completed = true,
                 actualReps = 15,
                 actualWeightInKg = null,
-                actualTime = 30.seconds,
+                actualTime = null,
                 effort = SetEffort.MODERATE,
                 restTime = 60.seconds,
+                plannedRestTime = 60.seconds,
                 time = 123.seconds
             )
         )
@@ -336,4 +320,3 @@ private fun TrainingStatisticsTabEmptyPreview() {
         )
     }
 }
-

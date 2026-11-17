@@ -28,7 +28,7 @@ fun EndEarlySessionButton(onEndClicked: () -> Unit, modifier: Modifier = Modifie
     ) {
         Icon(
             imageVector = Icons.Default.Close,
-            contentDescription = "End training session",
+            contentDescription = stringResource(R.string.session_end_early_cd),
             tint = MaterialTheme.colorScheme.error
         )
     }

@@ -46,6 +46,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.bento.AppBentoTile
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.inputField.AppLabeledTextField
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.shared.utils.formatVolumeText
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -148,7 +149,11 @@ private fun CelebrationBanner(
         )
 
         val text = if (trainingPlanResult is ResultHandler.Success) {
-            "${trainingPlanResult.value.title} • ${date.formatToString()}"
+            stringResource(
+                R.string.session_summary_plan_date_format,
+                trainingPlanResult.value.title,
+                date.formatToString()
+            )
         } else {
             date.formatToString()
         }
@@ -179,11 +184,7 @@ private fun BentoMetricsGrid(statistics: TrainingStatistics, modifier: Modifier 
             )
             AppBentoTile(
                 label = stringResource(R.string.session_bento_volume_label),
-                value = if (statistics.totalVolumeKg > 0) {
-                    stringResource(R.string.session_kg_suffix, statistics.totalVolumeKg.toInt())
-                } else {
-                    stringResource(R.string.session_bodyweight)
-                },
+                value = statistics.totalVolumeKg.formatVolumeText(),
                 subtitle = stringResource(R.string.session_bento_volume_sub),
                 modifier = Modifier.weight(1f)
             )
@@ -195,7 +196,11 @@ private fun BentoMetricsGrid(statistics: TrainingStatistics, modifier: Modifier 
         ) {
             AppBentoTile(
                 label = stringResource(R.string.session_bento_sets_label),
-                value = "${statistics.completedSetsCount} / ${statistics.totalSetsCount}",
+                value = stringResource(
+                    R.string.session_bento_sets_value_format,
+                    statistics.completedSetsCount,
+                    statistics.totalSetsCount
+                ),
                 subtitle = stringResource(R.string.session_bento_sets_sub),
                 modifier = Modifier.weight(1f)
             )

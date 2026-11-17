@@ -13,5 +13,6 @@ data class ExerciseAttemptStatistics(
     val actualWeightInKg: Double? = null,
     val actualTime: Duration? = null,
     val effort: SetEffort? = null,
-    val restTime: Duration? = null
+    val restTime: Duration? = null,
+    val plannedRestTime: Duration? = null
 )

@@ -153,6 +153,11 @@ class SessionStatisticsRecorderTest {
             assertEquals(45.seconds, stats.totalTime)
             assertEquals(1, stats.exercisesStatistics.size)
             assertEquals("90° Hold", stats.exercisesStatistics[0].exerciseName)
+            assertEquals(1, stats.exercisesStatistics[0].plannedSets)
+            assertEquals(
+                plan.exercises[0].repetitions,
+                stats.exercisesStatistics[0].plannedConfig.reps
+            )
             assertEquals(1, stats.exercisesStatistics[0].attemptsStatistics.size)
             assertEquals(12, stats.exercisesStatistics[0].attemptsStatistics[0].actualReps)
             assertEquals(
@@ -213,9 +218,12 @@ class SessionStatisticsRecorderTest {
             assertEquals(2, attempts.size)
             assertTrue(attempts[0].completed)
             assertEquals(25.seconds, attempts[0].restTime)
+            assertEquals(60.seconds, attempts[0].plannedRestTime)
             assertEquals(SetEffort.HARD, attempts[0].effort)
             assertFalse(attempts[1].completed)
             assertEquals(2, attempts[1].set)
+            assertEquals(2, finalStats.exercisesStatistics.first().plannedSets)
+            assertEquals(60.seconds, finalStats.exercisesStatistics.first().plannedRestTime)
         }
 
     @Test

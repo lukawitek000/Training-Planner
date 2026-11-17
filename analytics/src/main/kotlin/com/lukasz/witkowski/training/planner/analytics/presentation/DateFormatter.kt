@@ -9,10 +9,7 @@ import java.time.temporal.ChronoUnit
 import java.util.Date
 import java.util.Locale
 
-internal data class FormattedDateLabel(
-    val primary: String,
-    val secondary: String
-)
+internal data class FormattedDateLabel(val primary: String, val secondary: String)
 
 internal fun Date.toFormattedDateLabel(
     context: Context,
@@ -28,8 +25,14 @@ internal fun Date.toFormattedDateLabel(
     val monthsBetween = ChronoUnit.MONTHS.between(targetDate, todayDate)
     val yearsBetween = ChronoUnit.YEARS.between(targetDate, todayDate)
 
-    val shortDateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, HH:mm", locale)
-    val fullDateFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy", locale)
+    val shortDateTimeFormatter = DateTimeFormatter.ofPattern(
+        context.getString(R.string.date_pattern_short),
+        locale
+    )
+    val fullDateFormatter = DateTimeFormatter.ofPattern(
+        context.getString(R.string.date_pattern_full),
+        locale
+    )
 
     return when {
         daysBetween <= 0 -> FormattedDateLabel(

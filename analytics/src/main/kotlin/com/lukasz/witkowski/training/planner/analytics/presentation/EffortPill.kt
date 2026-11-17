@@ -63,10 +63,10 @@ internal fun EffortPill(
 
     TooltipBox(
         positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            TooltipAnchorPosition.Below,
+            TooltipAnchorPosition.Below
         ),
         tooltip = {
-            PlainTooltip() { Text(description) }
+            PlainTooltip { Text(description) }
         },
         state = tooltipState
     ) {
@@ -107,9 +107,7 @@ private data class RpeVisualStyle(
 )
 
 @Composable
-private fun SessionRpe.toVisualStyle(
-    darkTheme: Boolean = isSystemInDarkTheme()
-): RpeVisualStyle {
+private fun SessionRpe.toVisualStyle(darkTheme: Boolean = isSystemInDarkTheme()): RpeVisualStyle {
     val icon = when (this) {
         SessionRpe.VERY_LIGHT -> Icons.Rounded.Spa
         SessionRpe.LIGHT -> Icons.Rounded.Air

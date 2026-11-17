@@ -13,18 +13,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import com.lukasz.witkowski.training.planner.analytics.R
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 
 @Composable
-internal fun SessionNotes(
-    notes: String,
-    modifier: Modifier = Modifier
-) {
+internal fun SessionNotes(notes: String, modifier: Modifier = Modifier) {
+    val openQuote = stringResource(R.string.session_notes_open_quote)
+    val closeQuote = stringResource(R.string.session_notes_close_quote)
     AppCard(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.background
@@ -49,7 +52,7 @@ internal fun SessionNotes(
                             color = MaterialTheme.colorScheme.primary
                         )
                     ) {
-                        append("\" ")
+                        append(openQuote)
                     }
                     withStyle(
                         SpanStyle(
@@ -65,10 +68,18 @@ internal fun SessionNotes(
                             color = MaterialTheme.colorScheme.primary
                         )
                     ) {
-                        append(" \"")
+                        append(closeQuote)
                     }
                 }
             )
         }
+    }
+}
+
+@AppPreview
+@Composable
+private fun SessionNotesPreview() {
+    TrainingPlannerTheme {
+        SessionNotes(notes = "Great chest & triceps workout. Pushed hard on bench press.")
     }
 }

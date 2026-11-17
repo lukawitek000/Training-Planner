@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.analytics.domain.models
 
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatisticsId
+import com.lukasz.witkowski.training.planner.shared.utils.calculateCompletenessPercentage
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlin.time.Duration
 
@@ -13,5 +14,8 @@ data class ExerciseStatisticsOverview(
     val totalSetsCount: Int
 ) {
     val completenessRate: Double
-        get() = if (totalSetsCount == 0) 0.0 else (completedSetsCount * 100.0) / totalSetsCount.toDouble()
+        get() = calculateCompletenessPercentage(
+            completed = completedSetsCount,
+            total = totalSetsCount
+        )
 }

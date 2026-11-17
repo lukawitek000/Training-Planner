@@ -69,10 +69,10 @@ import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.segmentedControl.AppSegmentedControl
 import com.lukasz.witkowski.training.planner.shared.ui.segmentedControl.AppSegmentedControlItem
 import kotlin.math.abs
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 
 /**
  * Mode tabs inside [AppTimePickerBottomSheet].

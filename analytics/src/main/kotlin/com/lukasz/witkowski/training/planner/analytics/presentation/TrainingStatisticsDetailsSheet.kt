@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.CompareArrows
@@ -41,12 +40,10 @@ import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.analytics.R
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
-import com.lukasz.witkowski.training.planner.shared.theme.ErrorContainer
-import com.lukasz.witkowski.training.planner.shared.theme.Success
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.theme.Warning
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
+import com.lukasz.witkowski.training.planner.shared.utils.formatVolumeText
 import java.util.Date
 import kotlin.time.Duration
 
@@ -55,7 +52,7 @@ import kotlin.time.Duration
 internal fun TrainingStatisticsDetailsSheet(
     statistics: TrainingStatistics,
     onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -74,7 +71,7 @@ internal fun TrainingStatisticsDetailsSheet(
 private fun TrainingStatisticsDetailsContent(
     statistics: TrainingStatistics,
     onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.padding(horizontal = Dimens.spaceSm)) {
         SheetHeader(
@@ -109,7 +106,10 @@ private fun TrainingStatisticsDetailsContent(
                     redColor = ParameterColors.CriticallyIncompleted.color
                 )
             }
-            itemsIndexed(statistics.exercisesStatistics, key = { _, stats -> stats.id.value.toString() }) { idx, stats ->
+            itemsIndexed(
+                statistics.exercisesStatistics,
+                key = { _, stats -> stats.id.value.toString() }
+            ) { idx, stats ->
                 ExerciseDetailsCard(
                     statistics = stats,
                     index = idx,
@@ -125,7 +125,7 @@ private fun SheetHeader(
     date: Date,
     totalTime: Duration,
     onDismissRequest: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val dateLabel = remember(date) { date.toFormattedDateLabel(context) }
@@ -136,7 +136,7 @@ private fun SheetHeader(
             horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
         ) {
             Text(
-                text = "Session Breakdown",
+                text = stringResource(R.string.session_breakdown_title),
                 style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.weight(1f),
                 fontWeight = FontWeight.Bold
@@ -144,7 +144,7 @@ private fun SheetHeader(
             IconButton(onClick = onDismissRequest) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Close statistics details"
+                    contentDescription = stringResource(R.string.close_statistics_details_cd)
                 )
             }
         }
@@ -157,20 +157,18 @@ private fun SheetHeader(
                 text = dateLabel.primary
             )
             Text(
-                text = "($totalTime total)"
+                text = stringResource(R.string.total_time_summary, totalTime.toString())
             )
         }
-
     }
 }
 
 @Composable
-private fun SessionSummary(
-    statistics: TrainingStatistics,
-    modifier: Modifier = Modifier
-) {
+private fun SessionSummary(statistics: TrainingStatistics, modifier: Modifier = Modifier) {
     val completenessRate = statistics.completenessRate
-    val completenessStyle = remember(completenessRate) { CompletenessStyle.create(completenessRate) }
+    val completenessStyle = remember(completenessRate) {
+        CompletenessStyle.create(completenessRate)
+    }
     Column(modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
@@ -271,7 +269,7 @@ private fun annotatedStringResource(
 }
 
 @Composable
-fun TargetComparisonLegend(
+internal fun TargetComparisonLegend(
     greenColor: Color,
     amberColor: Color,
     redColor: Color,
@@ -293,7 +291,7 @@ fun TargetComparisonLegend(
     )
 
     AppCard(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
     ) {
         Row(
             modifier = Modifier.padding(Dimens.spaceSm),

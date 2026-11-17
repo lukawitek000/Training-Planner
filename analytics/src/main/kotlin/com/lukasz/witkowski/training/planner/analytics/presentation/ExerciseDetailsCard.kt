@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.outlined.TrackChanges
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,11 +44,13 @@ import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import com.lukasz.witkowski.training.planner.analytics.R
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.ErrorContainer
 import com.lukasz.witkowski.training.planner.shared.theme.Success
@@ -54,13 +58,17 @@ import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.theme.Warning
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
+import com.lukasz.witkowski.training.planner.shared.utils.formatVolumeText
 import kotlin.time.Duration
+
+private const val PARTIAL_COMPLETION_RATIO = 0.8
+private const val REST_PARTIAL_TOLERANCE_RATIO = 1.25
 
 @Composable
 internal fun ExerciseDetailsCard(
     statistics: ExerciseStatistics,
     index: Int,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     var isExpanded by rememberSaveable(index) { mutableStateOf(true) }
     AppCard(modifier = modifier.fillMaxWidth()) {
@@ -85,10 +93,17 @@ internal fun ExerciseDetailsCard(
                 Column(
                     verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
                 ) {
-                    statistics.attemptsStatistics.forEachIndexed { index, setStatistics ->
+                    PlannedConfiguration(
+                        plannedSets = statistics.plannedSets,
+                        plannedConfig = statistics.plannedConfig,
+                        plannedRestTime = statistics.plannedRestTime
+                    )
+                    statistics.attemptsStatistics.forEachIndexed { setIndex, setStatistics ->
                         ExerciseSetStatistics(
-                            index = index,
-                            statistics = setStatistics
+                            index = setIndex,
+                            statistics = setStatistics,
+                            plannedConfig = statistics.plannedConfig,
+                            fallbackPlannedRestTime = statistics.plannedRestTime
                         )
                     }
                 }
@@ -105,7 +120,7 @@ private fun ExerciseCardHeader(
     index: Int,
     isExpanded: Boolean,
     onToggleExpansion: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val icon = if (isExpanded) {
         Icons.Default.ExpandLess
@@ -115,7 +130,7 @@ private fun ExerciseCardHeader(
     Row(
         modifier = modifier.fillMaxWidth().height(IntrinsicSize.Max),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Row(
             modifier = Modifier
@@ -158,10 +173,7 @@ private fun ExerciseCardHeader(
 }
 
 @Composable
-private fun ExerciseNumber(
-    number: Int,
-    modifier: Modifier = Modifier,
-) {
+private fun ExerciseNumber(number: Int, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .background(
@@ -184,8 +196,16 @@ private fun ExerciseNumber(
 private fun ExerciseSetStatistics(
     index: Int,
     statistics: ExerciseAttemptStatistics,
-    modifier: Modifier = Modifier,
+    plannedConfig: SessionExerciseConfiguration,
+    fallbackPlannedRestTime: Duration,
+    modifier: Modifier = Modifier
 ) {
+    val plannedRest = statistics.plannedRestTime
+        ?: fallbackPlannedRestTime.takeIf { it > Duration.ZERO }
+    val showLoad = statistics.actualWeightInKg != null || plannedConfig.weightInKg != null
+    val showHold = statistics.actualTime != null || plannedConfig.holdTime != null
+    val showRest = statistics.restTime != null || plannedRest != null
+
     AppCard(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -198,8 +218,6 @@ private fun ExerciseSetStatistics(
                 statistics = statistics,
                 index = index
             )
-            // TODO no planned config in statistics
-            PlannedConfiguration()
             Column(
                 verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)
             ) {
@@ -207,40 +225,67 @@ private fun ExerciseSetStatistics(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
                     modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)
                 ) {
-                    statistics.actualWeightInKg?.let { actualLoad ->
+                    if (showLoad) {
+                        val actualLoad = statistics.actualWeightInKg ?: 0.0
+                        val targetLoad = plannedConfig.weightInKg
                         ParameterLayout(
-                            label = "Load",
+                            label = stringResource(R.string.parameter_load_label),
                             value = actualLoad.formatVolumeText(),
-                            targetValue = "TODO",
-                            parameterColors = ParameterColors.Completed
+                            targetValue = targetLoad?.formatVolumeText(),
+                            parameterColors = ParameterColors.forTargetMinimum(
+                                completed = statistics.completed,
+                                actual = actualLoad,
+                                target = targetLoad
+                            )
                         )
                     }
-                    ParameterLayout(
-                        label = "Reps",
-                        value = statistics.actualReps.toString(),
-                        targetValue = "TODO1",
-                        parameterColors = ParameterColors.PartiallyCompleted
-                    )
-                }
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
-                    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)
-                ) {
-                    statistics.actualTime?.let { actualHoldTime ->
+                    if (!plannedConfig.isIsometric || statistics.actualReps > 0) {
+                        val targetReps = plannedConfig.reps.takeIf { it > 0 }
                         ParameterLayout(
-                            label = "Hold time",
-                            value = actualHoldTime.toString(),
-                            targetValue = "TODO2",
-                            parameterColors = ParameterColors.CriticallyIncompleted
+                            label = stringResource(R.string.parameter_reps_label),
+                            value = statistics.actualReps.toString(),
+                            targetValue = targetReps?.toString(),
+                            parameterColors = ParameterColors.forTargetMinimum(
+                                completed = statistics.completed,
+                                actual = statistics.actualReps.toDouble(),
+                                target = targetReps?.toDouble()
+                            )
                         )
                     }
-                    ParameterLayout(
-                        label = "Rest taken",
-                        value = "12m 32s",
-//                    value = statistics.restTime.toString(),
-                        targetValue = "TODO2",
-                        parameterColors = ParameterColors.CriticallyIncompleted,
-                    )
+                }
+                if (showHold || showRest) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
+                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)
+                    ) {
+                        if (showHold) {
+                            val actualHold = statistics.actualTime ?: Duration.ZERO
+                            val targetHold = plannedConfig.holdTime
+                            ParameterLayout(
+                                label = stringResource(R.string.parameter_hold_time_label),
+                                value = actualHold.toString(),
+                                targetValue = targetHold?.toString(),
+                                parameterColors = ParameterColors.forTargetMinimum(
+                                    completed = statistics.completed,
+                                    actual = actualHold.inWholeMilliseconds.toDouble(),
+                                    target = targetHold?.inWholeMilliseconds?.toDouble()
+                                )
+                            )
+                        }
+                        if (showRest) {
+                            val actualRest = statistics.restTime ?: Duration.ZERO
+                            ParameterLayout(
+                                label = stringResource(R.string.parameter_rest_taken_label),
+                                value = actualRest.toString(),
+                                targetValue = plannedRest?.toString(),
+                                parameterColors = ParameterColors.forRestDuration(
+                                    completed = statistics.completed,
+                                    actual = actualRest,
+                                    target = plannedRest
+                                )
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -248,10 +293,7 @@ private fun ExerciseSetStatistics(
 }
 
 @Composable
-private fun SetHeader(
-    statistics: ExerciseAttemptStatistics,
-    index: Int,
-) {
+private fun SetHeader(statistics: ExerciseAttemptStatistics, index: Int) {
     val icon = if (statistics.completed) {
         Icons.Default.Done
     } else {
@@ -304,8 +346,63 @@ private fun SetHeader(
 }
 
 @Composable
-private fun PlannedConfiguration() {
+private fun PlannedConfiguration(
+    plannedSets: Int,
+    plannedConfig: SessionExerciseConfiguration,
+    plannedRestTime: Duration,
+    modifier: Modifier = Modifier
+) {
+    val plannedHold = plannedConfig.holdTime
+    val chips = buildList {
+        add(stringResource(R.string.planned_sets_format, plannedSets))
+        if (plannedHold != null && plannedHold > Duration.ZERO) {
+            add(stringResource(R.string.planned_hold_format, plannedHold.toString()))
+        } else {
+            add(stringResource(R.string.planned_reps_format, plannedConfig.reps))
+        }
+        add((plannedConfig.weightInKg ?: 0.0).formatVolumeText())
+        if (plannedRestTime > Duration.ZERO) {
+            add(stringResource(R.string.planned_rest_format, plannedRestTime.toString()))
+        }
+    }
 
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                shape = MaterialTheme.shapes.small
+            )
+            .padding(horizontal = Dimens.spaceSm, vertical = Dimens.spaceXs),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
+    ) {
+        Icon(
+            imageVector = Icons.Outlined.TrackChanges,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(Dimens.iconSize16)
+        )
+        Text(
+            text = stringResource(R.string.planned_config_label),
+            style = MaterialTheme.typography.labelMedium,
+            fontWeight = FontWeight.SemiBold,
+            color = MaterialTheme.colorScheme.primary
+        )
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),
+            verticalArrangement = Arrangement.spacedBy(Dimens.spaceXxs)
+        ) {
+            chips.forEachIndexed { idx, chip ->
+                val text = if (idx < chips.lastIndex) "$chip ·" else chip
+                Text(
+                    text = text,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -314,7 +411,7 @@ private fun RowScope.ParameterLayout(
     value: String,
     parameterColors: ParameterColors,
     targetValue: String?,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -324,8 +421,7 @@ private fun RowScope.ParameterLayout(
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
                 shape = MaterialTheme.shapes.medium
             )
-            .padding(horizontal = Dimens.spaceSm, vertical = Dimens.spaceXs)
-        ,
+            .padding(horizontal = Dimens.spaceSm, vertical = Dimens.spaceXs),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Text(
@@ -333,7 +429,7 @@ private fun RowScope.ParameterLayout(
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.outline
         )
-        ValueWithTargetWrapRow() {
+        ValueWithTargetWrapRow {
             Text(
                 text = value,
                 color = parameterColors.color,
@@ -350,11 +446,7 @@ private fun RowScope.ParameterLayout(
 }
 
 @Composable
-private fun TargetValue(
-    target: String,
-    color: Color,
-    modifier: Modifier = Modifier,
-) {
+private fun TargetValue(target: String, color: Color, modifier: Modifier = Modifier) {
     val backgroundColor = color.copy(alpha = 0.2f)
     Text(
         text = stringResource(R.string.target_prefix, target),
@@ -365,15 +457,15 @@ private fun TargetValue(
                 color = backgroundColor,
                 shape = MaterialTheme.shapes.small
             )
-            .padding(Dimens.spaceXxs),
+            .padding(Dimens.spaceXxs)
     )
 }
 
 @Composable
 private fun ValueWithTargetWrapRow(
+    modifier: Modifier = Modifier,
     horizontalGap: Dp = Dimens.spaceXs,
     verticalGap: Dp = Dimens.spaceXs,
-    modifier: Modifier = Modifier,
     content: @Composable () -> Unit
 ) {
     val measurePolicy = remember(horizontalGap, verticalGap) {
@@ -468,8 +560,35 @@ internal sealed interface ParameterColors {
     data object CriticallyIncompleted : ParameterColors {
         override val color: Color = ErrorContainer
     }
-}
 
+    companion object {
+        fun forTargetMinimum(completed: Boolean, actual: Double, target: Double?): ParameterColors {
+            if (!completed) return CriticallyIncompleted
+            if (target == null || target <= 0.0) return Completed
+            return when {
+                actual >= target -> Completed
+                actual >= target * PARTIAL_COMPLETION_RATIO -> PartiallyCompleted
+                else -> CriticallyIncompleted
+            }
+        }
+
+        fun forRestDuration(
+            completed: Boolean,
+            actual: Duration,
+            target: Duration?
+        ): ParameterColors {
+            if (!completed && actual == Duration.ZERO) return CriticallyIncompleted
+            if (target == null || target <= Duration.ZERO) return Completed
+            val actualMs = actual.inWholeMilliseconds.toDouble()
+            val targetMs = target.inWholeMilliseconds.toDouble()
+            return when {
+                actualMs <= targetMs -> Completed
+                actualMs <= targetMs * REST_PARTIAL_TOLERANCE_RATIO -> PartiallyCompleted
+                else -> CriticallyIncompleted
+            }
+        }
+    }
+}
 
 @AppPreview
 @Composable

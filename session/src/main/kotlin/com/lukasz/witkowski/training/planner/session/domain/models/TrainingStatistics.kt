@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.session.domain.models
 
+import com.lukasz.witkowski.training.planner.shared.utils.calculateCompletenessPercentage
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
 import kotlin.time.Duration
@@ -34,5 +35,8 @@ data class TrainingStatistics(
         get() = allAttempts.size
 
     val completenessRate: Double
-        get() = if (totalSetsCount == 0) 0.0 else (completedSetsCount / totalSetsCount.toDouble()) * 100.0
+        get() = calculateCompletenessPercentage(
+            completed = completedSetsCount,
+            total = totalSetsCount
+        )
 }

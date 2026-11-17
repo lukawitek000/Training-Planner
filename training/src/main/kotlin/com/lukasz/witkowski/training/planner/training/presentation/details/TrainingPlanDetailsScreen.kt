@@ -31,10 +31,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.presentation.editor.buildStringOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
@@ -289,30 +289,15 @@ private fun ExerciseListItem(
                     style = MaterialTheme.typography.titleMedium,
                     color = MaterialTheme.colorScheme.onSurface
                 )
-                val repsOrTime = when {
-                    exercise.time > Duration.ZERO && exercise.repetitions > 1 -> {
-                        "${exercise.repetitions} x ${exercise.time.inWholeSeconds}s"
-                    }
-                    exercise.time > Duration.ZERO -> {
-                        "${exercise.time.inWholeSeconds}s"
-                    }
-                    else -> {
-                        stringResource(R.string.reps_with_value, exercise.repetitions)
-                    }
-                }
+                val exerciseConfig = buildStringOverview(
+                    sets = exercise.sets,
+                    reps = exercise.repetitions,
+                    restTime = exercise.restTime,
+                    weightInKg = exercise.weightInKg,
+                    time = exercise.time.takeIf { it > Duration.ZERO }
+                )
                 Text(
-                    text =
-                    "${stringResource(
-                        R.string.sets_with_value,
-                        exercise.sets
-                    )} | $repsOrTime" +
-                        if (exercise.weightInKg !=
-                            null
-                        ) {
-                            " | ${exercise.weightInKg} ${stringResource(R.string.kg)}"
-                        } else {
-                            ""
-                        },
+                    text = exerciseConfig,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

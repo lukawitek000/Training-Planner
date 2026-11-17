@@ -9,6 +9,8 @@ import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
+import com.lukasz.witkowski.training.planner.session.domain.session.models.TrainingExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
@@ -23,10 +25,11 @@ internal data class SessionMetricsAccumulator(
     val stopElapsed: Duration? = null,
     val attempts: List<ExerciseAttemptStatistics> = emptyList(),
     val exerciseStatisticsIds: Map<TrainingExerciseId, ExerciseStatisticsId> = emptyMap(),
-    val exerciseNames: Map<TrainingExerciseId, String> = emptyMap(),
+    val exerciseSnapshots: Map<TrainingExerciseId, TrainingExerciseSnapshot> = emptyMap(),
     val setCountsByExercise: Map<TrainingExerciseId, Int> = emptyMap(),
     val currentExerciseStartTime: Duration? = null,
     val currentRestStartTime: Duration? = null,
+    val currentPlannedRestTime: Duration? = null,
     val overallRpe: SessionRpe? = null,
     val notes: String? = null
 ) {
@@ -48,7 +51,10 @@ internal data class SessionMetricsAccumulator(
             recordAttempt(event.exercise, completed = false, currentElapsed = currentElapsed)
         }
         is SessionEvent.RestStarted -> {
-            copy(currentRestStartTime = currentElapsed)
+            copy(
+                currentRestStartTime = currentElapsed,
+                currentPlannedRestTime = event.restTime
+            )
         }
         is SessionEvent.RestCompleted -> {
             recordRestFinished(event.feedback, currentElapsed)
@@ -92,7 +98,8 @@ internal data class SessionMetricsAccumulator(
             completed = completed,
             actualReps = exercise.currentConfig.reps,
             actualWeightInKg = exercise.currentConfig.weightInKg,
-            actualTime = exercise.currentConfig.holdTime
+            actualTime = exercise.currentConfig.holdTime,
+            plannedRestTime = exercise.restTime.takeIf { it > Duration.ZERO }
         )
         val updatedExerciseIds = if (exerciseId !in exerciseStatisticsIds) {
             val deterministicExerciseStatsId = ExerciseStatisticsId(
@@ -109,7 +116,7 @@ internal data class SessionMetricsAccumulator(
             attempts = attempts + attempt,
             setCountsByExercise = updatedSetCounts,
             exerciseStatisticsIds = updatedExerciseIds,
-            exerciseNames = exerciseNames + (exerciseId to exercise.snapshot.name),
+            exerciseSnapshots = exerciseSnapshots + (exerciseId to exercise.snapshot),
             currentExerciseStartTime = null
         )
     }
@@ -126,14 +133,16 @@ internal data class SessionMetricsAccumulator(
         val lastAttempt = attempts[lastIndex]
         val updatedLastAttempt = lastAttempt.copy(
             effort = feedback ?: lastAttempt.effort,
-            restTime = restDuration
+            restTime = restDuration,
+            plannedRestTime = currentPlannedRestTime ?: lastAttempt.plannedRestTime
         )
         val updatedAttempts = attempts.toMutableList().apply {
             this[lastIndex] = updatedLastAttempt
         }
         return copy(
             attempts = updatedAttempts,
-            currentRestStartTime = null
+            currentRestStartTime = null,
+            currentPlannedRestTime = null
         )
     }
 
@@ -147,10 +156,14 @@ internal data class SessionMetricsAccumulator(
                     "${statisticsId.value}_exercise_${exerciseId.value}".toByteArray()
                 ).toString()
             )
+            val snapshot = exerciseSnapshots[exerciseId]
             ExerciseStatistics(
                 id = exerciseStatsId,
                 trainingExerciseId = exerciseId,
-                exerciseName = exerciseNames[exerciseId].orEmpty(),
+                exerciseName = snapshot?.name.orEmpty(),
+                plannedSets = snapshot?.plannedSets ?: attemptsStatistics.size,
+                plannedConfig = snapshot?.plannedConfig ?: SessionExerciseConfiguration(reps = 1),
+                plannedRestTime = snapshot?.plannedRestTime ?: Duration.ZERO,
                 attemptsStatistics = attemptsStatistics
             )
         }

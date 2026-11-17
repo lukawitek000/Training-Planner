@@ -22,5 +22,6 @@ data class DbExerciseAttemptStatistics(
     val actualWeightInKg: Double? = null,
     val actualTime: Long? = null,
     val rpe: Int? = null,
-    val restTime: Long? = null
+    val restTime: Long? = null,
+    val plannedRestTime: Long? = null
 )

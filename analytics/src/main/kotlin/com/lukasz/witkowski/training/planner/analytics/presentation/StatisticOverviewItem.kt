@@ -14,17 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Comment
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.automirrored.filled.ShortText
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.FitnessCenter
 import androidx.compose.material.icons.filled.Insights
-import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.MonitorWeight
-import androidx.compose.material.icons.filled.ShortText
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -39,20 +33,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.BaselineShift
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import com.lukasz.witkowski.training.planner.analytics.R
 import com.lukasz.witkowski.training.planner.analytics.domain.models.ExerciseStatisticsOverview
@@ -61,6 +47,8 @@ import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
+import com.lukasz.witkowski.training.planner.shared.utils.formatUpToTwoDecimals
+import com.lukasz.witkowski.training.planner.shared.utils.formatVolumeText
 import java.util.Date
 
 @Composable
@@ -69,7 +57,7 @@ internal fun StatisticOverviewItem(
     isFirst: Boolean,
     isLast: Boolean,
     onItemClicked: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     var dotCenterY by remember { mutableFloatStateOf(0f) }
 
@@ -109,12 +97,12 @@ internal fun StatisticOverviewItem(
                         radius = dotRadius
                     ),
                     radius = dotRadius,
-                    center = center,
+                    center = center
                 )
             }
             .padding(
                 start = Dimens.gutterWidth,
-                bottom = if (isLast) 0.dp else Dimens.spaceMd
+                bottom = if (isLast) Dimens.zeroDp else Dimens.spaceMd
             )
     ) {
         Box(
@@ -148,16 +136,11 @@ internal fun StatisticOverviewItem(
                 )
             }
         }
-
-
     }
 }
 
 @Composable
-private fun OverviewHeader(
-    date: Date,
-    completenessRate: Double
-) {
+private fun OverviewHeader(date: Date, completenessRate: Double) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -169,10 +152,7 @@ private fun OverviewHeader(
 }
 
 @Composable
-private fun FormattedSessionDate(
-    date: Date,
-    modifier: Modifier = Modifier,
-) {
+private fun FormattedSessionDate(date: Date, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val label = remember(date) { date.toFormattedDateLabel(context) }
     Row(
@@ -185,27 +165,26 @@ private fun FormattedSessionDate(
             text = label.primary,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = MaterialTheme.colorScheme.onSurface
         )
         Text(
             modifier = modifier,
             text = label.secondary,
             style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
         )
     }
-
 }
 
 @Composable
 private fun OverviewCardHeader(
     overview: TrainingStatisticsOverview,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -232,7 +211,7 @@ private fun OverviewCardHeader(
 @Composable
 private fun TrainingSessionSummary(
     overview: TrainingStatisticsOverview,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.fillMaxWidth().background(
@@ -241,7 +220,7 @@ private fun TrainingSessionSummary(
         )
             .padding(Dimens.spaceSm),
         horizontalArrangement = Arrangement.spacedBy(Dimens.spaceMd),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         StatisticWithLabelAndIcon(
             label = stringResource(R.string.duration_label),
@@ -261,26 +240,19 @@ private fun TrainingSessionSummary(
 }
 
 @Composable
-internal fun Double.formatVolumeText() : String {
-    return this.takeIf { it > 0 }?.formatUpToTwoDecimals()
-        ?.plus(stringResource(R.string.kg))
-        ?: stringResource(R.string.bodyweight)
-}
-
-@Composable
 private fun StatisticWithLabelAndIcon(
     label: String,
     icon: ImageVector,
     statistic: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier,
+        modifier = modifier
     ) {
         Surface(
             shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.surfaceVariant,
+            color = MaterialTheme.colorScheme.surfaceVariant
         ) {
             Icon(
                 icon,
@@ -290,7 +262,7 @@ private fun StatisticWithLabelAndIcon(
             )
         }
         Spacer(Modifier.width(Dimens.spaceSm))
-        Column() {
+        Column {
             Text(
                 text = label,
                 style = MaterialTheme.typography.titleSmall,
@@ -304,13 +276,12 @@ private fun StatisticWithLabelAndIcon(
             )
         }
     }
-
 }
 
 @Composable
 private fun ExercisesOverviews(
     overviews: List<ExerciseStatisticsOverview>,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     FlowRow(
         modifier = modifier,
@@ -341,15 +312,12 @@ private fun ExercisesOverviews(
 }
 
 @Composable
-private fun DetailsButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
+private fun DetailsButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clickable(enabled = true, onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = Icons.Default.Insights,
@@ -369,9 +337,7 @@ private fun DetailsButton(
             tint = MaterialTheme.colorScheme.primary
         )
     }
-
 }
-
 
 @AppPreview
 @Composable

@@ -21,4 +21,6 @@
     <string name="time_picker_minutes_preset">%1$d min</string>
     <string name="time_picker_set_time">Set Time (%1$s)</string>
     <string name="time_picker_confirm_no_timer">Confirm (No Timer)</string>
+    <string name="weight_kg_format">%1$s kg</string>
+    <string name="bodyweight">Bodyweight</string>
 </resources>

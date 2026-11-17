@@ -23,18 +23,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import com.lukasz.witkowski.training.planner.analytics.R
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.ErrorColor
 import com.lukasz.witkowski.training.planner.shared.theme.ShapeFull
+import com.lukasz.witkowski.training.planner.shared.theme.Success
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.theme.Warning
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
+import com.lukasz.witkowski.training.planner.shared.utils.formatUpToTwoDecimals
 
 @Composable
 internal fun CompletenessPill(
     completenessRate: Double,
     modifier: Modifier = Modifier,
-    includeLabel: Boolean = true,
+    includeLabel: Boolean = true
 ) {
-    val completenessStyle = remember(completenessRate) { CompletenessStyle.create(completenessRate) }
+    val completenessStyle = remember(completenessRate) {
+        CompletenessStyle.create(completenessRate)
+    }
     val textStyle = MaterialTheme.typography.labelMedium
     Row(
         modifier = modifier
@@ -44,7 +49,7 @@ internal fun CompletenessPill(
             )
             .padding(horizontal = Dimens.spaceSm, vertical = Dimens.spaceXs),
         horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = completenessStyle.icon,
@@ -88,34 +93,31 @@ internal sealed class CompletenessStyle {
     abstract val backgroundColor: Color
     abstract val icon: ImageVector
 
-    data object Completed: CompletenessStyle() {
-        override val contentColor: Color = Color.Green
+    data object Completed : CompletenessStyle() {
+        override val contentColor: Color = Success
         override val backgroundColor: Color = contentColor.copy(alpha = 0.2f)
         override val icon: ImageVector = Icons.Default.CheckCircle
     }
 
-    data object PartialCompleteness: CompletenessStyle() {
+    data object PartialCompleteness : CompletenessStyle() {
         override val contentColor: Color = Warning
         override val backgroundColor: Color = contentColor.copy(alpha = 0.15f)
         override val icon: ImageVector = Icons.Default.Timelapse
     }
 
     data object CriticalCompleteness : CompletenessStyle() {
-        override val contentColor: Color = Color.Red
+        override val contentColor: Color = ErrorColor
         override val backgroundColor: Color = contentColor.copy(alpha = 0.2f)
         override val icon: ImageVector = Icons.Default.LocalFireDepartment
     }
 
     companion object {
-        fun create(completenessRate: Double): CompletenessStyle {
-            return when {
-                completenessRate < 20.0 -> CriticalCompleteness
-                completenessRate == 100.0 -> Completed
-                else -> PartialCompleteness
-            }
+        fun create(completenessRate: Double): CompletenessStyle = when {
+            completenessRate < 20.0 -> CriticalCompleteness
+            completenessRate == 100.0 -> Completed
+            else -> PartialCompleteness
         }
     }
-
 }
 
 @AppPreview

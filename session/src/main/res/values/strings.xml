@@ -37,6 +37,8 @@
     <string name="session_sec_hold_label">sec hold</string>
     <string name="session_timer_negative">&#8722;&#160;</string>
     <string name="session_start_hold_timer">Start Hold Timer</string>
+    <string name="session_loading_exercise_images">Loading exercise images</string>
+    <string name="session_end_early_cd">End training session</string>
     <string name="session_add_extra_set">Add Extra Set</string>
     <string name="session_remove_set">Remove Set</string>
     <string name="session_complete_set">Complete Set</string>
@@ -73,6 +75,8 @@
     <string name="session_bodyweight">Bodyweight</string>
     <string name="session_reps_suffix">%1$d reps</string>
     <string name="session_kg_suffix">%1$d kg</string>
+    <string name="session_summary_plan_date_format">%1$s • %2$s</string>
+    <string name="session_bento_sets_value_format">%1$d / %2$d</string>
     <string name="session_exercise_breakdown">EXERCISE BREAKDOWN</string>
     <string name="session_set_format">Set %1$d</string>
     <string name="session_status_completed">Completed</string>

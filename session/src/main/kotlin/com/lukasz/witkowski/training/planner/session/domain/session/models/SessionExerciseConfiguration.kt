@@ -4,8 +4,9 @@ import kotlin.time.Duration
 
 data class SessionExerciseConfiguration(
     val reps: Int,
-    val weightInKg: Double?,
-    val holdTime: Duration?
+    val weightInKg: Double? = null,
+    val holdTime: Duration? = null
 ) {
-    val isIsometric = holdTime != null
+    val isIsometric: Boolean
+        get() = holdTime != null && holdTime > Duration.ZERO
 }

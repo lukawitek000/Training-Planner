@@ -21,7 +21,8 @@ internal fun ExerciseAttemptStatistics.toDbExerciseAttemptStatistics(
     actualWeightInKg = actualWeightInKg,
     actualTime = actualTime?.inWholeMilliseconds,
     rpe = effort?.score,
-    restTime = restTime?.inWholeMilliseconds
+    restTime = restTime?.inWholeMilliseconds,
+    plannedRestTime = plannedRestTime?.inWholeMilliseconds
 )
 
 internal fun DbExerciseAttemptStatistics.toExerciseAttemptStatistics(): ExerciseAttemptStatistics =
@@ -35,5 +36,6 @@ internal fun DbExerciseAttemptStatistics.toExerciseAttemptStatistics(): Exercise
         actualWeightInKg = actualWeightInKg,
         actualTime = actualTime?.milliseconds,
         effort = SetEffort.fromNumeric(rpe),
-        restTime = restTime?.milliseconds
+        restTime = restTime?.milliseconds,
+        plannedRestTime = plannedRestTime?.milliseconds
     )

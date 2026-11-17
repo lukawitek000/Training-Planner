@@ -12,6 +12,7 @@ import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
@@ -69,7 +70,9 @@ class DbStatisticsRepositoryTest {
                 completed = true,
                 actualReps = 12,
                 actualWeightInKg = 85.5,
-                effort = SetEffort.HARD
+                effort = SetEffort.HARD,
+                restTime = 60.seconds,
+                plannedRestTime = 90.seconds
             )
 
         val exerciseStatistics =
@@ -77,6 +80,13 @@ class DbStatisticsRepositoryTest {
                 id = exerciseStatisticsId,
                 trainingExerciseId = trainingExerciseId,
                 exerciseName = "Bench Press",
+                plannedSets = 3,
+                plannedConfig = SessionExerciseConfiguration(
+                    reps = 10,
+                    weightInKg = 80.0,
+                    holdTime = 45.seconds
+                ),
+                plannedRestTime = 90.seconds,
                 attemptsStatistics = listOf(attempt)
             )
 
@@ -104,6 +114,11 @@ class DbStatisticsRepositoryTest {
         val retrievedExercise = retrieved.exercisesStatistics.first()
         assertEquals(trainingExerciseId, retrievedExercise.trainingExerciseId)
         assertEquals("Bench Press", retrievedExercise.exerciseName)
+        assertEquals(3, retrievedExercise.plannedSets)
+        assertEquals(10, retrievedExercise.plannedConfig.reps)
+        assertEquals(80.0, retrievedExercise.plannedConfig.weightInKg)
+        assertEquals(45.seconds, retrievedExercise.plannedConfig.holdTime)
+        assertEquals(90.seconds, retrievedExercise.plannedRestTime)
         assertEquals(1, retrievedExercise.attemptsStatistics.size)
 
         val retrievedAttempt = retrievedExercise.attemptsStatistics.first()
@@ -111,6 +126,8 @@ class DbStatisticsRepositoryTest {
         assertEquals(12, retrievedAttempt.actualReps)
         assertEquals(85.5, retrievedAttempt.actualWeightInKg)
         assertEquals(SetEffort.HARD, retrievedAttempt.effort)
+        assertEquals(60.seconds, retrievedAttempt.restTime)
+        assertEquals(90.seconds, retrievedAttempt.plannedRestTime)
         assertEquals(true, retrievedAttempt.completed)
     }
 
@@ -263,7 +280,7 @@ class DbStatisticsRepositoryTest {
         assertEquals(1800.0, latestOverview.totalVolumeKg, 0.01)
         assertEquals(2, latestOverview.completedSetsCount)
         assertEquals(3, latestOverview.totalSetsCount)
-        assertEquals(2.0 / 3.0, latestOverview.completenessRate, 0.001)
+        assertEquals((2.0 / 3.0) * 100.0, latestOverview.completenessRate, 0.001)
         assertEquals(SessionRpe.VERY_HARD, latestOverview.rpe)
         assertEquals("Felt strong on bench", latestOverview.note)
         assertEquals(2, latestOverview.exerciseOverviews.size)
@@ -273,7 +290,7 @@ class DbStatisticsRepositoryTest {
         }
         assertEquals("90° Hold", holdOverview.exerciseName)
         assertEquals(150.seconds, holdOverview.totalTime)
-        assertEquals(0.5, holdOverview.completenessRate, 0.001)
+        assertEquals(50.0, holdOverview.completenessRate, 0.001)
 
         val olderOverview = overviews[1]
         assertEquals(0, olderOverview.totalSetsCount)

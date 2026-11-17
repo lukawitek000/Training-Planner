@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.stateIn
 
 class TrainingStatisticsViewModel(
     private val trainingPlanId: TrainingPlanId,
-    private val service: TrainingStatisticsService,
+    private val service: TrainingStatisticsService
 ) : ViewModel() {
 
     val statisticsOverviews = service.getOverviews(trainingPlanId).cachedIn(viewModelScope)
@@ -30,7 +30,10 @@ class TrainingStatisticsViewModel(
             flowOf(DetailsUiState.NotSelected)
         } else {
             service.getStatistics(id)
-                .map { statistics -> statistics?.let { DetailsUiState.Success(it) } ?: DetailsUiState.NotSelected }
+                .map { statistics ->
+                    statistics?.let { DetailsUiState.Success(it) }
+                        ?: DetailsUiState.NotSelected
+                }
                 .catch { emit(DetailsUiState.Failure) }
         }
     }.stateIn(
@@ -51,5 +54,5 @@ class TrainingStatisticsViewModel(
 internal sealed interface DetailsUiState {
     data class Success(val details: TrainingStatistics) : DetailsUiState
     data object Failure : DetailsUiState
-    data object NotSelected: DetailsUiState
+    data object NotSelected : DetailsUiState
 }

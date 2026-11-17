@@ -15,5 +15,10 @@ data class DbExerciseStatistics(
     val id: String,
     val trainingStatisticsId: String,
     val trainingExerciseId: String,
-    val exerciseName: String = ""
+    val exerciseName: String = "",
+    val plannedSets: Int = 1,
+    val plannedReps: Int = 1,
+    val plannedWeightInKg: Double? = null,
+    val plannedHoldTime: Long? = null,
+    val plannedRestTime: Long = 0L
 )

@@ -68,7 +68,6 @@ import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryNam
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -399,7 +398,8 @@ private fun SwipeToDeleteExercise(
                             sets = exercise.sets,
                             reps = exercise.repetitions,
                             restTime = exercise.restTime,
-                            weightInKg = exercise.weightInKg
+                            weightInKg = exercise.weightInKg,
+                            time = exercise.time.takeIf { it > Duration.ZERO }
                         )
                         Text(
                             text = exerciseConfig,
