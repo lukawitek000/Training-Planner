@@ -50,11 +50,14 @@ import kotlinx.coroutines.launch
 internal fun EffortPill(
     rpe: SessionRpe,
     modifier: Modifier = Modifier,
+    textFactory: @Composable (label: String, score: Int) -> String = { label, score ->
+        stringResource(R.string.effort_long_summary, label, score)
+    }
 ) {
     val style = rpe.toVisualStyle()
     val label = stringResource(rpe.labelRes)
     val description = stringResource(rpe.descriptionRes)
-    val text = stringResource(R.string.effort_long_summary, label, rpe.score)
+    val text = textFactory(label, rpe.score)
     val tooltipState = rememberTooltipState(isPersistent = true)
     val scope = rememberCoroutineScope()
 

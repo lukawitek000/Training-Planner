@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import com.lukasz.witkowski.training.planner.analytics.R
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.ShapeFull
@@ -31,6 +32,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 internal fun CompletenessPill(
     completenessRate: Double,
     modifier: Modifier = Modifier,
+    includeLabel: Boolean = true,
 ) {
     val completenessStyle = remember(completenessRate) { CompletenessStyle.create(completenessRate) }
     val textStyle = MaterialTheme.typography.labelMedium
@@ -50,23 +52,38 @@ internal fun CompletenessPill(
             tint = completenessStyle.contentColor,
             modifier = Modifier.size(Dimens.iconSize16)
         )
-        Text(
-            text = stringResource(
-                R.string.completeness,
-                completenessRate.formatUpToTwoDecimals()
-            ),
-            color = completenessStyle.contentColor,
-            style = textStyle
+        CompletenessPercentage(
+            completenessRate = completenessRate,
+            completenessStyle = completenessStyle,
+            textStyle = textStyle
         )
-        Text(
-            text = stringResource(R.string.completed),
-            color = completenessStyle.contentColor,
-            style = textStyle
-        )
+        if (includeLabel) {
+            Text(
+                text = stringResource(R.string.completed),
+                color = completenessStyle.contentColor,
+                style = textStyle
+            )
+        }
     }
 }
 
-private sealed class CompletenessStyle {
+@Composable
+internal fun CompletenessPercentage(
+    completenessRate: Double,
+    completenessStyle: CompletenessStyle,
+    textStyle: TextStyle = MaterialTheme.typography.labelMedium
+) {
+    Text(
+        text = stringResource(
+            R.string.completeness,
+            completenessRate.formatUpToTwoDecimals()
+        ),
+        color = completenessStyle.contentColor,
+        style = textStyle
+    )
+}
+
+internal sealed class CompletenessStyle {
     abstract val contentColor: Color
     abstract val backgroundColor: Color
     abstract val icon: ImageVector

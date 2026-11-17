@@ -27,16 +27,16 @@ class TrainingStatisticsViewModel(
     @OptIn(ExperimentalCoroutinesApi::class)
     internal val statisticsDetails = selectedSession.flatMapLatest { id ->
         if (id == null) {
-            flowOf(DetailsUiState.NoData)
+            flowOf(DetailsUiState.NotSelected)
         } else {
             service.getStatistics(id)
-                .map { statistics -> statistics?.let { DetailsUiState.Success(it) } ?: DetailsUiState.NoData }
+                .map { statistics -> statistics?.let { DetailsUiState.Success(it) } ?: DetailsUiState.NotSelected }
                 .catch { emit(DetailsUiState.Failure) }
         }
     }.stateIn(
         viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = DetailsUiState.NoData
+        initialValue = DetailsUiState.NotSelected
     )
 
     fun onSessionClicked(id: TrainingStatisticsId) {
@@ -51,5 +51,5 @@ class TrainingStatisticsViewModel(
 internal sealed interface DetailsUiState {
     data class Success(val details: TrainingStatistics) : DetailsUiState
     data object Failure : DetailsUiState
-    data object NoData: DetailsUiState
+    data object NotSelected: DetailsUiState
 }

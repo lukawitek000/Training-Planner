@@ -3,14 +3,23 @@
     <string name="no_previous_sessions">No previous sessions available yet</string>
     <string name="session_stats">SESSION STATS</string>
     <string name="completed">Completed</string>
+    <string name="skipped">Skipped</string>
+    <string name="session_effort_label">Session effort</string>
+    <string name="session_total_vol_label">Total Vol.</string>
     <string name="completeness">%1$s%%</string>
     <string name="volume_summary">Volume: %1$s</string>
     <string name="bodyweight">Bodyweight</string>
     <string name="effort_long_summary">Effort: %1$s (%2$s)</string>
+    <string name="effort_short_summary">%1$s (%2$s)</string>
     <string name="exercise_overview_summary">(%1$s%% · %2$s)</string>
     <string name="inspect_details">Inspect Set Attempts &amp; Effort</string>
     <string name="duration_label">DURATION</string>
     <string name="volume_label">VOLUME</string>
+    <string name="exercise_breakdown_header">EXERCISES BREAKDOWN</string>
+    <string name="target_comparison_legend"><annotation style="bold">Target Comparison:</annotation> Actual performance vs planned targets. <annotation style="green">Green</annotation> indicates met/exceeded, deviations highlighted in <annotation style="amber">amber</annotation>/<annotation style="red">red</annotation>.</string>
+
+    <string name="set_label">Set %1$d \u00B7 %2$s</string>
+    <string name="target_prefix">Target: %1$s</string>
 
     <!-- Session RPE Short Labels -->
     <string name="rpe_very_light">Very light</string>

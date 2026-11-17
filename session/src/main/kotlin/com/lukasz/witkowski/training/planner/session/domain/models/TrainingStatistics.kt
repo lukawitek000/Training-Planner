@@ -32,4 +32,7 @@ data class TrainingStatistics(
 
     val totalSetsCount: Int
         get() = allAttempts.size
+
+    val completenessRate: Double
+        get() = if (totalSetsCount == 0) 0.0 else (completedSetsCount / totalSetsCount.toDouble()) * 100.0
 }

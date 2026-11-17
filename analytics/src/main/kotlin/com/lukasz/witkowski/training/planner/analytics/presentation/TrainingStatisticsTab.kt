@@ -65,6 +65,7 @@ import java.util.Locale
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
+// TODo convert it so that the TrainingPlandetails screen as a whole is a lazy column with sticky headers of the tabs
 @Composable
 fun TrainingStatisticsTab(
     viewModel: TrainingStatisticsViewModel,
@@ -99,6 +100,13 @@ private fun TrainingStatisticsTabContent(
             overviews = overviews,
             onSessionClicked = onSessionClicked,
             modifier = modifier
+        )
+    }
+    if (detailsUiState is DetailsUiState.Success) {
+        TrainingStatisticsDetailsSheet(
+            statistics = detailsUiState.details,
+            onDismissRequest = onDetailsDismiss,
+
         )
     }
 }
@@ -215,7 +223,8 @@ private val PREVIEW_EXERCISE_ATTEMPT_STATISTICS = listOf(
         actualWeightInKg = 80.0,
         actualTime = 45.seconds,
         effort = SetEffort.MODERATE,
-        restTime = 90.seconds
+        restTime = 90.seconds,
+        time = 54.seconds
     ),
     ExerciseAttemptStatistics(
         id = ExerciseAttemptStatisticsId.create(),
@@ -226,7 +235,8 @@ private val PREVIEW_EXERCISE_ATTEMPT_STATISTICS = listOf(
         actualWeightInKg = 80.0,
         actualTime = 48.seconds,
         effort = SetEffort.HARD,
-        restTime = 90.seconds
+        restTime = 90.seconds,
+        time = 62.seconds
     ),
     ExerciseAttemptStatistics(
         id = ExerciseAttemptStatisticsId.create(),
@@ -237,7 +247,8 @@ private val PREVIEW_EXERCISE_ATTEMPT_STATISTICS = listOf(
         actualWeightInKg = 80.0,
         actualTime = 50.seconds,
         effort = SetEffort.MAXIMAL,
-        restTime = 120.seconds
+        restTime = 120.seconds,
+        time = 74.seconds
     )
 )
 
@@ -262,13 +273,14 @@ private val PREVIEW_EXERCISE_STATISTICS = listOf(
                 actualWeightInKg = null,
                 actualTime = 30.seconds,
                 effort = SetEffort.MODERATE,
-                restTime = 60.seconds
+                restTime = 60.seconds,
+                time = 123.seconds
             )
         )
     )
 )
 
-private val PREVIEW_TRAINING_STATISTICS = TrainingStatistics(
+internal val PREVIEW_TRAINING_STATISTICS = TrainingStatistics(
     id = TrainingStatisticsId.create(),
     trainingPlanId = TrainingPlanId.create(),
     totalTime = 45.minutes,
@@ -287,7 +299,7 @@ private fun TrainingStatisticsTabPreview() {
         TrainingStatisticsTabContent(
             overviews = PREVIEW_TRAINING_STATISTICS_OVERVIEWS.asPreviewPagerFlow()
                 .collectAsLazyPagingItems(),
-            detailsUiState = DetailsUiState.NoData,
+            detailsUiState = DetailsUiState.NotSelected,
             onSessionClicked = {},
             onDetailsDismiss = {},
             modifier = Modifier.fillMaxSize()
@@ -317,7 +329,7 @@ private fun TrainingStatisticsTabEmptyPreview() {
         TrainingStatisticsTabContent(
             overviews = emptyList<TrainingStatisticsOverview>().asPreviewPagerFlow()
                 .collectAsLazyPagingItems(),
-            detailsUiState = DetailsUiState.NoData,
+            detailsUiState = DetailsUiState.NotSelected,
             onSessionClicked = {},
             onDetailsDismiss = {},
             modifier = Modifier.fillMaxSize()

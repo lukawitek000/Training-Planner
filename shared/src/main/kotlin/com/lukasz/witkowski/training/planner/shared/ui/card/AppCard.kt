@@ -36,7 +36,7 @@ fun AppCard(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         shape = shape,
         colors =
         CardDefaults.cardColors(

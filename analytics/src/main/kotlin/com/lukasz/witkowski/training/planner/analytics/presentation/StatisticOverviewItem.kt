@@ -250,9 +250,7 @@ private fun TrainingSessionSummary(
             modifier = Modifier.weight(1f)
         )
 
-        val volumeText = overview.totalVolumeKg.takeIf { it > 0 }?.formatUpToTwoDecimals()
-            ?.plus(stringResource(R.string.kg))
-            ?: stringResource(R.string.bodyweight)
+        val volumeText = overview.totalVolumeKg.formatVolumeText()
         StatisticWithLabelAndIcon(
             label = stringResource(R.string.volume_label),
             icon = Icons.Default.BarChart,
@@ -260,6 +258,13 @@ private fun TrainingSessionSummary(
             modifier = Modifier.weight(1f)
         )
     }
+}
+
+@Composable
+internal fun Double.formatVolumeText() : String {
+    return this.takeIf { it > 0 }?.formatUpToTwoDecimals()
+        ?.plus(stringResource(R.string.kg))
+        ?: stringResource(R.string.bodyweight)
 }
 
 @Composable
@@ -300,59 +305,6 @@ private fun StatisticWithLabelAndIcon(
         }
     }
 
-}
-
-@Composable
-private fun SessionNotes(
-    notes: String,
-    modifier: Modifier = Modifier
-) {
-    AppCard(
-        modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.background
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(Dimens.spaceSm),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.Comment,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary
-            )
-            Spacer(Modifier.width(Dimens.spaceMd))
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(
-                        SpanStyle(
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    ) {
-                        append("\" ")
-                    }
-                    withStyle(
-                        SpanStyle(
-                            fontWeight = FontWeight.Normal,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    ) {
-                        append(notes)
-                    }
-                    withStyle(
-                        SpanStyle(
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    ) {
-                        append(" \"")
-                    }
-                }
-            )
-        }
-    }
 }
 
 @Composable
