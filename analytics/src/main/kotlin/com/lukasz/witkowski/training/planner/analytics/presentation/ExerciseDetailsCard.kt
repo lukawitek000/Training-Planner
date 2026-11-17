@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.TrackChanges
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -61,7 +62,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.utils.formatVolumeText
 import kotlin.time.Duration
 
-private const val PARTIAL_COMPLETION_RATIO = 0.8
+private const val PARTIAL_COMPLETION_RATIO = 0.6
 private const val REST_PARTIAL_TOLERANCE_RATIO = 1.25
 
 @Composable
@@ -76,7 +77,6 @@ internal fun ExerciseDetailsCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(Dimens.spaceSm),
-            verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
         ) {
             ExerciseCardHeader(
                 exerciseName = statistics.exerciseName,
@@ -91,7 +91,8 @@ internal fun ExerciseDetailsCard(
                 visible = isExpanded
             ) {
                 Column(
-                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm),
+                    modifier = Modifier.padding(top = Dimens.spaceMd)
                 ) {
                     PlannedConfiguration(
                         plannedSets = statistics.plannedSets,
@@ -378,7 +379,7 @@ private fun PlannedConfiguration(
         horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Icon(
-            imageVector = Icons.Outlined.TrackChanges,
+            imageVector = Icons.Outlined.CalendarMonth,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(Dimens.iconSize16)

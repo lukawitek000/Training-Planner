@@ -35,7 +35,6 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
-// TODO convert it so that the TrainingPlanDetails screen as a whole is a lazy column with sticky headers of the tabs
 @Composable
 fun TrainingStatisticsTab(viewModel: TrainingStatisticsViewModel, modifier: Modifier = Modifier) {
     val overviews = viewModel.statisticsOverviews.collectAsLazyPagingItems()
