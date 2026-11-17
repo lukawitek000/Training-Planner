@@ -113,14 +113,16 @@ private fun ExerciseCardHeader(
         Icons.Default.ExpandMore
     }
     Row(
-        modifier = modifier.height(IntrinsicSize.Max),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier.fillMaxWidth().height(IntrinsicSize.Max),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Row(
             modifier = Modifier
                 .clip(MaterialTheme.shapes.medium)
                 .clickable(onClick = onToggleExpansion)
-                .padding(end = Dimens.spaceSm, top = Dimens.spaceXs, bottom = Dimens.spaceXs),
+                .padding(end = Dimens.spaceSm, top = Dimens.spaceXs, bottom = Dimens.spaceXs)
+                .weight(1f),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
         ) {
@@ -130,6 +132,7 @@ private fun ExerciseCardHeader(
             Text(
                 text = exerciseName,
                 style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.weight(1f)
             )
             Icon(
                 imageVector = icon,
@@ -138,7 +141,6 @@ private fun ExerciseCardHeader(
                 tint = MaterialTheme.colorScheme.outline
             )
         }
-        Spacer(Modifier.weight(1f))
         Column(
             horizontalAlignment = Alignment.End,
             modifier = Modifier.fillMaxHeight(),

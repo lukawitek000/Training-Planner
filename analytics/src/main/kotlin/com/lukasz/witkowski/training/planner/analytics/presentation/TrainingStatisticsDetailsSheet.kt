@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.CompareArrows
 import androidx.compose.material.icons.filled.AccessTime
@@ -74,7 +76,7 @@ private fun TrainingStatisticsDetailsContent(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(modifier = modifier.padding(Dimens.spaceSm)) {
+    Column(modifier = modifier.padding(horizontal = Dimens.spaceSm)) {
         SheetHeader(
             date = statistics.date,
             totalTime = statistics.totalTime,
@@ -93,7 +95,7 @@ private fun TrainingStatisticsDetailsContent(
                     SessionNotes(note)
                 }
             }
-            stickyHeader(key = "exercise_breakdown_header") {
+            item(key = "exercise_breakdown_header") {
                 Text(
                     text = stringResource(R.string.exercise_breakdown_header),
                     style = MaterialTheme.typography.headlineSmall,
@@ -105,6 +107,13 @@ private fun TrainingStatisticsDetailsContent(
                     greenColor = ParameterColors.Completed.color,
                     amberColor = ParameterColors.PartiallyCompleted.color,
                     redColor = ParameterColors.CriticallyIncompleted.color
+                )
+            }
+            itemsIndexed(statistics.exercisesStatistics, key = { _, stats -> stats.id.value.toString() }) { idx, stats ->
+                ExerciseDetailsCard(
+                    statistics = stats,
+                    index = idx,
+                    modifier = Modifier.padding(bottom = Dimens.spaceSm)
                 )
             }
         }

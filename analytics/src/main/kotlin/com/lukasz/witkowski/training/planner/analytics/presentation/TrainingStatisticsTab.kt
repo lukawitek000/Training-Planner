@@ -256,7 +256,7 @@ private val PREVIEW_EXERCISE_STATISTICS = listOf(
     ExerciseStatistics(
         id = ExerciseStatisticsId.create(),
         trainingExerciseId = PREVIEW_TRAINING_EXERCISE_ID,
-        exerciseName = "Barbell Bench Press",
+        exerciseName = "Barbell Bench Press longer name",
         attemptsStatistics = PREVIEW_EXERCISE_ATTEMPT_STATISTICS
     ),
     ExerciseStatistics(
