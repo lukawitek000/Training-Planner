@@ -1,41 +1,61 @@
 package com.lukasz.witkowski.training.planner.training.presentation.details
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.buildStringOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
+import com.lukasz.witkowski.training.planner.shared.theme.ShapeFull
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
@@ -57,11 +77,18 @@ import com.lukasz.witkowski.training.planner.training.presentation.list.Training
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
+import kotlinx.coroutines.launch
+
+private const val TAB_HEADER_INDEX = 1
+
+private fun LazyListState.isScrolledPast(itemIndex: Int): Boolean =
+    firstVisibleItemIndex > itemIndex ||
+        (firstVisibleItemIndex == itemIndex && firstVisibleItemScrollOffset > 0)
 
 @Composable
 fun TrainingPlanDetailsScreen(
     viewModel: TrainingPlanDetailsViewModel,
-    previousSessionsTabContent: @Composable (Modifier) -> Unit,
+    previousSessionsTabContent: LazyListScope.() -> Unit,
     modifier: Modifier = Modifier,
     onStartTrainingSessionClicked: (TrainingPlanId) -> Unit = {}
 ) {
@@ -77,7 +104,7 @@ fun TrainingPlanDetailsScreen(
 @Composable
 fun TrainingPlanDetailsScreenContent(
     trainingPlanState: ResultHandler<TrainingPlan>,
-    previousSessionsTabContent: @Composable (Modifier) -> Unit,
+    previousSessionsTabContent: LazyListScope.() -> Unit,
     modifier: Modifier = Modifier,
     onStartTrainingSessionClicked: (TrainingPlanId) -> Unit = {}
 ) {
@@ -110,10 +137,11 @@ fun TrainingPlanDetailsScreenContent(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun TrainingPlanDetails(
     trainingPlan: TrainingPlan,
-    previousSessionsTabContent: @Composable (Modifier) -> Unit,
+    previousSessionsTabContent: LazyListScope.() -> Unit,
     modifier: Modifier = Modifier,
     onStartTrainingSessionClicked: (TrainingPlanId) -> Unit = {}
 ) {
@@ -122,45 +150,119 @@ private fun TrainingPlanDetails(
         stringResource(id = R.string.exercises_tab_title),
         stringResource(id = R.string.previous_sessions_tab_title)
     )
+    val lazyListState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    val showScrollToTopButton by remember {
+        derivedStateOf { lazyListState.firstVisibleItemIndex > 0 }
+    }
 
-    Column(
-        modifier = modifier.padding(Dimens.spaceMd),
-        verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
-    ) {
-        TrainingPlanInfoSection(trainingPlan = trainingPlan)
-        AppPrimaryButton(
-            text = stringResource(id = R.string.start_training_session),
-            onClick = { onStartTrainingSessionClicked(trainingPlan.id) },
-            leadingIcon = Icons.Default.PlayArrow,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        PrimaryTabRow(
-            selectedTabIndex = selectedTabIndex,
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.primary
+    Box(modifier = modifier.fillMaxSize()) {
+        LazyColumn(
+            state = lazyListState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                start = Dimens.spaceMd,
+                end = Dimens.spaceMd,
+                top = Dimens.spaceMd,
+                bottom = Dimens.buttonHeight + Dimens.spaceXl
+            ),
+            verticalArrangement = Arrangement.Top
         ) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
-                    text = {
-                        Text(
-                            text = title,
-                            style = MaterialTheme.typography.titleSmall
+            item(key = "plan_header") {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = Dimens.spaceSm),
+                    verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
+                ) {
+                    TrainingPlanInfoSection(trainingPlan = trainingPlan)
+                    AppPrimaryButton(
+                        text = stringResource(id = R.string.start_training_session),
+                        onClick = { onStartTrainingSessionClicked(trainingPlan.id) },
+                        leadingIcon = Icons.Default.PlayArrow,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+
+            stickyHeader(key = "plan_tabs") {
+                Surface(
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    PrimaryTabRow(
+                        selectedTabIndex = selectedTabIndex,
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(
+                            top = Dimens.spaceXs,
+                            bottom = Dimens.spaceMd
                         )
+                    ) {
+                        tabs.forEachIndexed { index, title ->
+                            Tab(
+                                selected = selectedTabIndex == index,
+                                onClick = {
+                                    if (selectedTabIndex != index) {
+                                        selectedTabIndex = index
+                                        if (lazyListState.isScrolledPast(TAB_HEADER_INDEX)) {
+                                            coroutineScope.launch {
+                                                lazyListState.scrollToItem(TAB_HEADER_INDEX)
+                                            }
+                                        }
+                                    }
+                                },
+                                text = {
+                                    Text(
+                                        text = title,
+                                        style = MaterialTheme.typography.titleSmall
+                                    )
+                                }
+                            )
+                        }
                     }
-                )
+                }
+            }
+
+            when (selectedTabIndex) {
+                0 -> exercisesTabItems(exercises = trainingPlan.exercises)
+                1 -> previousSessionsTabContent()
             }
         }
-        when (selectedTabIndex) {
-            0 -> ExercisesTabContent(
-                exercises = trainingPlan.exercises,
-                modifier = Modifier.weight(1f)
+
+        AnimatedVisibility(
+            visible = showScrollToTopButton,
+            enter = fadeIn() + slideInVertically(initialOffsetY = { it }),
+            exit = fadeOut() + slideOutVertically(targetOffsetY = { it }),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = Dimens.spaceMd)
+        ) {
+            ScrollToTopPillButton(
+                onClick = {
+                    coroutineScope.launch {
+                        lazyListState.animateScrollToItem(0)
+                    }
+                }
             )
-            1 -> previousSessionsTabContent(Modifier.weight(1f))
         }
     }
+}
+
+@Composable
+private fun ScrollToTopPillButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    AppPrimaryButton(
+        text = stringResource(id = R.string.scroll_to_top),
+        modifier = modifier,
+        onClick = onClick,
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowUp,
+                contentDescription = null,
+                modifier = Modifier.size(Dimens.inputIconSize)
+            )
+        }
+    )
 }
 
 @Composable
@@ -235,20 +337,21 @@ private fun TrainingPlanRestTimeInfo(restTime: Duration, modifier: Modifier = Mo
     }
 }
 
-@Composable
-private fun ExercisesTabContent(exercises: List<TrainingExercise>, modifier: Modifier = Modifier) {
-    Column(modifier = modifier.fillMaxSize()) {
+private fun LazyListScope.exercisesTabItems(exercises: List<TrainingExercise>) {
+    item(key = "exercises_header") {
         Text(
             text = stringResource(id = R.string.exercises_count, exercises.size),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = Dimens.spaceSm)
         )
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)) {
-            itemsIndexed(exercises, key = { _, it -> it.id.toString() }) { index, exercise ->
-                ExerciseListItem(index = index, exercise = exercise)
-            }
-        }
+    }
+    itemsIndexed(exercises, key = { _, it -> it.id.toString() }) { index, exercise ->
+        ExerciseListItem(
+            index = index,
+            exercise = exercise,
+            modifier = Modifier.padding(bottom = Dimens.spaceSm)
+        )
     }
 }
 
@@ -314,7 +417,9 @@ private fun TrainingPlanDetailsScreenContentLoadingPreview() {
             trainingPlanState = ResultHandler.Loading,
             modifier = Modifier.fillMaxSize(),
             previousSessionsTabContent = {
-                AppEmptyState("No Data", modifier = it)
+                item {
+                    AppEmptyState("No Data", modifier = Modifier.fillMaxWidth())
+                }
             }
         )
     }
@@ -328,7 +433,9 @@ private fun TrainingPlanDetailsScreenContentFailurePreview() {
             trainingPlanState = ResultHandler.Error("Some error"),
             modifier = Modifier.fillMaxSize(),
             previousSessionsTabContent = {
-                AppEmptyState("No Data", modifier = it)
+                item {
+                    AppEmptyState("No Data", modifier = Modifier.fillMaxWidth())
+                }
             }
         )
     }
@@ -342,7 +449,9 @@ private fun TrainingPlanDetailsScreenContentPreview() {
             trainingPlanState = ResultHandler.Success(value = PREVIEW_TRAINING_PLAN),
             modifier = Modifier.fillMaxSize(),
             previousSessionsTabContent = {
-                AppEmptyState("No Data", modifier = it)
+                item {
+                    AppEmptyState("No Data", modifier = Modifier.fillMaxWidth())
+                }
             }
         )
     }

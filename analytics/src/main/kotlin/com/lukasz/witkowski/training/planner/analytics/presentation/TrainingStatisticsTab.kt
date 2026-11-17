@@ -2,7 +2,9 @@ package com.lukasz.witkowski.training.planner.analytics.presentation
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -24,6 +26,7 @@ import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
+import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppEmptyState
@@ -36,16 +39,59 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 @Composable
-fun TrainingStatisticsTab(viewModel: TrainingStatisticsViewModel, modifier: Modifier = Modifier) {
+fun TrainingStatisticsHost(
+    viewModel: TrainingStatisticsViewModel,
+    content: @Composable (LazyListScope.() -> Unit) -> Unit
+) {
     val overviews = viewModel.statisticsOverviews.collectAsLazyPagingItems()
     val detailsUiState by viewModel.statisticsDetails.collectAsStateWithLifecycle()
-    TrainingStatisticsTabContent(
-        overviews = overviews,
-        detailsUiState = detailsUiState,
-        onSessionClicked = viewModel::onSessionClicked,
-        onDetailsDismiss = viewModel::onSessionDismissed,
-        modifier = modifier
-    )
+
+    content {
+        trainingStatisticsItems(
+            overviews = overviews,
+            onSessionClicked = viewModel::onSessionClicked
+        )
+    }
+
+    val currentDetailsState = detailsUiState
+    if (currentDetailsState is DetailsUiState.Success) {
+        TrainingStatisticsDetailsSheet(
+            statistics = currentDetailsState.details,
+            onDismissRequest = viewModel::onSessionDismissed
+        )
+    }
+}
+
+fun LazyListScope.trainingStatisticsItems(
+    overviews: LazyPagingItems<TrainingStatisticsOverview>,
+    onSessionClicked: (TrainingStatisticsId) -> Unit,
+    emptyStateModifier: Modifier = Modifier
+) {
+    if (overviews.itemCount == 0) {
+        item(key = "empty_previous_sessions") {
+            AppEmptyState(
+                title = stringResource(id = R.string.no_previous_sessions),
+                modifier = emptyStateModifier
+                    .fillMaxWidth()
+                    .padding(vertical = Dimens.spaceXl)
+            )
+        }
+    } else {
+        val isEndReached = overviews.loadState.append.endOfPaginationReached
+        items(
+            count = overviews.itemCount,
+            key = overviews.itemKey { it.id.value }
+        ) { index ->
+            overviews[index]?.let { overview ->
+                StatisticOverviewItem(
+                    overview = overview,
+                    isFirst = index == 0,
+                    isLast = index == overviews.itemCount - 1 && isEndReached,
+                    onItemClicked = { onSessionClicked(overview.id) }
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -56,16 +102,12 @@ private fun TrainingStatisticsTabContent(
     onDetailsDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    if (overviews.itemCount == 0) {
-        AppEmptyState(
-            title = stringResource(id = R.string.no_previous_sessions),
-            modifier = modifier
-        )
-    } else {
-        StatisticsOverviewsList(
+    LazyColumn(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        trainingStatisticsItems(
             overviews = overviews,
-            onSessionClicked = onSessionClicked,
-            modifier = modifier
+            onSessionClicked = onSessionClicked
         )
     }
     if (detailsUiState is DetailsUiState.Success) {
@@ -73,32 +115,6 @@ private fun TrainingStatisticsTabContent(
             statistics = detailsUiState.details,
             onDismissRequest = onDetailsDismiss
         )
-    }
-}
-
-@Composable
-private fun StatisticsOverviewsList(
-    overviews: LazyPagingItems<TrainingStatisticsOverview>,
-    onSessionClicked: (TrainingStatisticsId) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val isEndReached = overviews.loadState.append.endOfPaginationReached
-    LazyColumn(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        items(
-            count = overviews.itemCount,
-            key = overviews.itemKey { it.id.value }
-        ) { index ->
-            overviews[index]?.let {
-                StatisticOverviewItem(
-                    overview = it,
-                    isFirst = index == 0,
-                    isLast = index == overviews.itemCount - 1 && isEndReached,
-                    onItemClicked = { onSessionClicked(it.id) }
-                )
-            }
-        }
     }
 }
 

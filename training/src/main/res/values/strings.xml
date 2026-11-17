@@ -17,6 +17,7 @@
     <string name="loading_training_plan">Loading training plan…</string>
     <string name="start_training_session">Start training session</string>
     <string name="rest_time_with_value">Rest time: %1$s</string>
+    <string name="scroll_to_top">Back to top</string>
 
     <!-- Delete Training Plan -->
     <string name="delete_training_plan_dialog_title">Delete training plan?</string>
