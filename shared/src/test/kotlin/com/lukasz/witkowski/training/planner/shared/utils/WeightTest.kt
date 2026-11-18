@@ -54,4 +54,10 @@ class WeightTest {
         assertFalse(Weight.ZERO.isPositive)
         assertFalse((-5.0).kg.isPositive)
     }
+
+    @Test
+    fun `defaultStep returns standard gym increment per unit`() {
+        assertEquals(2.5, WeightUnit.KG.defaultStep, 1e-9)
+        assertEquals(5.0, WeightUnit.LBS.defaultStep, 1e-9)
+    }
 }

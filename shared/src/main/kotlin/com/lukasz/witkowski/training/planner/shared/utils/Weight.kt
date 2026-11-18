@@ -4,7 +4,13 @@ import kotlin.math.roundToInt
 
 enum class WeightUnit {
     KG,
-    LBS
+    LBS;
+
+    val defaultStep: Double
+        get() = when (this) {
+            KG -> 2.5
+            LBS -> 5.0
+        }
 }
 
 @JvmInline

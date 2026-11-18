@@ -196,7 +196,7 @@ private fun ActiveSetCard(
                     val rounded = (steppedWeight * 100.0).roundToInt() / 100.0
                     onSessionIntent(SessionIntent.WeightChanged(Weight.of(rounded, weightUnit)))
                 },
-                step = 2.5,
+                step = weightUnit.defaultStep,
                 label = weightUnit.shortLabel(),
                 minValue = 0.0
             )

@@ -17,6 +17,7 @@ import com.lukasz.witkowski.training.planner.shared.utils.LocalWeightUnit
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
 import com.lukasz.witkowski.training.planner.shared.utils.kg
+import com.lukasz.witkowski.training.planner.shared.utils.lbs
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
@@ -214,5 +215,49 @@ class TrainingExerciseScreenTest {
 
         composeTestRule.onNodeWithText("132.28").assertIsDisplayed()
         composeTestRule.onNodeWithText("lbs").assertIsDisplayed()
+    }
+
+    @Test
+    fun incrementsWeightByFiveLbsWhenLocalWeightUnitIsLbs() {
+        val exercise = createSessionExercise(
+            name = "Bench Press",
+            reps = 10,
+            weight = 100.lbs
+        )
+        val progress = ExerciseQueueProgress(
+            remainingExerciseSets = 2,
+            currentExerciseTotalSets = 3,
+            totalExercises = 1,
+            remainingExercises = 1,
+            remainingSetsInWorkout = 3,
+            nextSetQueueProgress = null
+        )
+        val state = TrainingSessionState.ExerciseState(
+            sessionExercise = exercise,
+            timerState = TimerState.NotSet,
+            progress = progress
+        )
+        val uiState = TrainingSessionUiState.Exercise(
+            domainState = state,
+            imagesReferences = ResultHandler.Success(emptyList())
+        )
+        val recordedIntents = mutableListOf<SessionIntent>()
+
+        composeTestRule.setContent {
+            CompositionLocalProvider(LocalWeightUnit provides WeightUnit.LBS) {
+                TrainingPlannerTheme {
+                    TrainingExerciseScreen(
+                        uiState = uiState,
+                        onSessionIntent = { recordedIntents.add(it) },
+                        onEndClicked = {}
+                    )
+                }
+            }
+        }
+
+        composeTestRule.onNodeWithContentDescription("Increase").performClick()
+
+        val weightIntent = recordedIntents.filterIsInstance<SessionIntent.WeightChanged>().last()
+        assertEquals(105.0, weightIntent.weight.inPounds, 1e-6)
     }
 }
