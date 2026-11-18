@@ -37,11 +37,3 @@ fun Weight.formatWeightText(weightUnit: WeightUnit = LocalWeightUnit.current): S
 fun Weight?.formatVolumeText(weightUnit: WeightUnit = LocalWeightUnit.current): String =
     this?.takeIf { it.isPositive }?.formatWeightText(weightUnit)
         ?: stringResource(R.string.bodyweight)
-
-@Composable
-fun Double.formatWeightText(weightUnit: WeightUnit = LocalWeightUnit.current): String =
-    Weight.ofKilograms(this).formatWeightText(weightUnit)
-
-@Composable
-fun Double.formatVolumeText(weightUnit: WeightUnit = LocalWeightUnit.current): String =
-    Weight.ofKilograms(this).formatVolumeText(weightUnit)

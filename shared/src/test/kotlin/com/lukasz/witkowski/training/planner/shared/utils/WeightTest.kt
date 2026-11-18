@@ -24,9 +24,20 @@ class WeightTest {
 
     @Test
     fun `toDouble returns value in requested unit`() {
-        val weight = Weight.of(60.0, WeightUnit.KG)
-        assertEquals(60.0, weight.toDouble(WeightUnit.KG), 1e-9)
-        assertEquals(132.277357, weight.toDouble(WeightUnit.LBS), 1e-5)
+        val kgWeight = Weight.of(60.0, WeightUnit.KG)
+        assertEquals(60.0, kgWeight.toDouble(WeightUnit.KG), 1e-9)
+        assertEquals(132.277357, kgWeight.toDouble(WeightUnit.LBS), 1e-5)
+
+        val lbsWeight = Weight.of(135.0, WeightUnit.LBS)
+        assertEquals(135.0, lbsWeight.toDouble(WeightUnit.LBS), 1e-9)
+        assertEquals(61.234969, lbsWeight.toDouble(WeightUnit.KG), 1e-5)
+    }
+
+    @Test
+    fun `toInt rounds to nearest integer in requested unit`() {
+        assertEquals(220, 100.kg.toInt(WeightUnit.LBS))
+        assertEquals(45, 100.lbs.toInt(WeightUnit.KG))
+        assertEquals(0, Weight.ZERO.toInt(WeightUnit.KG))
     }
 
     @Test

@@ -22,7 +22,7 @@
     <string name="user_profile_preferences_title">Offline Preferences</string>
     <string name="user_profile_preferences_stored_on_device">Stored on device</string>
     <string name="user_profile_measurement_units_title">Measurement Units</string>
-    <string name="user_profile_measurement_units_subtitle">Default weight increments</string>
+    <string name="user_profile_measurement_units_subtitle">Display and input unit for weights</string>
     <string name="unit_kg">KG</string>
     <string name="unit_lbs">LBS</string>
 

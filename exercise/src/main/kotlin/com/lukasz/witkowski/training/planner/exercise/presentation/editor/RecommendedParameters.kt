@@ -543,7 +543,7 @@ private fun WeightParameterInputField(
     var text by rememberSaveable(weightUnit) {
         mutableStateOf(formatWeightForInput(weight, weightUnit))
     }
-    var lastEmittedKg by remember { mutableStateOf<Double?>(null) }
+    var lastEmittedKg by remember(weightUnit) { mutableStateOf<Double?>(null) }
 
     LaunchedEffect(weight, weightUnit) {
         val currentInputKg = text.toDoubleOrNull()?.let { Weight.of(it, weightUnit).inKilograms }
@@ -551,6 +551,7 @@ private fun WeightParameterInputField(
         val isFromOwnInput = lastEmittedKg != null &&
             targetKg != null &&
             abs(lastEmittedKg!! - targetKg) < 1e-6
+        lastEmittedKg = null
         val matchesCurrentText = (targetKg == null && currentInputKg == null) ||
             (
                 targetKg != null &&
@@ -606,7 +607,7 @@ private fun WeightParameterInputField(
 private fun formatWeightForInput(weight: Weight?, weightUnit: WeightUnit): String =
     weight?.toDouble(weightUnit)?.formatUpToTwoDecimals(Locale.US) ?: ""
 
-private fun sanitizeDecimalInput(input: String): String {
+internal fun sanitizeDecimalInput(input: String): String {
     val normalized = input.replace(',', '.')
     var hasDot = false
     val filtered = buildString {
@@ -622,7 +623,12 @@ private fun sanitizeDecimalInput(input: String): String {
         }
     }
     return if (filtered.startsWith('0') && filtered.length > 1 && filtered[1] != '.') {
-        filtered.trimStart('0').ifEmpty { "0" }
+        val trimmed = filtered.trimStart('0')
+        when {
+            trimmed.isEmpty() -> "0"
+            trimmed.startsWith('.') -> "0$trimmed"
+            else -> trimmed
+        }
     } else {
         filtered
     }
