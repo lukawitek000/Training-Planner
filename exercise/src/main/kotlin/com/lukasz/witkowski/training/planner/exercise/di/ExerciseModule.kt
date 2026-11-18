@@ -132,7 +132,8 @@ val exerciseModule =
                 exerciseService = get(),
                 categoryController = get(),
                 exerciseId = params.getOrNull(),
-                context = androidContext()
+                context = androidContext(),
+                userRepository = get()
             )
         }
         viewModel { params ->

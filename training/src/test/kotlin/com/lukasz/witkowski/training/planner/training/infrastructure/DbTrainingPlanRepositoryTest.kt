@@ -317,7 +317,7 @@ class DbTrainingPlanRepositoryTest {
                 exercise.copy(
                     repetitions = exercise.repetitions + 5,
                     sets = exercise.sets + 1,
-                    weightInKg = (exercise.weightInKg ?: 0) + 10,
+                    weightInKg = (exercise.weightInKg ?: 0.0) + 10.0,
                     exercise =
                     exercise.exercise.copy(
                         description = "Updated description for ${exercise.exercise.name}",

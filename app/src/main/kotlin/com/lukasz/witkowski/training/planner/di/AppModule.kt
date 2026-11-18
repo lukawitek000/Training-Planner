@@ -35,6 +35,7 @@ val appModule = module {
         TrainingExerciseConfigurationViewModel(
             service = get(),
             exerciseId = params.get(),
+            userRepository = get(),
         )
     }
 }

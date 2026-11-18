@@ -7,6 +7,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
+import com.lukasz.witkowski.training.planner.shared.utils.formatWeightText
 
 @Composable
 fun TargetMetricsOverview(sessionExercise: SessionExercise) {
@@ -24,7 +25,7 @@ fun TargetMetricsOverview(sessionExercise: SessionExercise) {
         }
     val weight = sessionExercise.snapshot.plannedConfig.weightInKg
     val weightSuffix = if (weight != null && weight > 0) {
-        stringResource(R.string.session_target_weight_suffix, weight.toString())
+        stringResource(R.string.session_target_weight_suffix, weight.formatWeightText())
     } else {
         ""
     }

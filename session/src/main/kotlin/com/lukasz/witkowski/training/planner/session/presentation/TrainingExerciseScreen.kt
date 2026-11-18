@@ -63,9 +63,13 @@ import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
 import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingIndicator
 import com.lukasz.witkowski.training.planner.shared.ui.scrolling.ScrollColumn
+import com.lukasz.witkowski.training.planner.shared.utils.LocalWeightUnit
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
+import com.lukasz.witkowski.training.planner.shared.utils.shortLabel
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -182,11 +186,18 @@ private fun ActiveSetCard(
                 )
             }
 
+            val weightUnit = LocalWeightUnit.current
+            val displayedWeight = Weight.ofKilograms(
+                state.sessionExercise.currentConfig.weightInKg ?: 0.0
+            ).toDouble(weightUnit)
             AppStepper(
-                value = state.sessionExercise.currentConfig.weightInKg ?: 0.0,
-                onValueChange = { onSessionIntent(SessionIntent.WeightChanged(it)) },
+                value = displayedWeight,
+                onValueChange = { steppedWeight ->
+                    val rounded = (steppedWeight * 100.0).roundToInt() / 100.0
+                    onSessionIntent(SessionIntent.WeightChanged(rounded))
+                },
                 step = 2.5,
-                label = stringResource(R.string.session_kg_label),
+                label = weightUnit.shortLabel(),
                 minValue = 0.0
             )
         }

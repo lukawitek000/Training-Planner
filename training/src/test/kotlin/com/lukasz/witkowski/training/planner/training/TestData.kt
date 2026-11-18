@@ -105,7 +105,7 @@ object TestData {
                 repetitions = 15,
                 sets = 4,
                 restTime = 90.seconds,
-                weightInKg = 20
+                weightInKg = 20.0
             )
 
     val TRAINING_EXERCISE_PULL_UPS
@@ -282,7 +282,7 @@ object TestData {
         repetitions: Int = 10,
         sets: Int = 3,
         restTime: Duration = 30.seconds,
-        weightInKg: Int? = null,
+        weightInKg: Double? = null,
         time: Duration = Duration.ZERO
     ): TrainingExercise = TrainingExercise(
         id = id,

@@ -30,8 +30,10 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -55,6 +57,14 @@ import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.theme.Warning
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.timepicker.AppTimePickerBottomSheet
+import com.lukasz.witkowski.training.planner.shared.utils.LocalWeightUnit
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
+import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
+import com.lukasz.witkowski.training.planner.shared.utils.formatUpToTwoDecimals
+import com.lukasz.witkowski.training.planner.shared.utils.formatWeightText
+import com.lukasz.witkowski.training.planner.shared.utils.shortLabel
+import java.util.Locale
+import kotlin.math.abs
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -174,7 +184,8 @@ fun ExerciseParametersInputFields(
     parameters: RecommendedParameters,
     testTagPrefix: String,
     onParametersIntent: (ExerciseParametersIntent) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    weightUnit: WeightUnit = LocalWeightUnit.current
 ) {
     var showRestTimePicker by rememberSaveable { mutableStateOf(false) }
     var showHoldTimePicker by rememberSaveable { mutableStateOf(false) }
@@ -216,11 +227,12 @@ fun ExerciseParametersInputFields(
                 modifier = Modifier.weight(1f),
                 testTag = "${testTagPrefix}_RepsField"
             )
-            ParameterInputField(
-                value = parameters.weightInKg,
+            WeightParameterInputField(
+                weightInKg = parameters.weightInKg,
+                weightUnit = weightUnit,
                 onValueChange = { onParametersIntent(ExerciseParametersIntent.WeightChanged(it)) },
                 label = stringResource(R.string.weight),
-                unit = stringResource(R.string.kg),
+                unit = weightUnit.shortLabel(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Next
@@ -376,7 +388,7 @@ sealed interface ExerciseParametersIntent {
             ExerciseEditingEvent.RecommendedTimeChanged(time, level)
     }
 
-    data class WeightChanged(val weight: Int?) : ExerciseParametersIntent {
+    data class WeightChanged(val weight: Double?) : ExerciseParametersIntent {
         override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent =
             ExerciseEditingEvent.RecommendedWeightChanged(weight, level)
     }
@@ -468,8 +480,9 @@ fun buildStringOverview(
     sets: Int,
     reps: Int,
     restTime: Duration,
-    weightInKg: Int?,
-    time: Duration? = null
+    weightInKg: Double?,
+    time: Duration? = null,
+    weightUnit: WeightUnit = LocalWeightUnit.current
 ): String = when {
     time != null && weightInKg != null -> {
         stringResource(
@@ -478,7 +491,7 @@ fun buildStringOverview(
             reps,
             time.inWholeSeconds,
             restTime.inWholeSeconds,
-            weightInKg
+            weightInKg.formatWeightText(weightUnit)
         )
     }
 
@@ -498,7 +511,7 @@ fun buildStringOverview(
             sets,
             reps,
             restTime.inWholeSeconds,
-            weightInKg
+            weightInKg.formatWeightText(weightUnit)
         )
     }
 
@@ -509,6 +522,106 @@ fun buildStringOverview(
             reps,
             restTime.inWholeSeconds
         )
+    }
+}
+
+@Composable
+private fun WeightParameterInputField(
+    weightInKg: Double?,
+    weightUnit: WeightUnit,
+    onValueChange: (Double?) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    unit: String = "",
+    testTag: String = "",
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
+) {
+    var text by rememberSaveable(weightUnit) {
+        mutableStateOf(formatWeightForInput(weightInKg, weightUnit))
+    }
+    var lastEmittedKg by remember { mutableStateOf<Double?>(null) }
+
+    LaunchedEffect(weightInKg, weightUnit) {
+        val currentInputKg = text.toDoubleOrNull()?.let { Weight.of(it, weightUnit).inKilograms }
+        val isFromOwnInput = lastEmittedKg != null &&
+            weightInKg != null &&
+            abs(lastEmittedKg!! - weightInKg) < 1e-6
+        val matchesCurrentText = (weightInKg == null && currentInputKg == null) ||
+            (
+                weightInKg != null &&
+                    currentInputKg != null &&
+                    abs(weightInKg - currentInputKg) < 1e-6
+                )
+        if (!isFromOwnInput && !matchesCurrentText) {
+            text = formatWeightForInput(weightInKg, weightUnit)
+        }
+    }
+
+    Column(modifier = modifier) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(bottom = Dimens.spaceXs),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        OutlinedTextField(
+            value = text,
+            onValueChange = { newValue ->
+                val sanitized = sanitizeDecimalInput(newValue)
+                text = sanitized
+                val parsed = sanitized.toDoubleOrNull()
+                lastEmittedKg = parsed?.let { Weight.of(it, weightUnit).inKilograms }
+                onValueChange(parsed)
+            },
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            singleLine = true,
+            maxLines = 1,
+            shape = MaterialTheme.shapes.small,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+            ),
+            modifier = Modifier
+                .defaultMinSize(minWidth = Dimens.iconSize40)
+                .testTag(testTag),
+            suffix = if (unit.isNotEmpty()) {
+                { Text(unit, style = MaterialTheme.typography.labelSmall) }
+            } else {
+                null
+            }
+        )
+    }
+}
+
+private fun formatWeightForInput(weightInKg: Double?, weightUnit: WeightUnit): String =
+    weightInKg?.let { Weight.ofKilograms(it).toDouble(weightUnit).formatUpToTwoDecimals(Locale.US) }
+        ?: ""
+
+private fun sanitizeDecimalInput(input: String): String {
+    val normalized = input.replace(',', '.')
+    var hasDot = false
+    val filtered = buildString {
+        for (ch in normalized) {
+            when {
+                ch.isDigit() -> append(ch)
+                ch == '.' && !hasDot -> {
+                    if (isEmpty()) append('0')
+                    append('.')
+                    hasDot = true
+                }
+            }
+        }
+    }
+    return if (filtered.startsWith('0') && filtered.length > 1 && filtered[1] != '.') {
+        filtered.trimStart('0').ifEmpty { "0" }
+    } else {
+        filtered
     }
 }
 
@@ -571,7 +684,8 @@ private fun ParameterInputField(
 @Composable
 private fun RecommendedParametersExtendedSummary(
     params: RecommendedParameters,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    weightUnit: WeightUnit = LocalWeightUnit.current
 ) {
     Row(
         modifier = modifier
@@ -580,36 +694,38 @@ private fun RecommendedParametersExtendedSummary(
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         ParameterOverview(
-            value = params.sets,
+            value = params.sets?.toString(),
             label = "${stringResource(R.string.sets)}:"
         )
         ParameterOverview(
-            value = params.reps,
+            value = params.reps?.toString(),
             label = "${stringResource(R.string.reps)}:"
         )
         if (params.time != null) {
             ParameterOverview(
-                value = params.time.inWholeSeconds.toInt(),
+                value = params.time.inWholeSeconds.toString(),
                 label = "${stringResource(R.string.hold)}:",
                 unit = stringResource(R.string.second_abbrv)
             )
         }
         ParameterOverview(
-            value = params.restTime?.inWholeSeconds?.toInt(),
+            value = params.restTime?.inWholeSeconds?.toString(),
             label = "${stringResource(R.string.rest_time)}:",
             unit = stringResource(R.string.second_abbrv)
         )
         ParameterOverview(
-            value = params.weightInKg,
+            value = params.weightInKg?.let {
+                Weight.ofKilograms(it).toDouble(weightUnit).formatUpToTwoDecimals()
+            },
             label = "${stringResource(R.string.weight)}:",
-            unit = stringResource(R.string.kg)
+            unit = weightUnit.shortLabel()
         )
     }
 }
 
 @Composable
 private fun ParameterOverview(
-    value: Int?,
+    value: String?,
     label: String,
     modifier: Modifier = Modifier,
     unit: String = ""
@@ -626,7 +742,7 @@ private fun ParameterOverview(
         )
         Spacer(Modifier.width(Dimens.spaceXs))
         Text(
-            text = value.toString(),
+            text = value,
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface
@@ -691,7 +807,7 @@ val PREVIEW_RECOMMENDED_PARAMETERS = listOf(
             sets = 3,
             reps = 10,
             restTime = 1.minutes,
-            weightInKg = 30
+            weightInKg = 30.0
         )
     ),
     Recommendation(RecommendationLevel.ADVANCED)

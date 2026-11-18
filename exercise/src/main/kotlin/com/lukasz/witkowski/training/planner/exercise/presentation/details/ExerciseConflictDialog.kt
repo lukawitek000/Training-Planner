@@ -281,7 +281,7 @@ private fun ExerciseConflictDialogPreview() {
         val sampleRecs = listOf(
             Recommendation(
                 RecommendationLevel.BEGINNER,
-                RecommendedParameters(sets = 3, reps = 10, restTime = 60.seconds, weightInKg = 40)
+                RecommendedParameters(sets = 3, reps = 10, restTime = 60.seconds, weightInKg = 40.0)
             )
         )
         ExerciseConflictDialog(

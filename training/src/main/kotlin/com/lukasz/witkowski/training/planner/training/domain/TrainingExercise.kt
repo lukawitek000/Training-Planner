@@ -12,7 +12,7 @@ data class TrainingExercise(
     val repetitions: Int = 1,
     val sets: Int = 1,
     val restTime: Duration = Duration.ZERO,
-    val weightInKg: Int? = null,
+    val weightInKg: Double? = null,
     val time: Duration = Duration.ZERO
 ) {
     val isIsometric: Boolean

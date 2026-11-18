@@ -52,7 +52,8 @@ val sessionModule =
                 trainingPlanService = get(),
                 trainingSessionService = get(),
                 exerciseService = get(),
-                trainingPlanId = params.get()
+                trainingPlanId = params.get(),
+                userRepository = get()
             )
         }
     }

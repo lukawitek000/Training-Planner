@@ -8,10 +8,14 @@ import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
+import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
+import com.lukasz.witkowski.training.planner.user.domain.UserRepository
 import kotlin.time.Duration
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
@@ -26,8 +30,17 @@ class TrainingSessionViewModel(
     private val trainingPlanService: TrainingPlanService,
     private val trainingSessionService: TrainingSessionService,
     private val exerciseService: ExerciseService,
-    private val trainingPlanId: TrainingPlanId
+    private val trainingPlanId: TrainingPlanId,
+    private val userRepository: UserRepository? = null
 ) : ViewModel() {
+
+    val weightUnit: StateFlow<WeightUnit> = userRepository?.weightUnit
+        ?.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = WeightUnit.KG
+        )
+        ?: MutableStateFlow(WeightUnit.KG)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val trainingSessionState: StateFlow<TrainingSessionUiState> =
@@ -74,7 +87,8 @@ class TrainingSessionViewModel(
             }
 
             is SessionIntent.WeightChanged -> {
-                trainingSessionService.changeWeight(intent.weight)
+                val weightInKg = Weight.of(intent.weight, weightUnit.value).inKilograms
+                trainingSessionService.changeWeight(weightInKg)
             }
 
             is SessionIntent.HoldTimeChanged -> {

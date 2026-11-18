@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.session.presentation
 
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -12,7 +13,9 @@ import com.lukasz.witkowski.training.planner.session.domain.session.queue.Exerci
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.utils.LocalWeightUnit
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
@@ -169,5 +172,46 @@ class TrainingExerciseScreenTest {
             .performClick()
 
         assertTrue(recordedIntents.contains(SessionIntent.StartTimer))
+    }
+
+    @Test
+    fun displaysWeightInLbsWhenLocalWeightUnitIsLbs() {
+        val exercise = createSessionExercise(
+            name = "Bench Press",
+            reps = 10,
+            weightInKg = 60.0
+        )
+        val progress = ExerciseQueueProgress(
+            remainingExerciseSets = 2,
+            currentExerciseTotalSets = 3,
+            totalExercises = 1,
+            remainingExercises = 1,
+            remainingSetsInWorkout = 3,
+            nextSetQueueProgress = null
+        )
+        val state = TrainingSessionState.ExerciseState(
+            sessionExercise = exercise,
+            timerState = TimerState.NotSet,
+            progress = progress
+        )
+        val uiState = TrainingSessionUiState.Exercise(
+            domainState = state,
+            imagesReferences = ResultHandler.Success(emptyList())
+        )
+
+        composeTestRule.setContent {
+            CompositionLocalProvider(LocalWeightUnit provides WeightUnit.LBS) {
+                TrainingPlannerTheme {
+                    TrainingExerciseScreen(
+                        uiState = uiState,
+                        onSessionIntent = {},
+                        onEndClicked = {}
+                    )
+                }
+            }
+        }
+
+        composeTestRule.onNodeWithText("132.28").assertIsDisplayed()
+        composeTestRule.onNodeWithText("lbs").assertIsDisplayed()
     }
 }

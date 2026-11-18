@@ -17,6 +17,22 @@ fun Double.formatUpToTwoDecimals(locale: Locale = Locale.getDefault()): String {
 }
 
 @Composable
-fun Double.formatVolumeText(): String = this.takeIf { it > 0.0 }?.formatUpToTwoDecimals()?.let {
-    stringResource(R.string.weight_kg_format, it)
-} ?: stringResource(R.string.bodyweight)
+fun WeightUnit.shortLabel(): String = when (this) {
+    WeightUnit.KG -> stringResource(R.string.unit_kg_short)
+    WeightUnit.LBS -> stringResource(R.string.unit_lbs_short)
+}
+
+@Composable
+fun Double.formatWeightText(weightUnit: WeightUnit = LocalWeightUnit.current): String {
+    val converted = Weight.ofKilograms(this).toDouble(weightUnit)
+    val formatted = converted.formatUpToTwoDecimals()
+    val formatRes = when (weightUnit) {
+        WeightUnit.KG -> R.string.weight_kg_format
+        WeightUnit.LBS -> R.string.weight_lbs_format
+    }
+    return stringResource(formatRes, formatted)
+}
+
+@Composable
+fun Double.formatVolumeText(weightUnit: WeightUnit = LocalWeightUnit.current): String =
+    this.takeIf { it > 0.0 }?.formatWeightText(weightUnit) ?: stringResource(R.string.bodyweight)

@@ -67,7 +67,7 @@ object TestData {
             sets = 4,
             reps = 10,
             restTime = 90.seconds,
-            weightInKg = 10
+            weightInKg = 10.0
         )
 
     val ADVANCED_RECOMMENDATION =
@@ -75,7 +75,7 @@ object TestData {
             sets = 5,
             reps = 12,
             restTime = 120.seconds,
-            weightInKg = 20
+            weightInKg = 20.0
         )
 
     // --- Domain Exercises ---
@@ -136,9 +136,9 @@ object TestData {
             beginnerRecommendation = BEGINNER_RECOMMENDATION.copy(reps = 12),
             intermediateRecommendation = INTERMEDIATE_RECOMMENDATION.copy(
                 reps = 15,
-                weightInKg = 20
+                weightInKg = 20.0
             ),
-            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 20, weightInKg = 40)
+            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 20, weightInKg = 40.0)
         )
 
     val PULL_UPS_DETAILS =
@@ -146,7 +146,7 @@ object TestData {
             exercise = PULL_UPS_EXERCISE,
             beginnerRecommendation = BEGINNER_RECOMMENDATION.copy(reps = 5),
             intermediateRecommendation = INTERMEDIATE_RECOMMENDATION.copy(reps = 8),
-            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 12, weightInKg = 10)
+            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 12, weightInKg = 10.0)
         )
 
     val PLANK_DETAILS =
@@ -170,7 +170,7 @@ object TestData {
                 sets = 4,
                 reps = 1,
                 restTime = 60.seconds,
-                weightInKg = 10,
+                weightInKg = 10.0,
                 time = 60.seconds
             )
         )
@@ -203,9 +203,9 @@ object TestData {
             beginnerRecommendation = BEGINNER_RECOMMENDATION.copy(reps = 12),
             intermediateRecommendation = INTERMEDIATE_RECOMMENDATION.copy(
                 reps = 15,
-                weightInKg = 20
+                weightInKg = 20.0
             ),
-            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 20, weightInKg = 40)
+            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 20, weightInKg = 40.0)
         )
 
     // --- Exercise Queries ---

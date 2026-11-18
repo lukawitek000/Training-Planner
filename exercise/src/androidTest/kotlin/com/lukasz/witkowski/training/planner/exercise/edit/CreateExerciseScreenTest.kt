@@ -108,7 +108,7 @@ class CreateExerciseScreenTest {
                     sets = 3,
                     reps = 10,
                     restTime = 30.seconds,
-                    weightInKg = 20
+                    weightInKg = 20.0
                 )
             )
         )
