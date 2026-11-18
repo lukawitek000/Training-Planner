@@ -15,6 +15,7 @@ import androidx.navigation3.runtime.result.ResultEffect
 import androidx.navigation3.runtime.result.rememberResultEventBusNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
+import com.lukasz.witkowski.training.planner.analytics.presentation.TrainingStatisticsHost
 import com.lukasz.witkowski.training.planner.auth.presentation.auth.AuthenticationScreen
 import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeleteExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsScreen
@@ -208,10 +209,15 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.trainingPlanEntryBuilder(
     }
 
     entry<TrainingPlanDetails> { key ->
-        TrainingPlanDetailsScreen(
-            viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
-            onStartTrainingSessionClicked = { navigator.trainingSession(it) }
-        )
+        TrainingStatisticsHost(
+            viewModel = koinViewModel { parametersOf(key.trainingPlanId) }
+        ) { previousSessionsTabContent ->
+            TrainingPlanDetailsScreen(
+                viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
+                onStartTrainingSessionClicked = { navigator.trainingSession(it) },
+                previousSessionsTabContent = previousSessionsTabContent
+            )
+        }
     }
 
     entry<DeleteTrainingPlan>(

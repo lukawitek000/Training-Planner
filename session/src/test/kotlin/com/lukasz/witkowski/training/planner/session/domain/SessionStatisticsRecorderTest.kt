@@ -12,8 +12,9 @@ import com.lukasz.witkowski.training.planner.session.domain.session.statisticsre
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionEvent
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import java.util.Date
+import kotlin.test.assertFailsWith
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -76,7 +77,7 @@ class SessionStatisticsRecorderTest {
             assertEquals(2, extraSetEvent.newSetIndex)
 
             // 3. Complete Ex 1 Set 1 -> ExerciseCompleted, RestStarted
-            timeProvider.advanceBy(Time(30000L))
+            timeProvider.advanceBy(30.seconds)
             session.handle(SessionCommand.Exercise.UpdateReps(10))
             session.handle(SessionCommand.Exercise.UpdateWeight(50.0))
             session.complete()
@@ -84,27 +85,27 @@ class SessionStatisticsRecorderTest {
             assertEquals(SessionEvent.RestStarted(45.seconds), events[4])
 
             // 4. Complete rest with feedback -> RestCompleted(MODERATE), ExerciseStarted(Ex 1 Set 2)
-            timeProvider.advanceBy(Time(45000L))
+            timeProvider.advanceBy(45.seconds)
             session.handle(SessionCommand.RestTime.UpdateFeedback(SetEffort.MODERATE))
             session.complete()
             assertEquals(SessionEvent.RestCompleted(SetEffort.MODERATE), events[5])
             assertTrue(events[6] is SessionEvent.ExerciseStarted)
 
             // 5. Skip Ex 1 Set 2 -> ExerciseSkipped, RestStarted
-            timeProvider.advanceBy(Time(10000L))
+            timeProvider.advanceBy(10.seconds)
             session.skip()
             assertTrue(events[7] is SessionEvent.ExerciseSkipped)
             assertEquals(SessionEvent.RestStarted(45.seconds), events[8])
 
             // 6. Skip rest with feedback -> RestSkipped(HARD), ExerciseStarted(Ex 2 Set 1)
-            timeProvider.advanceBy(Time(20000L))
+            timeProvider.advanceBy(20.seconds)
             session.handle(SessionCommand.RestTime.UpdateFeedback(SetEffort.HARD))
             session.skip()
             assertEquals(SessionEvent.RestSkipped(SetEffort.HARD), events[9])
             assertTrue(events[10] is SessionEvent.ExerciseStarted)
 
             // 7. Complete Ex 2 Set 1 (final set) -> ExerciseCompleted, SessionFinished
-            timeProvider.advanceBy(Time(30000L))
+            timeProvider.advanceBy(30.seconds)
             session.complete()
             assertTrue(events[11] is SessionEvent.ExerciseCompleted)
             assertEquals(SessionEvent.SessionFinished, events[12])
@@ -125,12 +126,12 @@ class SessionStatisticsRecorderTest {
     @Test
     fun `basic statistics recorder creates statistics from session events`() =
         runTest(UnconfinedTestDispatcher()) {
-            val fixedTimeProvider = FixedTimeProvider(time = Time(0L), date = Date(1000000L))
+            val fixedTimeProvider = FixedTimeProvider(time = Duration.ZERO, date = Date(1000000L))
             val recorder = BasicStatisticsRecorder(timeProvider = fixedTimeProvider)
 
             val plan =
                 createTrainingPlan(
-                    listOf(createTrainingExercise(sets = 1))
+                    listOf(createTrainingExercise(name = "90° Hold", sets = 1))
                 )
 
             val session =
@@ -143,14 +144,20 @@ class SessionStatisticsRecorderTest {
                 )
 
             session.start()
-            fixedTimeProvider.advanceBy(Time(45000L))
+            fixedTimeProvider.advanceBy(45.seconds)
             session.handle(SessionCommand.Exercise.UpdateReps(12))
             session.handle(SessionCommand.Exercise.UpdateWeight(40.0))
             session.complete()
 
             val stats = recorder.getStatistics()
-            assertEquals(Time(45000L), stats.totalTime)
+            assertEquals(45.seconds, stats.totalTime)
             assertEquals(1, stats.exercisesStatistics.size)
+            assertEquals("90° Hold", stats.exercisesStatistics[0].exerciseName)
+            assertEquals(1, stats.exercisesStatistics[0].plannedSets)
+            assertEquals(
+                plan.exercises[0].repetitions,
+                stats.exercisesStatistics[0].plannedConfig.reps
+            )
             assertEquals(1, stats.exercisesStatistics[0].attemptsStatistics.size)
             assertEquals(12, stats.exercisesStatistics[0].attemptsStatistics[0].actualReps)
             assertEquals(
@@ -163,7 +170,7 @@ class SessionStatisticsRecorderTest {
     @Test
     fun `basic recorder records rest, skipped sets, preserves id, and saves summary rpe`() =
         runTest(UnconfinedTestDispatcher()) {
-            val fixedTimeProvider = FixedTimeProvider(time = Time(0L), date = Date(1000000L))
+            val fixedTimeProvider = FixedTimeProvider(time = Duration.ZERO, date = Date(1000000L))
             val recorder = BasicStatisticsRecorder(timeProvider = fixedTimeProvider)
 
             val plan =
@@ -181,14 +188,14 @@ class SessionStatisticsRecorderTest {
                 )
 
             session.start()
-            fixedTimeProvider.advanceBy(Time(30000L))
+            fixedTimeProvider.advanceBy(30.seconds)
             session.complete() // Set 1 completed -> Rest
 
-            fixedTimeProvider.advanceBy(Time(25000L))
+            fixedTimeProvider.advanceBy(25.seconds)
             session.handle(SessionCommand.RestTime.UpdateFeedback(SetEffort.HARD))
             session.skip() // Skip rest after 25s -> Set 2
 
-            fixedTimeProvider.advanceBy(Time(35000L))
+            fixedTimeProvider.advanceBy(35.seconds)
             session.skip() // Set 2 skipped -> Summary
 
             val statsBeforeSummaryComplete = recorder.getStatistics()
@@ -211,15 +218,18 @@ class SessionStatisticsRecorderTest {
             assertEquals(2, attempts.size)
             assertTrue(attempts[0].completed)
             assertEquals(25.seconds, attempts[0].restTime)
+            assertEquals(60.seconds, attempts[0].plannedRestTime)
             assertEquals(SetEffort.HARD, attempts[0].effort)
             assertFalse(attempts[1].completed)
             assertEquals(2, attempts[1].set)
+            assertEquals(2, finalStats.exercisesStatistics.first().plannedSets)
+            assertEquals(60.seconds, finalStats.exercisesStatistics.first().plannedRestTime)
         }
 
     @Test
     fun `basic recorder normalizes blank summary notes to null`() =
         runTest(UnconfinedTestDispatcher()) {
-            val fixedTimeProvider = FixedTimeProvider(time = Time(0L), date = Date(1000000L))
+            val fixedTimeProvider = FixedTimeProvider(time = Duration.ZERO, date = Date(1000000L))
             val recorder = BasicStatisticsRecorder(timeProvider = fixedTimeProvider)
             val plan = createTrainingPlan(listOf(createTrainingExercise(sets = 1)))
 
@@ -239,4 +249,27 @@ class SessionStatisticsRecorderTest {
 
             assertNull(recorder.getStatistics().note)
         }
+
+    @Test
+    fun `basic recorder fails fast if getStatistics is called before SessionStarted`() {
+        val fixedTimeProvider = FixedTimeProvider(time = Duration.ZERO, date = Date(1000000L))
+        val recorder = BasicStatisticsRecorder(timeProvider = fixedTimeProvider)
+
+        assertFailsWith<IllegalStateException> {
+            recorder.getStatistics()
+        }
+    }
+
+    @Test
+    fun `basic recorder ignores non-start events before SessionStarted`() {
+        val fixedTimeProvider = FixedTimeProvider(time = Duration.ZERO, date = Date(1000000L))
+        val recorder = BasicStatisticsRecorder(timeProvider = fixedTimeProvider)
+
+        recorder.onEvent(SessionEvent.SessionFinished)
+        recorder.onEvent(SessionEvent.RestCompleted(feedback = SetEffort.HARD))
+
+        assertFailsWith<IllegalStateException> {
+            recorder.getStatistics()
+        }
+    }
 }

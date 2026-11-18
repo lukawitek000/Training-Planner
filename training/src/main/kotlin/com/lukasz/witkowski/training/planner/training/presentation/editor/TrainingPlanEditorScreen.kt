@@ -3,7 +3,6 @@ package com.lukasz.witkowski.training.planner.training.presentation.editor
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,8 +56,6 @@ import androidx.compose.ui.text.input.ImeAction
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.buildStringOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.Time
-import com.lukasz.witkowski.training.planner.shared.time.TimeFormatter
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
@@ -71,7 +68,6 @@ import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryNam
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanConfiguration
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyListState
@@ -192,13 +188,11 @@ fun TrainingPlanEditorScreenContent(
 
     if (showRestTimePicker) {
         AppTimePickerBottomSheet(
-            initialTime = Time(state.restTime.inWholeMilliseconds),
+            initialTime = state.restTime,
             onTimeConfirmed = { selectedTime ->
                 if (selectedTime != null) {
                     onIntent(
-                        TrainingPlanEditingIntent.RestTimeChanged(
-                            selectedTime.timeInMillis.milliseconds
-                        )
+                        TrainingPlanEditingIntent.RestTimeChanged(selectedTime)
                     )
                 }
             },
@@ -404,7 +398,8 @@ private fun SwipeToDeleteExercise(
                             sets = exercise.sets,
                             reps = exercise.repetitions,
                             restTime = exercise.restTime,
-                            weightInKg = exercise.weightInKg
+                            weightInKg = exercise.weightInKg,
+                            time = exercise.time.takeIf { it > Duration.ZERO }
                         )
                         Text(
                             text = exerciseConfig,
@@ -461,8 +456,7 @@ private fun TrainingPlanRestTime(
     restTime: Duration,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val formattedRestTime = TimeFormatter(context).formatTime(Time(restTime.inWholeMilliseconds))
+    val formattedRestTime = restTime.toString()
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)

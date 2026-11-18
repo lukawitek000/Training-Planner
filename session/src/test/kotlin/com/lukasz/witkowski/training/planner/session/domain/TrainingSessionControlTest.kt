@@ -535,7 +535,7 @@ internal class TrainingSessionControlTest : TrainingSessionTest() {
         runTest(UnconfinedTestDispatcher()) {
             // given
             val timeProvider = FixedTimeProvider()
-            val recorder = BasicStatisticsRecorder(TRAINING_PLAN.id, timeProvider)
+            val recorder = BasicStatisticsRecorder(timeProvider)
             val events = mutableListOf<SessionEvent>()
             val compositeRecorder =
                 SessionStatisticsRecorder { event ->
@@ -573,7 +573,7 @@ internal class TrainingSessionControlTest : TrainingSessionTest() {
         runTest(UnconfinedTestDispatcher()) {
             // given
             val timeProvider = FixedTimeProvider()
-            val recorder = BasicStatisticsRecorder(TRAINING_PLAN.id, timeProvider)
+            val recorder = BasicStatisticsRecorder(timeProvider)
             val events = mutableListOf<SessionEvent>()
             val compositeRecorder =
                 SessionStatisticsRecorder { event ->

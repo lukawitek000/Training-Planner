@@ -24,9 +24,7 @@
     <string name="session_loading_subtitle">Preparing workout plan progression and exercise metrics.</string>
 
     <!-- Active Exercise Screen -->
-    <string name="session_category_general">General</string>
     <string name="session_exercise_progress_format">EXERCISE %1$d OF %2$d</string>
-    <string name="session_up_next_format">Up next: %1$s (%2$d sets)</string>
     <string name="session_active_set_format">ACTIVE SET %1$d</string>
     <string name="session_target_hold_format">%1$d s hold</string>
     <string name="session_target_reps_format">%1$d reps</string>
@@ -37,6 +35,8 @@
     <string name="session_sec_hold_label">sec hold</string>
     <string name="session_timer_negative">&#8722;&#160;</string>
     <string name="session_start_hold_timer">Start Hold Timer</string>
+    <string name="session_loading_exercise_images">Loading exercise images</string>
+    <string name="session_end_early_cd">End training session</string>
     <string name="session_add_extra_set">Add Extra Set</string>
     <string name="session_remove_set">Remove Set</string>
     <string name="session_complete_set">Complete Set</string>
@@ -53,9 +53,7 @@
     <string name="session_feedback_limit">Limit</string>
     <string name="session_up_next">UP NEXT</string>
     <string name="session_set_progress_format">Set %1$d of %2$d</string>
-    <string name="session_following_format">Following: %1$s (%2$d sets)</string>
     <string name="session_start_next_set_now">Start Next Set Now</string>
-    <string name="session_skip_rest">Skip Rest</string>
 
     <!-- Summary Screen -->
     <string name="session_workout_complete">WORKOUT COMPLETE!</string>
@@ -70,11 +68,7 @@
     <string name="session_bento_sets_sub">Total volume sets</string>
     <string name="session_bento_reps_label">Total Repetitions</string>
     <string name="session_bento_reps_sub">Across all exercises</string>
-    <string name="session_bodyweight">Bodyweight</string>
     <string name="session_reps_suffix">%1$d reps</string>
-    <string name="session_kg_suffix">%1$d kg</string>
-    <string name="session_exercise_breakdown">EXERCISE BREAKDOWN</string>
-    <string name="session_set_format">Set %1$d</string>
-    <string name="session_status_completed">Completed</string>
-    <string name="session_status_skipped">Skipped</string>
+    <string name="session_summary_plan_date_format">%1$s • %2$s</string>
+    <string name="session_bento_sets_value_format">%1$d / %2$d</string>
 </resources>

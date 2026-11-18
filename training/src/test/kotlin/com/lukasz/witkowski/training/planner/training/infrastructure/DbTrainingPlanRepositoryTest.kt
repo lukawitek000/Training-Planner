@@ -228,7 +228,7 @@ class DbTrainingPlanRepositoryTest {
             )
             assertEquals(
                 FULL_BODY_TRAINING_PLAN.copy(
-                    lastSession = null
+                    lastSession = useInstant
                 ),
                 resultPlan.getOrThrow()
             )

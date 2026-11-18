@@ -5,7 +5,9 @@ import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.models.
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+import kotlin.time.Duration.Companion.milliseconds
 
 internal fun ExerciseStatistics.toDbExerciseStatistics(
     trainingStatisticsId: TrainingStatisticsId
@@ -14,7 +16,13 @@ internal fun ExerciseStatistics.toDbExerciseStatistics(
     DbExerciseStatistics(
         id = id.toString(),
         trainingStatisticsId = trainingStatisticsId.toString(),
-        trainingExerciseId = trainingExerciseId.toString()
+        trainingExerciseId = trainingExerciseId.toString(),
+        exerciseName = exerciseName,
+        plannedSets = plannedSets,
+        plannedReps = plannedConfig.reps,
+        plannedWeightInKg = plannedConfig.weightInKg,
+        plannedHoldTime = plannedConfig.holdTime?.inWholeMilliseconds,
+        plannedRestTime = plannedRestTime.inWholeMilliseconds
     ),
     exerciseAttemptsStatistics =
     attemptsStatistics.map {
@@ -26,8 +34,16 @@ internal fun DbExerciseWithAttemptsStatistics.toExerciseStatistics(): ExerciseSt
     ExerciseStatistics(
         id = ExerciseStatisticsId(exerciseStatistics.id),
         trainingExerciseId = TrainingExerciseId(exerciseStatistics.trainingExerciseId),
+        exerciseName = exerciseStatistics.exerciseName,
+        plannedSets = exerciseStatistics.plannedSets,
+        plannedConfig = SessionExerciseConfiguration(
+            reps = exerciseStatistics.plannedReps,
+            weightInKg = exerciseStatistics.plannedWeightInKg,
+            holdTime = exerciseStatistics.plannedHoldTime?.milliseconds
+        ),
+        plannedRestTime = exerciseStatistics.plannedRestTime.milliseconds,
         attemptsStatistics =
-        exerciseAttemptsStatistics.map {
-            it.toExerciseAttemptStatistics()
-        }
+        exerciseAttemptsStatistics
+            .sortedBy { it.set }
+            .map { it.toExerciseAttemptStatistics() }
     )

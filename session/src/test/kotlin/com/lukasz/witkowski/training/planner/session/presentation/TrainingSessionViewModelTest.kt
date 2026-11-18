@@ -17,7 +17,6 @@ import com.lukasz.witkowski.training.planner.session.domain.session.queue.Exerci
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionPhaseKey
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -85,7 +84,7 @@ class TrainingSessionViewModelTest {
                 TrainingSessionPhaseKey.Loading,
                 viewModel.trainingSessionState.value.phaseKey
             )
-            verify(exactly = 0) { trainingSessionService.startTraining(any(), any()) }
+            verify(exactly = 0) { trainingSessionService.startTraining(any()) }
 
             // when: training plan is emitted by trainingPlanService
             trainingPlanFlow.value = TRAINING_PLAN
@@ -178,7 +177,7 @@ class TrainingSessionViewModelTest {
                     statistics =
                     TrainingStatistics(
                         trainingPlanId = trainingPlanId,
-                        totalTime = Time(120_000L),
+                        totalTime = 120.seconds,
                         date = Date(0L),
                         exercisesStatistics = emptyList(),
                         note = "Done",

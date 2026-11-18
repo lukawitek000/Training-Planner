@@ -14,11 +14,11 @@ import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStati
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import java.util.Date
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.seconds
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,7 +39,7 @@ class TrainingSessionSummaryScreenTest {
         val statistics =
             TrainingStatistics(
                 trainingPlanId = plan.id,
-                totalTime = Time(2_700_000L),
+                totalTime = 2700.seconds,
                 date = Date(0L),
                 exercisesStatistics =
                 listOf(
@@ -49,7 +49,7 @@ class TrainingSessionSummaryScreenTest {
                         listOf(
                             ExerciseAttemptStatistics(
                                 trainingExerciseId = exerciseId,
-                                time = Time(30_000L),
+                                time = 30.seconds,
                                 set = 1,
                                 actualReps = 5,
                                 actualWeightInKg = 140.0,
@@ -100,7 +100,7 @@ class TrainingSessionSummaryScreenTest {
         val statistics =
             TrainingStatistics(
                 trainingPlanId = plan.id,
-                totalTime = Time(1_800_000L),
+                totalTime = 1800.seconds,
                 date = Date(0L),
                 exercisesStatistics = emptyList()
             )

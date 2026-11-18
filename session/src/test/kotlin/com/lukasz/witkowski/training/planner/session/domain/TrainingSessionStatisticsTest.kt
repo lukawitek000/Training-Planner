@@ -11,10 +11,11 @@ import com.lukasz.witkowski.training.planner.session.domain.session.SessionComma
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSession
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import java.util.Date
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -171,7 +172,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
     @Suppress("LongMethod")
     private fun createExpectedStatisticsForCompletedTraining() = TrainingStatistics(
         trainingPlanId = trainingPlan.id,
-        totalTime = Time(seconds = 190),
+        totalTime = 190.seconds,
         date = Date(0L),
         exercisesStatistics =
         listOf(
@@ -368,11 +369,11 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
         assertEquals(expectedAttemptStatistics.set, attemptStatistics.set)
     }
 
-    private fun assertEqualsTime(expected: Time, actual: Time) {
-        assertEquals(expected.timeInMillis, actual.timeInMillis)
+    private fun assertEqualsTime(expected: Duration, actual: Duration) {
+        assertEquals(expected, actual)
     }
 
     private companion object {
-        val TIME_10_SECONDS = Time(10000L)
+        val TIME_10_SECONDS = 10.seconds
     }
 }

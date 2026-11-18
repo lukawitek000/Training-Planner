@@ -43,6 +43,4 @@ internal class NextPhaseProvider(
         is SummaryPhase -> currentPhase
         else -> throw IllegalStateException("Invalid phase: $currentPhase")
     }
-
-    fun summaryPhase(): SummaryPhase = SummaryPhase(statisticsProvider)
 }

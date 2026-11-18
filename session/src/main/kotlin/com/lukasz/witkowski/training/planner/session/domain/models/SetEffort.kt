@@ -12,8 +12,6 @@ enum class SetEffort(val sessionRpe: SessionRpe) {
 
     val score: Int get() = sessionRpe.score
 
-    fun toSessionRpe(): SessionRpe = sessionRpe
-
     companion object {
         fun fromSessionRpe(rpe: SessionRpe): SetEffort = when (rpe) {
             SessionRpe.VERY_LIGHT,
