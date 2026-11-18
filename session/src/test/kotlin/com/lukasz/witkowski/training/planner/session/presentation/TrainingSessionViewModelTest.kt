@@ -18,8 +18,9 @@ import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionPhaseKey
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
-import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
+import com.lukasz.witkowski.training.planner.shared.utils.kg
+import com.lukasz.witkowski.training.planner.shared.utils.lbs
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
@@ -230,7 +231,7 @@ class TrainingSessionViewModelTest {
             verify(exactly = 1) { trainingSessionService.changeReps(12) }
 
             viewModel.onIntent(SessionIntent.WeightChanged(75.5))
-            verify(exactly = 1) { trainingSessionService.changeWeight(75.5) }
+            verify(exactly = 1) { trainingSessionService.changeWeight(75.5.kg) }
 
             viewModel.onIntent(SessionIntent.HoldTimeChanged(45.seconds))
             verify(exactly = 1) { trainingSessionService.updateHoldTime(45.seconds) }
@@ -302,7 +303,7 @@ class TrainingSessionViewModelTest {
         val config =
             SessionExerciseConfiguration(
                 reps = 10,
-                weightInKg = 50.0,
+                weight = 50.kg,
                 holdTime = null
             )
         val dummy = createDummyExercise().copy(imageIds = imageIds)
@@ -344,7 +345,7 @@ class TrainingSessionViewModelTest {
         viewModel.onIntent(SessionIntent.WeightChanged(100.0))
 
         verify {
-            trainingSessionService.changeWeight(Weight.ofPounds(100.0).inKilograms)
+            trainingSessionService.changeWeight(100.lbs)
         }
     }
 }

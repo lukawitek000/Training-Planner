@@ -16,6 +16,7 @@ import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.utils.LocalWeightUnit
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
@@ -38,7 +39,7 @@ class TrainingExerciseScreenTest {
             createSessionExercise(
                 name = "Bench Press",
                 reps = 10,
-                weightInKg = 60.0
+                weight = 60.kg
             )
         val progress =
             ExerciseQueueProgress(
@@ -179,7 +180,7 @@ class TrainingExerciseScreenTest {
         val exercise = createSessionExercise(
             name = "Bench Press",
             reps = 10,
-            weightInKg = 60.0
+            weight = 60.kg
         )
         val progress = ExerciseQueueProgress(
             remainingExerciseSets = 2,

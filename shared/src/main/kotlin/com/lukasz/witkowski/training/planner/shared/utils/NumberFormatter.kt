@@ -23,8 +23,8 @@ fun WeightUnit.shortLabel(): String = when (this) {
 }
 
 @Composable
-fun Double.formatWeightText(weightUnit: WeightUnit = LocalWeightUnit.current): String {
-    val converted = Weight.ofKilograms(this).toDouble(weightUnit)
+fun Weight.formatWeightText(weightUnit: WeightUnit = LocalWeightUnit.current): String {
+    val converted = toDouble(weightUnit)
     val formatted = converted.formatUpToTwoDecimals()
     val formatRes = when (weightUnit) {
         WeightUnit.KG -> R.string.weight_kg_format
@@ -34,5 +34,14 @@ fun Double.formatWeightText(weightUnit: WeightUnit = LocalWeightUnit.current): S
 }
 
 @Composable
+fun Weight?.formatVolumeText(weightUnit: WeightUnit = LocalWeightUnit.current): String =
+    this?.takeIf { it.isPositive }?.formatWeightText(weightUnit)
+        ?: stringResource(R.string.bodyweight)
+
+@Composable
+fun Double.formatWeightText(weightUnit: WeightUnit = LocalWeightUnit.current): String =
+    Weight.ofKilograms(this).formatWeightText(weightUnit)
+
+@Composable
 fun Double.formatVolumeText(weightUnit: WeightUnit = LocalWeightUnit.current): String =
-    this.takeIf { it > 0.0 }?.formatWeightText(weightUnit) ?: stringResource(R.string.bodyweight)
+    Weight.ofKilograms(this).formatVolumeText(weightUnit)

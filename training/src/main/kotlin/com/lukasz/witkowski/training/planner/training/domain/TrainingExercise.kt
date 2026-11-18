@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.training.domain
 
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import kotlin.time.Duration
 
 /**
@@ -12,7 +13,7 @@ data class TrainingExercise(
     val repetitions: Int = 1,
     val sets: Int = 1,
     val restTime: Duration = Duration.ZERO,
-    val weightInKg: Double? = null,
+    val weight: Weight? = null,
     val time: Duration = Duration.ZERO
 ) {
     val isIsometric: Boolean

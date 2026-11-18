@@ -49,7 +49,7 @@ fun ExerciseRecommendation.toRecommendation(level: RecommendationLevel): Recomme
             sets = sets,
             reps = reps,
             restTime = restTime,
-            weightInKg = weightInKg,
+            weight = weight,
             time = time
         )
     )
@@ -63,6 +63,6 @@ private fun Recommendation.toDomainExerciseRecommendation(): ExerciseRecommendat
         sets = checkNotNull(parameters.sets) { "Sets cannot be empty" },
         reps = checkNotNull(parameters.reps) { "Reps cannot be empty" },
         restTime = checkNotNull(parameters.restTime) { "Rest time cannot be empty" },
-        weightInKg = parameters.weightInKg,
+        weight = parameters.weight,
         time = parameters.time
     )

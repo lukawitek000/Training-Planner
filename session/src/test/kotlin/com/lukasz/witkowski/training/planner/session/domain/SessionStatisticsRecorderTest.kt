@@ -12,6 +12,7 @@ import com.lukasz.witkowski.training.planner.session.domain.session.statisticsre
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionEvent
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import java.util.Date
 import kotlin.test.assertFailsWith
 import kotlin.time.Duration
@@ -79,7 +80,7 @@ class SessionStatisticsRecorderTest {
             // 3. Complete Ex 1 Set 1 -> ExerciseCompleted, RestStarted
             timeProvider.advanceBy(30.seconds)
             session.handle(SessionCommand.Exercise.UpdateReps(10))
-            session.handle(SessionCommand.Exercise.UpdateWeight(50.0))
+            session.handle(SessionCommand.Exercise.UpdateWeight(50.kg))
             session.complete()
             assertTrue(events[3] is SessionEvent.ExerciseCompleted)
             assertEquals(SessionEvent.RestStarted(45.seconds), events[4])
@@ -146,7 +147,7 @@ class SessionStatisticsRecorderTest {
             session.start()
             fixedTimeProvider.advanceBy(45.seconds)
             session.handle(SessionCommand.Exercise.UpdateReps(12))
-            session.handle(SessionCommand.Exercise.UpdateWeight(40.0))
+            session.handle(SessionCommand.Exercise.UpdateWeight(40.kg))
             session.complete()
 
             val stats = recorder.getStatistics()
@@ -161,9 +162,8 @@ class SessionStatisticsRecorderTest {
             assertEquals(1, stats.exercisesStatistics[0].attemptsStatistics.size)
             assertEquals(12, stats.exercisesStatistics[0].attemptsStatistics[0].actualReps)
             assertEquals(
-                40.0,
-                stats.exercisesStatistics[0].attemptsStatistics[0].actualWeightInKg!!,
-                0.01
+                40.kg,
+                stats.exercisesStatistics[0].attemptsStatistics[0].actualWeight!!
             )
         }
 

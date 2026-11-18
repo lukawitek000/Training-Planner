@@ -62,6 +62,7 @@ import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
 import com.lukasz.witkowski.training.planner.shared.utils.formatUpToTwoDecimals
 import com.lukasz.witkowski.training.planner.shared.utils.formatWeightText
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.shared.utils.shortLabel
 import java.util.Locale
 import kotlin.math.abs
@@ -228,7 +229,7 @@ fun ExerciseParametersInputFields(
                 testTag = "${testTagPrefix}_RepsField"
             )
             WeightParameterInputField(
-                weightInKg = parameters.weightInKg,
+                weight = parameters.weight,
                 weightUnit = weightUnit,
                 onValueChange = { onParametersIntent(ExerciseParametersIntent.WeightChanged(it)) },
                 label = stringResource(R.string.weight),
@@ -469,7 +470,7 @@ private fun buildStringOverview(recommendation: Recommendation): String =
                 sets = it.sets!!,
                 reps = it.reps!!,
                 restTime = it.restTime!!,
-                weightInKg = it.weightInKg,
+                weight = it.weight,
                 time = it.time
             )
         }
@@ -480,18 +481,18 @@ fun buildStringOverview(
     sets: Int,
     reps: Int,
     restTime: Duration,
-    weightInKg: Double?,
+    weight: Weight?,
     time: Duration? = null,
     weightUnit: WeightUnit = LocalWeightUnit.current
 ): String = when {
-    time != null && weightInKg != null -> {
+    time != null && weight != null -> {
         stringResource(
             R.string.recommendation_overview_with_hold,
             sets,
             reps,
             time.inWholeSeconds,
             restTime.inWholeSeconds,
-            weightInKg.formatWeightText(weightUnit)
+            weight.formatWeightText(weightUnit)
         )
     }
 
@@ -505,13 +506,13 @@ fun buildStringOverview(
         )
     }
 
-    weightInKg != null -> {
+    weight != null -> {
         stringResource(
             R.string.recommendation_overview,
             sets,
             reps,
             restTime.inWholeSeconds,
-            weightInKg.formatWeightText(weightUnit)
+            weight.formatWeightText(weightUnit)
         )
     }
 
@@ -527,7 +528,7 @@ fun buildStringOverview(
 
 @Composable
 private fun WeightParameterInputField(
-    weightInKg: Double?,
+    weight: Weight?,
     weightUnit: WeightUnit,
     onValueChange: (Double?) -> Unit,
     label: String,
@@ -538,23 +539,24 @@ private fun WeightParameterInputField(
     keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     var text by rememberSaveable(weightUnit) {
-        mutableStateOf(formatWeightForInput(weightInKg, weightUnit))
+        mutableStateOf(formatWeightForInput(weight, weightUnit))
     }
     var lastEmittedKg by remember { mutableStateOf<Double?>(null) }
 
-    LaunchedEffect(weightInKg, weightUnit) {
+    LaunchedEffect(weight, weightUnit) {
         val currentInputKg = text.toDoubleOrNull()?.let { Weight.of(it, weightUnit).inKilograms }
+        val targetKg = weight?.inKilograms
         val isFromOwnInput = lastEmittedKg != null &&
-            weightInKg != null &&
-            abs(lastEmittedKg!! - weightInKg) < 1e-6
-        val matchesCurrentText = (weightInKg == null && currentInputKg == null) ||
+            targetKg != null &&
+            abs(lastEmittedKg!! - targetKg) < 1e-6
+        val matchesCurrentText = (targetKg == null && currentInputKg == null) ||
             (
-                weightInKg != null &&
+                targetKg != null &&
                     currentInputKg != null &&
-                    abs(weightInKg - currentInputKg) < 1e-6
+                    abs(targetKg - currentInputKg) < 1e-6
                 )
         if (!isFromOwnInput && !matchesCurrentText) {
-            text = formatWeightForInput(weightInKg, weightUnit)
+            text = formatWeightForInput(weight, weightUnit)
         }
     }
 
@@ -599,9 +601,8 @@ private fun WeightParameterInputField(
     }
 }
 
-private fun formatWeightForInput(weightInKg: Double?, weightUnit: WeightUnit): String =
-    weightInKg?.let { Weight.ofKilograms(it).toDouble(weightUnit).formatUpToTwoDecimals(Locale.US) }
-        ?: ""
+private fun formatWeightForInput(weight: Weight?, weightUnit: WeightUnit): String =
+    weight?.toDouble(weightUnit)?.formatUpToTwoDecimals(Locale.US) ?: ""
 
 private fun sanitizeDecimalInput(input: String): String {
     val normalized = input.replace(',', '.')
@@ -714,9 +715,7 @@ private fun RecommendedParametersExtendedSummary(
             unit = stringResource(R.string.second_abbrv)
         )
         ParameterOverview(
-            value = params.weightInKg?.let {
-                Weight.ofKilograms(it).toDouble(weightUnit).formatUpToTwoDecimals()
-            },
+            value = params.weight?.toDouble(weightUnit)?.formatUpToTwoDecimals(),
             label = "${stringResource(R.string.weight)}:",
             unit = weightUnit.shortLabel()
         )
@@ -807,7 +806,7 @@ val PREVIEW_RECOMMENDED_PARAMETERS = listOf(
             sets = 3,
             reps = 10,
             restTime = 1.minutes,
-            weightInKg = 30.0
+            weight = 30.kg
         )
     ),
     Recommendation(RecommendationLevel.ADVANCED)

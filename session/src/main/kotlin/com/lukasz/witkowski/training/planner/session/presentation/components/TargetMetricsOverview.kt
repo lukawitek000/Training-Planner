@@ -23,8 +23,8 @@ fun TargetMetricsOverview(sessionExercise: SessionExercise) {
                 sessionExercise.snapshot.plannedConfig.reps
             )
         }
-    val weight = sessionExercise.snapshot.plannedConfig.weightInKg
-    val weightSuffix = if (weight != null && weight > 0) {
+    val weight = sessionExercise.snapshot.plannedConfig.weight
+    val weightSuffix = if (weight != null && weight.isPositive) {
         stringResource(R.string.session_target_weight_suffix, weight.formatWeightText())
     } else {
         ""

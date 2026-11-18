@@ -154,11 +154,11 @@ class ExerciseEditorViewModel(
             }
 
             is ExerciseEditingEvent.RecommendedWeightChanged -> {
-                val weightInKg = event.weight?.let { Weight.of(it, weightUnit.value).inKilograms }
+                val weight = event.weight?.let { Weight.of(it, weightUnit.value) }
                 uiState.updateRecommendationParam(
                     level = event.level,
                     updateParameters = { currentParams ->
-                        currentParams.copy(weightInKg = weightInKg)
+                        currentParams.copy(weight = weight)
                     }
                 )
             }

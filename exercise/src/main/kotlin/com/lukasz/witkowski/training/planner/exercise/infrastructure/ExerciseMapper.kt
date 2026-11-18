@@ -11,6 +11,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSharing
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import kotlin.time.Duration.Companion.seconds
 
 internal fun ExerciseOverview.toDbExercise(): DbExercise {
@@ -141,7 +142,7 @@ internal fun ExerciseRecommendation.toDbExerciseRecommendation(
     sets = sets,
     reps = reps,
     restTimeInSeconds = restTime.inWholeSeconds,
-    weightInKg = weightInKg,
+    weightInKg = weight?.inKilograms,
     timeInSeconds = time?.inWholeSeconds
 )
 
@@ -169,7 +170,7 @@ private fun List<DbExerciseRecommendation>.toExerciseRecommendation(
     sets = 0,
     reps = 0,
     restTime = 0.seconds,
-    weightInKg = null,
+    weight = null,
     time = null
 )
 
@@ -178,6 +179,6 @@ private fun DbExerciseRecommendation.toExerciseRecommendation(): ExerciseRecomme
         sets = sets,
         reps = reps,
         restTime = restTimeInSeconds.seconds,
-        weightInKg = weightInKg,
+        weight = weightInKg?.kg,
         time = timeInSeconds?.seconds
     )

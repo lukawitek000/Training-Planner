@@ -2,13 +2,14 @@ package com.lukasz.witkowski.training.planner.session.domain.session
 
 import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import kotlin.time.Duration
 
 sealed interface SessionCommand {
     sealed interface Exercise : SessionCommand {
         data class UpdateReps(val reps: Int) : Exercise
 
-        data class UpdateWeight(val weightInKg: Double) : Exercise
+        data class UpdateWeight(val weight: Weight) : Exercise
 
         data class UpdateHoldDuration(val duration: Duration) : Exercise
 

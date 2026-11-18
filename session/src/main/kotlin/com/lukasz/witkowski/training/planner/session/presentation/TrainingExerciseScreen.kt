@@ -66,6 +66,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.scrolling.ScrollColumn
 import com.lukasz.witkowski.training.planner.shared.utils.LocalWeightUnit
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.shared.utils.Weight
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.shared.utils.shortLabel
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
@@ -187,9 +188,8 @@ private fun ActiveSetCard(
             }
 
             val weightUnit = LocalWeightUnit.current
-            val displayedWeight = Weight.ofKilograms(
-                state.sessionExercise.currentConfig.weightInKg ?: 0.0
-            ).toDouble(weightUnit)
+            val displayedWeight = (state.sessionExercise.currentConfig.weight ?: Weight.ZERO)
+                .toDouble(weightUnit)
             AppStepper(
                 value = displayedWeight,
                 onValueChange = { steppedWeight ->
@@ -560,7 +560,7 @@ private fun ExerciseImages(
 private fun TrainingExerciseScreenPreview() {
     val dummyConfig = SessionExerciseConfiguration(
         reps = 10,
-        weightInKg = 85.0,
+        weight = 85.kg,
         holdTime = null
     )
     val dummySnapshot = TrainingExerciseSnapshot(
@@ -608,7 +608,7 @@ private fun TrainingExerciseScreenPreview() {
 private fun TrainingExerciseScreenHoldTimePreview() {
     val dummyConfig = SessionExerciseConfiguration(
         reps = 0,
-        weightInKg = null,
+        weight = null,
         holdTime = 68.seconds
     )
     val dummySnapshot = TrainingExerciseSnapshot(
@@ -660,7 +660,7 @@ private fun TrainingExerciseScreenHoldTimePreview() {
 private fun TrainingExerciseScreenNegativeHoldTimePreview() {
     val dummyConfig = SessionExerciseConfiguration(
         reps = 0,
-        weightInKg = null,
+        weight = null,
         holdTime = 20.seconds
     )
     val dummySnapshot = TrainingExerciseSnapshot(

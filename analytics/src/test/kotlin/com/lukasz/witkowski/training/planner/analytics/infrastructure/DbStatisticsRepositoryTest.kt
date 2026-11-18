@@ -13,6 +13,7 @@ import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
@@ -69,7 +70,7 @@ class DbStatisticsRepositoryTest {
                 set = 1,
                 completed = true,
                 actualReps = 12,
-                actualWeightInKg = 85.5,
+                actualWeight = 85.5.kg,
                 effort = SetEffort.HARD,
                 restTime = 60.seconds,
                 plannedRestTime = 90.seconds
@@ -83,7 +84,7 @@ class DbStatisticsRepositoryTest {
                 plannedSets = 3,
                 plannedConfig = SessionExerciseConfiguration(
                     reps = 10,
-                    weightInKg = 80.0,
+                    weight = 80.kg,
                     holdTime = 45.seconds
                 ),
                 plannedRestTime = 90.seconds,
@@ -116,7 +117,7 @@ class DbStatisticsRepositoryTest {
         assertEquals("Bench Press", retrievedExercise.exerciseName)
         assertEquals(3, retrievedExercise.plannedSets)
         assertEquals(10, retrievedExercise.plannedConfig.reps)
-        assertEquals(80.0, retrievedExercise.plannedConfig.weightInKg)
+        assertEquals(80.kg, retrievedExercise.plannedConfig.weight)
         assertEquals(45.seconds, retrievedExercise.plannedConfig.holdTime)
         assertEquals(90.seconds, retrievedExercise.plannedRestTime)
         assertEquals(1, retrievedExercise.attemptsStatistics.size)
@@ -124,7 +125,7 @@ class DbStatisticsRepositoryTest {
         val retrievedAttempt = retrievedExercise.attemptsStatistics.first()
         assertEquals(attemptId, retrievedAttempt.id)
         assertEquals(12, retrievedAttempt.actualReps)
-        assertEquals(85.5, retrievedAttempt.actualWeightInKg)
+        assertEquals(85.5.kg, retrievedAttempt.actualWeight)
         assertEquals(SetEffort.HARD, retrievedAttempt.effort)
         assertEquals(60.seconds, retrievedAttempt.restTime)
         assertEquals(90.seconds, retrievedAttempt.plannedRestTime)
@@ -175,7 +176,7 @@ class DbStatisticsRepositoryTest {
                                 set = 1,
                                 completed = true,
                                 actualReps = 10,
-                                actualWeightInKg = 100.0
+                                actualWeight = 100.kg
                             ),
                             ExerciseAttemptStatistics(
                                 id = ExerciseAttemptStatisticsId.create(),
@@ -184,7 +185,7 @@ class DbStatisticsRepositoryTest {
                                 set = 2,
                                 completed = false,
                                 actualReps = 5,
-                                actualWeightInKg = 100.0
+                                actualWeight = 100.kg
                             )
                         )
                     ),
@@ -200,7 +201,7 @@ class DbStatisticsRepositoryTest {
                                 set = 1,
                                 completed = true,
                                 actualReps = 12,
-                                actualWeightInKg = 25.0
+                                actualWeight = 25.kg
                             )
                         )
                     )
@@ -230,7 +231,7 @@ class DbStatisticsRepositoryTest {
 
         val latestOverview = overviews[0]
         assertEquals(54.minutes, latestOverview.totalTime)
-        assertEquals(1800.0, latestOverview.totalVolumeKg, 0.01)
+        assertEquals(1800.0, latestOverview.totalVolume.inKilograms, 0.01)
         assertEquals(2, latestOverview.completedSetsCount)
         assertEquals(3, latestOverview.totalSetsCount)
         assertEquals((2.0 / 3.0) * 100.0, latestOverview.completenessRate, 0.001)

@@ -18,6 +18,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.editor.Exerci
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recommendation
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
@@ -108,7 +109,7 @@ class CreateExerciseScreenTest {
                     sets = 3,
                     reps = 10,
                     restTime = 30.seconds,
-                    weightInKg = 20.0
+                    weight = 20.kg
                 )
             )
         )

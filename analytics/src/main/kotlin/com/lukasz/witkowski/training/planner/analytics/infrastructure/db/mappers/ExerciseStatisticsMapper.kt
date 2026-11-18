@@ -6,6 +6,7 @@ import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStati
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -20,7 +21,7 @@ internal fun ExerciseStatistics.toDbExerciseStatistics(
         exerciseName = exerciseName,
         plannedSets = plannedSets,
         plannedReps = plannedConfig.reps,
-        plannedWeightInKg = plannedConfig.weightInKg,
+        plannedWeightInKg = plannedConfig.weight?.inKilograms,
         plannedHoldTime = plannedConfig.holdTime?.inWholeMilliseconds,
         plannedRestTime = plannedRestTime.inWholeMilliseconds
     ),
@@ -38,7 +39,7 @@ internal fun DbExerciseWithAttemptsStatistics.toExerciseStatistics(): ExerciseSt
         plannedSets = exerciseStatistics.plannedSets,
         plannedConfig = SessionExerciseConfiguration(
             reps = exerciseStatistics.plannedReps,
-            weightInKg = exerciseStatistics.plannedWeightInKg,
+            weight = exerciseStatistics.plannedWeightInKg?.kg,
             holdTime = exerciseStatistics.plannedHoldTime?.milliseconds
         ),
         plannedRestTime = exerciseStatistics.plannedRestTime.milliseconds,

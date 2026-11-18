@@ -53,6 +53,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppSecondaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppTertiaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -281,7 +282,7 @@ private fun ExerciseConflictDialogPreview() {
         val sampleRecs = listOf(
             Recommendation(
                 RecommendationLevel.BEGINNER,
-                RecommendedParameters(sets = 3, reps = 10, restTime = 60.seconds, weightInKg = 40.0)
+                RecommendedParameters(sets = 3, reps = 10, restTime = 60.seconds, weight = 40.kg)
             )
         )
         ExerciseConflictDialog(

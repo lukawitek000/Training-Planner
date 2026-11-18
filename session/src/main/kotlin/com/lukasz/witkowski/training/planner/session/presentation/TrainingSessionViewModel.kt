@@ -87,8 +87,8 @@ class TrainingSessionViewModel(
             }
 
             is SessionIntent.WeightChanged -> {
-                val weightInKg = Weight.of(intent.weight, weightUnit.value).inKilograms
-                trainingSessionService.changeWeight(weightInKg)
+                val weight = Weight.of(intent.weight, weightUnit.value)
+                trainingSessionService.changeWeight(weight)
             }
 
             is SessionIntent.HoldTimeChanged -> {

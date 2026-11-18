@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSess
 import com.lukasz.witkowski.training.planner.session.domain.session.queue.ExerciseQueueProgress
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
@@ -32,7 +33,7 @@ class RestTimeScreenTest {
             createSessionExercise(
                 name = "Barbell Squat",
                 reps = 8,
-                weightInKg = 100.0
+                weight = 100.kg
             )
         val nextProgress =
             ExerciseQueueProgress(

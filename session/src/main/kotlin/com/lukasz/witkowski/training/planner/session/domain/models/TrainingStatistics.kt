@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.session.domain.models
 
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import com.lukasz.witkowski.training.planner.shared.utils.calculateCompletenessPercentage
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
@@ -17,8 +18,10 @@ data class TrainingStatistics(
     val allAttempts: List<ExerciseAttemptStatistics>
         get() = exercisesStatistics.flatMap { it.attemptsStatistics }
 
-    val totalVolumeKg: Double
-        get() = allAttempts.sumOf { (it.actualWeightInKg ?: 0.0) * it.actualReps }
+    val totalVolume: Weight
+        get() = allAttempts.fold(Weight.ZERO) { acc, attempt ->
+            acc + (attempt.actualWeight ?: Weight.ZERO) * attempt.actualReps
+        }
 
     val totalReps: Int
         get() = allAttempts.sumOf { it.actualReps }

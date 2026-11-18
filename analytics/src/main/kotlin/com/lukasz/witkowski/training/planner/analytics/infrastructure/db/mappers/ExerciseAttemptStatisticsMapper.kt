@@ -5,6 +5,7 @@ import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttem
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -18,7 +19,7 @@ internal fun ExerciseAttemptStatistics.toDbExerciseAttemptStatistics(
     set = set,
     completed = completed,
     actualReps = actualReps,
-    actualWeightInKg = actualWeightInKg,
+    actualWeightInKg = actualWeight?.inKilograms,
     actualTime = actualTime?.inWholeMilliseconds,
     rpe = effort?.score,
     restTime = restTime?.inWholeMilliseconds,
@@ -33,7 +34,7 @@ internal fun DbExerciseAttemptStatistics.toExerciseAttemptStatistics(): Exercise
         set = set,
         completed = completed,
         actualReps = actualReps,
-        actualWeightInKg = actualWeightInKg,
+        actualWeight = actualWeightInKg?.kg,
         actualTime = actualTime?.milliseconds,
         effort = SetEffort.fromNumeric(rpe),
         restTime = restTime?.milliseconds,

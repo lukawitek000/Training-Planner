@@ -12,12 +12,23 @@ value class Weight private constructor(val inKilograms: Double) : Comparable<Wei
     val inPounds: Double
         get() = inKilograms * KG_TO_LBS
 
+    val isPositive: Boolean
+        get() = inKilograms > 0.0
+
     fun toDouble(unit: WeightUnit): Double = when (unit) {
         WeightUnit.KG -> inKilograms
         WeightUnit.LBS -> inPounds
     }
 
     fun toInt(unit: WeightUnit): Int = toDouble(unit).roundToInt()
+
+    operator fun plus(other: Weight): Weight = Weight(inKilograms + other.inKilograms)
+
+    operator fun minus(other: Weight): Weight = Weight(inKilograms - other.inKilograms)
+
+    operator fun times(factor: Int): Weight = Weight(inKilograms * factor)
+
+    operator fun times(factor: Double): Weight = Weight(inKilograms * factor)
 
     override fun compareTo(other: Weight): Int = inKilograms.compareTo(other.inKilograms)
 

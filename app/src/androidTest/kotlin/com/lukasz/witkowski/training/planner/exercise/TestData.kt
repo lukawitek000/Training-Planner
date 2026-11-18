@@ -15,6 +15,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recomm
 import com.lukasz.witkowski.training.planner.image.ImageByteArray
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import java.util.UUID
 import kotlin.time.Duration.Companion.seconds
 
@@ -59,7 +60,7 @@ object TestData {
             sets = 3,
             reps = 8,
             restTime = 60.seconds,
-            weightInKg = null
+            weight = null
         )
 
     val INTERMEDIATE_RECOMMENDATION =
@@ -67,7 +68,7 @@ object TestData {
             sets = 4,
             reps = 10,
             restTime = 90.seconds,
-            weightInKg = 10.0
+            weight = 10.kg
         )
 
     val ADVANCED_RECOMMENDATION =
@@ -75,7 +76,7 @@ object TestData {
             sets = 5,
             reps = 12,
             restTime = 120.seconds,
-            weightInKg = 20.0
+            weight = 20.kg
         )
 
     // --- Domain Exercises ---
@@ -136,9 +137,9 @@ object TestData {
             beginnerRecommendation = BEGINNER_RECOMMENDATION.copy(reps = 12),
             intermediateRecommendation = INTERMEDIATE_RECOMMENDATION.copy(
                 reps = 15,
-                weightInKg = 20.0
+                weight = 20.kg
             ),
-            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 20, weightInKg = 40.0)
+            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 20, weight = 40.kg)
         )
 
     val PULL_UPS_DETAILS =
@@ -146,7 +147,7 @@ object TestData {
             exercise = PULL_UPS_EXERCISE,
             beginnerRecommendation = BEGINNER_RECOMMENDATION.copy(reps = 5),
             intermediateRecommendation = INTERMEDIATE_RECOMMENDATION.copy(reps = 8),
-            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 12, weightInKg = 10.0)
+            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 12, weight = 10.kg)
         )
 
     val PLANK_DETAILS =
@@ -156,21 +157,21 @@ object TestData {
                 sets = 3,
                 reps = 1,
                 restTime = 30.seconds,
-                weightInKg = null,
+                weight = null,
                 time = 30.seconds
             ),
             intermediateRecommendation = ExerciseRecommendation(
                 sets = 3,
                 reps = 1,
                 restTime = 45.seconds,
-                weightInKg = null,
+                weight = null,
                 time = 45.seconds
             ),
             advancedRecommendation = ExerciseRecommendation(
                 sets = 4,
                 reps = 1,
                 restTime = 60.seconds,
-                weightInKg = 10.0,
+                weight = 10.kg,
                 time = 60.seconds
             )
         )
@@ -203,9 +204,9 @@ object TestData {
             beginnerRecommendation = BEGINNER_RECOMMENDATION.copy(reps = 12),
             intermediateRecommendation = INTERMEDIATE_RECOMMENDATION.copy(
                 reps = 15,
-                weightInKg = 20.0
+                weight = 20.kg
             ),
-            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 20, weightInKg = 40.0)
+            advancedRecommendation = ADVANCED_RECOMMENDATION.copy(reps = 20, weight = 40.kg)
         )
 
     // --- Exercise Queries ---
@@ -236,7 +237,7 @@ object TestData {
                         sets = BEGINNER_RECOMMENDATION.sets,
                         reps = BEGINNER_RECOMMENDATION.reps,
                         restTime = BEGINNER_RECOMMENDATION.restTime,
-                        weightInKg = BEGINNER_RECOMMENDATION.weightInKg
+                        weight = BEGINNER_RECOMMENDATION.weight
                     )
                 ),
                 Recommendation(
@@ -246,7 +247,7 @@ object TestData {
                         sets = INTERMEDIATE_RECOMMENDATION.sets,
                         reps = INTERMEDIATE_RECOMMENDATION.reps,
                         restTime = INTERMEDIATE_RECOMMENDATION.restTime,
-                        weightInKg = INTERMEDIATE_RECOMMENDATION.weightInKg
+                        weight = INTERMEDIATE_RECOMMENDATION.weight
                     )
                 ),
                 Recommendation(
@@ -256,7 +257,7 @@ object TestData {
                         sets = ADVANCED_RECOMMENDATION.sets,
                         reps = ADVANCED_RECOMMENDATION.reps,
                         restTime = ADVANCED_RECOMMENDATION.restTime,
-                        weightInKg = ADVANCED_RECOMMENDATION.weightInKg
+                        weight = ADVANCED_RECOMMENDATION.weight
                     )
                 )
             )

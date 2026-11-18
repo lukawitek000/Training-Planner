@@ -1,5 +1,6 @@
 package com.lukasz.witkowski.training.planner.session.domain.models
 
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlin.time.Duration
 
@@ -10,7 +11,7 @@ data class ExerciseAttemptStatistics(
     val set: Int,
     val completed: Boolean,
     val actualReps: Int = 0,
-    val actualWeightInKg: Double? = null,
+    val actualWeight: Weight? = null,
     val actualTime: Duration? = null,
     val effort: SetEffort? = null,
     val restTime: Duration? = null,

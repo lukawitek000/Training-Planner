@@ -14,6 +14,7 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.user.domain.UserRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -332,7 +333,7 @@ class ExerciseEditorViewModelTest {
 
             val expectedRecommendations = ExerciseEditingInput().recommendations.map {
                 if (it.level == level) {
-                    it.copy(parameters = it.parameters.copy(weightInKg = newWeight))
+                    it.copy(parameters = it.parameters.copy(weight = newWeight.kg))
                 } else {
                     it
                 }
@@ -555,8 +556,8 @@ class ExerciseEditorViewModelTest {
                 .recommendations
                 .first { it.level == level }
                 .parameters
-                .weightInKg!!
-            assertEquals(Weight.ofPounds(100.0).inKilograms, updated, 1e-6)
+                .weight!!
+            assertEquals(Weight.ofPounds(100.0).inKilograms, updated.inKilograms, 1e-6)
         }
     }
     private suspend fun ReceiveTurbine<ExerciseEditingUiState>.assertInitialCreateState() {

@@ -16,6 +16,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSharing
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -43,7 +44,7 @@ internal fun ExerciseDto.toExerciseDetails(
                 sets = dto.sets,
                 reps = dto.reps,
                 restTime = dto.restTimeInMillis.milliseconds,
-                weightInKg = dto.weightInKg,
+                weight = dto.weightInKg?.kg,
                 time = dto.timeInMillis?.milliseconds
             )
         } else {
@@ -51,7 +52,7 @@ internal fun ExerciseDto.toExerciseDetails(
                 sets = 0,
                 reps = 0,
                 restTime = 0.seconds,
-                weightInKg = null,
+                weight = null,
                 time = null
             )
         }
@@ -155,7 +156,7 @@ internal fun ExerciseDetails.toCreateExerciseRequestDto(
             beginnerRecommendation.sets,
             beginnerRecommendation.reps,
             beginnerRecommendation.restTime.inWholeMilliseconds,
-            beginnerRecommendation.weightInKg,
+            beginnerRecommendation.weight?.inKilograms,
             beginnerRecommendation.time?.inWholeMilliseconds
         ),
         ExerciseRecommendationDto(
@@ -163,7 +164,7 @@ internal fun ExerciseDetails.toCreateExerciseRequestDto(
             intermediateRecommendation.sets,
             intermediateRecommendation.reps,
             intermediateRecommendation.restTime.inWholeMilliseconds,
-            intermediateRecommendation.weightInKg,
+            intermediateRecommendation.weight?.inKilograms,
             intermediateRecommendation.time?.inWholeMilliseconds
         ),
         ExerciseRecommendationDto(
@@ -171,7 +172,7 @@ internal fun ExerciseDetails.toCreateExerciseRequestDto(
             advancedRecommendation.sets,
             advancedRecommendation.reps,
             advancedRecommendation.restTime.inWholeMilliseconds,
-            advancedRecommendation.weightInKg,
+            advancedRecommendation.weight?.inKilograms,
             advancedRecommendation.time?.inWholeMilliseconds
         )
     )
@@ -201,7 +202,7 @@ internal fun ExerciseDetails.toUpdateExerciseRequestDto(
             beginnerRecommendation.sets,
             beginnerRecommendation.reps,
             beginnerRecommendation.restTime.inWholeMilliseconds,
-            beginnerRecommendation.weightInKg,
+            beginnerRecommendation.weight?.inKilograms,
             beginnerRecommendation.time?.inWholeMilliseconds
         ),
         ExerciseRecommendationDto(
@@ -209,7 +210,7 @@ internal fun ExerciseDetails.toUpdateExerciseRequestDto(
             intermediateRecommendation.sets,
             intermediateRecommendation.reps,
             intermediateRecommendation.restTime.inWholeMilliseconds,
-            intermediateRecommendation.weightInKg,
+            intermediateRecommendation.weight?.inKilograms,
             intermediateRecommendation.time?.inWholeMilliseconds
         ),
         ExerciseRecommendationDto(
@@ -217,7 +218,7 @@ internal fun ExerciseDetails.toUpdateExerciseRequestDto(
             advancedRecommendation.sets,
             advancedRecommendation.reps,
             advancedRecommendation.restTime.inWholeMilliseconds,
-            advancedRecommendation.weightInKg,
+            advancedRecommendation.weight?.inKilograms,
             advancedRecommendation.time?.inWholeMilliseconds
         )
     )

@@ -97,7 +97,7 @@ internal data class SessionMetricsAccumulator(
             set = setNumber,
             completed = completed,
             actualReps = exercise.currentConfig.reps,
-            actualWeightInKg = exercise.currentConfig.weightInKg,
+            actualWeight = exercise.currentConfig.weight,
             actualTime = exercise.currentConfig.holdTime,
             plannedRestTime = exercise.restTime.takeIf { it > Duration.ZERO }
         )
