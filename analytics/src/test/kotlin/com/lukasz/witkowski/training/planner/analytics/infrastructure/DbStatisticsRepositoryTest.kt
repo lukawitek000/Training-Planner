@@ -132,53 +132,6 @@ class DbStatisticsRepositoryTest {
     }
 
     @Test
-    fun getTrainingStatisticsByTrainingPlanIdReturnsAllMatchingStatistics() = runTest {
-        val planId = TrainingPlanId.create()
-        val otherPlanId = TrainingPlanId.create()
-
-        val stats1 =
-            TrainingStatistics(
-                id = TrainingStatisticsId.create(),
-                trainingPlanId = planId,
-                totalTime = 60.seconds,
-                date = Date(100L),
-                exercisesStatistics = emptyList(),
-                note = "Plan 1 Session 1"
-            )
-        val stats2 =
-            TrainingStatistics(
-                id = TrainingStatisticsId.create(),
-                trainingPlanId = planId,
-                totalTime = 90.seconds,
-                date = Date(200L),
-                exercisesStatistics = emptyList(),
-                note = "Plan 1 Session 2"
-            )
-        val otherStats =
-            TrainingStatistics(
-                id = TrainingStatisticsId.create(),
-                trainingPlanId = otherPlanId,
-                totalTime = 45.seconds,
-                date = Date(300L),
-                exercisesStatistics = emptyList(),
-                note = "Other Plan Session"
-            )
-
-        repository.save(stats1)
-        repository.save(stats2)
-        repository.save(otherStats)
-
-        val planStats = repository.getByTrainingPlanId(planId).first()
-        assertEquals(2, planStats.size)
-        assertEquals(
-            setOf("Plan 1 Session 1", "Plan 1 Session 2"),
-            planStats.map {
-                it.note
-            }.toSet()
-        )
-    }
-
-    @Test
     fun getOverviewsByTrainingPlanIdReturnsMostRecentFirstWithComputedMetrics() = runTest {
         val targetPlanId = TrainingPlanId.create()
         val otherPlanId = TrainingPlanId.create()

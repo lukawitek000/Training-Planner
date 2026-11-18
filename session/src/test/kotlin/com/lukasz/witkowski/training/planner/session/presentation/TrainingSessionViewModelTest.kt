@@ -84,7 +84,7 @@ class TrainingSessionViewModelTest {
                 TrainingSessionPhaseKey.Loading,
                 viewModel.trainingSessionState.value.phaseKey
             )
-            verify(exactly = 0) { trainingSessionService.startTraining(any(), any()) }
+            verify(exactly = 0) { trainingSessionService.startTraining(any()) }
 
             // when: training plan is emitted by trainingPlanService
             trainingPlanFlow.value = TRAINING_PLAN

@@ -14,11 +14,6 @@ data class TrainingStatistics(
     val note: String? = null,
     val rpe: SessionRpe? = null
 ) {
-    val effectiveTime: Duration
-        get() = exercisesStatistics.fold(Duration.ZERO) { acc, statistics ->
-            acc + statistics.totalTime
-        }
-
     val allAttempts: List<ExerciseAttemptStatistics>
         get() = exercisesStatistics.flatMap { it.attemptsStatistics }
 

@@ -19,7 +19,10 @@ val analyticsModule = module {
     single { TrainingStatisticsService(statisticsRepository = get()) }
 
     single<SessionCompletedListener> {
-        AnalyticsSessionCompletedListener(statisticsRepository = get())
+        AnalyticsSessionCompletedListener(
+            statisticsRepository = get(),
+            trainingPlanService = get()
+        )
     }
     viewModel { params ->
         TrainingStatisticsViewModel(

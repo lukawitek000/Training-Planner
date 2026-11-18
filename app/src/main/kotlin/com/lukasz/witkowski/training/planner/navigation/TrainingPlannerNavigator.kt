@@ -105,6 +105,4 @@ class TrainingPlannerNavigator(
     }
 
     fun isOnMainScreen(): Boolean = isTrainingPlansList() || isExerciseList()
-
-    fun isCreatingOrEditingTrainingPlan() = backStack.contains(CreateTrainingPlan) || backStack.any { it is EditTrainingPlan }
 }

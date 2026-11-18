@@ -9,7 +9,6 @@
     <string name="last_session">Last session %1$s</string>
 
     <!-- Training Plan Details -->
-    <string name="training_plan_details">Training Plan Details</string>
     <string name="exercises_tab_title">Exercises</string>
     <string name="previous_sessions_tab_title">Previous sessions</string>
     <string name="training_plan_not_found">Training Plan not found</string>
@@ -26,7 +25,6 @@
     <string name="training_plan_deletion_failed">Training plan deletion failed.</string>
 
     <!-- Training Plan Editor -->
-    <string name="edit_training_plan">Edit training plan</string>
     <string name="training_plan_title_label">Training Plan title *</string>
     <string name="training_plan_title">Title</string>
     <string name="training_plan_description_label">Training Plan description</string>
@@ -41,13 +39,5 @@
     <string name="no_exercises_yet">No exercises yet</string>
     <string name="exercises_count">Exercises (%1$d) *</string>
     <string name="failed_to_save_training_plan">Failed to save training plan. Try again.</string>
-    <string name="training_plan_no_enough_data_message">Title and exercises are required</string>
-    <string name="change_rest_time">Change rest time</string>
     <string name="remove_training_exercise">Remove training exercise</string>
-    <string name="reps">Reps</string>
-    <string name="sets">Sets</string>
-    <string name="weight">Weight</string>
-    <string name="kg">kg</string>
-    <string name="reps_with_value">Reps: %1$s</string>
-    <string name="sets_with_value">Sets: %1$s</string>
 </resources>

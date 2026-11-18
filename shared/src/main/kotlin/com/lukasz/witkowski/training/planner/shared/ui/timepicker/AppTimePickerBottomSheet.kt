@@ -86,7 +86,6 @@ enum class AppTimePickerTab {
 private val DEFAULT_SECONDS_PRESETS = listOf(15, 30, 45, 60, 90, 120, 150, 180, 240)
 private val DEFAULT_MINUTES_PRESETS = listOf(1, 2, 3, 4, 5, 10)
 private const val SECONDS_PER_MINUTE = 60
-private const val MILLIS_PER_SECOND = 1000L
 
 /**
  * Stitch Universal Time Picker modal bottom sheet (`2b3ca74373e24dcfa028180f175696b0`) accepting [Time].

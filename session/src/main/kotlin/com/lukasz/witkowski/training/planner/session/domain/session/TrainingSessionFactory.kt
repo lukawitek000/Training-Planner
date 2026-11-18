@@ -17,7 +17,6 @@ internal object TrainingSessionFactory {
         trainingPlan: TrainingPlan,
         policy: TrainingSetsPolicy = StraightSetsPolicy(),
         statisticsRecorder: SessionStatisticsRecorder? = null,
-        additionalRecorders: List<SessionStatisticsRecorder> = emptyList(),
         timeProvider: TimeProvider = SystemTimeProvider(),
         timerFactory: TimerFactory = TimerFactory(timeProvider = timeProvider),
         scope: CoroutineScope
@@ -36,7 +35,6 @@ internal object TrainingSessionFactory {
             if (statisticsRecorder != null && statisticsRecorder !== primaryProvider) {
                 add(statisticsRecorder)
             }
-            addAll(additionalRecorders)
         }.distinct()
         val compositeRecorder = if (allRecorders.size == 1) {
             allRecorders.first()

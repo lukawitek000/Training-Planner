@@ -13,10 +13,6 @@ interface StatisticsRepository {
 
     suspend fun updateMetadata(id: TrainingStatisticsId, rpe: SessionRpe?, note: String?)
 
-    fun delete(trainingStatistics: TrainingStatistics)
-
-    fun getByTrainingPlanId(trainingPlanId: TrainingPlanId): Flow<List<TrainingStatistics>>
-
     fun getOverviewsByTrainingPlanId(
         trainingPlanId: TrainingPlanId
     ): Flow<PagingData<TrainingStatisticsOverview>>

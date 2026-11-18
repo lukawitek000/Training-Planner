@@ -3,7 +3,6 @@ package com.lukasz.witkowski.training.planner.session.application
 import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedListener
 import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
-import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.session.SessionCommand
 import com.lukasz.witkowski.training.planner.session.domain.session.StraightSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSession
@@ -50,7 +49,6 @@ class TrainingSessionService(
     private val serviceScope = CoroutineScope(SupervisorJob() + backgroundDispatcher)
     private var currentSessionScope: CoroutineScope? = null
     private var eagerSaveJob: Job? = null
-    private var savedStatisticsId: TrainingStatisticsId? = null
 
     private val activeSession = MutableStateFlow<TrainingSession?>(null)
     private lateinit var trainingSession: TrainingSession
@@ -68,24 +66,20 @@ class TrainingSessionService(
     var trainingPlan: TrainingPlan? = null
         private set
 
-    fun startTraining(
-        trainingPlan: TrainingPlan,
-        policy: TrainingSetsPolicy = trainingSetsStrategy
-    ) {
+    fun startTraining(trainingPlan: TrainingPlan) {
         currentSessionScope?.cancel()
         val newSessionScope = CoroutineScope(
             SupervisorJob(serviceScope.coroutineContext.job) + backgroundDispatcher
         )
         currentSessionScope = newSessionScope
 
-        savedStatisticsId = null
         eagerSaveJob = null
         this.trainingPlan = trainingPlan
 
         trainingSession =
             TrainingSessionFactory.create(
                 trainingPlan = trainingPlan,
-                policy = policy,
+                policy = trainingSetsStrategy,
                 statisticsRecorder = sessionStatisticsRecorder,
                 timeProvider = timeProvider,
                 timerFactory = timerFactory,
@@ -97,7 +91,6 @@ class TrainingSessionService(
             .filterIsInstance<TrainingSessionState.SummaryState>()
             .take(1)
             .onEach { summaryState ->
-                savedStatisticsId = summaryState.statistics.id
                 eagerSaveJob = serviceScope.launch(ioDispatcher) {
                     sessionCompletedListener.onSessionCompleted(summaryState.statistics)
                 }

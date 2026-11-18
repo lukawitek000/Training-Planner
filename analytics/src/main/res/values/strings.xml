@@ -7,7 +7,6 @@
     <string name="session_effort_label">Session effort</string>
     <string name="session_total_vol_label">Total Vol.</string>
     <string name="completeness">%1$s%%</string>
-    <string name="bodyweight">Bodyweight</string>
     <string name="effort_long_summary">Effort: %1$s (%2$s)</string>
     <string name="effort_short_summary">%1$s (%2$s)</string>
     <string name="exercise_overview_summary">(%1$s%% · %2$s)</string>
@@ -71,5 +70,9 @@
     <plurals name="date_days_ago">
         <item quantity="one">%d day ago</item>
         <item quantity="other">%d days ago</item>
+    </plurals>
+    <plurals name="date_weeks_ago">
+        <item quantity="one">%d week ago</item>
+        <item quantity="other">%d weeks ago</item>
     </plurals>
 </resources>

@@ -23,7 +23,6 @@ import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.outlined.CalendarMonth
-import androidx.compose.material.icons.outlined.TrackChanges
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -47,7 +46,6 @@ import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Dp
 import com.lukasz.witkowski.training.planner.analytics.R
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatistics
@@ -76,7 +74,7 @@ internal fun ExerciseDetailsCard(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(Dimens.spaceSm),
+                .padding(Dimens.spaceSm)
         ) {
             ExerciseCardHeader(
                 exerciseName = statistics.exerciseName,
@@ -463,12 +461,9 @@ private fun TargetValue(target: String, color: Color, modifier: Modifier = Modif
 }
 
 @Composable
-private fun ValueWithTargetWrapRow(
-    modifier: Modifier = Modifier,
-    horizontalGap: Dp = Dimens.spaceXs,
-    verticalGap: Dp = Dimens.spaceXs,
-    content: @Composable () -> Unit
-) {
+private fun ValueWithTargetWrapRow(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    val horizontalGap = Dimens.spaceXs
+    val verticalGap = Dimens.spaceXs
     val measurePolicy = remember(horizontalGap, verticalGap) {
         object : MeasurePolicy {
             override fun MeasureScope.measure(

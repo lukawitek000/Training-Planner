@@ -101,11 +101,6 @@ fun TrainingSessionSummaryScreen(
             minLines = 3
         )
 
-        ExercisesBreakdownSection(
-            statistics = statistics,
-            trainingPlanResult = uiState.trainingPlan
-        )
-
         AppPrimaryButton(
             text = stringResource(R.string.session_finish),
             leadingIcon = Icons.Default.Celebration,
@@ -212,15 +207,6 @@ private fun BentoMetricsGrid(statistics: TrainingStatistics, modifier: Modifier 
             )
         }
     }
-}
-
-@Composable
-private fun ExercisesBreakdownSection(
-    statistics: TrainingStatistics,
-    trainingPlanResult: ResultHandler<TrainingPlan>,
-    modifier: Modifier = Modifier
-) {
-    // TODO implement when working on statistics
 }
 
 @AppPreview

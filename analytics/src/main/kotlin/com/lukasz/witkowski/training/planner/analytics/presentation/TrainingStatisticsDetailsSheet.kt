@@ -220,8 +220,7 @@ private fun SessionSummary(statistics: TrainingStatistics, modifier: Modifier = 
 private fun SessionSummaryCard(
     label: String,
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
-    subContent: @Composable () -> Unit = {}
+    content: @Composable () -> Unit
 ) {
     AppCard(modifier) {
         Column(
@@ -234,7 +233,6 @@ private fun SessionSummaryCard(
                 modifier = Modifier.padding(bottom = Dimens.spaceSm)
             )
             content()
-            subContent()
         }
     }
 }

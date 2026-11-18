@@ -51,18 +51,6 @@ interface StatisticsDao {
         ORDER BY date DESC
         """
     )
-    fun getTrainingStatisticsByTrainingPlanId(
-        trainingPlanId: String
-    ): Flow<List<DbTrainingWithExercisesStatistics>>
-
-    @Transaction
-    @Query(
-        """
-        SELECT * FROM TrainingStatistics
-        WHERE trainingPlanId = :trainingPlanId
-        ORDER BY date DESC
-        """
-    )
     fun getTrainingStatisticsOverviewsByTrainingPlanId(
         trainingPlanId: String
     ): PagingSource<Int, DbTrainingWithExercisesStatistics>

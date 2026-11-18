@@ -64,14 +64,13 @@ fun TrainingStatisticsHost(
 
 fun LazyListScope.trainingStatisticsItems(
     overviews: LazyPagingItems<TrainingStatisticsOverview>,
-    onSessionClicked: (TrainingStatisticsId) -> Unit,
-    emptyStateModifier: Modifier = Modifier
+    onSessionClicked: (TrainingStatisticsId) -> Unit
 ) {
     if (overviews.itemCount == 0) {
         item(key = "empty_previous_sessions") {
             AppEmptyState(
                 title = stringResource(id = R.string.no_previous_sessions),
-                modifier = emptyStateModifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = Dimens.spaceXl)
             )

@@ -30,18 +30,6 @@ class DbStatisticsRepository(
         statisticsDao.updateMetadata(id.toString(), rpe?.score, note)
     }
 
-    override fun delete(trainingStatistics: TrainingStatistics) {
-//        TODO("Not yet implemented")
-    }
-
-    override fun getByTrainingPlanId(
-        trainingPlanId: TrainingPlanId
-    ): Flow<List<TrainingStatistics>> = statisticsDao
-        .getTrainingStatisticsByTrainingPlanId(trainingPlanId.toString())
-        .map { statisticsList ->
-            statisticsList.map { it.toTrainingStatistics() }
-        }
-
     override fun getOverviewsByTrainingPlanId(
         trainingPlanId: TrainingPlanId
     ): Flow<PagingData<TrainingStatisticsOverview>> = Pager(

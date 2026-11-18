@@ -5,12 +5,15 @@ import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedList
 import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
+import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 
 internal class AnalyticsSessionCompletedListener(
-    private val statisticsRepository: StatisticsRepository
+    private val statisticsRepository: StatisticsRepository,
+    private val trainingPlanService: TrainingPlanService
 ) : SessionCompletedListener {
     override suspend fun onSessionCompleted(statistics: TrainingStatistics) {
         statisticsRepository.save(statistics)
+        trainingPlanService.useTrainingPlan(statistics.trainingPlanId)
     }
 
     override suspend fun onSessionMetadataUpdated(

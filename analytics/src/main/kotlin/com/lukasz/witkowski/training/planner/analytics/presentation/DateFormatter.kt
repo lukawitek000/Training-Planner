@@ -19,9 +19,10 @@ internal fun Date.toFormattedDateLabel(
 ): FormattedDateLabel {
     val targetDateTime = this.toInstant().atZone(zoneId)
     val targetDate = targetDateTime.toLocalDate()
-    val todayDate = now.toLocalDate()
+    val todayDate = now.withZoneSameInstant(zoneId).toLocalDate()
 
     val daysBetween = ChronoUnit.DAYS.between(targetDate, todayDate)
+    val weeksBetween = ChronoUnit.WEEKS.between(targetDate, todayDate).toInt()
     val monthsBetween = ChronoUnit.MONTHS.between(targetDate, todayDate)
     val yearsBetween = ChronoUnit.YEARS.between(targetDate, todayDate)
 
@@ -59,7 +60,16 @@ internal fun Date.toFormattedDateLabel(
             secondary = context.getString(R.string.date_last_week)
         )
 
-        monthsBetween <= 1L -> FormattedDateLabel(
+        monthsBetween < 1L -> FormattedDateLabel(
+            primary = targetDateTime.format(fullDateFormatter),
+            secondary = context.resources.getQuantityString(
+                R.plurals.date_weeks_ago,
+                weeksBetween,
+                weeksBetween
+            )
+        )
+
+        monthsBetween == 1L -> FormattedDateLabel(
             primary = targetDateTime.format(fullDateFormatter),
             secondary = context.getString(R.string.date_one_month_ago)
         )
