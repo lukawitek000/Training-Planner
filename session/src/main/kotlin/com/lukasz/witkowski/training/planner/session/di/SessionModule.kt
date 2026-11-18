@@ -1,6 +1,7 @@
 package com.lukasz.witkowski.training.planner.session.di
 
 import com.lukasz.witkowski.training.planner.session.application.TrainingSessionService
+import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedListener
 import com.lukasz.witkowski.training.planner.session.domain.session.StraightSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.CompositeStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
@@ -24,7 +25,15 @@ val sessionModule =
                 get<kotlinx.coroutines.CoroutineDispatcher>(
                     named(CoroutineDispatcherQualifiers.DEFAULT)
                 )
+            val ioDispatcher =
+                get<kotlinx.coroutines.CoroutineDispatcher>(
+                    named(CoroutineDispatcherQualifiers.IO)
+                )
+            val sessionCompletedListener =
+                getOrNull<SessionCompletedListener>() ?: SessionCompletedListener.NoOp
+
             TrainingSessionService(
+                sessionCompletedListener = sessionCompletedListener,
                 timeProvider = timeProvider,
                 timerFactory =
                 TimerFactory(
@@ -33,6 +42,7 @@ val sessionModule =
                 ),
                 trainingSetsStrategy = StraightSetsPolicy(),
                 backgroundDispatcher = backgroundDispatcher,
+                ioDispatcher = ioDispatcher,
                 sessionStatisticsRecorder = get()
             )
         }

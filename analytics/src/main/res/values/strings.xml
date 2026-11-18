@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="no_previous_sessions">No previous sessions available yet</string>
+    <string name="session_stats">SESSION STATS</string>
+    <string name="completed">Completed</string>
+    <string name="skipped">Skipped</string>
+    <string name="session_effort_label">Session effort</string>
+    <string name="session_total_vol_label">Total Vol.</string>
+    <string name="completeness">%1$s%%</string>
+    <string name="effort_long_summary">Effort: %1$s (%2$s)</string>
+    <string name="effort_short_summary">%1$s (%2$s)</string>
+    <string name="exercise_overview_summary">(%1$s%% · %2$s)</string>
+    <string name="inspect_details">Inspect Set Attempts &amp; Effort</string>
+    <string name="duration_label">DURATION</string>
+    <string name="volume_label">VOLUME</string>
+    <string name="session_breakdown_title">Session Breakdown</string>
+    <string name="close_statistics_details_cd">Close statistics details</string>
+    <string name="total_time_summary">(%1$s total)</string>
+    <string name="exercise_breakdown_header">EXERCISES BREAKDOWN</string>
+    <string name="target_comparison_legend"><annotation style="bold">Target Comparison:</annotation> Actual performance vs planned targets. <annotation style="green">Green</annotation> indicates met/exceeded, deviations highlighted in <annotation style="amber">amber</annotation>/<annotation style="red">red</annotation>.</string>
+
+    <string name="set_label">Set %1$d \u00B7 %2$s</string>
+    <string name="target_prefix">Target: %1$s</string>
+    <string name="planned_config_label">Planned:</string>
+    <string name="planned_sets_format">%1$d sets</string>
+    <string name="planned_reps_format">%1$d reps</string>
+    <string name="planned_hold_format">%1$s hold</string>
+    <string name="planned_rest_format">%1$s rest</string>
+    <string name="parameter_load_label">Load</string>
+    <string name="parameter_reps_label">Reps</string>
+    <string name="parameter_hold_time_label">Hold time</string>
+    <string name="parameter_rest_taken_label">Rest taken</string>
+    <string name="session_notes_open_quote">\"&#160;</string>
+    <string name="session_notes_close_quote">&#160;\"</string>
+    <string name="date_pattern_short">MMM d, HH:mm</string>
+    <string name="date_pattern_full">MMM d, yyyy</string>
+
+    <!-- Session RPE Short Labels -->
+    <string name="rpe_very_light">Very light</string>
+    <string name="rpe_light">Light</string>
+    <string name="rpe_moderate_light">Moderate light</string>
+    <string name="rpe_moderate">Moderate</string>
+    <string name="rpe_somewhat_hard">Somewhat hard</string>
+    <string name="rpe_challenging">Challenging</string>
+    <string name="rpe_hard">Hard</string>
+    <string name="rpe_very_hard">Very hard</string>
+    <string name="rpe_near_limit">Near limit</string>
+    <string name="rpe_maximal">Maximal</string>
+
+    <!-- Optional: Session RPE Descriptions (for pickers/tooltips) -->
+    <string name="rpe_very_light_desc">Minimal effort, easy breathing, feels like rest</string>
+    <string name="rpe_light_desc">Comfortable pace, can hold a full conversation easily</string>
+    <string name="rpe_moderate_light_desc">Steady and relaxed, slight increase in breathing</string>
+    <string name="rpe_moderate_desc">Noticeable effort, still comfortable to sustain</string>
+    <string name="rpe_somewhat_hard_desc">Breathing deepens, speaking in shorter sentences</string>
+    <string name="rpe_challenging_desc">Sustained effort, requires focus to maintain pace</string>
+    <string name="rpe_hard_desc">Heavy breathing, difficult to speak more than a few words</string>
+    <string name="rpe_very_hard_desc">Intense effort, near maximum sustainable intensity</string>
+    <string name="rpe_near_limit_desc">Exhausting effort, can only be held briefly</string>
+    <string name="rpe_maximal_desc">All-out absolute limit, cannot continue further</string>
+
+    <string name="date_today">Today</string>
+    <string name="date_yesterday">Yesterday</string>
+    <string name="date_last_week">Last week</string>
+    <string name="date_one_month_ago">1 month ago</string>
+    <string name="date_few_months_ago">Few months ago</string>
+    <string name="date_last_year">Last year</string>
+    <string name="date_few_years_ago">Few years ago</string>
+
+    <plurals name="date_days_ago">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+    <plurals name="date_weeks_ago">
+        <item quantity="one">%d week ago</item>
+        <item quantity="other">%d weeks ago</item>
+    </plurals>
+</resources>

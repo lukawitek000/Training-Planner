@@ -29,4 +29,7 @@ class TrainingPlanService(private val trainingPlanRepository: TrainingPlanReposi
 
     suspend fun deleteTrainingPlan(trainingPlanId: TrainingPlanId): Result<Unit> =
         trainingPlanRepository.delete(trainingPlanId)
+
+    suspend fun useTrainingPlan(trainingPlanId: TrainingPlanId): Result<TrainingPlan> =
+        trainingPlanRepository.useTrainingPlan(trainingPlanId)
 }

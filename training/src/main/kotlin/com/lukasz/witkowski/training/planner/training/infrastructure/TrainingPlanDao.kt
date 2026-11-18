@@ -124,7 +124,7 @@ internal interface TrainingPlanDao {
                 lastUsed = currentInstant
             )
         updateTrainingPlan(updatedPlan)
-        return result
+        return result.copy(trainingPlan = updatedPlan)
     }
 
     // Testing

@@ -43,7 +43,9 @@ class StraightSetsPolicy : TrainingSetsPolicy {
         description = exercise.description,
         categories = exercise.categories,
         imageIds = exercise.imageIds,
-        plannedConfig = toConfig()
+        plannedConfig = toConfig(),
+        plannedSets = sets,
+        plannedRestTime = restTime
     )
 
     private fun TrainingExercise.toConfig(): SessionExerciseConfiguration =

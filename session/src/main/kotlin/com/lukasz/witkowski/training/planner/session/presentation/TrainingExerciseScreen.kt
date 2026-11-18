@@ -523,7 +523,7 @@ private fun ExerciseImages(
                 )
                 Spacer(Modifier.height(Dimens.spaceMd))
                 Text(
-                    text = "Loading exercise images",
+                    text = stringResource(R.string.session_loading_exercise_images),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurface
                 )

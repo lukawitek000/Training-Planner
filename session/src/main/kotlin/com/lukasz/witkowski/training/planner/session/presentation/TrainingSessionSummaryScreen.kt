@@ -40,13 +40,13 @@ import com.lukasz.witkowski.training.planner.session.presentation.components.App
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.time.formatToString
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.bento.AppBentoTile
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.inputField.AppLabeledTextField
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.shared.utils.formatVolumeText
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -54,6 +54,7 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
@@ -100,11 +101,6 @@ fun TrainingSessionSummaryScreen(
             minLines = 3
         )
 
-        ExercisesBreakdownSection(
-            statistics = statistics,
-            trainingPlanResult = uiState.trainingPlan
-        )
-
         AppPrimaryButton(
             text = stringResource(R.string.session_finish),
             leadingIcon = Icons.Default.Celebration,
@@ -148,7 +144,11 @@ private fun CelebrationBanner(
         )
 
         val text = if (trainingPlanResult is ResultHandler.Success) {
-            "${trainingPlanResult.value.title} • ${date.formatToString()}"
+            stringResource(
+                R.string.session_summary_plan_date_format,
+                trainingPlanResult.value.title,
+                date.formatToString()
+            )
         } else {
             date.formatToString()
         }
@@ -173,17 +173,13 @@ private fun BentoMetricsGrid(statistics: TrainingStatistics, modifier: Modifier 
         ) {
             AppBentoTile(
                 label = stringResource(R.string.session_bento_duration_label),
-                value = formatDuration(statistics.totalTime),
+                value = statistics.totalTime.toString(),
                 subtitle = stringResource(R.string.session_bento_duration_sub),
                 modifier = Modifier.weight(1f)
             )
             AppBentoTile(
                 label = stringResource(R.string.session_bento_volume_label),
-                value = if (statistics.totalVolumeKg > 0) {
-                    stringResource(R.string.session_kg_suffix, statistics.totalVolumeKg.toInt())
-                } else {
-                    stringResource(R.string.session_bodyweight)
-                },
+                value = statistics.totalVolumeKg.formatVolumeText(),
                 subtitle = stringResource(R.string.session_bento_volume_sub),
                 modifier = Modifier.weight(1f)
             )
@@ -195,7 +191,11 @@ private fun BentoMetricsGrid(statistics: TrainingStatistics, modifier: Modifier 
         ) {
             AppBentoTile(
                 label = stringResource(R.string.session_bento_sets_label),
-                value = "${statistics.completedSetsCount} / ${statistics.totalSetsCount}",
+                value = stringResource(
+                    R.string.session_bento_sets_value_format,
+                    statistics.completedSetsCount,
+                    statistics.totalSetsCount
+                ),
                 subtitle = stringResource(R.string.session_bento_sets_sub),
                 modifier = Modifier.weight(1f)
             )
@@ -209,29 +209,13 @@ private fun BentoMetricsGrid(statistics: TrainingStatistics, modifier: Modifier 
     }
 }
 
-@Composable
-private fun ExercisesBreakdownSection(
-    statistics: TrainingStatistics,
-    trainingPlanResult: ResultHandler<TrainingPlan>,
-    modifier: Modifier = Modifier
-) {
-    // TODO implement when working on statistics
-}
-
-private fun formatDuration(time: Time): String {
-    val totalSeconds = (time.timeInMillis / 1000).toInt()
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return if (minutes > 0) "${minutes}m ${seconds}s" else "${seconds}s"
-}
-
 @AppPreview
 @Composable
 private fun TrainingSessionSummaryScreenPreview() {
     val stats = TrainingStatistics(
         id = TrainingStatisticsId.create(),
         trainingPlanId = TrainingPlanId.create(),
-        totalTime = Time(2700000L),
+        totalTime = 2700000L.milliseconds,
         date = Date(),
         exercisesStatistics = listOf(
             ExerciseStatistics(
@@ -241,7 +225,7 @@ private fun TrainingSessionSummaryScreenPreview() {
                     ExerciseAttemptStatistics(
                         id = ExerciseAttemptStatisticsId.create(),
                         trainingExerciseId = TrainingExerciseId.create(),
-                        time = Time(12_000L),
+                        time = 12_000L.milliseconds,
                         set = 1,
                         completed = true,
                         actualReps = 10,
@@ -252,7 +236,7 @@ private fun TrainingSessionSummaryScreenPreview() {
                     ExerciseAttemptStatistics(
                         id = ExerciseAttemptStatisticsId.create(),
                         trainingExerciseId = TrainingExerciseId.create(),
-                        time = Time(12_000L),
+                        time = 12_000L.milliseconds,
                         set = 2,
                         completed = false,
                         actualReps = 10,
@@ -269,7 +253,7 @@ private fun TrainingSessionSummaryScreenPreview() {
                     ExerciseAttemptStatistics(
                         id = ExerciseAttemptStatisticsId.create(),
                         trainingExerciseId = TrainingExerciseId.create(),
-                        time = Time(12_000L),
+                        time = 12_000L.milliseconds,
                         set = 1,
                         completed = true,
                         actualReps = 10,
@@ -280,7 +264,7 @@ private fun TrainingSessionSummaryScreenPreview() {
                     ExerciseAttemptStatistics(
                         id = ExerciseAttemptStatisticsId.create(),
                         trainingExerciseId = TrainingExerciseId.create(),
-                        time = Time(12_000L),
+                        time = 12_000L.milliseconds,
                         set = 2,
                         completed = false,
                         actualReps = 10,

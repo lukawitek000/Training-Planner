@@ -63,13 +63,14 @@ import androidx.compose.ui.text.style.TextAlign
 import com.lukasz.witkowski.training.planner.shared.R
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.Time
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.badges.AppMetadataPill
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.segmentedControl.AppSegmentedControl
 import com.lukasz.witkowski.training.planner.shared.ui.segmentedControl.AppSegmentedControlItem
 import kotlin.math.abs
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
@@ -85,7 +86,6 @@ enum class AppTimePickerTab {
 private val DEFAULT_SECONDS_PRESETS = listOf(15, 30, 45, 60, 90, 120, 150, 180, 240)
 private val DEFAULT_MINUTES_PRESETS = listOf(1, 2, 3, 4, 5, 10)
 private const val SECONDS_PER_MINUTE = 60
-private const val MILLIS_PER_SECOND = 1000L
 
 /**
  * Stitch Universal Time Picker modal bottom sheet (`2b3ca74373e24dcfa028180f175696b0`) accepting [Time].
@@ -93,8 +93,8 @@ private const val MILLIS_PER_SECOND = 1000L
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppTimePickerBottomSheet(
-    initialTime: Time?,
-    onTimeConfirmed: (Time?) -> Unit,
+    initialTime: Duration?,
+    onTimeConfirmed: (Duration?) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     title: String = stringResource(R.string.time_picker_select_time),
@@ -104,11 +104,11 @@ fun AppTimePickerBottomSheet(
     secondsPresets: List<Int> = DEFAULT_SECONDS_PRESETS,
     minutesPresets: List<Int> = DEFAULT_MINUTES_PRESETS
 ) {
-    val initialSeconds = initialTime?.let { (it.timeInMillis / MILLIS_PER_SECOND).toInt() }
+    val initialSeconds = initialTime?.inWholeSeconds?.toInt()
     AppTimePickerBottomSheet(
         initialSeconds = initialSeconds,
         onSecondsConfirmed = { seconds ->
-            onTimeConfirmed(seconds?.let { Time(seconds = it) })
+            onTimeConfirmed(seconds?.seconds)
         },
         onDismissRequest = onDismissRequest,
         modifier = modifier,

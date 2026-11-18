@@ -69,6 +69,8 @@ internal class DbTrainingPlanRepository(
         withContext(dispatcher) {
             runCatchingCancellable {
                 trainingPlanDao.deleteTrainingPlanById(trainingPlanId.toString())
+                cachePlans.remove(trainingPlanId)
+                Unit
             }
         }
 
@@ -132,6 +134,7 @@ internal class DbTrainingPlanRepository(
                     }
                 )
             trainingPlanDao.updateTrainingWithTrainingExercises(dbPlanWithExercises)
+            cachePlans.remove(id)
             id
         }
     }
@@ -144,6 +147,7 @@ internal class DbTrainingPlanRepository(
                         trainingPlanId.toString(),
                         timeProvider.currentInstant()
                     ).toTrainingPlan()
+                    .also { cachePlans.remove(trainingPlanId) }
             }
         }
 }

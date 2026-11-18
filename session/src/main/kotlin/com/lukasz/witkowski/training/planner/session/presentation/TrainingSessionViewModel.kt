@@ -124,11 +124,20 @@ class TrainingSessionViewModel(
             is SessionIntent.SessionEndEarly -> {
                 trainingSessionService.endEarly()
             }
+
+            is SessionIntent.FinishWorkout -> {
+                trainingSessionService.finishWorkout()
+            }
         }
     }
 
     private fun fetchTrainingPlan() {
         viewModelScope.launch {
+            if (trainingSessionService.trainingPlan?.id == trainingPlanId &&
+                trainingSessionService.trainingSessionState.value !is TrainingSessionState.IdleState
+            ) {
+                return@launch
+            }
             trainingPlanService.getTrainingPlanById(trainingPlanId)
                 .filterNotNull()
                 .first()
@@ -165,4 +174,5 @@ sealed interface SessionIntent {
     data class SessionFeedbackSelected(val rpe: SessionRpe) : SessionIntent
 
     data object SessionEndEarly : SessionIntent
+    data object FinishWorkout : SessionIntent
 }

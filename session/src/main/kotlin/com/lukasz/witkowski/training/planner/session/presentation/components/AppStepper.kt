@@ -28,6 +28,7 @@ import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
+import com.lukasz.witkowski.training.planner.shared.utils.formatUpToTwoDecimals
 
 /**
  * Numeric stepper component for adjusting exercise repetitions and loads.
@@ -41,13 +42,7 @@ fun AppStepper(
     minValue: Double = 0.0,
     maxValue: Double = Double.MAX_VALUE,
     label: String? = null,
-    formatValue: (Double) -> String = {
-        if (it % 1.0 == 0.0) {
-            it.toInt().toString()
-        } else {
-            "%.1f".format(it)
-        }
-    },
+    formatValue: (Double) -> String = { it.formatUpToTwoDecimals() },
     enabled: Boolean = true
 ) {
     AppCard(
