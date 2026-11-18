@@ -12,10 +12,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategor
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
-import com.lukasz.witkowski.training.planner.shared.utils.Weight
-import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
 import com.lukasz.witkowski.training.planner.shared.utils.kg
-import com.lukasz.witkowski.training.planner.user.domain.UserRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -30,7 +27,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
@@ -40,20 +36,17 @@ import org.junit.Before
 @OptIn(ExperimentalCoroutinesApi::class)
 class ExerciseEditorViewModelTest {
     private val service: ExerciseService = mockk()
-    private val userRepository: UserRepository = mockk()
     private lateinit var vm: ExerciseEditorViewModel
 
-    private fun givenVm(exerciseId: ExerciseId? = null, weightUnit: WeightUnit = WeightUnit.KG) {
+    private fun givenVm(exerciseId: ExerciseId? = null) {
         val categoryService = mockk<ExerciseCategoriesService>()
         every { categoryService.getAllCategories() } returns flowOf(TestData.CATEGORIES_LIST)
-        every { userRepository.weightUnit } returns flowOf(weightUnit)
         vm = ExerciseEditorViewModel(
             exerciseService = service,
             categoryController = DefaultCategoryController2(
                 categoryService = categoryService
             ),
-            exerciseId = exerciseId,
-            userRepository = userRepository
+            exerciseId = exerciseId
         )
     }
 
@@ -327,13 +320,13 @@ class ExerciseEditorViewModelTest {
         givenVm()
         vm.uiState.test {
             assertInitialCreateState()
-            val newWeight = 15.0
+            val newWeight = 15.0.kg
             val level = RecommendationLevel.BEGINNER
             vm.onEvent(ExerciseEditingEvent.RecommendedWeightChanged(newWeight, level))
 
             val expectedRecommendations = ExerciseEditingInput().recommendations.map {
                 if (it.level == level) {
-                    it.copy(parameters = it.parameters.copy(weight = newWeight.kg))
+                    it.copy(parameters = it.parameters.copy(weight = newWeight))
                 } else {
                     it
                 }
@@ -539,25 +532,6 @@ class ExerciseEditorViewModelTest {
                 ),
                 awaitItem()
             )
-        }
-    }
-
-    @Test
-    fun `when weight unit is LBS, recommended weight is converted to kg in state`() = runTest {
-        Dispatchers.setMain(UnconfinedTestDispatcher(testScheduler))
-        givenVm(weightUnit = WeightUnit.LBS)
-        vm.uiState.test {
-            awaitItem()
-            val level = RecommendationLevel.BEGINNER
-            vm.onEvent(ExerciseEditingEvent.RecommendedWeightChanged(100.0, level))
-
-            val updated = (awaitItem() as ExerciseEditingUiState.Editing)
-                .exerciseEditingInput
-                .recommendations
-                .first { it.level == level }
-                .parameters
-                .weight!!
-            assertEquals(Weight.ofPounds(100.0).inKilograms, updated.inKilograms, 1e-6)
         }
     }
     private suspend fun ReceiveTurbine<ExerciseEditingUiState>.assertInitialCreateState() {

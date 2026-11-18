@@ -18,15 +18,12 @@ import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionPhaseKey
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
-import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
 import com.lukasz.witkowski.training.planner.shared.utils.kg
-import com.lukasz.witkowski.training.planner.shared.utils.lbs
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import com.lukasz.witkowski.training.planner.user.domain.UserRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -230,7 +227,7 @@ class TrainingSessionViewModelTest {
             viewModel.onIntent(SessionIntent.RepsChanged(12))
             verify(exactly = 1) { trainingSessionService.changeReps(12) }
 
-            viewModel.onIntent(SessionIntent.WeightChanged(75.5))
+            viewModel.onIntent(SessionIntent.WeightChanged(75.5.kg))
             verify(exactly = 1) { trainingSessionService.changeWeight(75.5.kg) }
 
             viewModel.onIntent(SessionIntent.HoldTimeChanged(45.seconds))
@@ -328,24 +325,5 @@ class TrainingSessionViewModelTest {
             currentConfig = config,
             restTime = 30.seconds
         )
-    }
-
-    @Test
-    fun `when weight unit is LBS, WeightChanged converts pounds to kilograms`() = runTest {
-        val userRepository = mockk<UserRepository>()
-        every { userRepository.weightUnit } returns MutableStateFlow(WeightUnit.LBS)
-        val viewModel = TrainingSessionViewModel(
-            trainingPlanService = trainingPlanService,
-            trainingSessionService = trainingSessionService,
-            exerciseService = exerciseService,
-            trainingPlanId = trainingPlanId,
-            userRepository = userRepository
-        )
-
-        viewModel.onIntent(SessionIntent.WeightChanged(100.0))
-
-        verify {
-            trainingSessionService.changeWeight(100.lbs)
-        }
     }
 }

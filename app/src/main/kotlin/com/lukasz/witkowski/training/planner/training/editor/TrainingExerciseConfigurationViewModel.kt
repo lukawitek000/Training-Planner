@@ -8,16 +8,12 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.details.Exerc
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseParametersIntent
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
-import com.lukasz.witkowski.training.planner.shared.utils.Weight
-import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
-import com.lukasz.witkowski.training.planner.user.domain.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -27,16 +23,7 @@ import kotlin.time.Duration
 class TrainingExerciseConfigurationViewModel(
     service: ExerciseService,
     exerciseId: ExerciseId,
-    private val userRepository: UserRepository? = null,
 ) : ExerciseDetailsViewModel(service, exerciseId) {
-    private val weightUnit: StateFlow<WeightUnit> = userRepository?.weightUnit
-        ?.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = WeightUnit.KG
-        )
-        ?: MutableStateFlow(WeightUnit.KG)
-
     private val _parameters = MutableStateFlow(ParametersEditorState())
 
     init {
@@ -77,8 +64,7 @@ class TrainingExerciseConfigurationViewModel(
             }
 
             is ExerciseParametersIntent.WeightChanged -> _parameters.update {
-                val weight = intent.weight?.let { w -> Weight.of(w, weightUnit.value) }
-                it.copy(value = it.value.copy(weight = weight), wasModifiedByUser = true)
+                it.copy(value = it.value.copy(weight = intent.weight), wasModifiedByUser = true)
             }
 
             is ExerciseParametersIntent.TimeChanged -> _parameters.update {

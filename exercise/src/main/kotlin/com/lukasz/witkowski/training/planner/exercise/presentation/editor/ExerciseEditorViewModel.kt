@@ -19,8 +19,6 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.toReco
 import com.lukasz.witkowski.training.planner.image.ImageByteArray
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.shared.utils.Weight
-import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
-import com.lukasz.witkowski.training.planner.user.domain.UserRepository
 import java.io.File
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -40,16 +38,8 @@ class ExerciseEditorViewModel(
     private val exerciseService: ExerciseService,
     private val categoryController: CategoryController2,
     private val exerciseId: ExerciseId? = null,
-    private val context: Context? = null,
-    private val userRepository: UserRepository? = null
+    private val context: Context? = null
 ) : ViewModel() {
-    val weightUnit: StateFlow<WeightUnit> = userRepository?.weightUnit
-        ?.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.Eagerly,
-            initialValue = WeightUnit.KG
-        )
-        ?: MutableStateFlow(WeightUnit.KG)
     val isEditMode = exerciseId != null
     private val initialState = exerciseId?.let { ExerciseEditingUiState.Loading(it) }
         ?: ExerciseEditingUiState.Editing(ExerciseEditingInput())
@@ -154,11 +144,10 @@ class ExerciseEditorViewModel(
             }
 
             is ExerciseEditingEvent.RecommendedWeightChanged -> {
-                val weight = event.weight?.let { Weight.of(it, weightUnit.value) }
                 uiState.updateRecommendationParam(
                     level = event.level,
                     updateParameters = { currentParams ->
-                        currentParams.copy(weight = weight)
+                        currentParams.copy(weight = event.weight)
                     }
                 )
             }
@@ -337,7 +326,7 @@ sealed interface ExerciseEditingEvent {
     data class RecommendedRestTimeChanged(val restTime: Duration?, val level: RecommendationLevel) :
         ExerciseEditingEvent
 
-    data class RecommendedWeightChanged(val weight: Double?, val level: RecommendationLevel) :
+    data class RecommendedWeightChanged(val weight: Weight?, val level: RecommendationLevel) :
         ExerciseEditingEvent
 
     data class RecommendedTimeChanged(val time: Duration?, val level: RecommendationLevel) :

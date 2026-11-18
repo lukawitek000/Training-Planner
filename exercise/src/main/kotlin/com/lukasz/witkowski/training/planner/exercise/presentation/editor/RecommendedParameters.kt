@@ -389,7 +389,7 @@ sealed interface ExerciseParametersIntent {
             ExerciseEditingEvent.RecommendedTimeChanged(time, level)
     }
 
-    data class WeightChanged(val weight: Double?) : ExerciseParametersIntent {
+    data class WeightChanged(val weight: Weight?) : ExerciseParametersIntent {
         override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent =
             ExerciseEditingEvent.RecommendedWeightChanged(weight, level)
     }
@@ -530,7 +530,7 @@ fun buildStringOverview(
 private fun WeightParameterInputField(
     weight: Weight?,
     weightUnit: WeightUnit,
-    onValueChange: (Double?) -> Unit,
+    onValueChange: (Weight?) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
     unit: String = "",
@@ -574,8 +574,8 @@ private fun WeightParameterInputField(
             onValueChange = { newValue ->
                 val sanitized = sanitizeDecimalInput(newValue)
                 text = sanitized
-                val parsed = sanitized.toDoubleOrNull()
-                lastEmittedKg = parsed?.let { Weight.of(it, weightUnit).inKilograms }
+                val parsed = sanitized.toDoubleOrNull()?.let { Weight.of(it, weightUnit) }
+                lastEmittedKg = parsed?.inKilograms
                 onValueChange(parsed)
             },
             keyboardOptions = keyboardOptions,
