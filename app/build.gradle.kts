@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.material3)
     debugImplementation(libs.compose.ui.tooling)
+    debugImplementation(libs.leakcanary.android)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.compose.material.icons.extended)
 
