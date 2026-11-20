@@ -13,7 +13,7 @@
 - **Theme & Previews (`shared/theme/`, `shared/ui/AppPreview.kt`):** `TrainingPlannerTheme`, `Dimens`, `Color`, `Type`, `Shape`, and `@AppPreview`.
 - **Core Utilities (`shared/utils/`, `shared/time/`, `shared/di/`, `shared/network/`):**
   - `AppResult<T, E>` and `ResultHandler` for functional error handling.
-  - `Time`, `TimeProvider`, `SystemTimeProvider`, `TestTimeProvider`, `TimeFormatter`.
+  - `TimeProvider`, `SystemTimeProvider`, `TestTimeProvider`, `DurationFormatter` (`Duration.formatDuration`), `DateExt`.
   - `CoroutineDispatchersModule` (`CoroutineDispatcherQualifiers.IO`, `DEFAULT`, `MAIN`).
   - `NetworkFailure` enum.
 

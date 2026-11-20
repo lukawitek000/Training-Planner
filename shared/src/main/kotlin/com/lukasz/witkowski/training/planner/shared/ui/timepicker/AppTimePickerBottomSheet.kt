@@ -63,6 +63,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.lukasz.witkowski.training.planner.shared.R
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.badges.AppMetadataPill
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
@@ -776,25 +777,8 @@ private fun WheelColumnPicker(
 }
 
 @Composable
-private fun formatDurationLabel(seconds: Int?): String {
-    if (seconds == null) return ""
-    val mins = seconds / SECONDS_PER_MINUTE
-    val remSecs = seconds % SECONDS_PER_MINUTE
-    return when {
-        mins > 0 && remSecs > 0 ->
-            "$mins ${
-                stringResource(
-                    R.string.minutes_shortcut
-                )
-            } $remSecs ${stringResource(R.string.seconds_shortcut)}"
-
-        mins > 0 && seconds !in DEFAULT_SECONDS_PRESETS ->
-            stringResource(R.string.time_picker_minutes_preset, mins)
-
-        else ->
-            stringResource(R.string.time_picker_seconds_preset, seconds)
-    }
-}
+private fun formatDurationLabel(seconds: Int?): String =
+    seconds?.seconds?.formatDuration().orEmpty()
 
 @AppPreview
 @Composable

@@ -1,10 +1,13 @@
 package com.lukasz.witkowski.training.planner.session.presentation
 
+import java.util.Locale
 import kotlin.time.Duration
 
-fun formatRemainingTime(time: Duration): String {
-    val totalSeconds = time.absoluteValue.inWholeSeconds
-    val minutes = totalSeconds / 60
-    val seconds = totalSeconds % 60
-    return "%02d:%02d".format(minutes, seconds)
-}
+fun formatRemainingTime(time: Duration, locale: Locale = Locale.getDefault()): String =
+    time.absoluteValue.toComponents { hours, minutes, seconds, _ ->
+        if (hours > 0L) {
+            String.format(locale, "%d:%02d:%02d", hours, minutes, seconds)
+        } else {
+            String.format(locale, "%02d:%02d", minutes, seconds)
+        }
+    }

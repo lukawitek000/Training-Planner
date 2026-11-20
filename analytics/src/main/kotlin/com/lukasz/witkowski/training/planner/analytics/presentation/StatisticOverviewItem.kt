@@ -45,6 +45,7 @@ import com.lukasz.witkowski.training.planner.analytics.domain.models.ExerciseSta
 import com.lukasz.witkowski.training.planner.analytics.domain.models.TrainingStatisticsOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.utils.formatUpToTwoDecimals
@@ -225,7 +226,7 @@ private fun TrainingSessionSummary(
         StatisticWithLabelAndIcon(
             label = stringResource(R.string.duration_label),
             icon = Icons.Default.AccessTime,
-            statistic = overview.totalTime.toString(),
+            statistic = overview.totalTime.formatDuration(),
             modifier = Modifier.weight(1f)
         )
 
@@ -303,7 +304,7 @@ private fun ExercisesOverviews(
                     stringResource(
                         R.string.exercise_overview_summary,
                         overview.completenessRate.formatUpToTwoDecimals(),
-                        overview.totalTime.toString()
+                        overview.totalTime.formatDuration()
                     )
                 )
             }

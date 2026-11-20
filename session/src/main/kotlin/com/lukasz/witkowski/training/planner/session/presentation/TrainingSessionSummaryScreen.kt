@@ -40,6 +40,7 @@ import com.lukasz.witkowski.training.planner.session.presentation.components.App
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.time.formatToString
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.bento.AppBentoTile
@@ -173,7 +174,7 @@ private fun BentoMetricsGrid(statistics: TrainingStatistics, modifier: Modifier 
         ) {
             AppBentoTile(
                 label = stringResource(R.string.session_bento_duration_label),
-                value = statistics.totalTime.toString(),
+                value = statistics.totalTime.formatDuration(),
                 subtitle = stringResource(R.string.session_bento_duration_sub),
                 modifier = Modifier.weight(1f)
             )

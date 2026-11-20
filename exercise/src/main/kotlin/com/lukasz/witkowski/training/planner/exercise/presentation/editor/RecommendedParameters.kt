@@ -53,6 +53,7 @@ import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.Success
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.theme.Warning
+import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.timepicker.AppTimePickerBottomSheet
 import kotlin.time.Duration
@@ -476,8 +477,8 @@ fun buildStringOverview(
             R.string.recommendation_overview_with_hold,
             sets,
             reps,
-            time.inWholeSeconds,
-            restTime.inWholeSeconds,
+            time.formatDuration(),
+            restTime.formatDuration(),
             weightInKg
         )
     }
@@ -487,8 +488,8 @@ fun buildStringOverview(
             R.string.recommendation_with_hold_no_weight,
             sets,
             reps,
-            time.inWholeSeconds,
-            restTime.inWholeSeconds
+            time.formatDuration(),
+            restTime.formatDuration()
         )
     }
 
@@ -497,7 +498,7 @@ fun buildStringOverview(
             R.string.recommendation_overview,
             sets,
             reps,
-            restTime.inWholeSeconds,
+            restTime.formatDuration(),
             weightInKg
         )
     }
@@ -507,7 +508,7 @@ fun buildStringOverview(
             R.string.recommendation_no_weight,
             sets,
             reps,
-            restTime.inWholeSeconds
+            restTime.formatDuration()
         )
     }
 }
@@ -589,15 +590,13 @@ private fun RecommendedParametersExtendedSummary(
         )
         if (params.time != null) {
             ParameterOverview(
-                value = params.time.inWholeSeconds.toInt(),
-                label = "${stringResource(R.string.hold)}:",
-                unit = stringResource(R.string.second_abbrv)
+                value = params.time.formatDuration(),
+                label = "${stringResource(R.string.hold)}:"
             )
         }
         ParameterOverview(
-            value = params.restTime?.inWholeSeconds?.toInt(),
-            label = "${stringResource(R.string.rest_time)}:",
-            unit = stringResource(R.string.second_abbrv)
+            value = params.restTime?.formatDuration(),
+            label = "${stringResource(R.string.rest_time)}:"
         )
         ParameterOverview(
             value = params.weightInKg,
@@ -614,6 +613,21 @@ private fun ParameterOverview(
     modifier: Modifier = Modifier,
     unit: String = ""
 ) {
+    ParameterOverview(
+        value = value?.toString(),
+        label = label,
+        modifier = modifier,
+        unit = unit
+    )
+}
+
+@Composable
+private fun ParameterOverview(
+    value: String?,
+    label: String,
+    modifier: Modifier = Modifier,
+    unit: String = ""
+) {
     if (value == null) return
     Row(
         modifier = modifier,
@@ -626,7 +640,7 @@ private fun ParameterOverview(
         )
         Spacer(Modifier.width(Dimens.spaceXs))
         Text(
-            text = value.toString(),
+            text = value,
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface

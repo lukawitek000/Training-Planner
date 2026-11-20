@@ -52,6 +52,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.buildStringOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
@@ -313,7 +314,7 @@ private fun TrainingPlanInfoSection(trainingPlan: TrainingPlan, modifier: Modifi
 
 @Composable
 private fun TrainingPlanRestTimeInfo(restTime: Duration, modifier: Modifier = Modifier) {
-    val formattedRestTime = restTime.toString()
+    val formattedRestTime = restTime.formatDuration()
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXs),

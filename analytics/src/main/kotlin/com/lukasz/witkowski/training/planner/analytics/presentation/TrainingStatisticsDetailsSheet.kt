@@ -41,6 +41,7 @@ import com.lukasz.witkowski.training.planner.analytics.R
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.utils.formatVolumeText
@@ -157,7 +158,7 @@ private fun SheetHeader(
                 text = dateLabel.primary
             )
             Text(
-                text = stringResource(R.string.total_time_summary, totalTime.toString())
+                text = stringResource(R.string.total_time_summary, totalTime.formatDuration())
             )
         }
     }
