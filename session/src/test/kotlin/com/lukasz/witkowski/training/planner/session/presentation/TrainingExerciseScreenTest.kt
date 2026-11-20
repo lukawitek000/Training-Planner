@@ -2,6 +2,9 @@ package com.lukasz.witkowski.training.planner.session.presentation
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasAnySibling
+import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -255,7 +258,10 @@ class TrainingExerciseScreenTest {
             }
         }
 
-        composeTestRule.onNodeWithContentDescription("Increase").performClick()
+        composeTestRule.onNode(
+            hasContentDescription("Increase") and
+                hasAnySibling(hasText("lbs", substring = true))
+        ).performClick()
 
         val weightIntent = recordedIntents.filterIsInstance<SessionIntent.WeightChanged>().last()
         assertEquals(105.0, weightIntent.weight.inPounds, 1e-6)
