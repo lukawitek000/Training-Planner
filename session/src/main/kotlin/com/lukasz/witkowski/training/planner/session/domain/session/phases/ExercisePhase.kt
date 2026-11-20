@@ -62,7 +62,7 @@ internal class ExercisePhase(
             }
 
             is SessionCommand.Exercise.UpdateWeight -> {
-                exercise.updateConfig { it.copy(weightInKg = command.weightInKg) }
+                exercise.updateConfig { it.copy(weight = command.weight) }
             }
 
             is SessionCommand.Exercise.UpdateHoldDuration -> {

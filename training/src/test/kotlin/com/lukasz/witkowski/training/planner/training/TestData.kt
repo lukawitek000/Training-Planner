@@ -2,6 +2,8 @@ package com.lukasz.witkowski.training.planner.training
 
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -94,7 +96,7 @@ object TestData {
                 repetitions = 12,
                 sets = 3,
                 restTime = 60.seconds,
-                weightInKg = null
+                weight = null
             )
 
     val TRAINING_EXERCISE_SQUATS
@@ -105,7 +107,7 @@ object TestData {
                 repetitions = 15,
                 sets = 4,
                 restTime = 90.seconds,
-                weightInKg = 20
+                weight = 20.kg
             )
 
     val TRAINING_EXERCISE_PULL_UPS
@@ -116,7 +118,7 @@ object TestData {
                 repetitions = 8,
                 sets = 3,
                 restTime = 60.seconds,
-                weightInKg = null
+                weight = null
             )
 
     val TRAINING_EXERCISE_PLANK
@@ -127,7 +129,7 @@ object TestData {
                 repetitions = 1,
                 sets = 3,
                 restTime = 45.seconds,
-                weightInKg = null,
+                weight = null,
                 time = 45.seconds
             )
 
@@ -139,7 +141,7 @@ object TestData {
                 repetitions = 1,
                 sets = 1,
                 restTime = 30.seconds,
-                weightInKg = null
+                weight = null
             )
 
     // --- Training Plans (Different kinds, multiple exercises, different categories) ---
@@ -282,7 +284,7 @@ object TestData {
         repetitions: Int = 10,
         sets: Int = 3,
         restTime: Duration = 30.seconds,
-        weightInKg: Int? = null,
+        weight: Weight? = null,
         time: Duration = Duration.ZERO
     ): TrainingExercise = TrainingExercise(
         id = id,
@@ -290,7 +292,7 @@ object TestData {
         repetitions = repetitions,
         sets = sets,
         restTime = restTime,
-        weightInKg = weightInKg,
+        weight = weight,
         time = time
     )
 

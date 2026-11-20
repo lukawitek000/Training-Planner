@@ -61,7 +61,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                     set = 1,
                     completed = true,
                     actualReps = exerciseToRecordAttempt.repetitions,
-                    actualWeightInKg = exerciseToRecordAttempt.weightInKg?.toDouble()
+                    actualWeight = exerciseToRecordAttempt.weight
                 )
             assertAttemptStatistics(expectedStatistics, attemptStatistics)
         }
@@ -95,7 +95,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                     set = 1,
                     completed = true,
                     actualReps = exerciseToRecordStatistics.repetitions,
-                    actualWeightInKg = exerciseToRecordStatistics.weightInKg?.toDouble()
+                    actualWeight = exerciseToRecordStatistics.weight
                 ),
                 ExerciseAttemptStatistics(
                     trainingExerciseId = exerciseToRecordStatistics.id,
@@ -103,7 +103,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                     set = 2,
                     completed = true,
                     actualReps = exerciseToRecordStatistics.repetitions,
-                    actualWeightInKg = exerciseToRecordStatistics.weightInKg?.toDouble()
+                    actualWeight = exerciseToRecordStatistics.weight
                 ),
                 ExerciseAttemptStatistics(
                     trainingExerciseId = exerciseToRecordStatistics.id,
@@ -111,7 +111,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                     set = 3,
                     completed = true,
                     actualReps = exerciseToRecordStatistics.repetitions,
-                    actualWeightInKg = exerciseToRecordStatistics.weightInKg?.toDouble()
+                    actualWeight = exerciseToRecordStatistics.weight
                 )
             )
         val expectedStatistics =
@@ -186,8 +186,8 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                         set = 1,
                         completed = true,
                         actualReps = trainingExercises.first().repetitions,
-                        actualWeightInKg =
-                        trainingExercises.first().weightInKg?.toDouble()
+                        actualWeight =
+                        trainingExercises.first().weight
                     ),
                     ExerciseAttemptStatistics(
                         trainingExerciseId = trainingExercises.first().id,
@@ -195,8 +195,8 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                         set = 2,
                         completed = true,
                         actualReps = trainingExercises.first().repetitions,
-                        actualWeightInKg =
-                        trainingExercises.first().weightInKg?.toDouble()
+                        actualWeight =
+                        trainingExercises.first().weight
                     )
                 )
             ),
@@ -210,7 +210,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                         set = 1,
                         completed = true,
                         actualReps = trainingExercises[1].repetitions,
-                        actualWeightInKg = trainingExercises[1].weightInKg?.toDouble()
+                        actualWeight = trainingExercises[1].weight
                     ),
                     ExerciseAttemptStatistics(
                         trainingExerciseId = trainingExercises[1].id,
@@ -218,7 +218,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                         set = 2,
                         completed = true,
                         actualReps = trainingExercises[1].repetitions,
-                        actualWeightInKg = trainingExercises[1].weightInKg?.toDouble()
+                        actualWeight = trainingExercises[1].weight
                     ),
                     ExerciseAttemptStatistics(
                         trainingExerciseId = trainingExercises[1].id,
@@ -226,7 +226,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                         set = 3,
                         completed = true,
                         actualReps = trainingExercises[1].repetitions,
-                        actualWeightInKg = trainingExercises[1].weightInKg?.toDouble()
+                        actualWeight = trainingExercises[1].weight
                     )
                 )
             ),
@@ -240,7 +240,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                         set = 1,
                         completed = true,
                         actualReps = trainingExercises[2].repetitions,
-                        actualWeightInKg = trainingExercises[2].weightInKg?.toDouble()
+                        actualWeight = trainingExercises[2].weight
                     )
                 )
             ),
@@ -254,7 +254,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                         set = 1,
                         completed = true,
                         actualReps = trainingExercises[3].repetitions,
-                        actualWeightInKg = trainingExercises[3].weightInKg?.toDouble()
+                        actualWeight = trainingExercises[3].weight
                     ),
                     ExerciseAttemptStatistics(
                         trainingExerciseId = trainingExercises[3].id,
@@ -262,7 +262,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                         set = 2,
                         completed = true,
                         actualReps = trainingExercises[3].repetitions,
-                        actualWeightInKg = trainingExercises[3].weightInKg?.toDouble()
+                        actualWeight = trainingExercises[3].weight
                     ),
                     ExerciseAttemptStatistics(
                         trainingExerciseId = trainingExercises[3].id,
@@ -270,7 +270,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                         set = 3,
                         completed = true,
                         actualReps = trainingExercises[3].repetitions,
-                        actualWeightInKg = trainingExercises[3].weightInKg?.toDouble()
+                        actualWeight = trainingExercises[3].weight
                     ),
                     ExerciseAttemptStatistics(
                         trainingExerciseId = trainingExercises[3].id,
@@ -278,7 +278,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                         set = 4,
                         completed = true,
                         actualReps = trainingExercises[3].repetitions,
-                        actualWeightInKg = trainingExercises[3].weightInKg?.toDouble()
+                        actualWeight = trainingExercises[3].weight
                     ),
                     ExerciseAttemptStatistics(
                         trainingExerciseId = trainingExercises[3].id,
@@ -286,7 +286,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
                         set = 5,
                         completed = true,
                         actualReps = trainingExercises[3].repetitions,
-                        actualWeightInKg = trainingExercises[3].weightInKg?.toDouble()
+                        actualWeight = trainingExercises[3].weight
                     )
                 )
             )

@@ -15,6 +15,7 @@ import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSess
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import java.util.Date
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -52,7 +53,7 @@ class TrainingSessionSummaryScreenTest {
                                 time = 30.seconds,
                                 set = 1,
                                 actualReps = 5,
-                                actualWeightInKg = 140.0,
+                                actualWeight = 140.kg,
                                 completed = true
                             )
                         )

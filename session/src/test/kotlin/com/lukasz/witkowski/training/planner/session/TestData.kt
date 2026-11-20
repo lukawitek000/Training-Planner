@@ -5,6 +5,8 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
 import com.lukasz.witkowski.training.planner.session.domain.session.models.TrainingExerciseSnapshot
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -93,7 +95,7 @@ fun createSessionExercise(
     exerciseId: TrainingExerciseId = TrainingExerciseId.create(),
     name: String = "Test Exercise",
     reps: Int = 10,
-    weightInKg: Double? = 50.0,
+    weight: Weight? = 50.kg,
     holdTime: Duration? = null,
     restTime: Duration = 30.seconds,
     imageIds: List<ImageId> = emptyList()
@@ -101,7 +103,7 @@ fun createSessionExercise(
     val config =
         SessionExerciseConfiguration(
             reps = reps,
-            weightInKg = weightInKg,
+            weight = weight,
             holdTime = holdTime
         )
     val dummy = createDummyExercise(name).copy(imageIds = imageIds)

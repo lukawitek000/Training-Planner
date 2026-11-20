@@ -12,6 +12,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategor
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -319,13 +320,13 @@ class ExerciseEditorViewModelTest {
         givenVm()
         vm.uiState.test {
             assertInitialCreateState()
-            val newWeight = 15
+            val newWeight = 15.0.kg
             val level = RecommendationLevel.BEGINNER
             vm.onEvent(ExerciseEditingEvent.RecommendedWeightChanged(newWeight, level))
 
             val expectedRecommendations = ExerciseEditingInput().recommendations.map {
                 if (it.level == level) {
-                    it.copy(parameters = it.parameters.copy(weightInKg = newWeight))
+                    it.copy(parameters = it.parameters.copy(weight = newWeight))
                 } else {
                     it
                 }
