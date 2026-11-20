@@ -17,8 +17,8 @@ import com.lukasz.witkowski.training.planner.network.TokenStorage
 import com.lukasz.witkowski.training.planner.network.networkModule
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
+import com.lukasz.witkowski.training.planner.shared.di.timeModule
 import com.lukasz.witkowski.training.planner.shared.featureflags.featureFlagsModule
-import com.lukasz.witkowski.training.planner.shared.time.SystemTimeProvider
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
@@ -28,7 +28,7 @@ import retrofit2.Retrofit
 
 val authModule =
     module {
-        includes(dispatchersModule, networkModule, featureFlagsModule)
+        includes(dispatchersModule, timeModule, networkModule, featureFlagsModule)
 
         single {
             get<Retrofit>(NetworkQualifiers.UNAUTHENTICATED).create(AuthenticationApi::class.java)
@@ -37,7 +37,7 @@ val authModule =
         single {
             RetrofitAuthenticationRemoteDataSource(
                 api = get(),
-                timeProvider = SystemTimeProvider(),
+                timeProvider = get(),
                 ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
             )
         } bind AuthenticationRemoteDataSource::class
@@ -45,7 +45,7 @@ val authModule =
         single {
             RetrofitTokenRefreshRemoteDataSource(
                 api = get(),
-                timeProvider = SystemTimeProvider(),
+                timeProvider = get(),
                 ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO))
             )
         } bind TokenRefreshRemoteDataSource::class

@@ -12,7 +12,7 @@ import com.lukasz.witkowski.training.planner.training.infrastructure.models.DbTr
 @Database(
     entities = [DbTrainingPlan::class, DbTrainingExercise::class, DbExerciseCategory::class],
     version = 7,
-    exportSchema = false
+    exportSchema = true
 )
 @ColumnTypeConverters(InstantConverters::class, Converters::class)
 internal abstract class TrainingPlanDatabase : RoomDatabase() {

@@ -13,9 +13,9 @@ import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSess
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.BasicStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionEvent
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
-import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
+import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlin.test.assertFailsWith
@@ -207,7 +207,7 @@ internal class TrainingSessionControlTest : TrainingSessionTest() {
     fun `rest state automatically transitions to next exercise when rest timer finishes`() =
         runTest(UnconfinedTestDispatcher()) {
             val dispatcher = StandardTestDispatcher(testScheduler)
-            val timeProvider = FixedTimeProvider()
+            val timeProvider = TestTimeProvider()
             val timerFactory =
                 TimerFactory(
                     timeProvider = timeProvider,
@@ -434,7 +434,7 @@ internal class TrainingSessionControlTest : TrainingSessionTest() {
         runTest(UnconfinedTestDispatcher()) {
             // given
             val dispatcher = StandardTestDispatcher(testScheduler)
-            val timeProvider = FixedTimeProvider()
+            val timeProvider = TestTimeProvider()
             val timerFactory =
                 TimerFactory(
                     timeProvider = timeProvider,
@@ -534,7 +534,7 @@ internal class TrainingSessionControlTest : TrainingSessionTest() {
     fun `endEarly in ExercisePhase records set as skipped, finishes session, and goes to Idle`() =
         runTest(UnconfinedTestDispatcher()) {
             // given
-            val timeProvider = FixedTimeProvider()
+            val timeProvider = TestTimeProvider()
             val recorder = BasicStatisticsRecorder(timeProvider)
             val events = mutableListOf<SessionEvent>()
             val compositeRecorder =
@@ -572,7 +572,7 @@ internal class TrainingSessionControlTest : TrainingSessionTest() {
     fun `endEarly in RestPhase records rest as completed with effort and returns to IdleState`() =
         runTest(UnconfinedTestDispatcher()) {
             // given
-            val timeProvider = FixedTimeProvider()
+            val timeProvider = TestTimeProvider()
             val recorder = BasicStatisticsRecorder(timeProvider)
             val events = mutableListOf<SessionEvent>()
             val compositeRecorder =

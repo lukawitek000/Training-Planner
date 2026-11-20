@@ -8,7 +8,7 @@ import androidx.room3.RoomDatabase
 @Database(
     entities = [DbImageReference::class, DbImageOwner::class],
     version = 2,
-    exportSchema = false
+    exportSchema = true
 )
 internal abstract class ImageReferenceDatabase : RoomDatabase() {
     abstract fun imageReferenceDao(): ImageReferenceDao

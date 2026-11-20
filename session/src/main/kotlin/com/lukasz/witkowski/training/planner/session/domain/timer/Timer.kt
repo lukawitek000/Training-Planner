@@ -1,7 +1,7 @@
 package com.lukasz.witkowski.training.planner.session.domain.timer
 
-import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SystemTimeProvider
-import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.TimeProvider
+import com.lukasz.witkowski.training.planner.shared.time.SystemTimeProvider
+import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineDispatcher

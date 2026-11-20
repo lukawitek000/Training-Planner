@@ -11,11 +11,10 @@ import com.lukasz.witkowski.training.planner.session.domain.session.statisticsre
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.CompositeStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionEvent
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
-import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider
-import java.util.Date
+import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import kotlin.test.assertFailsWith
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -50,7 +49,7 @@ class SessionStatisticsRecorderTest {
         runTest(UnconfinedTestDispatcher()) {
             val events = mutableListOf<SessionEvent>()
             val recorder = SessionStatisticsRecorder { events.add(it) }
-            val timeProvider = FixedTimeProvider()
+            val timeProvider = TestTimeProvider()
 
             val ex1 = createTrainingExercise(name = "Ex 1", sets = 1, restTime = 60.seconds)
             val ex2 = createTrainingExercise(name = "Ex 2", sets = 1, restTime = 0.seconds)
@@ -126,7 +125,8 @@ class SessionStatisticsRecorderTest {
     @Test
     fun `basic statistics recorder creates statistics from session events`() =
         runTest(UnconfinedTestDispatcher()) {
-            val fixedTimeProvider = FixedTimeProvider(time = Duration.ZERO, date = Date(1000000L))
+            val fixedTimeProvider =
+                TestTimeProvider(instant = Instant.fromEpochMilliseconds(1000000L))
             val recorder = BasicStatisticsRecorder(timeProvider = fixedTimeProvider)
 
             val plan =
@@ -170,7 +170,8 @@ class SessionStatisticsRecorderTest {
     @Test
     fun `basic recorder records rest, skipped sets, preserves id, and saves summary rpe`() =
         runTest(UnconfinedTestDispatcher()) {
-            val fixedTimeProvider = FixedTimeProvider(time = Duration.ZERO, date = Date(1000000L))
+            val fixedTimeProvider =
+                TestTimeProvider(instant = Instant.fromEpochMilliseconds(1000000L))
             val recorder = BasicStatisticsRecorder(timeProvider = fixedTimeProvider)
 
             val plan =
@@ -229,7 +230,8 @@ class SessionStatisticsRecorderTest {
     @Test
     fun `basic recorder normalizes blank summary notes to null`() =
         runTest(UnconfinedTestDispatcher()) {
-            val fixedTimeProvider = FixedTimeProvider(time = Duration.ZERO, date = Date(1000000L))
+            val fixedTimeProvider =
+                TestTimeProvider(instant = Instant.fromEpochMilliseconds(1000000L))
             val recorder = BasicStatisticsRecorder(timeProvider = fixedTimeProvider)
             val plan = createTrainingPlan(listOf(createTrainingExercise(sets = 1)))
 
@@ -252,7 +254,7 @@ class SessionStatisticsRecorderTest {
 
     @Test
     fun `basic recorder fails fast if getStatistics is called before SessionStarted`() {
-        val fixedTimeProvider = FixedTimeProvider(time = Duration.ZERO, date = Date(1000000L))
+        val fixedTimeProvider = TestTimeProvider(instant = Instant.fromEpochMilliseconds(1000000L))
         val recorder = BasicStatisticsRecorder(timeProvider = fixedTimeProvider)
 
         assertFailsWith<IllegalStateException> {
@@ -262,7 +264,7 @@ class SessionStatisticsRecorderTest {
 
     @Test
     fun `basic recorder ignores non-start events before SessionStarted`() {
-        val fixedTimeProvider = FixedTimeProvider(time = Duration.ZERO, date = Date(1000000L))
+        val fixedTimeProvider = TestTimeProvider(instant = Instant.fromEpochMilliseconds(1000000L))
         val recorder = BasicStatisticsRecorder(timeProvider = fixedTimeProvider)
 
         recorder.onEvent(SessionEvent.SessionFinished)

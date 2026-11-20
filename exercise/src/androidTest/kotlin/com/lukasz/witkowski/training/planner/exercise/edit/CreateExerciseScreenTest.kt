@@ -174,7 +174,7 @@ class CreateExerciseScreenTest {
         cardHeaderNode.assertIsDisplayed()
 
         // Test that the header overview displays correct data
-        composeTestRule.onNodeWithText("3 x 10 · 30 s · 20 kg").assertIsDisplayed()
+        composeTestRule.onNodeWithText("3 x 10 · 30s · 20 kg").assertIsDisplayed()
 
         // Expand the recommendation card to show input fields
         cardHeaderNode.performClick()

@@ -32,6 +32,7 @@ import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.network.networkModule
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
+import com.lukasz.witkowski.training.planner.shared.di.timeModule
 import com.lukasz.witkowski.training.planner.shared.featureflags.featureFlagsModule
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -47,7 +48,7 @@ import retrofit2.Retrofit
 
 val exerciseModule =
     module {
-        includes(dispatchersModule, imageModule, networkModule, featureFlagsModule)
+        includes(dispatchersModule, timeModule, imageModule, networkModule, featureFlagsModule)
 
         single {
             get<Retrofit>().create(ExerciseApi::class.java)
@@ -82,7 +83,8 @@ val exerciseModule =
                     kotlinx.coroutines.SupervisorJob() +
                         get<CoroutineDispatcher>(named(CoroutineDispatcherQualifiers.IO))
                 ),
-                exerciseSyncRepositoryProvider = { get() }
+                exerciseSyncRepositoryProvider = { get() },
+                timeProvider = get()
             )
         }
         single<ExerciseMutationScheduler> { get<WorkManagerExerciseMutationScheduler>() }
@@ -93,7 +95,8 @@ val exerciseModule =
                 localDataSource = get(),
                 mutationScheduler = get(),
                 ioDispatcher = get(named(CoroutineDispatcherQualifiers.IO)),
-                featureFlagProvider = get()
+                featureFlagProvider = get(),
+                timeProvider = get()
             )
         } bind ExerciseRepository::class
 

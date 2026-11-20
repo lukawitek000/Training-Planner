@@ -30,7 +30,7 @@ data class DbExerciseMutation(
     val advancedWeight: Int? = null,
     val advancedTime: Long? = null,
     val conflictServerJson: String? = null,
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = 0L
 ) {
     companion object {
         const val TYPE_CREATE = "CREATE"

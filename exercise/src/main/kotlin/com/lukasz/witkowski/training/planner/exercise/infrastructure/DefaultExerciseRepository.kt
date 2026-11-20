@@ -17,6 +17,8 @@ import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
 import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
 import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.time.SystemTimeProvider
+import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
 import java.util.UUID
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -33,7 +35,8 @@ internal class DefaultExerciseRepository(
         pageSize = DEFAULT_PAGE_SIZE,
         prefetchDistance = DEFAULT_PREFETCH_DISTANCE
     ),
-    private val featureFlagProvider: FeatureFlagProvider = DefaultFeatureFlagProvider()
+    private val featureFlagProvider: FeatureFlagProvider = DefaultFeatureFlagProvider(),
+    private val timeProvider: TimeProvider = SystemTimeProvider()
 ) : ExerciseRepository {
 
     override fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails?> =
@@ -77,7 +80,8 @@ internal class DefaultExerciseRepository(
             val idempotencyKey = UUID.randomUUID().toString()
             val mutation = exercise.toPendingMutation(
                 idempotencyKey = idempotencyKey,
-                type = DbExerciseMutation.TYPE_CREATE
+                type = DbExerciseMutation.TYPE_CREATE,
+                createdAt = timeProvider.currentInstant().toEpochMilliseconds()
             )
             localDataSource.insertMutation(mutation)
             enqueueMutationWorker()
@@ -103,7 +107,8 @@ internal class DefaultExerciseRepository(
             val existingDomain = existingDbDetails.toExerciseDetails()
             val deleteMutation = existingDomain.toPendingMutation(
                 idempotencyKey = UUID.randomUUID().toString(),
-                type = DbExerciseMutation.TYPE_DELETE
+                type = DbExerciseMutation.TYPE_DELETE,
+                createdAt = timeProvider.currentInstant().toEpochMilliseconds()
             )
             localDataSource.updateSyncState(
                 exerciseId.toString(),
@@ -153,7 +158,8 @@ internal class DefaultExerciseRepository(
             }
             val mutation = exercise.toPendingMutation(
                 idempotencyKey = idempotencyKey,
-                type = mutationType
+                type = mutationType,
+                createdAt = timeProvider.currentInstant().toEpochMilliseconds()
             )
             val shouldMarkPendingUpload =
                 exercise.exercise.metadata.source is ExerciseSource.UserCreated ||
@@ -240,6 +246,7 @@ internal class DefaultExerciseRepository(
 
 private fun ExerciseDetails.toPendingMutation(
     idempotencyKey: String,
+    createdAt: Long,
     type: String = DbExerciseMutation.TYPE_UPDATE
 ): DbExerciseMutation = DbExerciseMutation(
     id = UUID.randomUUID().toString(),
@@ -265,7 +272,8 @@ private fun ExerciseDetails.toPendingMutation(
     advancedReps = advancedRecommendation.reps,
     advancedRestTime = advancedRecommendation.restTime.inWholeMilliseconds,
     advancedWeight = advancedRecommendation.weightInKg,
-    advancedTime = advancedRecommendation.time?.inWholeMilliseconds
+    advancedTime = advancedRecommendation.time?.inWholeMilliseconds,
+    createdAt = createdAt
 )
 
 private fun ExerciseDetails.toPendingUploadDetails(): ExerciseDetails = copy(

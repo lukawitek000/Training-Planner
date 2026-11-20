@@ -1,6 +1,6 @@
 package com.lukasz.witkowski.training.planner.session.domain.timer
 
-import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider
+import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -18,7 +18,7 @@ import org.junit.Test
 class TimerTest {
     private val scheduler = TestCoroutineScheduler()
     private val testDispatcher = StandardTestDispatcher(scheduler)
-    private val timeProvider = FixedTimeProvider()
+    private val timeProvider = TestTimeProvider()
 
     @Test
     fun `initialized timer with NotSet starts in NotSet state`() {

@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onPlaced
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.times
@@ -46,11 +45,12 @@ import com.lukasz.witkowski.training.planner.analytics.domain.models.TrainingSta
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.formatDuration
+import com.lukasz.witkowski.training.planner.shared.time.toRelativeDateLabel
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.utils.formatUpToTwoDecimals
 import com.lukasz.witkowski.training.planner.shared.utils.formatVolumeText
-import java.util.Date
+import kotlin.time.Instant
 
 @Composable
 internal fun StatisticOverviewItem(
@@ -141,7 +141,7 @@ internal fun StatisticOverviewItem(
 }
 
 @Composable
-private fun OverviewHeader(date: Date, completenessRate: Double) {
+private fun OverviewHeader(date: Instant, completenessRate: Double) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
@@ -153,9 +153,8 @@ private fun OverviewHeader(date: Date, completenessRate: Double) {
 }
 
 @Composable
-private fun FormattedSessionDate(date: Date, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
-    val label = remember(date) { date.toFormattedDateLabel(context) }
+private fun FormattedSessionDate(date: Instant, modifier: Modifier = Modifier) {
+    val label = date.toRelativeDateLabel()
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,

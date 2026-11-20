@@ -32,9 +32,9 @@ import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppEmptyState
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import java.util.Date
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -151,7 +151,7 @@ internal val PREVIEW_TRAINING_STATISTICS_OVERVIEWS = listOf(
     TrainingStatisticsOverview(
         id = TrainingStatisticsId.create(),
         trainingPlanId = TrainingPlanId.create(),
-        date = Date(),
+        date = Instant.parse("2026-09-10T12:00:00Z"),
         totalTime = 45.minutes,
         totalVolumeKg = 0.0,
         completedSetsCount = 10,
@@ -163,7 +163,7 @@ internal val PREVIEW_TRAINING_STATISTICS_OVERVIEWS = listOf(
     TrainingStatisticsOverview(
         id = TrainingStatisticsId.create(),
         trainingPlanId = TrainingPlanId.create(),
-        date = Date(System.currentTimeMillis() - (86400000L * 2)),
+        date = Instant.parse("2026-09-08T12:00:00Z"),
         totalTime = 52.minutes,
         totalVolumeKg = 4100.0,
         completedSetsCount = 12,
@@ -282,7 +282,7 @@ internal val PREVIEW_TRAINING_STATISTICS = TrainingStatistics(
     id = TrainingStatisticsId.create(),
     trainingPlanId = TrainingPlanId.create(),
     totalTime = 45.minutes,
-    date = Date(),
+    date = Instant.parse("2026-09-10T12:00:00Z"),
     exercisesStatistics = PREVIEW_EXERCISE_STATISTICS,
     note = "Great chest & triceps workout. Pushed hard on bench press.",
     rpe = SessionRpe.HARD

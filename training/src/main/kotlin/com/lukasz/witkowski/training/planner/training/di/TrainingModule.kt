@@ -2,7 +2,7 @@ package com.lukasz.witkowski.training.planner.training.di
 
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
-import com.lukasz.witkowski.training.planner.shared.time.SystemTimeProvider
+import com.lukasz.witkowski.training.planner.shared.di.timeModule
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanRepository
 import com.lukasz.witkowski.training.planner.training.infrastructure.DbTrainingPlanRepository
@@ -21,7 +21,7 @@ import org.koin.plugin.module.dsl.viewModel
 
 val trainingModule =
     module {
-        includes(dispatchersModule)
+        includes(dispatchersModule, timeModule)
 
         single { TrainingPlanDatabase.getInstance(androidContext()) }
         single { get<TrainingPlanDatabase>().trainingPlanDao() }
@@ -29,7 +29,7 @@ val trainingModule =
         single {
             DbTrainingPlanRepository(
                 trainingPlanDao = get(),
-                timeProvider = SystemTimeProvider(),
+                timeProvider = get(),
                 dispatcher = get(named(CoroutineDispatcherQualifiers.IO))
             )
         } bind TrainingPlanRepository::class

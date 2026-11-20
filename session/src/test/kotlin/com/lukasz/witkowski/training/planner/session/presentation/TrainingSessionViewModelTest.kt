@@ -28,8 +28,8 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.Date
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -178,7 +178,7 @@ class TrainingSessionViewModelTest {
                     TrainingStatistics(
                         trainingPlanId = trainingPlanId,
                         totalTime = 120.seconds,
-                        date = Date(0L),
+                        date = Instant.fromEpochMilliseconds(0L),
                         exercisesStatistics = emptyList(),
                         note = "Done",
                         rpe = SessionRpe.HARD

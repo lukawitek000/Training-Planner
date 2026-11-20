@@ -13,14 +13,14 @@ import com.lukasz.witkowski.training.planner.session.domain.session.models.Sessi
 import com.lukasz.witkowski.training.planner.session.domain.session.models.TrainingExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import java.util.Date
 import java.util.UUID
 import kotlin.time.Duration
+import kotlin.time.Instant
 
 internal data class SessionMetricsAccumulator(
     val statisticsId: TrainingStatisticsId = TrainingStatisticsId.create(),
     val trainingPlanId: TrainingPlanId,
-    val sessionDate: Date,
+    val sessionDate: Instant,
     val startElapsed: Duration,
     val stopElapsed: Duration? = null,
     val attempts: List<ExerciseAttemptStatistics> = emptyList(),
@@ -36,7 +36,7 @@ internal data class SessionMetricsAccumulator(
     fun reduce(
         event: SessionEvent,
         currentElapsed: Duration,
-        currentDate: Date
+        currentDate: Instant
     ): SessionMetricsAccumulator = when (event) {
         is SessionEvent.SessionStarted -> {
             start(event, currentElapsed, currentDate)
@@ -182,7 +182,7 @@ internal data class SessionMetricsAccumulator(
         fun start(
             event: SessionEvent.SessionStarted,
             currentElapsed: Duration,
-            currentDate: Date
+            currentDate: Instant
         ): SessionMetricsAccumulator = SessionMetricsAccumulator(
             statisticsId = TrainingStatisticsId.create(),
             trainingPlanId = event.trainingPlanId,

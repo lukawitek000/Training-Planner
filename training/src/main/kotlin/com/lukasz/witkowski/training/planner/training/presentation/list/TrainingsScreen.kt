@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.training.presentation.list
 
-import android.text.format.DateUtils
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +31,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategor
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.formatRelativeDate
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
@@ -241,14 +241,7 @@ fun TrainingPlanDateInfo(
     modifier: Modifier = Modifier
 ) {
     val color = MaterialTheme.colorScheme.onSurfaceVariant
-    val timeMillis = instant.toEpochMilliseconds()
-    val nowMillis = System.currentTimeMillis()
-    val formattedTime = DateUtils.getRelativeTimeSpanString(
-        timeMillis,
-        nowMillis,
-        DateUtils.MINUTE_IN_MILLIS,
-        DateUtils.FORMAT_ABBREV_RELATIVE
-    )
+    val formattedTime = instant.formatRelativeDate()
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically

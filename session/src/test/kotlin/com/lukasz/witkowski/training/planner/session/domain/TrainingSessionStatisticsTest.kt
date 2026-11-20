@@ -10,12 +10,12 @@ import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStati
 import com.lukasz.witkowski.training.planner.session.domain.session.SessionCommand
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSession
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
-import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider
+import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
-import java.util.Date
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
@@ -32,7 +32,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
     fun `record single exercise attempt with completed status`() =
         runTest(UnconfinedTestDispatcher()) {
             // given
-            val timeProvider = FixedTimeProvider()
+            val timeProvider = TestTimeProvider(instant = Instant.fromEpochMilliseconds(0L))
             val trainingSession =
                 createTrainingSession(
                     trainingPlan = trainingPlan,
@@ -70,7 +70,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
     @Suppress("LongMethod")
     fun `record statistics for exercise from 3 attempts`() = runTest(UnconfinedTestDispatcher()) {
         // given
-        val timeProvider = FixedTimeProvider()
+        val timeProvider = TestTimeProvider(instant = Instant.fromEpochMilliseconds(0L))
         val trainingSession =
             createTrainingSession(
                 trainingPlan = trainingPlan,
@@ -125,7 +125,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
     @Test
     fun `record statistics for completed training`() = runTest(UnconfinedTestDispatcher()) {
         // given
-        val timeProvider = FixedTimeProvider()
+        val timeProvider = TestTimeProvider(instant = Instant.fromEpochMilliseconds(0L))
         val trainingSession =
             createTrainingSession(
                 trainingPlan = trainingPlan,
@@ -147,7 +147,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
     fun `summary phase updates overall RPE and notes without mutating statistics directly`() =
         runTest(UnconfinedTestDispatcher()) {
             // given
-            val timeProvider = FixedTimeProvider()
+            val timeProvider = TestTimeProvider(instant = Instant.fromEpochMilliseconds(0L))
             val trainingSession =
                 createTrainingSession(
                     trainingPlan = trainingPlan,
@@ -173,7 +173,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
     private fun createExpectedStatisticsForCompletedTraining() = TrainingStatistics(
         trainingPlanId = trainingPlan.id,
         totalTime = 190.seconds,
-        date = Date(0L),
+        date = Instant.fromEpochMilliseconds(0L),
         exercisesStatistics =
         listOf(
             ExerciseStatistics(
@@ -295,7 +295,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
 
     private fun completeRestOfTheTraining(
         trainingSession: TrainingSession,
-        timeProvider: FixedTimeProvider
+        timeProvider: TestTimeProvider
     ): TrainingSessionState.SummaryState {
         do {
             timeProvider.advanceBy(TIME_10_SECONDS)

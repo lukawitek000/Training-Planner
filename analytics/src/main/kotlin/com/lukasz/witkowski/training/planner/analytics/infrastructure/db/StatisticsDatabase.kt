@@ -15,7 +15,7 @@ import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.models.
         DbExerciseAttemptStatistics::class
     ],
     version = 5,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class StatisticsDatabase : RoomDatabase() {
     abstract fun statisticsDao(): StatisticsDao

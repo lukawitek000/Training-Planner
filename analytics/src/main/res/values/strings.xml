@@ -32,8 +32,6 @@
     <string name="parameter_rest_taken_label">Rest taken</string>
     <string name="session_notes_open_quote">\"&#160;</string>
     <string name="session_notes_close_quote">&#160;\"</string>
-    <string name="date_pattern_short">MMM d, HH:mm</string>
-    <string name="date_pattern_full">MMM d, yyyy</string>
 
     <!-- Session RPE Short Labels -->
     <string name="rpe_very_light">Very light</string>
@@ -58,21 +56,4 @@
     <string name="rpe_very_hard_desc">Intense effort, near maximum sustainable intensity</string>
     <string name="rpe_near_limit_desc">Exhausting effort, can only be held briefly</string>
     <string name="rpe_maximal_desc">All-out absolute limit, cannot continue further</string>
-
-    <string name="date_today">Today</string>
-    <string name="date_yesterday">Yesterday</string>
-    <string name="date_last_week">Last week</string>
-    <string name="date_one_month_ago">1 month ago</string>
-    <string name="date_few_months_ago">Few months ago</string>
-    <string name="date_last_year">Last year</string>
-    <string name="date_few_years_ago">Few years ago</string>
-
-    <plurals name="date_days_ago">
-        <item quantity="one">%d day ago</item>
-        <item quantity="other">%d days ago</item>
-    </plurals>
-    <plurals name="date_weeks_ago">
-        <item quantity="one">%d week ago</item>
-        <item quantity="other">%d weeks ago</item>
-    </plurals>
 </resources>

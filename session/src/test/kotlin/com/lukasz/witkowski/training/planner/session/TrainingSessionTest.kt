@@ -7,9 +7,9 @@ import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSess
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.CompositeStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
-import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.TimeProvider
-import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
+import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
+import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
@@ -27,7 +27,7 @@ internal open class TrainingSessionTest {
         scope: CoroutineScope,
         policy: TrainingSetsPolicy = trainingSetsStrategy,
         statisticsRecorder: SessionStatisticsRecorder = CompositeStatisticsRecorder(),
-        timeProvider: TimeProvider = FixedTimeProvider(),
+        timeProvider: TimeProvider = TestTimeProvider(),
         timerFactory: TimerFactory = TimerFactory(timeProvider = timeProvider)
     ): TrainingSession = TrainingSessionFactory.create(
         trainingPlan = trainingPlan,

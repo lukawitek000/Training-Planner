@@ -134,4 +134,13 @@ class DurationFormatterTest {
             result.parts
         )
     }
+
+    @Test
+    fun `very large finite duration decomposes without infinite saturation`() {
+        val large = 4_611_686_018_427_387L.seconds + 600.milliseconds
+        val result = large.decomposeForDisplay()
+
+        assertFalse(result.isNegative)
+        assertEquals(DurationUnitPart.HOURS, result.parts.first().unit)
+    }
 }

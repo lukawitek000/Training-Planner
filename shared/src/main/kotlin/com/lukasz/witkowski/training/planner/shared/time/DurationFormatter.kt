@@ -8,10 +8,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 import java.text.DecimalFormatSymbols
 import java.util.Locale
-import kotlin.math.roundToLong
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlin.time.DurationUnit
 
 enum class DurationFormatStyle {
     /** Compact UI chips, bento tiles, and list summaries (e.g., "1h 30m", "45s"). */
@@ -37,23 +34,36 @@ internal data class DurationDisplayComponents(
     val parts: List<DurationPart>
 )
 
+private const val HALF_SECOND_NANOS = 500_000_000
+private const val SECONDS_PER_MINUTE = 60L
+private const val SECONDS_PER_HOUR = 3_600L
+
 /**
  * Rounds [this] duration to the nearest whole second *before* decomposing into hours, minutes,
- * and seconds, preventing overflow artifacts such as "0m 60s" or "1h 60m".
+ * and seconds, preventing overflow artifacts such as "0m 60s", "1h 60m", or [Duration.INFINITE]
+ * saturation on large finite durations.
  *
  * Zero-valued components are omitted unless the entire rounded duration is zero, in which case
  * a single `0 SECONDS` part is returned.
  */
 internal fun Duration.decomposeForDisplay(): DurationDisplayComponents {
-    val roundedSeconds = absoluteValue.toDouble(DurationUnit.SECONDS).roundToLong()
-    val isEffectivelyNegative = isNegative() && roundedSeconds > 0L
-    val parts = roundedSeconds.seconds.toComponents { hours, minutes, seconds, _ ->
-        buildList {
-            if (hours > 0L) add(DurationPart(hours, DurationUnitPart.HOURS))
-            if (minutes > 0) add(DurationPart(minutes.toLong(), DurationUnitPart.MINUTES))
-            if (seconds > 0) add(DurationPart(seconds.toLong(), DurationUnitPart.SECONDS))
-            if (isEmpty()) add(DurationPart(0L, DurationUnitPart.SECONDS))
+    val roundedSeconds = absoluteValue.toComponents { totalSeconds, nanoseconds ->
+        if (nanoseconds >= HALF_SECOND_NANOS && totalSeconds < Long.MAX_VALUE) {
+            totalSeconds + 1L
+        } else {
+            totalSeconds
         }
+    }
+    val isEffectivelyNegative = isNegative() && roundedSeconds > 0L
+    val hours = roundedSeconds / SECONDS_PER_HOUR
+    val remainingAfterHours = roundedSeconds % SECONDS_PER_HOUR
+    val minutes = remainingAfterHours / SECONDS_PER_MINUTE
+    val seconds = remainingAfterHours % SECONDS_PER_MINUTE
+    val parts = buildList {
+        if (hours > 0L) add(DurationPart(hours, DurationUnitPart.HOURS))
+        if (minutes > 0L) add(DurationPart(minutes, DurationUnitPart.MINUTES))
+        if (seconds > 0L) add(DurationPart(seconds, DurationUnitPart.SECONDS))
+        if (isEmpty()) add(DurationPart(0L, DurationUnitPart.SECONDS))
     }
     return DurationDisplayComponents(
         isNegative = isEffectivelyNegative,
