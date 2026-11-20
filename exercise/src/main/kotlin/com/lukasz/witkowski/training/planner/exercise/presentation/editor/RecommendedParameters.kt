@@ -64,7 +64,6 @@ import com.lukasz.witkowski.training.planner.shared.utils.formatUpToTwoDecimals
 import com.lukasz.witkowski.training.planner.shared.utils.formatWeightText
 import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.shared.utils.shortLabel
-import timber.log.Timber
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.time.Duration
