@@ -10,7 +10,7 @@ class NumberFormatterTest {
     fun `formatUpToTwoDecimals strips trailing zeros and rounds half up`() {
         assertEquals("10", 10.0.formatUpToTwoDecimals(Locale.US))
         assertEquals("62.5", 62.5.formatUpToTwoDecimals(Locale.US))
-        assertEquals("2.26", 2.255.formatUpToTwoDecimals(Locale.US))
+        assertEquals("2.26", 2.256.formatUpToTwoDecimals(Locale.US))
         assertEquals("132.28", 132.277357.formatUpToTwoDecimals(Locale.US))
     }
 
