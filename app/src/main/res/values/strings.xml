@@ -28,14 +28,6 @@
     <string name="exercise_deleted">Exercise deleted.</string>
     <string name="exercise_deletion_failed">Exercise deletion failed.</string>
 
-    <!-- Recommendations -->
-    <string name="recommended_parameters">Recommended parameters *</string>
-    <string name="recommended_parameters_label">Recommended parameters</string>
-    <string name="recommended_parameters_description">Suggested sets, reps, rest time and weight for different experience level. These are default recommendations.</string>
-    <string name="not_set">Not set</string>
-    <string name="recommendation_overview">%1$d x %2$d &#183; %3$d s &#183; %4$d kg</string>
-    <string name="recommendation_no_weight">%1$d x %2$d &#183; %3$d s</string>
-
     <!-- Training Plan -->
     <string name="search_training_plan">Search Training Plan</string>
     <string name="edit_training_plan">Edit training plan</string>

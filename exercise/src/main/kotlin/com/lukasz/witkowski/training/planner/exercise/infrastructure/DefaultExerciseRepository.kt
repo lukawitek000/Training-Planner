@@ -4,10 +4,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMutationScheduler
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
@@ -41,7 +41,7 @@ internal class DefaultExerciseRepository(
             it?.toExerciseDetails()
         }
 
-    override fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise>> = Pager(
+    override fun queryExercises(query: ExerciseQuery): Flow<PagingData<ExerciseOverview>> = Pager(
         config = pagingConfig,
         pagingSourceFactory = {
             localDataSource.getExercisesWithCategories(
@@ -254,17 +254,17 @@ private fun ExerciseDetails.toPendingMutation(
     beginnerSets = beginnerRecommendation.sets,
     beginnerReps = beginnerRecommendation.reps,
     beginnerRestTime = beginnerRecommendation.restTime.inWholeMilliseconds,
-    beginnerWeight = beginnerRecommendation.weightInKg,
+    beginnerWeight = beginnerRecommendation.weight?.inKilograms,
     beginnerTime = beginnerRecommendation.time?.inWholeMilliseconds,
     intermediateSets = intermediateRecommendation.sets,
     intermediateReps = intermediateRecommendation.reps,
     intermediateRestTime = intermediateRecommendation.restTime.inWholeMilliseconds,
-    intermediateWeight = intermediateRecommendation.weightInKg,
+    intermediateWeight = intermediateRecommendation.weight?.inKilograms,
     intermediateTime = intermediateRecommendation.time?.inWholeMilliseconds,
     advancedSets = advancedRecommendation.sets,
     advancedReps = advancedRecommendation.reps,
     advancedRestTime = advancedRecommendation.restTime.inWholeMilliseconds,
-    advancedWeight = advancedRecommendation.weightInKg,
+    advancedWeight = advancedRecommendation.weight?.inKilograms,
     advancedTime = advancedRecommendation.time?.inWholeMilliseconds
 )
 

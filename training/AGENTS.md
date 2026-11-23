@@ -7,7 +7,7 @@
   - `TrainingPlan`, `TrainingPlanOverview`, `TrainingPlanConfiguration`, `TrainingExercise`, and `ExerciseSnapshot` (detaches the plan from live exercise mutations and stores `revision: Long? = 1L`).
   - `TrainingPlanRepository` and `TrainingPlanService`.
 - **Infrastructure (`infrastructure/`):**
-  - **Room 3 (`TrainingPlanDatabase`):** `TrainingPlanDao`, `DbTrainingPlanRepository`, `DbTrainingPlan`, `DbTrainingExercise`, `DbExerciseSnapshot`, `DbExerciseCategory`.
+  - **Room 3 (`TrainingPlanDatabase`):** `TrainingPlanDao`, `DbTrainingPlanRepository`, `DbTrainingPlan`, `DbTrainingExercise`, `DbExerciseCategory`.
   - No remote/backend synchronization exists in `:training` yet (even though `:backend` already has `TrainingPlanRoutes`).
 - **Presentation (`presentation/`):**
   - `TrainingsScreen` (`TrainingsListViewModel`, `TrainingsListUiState`).

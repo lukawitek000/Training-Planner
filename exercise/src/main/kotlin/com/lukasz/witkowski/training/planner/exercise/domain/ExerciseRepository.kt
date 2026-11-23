@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface ExerciseRepository {
     fun getExerciseDetailsById(id: ExerciseId): Flow<ExerciseDetails?>
 
-    fun queryExercises(query: ExerciseQuery): Flow<PagingData<Exercise>>
+    fun queryExercises(query: ExerciseQuery): Flow<PagingData<ExerciseOverview>>
 
     /**
      * Returns true when the insertion has finished

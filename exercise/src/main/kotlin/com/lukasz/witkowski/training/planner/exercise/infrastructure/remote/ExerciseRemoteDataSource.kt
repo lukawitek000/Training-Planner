@@ -3,11 +3,11 @@ package com.lukasz.witkowski.training.planner.exercise.infrastructure.remote
 import com.lukasz.witkowski.training.planner.dto.common.PagedResponseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseSyncResponseDto
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseFailure
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
 
 interface ExerciseRemoteDataSource {
@@ -23,19 +23,21 @@ interface ExerciseRemoteDataSource {
         page: Int? = null,
         limit: Int? = null,
         currentUserId: String? = null
-    ): AppResult<PagedResponseDto<Exercise>, ExerciseFailure>
+    ): AppResult<PagedResponseDto<ExerciseOverview>, ExerciseFailure>
 
     suspend fun getExerciseById(
         id: ExerciseId,
         currentUserId: String? = null
-    ): AppResult<Exercise, ExerciseFailure>
+    ): AppResult<ExerciseOverview, ExerciseFailure>
 
     suspend fun getExerciseDetailsById(
         id: ExerciseId,
         currentUserId: String? = null
     ): AppResult<ExerciseDetails, ExerciseFailure>
 
-    suspend fun createExercise(exercise: Exercise): AppResult<Exercise, ExerciseFailure>
+    suspend fun createExercise(
+        exercise: ExerciseOverview
+    ): AppResult<ExerciseOverview, ExerciseFailure>
 
     suspend fun createExercise(
         exerciseDetails: ExerciseDetails,

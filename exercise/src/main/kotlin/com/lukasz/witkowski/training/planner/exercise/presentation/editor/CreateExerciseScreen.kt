@@ -36,6 +36,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategory
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_CATEGORIES
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
+import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_THUMBNAIL
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.presentation.ImageInputForm
@@ -305,7 +306,7 @@ fun CreateExerciseScreenPreview() {
             name = "Push ups",
             description = "Compound upper-body pushing movement",
             images = PREVIEW_PUSH_UP_IMAGES,
-            previewImage = PREVIEW_PUSH_UP_IMAGES.firstOrNull(),
+            previewImage = PREVIEW_PUSH_UP_THUMBNAIL,
             categories = PREVIEW_CATEGORIES
         )
         CreateExerciseScreenContent(
@@ -343,7 +344,7 @@ fun CreateExerciseScreenSavingPreview() {
             name = "Push ups",
             description = "Compound upper-body pushing movement",
             images = PREVIEW_PUSH_UP_IMAGES,
-            previewImage = PREVIEW_PUSH_UP_IMAGES.firstOrNull(),
+            previewImage = PREVIEW_PUSH_UP_THUMBNAIL,
             categories = PREVIEW_CATEGORIES
         )
         CreateExerciseScreenContent(

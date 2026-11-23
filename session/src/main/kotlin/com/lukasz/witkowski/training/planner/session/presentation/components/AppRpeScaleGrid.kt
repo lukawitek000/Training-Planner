@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import com.lukasz.witkowski.training.planner.session.R
+import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
@@ -29,8 +30,8 @@ import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
  */
 @Composable
 fun AppRpeScaleGrid(
-    selectedRpe: Int?,
-    onRpeSelected: (Int) -> Unit,
+    selectedRpe: SessionRpe?,
+    onRpeSelected: (SessionRpe) -> Unit,
     modifier: Modifier = Modifier
 ) {
     AppCard(
@@ -55,21 +56,20 @@ fun AppRpeScaleGrid(
                 )
                 if (selectedRpe != null) {
                     Text(
-                        text = stringResource(R.string.rpe_scale_score_format, selectedRpe),
+                        text = stringResource(R.string.rpe_scale_score_format, selectedRpe.score),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
 
-            // Top row: 1 to 5
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
             ) {
-                (1..5).forEach { rpe ->
+                SessionRpe.entries.take(5).forEach { rpe ->
                     RpeCell(
-                        value = rpe,
+                        value = rpe.score,
                         isSelected = selectedRpe == rpe,
                         onClick = { onRpeSelected(rpe) },
                         modifier = Modifier.weight(1f)
@@ -77,14 +77,13 @@ fun AppRpeScaleGrid(
                 }
             }
 
-            // Bottom row: 6 to 10
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
             ) {
-                (6..10).forEach { rpe ->
+                SessionRpe.entries.drop(5).forEach { rpe ->
                     RpeCell(
-                        value = rpe,
+                        value = rpe.score,
                         isSelected = selectedRpe == rpe,
                         onClick = { onRpeSelected(rpe) },
                         modifier = Modifier.weight(1f)
@@ -151,14 +150,16 @@ private fun RpeCell(
 }
 
 @Composable
-private fun getRpeDescription(rpe: Int?): String = when (rpe) {
-    1, 2 -> stringResource(R.string.rpe_desc_warmup)
-    3, 4 -> stringResource(R.string.rpe_desc_light)
-    5, 6 -> stringResource(R.string.rpe_desc_challenging)
-    7, 8 -> stringResource(R.string.rpe_desc_hard)
-    9 -> stringResource(R.string.rpe_desc_near_limit)
-    10 -> stringResource(R.string.rpe_desc_max_effort)
-    else -> stringResource(R.string.rpe_desc_prompt)
+private fun getRpeDescription(rpe: SessionRpe?): String = when (rpe) {
+    SessionRpe.VERY_LIGHT, SessionRpe.LIGHT -> stringResource(R.string.rpe_desc_warmup)
+    SessionRpe.MODERATE_LIGHT, SessionRpe.MODERATE -> stringResource(R.string.rpe_desc_light)
+    SessionRpe.SOMEWHAT_HARD, SessionRpe.CHALLENGING -> stringResource(
+        R.string.rpe_desc_challenging
+    )
+    SessionRpe.HARD, SessionRpe.VERY_HARD -> stringResource(R.string.rpe_desc_hard)
+    SessionRpe.NEAR_LIMIT -> stringResource(R.string.rpe_desc_near_limit)
+    SessionRpe.MAXIMAL -> stringResource(R.string.rpe_desc_max_effort)
+    null -> stringResource(R.string.rpe_desc_prompt)
 }
 
 @AppPreview
@@ -166,7 +167,7 @@ private fun getRpeDescription(rpe: Int?): String = when (rpe) {
 private fun AppRpeScaleGridPreview() {
     TrainingPlannerTheme {
         AppRpeScaleGrid(
-            selectedRpe = 8,
+            selectedRpe = SessionRpe.VERY_HARD,
             onRpeSelected = {},
             modifier = Modifier.padding(Dimens.spaceMd)
         )

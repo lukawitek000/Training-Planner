@@ -1,9 +1,9 @@
 package com.lukasz.witkowski.training.planner.exercise.application
 
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSharing
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
@@ -22,8 +22,7 @@ internal object ExerciseFactory {
             syncState = ExerciseSyncState.PENDING_UPLOAD
         )
     ): ExerciseDetails = ExerciseDetails(
-        exercise =
-        Exercise(
+        exercise = ExerciseOverview(
             id = exerciseId,
             name = exerciseConfiguration.name,
             description = exerciseConfiguration.description,

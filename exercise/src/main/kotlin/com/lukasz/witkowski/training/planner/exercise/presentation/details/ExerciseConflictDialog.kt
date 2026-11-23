@@ -39,8 +39,8 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recommendation
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
@@ -53,6 +53,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppSecondaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppTertiaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -281,12 +282,12 @@ private fun ExerciseConflictDialogPreview() {
         val sampleRecs = listOf(
             Recommendation(
                 RecommendationLevel.BEGINNER,
-                RecommendedParameters(sets = 3, reps = 10, restTime = 60.seconds, weightInKg = 40)
+                RecommendedParameters(sets = 3, reps = 10, restTime = 60.seconds, weight = 40.kg)
             )
         )
         ExerciseConflictDialog(
             localDetails = ExerciseDetails(
-                exercise = Exercise(
+                exercise = ExerciseOverview(
                     id = ExerciseId.create(),
                     name = "Barbell Bench Press (Heavy)",
                     description = "Updated local notes with pause at bottom",
@@ -299,7 +300,7 @@ private fun ExerciseConflictDialogPreview() {
                 recommendations = sampleRecs
             ),
             serverDetails = ExerciseDetails(
-                exercise = Exercise(
+                exercise = ExerciseOverview(
                     id = ExerciseId.create(),
                     name = "Barbell Bench Press",
                     description = "Cloud description updated from another device",

@@ -18,6 +18,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.toExer
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.toRecommendation
 import com.lukasz.witkowski.training.planner.image.ImageByteArray
 import com.lukasz.witkowski.training.planner.image.ImageReference
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import java.io.File
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -146,7 +147,7 @@ class ExerciseEditorViewModel(
                 uiState.updateRecommendationParam(
                     level = event.level,
                     updateParameters = { currentParams ->
-                        currentParams.copy(weightInKg = event.weight)
+                        currentParams.copy(weight = event.weight)
                     }
                 )
             }
@@ -220,7 +221,7 @@ class ExerciseEditorViewModel(
             runCatching {
                 val exerciseDetails = exerciseService.getExerciseDetailsById(exerciseId).first()
                 if (exerciseDetails != null) {
-                    val loadedImages = if (exerciseDetails.exercise.imageIds.isNotEmpty()) {
+                    val loadedImages = if (exerciseDetails.images.isNotEmpty()) {
                         runCatching {
                             exerciseService.readImageReferences(exerciseId)
                         }.getOrDefault(emptyList())
@@ -325,7 +326,7 @@ sealed interface ExerciseEditingEvent {
     data class RecommendedRestTimeChanged(val restTime: Duration?, val level: RecommendationLevel) :
         ExerciseEditingEvent
 
-    data class RecommendedWeightChanged(val weight: Int?, val level: RecommendationLevel) :
+    data class RecommendedWeightChanged(val weight: Weight?, val level: RecommendationLevel) :
         ExerciseEditingEvent
 
     data class RecommendedTimeChanged(val time: Duration?, val level: RecommendationLevel) :

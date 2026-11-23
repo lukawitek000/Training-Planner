@@ -42,7 +42,7 @@ When designing, implementing, or refactoring non-trivial code, you **MUST**:
 - **[`:dto`](dto/AGENTS.md)** — Pure Kotlin/JVM `@Serializable` network contracts and `ApiRoutes` shared between Android and `:backend`.
 - **[`:exercise`](exercise/AGENTS.md)** — **Reference Module:** Exercise catalog (`Exercise`), Room 3 + Paging 3, WorkManager outbox sync (`DbExerciseMutation`), and conflict resolution.
 - **[`:training`](training/AGENTS.md)** — `TrainingPlan` (Intent), `TrainingExercise`, `ExerciseSnapshot`, `TrainingPlanDatabase`, and MVI editor reducer.
-- **[`:session`](session/AGENTS.md)** — Live workout execution state machine (`TrainingSession`, `StraightSetsPolicy`, `CircuitSetsPolicy`, `Timer`) and execution Compose UI.
+- **[`:session`](session/AGENTS.md)** — Live workout execution state machine (`TrainingSession`, `SessionPhase`, `NextPhaseProvider`, `ExerciseQueue`, `StraightSetsPolicy`, `Timer`) and execution Compose UI.
 - **[`:session-service`](session-service/AGENTS.md)** — Android Foreground Service (`SessionService`) and ongoing workout notifications.
 - **[`:analytics`](analytics/AGENTS.md)** — Completed workout persistence (`StatisticsDatabase`, `TrainingStatistics`) via `SessionCompletedListener`.
 - **[`:synchronization`](synchronization/AGENTS.md)** — *Legacy:* Currently holds Wear OS Bluetooth `ChannelClient` streaming (not backend HTTP sync).

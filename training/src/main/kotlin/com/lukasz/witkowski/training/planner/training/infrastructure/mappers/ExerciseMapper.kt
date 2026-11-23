@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.training.infrastructure.mappers
 
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -38,7 +39,7 @@ private fun TrainingExercise.toDbTrainingExercise(trainingPlanId: TrainingPlanId
         repetitions = repetitions,
         sets = sets,
         restTime = restTime.inWholeSeconds,
-        weightInKg = weightInKg,
+        weightInKg = weight?.inKilograms,
         time = time.inWholeSeconds,
         exerciseRevision = exercise.revision
     )
@@ -60,7 +61,7 @@ internal fun DbTrainingExerciseWithCategories.toTrainingExercise() = TrainingExe
     ),
     repetitions = trainingExercise.repetitions,
     sets = trainingExercise.sets,
-    weightInKg = trainingExercise.weightInKg,
+    weight = trainingExercise.weightInKg?.kg,
     restTime = trainingExercise.restTime.seconds,
     time = trainingExercise.time.seconds
 )

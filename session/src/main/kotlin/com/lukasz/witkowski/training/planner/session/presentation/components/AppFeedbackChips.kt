@@ -47,11 +47,6 @@ fun <T> AppFeedbackChips(
             } else {
                 MaterialTheme.colorScheme.onSurface
             }
-            val borderColor = if (isSelected) {
-                MaterialTheme.colorScheme.primary
-            } else {
-                MaterialTheme.colorScheme.outlineVariant
-            }
 
             Box(
                 modifier = Modifier
@@ -59,15 +54,15 @@ fun <T> AppFeedbackChips(
                     .clip(CircleShape)
                     .background(backgroundColor)
                     .border(
-                        width = if (isSelected) Dimens.mediumBorder else Dimens.thinBorder,
-                        color = borderColor,
+                        width = Dimens.thinBorder,
+                        color = MaterialTheme.colorScheme.outlineVariant,
                         shape = CircleShape
                     )
                     .clickable(
                         role = Role.RadioButton,
                         onClick = { onOptionSelected(option) }
                     )
-                    .padding(vertical = Dimens.spaceSm, horizontal = Dimens.spaceXs),
+                    .padding(vertical = Dimens.spaceMd, horizontal = Dimens.spaceXs),
                 contentAlignment = Alignment.Center
             ) {
                 Text(

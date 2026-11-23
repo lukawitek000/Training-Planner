@@ -5,7 +5,17 @@ import com.lukasz.witkowski.training.planner.image.domain.Image as DomainImage
 import com.lukasz.witkowski.training.planner.image.domain.ImageReference as DomainImageReference
 import com.lukasz.witkowski.training.planner.image.domain.ImageReferenceRepository
 import com.lukasz.witkowski.training.planner.image.domain.ImageRepository
+import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.shared.utils.runCatchingCancellable
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import timber.log.Timber
 
 /**
@@ -16,6 +26,8 @@ internal class DataReferenceSeparatedImageStorage constructor(
     private val imageReferenceRepository: ImageReferenceRepository,
     private val checksumCalculator: ChecksumCalculator
 ) : ImageStorage {
+    private val cacheRefsState = ConcurrentHashMap<ImageId, ImageReference>()
+    private val mutex = Mutex()
     override suspend fun saveImage(imageConfiguration: ImageConfiguration): ImageReference {
         val imageId = generateImageId()
         return saveImageWithId(imageConfiguration, imageId)
@@ -62,6 +74,46 @@ internal class DataReferenceSeparatedImageStorage constructor(
     override suspend fun readImageReferences(ownerId: UUID): List<ImageReference> {
         val domainImageReferences = imageReferenceRepository.readAllByOwnerId(ownerId)
         return domainImageReferences.map { it.toImageReference() }
+    }
+
+    override suspend fun loadImageReferences(
+        images: List<ImageId>
+    ): Flow<ResultHandler<List<ImageReference>>> = flow {
+        if (cacheRefsState.keys.containsAll(images)) {
+            val references = images.mapNotNull { cacheRefsState[it] }
+            emit(ResultHandler.Success(references))
+        }
+        emit(ResultHandler.Loading)
+        val result = runCatchingCancellable {
+            coroutineScope {
+                images.map { imageId ->
+                    async {
+                        fetchOrGetSingle(imageId)
+                    }
+                }.awaitAll()
+            }
+        }
+            .fold(
+                onSuccess = {
+                    ResultHandler.Success(it)
+                },
+                onFailure = {
+                    ResultHandler.Error(it.message ?: "")
+                }
+            )
+        emit(result)
+    }
+
+    private suspend fun fetchOrGetSingle(id: ImageId): ImageReference {
+        cacheRefsState[id]?.let { return it }
+        return mutex.withLock {
+            cacheRefsState[id]?.let { return@withLock it }
+            checkNotNull(readImageReference(id)) {
+                "ImageReference for the given id does not exist"
+            }.also {
+                cacheRefsState[id] = it
+            }
+        }
     }
 
     override suspend fun deleteImage(imageId: ImageId, ownerId: UUID): Boolean {

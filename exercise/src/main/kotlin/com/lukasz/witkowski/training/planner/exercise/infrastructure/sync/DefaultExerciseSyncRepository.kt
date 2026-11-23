@@ -1,12 +1,12 @@
 package com.lukasz.witkowski.training.planner.exercise.infrastructure.sync
 
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseFailure
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRecommendation
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncRepository
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
@@ -24,6 +24,7 @@ import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
 import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlagProvider
 import com.lukasz.witkowski.training.planner.shared.network.NetworkFailure
 import com.lukasz.witkowski.training.planner.shared.utils.AppResult
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.firstOrNull
@@ -233,7 +234,7 @@ internal class DefaultExerciseSyncRepository(
             .toSet()
             .ifEmpty { setOf(ExerciseCategory("Other")) }
 
-        val domainExercise = Exercise(
+        val domainExercise = ExerciseOverview(
             id = ExerciseId(mutation.exerciseId),
             name = mutation.name,
             description = mutation.description,
@@ -249,21 +250,21 @@ internal class DefaultExerciseSyncRepository(
             sets = mutation.beginnerSets ?: 0,
             reps = mutation.beginnerReps ?: 0,
             restTime = (mutation.beginnerRestTime ?: 0L).milliseconds,
-            weightInKg = mutation.beginnerWeight,
+            weight = mutation.beginnerWeight?.kg,
             time = mutation.beginnerTime?.milliseconds
         )
         val intermediateRec = ExerciseRecommendation(
             sets = mutation.intermediateSets ?: 0,
             reps = mutation.intermediateReps ?: 0,
             restTime = (mutation.intermediateRestTime ?: 0L).milliseconds,
-            weightInKg = mutation.intermediateWeight,
+            weight = mutation.intermediateWeight?.kg,
             time = mutation.intermediateTime?.milliseconds
         )
         val advancedRec = ExerciseRecommendation(
             sets = mutation.advancedSets ?: 0,
             reps = mutation.advancedReps ?: 0,
             restTime = (mutation.advancedRestTime ?: 0L).milliseconds,
-            weightInKg = mutation.advancedWeight,
+            weight = mutation.advancedWeight?.kg,
             time = mutation.advancedTime?.milliseconds
         )
 

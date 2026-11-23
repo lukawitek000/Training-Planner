@@ -34,6 +34,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
@@ -53,6 +54,52 @@ fun AppLoadingState(
     modifier: Modifier = Modifier,
     title: String = "Setting up your planner...",
     subtitle: String? = "Preparing your workout routines and local workspace.",
+    icon: ImageVector = Icons.Default.FitnessCenter,
+    iconContentDescription: String? = null
+) {
+    Column(
+        modifier =
+        modifier
+            .fillMaxSize()
+            .padding(Dimens.margin),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        AppLoadingIndicator(
+            icon = icon,
+            iconContentDescription = iconContentDescription
+        )
+
+        Spacer(modifier = Modifier.height(Dimens.spaceLg))
+
+        Text(
+            text = title,
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+
+        if (!subtitle.isNullOrBlank()) {
+            Text(
+                text = subtitle,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+                modifier =
+                Modifier
+                    .widthIn(max = Dimens.maxSubtitleWidth)
+                    .padding(top = Dimens.spaceXs)
+            )
+        }
+    }
+}
+
+@Composable
+fun AppLoadingIndicator(
+    modifier: Modifier = Modifier,
+    spinnerSize: Dp = Dimens.spinnerSize,
+    spinnerIconContainerSize: Dp = Dimens.spinnerIconContainerSize,
     icon: ImageVector = Icons.Default.FitnessCenter,
     iconContentDescription: String? = null
 ) {
@@ -90,85 +137,52 @@ fun AppLoadingState(
         ),
         label = "AppLoadingStateRotation"
     )
-
-    Column(
-        modifier =
-        modifier
-            .fillMaxSize()
-            .padding(Dimens.margin),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    Box(
+        modifier = modifier.size(spinnerSize),
+        contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier.size(Dimens.spinnerSize),
-            contentAlignment = Alignment.Center
-        ) {
-            // Soft Ambient Pulse Glow
-            Surface(
-                modifier =
-                Modifier
-                    .size(Dimens.spinnerSize)
-                    .scale(pulseScale),
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = pulseAlpha)
-            ) {}
+        // Soft Ambient Pulse Glow
+        Surface(
+            modifier =
+            Modifier
+                .size(spinnerSize)
+                .scale(pulseScale),
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = pulseAlpha)
+        ) {}
 
-            // Spinner Ring
-            CircularProgressIndicator(
-                modifier =
-                Modifier
-                    .size(Dimens.spinnerSize)
-                    .rotate(rotation),
-                color = MaterialTheme.colorScheme.primaryContainer,
-                trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                strokeWidth = Dimens.spinnerStrokeWidth,
-                strokeCap = StrokeCap.Round
-            )
-
-            // Centered Brand Dumbbell Icon Container
-            Surface(
-                modifier = Modifier.size(Dimens.spinnerIconContainerSize),
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                border =
-                BorderStroke(
-                    width = Dimens.thinBorder,
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
-                ),
-                shadowElevation = Dimens.shadowLg
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = iconContentDescription,
-                        tint = MaterialTheme.colorScheme.primaryContainer,
-                        modifier = Modifier.size(Dimens.iconSize24)
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(Dimens.spaceLg))
-
-        Text(
-            text = title,
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
+        // Spinner Ring
+        CircularProgressIndicator(
+            modifier =
+            Modifier
+                .size(spinnerSize)
+                .rotate(rotation),
+            color = MaterialTheme.colorScheme.primaryContainer,
+            trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            strokeWidth = Dimens.spinnerStrokeWidth,
+            strokeCap = StrokeCap.Round
         )
 
-        if (!subtitle.isNullOrBlank()) {
-            Text(
-                text = subtitle,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-                modifier =
-                Modifier
-                    .widthIn(max = Dimens.maxSubtitleWidth)
-                    .padding(top = Dimens.spaceXs)
-            )
+        // Centered Brand Dumbbell Icon Container
+        Surface(
+            modifier = Modifier.size(spinnerIconContainerSize),
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            border =
+            BorderStroke(
+                width = Dimens.thinBorder,
+                color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+            ),
+            shadowElevation = Dimens.shadowLg
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = iconContentDescription,
+                    tint = MaterialTheme.colorScheme.primaryContainer,
+                    modifier = Modifier.size(Dimens.iconSize24)
+                )
+            }
         }
     }
 }

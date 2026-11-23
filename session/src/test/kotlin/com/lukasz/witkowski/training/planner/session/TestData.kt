@@ -1,6 +1,12 @@
 package com.lukasz.witkowski.training.planner.session
 
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
+import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
+import com.lukasz.witkowski.training.planner.session.domain.session.models.TrainingExerciseSnapshot
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseSnapshot
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
@@ -84,3 +90,34 @@ fun createTrainingExercise(
     repetitions = repetitions,
     restTime = restTime
 )
+
+fun createSessionExercise(
+    exerciseId: TrainingExerciseId = TrainingExerciseId.create(),
+    name: String = "Test Exercise",
+    reps: Int = 10,
+    weight: Weight? = 50.kg,
+    holdTime: Duration? = null,
+    restTime: Duration = 30.seconds,
+    imageIds: List<ImageId> = emptyList()
+): SessionExercise {
+    val config =
+        SessionExerciseConfiguration(
+            reps = reps,
+            weight = weight,
+            holdTime = holdTime
+        )
+    val dummy = createDummyExercise(name).copy(imageIds = imageIds)
+    return SessionExercise(
+        snapshot =
+        TrainingExerciseSnapshot(
+            id = exerciseId,
+            name = dummy.name,
+            description = dummy.description,
+            categories = dummy.categories,
+            imageIds = imageIds,
+            plannedConfig = config
+        ),
+        currentConfig = config,
+        restTime = restTime
+    )
+}

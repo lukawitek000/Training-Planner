@@ -15,6 +15,8 @@ import androidx.navigation3.runtime.result.ResultEffect
 import androidx.navigation3.runtime.result.rememberResultEventBusNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
+import com.lukasz.witkowski.training.planner.BuildConfig
+import com.lukasz.witkowski.training.planner.analytics.presentation.TrainingStatisticsHost
 import com.lukasz.witkowski.training.planner.auth.presentation.auth.AuthenticationScreen
 import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeleteExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsScreen
@@ -59,17 +61,13 @@ fun Navigation(
         ),
         sceneStrategies = listOf(dialogStrategy),
         entryProvider = entryProvider {
-            entry<TrainingPlansList> {
-                TrainingsScreen(
-                    viewModel = koinViewModel(),
-                    onTrainingPlanClicked = { navigator.trainingPlanDetails(it) },
-                    onCreateTrainingClicked = { navigator.trainingCreate() }
-                )
-            }
+            exerciseEntryBuilder(navigator)
+            trainingPlanEntryBuilder(navigator)
 
             entry<UserProfile> {
                 UserProfileScreen(
                     viewModel = koinViewModel(),
+                    versionName = BuildConfig.VERSION_NAME,
                     onSignInClick = { navigator.authentication() },
                 )
             }
@@ -90,78 +88,6 @@ fun Navigation(
                     }
                 }
             }
-
-            entry<CreateTrainingPlan> {
-                val trainingPlanEditorViewModel: TrainingPlanEditorViewModel = koinViewModel()
-                ResultEffect<TrainingExercise> { trainingExercise ->
-                    Timber.i("TrainingExercise received $trainingExercise")
-                    trainingPlanEditorViewModel.processIntent(
-                        TrainingPlanEditingIntent.TrainingExerciseAdded(trainingExercise)
-                    )
-                }
-                TrainingPlanEditorScreen(
-                    viewModel = trainingPlanEditorViewModel,
-                    onAddExerciseClicked = { navigator.addTrainingExercises() },
-                    navigateBack = { navigator.goBack() }
-                )
-            }
-
-            entry<EditTrainingPlan> { key ->
-                val trainingPlanEditorViewModel: TrainingPlanEditorViewModel = koinViewModel { parametersOf(key.trainingPlanId) }
-                ResultEffect<TrainingExercise> { trainingExercise ->
-                    Timber.i("TrainingExercise received $trainingExercise")
-                    trainingPlanEditorViewModel.processIntent(
-                        TrainingPlanEditingIntent.TrainingExerciseAdded(trainingExercise)
-                    )
-                }
-                EditTrainingPlanScreen(
-                    viewModel = trainingPlanEditorViewModel,
-                    onAddExerciseClicked = { navigator.addTrainingExercises() },
-                    navigateBack = { navigator.goBack() }
-                )
-            }
-
-            entry<AddTrainingExercise> {
-                AddTrainingExerciseScreen(
-                    viewModel = koinViewModel(),
-                    onExerciseSelected = { navigator.configureTrainingExercise(it) }
-                )
-            }
-
-            entry<TrainingExerciseConfiguration> { key ->
-                val resultBus = LocalResultEventBus.current
-                TrainingExerciseConfigurationScreen(
-                    viewModel = koinViewModel { parametersOf(key.exerciseId) },
-                    onExerciseConfigured = { trainingExercise ->
-                        Timber.i("TrainingExercise configured $trainingExercise")
-                        resultBus.sendResult(trainingExercise)
-                        navigator.returnToCreateTrainingPlan()
-                    }
-                )
-            }
-
-            entry<TrainingPlanDetails> { key ->
-                TrainingPlanDetailsScreen(
-                    viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
-                    onStartTrainingSessionClicked = { navigator.trainingSession(it) }
-                )
-            }
-
-            entry<DeleteTrainingPlan>(
-                metadata = DialogSceneStrategy.dialog()
-            ) { key ->
-                DeleteTrainingPlanScreen(
-                    viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
-                    onDelete = {
-                        navigator.trainingPlanDeleted()
-                    },
-                    onCancel = {
-                        navigator.goBack()
-                    }
-                )
-            }
-
-            exerciseEntryBuilder(navigator)
 
             entry<TrainingSession> { key ->
                 TrainingSessionScreen(
@@ -216,6 +142,93 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.exerciseEntryBuilder(
             viewModel = koinViewModel { parametersOf(key.exerciseId) },
             onDelete = {
                 navigator.exerciseDeleted()
+            },
+            onCancel = {
+                navigator.goBack()
+            }
+        )
+    }
+}
+
+private fun EntryProviderScope<TrainingPlannerNavKey>.trainingPlanEntryBuilder(
+    navigator: TrainingPlannerNavigator
+) {
+    entry<TrainingPlansList> {
+        TrainingsScreen(
+            viewModel = koinViewModel(),
+            onTrainingPlanClicked = { navigator.trainingPlanDetails(it) },
+            onCreateTrainingClicked = { navigator.trainingCreate() }
+        )
+    }
+
+    entry<CreateTrainingPlan> {
+        val trainingPlanEditorViewModel: TrainingPlanEditorViewModel = koinViewModel()
+        ResultEffect<TrainingExercise> { trainingExercise ->
+            Timber.i("TrainingExercise received $trainingExercise")
+            trainingPlanEditorViewModel.processIntent(
+                TrainingPlanEditingIntent.TrainingExerciseAdded(trainingExercise)
+            )
+        }
+        TrainingPlanEditorScreen(
+            viewModel = trainingPlanEditorViewModel,
+            onAddExerciseClicked = { navigator.addTrainingExercises() },
+            navigateBack = { navigator.goBack() }
+        )
+    }
+
+    entry<EditTrainingPlan> { key ->
+        val trainingPlanEditorViewModel: TrainingPlanEditorViewModel = koinViewModel { parametersOf(key.trainingPlanId) }
+        ResultEffect<TrainingExercise> { trainingExercise ->
+            Timber.i("TrainingExercise received $trainingExercise")
+            trainingPlanEditorViewModel.processIntent(
+                TrainingPlanEditingIntent.TrainingExerciseAdded(trainingExercise)
+            )
+        }
+        EditTrainingPlanScreen(
+            viewModel = trainingPlanEditorViewModel,
+            onAddExerciseClicked = { navigator.addTrainingExercises() },
+            navigateBack = { navigator.goBack() }
+        )
+    }
+
+    entry<AddTrainingExercise> {
+        AddTrainingExerciseScreen(
+            viewModel = koinViewModel(),
+            onExerciseSelected = { navigator.configureTrainingExercise(it) }
+        )
+    }
+
+    entry<TrainingExerciseConfiguration> { key ->
+        val resultBus = LocalResultEventBus.current
+        TrainingExerciseConfigurationScreen(
+            viewModel = koinViewModel { parametersOf(key.exerciseId) },
+            onExerciseConfigured = { trainingExercise ->
+                Timber.i("TrainingExercise configured $trainingExercise")
+                resultBus.sendResult(trainingExercise)
+                navigator.returnToCreateTrainingPlan()
+            }
+        )
+    }
+
+    entry<TrainingPlanDetails> { key ->
+        TrainingStatisticsHost(
+            viewModel = koinViewModel { parametersOf(key.trainingPlanId) }
+        ) { previousSessionsTabContent ->
+            TrainingPlanDetailsScreen(
+                viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
+                onStartTrainingSessionClicked = { navigator.trainingSession(it) },
+                previousSessionsTabContent = previousSessionsTabContent
+            )
+        }
+    }
+
+    entry<DeleteTrainingPlan>(
+        metadata = DialogSceneStrategy.dialog()
+    ) { key ->
+        DeleteTrainingPlanScreen(
+            viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
+            onDelete = {
+                navigator.trainingPlanDeleted()
             },
             onCancel = {
                 navigator.goBack()

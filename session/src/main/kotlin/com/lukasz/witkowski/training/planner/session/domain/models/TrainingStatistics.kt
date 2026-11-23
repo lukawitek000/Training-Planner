@@ -1,32 +1,27 @@
 package com.lukasz.witkowski.training.planner.session.domain.models
 
-import com.lukasz.witkowski.training.planner.shared.time.Time
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
+import com.lukasz.witkowski.training.planner.shared.utils.calculateCompletenessPercentage
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import java.util.Date
+import kotlin.time.Duration
 
 data class TrainingStatistics(
     val id: TrainingStatisticsId = TrainingStatisticsId.create(),
     val trainingPlanId: TrainingPlanId,
-    val totalTime: Time,
+    val totalTime: Duration,
     val date: Date,
     val exercisesStatistics: List<ExerciseStatistics>,
     val note: String? = null,
-    val rpe: Int? = null
+    val rpe: SessionRpe? = null
 ) {
-    val effectiveTime: Time
-        get() {
-            val timeInMillis =
-                exercisesStatistics.sumOf {
-                    it.totalTime.timeInMillis
-                }
-            return Time(timeInMillis)
-        }
-
     val allAttempts: List<ExerciseAttemptStatistics>
         get() = exercisesStatistics.flatMap { it.attemptsStatistics }
 
-    val totalVolumeKg: Double
-        get() = allAttempts.sumOf { (it.actualWeightInKg ?: 0.0) * it.actualReps }
+    val totalVolume: Weight
+        get() = allAttempts.fold(Weight.ZERO) { acc, attempt ->
+            acc + (attempt.actualWeight ?: Weight.ZERO) * attempt.actualReps
+        }
 
     val totalReps: Int
         get() = allAttempts.sumOf { it.actualReps }
@@ -36,4 +31,10 @@ data class TrainingStatistics(
 
     val totalSetsCount: Int
         get() = allAttempts.size
+
+    val completenessRate: Double
+        get() = calculateCompletenessPercentage(
+            completed = completedSetsCount,
+            total = totalSetsCount
+        )
 }

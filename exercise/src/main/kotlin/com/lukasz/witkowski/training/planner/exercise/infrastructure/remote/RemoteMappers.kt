@@ -5,17 +5,18 @@ import com.lukasz.witkowski.training.planner.dto.exercise.CreateExerciseRequestD
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseDto
 import com.lukasz.witkowski.training.planner.dto.exercise.ExerciseRecommendationDto
 import com.lukasz.witkowski.training.planner.dto.exercise.UpdateExerciseRequestDto
-import com.lukasz.witkowski.training.planner.exercise.domain.Exercise
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRecommendation
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSharing
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
@@ -25,7 +26,7 @@ internal fun ExerciseDto.toExerciseDetails(
     currentUserId: String? = null,
     existingImageIds: List<ImageId> = emptyList()
 ): ExerciseDetails {
-    val domainExercise = toExercise(currentUserId).let {
+    val domainExercise = toExerciseOverview(currentUserId).let {
         if (existingImageIds.isNotEmpty() &&
             it.imageIds.isEmpty()
         ) {
@@ -43,7 +44,7 @@ internal fun ExerciseDto.toExerciseDetails(
                 sets = dto.sets,
                 reps = dto.reps,
                 restTime = dto.restTimeInMillis.milliseconds,
-                weightInKg = dto.weightInKg,
+                weight = dto.weightInKg?.kg,
                 time = dto.timeInMillis?.milliseconds
             )
         } else {
@@ -51,7 +52,7 @@ internal fun ExerciseDto.toExerciseDetails(
                 sets = 0,
                 reps = 0,
                 restTime = 0.seconds,
-                weightInKg = null,
+                weight = null,
                 time = null
             )
         }
@@ -65,7 +66,7 @@ internal fun ExerciseDto.toExerciseDetails(
     )
 }
 
-internal fun ExerciseDto.toExercise(currentUserId: String? = null): Exercise {
+internal fun ExerciseDto.toExerciseOverview(currentUserId: String? = null): ExerciseOverview {
     val sourceObj = when (source) {
         "USER_CREATED" -> {
             val ownerObj = if (owner != null) {
@@ -91,7 +92,7 @@ internal fun ExerciseDto.toExercise(currentUserId: String? = null): Exercise {
         syncState = ExerciseSyncState.SYNCED
     )
 
-    return Exercise(
+    return ExerciseOverview(
         id = ExerciseId(id),
         name = name,
         description = description,
@@ -102,12 +103,19 @@ internal fun ExerciseDto.toExercise(currentUserId: String? = null): Exercise {
         } else {
             categoriesSet
         },
-        imageIds = images.map { ImageId(it) },
+        imageIds = images?.map { ImageId(it) } ?: emptyList(),
         metadata = metadataObj
     )
 }
 
-internal fun Exercise.toCreateExerciseRequestDto(): CreateExerciseRequestDto =
+internal fun ExerciseDto.toExercise(currentUserId: String? = null): ExerciseOverview =
+    toExerciseOverview(currentUserId)
+
+@Deprecated("Use toExerciseOverview instead", ReplaceWith("toExerciseOverview(currentUserId)"))
+internal fun ExerciseDto.toExercise2(currentUserId: String? = null): ExerciseOverview =
+    toExerciseOverview(currentUserId)
+
+internal fun ExerciseOverview.toCreateExerciseRequestDto(): CreateExerciseRequestDto =
     CreateExerciseRequestDto(
         name = name,
         description = description,
@@ -121,7 +129,7 @@ internal fun Exercise.toCreateExerciseRequestDto(): CreateExerciseRequestDto =
         images = imageIds.map { it.value.toString() }
     )
 
-internal fun Exercise.toUpdateExerciseRequestDto(
+internal fun ExerciseOverview.toUpdateExerciseRequestDto(
     expectedVersion: Long? = null,
     idempotencyKey: String? = null
 ): UpdateExerciseRequestDto = UpdateExerciseRequestDto(
@@ -148,7 +156,7 @@ internal fun ExerciseDetails.toCreateExerciseRequestDto(
             beginnerRecommendation.sets,
             beginnerRecommendation.reps,
             beginnerRecommendation.restTime.inWholeMilliseconds,
-            beginnerRecommendation.weightInKg,
+            beginnerRecommendation.weight?.inKilograms,
             beginnerRecommendation.time?.inWholeMilliseconds
         ),
         ExerciseRecommendationDto(
@@ -156,7 +164,7 @@ internal fun ExerciseDetails.toCreateExerciseRequestDto(
             intermediateRecommendation.sets,
             intermediateRecommendation.reps,
             intermediateRecommendation.restTime.inWholeMilliseconds,
-            intermediateRecommendation.weightInKg,
+            intermediateRecommendation.weight?.inKilograms,
             intermediateRecommendation.time?.inWholeMilliseconds
         ),
         ExerciseRecommendationDto(
@@ -164,7 +172,7 @@ internal fun ExerciseDetails.toCreateExerciseRequestDto(
             advancedRecommendation.sets,
             advancedRecommendation.reps,
             advancedRecommendation.restTime.inWholeMilliseconds,
-            advancedRecommendation.weightInKg,
+            advancedRecommendation.weight?.inKilograms,
             advancedRecommendation.time?.inWholeMilliseconds
         )
     )
@@ -194,7 +202,7 @@ internal fun ExerciseDetails.toUpdateExerciseRequestDto(
             beginnerRecommendation.sets,
             beginnerRecommendation.reps,
             beginnerRecommendation.restTime.inWholeMilliseconds,
-            beginnerRecommendation.weightInKg,
+            beginnerRecommendation.weight?.inKilograms,
             beginnerRecommendation.time?.inWholeMilliseconds
         ),
         ExerciseRecommendationDto(
@@ -202,7 +210,7 @@ internal fun ExerciseDetails.toUpdateExerciseRequestDto(
             intermediateRecommendation.sets,
             intermediateRecommendation.reps,
             intermediateRecommendation.restTime.inWholeMilliseconds,
-            intermediateRecommendation.weightInKg,
+            intermediateRecommendation.weight?.inKilograms,
             intermediateRecommendation.time?.inWholeMilliseconds
         ),
         ExerciseRecommendationDto(
@@ -210,7 +218,7 @@ internal fun ExerciseDetails.toUpdateExerciseRequestDto(
             advancedRecommendation.sets,
             advancedRecommendation.reps,
             advancedRecommendation.restTime.inWholeMilliseconds,
-            advancedRecommendation.weightInKg,
+            advancedRecommendation.weight?.inKilograms,
             advancedRecommendation.time?.inWholeMilliseconds
         )
     )
@@ -226,6 +234,6 @@ internal fun ExerciseDetails.toUpdateExerciseRequestDto(
         expectedVersion = expectedVersion ?: exercise.metadata.revision,
         idempotencyKey = idempotencyKey,
         recommendations = recList,
-        images = exercise.imageIds.map { it.value.toString() }
+        images = images.map { it.value.toString() }
     )
 }

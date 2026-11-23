@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -22,8 +23,8 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.editor.Exerci
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.ExerciseParametersIntent
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.PREVIEW_RECOMMENDED_PARAMETERS
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.RecommendedParametersCardHeader
-import com.lukasz.witkowski.training.planner.exercise.presentation.models.Exercise
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
+import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
@@ -135,6 +136,7 @@ private fun TrainingExerciseParameters(
         )
         AppPrimaryButton(
             text = stringResource(R.string.add_exercise),
+            modifier = Modifier.fillMaxWidth(),
             onClick = onAddTrainingExercise,
             enabled = parameters.areValid()
         )
@@ -178,7 +180,7 @@ private fun TrainingExerciseConfigurationScreenContentSelectedRecommendationPrev
 
 private val PREVIEW_SUCCESS_STATE = ExerciseDetailsState.Success(
     details = ExerciseDetails(
-        exercise = Exercise(
+        exercise = ExerciseOverview(
             id = ExerciseId.create(),
             name = "Push ups",
             description = "Some long description in here",

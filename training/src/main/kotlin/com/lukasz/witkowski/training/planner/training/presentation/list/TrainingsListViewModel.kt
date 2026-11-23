@@ -9,9 +9,7 @@ import com.lukasz.witkowski.training.planner.training.application.TrainingPlanSe
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanOverview
 import com.lukasz.witkowski.training.planner.training.domain.TrainingQuery
-import kotlin.collections.filter
-import kotlin.collections.map
-import kotlin.collections.toSet
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -36,7 +34,7 @@ class TrainingsListViewModel(
         combine(query, categoryController.filterCategories) { searchQuery, filterCategories ->
             FilteringState(searchQuery, filterCategories)
         }
-            .debounce(300.milliseconds)
+            .debounce { if (it.searchQuery.isEmpty()) Duration.ZERO else 300.milliseconds }
             .flatMapLatest { filteringState ->
                 val trainingQuery = filteringState.toTrainingQuery()
                 service.getTrainingPlansOverviews(trainingQuery)

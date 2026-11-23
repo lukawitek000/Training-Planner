@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room3.Room
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.TestData
 import com.lukasz.witkowski.training.planner.training.TestData.CATEGORY_LEGS
 import com.lukasz.witkowski.training.planner.training.TestData.FULL_BODY_TRAINING_PLAN
@@ -228,7 +230,7 @@ class DbTrainingPlanRepositoryTest {
             )
             assertEquals(
                 FULL_BODY_TRAINING_PLAN.copy(
-                    lastSession = null
+                    lastSession = useInstant
                 ),
                 resultPlan.getOrThrow()
             )
@@ -317,7 +319,7 @@ class DbTrainingPlanRepositoryTest {
                 exercise.copy(
                     repetitions = exercise.repetitions + 5,
                     sets = exercise.sets + 1,
-                    weightInKg = (exercise.weightInKg ?: 0) + 10,
+                    weight = (exercise.weight ?: Weight.ZERO) + 10.kg,
                     exercise =
                     exercise.exercise.copy(
                         description = "Updated description for ${exercise.exercise.name}",

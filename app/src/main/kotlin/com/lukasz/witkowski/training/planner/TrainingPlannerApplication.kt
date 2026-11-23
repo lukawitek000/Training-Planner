@@ -5,6 +5,7 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.svg.SvgDecoder
+import com.lukasz.witkowski.training.planner.debug.StrictModeConfig
 import com.lukasz.witkowski.training.planner.di.appModule
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
@@ -30,6 +31,7 @@ class TrainingPlannerApplication : Application(), SingletonImageLoader.Factory {
         super.onCreate()
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
+            StrictModeConfig.configure()
         }
         startKoin {
             androidContext(this@TrainingPlannerApplication)

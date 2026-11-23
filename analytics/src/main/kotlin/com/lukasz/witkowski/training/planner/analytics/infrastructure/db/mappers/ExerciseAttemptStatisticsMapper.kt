@@ -4,8 +4,10 @@ import com.lukasz.witkowski.training.planner.analytics.infrastructure.db.models.
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatistics
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseAttemptStatisticsId
 import com.lukasz.witkowski.training.planner.session.domain.models.ExerciseStatisticsId
-import com.lukasz.witkowski.training.planner.shared.time.Time
+import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+import kotlin.time.Duration.Companion.milliseconds
 
 internal fun ExerciseAttemptStatistics.toDbExerciseAttemptStatistics(
     exerciseStatisticsId: ExerciseStatisticsId
@@ -13,22 +15,28 @@ internal fun ExerciseAttemptStatistics.toDbExerciseAttemptStatistics(
     id = id.toString(),
     exerciseStatisticsId = exerciseStatisticsId.toString(),
     trainingExerciseId = trainingExerciseId.toString(),
-    time = time.timeInMillis,
+    time = time.inWholeMilliseconds,
     set = set,
     completed = completed,
     actualReps = actualReps,
-    actualWeightInKg = actualWeightInKg,
-    rpe = rpe
+    actualWeightInKg = actualWeight?.inKilograms,
+    actualTime = actualTime?.inWholeMilliseconds,
+    rpe = effort?.score,
+    restTime = restTime?.inWholeMilliseconds,
+    plannedRestTime = plannedRestTime?.inWholeMilliseconds
 )
 
 internal fun DbExerciseAttemptStatistics.toExerciseAttemptStatistics(): ExerciseAttemptStatistics =
     ExerciseAttemptStatistics(
         id = ExerciseAttemptStatisticsId(id),
         trainingExerciseId = TrainingExerciseId(trainingExerciseId),
-        time = Time(time),
+        time = time.milliseconds,
         set = set,
         completed = completed,
         actualReps = actualReps,
-        actualWeightInKg = actualWeightInKg,
-        rpe = rpe
+        actualWeight = actualWeightInKg?.kg,
+        actualTime = actualTime?.milliseconds,
+        effort = SetEffort.fromNumeric(rpe),
+        restTime = restTime?.milliseconds,
+        plannedRestTime = plannedRestTime?.milliseconds
     )

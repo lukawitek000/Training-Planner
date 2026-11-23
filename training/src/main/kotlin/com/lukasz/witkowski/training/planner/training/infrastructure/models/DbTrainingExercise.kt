@@ -31,7 +31,7 @@ data class DbTrainingExercise(
     val repetitions: Int,
     val sets: Int,
     val restTime: Long,
-    val weightInKg: Int?,
+    val weightInKg: Double?,
     val time: Long = 0L,
     val exerciseRevision: Long? = 1L
 )

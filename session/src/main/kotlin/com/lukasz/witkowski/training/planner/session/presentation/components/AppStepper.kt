@@ -28,6 +28,7 @@ import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
+import com.lukasz.witkowski.training.planner.shared.utils.formatUpToTwoDecimals
 
 /**
  * Numeric stepper component for adjusting exercise repetitions and loads.
@@ -41,13 +42,7 @@ fun AppStepper(
     minValue: Double = 0.0,
     maxValue: Double = Double.MAX_VALUE,
     label: String? = null,
-    formatValue: (Double) -> String = {
-        if (it % 1.0 == 0.0) {
-            it.toInt().toString()
-        } else {
-            "%.1f".format(it)
-        }
-    },
+    formatValue: (Double) -> String = { it.formatUpToTwoDecimals() },
     enabled: Boolean = true
 ) {
     AppCard(
@@ -58,7 +53,6 @@ fun AppStepper(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = Dimens.spaceMd, vertical = Dimens.spaceSm),
-            horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             val canDecrement = enabled && value > minValue
@@ -71,12 +65,14 @@ fun AppStepper(
                 onClick = {
                     val newValue = (value - step).coerceAtLeast(minValue)
                     onValueChange(newValue)
-                }
+                },
+                modifier = Modifier.weight(0.25f)
             )
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.weight(1f)
             ) {
                 Text(
                     text = formatValue(value),
@@ -99,7 +95,8 @@ fun AppStepper(
                 onClick = {
                     val newValue = (value + step).coerceAtMost(maxValue)
                     onValueChange(newValue)
-                }
+                },
+                modifier = Modifier.weight(0.25f)
             )
         }
     }
@@ -151,29 +148,31 @@ private fun StepperActionButton(
         MaterialTheme.colorScheme.outline
     }
 
-    Box(
-        modifier = modifier
-            .size(Dimens.stepperButtonSize)
-            .clip(CircleShape)
-            .background(backgroundColor)
-            .border(
-                width = Dimens.thinBorder,
-                color = MaterialTheme.colorScheme.outlineVariant,
-                shape = CircleShape
+    Box(modifier, contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .size(Dimens.stepperButtonSize)
+                .clip(CircleShape)
+                .background(backgroundColor)
+                .border(
+                    width = Dimens.thinBorder,
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    shape = CircleShape
+                )
+                .clickable(
+                    enabled = enabled,
+                    role = Role.Button,
+                    onClick = onClick
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+                tint = iconColor,
+                modifier = Modifier.size(Dimens.iconSize24)
             )
-            .clickable(
-                enabled = enabled,
-                role = Role.Button,
-                onClick = onClick
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = contentDescription,
-            tint = iconColor,
-            modifier = Modifier.size(Dimens.iconSize24)
-        )
+        }
     }
 }
 
