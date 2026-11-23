@@ -1,6 +1,5 @@
 package com.lukasz.witkowski.training.planner.training.presentation.list
 
-import android.text.format.DateUtils
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,6 +32,9 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategor
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.LocalTimeProvider
+import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
+import com.lukasz.witkowski.training.planner.shared.time.formatRelativeDate
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
@@ -241,14 +244,7 @@ fun TrainingPlanDateInfo(
     modifier: Modifier = Modifier
 ) {
     val color = MaterialTheme.colorScheme.onSurfaceVariant
-    val timeMillis = instant.toEpochMilliseconds()
-    val nowMillis = System.currentTimeMillis()
-    val formattedTime = DateUtils.getRelativeTimeSpanString(
-        timeMillis,
-        nowMillis,
-        DateUtils.MINUTE_IN_MILLIS,
-        DateUtils.FORMAT_ABBREV_RELATIVE
-    )
+    val formattedTime = instant.formatRelativeDate()
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -321,16 +317,20 @@ private fun TrainingsScreenEmptyListPreview() {
 @Composable
 private fun TrainingsScreenSuccessPreview() {
     TrainingPlannerTheme {
-        TrainingsScreenContent(
-            uiState = TrainingsListUiState.Success(
-                filteringState = FilteringState("Some query", categories = emptyList()),
-                plans = PREVIEW_TRAINING_PLANS_OVERVIEWS
-            ),
-            onTrainingPlanClicked = {},
-            onSearchQueryChanged = {},
-            toggleCategory = {},
-            modifier = Modifier.fillMaxSize()
-        )
+        CompositionLocalProvider(
+            LocalTimeProvider provides TestTimeProvider(Instant.parse("2026-09-10T12:00:00Z"))
+        ) {
+            TrainingsScreenContent(
+                uiState = TrainingsListUiState.Success(
+                    filteringState = FilteringState("Some query", categories = emptyList()),
+                    plans = PREVIEW_TRAINING_PLANS_OVERVIEWS
+                ),
+                onTrainingPlanClicked = {},
+                onSearchQueryChanged = {},
+                toggleCategory = {},
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 

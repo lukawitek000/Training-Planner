@@ -39,6 +39,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
+import com.lukasz.witkowski.training.planner.exercise.presentation.editor.buildStringOverview
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseOverview
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recommendation
@@ -54,6 +55,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.button.AppSecondaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppTertiaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
 import com.lukasz.witkowski.training.planner.shared.utils.kg
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -255,17 +257,19 @@ private fun ConflictVersionColumn(
             details.recommendations.forEach { rec ->
                 val p = rec.parameters
                 if (p.areValid()) {
-                    val holdText = if (p.time != null &&
-                        p.time.inWholeSeconds > 0
-                    ) {
-                        " · ${p.time.inWholeSeconds}s hold"
-                    } else {
-                        ""
-                    }
+                    val overview = buildStringOverview(
+                        sets = p.sets!!,
+                        reps = p.reps!!,
+                        restTime = p.restTime!!,
+                        weight = p.weight,
+                        time = p.time?.takeIf { it > Duration.ZERO }
+                    )
                     Text(
-                        text = "${rec.level.name.take(
-                            3
-                        )}: ${p.sets}x${p.reps}$holdText · ${p.restTime?.inWholeSeconds ?: 0}s",
+                        text = stringResource(
+                            R.string.conflict_recommendation_row,
+                            rec.level.name.take(3),
+                            overview
+                        ),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )

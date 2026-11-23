@@ -16,13 +16,13 @@ import com.lukasz.witkowski.training.planner.session.domain.session.models.Sessi
 import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import java.util.Date
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -96,7 +96,7 @@ class DbStatisticsRepositoryTest {
                 id = statisticsId,
                 trainingPlanId = trainingPlanId,
                 totalTime = 120.seconds,
-                date = Date(1_000_000L),
+                date = Instant.fromEpochMilliseconds(1_000_000L),
                 exercisesStatistics = listOf(exerciseStatistics),
                 note = "Strong session, felt good on bench press",
                 rpe = SessionRpe.VERY_HARD
@@ -110,6 +110,7 @@ class DbStatisticsRepositoryTest {
         assertEquals(trainingPlanId, retrieved.trainingPlanId)
         assertEquals("Strong session, felt good on bench press", retrieved.note)
         assertEquals(SessionRpe.VERY_HARD, retrieved.rpe)
+        assertEquals(Instant.fromEpochMilliseconds(1_000_000L), retrieved.date)
         assertEquals(1, retrieved.exercisesStatistics.size)
 
         val retrievedExercise = retrieved.exercisesStatistics.first()
@@ -144,7 +145,7 @@ class DbStatisticsRepositoryTest {
                 id = TrainingStatisticsId.create(),
                 trainingPlanId = targetPlanId,
                 totalTime = 30.minutes,
-                date = Date(1_000L),
+                date = Instant.fromEpochMilliseconds(1_000L),
                 exercisesStatistics = listOf(
                     ExerciseStatistics(
                         id = ExerciseStatisticsId.create(),
@@ -162,7 +163,7 @@ class DbStatisticsRepositoryTest {
                 id = TrainingStatisticsId.create(),
                 trainingPlanId = targetPlanId,
                 totalTime = 54.minutes,
-                date = Date(5_000L),
+                date = Instant.fromEpochMilliseconds(5_000L),
                 exercisesStatistics = listOf(
                     ExerciseStatistics(
                         id = ExerciseStatisticsId.create(),
@@ -215,7 +216,7 @@ class DbStatisticsRepositoryTest {
                 id = TrainingStatisticsId.create(),
                 trainingPlanId = otherPlanId,
                 totalTime = 20.minutes,
-                date = Date(9_000L),
+                date = Instant.fromEpochMilliseconds(9_000L),
                 exercisesStatistics = emptyList()
             )
 
@@ -265,7 +266,7 @@ class DbStatisticsRepositoryTest {
                 id = statsId,
                 trainingPlanId = planId,
                 totalTime = 10.minutes,
-                date = Date(2_000L),
+                date = Instant.fromEpochMilliseconds(2_000L),
                 exercisesStatistics = listOf(
                     ExerciseStatistics(
                         id = ExerciseStatisticsId.create(),

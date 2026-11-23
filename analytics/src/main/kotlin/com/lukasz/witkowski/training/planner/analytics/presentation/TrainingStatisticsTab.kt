@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,15 +29,17 @@ import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStati
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.LocalTimeProvider
+import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppEmptyState
 import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import java.util.Date
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -153,7 +156,7 @@ internal val PREVIEW_TRAINING_STATISTICS_OVERVIEWS = listOf(
     TrainingStatisticsOverview(
         id = TrainingStatisticsId.create(),
         trainingPlanId = TrainingPlanId.create(),
-        date = Date(),
+        date = Instant.parse("2026-09-10T12:00:00Z"),
         totalTime = 45.minutes,
         totalVolume = Weight.ZERO,
         completedSetsCount = 10,
@@ -165,7 +168,7 @@ internal val PREVIEW_TRAINING_STATISTICS_OVERVIEWS = listOf(
     TrainingStatisticsOverview(
         id = TrainingStatisticsId.create(),
         trainingPlanId = TrainingPlanId.create(),
-        date = Date(System.currentTimeMillis() - (86400000L * 2)),
+        date = Instant.parse("2026-09-08T12:00:00Z"),
         totalTime = 52.minutes,
         totalVolume = 4100.kg,
         completedSetsCount = 12,
@@ -284,7 +287,7 @@ internal val PREVIEW_TRAINING_STATISTICS = TrainingStatistics(
     id = TrainingStatisticsId.create(),
     trainingPlanId = TrainingPlanId.create(),
     totalTime = 45.minutes,
-    date = Date(),
+    date = Instant.parse("2026-09-10T12:00:00Z"),
     exercisesStatistics = PREVIEW_EXERCISE_STATISTICS,
     note = "Great chest & triceps workout. Pushed hard on bench press.",
     rpe = SessionRpe.HARD
@@ -296,14 +299,18 @@ private val PREVIEW_DETAILS_SUCCESS_STATE = DetailsUiState.Success(PREVIEW_TRAIN
 @Composable
 private fun TrainingStatisticsTabPreview() {
     TrainingPlannerTheme {
-        TrainingStatisticsTabContent(
-            overviews = PREVIEW_TRAINING_STATISTICS_OVERVIEWS.asPreviewPagerFlow()
-                .collectAsLazyPagingItems(),
-            detailsUiState = DetailsUiState.NotSelected,
-            onSessionClicked = {},
-            onDetailsDismiss = {},
-            modifier = Modifier.fillMaxSize()
-        )
+        CompositionLocalProvider(
+            LocalTimeProvider provides TestTimeProvider(Instant.parse("2026-09-10T12:00:00Z"))
+        ) {
+            TrainingStatisticsTabContent(
+                overviews = PREVIEW_TRAINING_STATISTICS_OVERVIEWS.asPreviewPagerFlow()
+                    .collectAsLazyPagingItems(),
+                detailsUiState = DetailsUiState.NotSelected,
+                onSessionClicked = {},
+                onDetailsDismiss = {},
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 
@@ -311,14 +318,18 @@ private fun TrainingStatisticsTabPreview() {
 @Composable
 private fun TrainingStatisticsTabDetailsPreview() {
     TrainingPlannerTheme {
-        TrainingStatisticsTabContent(
-            overviews = PREVIEW_TRAINING_STATISTICS_OVERVIEWS.asPreviewPagerFlow()
-                .collectAsLazyPagingItems(),
-            detailsUiState = PREVIEW_DETAILS_SUCCESS_STATE,
-            onSessionClicked = {},
-            onDetailsDismiss = {},
-            modifier = Modifier.fillMaxSize()
-        )
+        CompositionLocalProvider(
+            LocalTimeProvider provides TestTimeProvider(Instant.parse("2026-09-10T12:00:00Z"))
+        ) {
+            TrainingStatisticsTabContent(
+                overviews = PREVIEW_TRAINING_STATISTICS_OVERVIEWS.asPreviewPagerFlow()
+                    .collectAsLazyPagingItems(),
+                detailsUiState = PREVIEW_DETAILS_SUCCESS_STATE,
+                onSessionClicked = {},
+                onDetailsDismiss = {},
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 

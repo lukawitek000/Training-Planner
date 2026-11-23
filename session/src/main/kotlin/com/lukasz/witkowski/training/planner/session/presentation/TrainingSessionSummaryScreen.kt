@@ -40,7 +40,9 @@ import com.lukasz.witkowski.training.planner.session.presentation.components.App
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.formatToString
+import com.lukasz.witkowski.training.planner.shared.time.DateTimeStyle
+import com.lukasz.witkowski.training.planner.shared.time.formatDateTime
+import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.bento.AppBentoTile
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
@@ -53,7 +55,6 @@ import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import java.util.Date
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
@@ -113,7 +114,7 @@ fun TrainingSessionSummaryScreen(
 @Composable
 private fun CelebrationBanner(
     trainingPlanResult: ResultHandler<TrainingPlan>,
-    date: Date,
+    date: Instant,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -143,14 +144,15 @@ private fun CelebrationBanner(
             color = MaterialTheme.colorScheme.onSurface
         )
 
+        val formattedDate = date.formatDateTime(DateTimeStyle.FULL_DATE_TIME)
         val text = if (trainingPlanResult is ResultHandler.Success) {
             stringResource(
                 R.string.session_summary_plan_date_format,
                 trainingPlanResult.value.title,
-                date.formatToString()
+                formattedDate
             )
         } else {
-            date.formatToString()
+            formattedDate
         }
         Text(
             text = text,
@@ -173,7 +175,7 @@ private fun BentoMetricsGrid(statistics: TrainingStatistics, modifier: Modifier 
         ) {
             AppBentoTile(
                 label = stringResource(R.string.session_bento_duration_label),
-                value = statistics.totalTime.toString(),
+                value = statistics.totalTime.formatDuration(),
                 subtitle = stringResource(R.string.session_bento_duration_sub),
                 modifier = Modifier.weight(1f)
             )
@@ -216,7 +218,7 @@ private fun TrainingSessionSummaryScreenPreview() {
         id = TrainingStatisticsId.create(),
         trainingPlanId = TrainingPlanId.create(),
         totalTime = 2700000L.milliseconds,
-        date = Date(),
+        date = Instant.parse("2026-09-10T12:00:00Z"),
         exercisesStatistics = listOf(
             ExerciseStatistics(
                 id = ExerciseStatisticsId.create(),

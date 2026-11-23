@@ -30,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -41,11 +40,14 @@ import com.lukasz.witkowski.training.planner.analytics.R
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.DateTimeStyle
+import com.lukasz.witkowski.training.planner.shared.time.formatDateTime
+import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.utils.formatVolumeText
-import java.util.Date
 import kotlin.time.Duration
+import kotlin.time.Instant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -122,13 +124,12 @@ private fun TrainingStatisticsDetailsContent(
 
 @Composable
 private fun SheetHeader(
-    date: Date,
+    date: Instant,
     totalTime: Duration,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val dateLabel = remember(date) { date.toFormattedDateLabel(context) }
+    val formattedDate = date.formatDateTime(DateTimeStyle.FULL_DATE_TIME)
     Column(modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -154,10 +155,10 @@ private fun SheetHeader(
         ) {
             Icon(imageVector = Icons.Default.AccessTime, contentDescription = null)
             Text(
-                text = dateLabel.primary
+                text = formattedDate
             )
             Text(
-                text = stringResource(R.string.total_time_summary, totalTime.toString())
+                text = stringResource(R.string.total_time_summary, totalTime.formatDuration())
             )
         }
     }

@@ -39,7 +39,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -56,6 +55,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -63,11 +63,14 @@ import androidx.compose.ui.text.style.TextAlign
 import com.lukasz.witkowski.training.planner.shared.R
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.badges.AppMetadataPill
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
+import com.lukasz.witkowski.training.planner.shared.ui.button.AppTertiaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.segmentedControl.AppSegmentedControl
 import com.lukasz.witkowski.training.planner.shared.ui.segmentedControl.AppSegmentedControlItem
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -88,7 +91,8 @@ private val DEFAULT_MINUTES_PRESETS = listOf(1, 2, 3, 4, 5, 10)
 private const val SECONDS_PER_MINUTE = 60
 
 /**
- * Stitch Universal Time Picker modal bottom sheet (`2b3ca74373e24dcfa028180f175696b0`) accepting [Time].
+ * Stitch Universal Time Picker modal bottom sheet (`2b3ca74373e24dcfa028180f175696b0`)
+ * accepting [Duration].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -416,24 +420,19 @@ fun AppTimePickerSheetContent(
             onClick = { onSecondsConfirmed(selectedSeconds) },
             leadingIcon = Icons.Default.CheckCircle,
             enabled = allowNoTime || selectedSeconds != null,
-            modifier = Modifier.testTag("TimePickerConfirmButton")
+            modifier = Modifier.testTag("TimePickerConfirmButton").fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(Dimens.spaceXs))
 
-        TextButton(
+        AppTertiaryButton(
+            text = stringResource(R.string.cancel),
             onClick = onDismissRequest,
             modifier =
             Modifier
                 .fillMaxWidth()
                 .testTag("TimePickerCancelButton")
-        ) {
-            Text(
-                text = stringResource(R.string.cancel),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        )
     }
 }
 
@@ -656,17 +655,21 @@ private fun CustomTimeWheelSelector(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXl),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    val configuration = LocalConfiguration.current
+                    val locale = remember(configuration) {
+                        configuration.locales[0] ?: Locale.getDefault()
+                    }
                     WheelColumnPicker(
                         items = minutesOptions,
                         selectedItem = minutes,
-                        formatItem = { it.toString() },
+                        formatItem = { String.format(locale, "%d", it) },
                         onItemSelected = onMinutesChanged,
                         modifier = Modifier.weight(1f)
                     )
                     WheelColumnPicker(
                         items = secondsOptions,
                         selectedItem = seconds,
-                        formatItem = { "%02d".format(it) },
+                        formatItem = { String.format(locale, "%02d", it) },
                         onItemSelected = onSecondsChanged,
                         modifier = Modifier.weight(1f)
                     )
@@ -776,25 +779,8 @@ private fun WheelColumnPicker(
 }
 
 @Composable
-private fun formatDurationLabel(seconds: Int?): String {
-    if (seconds == null) return ""
-    val mins = seconds / SECONDS_PER_MINUTE
-    val remSecs = seconds % SECONDS_PER_MINUTE
-    return when {
-        mins > 0 && remSecs > 0 ->
-            "$mins ${
-                stringResource(
-                    R.string.minutes_shortcut
-                )
-            } $remSecs ${stringResource(R.string.seconds_shortcut)}"
-
-        mins > 0 && seconds !in DEFAULT_SECONDS_PRESETS ->
-            stringResource(R.string.time_picker_minutes_preset, mins)
-
-        else ->
-            stringResource(R.string.time_picker_seconds_preset, seconds)
-    }
-}
+private fun formatDurationLabel(seconds: Int?): String =
+    seconds?.seconds?.formatDuration().orEmpty()
 
 @AppPreview
 @Composable

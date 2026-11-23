@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.lukasz.witkowski.training.planner.R
+import com.lukasz.witkowski.training.planner.exercise.R as ExerciseR
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsScreenContent
@@ -94,7 +95,7 @@ private fun TrainingExerciseParameters(
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceMd)
     ) {
         Text(
-            text = stringResource(R.string.recommended_parameters_label),
+            text = stringResource(ExerciseR.string.recommended_parameters_label),
             style = MaterialTheme.typography.titleLarge
         )
         details.recommendations.forEach {
@@ -107,7 +108,11 @@ private fun TrainingExerciseParameters(
                 },
                 border = BorderStroke(
                     width = if (isSelected) Dimens.shadowSm else Dimens.thinBorder,
-                    color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant
+                    color = if (isSelected) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.outlineVariant
+                    }
                 ),
             ) {
                 RecommendedParametersCardHeader(
@@ -141,7 +146,6 @@ private fun TrainingExerciseParameters(
             enabled = parameters.areValid()
         )
     }
-
 }
 
 @AppPreview

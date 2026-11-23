@@ -5,22 +5,23 @@ import com.lukasz.witkowski.training.planner.session.domain.SessionCompletedList
 import com.lukasz.witkowski.training.planner.session.domain.session.StraightSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.CompositeStatisticsRecorder
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
-import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SystemTimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
 import com.lukasz.witkowski.training.planner.session.presentation.TrainingSessionViewModel
 import com.lukasz.witkowski.training.planner.shared.di.CoroutineDispatcherQualifiers
 import com.lukasz.witkowski.training.planner.shared.di.dispatchersModule
+import com.lukasz.witkowski.training.planner.shared.di.timeModule
+import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val sessionModule =
     module {
-        includes(dispatchersModule)
+        includes(dispatchersModule, timeModule)
 
         single<SessionStatisticsRecorder> { CompositeStatisticsRecorder() }
         single {
-            val timeProvider = SystemTimeProvider()
+            val timeProvider = get<TimeProvider>()
             val backgroundDispatcher =
                 get<kotlinx.coroutines.CoroutineDispatcher>(
                     named(CoroutineDispatcherQualifiers.DEFAULT)

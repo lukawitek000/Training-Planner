@@ -81,7 +81,7 @@ fun RestTimeScreen(
         )
         // TODO: Play 3-2-1 audio beeps and trigger vibration haptic pulses as rest interval finishes
         AppCircularTimer(
-            timeFormatted = formatRemainingTime(remainingTime),
+            timeFormatted = rememberFormattedRemainingTime(remainingTime),
             progress = progress,
             label = stringResource(R.string.session_rest_remaining)
         )

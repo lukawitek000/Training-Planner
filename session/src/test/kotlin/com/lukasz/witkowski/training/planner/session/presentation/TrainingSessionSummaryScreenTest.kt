@@ -16,10 +16,10 @@ import com.lukasz.witkowski.training.planner.session.presentation.models.Trainin
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.shared.utils.kg
-import java.util.Date
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -41,7 +41,7 @@ class TrainingSessionSummaryScreenTest {
             TrainingStatistics(
                 trainingPlanId = plan.id,
                 totalTime = 2700.seconds,
-                date = Date(0L),
+                date = Instant.fromEpochMilliseconds(0L),
                 exercisesStatistics =
                 listOf(
                     ExerciseStatistics(
@@ -102,7 +102,7 @@ class TrainingSessionSummaryScreenTest {
             TrainingStatistics(
                 trainingPlanId = plan.id,
                 totalTime = 1800.seconds,
-                date = Date(0L),
+                date = Instant.fromEpochMilliseconds(0L),
                 exercisesStatistics = emptyList()
             )
 

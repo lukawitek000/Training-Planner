@@ -55,6 +55,7 @@ import com.lukasz.witkowski.training.planner.shared.theme.ErrorContainer
 import com.lukasz.witkowski.training.planner.shared.theme.Success
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.theme.Warning
+import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.utils.Weight
@@ -166,7 +167,7 @@ private fun ExerciseCardHeader(
                 includeLabel = false
             )
             Text(
-                text = totalTime.toString()
+                text = totalTime.formatDuration()
             )
         }
     }
@@ -263,8 +264,8 @@ private fun ExerciseSetStatistics(
                             val targetHold = plannedConfig.holdTime
                             ParameterLayout(
                                 label = stringResource(R.string.parameter_hold_time_label),
-                                value = actualHold.toString(),
-                                targetValue = targetHold?.toString(),
+                                value = actualHold.formatDuration(),
+                                targetValue = targetHold?.formatDuration(),
                                 parameterColors = ParameterColors.forTargetMinimum(
                                     completed = statistics.completed,
                                     actual = actualHold.inWholeMilliseconds.toDouble(),
@@ -276,8 +277,8 @@ private fun ExerciseSetStatistics(
                             val actualRest = statistics.restTime ?: Duration.ZERO
                             ParameterLayout(
                                 label = stringResource(R.string.parameter_rest_taken_label),
-                                value = actualRest.toString(),
-                                targetValue = plannedRest?.toString(),
+                                value = actualRest.formatDuration(),
+                                targetValue = plannedRest?.formatDuration(),
                                 parameterColors = ParameterColors.forRestDuration(
                                     completed = statistics.completed,
                                     actual = actualRest,
@@ -356,13 +357,13 @@ private fun PlannedConfiguration(
     val chips = buildList {
         add(stringResource(R.string.planned_sets_format, plannedSets))
         if (plannedHold != null && plannedHold > Duration.ZERO) {
-            add(stringResource(R.string.planned_hold_format, plannedHold.toString()))
+            add(stringResource(R.string.planned_hold_format, plannedHold.formatDuration()))
         } else {
             add(stringResource(R.string.planned_reps_format, plannedConfig.reps))
         }
         add(plannedConfig.weight.formatVolumeText())
         if (plannedRestTime > Duration.ZERO) {
-            add(stringResource(R.string.planned_rest_format, plannedRestTime.toString()))
+            add(stringResource(R.string.planned_rest_format, plannedRestTime.formatDuration()))
         }
     }
 

@@ -2,6 +2,8 @@ package com.lukasz.witkowski.training.planner.session.presentation
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 class TimeFormattingTest {
@@ -40,5 +42,11 @@ class TimeFormattingTest {
     fun `negative time is correctly formatted with only minutes`() {
         val result = formatRemainingTime((-60).seconds)
         assertEquals("01:00", result)
+    }
+
+    @Test
+    fun `time over one hour is formatted with hours minutes and seconds`() {
+        val result = formatRemainingTime(1.hours + 5.minutes + 9.seconds)
+        assertEquals("1:05:09", result)
     }
 }

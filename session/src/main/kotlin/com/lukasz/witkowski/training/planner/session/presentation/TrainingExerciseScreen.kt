@@ -29,15 +29,19 @@ import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_IMAGES
 import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.image.presentation.ImageGallery
@@ -262,7 +266,7 @@ private fun IsometricHoldControls(
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.small)
                 .background(holdTimeState.backgroundColor)
@@ -323,31 +327,38 @@ private fun TimerClock(remainingTime: Duration, timerColor: Color, modifier: Mod
     val style = MaterialTheme.typography.headlineLarge.copy(
         fontWeight = FontWeight.Bold
     )
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = stringResource(R.string.session_timer_negative),
-            textAlign = TextAlign.End,
-            style = style,
-            color = timerColor,
-            modifier = Modifier.alpha(if (remainingTime.isNegative()) 1f else 0f)
-        )
-        Text(
-            text = formatRemainingTime(remainingTime),
-            style = style,
-            color = timerColor,
-            modifier = Modifier,
-            textAlign = TextAlign.Center
-        )
-        Text(
-            text = stringResource(R.string.session_timer_negative),
-            style = style,
-            textAlign = TextAlign.Start,
-            modifier = Modifier.alpha(0f)
-        )
+    val showNegativeSign =
+        remainingTime.isNegative() && remainingTime.absoluteValue.inWholeSeconds > 0L
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
+        Row(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.session_timer_negative),
+                textAlign = TextAlign.End,
+                style = style,
+                color = timerColor,
+                modifier = Modifier
+                    .alpha(if (showNegativeSign) 1f else 0f)
+                    .then(if (showNegativeSign) Modifier else Modifier.clearAndSetSemantics {})
+            )
+            Text(
+                text = rememberFormattedRemainingTime(remainingTime),
+                style = style,
+                color = timerColor,
+                textAlign = TextAlign.Center
+            )
+            Text(
+                text = stringResource(R.string.session_timer_negative),
+                style = style,
+                textAlign = TextAlign.Start,
+                modifier = Modifier
+                    .alpha(0f)
+                    .clearAndSetSemantics {}
+            )
+        }
     }
 }
 

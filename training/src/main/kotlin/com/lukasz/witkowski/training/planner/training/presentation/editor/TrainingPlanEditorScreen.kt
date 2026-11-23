@@ -56,6 +56,7 @@ import androidx.compose.ui.text.input.ImeAction
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.buildStringOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
@@ -456,7 +457,7 @@ private fun TrainingPlanRestTime(
     restTime: Duration,
     modifier: Modifier = Modifier
 ) {
-    val formattedRestTime = restTime.toString()
+    val formattedRestTime = restTime.formatDuration()
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceXs)

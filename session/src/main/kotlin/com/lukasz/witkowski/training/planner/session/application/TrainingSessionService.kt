@@ -10,9 +10,9 @@ import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSess
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
-import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SystemTimeProvider
-import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.TimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
+import com.lukasz.witkowski.training.planner.shared.time.SystemTimeProvider
+import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
 import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlin.time.Duration

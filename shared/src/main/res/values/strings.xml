@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="minutes_shortcut">min</string>
-    <string name="seconds_shortcut">s</string>
     <string name="search_clear_query">Clear search query</string>
     <string name="cancel">Cancel</string>
     <string name="delete">Delete</string>
@@ -21,4 +19,22 @@
     <string name="unit_kg_short">kg</string>
     <string name="unit_lbs_short">lbs</string>
     <string name="bodyweight">Bodyweight</string>
+
+    <!-- Relative Date Labels -->
+    <string name="date_today">Today</string>
+    <string name="date_yesterday">Yesterday</string>
+    <string name="date_last_week">Last week</string>
+    <string name="date_one_month_ago">1 month ago</string>
+    <string name="date_few_months_ago">Few months ago</string>
+    <string name="date_last_year">Last year</string>
+    <string name="date_few_years_ago">Few years ago</string>
+
+    <plurals name="date_days_ago">
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
+    </plurals>
+    <plurals name="date_weeks_ago">
+        <item quantity="one">%d week ago</item>
+        <item quantity="other">%d weeks ago</item>
+    </plurals>
 </resources>

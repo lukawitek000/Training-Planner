@@ -1,6 +1,8 @@
 package com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder
 
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatistics
+import com.lukasz.witkowski.training.planner.shared.time.SystemTimeProvider
+import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
 import java.util.concurrent.atomic.AtomicReference
 
 /**
@@ -20,12 +22,12 @@ class BasicStatisticsRecorder(private val timeProvider: TimeProvider = SystemTim
 
     override fun onEvent(event: SessionEvent) {
         val currentElapsed = timeProvider.elapsedTime()
-        val currentDate = timeProvider.currentDate()
+        val currentInstant = timeProvider.currentInstant()
         state.updateAndGet { current ->
             if (event is SessionEvent.SessionStarted) {
-                SessionMetricsAccumulator.start(event, currentElapsed, currentDate)
+                SessionMetricsAccumulator.start(event, currentElapsed, currentInstant)
             } else {
-                current?.reduce(event, currentElapsed, currentDate)
+                current?.reduce(event, currentElapsed, currentInstant)
             }
         }
     }

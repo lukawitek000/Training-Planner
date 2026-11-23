@@ -3,14 +3,14 @@ package com.lukasz.witkowski.training.planner.session.domain.models
 import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import com.lukasz.witkowski.training.planner.shared.utils.calculateCompletenessPercentage
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
-import java.util.Date
 import kotlin.time.Duration
+import kotlin.time.Instant
 
 data class TrainingStatistics(
     val id: TrainingStatisticsId = TrainingStatisticsId.create(),
     val trainingPlanId: TrainingPlanId,
     val totalTime: Duration,
-    val date: Date,
+    val date: Instant,
     val exercisesStatistics: List<ExerciseStatistics>,
     val note: String? = null,
     val rpe: SessionRpe? = null

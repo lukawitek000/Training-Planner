@@ -17,9 +17,9 @@ import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSess
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSetsPolicy
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionEvent
 import com.lukasz.witkowski.training.planner.session.domain.session.statisticsrecorder.SessionStatisticsRecorder
-import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
+import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
@@ -38,7 +38,7 @@ import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class TrainingSessionServiceTest : TrainingSessionTest() {
-    private val timeProvider: FixedTimeProvider = FixedTimeProvider()
+    private val timeProvider: TestTimeProvider = TestTimeProvider()
     private val trainingSetsPolicy: TrainingSetsPolicy = StraightSetsPolicy()
     private val recordedEvents = mutableListOf<SessionEvent>()
     private val completedStatistics = mutableListOf<TrainingStatistics>()

@@ -4,8 +4,11 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import java.io.File
-import java.util.Date
 import java.util.Properties
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.toJavaInstant
 
 object JwtConfig {
     const val ISSUER = "com.lukasz.witkowski.training.planner"
@@ -14,8 +17,10 @@ object JwtConfig {
 
     private val secret: String by lazy { resolveSecret() }
 
-    val ACCESS_TOKEN_EXPIRATION_MS = 24 * 60 * 60 * 1000L // 24 hours
-    val REFRESH_TOKEN_EXPIRATION_MS = 30L * 24 * 60 * 60 * 1000L // 30 days
+    val ACCESS_TOKEN_EXPIRATION = 24.hours
+    val REFRESH_TOKEN_EXPIRATION = 30.days
+    val ACCESS_TOKEN_EXPIRATION_MS = ACCESS_TOKEN_EXPIRATION.inWholeMilliseconds
+    val REFRESH_TOKEN_EXPIRATION_MS = REFRESH_TOKEN_EXPIRATION.inWholeMilliseconds
 
     private val algorithm by lazy { Algorithm.HMAC256(secret) }
 
@@ -46,22 +51,27 @@ object JwtConfig {
         return "training_planner_secret_jwt_key_for_development"
     }
 
-    fun generateAccessToken(userId: String, email: String, username: String): String = JWT
+    fun generateAccessToken(
+        userId: String,
+        email: String,
+        username: String,
+        clock: Clock = Clock.System
+    ): String = JWT
         .create()
         .withSubject(userId)
         .withIssuer(ISSUER)
         .withAudience(AUDIENCE)
         .withClaim("email", email)
         .withClaim("username", username)
-        .withExpiresAt(Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_MS))
+        .withExpiresAt((clock.now() + ACCESS_TOKEN_EXPIRATION).toJavaInstant())
         .sign(algorithm)
 
-    fun generateRefreshToken(userId: String): String = JWT
+    fun generateRefreshToken(userId: String, clock: Clock = Clock.System): String = JWT
         .create()
         .withSubject(userId)
         .withIssuer(ISSUER)
         .withAudience(AUDIENCE)
         .withClaim("type", "refresh")
-        .withExpiresAt(Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION_MS))
+        .withExpiresAt((clock.now() + REFRESH_TOKEN_EXPIRATION).toJavaInstant())
         .sign(algorithm)
 }

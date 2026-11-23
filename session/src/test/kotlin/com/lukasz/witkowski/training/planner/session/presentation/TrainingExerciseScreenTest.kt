@@ -1,15 +1,18 @@
 package com.lukasz.witkowski.training.planner.session.presentation
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasAnySibling
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.unit.LayoutDirection
 import com.lukasz.witkowski.training.planner.session.createSessionExercise
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.session.queue.ExerciseQueueProgress
@@ -23,6 +26,7 @@ import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.shared.utils.lbs
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import org.junit.Rule
 import org.junit.Test
@@ -218,6 +222,85 @@ class TrainingExerciseScreenTest {
 
         composeTestRule.onNodeWithText("132.28").assertIsDisplayed()
         composeTestRule.onNodeWithText("lbs").assertIsDisplayed()
+    }
+
+    @Test
+    fun timerClockShowsNegativeSignForWholeSecondOverflowInRtlAndHidesForSubSecond() {
+        val exercise = createSessionExercise(name = "Plank", holdTime = 45.seconds)
+        val progress = ExerciseQueueProgress(
+            remainingExerciseSets = 0,
+            currentExerciseTotalSets = 1,
+            totalExercises = 1,
+            remainingExercises = 1,
+            remainingSetsInWorkout = 1,
+            nextSetQueueProgress = null
+        )
+
+        val overflowUiState = TrainingSessionUiState.Exercise(
+            domainState = TrainingSessionState.ExerciseState(
+                sessionExercise = exercise,
+                timerState = TimerState.OverflowRunning((-20).seconds),
+                progress = progress
+            ),
+            imagesReferences = ResultHandler.Success(emptyList())
+        )
+
+        composeTestRule.setContent {
+            TrainingPlannerTheme {
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                    TrainingExerciseScreen(
+                        uiState = overflowUiState,
+                        onSessionIntent = {},
+                        onEndClicked = {}
+                    )
+                }
+            }
+        }
+
+        composeTestRule.onNodeWithText("00:20").assertIsDisplayed()
+        // Only the single visible minus sign node should exist in semantics (mirror spacer cleared)
+        val minusNodes = composeTestRule.onAllNodesWithText("\u2212\u00A0").fetchSemanticsNodes()
+        assertEquals(1, minusNodes.size)
+        val timeBounds = composeTestRule.onNodeWithText("00:20").fetchSemanticsNode().boundsInRoot
+        assertTrue(minusNodes.single().boundsInRoot.right <= timeBounds.left + 1f)
+    }
+
+    @Test
+    fun timerClockSuppressesNegativeSignForSubSecondOverflow() {
+        val exercise = createSessionExercise(name = "Plank", holdTime = 45.seconds)
+        val progress = ExerciseQueueProgress(
+            remainingExerciseSets = 0,
+            currentExerciseTotalSets = 1,
+            totalExercises = 1,
+            remainingExercises = 1,
+            remainingSetsInWorkout = 1,
+            nextSetQueueProgress = null
+        )
+
+        val subSecondUiState = TrainingSessionUiState.Exercise(
+            domainState = TrainingSessionState.ExerciseState(
+                sessionExercise = exercise,
+                timerState = TimerState.OverflowRunning((-500).milliseconds),
+                progress = progress
+            ),
+            imagesReferences = ResultHandler.Success(emptyList())
+        )
+
+        composeTestRule.setContent {
+            TrainingPlannerTheme {
+                TrainingExerciseScreen(
+                    uiState = subSecondUiState,
+                    onSessionIntent = {},
+                    onEndClicked = {}
+                )
+            }
+        }
+
+        composeTestRule.onNodeWithText("00:00").assertIsDisplayed()
+        assertEquals(
+            0,
+            composeTestRule.onAllNodesWithText("\u2212\u00A0").fetchSemanticsNodes().size
+        )
     }
 
     @Test

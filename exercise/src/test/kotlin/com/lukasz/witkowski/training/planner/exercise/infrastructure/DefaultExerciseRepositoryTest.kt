@@ -14,6 +14,7 @@ import com.lukasz.witkowski.training.planner.exercise.infrastructure.local.RoomE
 import com.lukasz.witkowski.training.planner.image.ImageId
 import com.lukasz.witkowski.training.planner.shared.featureflags.DefaultFeatureFlagProvider
 import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
+import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -21,6 +22,8 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -40,6 +43,7 @@ class DefaultExerciseRepositoryTest {
     private lateinit var exerciseDao: ExerciseDao
     private lateinit var mutationDao: ExerciseMutationDao
     private lateinit var repository: DefaultExerciseRepository
+    private val timeProvider = TestTimeProvider(instant = Instant.parse("2026-11-20T10:00:00Z"))
     private val ioDispatcher = UnconfinedTestDispatcher()
 
     @Before
@@ -62,7 +66,8 @@ class DefaultExerciseRepositoryTest {
                 ioDispatcher = ioDispatcher,
                 featureFlagProvider = DefaultFeatureFlagProvider(
                     overrides = mapOf(FeatureFlag.ONLINE_SYNC to true)
-                )
+                ),
+                timeProvider = timeProvider
             )
     }
 
@@ -117,6 +122,7 @@ class DefaultExerciseRepositoryTest {
         )
         repository.saveExerciseLocally(syncedDetails)
         val id = syncedDetails.exercise.id
+        timeProvider.advanceBy(5.minutes)
 
         val deleted = repository.delete(id)
         assertTrue(deleted)
@@ -128,6 +134,7 @@ class DefaultExerciseRepositoryTest {
         val mutation = mutationDao.getMutationByExerciseIdOnce(id.toString())
         assertNotNull(mutation)
         assertEquals(DbExerciseMutation.TYPE_DELETE, mutation.type)
+        assertEquals(timeProvider.currentInstant().toEpochMilliseconds(), mutation.createdAt)
     }
 
     @Test
@@ -143,6 +150,7 @@ class DefaultExerciseRepositoryTest {
         val isSuccess = repository.insert(details)
         assertTrue(isSuccess)
 
+        timeProvider.advanceBy(2.minutes)
         val updatedDetails =
             details.copy(
                 exercise =
@@ -166,6 +174,7 @@ class DefaultExerciseRepositoryTest {
         assertNotNull(mutation)
         assertEquals(DbExerciseMutation.TYPE_CREATE, mutation.type)
         assertEquals("New name", mutation.name)
+        assertEquals(timeProvider.currentInstant().toEpochMilliseconds(), mutation.createdAt)
     }
 
     @Test
@@ -330,6 +339,7 @@ class DefaultExerciseRepositoryTest {
             assertEquals(30000L, mutation.beginnerTime)
             assertEquals(45000L, mutation.intermediateTime)
             assertEquals(60000L, mutation.advancedTime)
+            assertEquals(timeProvider.currentInstant().toEpochMilliseconds(), mutation.createdAt)
         }
 
     @Test

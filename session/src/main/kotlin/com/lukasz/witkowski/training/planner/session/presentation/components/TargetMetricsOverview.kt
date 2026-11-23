@@ -7,6 +7,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExercise
+import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.utils.formatWeightText
 
 @Composable
@@ -15,7 +16,7 @@ fun TargetMetricsOverview(sessionExercise: SessionExercise) {
         if (sessionExercise.currentConfig.isIsometric) {
             stringResource(
                 R.string.session_target_hold_format,
-                sessionExercise.snapshot.plannedConfig.holdTime!!.inWholeSeconds
+                sessionExercise.snapshot.plannedConfig.holdTime!!.formatDuration()
             )
         } else {
             stringResource(

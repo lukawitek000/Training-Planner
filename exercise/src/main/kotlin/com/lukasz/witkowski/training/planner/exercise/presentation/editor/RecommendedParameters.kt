@@ -55,6 +55,7 @@ import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.Success
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.theme.Warning
+import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.timepicker.AppTimePickerBottomSheet
 import com.lukasz.witkowski.training.planner.shared.utils.LocalWeightUnit
@@ -490,8 +491,8 @@ fun buildStringOverview(
             R.string.recommendation_overview_with_hold,
             sets,
             reps,
-            time.inWholeSeconds,
-            restTime.inWholeSeconds,
+            time.formatDuration(),
+            restTime.formatDuration(),
             weight.formatWeightText(weightUnit)
         )
     }
@@ -501,8 +502,8 @@ fun buildStringOverview(
             R.string.recommendation_with_hold_no_weight,
             sets,
             reps,
-            time.inWholeSeconds,
-            restTime.inWholeSeconds
+            time.formatDuration(),
+            restTime.formatDuration()
         )
     }
 
@@ -512,7 +513,7 @@ fun buildStringOverview(
             R.string.recommendation_overview,
             sets,
             reps,
-            restTime.inWholeSeconds,
+            restTime.formatDuration(),
             weightText
         )
     }
@@ -522,7 +523,7 @@ fun buildStringOverview(
             R.string.recommendation_no_weight,
             sets,
             reps,
-            restTime.inWholeSeconds
+            restTime.formatDuration()
         )
     }
 }
@@ -711,15 +712,13 @@ private fun RecommendedParametersExtendedSummary(
         )
         if (params.time != null) {
             ParameterOverview(
-                value = params.time.inWholeSeconds.toString(),
-                label = "${stringResource(R.string.hold)}:",
-                unit = stringResource(R.string.second_abbrv)
+                value = params.time.formatDuration(),
+                label = "${stringResource(R.string.hold)}:"
             )
         }
         ParameterOverview(
-            value = params.restTime?.inWholeSeconds?.toString(),
-            label = "${stringResource(R.string.rest_time)}:",
-            unit = stringResource(R.string.second_abbrv)
+            value = params.restTime?.formatDuration(),
+            label = "${stringResource(R.string.rest_time)}:"
         )
         ParameterOverview(
             value = params.weight?.toDouble(weightUnit)?.formatUpToTwoDecimals(),
