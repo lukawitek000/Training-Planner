@@ -20,6 +20,7 @@ import com.lukasz.witkowski.training.planner.session.domain.session.statisticsre
 import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
@@ -106,7 +107,7 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
                 { trainingSessionService.skip() },
                 { trainingSessionService.completed() },
                 { trainingSessionService.changeReps(10) },
-                { trainingSessionService.changeWeight(50.0) },
+                { trainingSessionService.changeWeight(50.kg) },
                 { trainingSessionService.addExtraSet() },
                 { trainingSessionService.removeExtraSet() },
                 { trainingSessionService.setExerciseSetFeedback(SetEffort.MODERATE) },
@@ -176,7 +177,7 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
 
         // when: delegate reps, weight, holdTime, timer start/reset, add/remove extra set, and handle
         trainingSessionService.changeReps(15)
-        trainingSessionService.changeWeight(65.5)
+        trainingSessionService.changeWeight(65.5.kg)
         trainingSessionService.updateHoldTime(35.seconds)
         trainingSessionService.startTimer()
         val runningState =
@@ -194,7 +195,7 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
         val exerciseState =
             trainingSessionService.trainingSessionState.value as TrainingSessionState.ExerciseState
         assertEquals(18, exerciseState.sessionExercise.currentConfig.reps)
-        assertEquals(65.5, exerciseState.sessionExercise.currentConfig.weightInKg!!, 0.01)
+        assertEquals(65.5.kg, exerciseState.sessionExercise.currentConfig.weight!!)
         assertEquals(35.seconds, exerciseState.sessionExercise.currentConfig.holdTime)
         assertEquals(TimerState.Ready(35.seconds), exerciseState.timerState)
         assertEquals(1, exerciseState.progress.currentExerciseTotalSets)

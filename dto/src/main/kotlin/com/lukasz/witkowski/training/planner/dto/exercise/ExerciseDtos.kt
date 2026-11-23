@@ -14,7 +14,7 @@ data class ExerciseRecommendationDto(
     val sets: Int,
     val reps: Int,
     val restTimeInMillis: Long,
-    val weightInKg: Int?,
+    val weightInKg: Double?,
     val timeInMillis: Long? = null
 )
 

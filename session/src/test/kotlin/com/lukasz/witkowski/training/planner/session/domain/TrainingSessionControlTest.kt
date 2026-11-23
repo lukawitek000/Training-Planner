@@ -16,6 +16,7 @@ import com.lukasz.witkowski.training.planner.session.domain.session.statisticsre
 import com.lukasz.witkowski.training.planner.session.domain.statisticsrecorder.FixedTimeProvider
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlin.test.assertFailsWith
@@ -409,24 +410,24 @@ internal class TrainingSessionControlTest : TrainingSessionTest() {
 
             // when: modify reps and weight in Set 1, then complete Set 1
             trainingSession.handle(SessionCommand.Exercise.UpdateReps(12))
-            trainingSession.handle(SessionCommand.Exercise.UpdateWeight(82.5))
+            trainingSession.handle(SessionCommand.Exercise.UpdateWeight(82.5.kg))
             trainingSession.complete() // Set 1 -> Set 2
 
             // then: Set 2 inherits updated reps & weight while preserving plannedConfig
             val set2State = trainingSession.state.value as TrainingSessionState.ExerciseState
             assertEquals(12, set2State.sessionExercise.currentConfig.reps)
-            assertEquals(82.5, set2State.sessionExercise.currentConfig.weightInKg!!, 0.01)
+            assertEquals(82.5.kg, set2State.sessionExercise.currentConfig.weight!!)
             assertEquals(10, set2State.sessionExercise.snapshot.plannedConfig.reps)
 
             // when: modify reps and weight in Set 2, then SKIP Set 2
             trainingSession.handle(SessionCommand.Exercise.UpdateReps(20))
-            trainingSession.handle(SessionCommand.Exercise.UpdateWeight(100.0))
+            trainingSession.handle(SessionCommand.Exercise.UpdateWeight(100.kg))
             trainingSession.skip() // Set 2 skipped -> Set 3
 
             // then: Set 3 keeps Set 1's completed config (12 reps, 82.5kg)
             val set3State = trainingSession.state.value as TrainingSessionState.ExerciseState
             assertEquals(12, set3State.sessionExercise.currentConfig.reps)
-            assertEquals(82.5, set3State.sessionExercise.currentConfig.weightInKg!!, 0.01)
+            assertEquals(82.5.kg, set3State.sessionExercise.currentConfig.weight!!)
         }
 
     @Test

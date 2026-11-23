@@ -63,9 +63,14 @@ import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
 import com.lukasz.witkowski.training.planner.shared.ui.loading.AppLoadingIndicator
 import com.lukasz.witkowski.training.planner.shared.ui.scrolling.ScrollColumn
+import com.lukasz.witkowski.training.planner.shared.utils.LocalWeightUnit
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
+import com.lukasz.witkowski.training.planner.shared.utils.kg
+import com.lukasz.witkowski.training.planner.shared.utils.shortLabel
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
+import kotlin.math.roundToInt
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -182,11 +187,17 @@ private fun ActiveSetCard(
                 )
             }
 
+            val weightUnit = LocalWeightUnit.current
+            val displayedWeight = (state.sessionExercise.currentConfig.weight ?: Weight.ZERO)
+                .toDouble(weightUnit)
             AppStepper(
-                value = state.sessionExercise.currentConfig.weightInKg ?: 0.0,
-                onValueChange = { onSessionIntent(SessionIntent.WeightChanged(it)) },
-                step = 2.5,
-                label = stringResource(R.string.session_kg_label),
+                value = displayedWeight,
+                onValueChange = { steppedWeight ->
+                    val rounded = (steppedWeight * 100.0).roundToInt() / 100.0
+                    onSessionIntent(SessionIntent.WeightChanged(Weight.of(rounded, weightUnit)))
+                },
+                step = weightUnit.defaultStep,
+                label = weightUnit.shortLabel(),
                 minValue = 0.0
             )
         }
@@ -549,7 +560,7 @@ private fun ExerciseImages(
 private fun TrainingExerciseScreenPreview() {
     val dummyConfig = SessionExerciseConfiguration(
         reps = 10,
-        weightInKg = 85.0,
+        weight = 85.kg,
         holdTime = null
     )
     val dummySnapshot = TrainingExerciseSnapshot(
@@ -597,7 +608,7 @@ private fun TrainingExerciseScreenPreview() {
 private fun TrainingExerciseScreenHoldTimePreview() {
     val dummyConfig = SessionExerciseConfiguration(
         reps = 0,
-        weightInKg = null,
+        weight = null,
         holdTime = 68.seconds
     )
     val dummySnapshot = TrainingExerciseSnapshot(
@@ -649,7 +660,7 @@ private fun TrainingExerciseScreenHoldTimePreview() {
 private fun TrainingExerciseScreenNegativeHoldTimePreview() {
     val dummyConfig = SessionExerciseConfiguration(
         reps = 0,
-        weightInKg = null,
+        weight = null,
         holdTime = 20.seconds
     )
     val dummySnapshot = TrainingExerciseSnapshot(

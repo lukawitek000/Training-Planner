@@ -206,7 +206,7 @@ private fun SessionSummary(statistics: TrainingStatistics, modifier: Modifier = 
                 label = stringResource(R.string.session_total_vol_label),
                 content = {
                     Text(
-                        text = statistics.totalVolumeKg.formatVolumeText(),
+                        text = statistics.totalVolume.formatVolumeText(),
                         style = MaterialTheme.typography.bodyLarge
                     )
                 },

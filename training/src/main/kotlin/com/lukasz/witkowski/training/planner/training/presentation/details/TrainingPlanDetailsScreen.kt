@@ -391,7 +391,7 @@ private fun ExerciseListItem(
                     sets = exercise.sets,
                     reps = exercise.repetitions,
                     restTime = exercise.restTime,
-                    weightInKg = exercise.weightInKg,
+                    weight = exercise.weight,
                     time = exercise.time.takeIf { it > Duration.ZERO }
                 )
                 Text(

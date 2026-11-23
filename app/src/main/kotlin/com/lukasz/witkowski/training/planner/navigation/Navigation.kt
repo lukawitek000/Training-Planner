@@ -15,6 +15,7 @@ import androidx.navigation3.runtime.result.ResultEffect
 import androidx.navigation3.runtime.result.rememberResultEventBusNavEntryDecorator
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
+import com.lukasz.witkowski.training.planner.BuildConfig
 import com.lukasz.witkowski.training.planner.analytics.presentation.TrainingStatisticsHost
 import com.lukasz.witkowski.training.planner.auth.presentation.auth.AuthenticationScreen
 import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeleteExerciseScreen
@@ -66,6 +67,7 @@ fun Navigation(
             entry<UserProfile> {
                 UserProfileScreen(
                     viewModel = koinViewModel(),
+                    versionName = BuildConfig.VERSION_NAME,
                     onSignInClick = { navigator.authentication() },
                 )
             }

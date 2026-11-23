@@ -229,7 +229,7 @@ private fun TrainingSessionSummary(
             modifier = Modifier.weight(1f)
         )
 
-        val volumeText = overview.totalVolumeKg.formatVolumeText()
+        val volumeText = overview.totalVolume.formatVolumeText()
         StatisticWithLabelAndIcon(
             label = stringResource(R.string.volume_label),
             icon = Icons.Default.BarChart,

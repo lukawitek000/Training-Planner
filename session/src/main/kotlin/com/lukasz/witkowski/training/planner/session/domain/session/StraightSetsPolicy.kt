@@ -51,7 +51,7 @@ class StraightSetsPolicy : TrainingSetsPolicy {
     private fun TrainingExercise.toConfig(): SessionExerciseConfiguration =
         SessionExerciseConfiguration(
             reps = repetitions,
-            weightInKg = weightInKg?.toDouble(),
+            weight = weight,
             holdTime = time.takeIf { it > Duration.ZERO }
         )
 }
