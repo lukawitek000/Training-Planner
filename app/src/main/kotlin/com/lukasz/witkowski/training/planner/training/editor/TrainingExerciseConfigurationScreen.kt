@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -140,6 +141,7 @@ private fun TrainingExerciseParameters(
         )
         AppPrimaryButton(
             text = stringResource(R.string.add_exercise),
+            modifier = Modifier.fillMaxWidth(),
             onClick = onAddTrainingExercise,
             enabled = parameters.areValid()
         )

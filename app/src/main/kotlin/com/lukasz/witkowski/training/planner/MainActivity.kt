@@ -17,8 +17,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
 import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
@@ -33,16 +36,27 @@ import com.lukasz.witkowski.training.planner.shared.time.ProvideTimeDisplayEnvir
 import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import org.koin.compose.koinInject
+import com.lukasz.witkowski.training.planner.shared.utils.LocalWeightUnit
+import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
+import com.lukasz.witkowski.training.planner.user.domain.UserRepository
+import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
+    private val userRepository: UserRepository by inject()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             val timeProvider: TimeProvider = koinInject()
-            TrainingPlannerTheme {
-                ProvideTimeDisplayEnvironment(timeProvider = timeProvider) {
-                    TrainingPlannerApp()
+            val weightUnit by userRepository.weightUnit.collectAsStateWithLifecycle(
+                initialValue = WeightUnit.KG
+            )
+            CompositionLocalProvider(LocalWeightUnit provides weightUnit) {
+                TrainingPlannerTheme {
+                    ProvideTimeDisplayEnvironment(timeProvider = timeProvider) {
+                        TrainingPlannerApp()
+                    }
                 }
             }
         }

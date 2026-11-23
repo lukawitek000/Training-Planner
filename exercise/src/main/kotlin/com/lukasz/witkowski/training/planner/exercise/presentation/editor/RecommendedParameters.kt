@@ -30,8 +30,10 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -56,6 +58,15 @@ import com.lukasz.witkowski.training.planner.shared.theme.Warning
 import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.timepicker.AppTimePickerBottomSheet
+import com.lukasz.witkowski.training.planner.shared.utils.LocalWeightUnit
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
+import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
+import com.lukasz.witkowski.training.planner.shared.utils.formatUpToTwoDecimals
+import com.lukasz.witkowski.training.planner.shared.utils.formatWeightText
+import com.lukasz.witkowski.training.planner.shared.utils.kg
+import com.lukasz.witkowski.training.planner.shared.utils.shortLabel
+import java.util.Locale
+import kotlin.math.abs
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -175,7 +186,8 @@ fun ExerciseParametersInputFields(
     parameters: RecommendedParameters,
     testTagPrefix: String,
     onParametersIntent: (ExerciseParametersIntent) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    weightUnit: WeightUnit = LocalWeightUnit.current
 ) {
     var showRestTimePicker by rememberSaveable { mutableStateOf(false) }
     var showHoldTimePicker by rememberSaveable { mutableStateOf(false) }
@@ -217,11 +229,12 @@ fun ExerciseParametersInputFields(
                 modifier = Modifier.weight(1f),
                 testTag = "${testTagPrefix}_RepsField"
             )
-            ParameterInputField(
-                value = parameters.weightInKg,
+            WeightParameterInputField(
+                weight = parameters.weight,
+                weightUnit = weightUnit,
                 onValueChange = { onParametersIntent(ExerciseParametersIntent.WeightChanged(it)) },
                 label = stringResource(R.string.weight),
-                unit = stringResource(R.string.kg),
+                unit = weightUnit.shortLabel(),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Decimal,
                     imeAction = ImeAction.Next
@@ -377,7 +390,7 @@ sealed interface ExerciseParametersIntent {
             ExerciseEditingEvent.RecommendedTimeChanged(time, level)
     }
 
-    data class WeightChanged(val weight: Int?) : ExerciseParametersIntent {
+    data class WeightChanged(val weight: Weight?) : ExerciseParametersIntent {
         override fun toExerciseEditingEvent(level: RecommendationLevel): ExerciseEditingEvent =
             ExerciseEditingEvent.RecommendedWeightChanged(weight, level)
     }
@@ -458,7 +471,7 @@ private fun buildStringOverview(recommendation: Recommendation): String =
                 sets = it.sets!!,
                 reps = it.reps!!,
                 restTime = it.restTime!!,
-                weightInKg = it.weightInKg,
+                weight = it.weight,
                 time = it.time
             )
         }
@@ -469,17 +482,18 @@ fun buildStringOverview(
     sets: Int,
     reps: Int,
     restTime: Duration,
-    weightInKg: Int?,
-    time: Duration? = null
+    weight: Weight?,
+    time: Duration? = null,
+    weightUnit: WeightUnit = LocalWeightUnit.current
 ): String = when {
-    time != null && weightInKg != null -> {
+    time != null && weight != null -> {
         stringResource(
             R.string.recommendation_overview_with_hold,
             sets,
             reps,
             time.formatDuration(),
             restTime.formatDuration(),
-            weightInKg
+            weight.formatWeightText(weightUnit)
         )
     }
 
@@ -493,13 +507,14 @@ fun buildStringOverview(
         )
     }
 
-    weightInKg != null -> {
+    weight != null -> {
+        val weightText = weight.formatWeightText(weightUnit)
         stringResource(
             R.string.recommendation_overview,
             sets,
             reps,
             restTime.formatDuration(),
-            weightInKg
+            weightText
         )
     }
 
@@ -510,6 +525,112 @@ fun buildStringOverview(
             reps,
             restTime.formatDuration()
         )
+    }
+}
+
+@Composable
+private fun WeightParameterInputField(
+    weight: Weight?,
+    weightUnit: WeightUnit,
+    onValueChange: (Weight?) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    unit: String = "",
+    testTag: String = "",
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
+) {
+    var text by rememberSaveable(weightUnit) {
+        mutableStateOf(formatWeightForInput(weight, weightUnit))
+    }
+    var lastEmittedKg by remember(weightUnit) { mutableStateOf<Double?>(null) }
+
+    LaunchedEffect(weight, weightUnit) {
+        val currentInputKg = text.toDoubleOrNull()?.let { Weight.of(it, weightUnit).inKilograms }
+        val targetKg = weight?.inKilograms
+        val isFromOwnInput = lastEmittedKg != null &&
+            targetKg != null &&
+            abs(lastEmittedKg!! - targetKg) < 1e-6
+        lastEmittedKg = null
+        val matchesCurrentText = (targetKg == null && currentInputKg == null) ||
+            (
+                targetKg != null &&
+                    currentInputKg != null &&
+                    abs(targetKg - currentInputKg) < 1e-6
+                )
+        if (!isFromOwnInput && !matchesCurrentText) {
+            text = formatWeightForInput(weight, weightUnit)
+        }
+    }
+
+    Column(modifier = modifier) {
+        Text(
+            text = label,
+            modifier = Modifier.padding(bottom = Dimens.spaceXs),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        OutlinedTextField(
+            value = text,
+            onValueChange = { newValue ->
+                val sanitized = sanitizeDecimalInput(newValue)
+                text = sanitized
+                val parsed = sanitized.toDoubleOrNull()?.let { Weight.of(it, weightUnit) }
+                lastEmittedKg = parsed?.inKilograms
+                onValueChange(parsed)
+            },
+            keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
+            singleLine = true,
+            maxLines = 1,
+            shape = MaterialTheme.shapes.small,
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)
+            ),
+            modifier = Modifier
+                .defaultMinSize(minWidth = Dimens.iconSize40)
+                .testTag(testTag),
+            suffix = if (unit.isNotEmpty()) {
+                { Text(unit, style = MaterialTheme.typography.labelSmall) }
+            } else {
+                null
+            }
+        )
+    }
+}
+
+private fun formatWeightForInput(weight: Weight?, weightUnit: WeightUnit): String =
+    weight?.toDouble(weightUnit)?.formatUpToTwoDecimals(Locale.US) ?: ""
+
+internal fun sanitizeDecimalInput(input: String): String {
+    val normalized = input.replace(',', '.')
+    var hasDot = false
+    val filtered = buildString {
+        for (ch in normalized) {
+            when {
+                ch.isDigit() -> append(ch)
+                ch == '.' && !hasDot -> {
+                    if (isEmpty()) append('0')
+                    append('.')
+                    hasDot = true
+                }
+            }
+        }
+    }
+    return if (filtered.startsWith('0') && filtered.length > 1 && filtered[1] != '.') {
+        val trimmed = filtered.trimStart('0')
+        when {
+            trimmed.isEmpty() -> "0"
+            trimmed.startsWith('.') -> "0$trimmed"
+            else -> trimmed
+        }
+    } else {
+        filtered
     }
 }
 
@@ -572,7 +693,8 @@ private fun ParameterInputField(
 @Composable
 private fun RecommendedParametersExtendedSummary(
     params: RecommendedParameters,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    weightUnit: WeightUnit = LocalWeightUnit.current
 ) {
     Row(
         modifier = modifier
@@ -581,11 +703,11 @@ private fun RecommendedParametersExtendedSummary(
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         ParameterOverview(
-            value = params.sets,
+            value = params.sets?.toString(),
             label = "${stringResource(R.string.sets)}:"
         )
         ParameterOverview(
-            value = params.reps,
+            value = params.reps?.toString(),
             label = "${stringResource(R.string.reps)}:"
         )
         if (params.time != null) {
@@ -599,26 +721,11 @@ private fun RecommendedParametersExtendedSummary(
             label = "${stringResource(R.string.rest_time)}:"
         )
         ParameterOverview(
-            value = params.weightInKg,
+            value = params.weight?.toDouble(weightUnit)?.formatUpToTwoDecimals(),
             label = "${stringResource(R.string.weight)}:",
-            unit = stringResource(R.string.kg)
+            unit = weightUnit.shortLabel()
         )
     }
-}
-
-@Composable
-private fun ParameterOverview(
-    value: Int?,
-    label: String,
-    modifier: Modifier = Modifier,
-    unit: String = ""
-) {
-    ParameterOverview(
-        value = value?.toString(),
-        label = label,
-        modifier = modifier,
-        unit = unit
-    )
 }
 
 @Composable
@@ -705,7 +812,7 @@ val PREVIEW_RECOMMENDED_PARAMETERS = listOf(
             sets = 3,
             reps = 10,
             restTime = 1.minutes,
-            weightInKg = 30
+            weight = 30.kg
         )
     ),
     Recommendation(RecommendationLevel.ADVANCED)

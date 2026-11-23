@@ -12,10 +12,6 @@ android {
     }
 }
 
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-}
-
 dependencies {
     api(projects.shared)
     api(projects.image)

@@ -37,6 +37,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
 import com.lukasz.witkowski.training.planner.shared.ui.timer.AppCircularTimer
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.ExerciseCategoryName
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import kotlin.time.Duration
@@ -215,7 +216,7 @@ private fun SetFeedbackForm(
 private fun RestTimeScreenPreview() {
     val dummyConfig = SessionExerciseConfiguration(
         reps = 12,
-        weightInKg = 50.0,
+        weight = 50.kg,
         holdTime = null
     )
     val dummySnapshot = TrainingExerciseSnapshot(

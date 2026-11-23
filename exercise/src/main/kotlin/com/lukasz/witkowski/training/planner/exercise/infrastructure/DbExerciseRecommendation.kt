@@ -25,7 +25,7 @@ data class DbExerciseRecommendation(
     val sets: Int,
     val reps: Int,
     val restTimeInSeconds: Long,
-    val weightInKg: Int?,
+    val weightInKg: Double?,
     val timeInSeconds: Long? = null
 )
 

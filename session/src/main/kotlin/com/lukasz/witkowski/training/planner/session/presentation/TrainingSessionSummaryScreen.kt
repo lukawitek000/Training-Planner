@@ -181,7 +181,7 @@ private fun BentoMetricsGrid(statistics: TrainingStatistics, modifier: Modifier 
             )
             AppBentoTile(
                 label = stringResource(R.string.session_bento_volume_label),
-                value = statistics.totalVolumeKg.formatVolumeText(),
+                value = statistics.totalVolume.formatVolumeText(),
                 subtitle = stringResource(R.string.session_bento_volume_sub),
                 modifier = Modifier.weight(1f)
             )

@@ -8,6 +8,7 @@ import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import com.lukasz.witkowski.training.planner.training.application.TrainingPlanService
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlin.time.Duration
@@ -158,7 +159,7 @@ class TrainingSessionViewModel(
 
 sealed interface SessionIntent {
     data class RepsChanged(val reps: Int) : SessionIntent
-    data class WeightChanged(val weight: Double) : SessionIntent
+    data class WeightChanged(val weight: Weight) : SessionIntent
     data class HoldTimeChanged(val time: Duration) : SessionIntent
     data object SetAdded : SessionIntent
     data object SetRemoved : SessionIntent

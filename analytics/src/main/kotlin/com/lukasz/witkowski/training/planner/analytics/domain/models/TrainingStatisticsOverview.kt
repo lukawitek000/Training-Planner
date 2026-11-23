@@ -2,6 +2,7 @@ package com.lukasz.witkowski.training.planner.analytics.domain.models
 
 import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStatisticsId
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import com.lukasz.witkowski.training.planner.shared.utils.calculateCompletenessPercentage
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlin.time.Duration
@@ -12,7 +13,7 @@ data class TrainingStatisticsOverview(
     val trainingPlanId: TrainingPlanId,
     val date: Instant,
     val totalTime: Duration,
-    val totalVolumeKg: Double,
+    val totalVolume: Weight,
     val completedSetsCount: Int,
     val totalSetsCount: Int,
     val rpe: SessionRpe?,

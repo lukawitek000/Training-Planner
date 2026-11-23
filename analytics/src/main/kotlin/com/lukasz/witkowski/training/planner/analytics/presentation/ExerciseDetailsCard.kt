@@ -58,6 +58,7 @@ import com.lukasz.witkowski.training.planner.shared.theme.Warning
 import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import com.lukasz.witkowski.training.planner.shared.utils.formatVolumeText
 import kotlin.time.Duration
 
@@ -202,7 +203,7 @@ private fun ExerciseSetStatistics(
 ) {
     val plannedRest = statistics.plannedRestTime
         ?: fallbackPlannedRestTime.takeIf { it > Duration.ZERO }
-    val showLoad = statistics.actualWeightInKg != null || plannedConfig.weightInKg != null
+    val showLoad = statistics.actualWeight != null || plannedConfig.weight != null
     val showHold = statistics.actualTime != null || plannedConfig.holdTime != null
     val showRest = statistics.restTime != null || plannedRest != null
 
@@ -226,16 +227,16 @@ private fun ExerciseSetStatistics(
                     modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max)
                 ) {
                     if (showLoad) {
-                        val actualLoad = statistics.actualWeightInKg ?: 0.0
-                        val targetLoad = plannedConfig.weightInKg
+                        val actualLoad = statistics.actualWeight ?: Weight.ZERO
+                        val targetLoad = plannedConfig.weight
                         ParameterLayout(
                             label = stringResource(R.string.parameter_load_label),
                             value = actualLoad.formatVolumeText(),
                             targetValue = targetLoad?.formatVolumeText(),
                             parameterColors = ParameterColors.forTargetMinimum(
                                 completed = statistics.completed,
-                                actual = actualLoad,
-                                target = targetLoad
+                                actual = actualLoad.inKilograms,
+                                target = targetLoad?.inKilograms
                             )
                         )
                     }
@@ -360,7 +361,7 @@ private fun PlannedConfiguration(
         } else {
             add(stringResource(R.string.planned_reps_format, plannedConfig.reps))
         }
-        add((plannedConfig.weightInKg ?: 0.0).formatVolumeText())
+        add(plannedConfig.weight.formatVolumeText())
         if (plannedRestTime > Duration.ZERO) {
             add(stringResource(R.string.planned_rest_format, plannedRestTime.formatDuration()))
         }

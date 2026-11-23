@@ -54,6 +54,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppSecondaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppTertiaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.chips.AppCategoryPill
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
@@ -260,7 +261,7 @@ private fun ConflictVersionColumn(
                         sets = p.sets!!,
                         reps = p.reps!!,
                         restTime = p.restTime!!,
-                        weightInKg = p.weightInKg,
+                        weight = p.weight,
                         time = p.time?.takeIf { it > Duration.ZERO }
                     )
                     Text(
@@ -285,7 +286,7 @@ private fun ExerciseConflictDialogPreview() {
         val sampleRecs = listOf(
             Recommendation(
                 RecommendationLevel.BEGINNER,
-                RecommendedParameters(sets = 3, reps = 10, restTime = 60.seconds, weightInKg = 40)
+                RecommendedParameters(sets = 3, reps = 10, restTime = 60.seconds, weight = 40.kg)
             )
         )
         ExerciseConflictDialog(

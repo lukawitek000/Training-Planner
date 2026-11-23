@@ -65,6 +65,7 @@ import com.lukasz.witkowski.training.planner.user.domain.model.WeightUnit
 fun UserProfileScreen(
     viewModel: UserProfileViewModel,
     modifier: Modifier = Modifier,
+    versionName: String = "",
     onSignInClick: () -> Unit = {},
     onSignOutClick: () -> Unit = {}
 ) {
@@ -76,6 +77,7 @@ fun UserProfileScreen(
 
     UserProfileScreenContent(
         uiState = uiState,
+        versionName = versionName,
         onWeightUnitChanged = viewModel::onWeightUnitChanged,
         onSignInClick = onSignInClick,
         onSignOutWithPolicy = { keepLocalData ->
@@ -91,6 +93,7 @@ private fun UserProfileScreenContent(
     uiState: ProfileUiState,
     onWeightUnitChanged: (WeightUnit) -> Unit,
     onSignInClick: () -> Unit,
+    versionName: String = "",
     onSignOutClick: () -> Unit = {},
     onSignOutWithPolicy: (keepLocalData: Boolean) -> Unit = { onSignOutClick() },
     modifier: Modifier = Modifier
@@ -164,7 +167,7 @@ private fun UserProfileScreenContent(
                         onWeightUnitChanged = onWeightUnitChanged
                     )
 
-                    EngineFootnote()
+                    EngineFootnote(versionName = versionName)
                 }
 
                 if (isOnlineSyncEnabled && showSignOutSheet) {
@@ -579,7 +582,12 @@ private fun OfflinePreferencesCard(
 }
 
 @Composable
-private fun EngineFootnote(modifier: Modifier = Modifier) {
+private fun EngineFootnote(versionName: String = "", modifier: Modifier = Modifier) {
+    val footnoteText = if (versionName.isNotBlank()) {
+        stringResource(id = R.string.user_profile_engine_footnote_build, versionName)
+    } else {
+        stringResource(id = R.string.user_profile_engine_footnote_default)
+    }
     Column(
         modifier =
         modifier
@@ -599,7 +607,7 @@ private fun EngineFootnote(modifier: Modifier = Modifier) {
                 modifier = Modifier.size(Dimens.iconSize14)
             )
             Text(
-                text = stringResource(id = R.string.user_profile_engine_footnote_build),
+                text = footnoteText,
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.outline
             )

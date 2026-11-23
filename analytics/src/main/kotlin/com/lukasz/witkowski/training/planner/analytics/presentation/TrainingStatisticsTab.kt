@@ -32,6 +32,8 @@ import com.lukasz.witkowski.training.planner.shared.time.ProvideTimeDisplayEnvir
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppEmptyState
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExerciseId
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlin.time.Duration.Companion.minutes
@@ -155,7 +157,7 @@ internal val PREVIEW_TRAINING_STATISTICS_OVERVIEWS = listOf(
         trainingPlanId = TrainingPlanId.create(),
         date = Instant.parse("2026-09-10T12:00:00Z"),
         totalTime = 45.minutes,
-        totalVolumeKg = 0.0,
+        totalVolume = Weight.ZERO,
         completedSetsCount = 10,
         totalSetsCount = 11,
         rpe = SessionRpe.HARD,
@@ -167,7 +169,7 @@ internal val PREVIEW_TRAINING_STATISTICS_OVERVIEWS = listOf(
         trainingPlanId = TrainingPlanId.create(),
         date = Instant.parse("2026-09-08T12:00:00Z"),
         totalTime = 52.minutes,
-        totalVolumeKg = 4100.0,
+        totalVolume = 4100.kg,
         completedSetsCount = 12,
         totalSetsCount = 12,
         rpe = SessionRpe.CHALLENGING,
@@ -202,7 +204,7 @@ private val PREVIEW_EXERCISE_ATTEMPT_STATISTICS = listOf(
         set = 1,
         completed = true,
         actualReps = 10,
-        actualWeightInKg = 80.0,
+        actualWeight = 80.kg,
         actualTime = 45.seconds,
         effort = SetEffort.MODERATE,
         restTime = 90.seconds,
@@ -215,7 +217,7 @@ private val PREVIEW_EXERCISE_ATTEMPT_STATISTICS = listOf(
         set = 2,
         completed = true,
         actualReps = 9,
-        actualWeightInKg = 80.0,
+        actualWeight = 80.kg,
         actualTime = 42.seconds,
         effort = SetEffort.HARD,
         restTime = 90.seconds,
@@ -228,7 +230,7 @@ private val PREVIEW_EXERCISE_ATTEMPT_STATISTICS = listOf(
         set = 3,
         completed = true,
         actualReps = 6,
-        actualWeightInKg = 80.0,
+        actualWeight = 80.kg,
         actualTime = 30.seconds,
         effort = SetEffort.MAXIMAL,
         restTime = 120.seconds,
@@ -245,7 +247,7 @@ private val PREVIEW_EXERCISE_STATISTICS = listOf(
         plannedSets = 3,
         plannedConfig = SessionExerciseConfiguration(
             reps = 10,
-            weightInKg = 80.0,
+            weight = 80.kg,
             holdTime = 45.seconds
         ),
         plannedRestTime = 90.seconds,
@@ -258,7 +260,7 @@ private val PREVIEW_EXERCISE_STATISTICS = listOf(
         plannedSets = 2,
         plannedConfig = SessionExerciseConfiguration(
             reps = 15,
-            weightInKg = null,
+            weight = null,
             holdTime = null
         ),
         plannedRestTime = 60.seconds,
@@ -269,7 +271,7 @@ private val PREVIEW_EXERCISE_STATISTICS = listOf(
                 set = 1,
                 completed = true,
                 actualReps = 15,
-                actualWeightInKg = null,
+                actualWeight = null,
                 actualTime = null,
                 effort = SetEffort.MODERATE,
                 restTime = 60.seconds,

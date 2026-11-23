@@ -17,6 +17,7 @@ import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.time.ProvideTimeDisplayEnvironment
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.seconds
@@ -54,7 +55,7 @@ class TrainingSessionSummaryScreenTest {
                                 time = 30.seconds,
                                 set = 1,
                                 actualReps = 5,
-                                actualWeightInKg = 140.0,
+                                actualWeight = 140.kg,
                                 completed = true
                             )
                         )

@@ -13,6 +13,7 @@ import com.lukasz.witkowski.training.planner.session.domain.session.statisticsre
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerFactory
 import com.lukasz.witkowski.training.planner.shared.time.SystemTimeProvider
 import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
 import com.lukasz.witkowski.training.planner.training.domain.TrainingPlan
 import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineDispatcher
@@ -140,7 +141,7 @@ class TrainingSessionService(
         requireActiveSession().handle(SessionCommand.Exercise.UpdateReps(newReps))
     }
 
-    fun changeWeight(weight: Double) {
+    fun changeWeight(weight: Weight) {
         requireActiveSession().handle(SessionCommand.Exercise.UpdateWeight(weight))
     }
 

@@ -55,7 +55,7 @@
     <string name="recommended_parameters_label">Recommended parameters</string>
     <string name="recommended_parameters_description">Suggested sets, reps, rest time and weight for different experience level. These are default recommendations.</string>
     <string name="not_set">Not set</string>
-    <string name="recommendation_overview">%1$d x %2$d &#183; %3$s &#183; %4$d kg</string>
+    <string name="recommendation_overview">%1$d x %2$d &#183; %3$s &#183; %4$s</string>
     <string name="recommendation_no_weight">%1$d x %2$d &#183; %3$s</string>
     <string name="reps">Reps</string>
     <string name="sets">Sets</string>
@@ -63,7 +63,7 @@
     <string name="hold_time">Hold / Time</string>
     <string name="hold">Hold</string>
     <string name="hold_time_hint">Configure hold duration for isometrics or leave unset for rep-only movements.</string>
-    <string name="recommendation_overview_with_hold">%1$d x %2$d &#183; %3$s hold &#183; %4$s &#183; %5$d kg</string>
+    <string name="recommendation_overview_with_hold">%1$d x %2$d &#183; %3$s hold &#183; %4$s &#183; %5$s</string>
     <string name="recommendation_with_hold_no_weight">%1$d x %2$d &#183; %3$s hold &#183; %4$s</string>
     <string name="conflict_recommendation_row">%1$s: %2$s</string>
     <string name="weight">Weight</string>

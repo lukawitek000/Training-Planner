@@ -64,7 +64,7 @@ class TrainingExerciseConfigurationViewModel(
             }
 
             is ExerciseParametersIntent.WeightChanged -> _parameters.update {
-                it.copy(value = it.value.copy(weightInKg = intent.weight), wasModifiedByUser = true)
+                it.copy(value = it.value.copy(weight = intent.weight), wasModifiedByUser = true)
             }
 
             is ExerciseParametersIntent.TimeChanged -> _parameters.update {
@@ -87,7 +87,7 @@ class TrainingExerciseConfigurationViewModel(
             sets = parameters.value.sets!!,
             repetitions = parameters.value.reps!!,
             restTime = parameters.value.restTime!!,
-            weightInKg = parameters.value.weightInKg,
+            weight = parameters.value.weight,
             time = parameters.value.time ?: Duration.ZERO
         )
     }

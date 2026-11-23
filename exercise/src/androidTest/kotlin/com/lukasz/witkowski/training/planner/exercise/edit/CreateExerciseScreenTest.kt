@@ -19,6 +19,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recomm
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
 import com.lukasz.witkowski.training.planner.shared.time.formatDuration
+import com.lukasz.witkowski.training.planner.shared.utils.kg
 import java.util.Locale
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -110,7 +111,7 @@ class CreateExerciseScreenTest {
                     sets = 3,
                     reps = 10,
                     restTime = 30.seconds,
-                    weightInKg = 20
+                    weight = 20.kg
                 )
             )
         )
@@ -234,7 +235,7 @@ class CreateExerciseScreenTest {
         assertEquals(
             true,
             inputEvents.contains(
-                ExerciseEditingEvent.RecommendedWeightChanged(40, RecommendationLevel.BEGINNER)
+                ExerciseEditingEvent.RecommendedWeightChanged(40.kg, RecommendationLevel.BEGINNER)
             )
         )
         assertEquals(true, inputEvents.contains(ExerciseEditingEvent.SaveChangesRequested(input)))

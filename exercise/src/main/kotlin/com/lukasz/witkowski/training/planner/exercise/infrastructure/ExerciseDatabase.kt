@@ -16,8 +16,8 @@ import androidx.room3.RoomDatabase
         DbSyncMetadata::class,
         DbExerciseMutation::class
     ],
-    version = 14,
-    exportSchema = true
+    version = 15,
+    exportSchema = false
 )
 @ColumnTypeConverters(Converters::class)
 internal abstract class ExerciseDatabase : RoomDatabase() {

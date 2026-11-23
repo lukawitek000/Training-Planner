@@ -13,7 +13,7 @@ internal fun DbTrainingWithExercisesStatistics.toTrainingStatisticsOverview():
         trainingPlanId = statistics.trainingPlanId,
         date = statistics.date,
         totalTime = statistics.totalTime,
-        totalVolumeKg = statistics.totalVolumeKg,
+        totalVolume = statistics.totalVolume,
         completedSetsCount = statistics.completedSetsCount,
         totalSetsCount = statistics.totalSetsCount,
         rpe = statistics.rpe,

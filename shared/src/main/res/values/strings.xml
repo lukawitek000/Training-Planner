@@ -15,6 +15,9 @@
     <string name="time_picker_set_time">Set Time (%1$s)</string>
     <string name="time_picker_confirm_no_timer">Confirm (No Timer)</string>
     <string name="weight_kg_format">%1$s kg</string>
+    <string name="weight_lbs_format">%1$s lbs</string>
+    <string name="unit_kg_short">kg</string>
+    <string name="unit_lbs_short">lbs</string>
     <string name="bodyweight">Bodyweight</string>
 
     <!-- Relative Date Labels -->
