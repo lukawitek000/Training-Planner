@@ -39,7 +39,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -68,6 +67,7 @@ import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.badges.AppMetadataPill
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
+import com.lukasz.witkowski.training.planner.shared.ui.button.AppTertiaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.segmentedControl.AppSegmentedControl
 import com.lukasz.witkowski.training.planner.shared.ui.segmentedControl.AppSegmentedControlItem
 import java.util.Locale
@@ -420,24 +420,19 @@ fun AppTimePickerSheetContent(
             onClick = { onSecondsConfirmed(selectedSeconds) },
             leadingIcon = Icons.Default.CheckCircle,
             enabled = allowNoTime || selectedSeconds != null,
-            modifier = Modifier.testTag("TimePickerConfirmButton")
+            modifier = Modifier.testTag("TimePickerConfirmButton").fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(Dimens.spaceXs))
 
-        TextButton(
+        AppTertiaryButton(
+            text = stringResource(R.string.cancel),
             onClick = onDismissRequest,
             modifier =
             Modifier
                 .fillMaxWidth()
                 .testTag("TimePickerCancelButton")
-        ) {
-            Text(
-                text = stringResource(R.string.cancel),
-                style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        }
+        )
     }
 }
 

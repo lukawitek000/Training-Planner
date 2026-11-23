@@ -82,7 +82,7 @@ private const val TAB_HEADER_INDEX = 1
 
 private fun LazyListState.isScrolledPast(itemIndex: Int): Boolean =
     firstVisibleItemIndex > itemIndex ||
-            (firstVisibleItemIndex == itemIndex && firstVisibleItemScrollOffset > 0)
+        (firstVisibleItemIndex == itemIndex && firstVisibleItemScrollOffset > 0)
 
 @Composable
 fun TrainingPlanDetailsScreen(
@@ -445,7 +445,8 @@ private fun TrainingPlanDetailsScreenContentFailurePreview() {
 private fun TrainingPlanDetailsScreenContentPreview() {
     TrainingPlannerTheme {
         CompositionLocalProvider(
-            LocalTimeProvider provides TestTimeProvider(instant = Instant.parse("2026-10-06T12:00:00Z"))
+            LocalTimeProvider provides
+                TestTimeProvider(instant = Instant.parse("2026-10-06T12:00:00Z"))
         ) {
             TrainingPlanDetailsScreenContent(
                 trainingPlanState = ResultHandler.Success(value = PREVIEW_TRAINING_PLAN),
