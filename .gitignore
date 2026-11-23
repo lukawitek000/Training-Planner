@@ -324,4 +324,5 @@ hs_err_pid*
 # Local Exercise Video Hunting & SVG Conversion Tools
 /tools/
 /comparison_images/
+/.agents/skills/exercise-asset-pipeline/
 *.mp4
