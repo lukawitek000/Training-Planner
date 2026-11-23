@@ -3,6 +3,7 @@ package com.lukasz.witkowski.training.planner.exercise.presentation.list
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,8 +14,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -37,6 +40,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
@@ -312,12 +316,13 @@ fun ExerciseListItemContent(
             modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(Dimens.spaceMd),
+                .padding(Dimens.spaceSm),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ExerciseThumbnail(
                 imageDescription = imageDescription,
-                imageReference = exercise.thumbnail
+                imageReference = exercise.thumbnail,
+                modifier = Modifier.weight(0.5f, fill = true)
             )
             Spacer(modifier = Modifier.width(Dimens.spaceMd))
             ExerciseInformation(
@@ -354,10 +359,10 @@ private fun ExerciseInformation(
         ) {
             Text(
                 text = exercise.name,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 modifier =
                 Modifier
@@ -487,7 +492,7 @@ private fun ExerciseThumbnail(
     modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = modifier.size(Dimens.listItemThumbnailSize),
+        modifier = modifier,
         shape = MaterialTheme.shapes.small,
         color = MaterialTheme.colorScheme.surfaceContainerHighest,
         border =
@@ -496,7 +501,9 @@ private fun ExerciseThumbnail(
             color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
         )
     ) {
-        Box(contentAlignment = Alignment.Center) {
+        Box(
+            contentAlignment = Alignment.Center,
+        ) {
             if (imageReference != null) {
                 val imgModel: Any = if (imageReference.path.startsWith("file:///android_asset/") ||
                     imageReference.isRemote ||
@@ -512,10 +519,9 @@ private fun ExerciseThumbnail(
                     error = painterResource(id = R.drawable.exercise_default),
                     fallback = painterResource(id = R.drawable.exercise_default),
                     contentDescription = imageDescription,
-                    contentScale = ContentScale.Fit,
+                    contentScale = ContentScale.FillWidth,
                     modifier =
                     Modifier
-                        .fillMaxSize()
                         .clip(MaterialTheme.shapes.small)
                 )
             } else {
