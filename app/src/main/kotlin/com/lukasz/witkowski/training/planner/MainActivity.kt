@@ -29,15 +29,21 @@ import com.lukasz.witkowski.training.planner.navigation.TrainingPlansList
 import com.lukasz.witkowski.training.planner.navigation.rememberTrainingPlannerNavBackStack
 import com.lukasz.witkowski.training.planner.navigation.toUiConfig
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.ProvideTimeDisplayEnvironment
+import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
+import org.koin.compose.koinInject
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val timeProvider: TimeProvider = koinInject()
             TrainingPlannerTheme {
-                TrainingPlannerApp()
+                ProvideTimeDisplayEnvironment(timeProvider = timeProvider) {
+                    TrainingPlannerApp()
+                }
             }
         }
     }

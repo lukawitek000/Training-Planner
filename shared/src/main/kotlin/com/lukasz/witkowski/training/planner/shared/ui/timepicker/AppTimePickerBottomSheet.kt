@@ -56,6 +56,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -69,6 +70,7 @@ import com.lukasz.witkowski.training.planner.shared.ui.badges.AppMetadataPill
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
 import com.lukasz.witkowski.training.planner.shared.ui.segmentedControl.AppSegmentedControl
 import com.lukasz.witkowski.training.planner.shared.ui.segmentedControl.AppSegmentedControlItem
+import java.util.Locale
 import kotlin.math.abs
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -89,7 +91,8 @@ private val DEFAULT_MINUTES_PRESETS = listOf(1, 2, 3, 4, 5, 10)
 private const val SECONDS_PER_MINUTE = 60
 
 /**
- * Stitch Universal Time Picker modal bottom sheet (`2b3ca74373e24dcfa028180f175696b0`) accepting [Time].
+ * Stitch Universal Time Picker modal bottom sheet (`2b3ca74373e24dcfa028180f175696b0`)
+ * accepting [Duration].
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -657,17 +660,21 @@ private fun CustomTimeWheelSelector(
                     horizontalArrangement = Arrangement.spacedBy(Dimens.spaceXl),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    val configuration = LocalConfiguration.current
+                    val locale = remember(configuration) {
+                        configuration.locales[0] ?: Locale.getDefault()
+                    }
                     WheelColumnPicker(
                         items = minutesOptions,
                         selectedItem = minutes,
-                        formatItem = { it.toString() },
+                        formatItem = { String.format(locale, "%d", it) },
                         onItemSelected = onMinutesChanged,
                         modifier = Modifier.weight(1f)
                     )
                     WheelColumnPicker(
                         items = secondsOptions,
                         selectedItem = seconds,
-                        formatItem = { "%02d".format(it) },
+                        formatItem = { String.format(locale, "%02d", it) },
                         onItemSelected = onSecondsChanged,
                         modifier = Modifier.weight(1f)
                     )

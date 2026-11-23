@@ -108,79 +108,75 @@ class DateTimeFormatterTest {
     }
 
     @Test
-    fun `skeleton respects 24h vs 12h preference`() {
-        assertEquals("MMMdHmm", DateTimeStyle.SHORT_DATE_TIME.toSkeleton(is24Hour = true))
-        assertEquals("MMMdhm", DateTimeStyle.SHORT_DATE_TIME.toSkeleton(is24Hour = false))
-        assertEquals("yMMMd", DateTimeStyle.FULL_DATE.toSkeleton(is24Hour = true))
-        assertEquals("yMMMd", DateTimeStyle.FULL_DATE.toSkeleton(is24Hour = false))
-        assertEquals("yMMMdHmm", DateTimeStyle.FULL_DATE_TIME.toSkeleton(is24Hour = true))
-        assertEquals("yMMMdhm", DateTimeStyle.FULL_DATE_TIME.toSkeleton(is24Hour = false))
+    fun `month end and leap year boundaries follow calendar ChronoUnit rules`() {
+        // Jan 31 -> Feb 28 is 28 days (< 1 full calendar month), so it is 4 weeks ago
+        assertEquals(
+            RelativeDateBucket.WeeksAgo(4),
+            classifyRelativeDate(LocalDate.of(2026, 1, 31), LocalDate.of(2026, 2, 28))
+        )
+        // Jan 28 -> Feb 28 is 1 full calendar month
+        assertEquals(
+            RelativeDateBucket.OneMonthAgo,
+            classifyRelativeDate(LocalDate.of(2026, 1, 28), LocalDate.of(2026, 2, 28))
+        )
+        // Leap day 2024-02-29 -> 2025-02-28 is 11 months (1 day short of 1 full year)
+        assertEquals(
+            RelativeDateBucket.FewMonthsAgo,
+            classifyRelativeDate(LocalDate.of(2024, 2, 29), LocalDate.of(2025, 2, 28))
+        )
+        // Leap day 2024-02-29 -> 2025-03-01 is >= 1 full calendar year
+        assertEquals(
+            RelativeDateBucket.LastYear,
+            classifyRelativeDate(LocalDate.of(2024, 2, 29), LocalDate.of(2025, 3, 1))
+        )
     }
 
     @Test
-    fun `formatDateTime formats instant with injected pattern provider and timezone`() {
+    fun `skeleton respects 24h vs 12h preference`() {
+        assertEquals("MMMdHmm", DateTimeStyle.SHORT_DATE_TIME.toSkeleton(is24Hour = true))
+        assertEquals("MMMdhmm", DateTimeStyle.SHORT_DATE_TIME.toSkeleton(is24Hour = false))
+        assertEquals("yMMMd", DateTimeStyle.FULL_DATE.toSkeleton(is24Hour = true))
+        assertEquals("yMMMd", DateTimeStyle.FULL_DATE.toSkeleton(is24Hour = false))
+        assertEquals("yMMMdHmm", DateTimeStyle.FULL_DATE_TIME.toSkeleton(is24Hour = true))
+        assertEquals("yMMMdhmm", DateTimeStyle.FULL_DATE_TIME.toSkeleton(is24Hour = false))
+    }
+
+    @Test
+    fun `formatDateTime delegates skeleton, zone, and locale to injected engine`() {
         val instant = Instant.parse("2026-11-20T19:23:00Z")
-        val provider = DatePatternProvider { _, skeleton ->
-            when (skeleton) {
-                "MMMdHmm" -> "MMM d, HH:mm"
-                "MMMdhm" -> "MMM d, h:mm a"
-                "yMMMd" -> "MMM d, yyyy"
-                else -> "MMM d, yyyy, HH:mm"
-            }
+        val engine = DateTimeFormatEngine { _, skeleton, zoneId, locale ->
+            "$skeleton@${zoneId.id}@${locale.toLanguageTag()}"
         }
         val utc = ZoneId.of("UTC")
 
         assertEquals(
-            "Nov 20, 19:23",
+            "MMMdHmm@UTC@en-US",
             instant.formatDateTime(
                 style = DateTimeStyle.SHORT_DATE_TIME,
-                patternProvider = provider,
+                formatEngine = engine,
                 zoneId = utc,
                 locale = Locale.US,
                 is24Hour = true
             )
         )
         assertEquals(
-            "Nov 20, 7:23 PM",
+            "MMMdhmm@UTC@en-US",
             instant.formatDateTime(
                 style = DateTimeStyle.SHORT_DATE_TIME,
-                patternProvider = provider,
+                formatEngine = engine,
                 zoneId = utc,
                 locale = Locale.US,
                 is24Hour = false
             )
         )
         assertEquals(
-            "Nov 20, 2026",
+            "yMMMd@UTC@pl-PL",
             instant.formatDateTime(
                 style = DateTimeStyle.FULL_DATE,
-                patternProvider = provider,
+                formatEngine = engine,
                 zoneId = utc,
-                locale = Locale.US
+                locale = Locale.forLanguageTag("pl-PL")
             )
         )
-    }
-
-    @Test
-    fun `formatDateTime sanitizes ICU B day-period symbol and falls back on invalid pattern`() {
-        val instant = Instant.parse("2026-11-20T19:23:00Z")
-        val utc = ZoneId.of("UTC")
-
-        val sanitized = instant.formatDateTime(
-            style = DateTimeStyle.SHORT_DATE_TIME,
-            patternProvider = DatePatternProvider { _, _ -> "MMM d, h:mm B" },
-            zoneId = utc,
-            locale = Locale.US,
-            is24Hour = false
-        )
-        assertEquals("Nov 20, 7:23 PM", sanitized)
-
-        val fallback = instant.formatDateTime(
-            style = DateTimeStyle.FULL_DATE,
-            patternProvider = DatePatternProvider { _, _ -> "invalid pattern %%%" },
-            zoneId = utc,
-            locale = Locale.US
-        )
-        assertEquals("Nov 20, 2026", fallback)
     }
 }

@@ -18,6 +18,8 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.editor.Exerci
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.Recommendation
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendationLevel
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.RecommendedParameters
+import com.lukasz.witkowski.training.planner.shared.time.formatDuration
+import java.util.Locale
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
@@ -174,7 +176,8 @@ class CreateExerciseScreenTest {
         cardHeaderNode.assertIsDisplayed()
 
         // Test that the header overview displays correct data
-        composeTestRule.onNodeWithText("3 x 10 · 30s · 20 kg").assertIsDisplayed()
+        val expectedRest = 30.seconds.formatDuration(locale = Locale.getDefault())
+        composeTestRule.onNodeWithText("3 x 10 · $expectedRest · 20 kg").assertIsDisplayed()
 
         // Expand the recommendation card to show input fields
         cardHeaderNode.performClick()

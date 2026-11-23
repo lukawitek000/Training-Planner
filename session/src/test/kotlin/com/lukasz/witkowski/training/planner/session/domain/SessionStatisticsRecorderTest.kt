@@ -151,6 +151,7 @@ class SessionStatisticsRecorderTest {
 
             val stats = recorder.getStatistics()
             assertEquals(45.seconds, stats.totalTime)
+            assertEquals(Instant.fromEpochMilliseconds(1000000L), stats.date)
             assertEquals(1, stats.exercisesStatistics.size)
             assertEquals("90° Hold", stats.exercisesStatistics[0].exerciseName)
             assertEquals(1, stats.exercisesStatistics[0].plannedSets)

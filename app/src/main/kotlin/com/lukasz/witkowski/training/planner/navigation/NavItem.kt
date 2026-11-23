@@ -10,9 +10,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
 import com.lukasz.witkowski.training.planner.R
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import com.lukasz.witkowski.training.planner.auth.R as AuthR
+import com.lukasz.witkowski.training.planner.exercise.R as ExerciseR
+import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.shared.R as SharedR
+import com.lukasz.witkowski.training.planner.training.R as TrainingR
+import com.lukasz.witkowski.training.planner.training.domain.TrainingPlanId
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
@@ -191,7 +194,7 @@ private fun TrainingPlannerNavigator.createBottomBarConfig(
             ),
             BottomBarItem(
                 icon = R.drawable.exercises_icon,
-                title = context.getString(R.string.exercises),
+                title = context.getString(ExerciseR.string.exercises),
                 selected = selectedTab == BottomNavigationTab.EXERCISES,
                 onClick = { exerciseList() }
             )
@@ -215,14 +218,14 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
             bottomBarConfig = createBottomBarConfig(context, BottomNavigationTab.TRAINING_PLANS),
             fabConfig = FabConfig(
                 icon = Icons.Default.Add,
-                contentDescription = context.getString(R.string.create_training),
+                contentDescription = context.getString(TrainingR.string.create_training),
                 onClick = { trainingCreate() }
             )
         )
 
         is ExercisesList -> UiConfig(
             topBarConfig = TopBarConfig(
-                title = context.getString(R.string.exercises),
+                title = context.getString(ExerciseR.string.exercises),
                 hasBackArrow = false,
                 menuItems = listOf(
                     TopBarMenuItem.IconItem(
@@ -234,7 +237,7 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
             bottomBarConfig = createBottomBarConfig(context, BottomNavigationTab.EXERCISES),
             fabConfig = FabConfig(
                 icon = Icons.Default.Add,
-                contentDescription = context.getString(R.string.create_exercise),
+                contentDescription = context.getString(ExerciseR.string.create_exercise),
                 onClick = { exerciseCreate() }
             )
         )
@@ -255,21 +258,21 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
 
         is CreateExercise -> UiConfig(
             topBarConfig = TopBarConfig(
-                title = context.getString(R.string.create_exercise),
+                title = context.getString(ExerciseR.string.create_exercise),
                 hasBackArrow = true
             )
         )
 
         is EditExercise -> UiConfig(
             topBarConfig = TopBarConfig(
-                title = context.getString(R.string.edit_exercise),
+                title = context.getString(ExerciseR.string.edit_exercise),
                 hasBackArrow = true
             )
         )
 
         is DeleteExercise, is ExerciseDetails -> UiConfig(
             topBarConfig = TopBarConfig(
-                title = context.getString(R.string.exercise_details),
+                title = context.getString(ExerciseR.string.exercise_details),
                 hasBackArrow = true,
                 menuItems = listOf(
                     TopBarMenuItem.OverflowItem(
@@ -279,7 +282,7 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
                     ),
                     TopBarMenuItem.OverflowItem(
                         icon = Icons.Default.Delete,
-                        text = context.getString(R.string.delete),
+                        text = context.getString(SharedR.string.delete),
                         action = TopBarAction.DeleteExercise(key.exerciseId),
                         color = Color.Red
                     ),
@@ -289,7 +292,7 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
 
         is CreateTrainingPlan -> UiConfig(
             topBarConfig = TopBarConfig(
-                title = context.getString(R.string.create_training),
+                title = context.getString(TrainingR.string.create_training),
                 hasBackArrow = true
             )
         )
@@ -303,7 +306,7 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
 
         is AddTrainingExercise -> UiConfig(
             topBarConfig = TopBarConfig(
-                title = context.getString(R.string.search_exercise),
+                title = context.getString(ExerciseR.string.search_exercise),
                 hasBackArrow = true
             )
         )
@@ -327,7 +330,7 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
                     ),
                     TopBarMenuItem.OverflowItem(
                         icon = Icons.Default.Delete,
-                        text = context.getString(R.string.delete),
+                        text = context.getString(SharedR.string.delete),
                         action = TopBarAction.DeleteTrainingPlan(key.trainingPlanId),
                         color = Color.Red
                     )
@@ -347,7 +350,7 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
                     ),
                     TopBarMenuItem.OverflowItem(
                         icon = Icons.Default.Delete,
-                        text = context.getString(R.string.delete),
+                        text = context.getString(SharedR.string.delete),
                         action = TopBarAction.DeleteTrainingPlan(key.trainingPlanId),
                         color = Color.Red
                     )

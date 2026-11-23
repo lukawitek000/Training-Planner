@@ -14,6 +14,8 @@ import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStati
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.ProvideTimeDisplayEnvironment
+import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -74,11 +76,13 @@ class TrainingSessionSummaryScreenTest {
 
         composeTestRule.setContent {
             TrainingPlannerTheme {
-                TrainingSessionSummaryScreen(
-                    uiState = uiState,
-                    onSessionIntent = {},
-                    onFinishWorkout = {}
-                )
+                ProvideTimeDisplayEnvironment(TestTimeProvider()) {
+                    TrainingSessionSummaryScreen(
+                        uiState = uiState,
+                        onSessionIntent = {},
+                        onFinishWorkout = {}
+                    )
+                }
             }
         }
 
@@ -122,11 +126,13 @@ class TrainingSessionSummaryScreenTest {
 
         composeTestRule.setContent {
             TrainingPlannerTheme {
-                TrainingSessionSummaryScreen(
-                    uiState = uiState,
-                    onSessionIntent = { recordedIntents.add(it) },
-                    onFinishWorkout = { finishClicked = true }
-                )
+                ProvideTimeDisplayEnvironment(TestTimeProvider()) {
+                    TrainingSessionSummaryScreen(
+                        uiState = uiState,
+                        onSessionIntent = { recordedIntents.add(it) },
+                        onFinishWorkout = { finishClicked = true }
+                    )
+                }
             }
         }
 

@@ -31,6 +31,8 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategor
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.ProvideTimeDisplayEnvironment
+import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.time.formatRelativeDate
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.card.AppCard
@@ -314,16 +316,20 @@ private fun TrainingsScreenEmptyListPreview() {
 @Composable
 private fun TrainingsScreenSuccessPreview() {
     TrainingPlannerTheme {
-        TrainingsScreenContent(
-            uiState = TrainingsListUiState.Success(
-                filteringState = FilteringState("Some query", categories = emptyList()),
-                plans = PREVIEW_TRAINING_PLANS_OVERVIEWS
-            ),
-            onTrainingPlanClicked = {},
-            onSearchQueryChanged = {},
-            toggleCategory = {},
-            modifier = Modifier.fillMaxSize()
-        )
+        ProvideTimeDisplayEnvironment(
+            TestTimeProvider(Instant.parse("2026-09-10T12:00:00Z"))
+        ) {
+            TrainingsScreenContent(
+                uiState = TrainingsListUiState.Success(
+                    filteringState = FilteringState("Some query", categories = emptyList()),
+                    plans = PREVIEW_TRAINING_PLANS_OVERVIEWS
+                ),
+                onTrainingPlanClicked = {},
+                onSearchQueryChanged = {},
+                toggleCategory = {},
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
 

@@ -44,6 +44,8 @@ import com.lukasz.witkowski.training.planner.analytics.domain.models.ExerciseSta
 import com.lukasz.witkowski.training.planner.analytics.domain.models.TrainingStatisticsOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.ProvideTimeDisplayEnvironment
+import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.time.toRelativeDateLabel
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
@@ -161,14 +163,12 @@ private fun FormattedSessionDate(date: Instant, modifier: Modifier = Modifier) {
         horizontalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         Text(
-            modifier = modifier,
             text = label.primary,
             fontWeight = FontWeight.Bold,
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
-            modifier = modifier,
             text = label.secondary,
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -343,14 +343,18 @@ private fun DetailsButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
 @Composable
 private fun StatisticOverviewItemsPreview() {
     TrainingPlannerTheme {
-        Column {
-            PREVIEW_TRAINING_STATISTICS_OVERVIEWS.forEachIndexed { index, overview ->
-                StatisticOverviewItem(
-                    overview = overview,
-                    isFirst = index == 0,
-                    isLast = index == PREVIEW_TRAINING_STATISTICS_OVERVIEWS.lastIndex,
-                    onItemClicked = {}
-                )
+        ProvideTimeDisplayEnvironment(
+            TestTimeProvider(Instant.parse("2026-09-10T12:00:00Z"))
+        ) {
+            Column {
+                PREVIEW_TRAINING_STATISTICS_OVERVIEWS.forEachIndexed { index, overview ->
+                    StatisticOverviewItem(
+                        overview = overview,
+                        isFirst = index == 0,
+                        isLast = index == PREVIEW_TRAINING_STATISTICS_OVERVIEWS.lastIndex,
+                        onItemClicked = {}
+                    )
+                }
             }
         }
     }

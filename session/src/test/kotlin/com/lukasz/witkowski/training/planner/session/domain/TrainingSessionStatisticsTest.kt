@@ -309,6 +309,7 @@ internal class TrainingSessionStatisticsTest : TrainingSessionTest() {
         trainingStatistics: TrainingStatistics
     ) {
         assertEquals(expectedStatistics.trainingPlanId, trainingStatistics.trainingPlanId)
+        assertEquals(expectedStatistics.date, trainingStatistics.date)
         assertEqualsTime(expectedStatistics.totalTime, trainingStatistics.totalTime)
         assertExercisesStatistics(
             expectedStatistics.exercisesStatistics,

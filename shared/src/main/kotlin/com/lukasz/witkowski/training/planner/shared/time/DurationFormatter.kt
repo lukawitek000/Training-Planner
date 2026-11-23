@@ -3,6 +3,8 @@ package com.lukasz.witkowski.training.planner.shared.time
 import android.icu.text.MeasureFormat
 import android.icu.util.Measure
 import android.icu.util.MeasureUnit
+import android.text.BidiFormatter
+import android.text.TextDirectionHeuristics
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
@@ -71,6 +73,8 @@ internal fun Duration.decomposeForDisplay(): DurationDisplayComponents {
     )
 }
 
+private const val LRM = '\u200E'
+
 /**
  * Formats [this] duration into a locale-aware, RTL-safe string using ICU [MeasureFormat].
  */
@@ -78,10 +82,10 @@ fun Duration.formatDuration(
     style: DurationFormatStyle = DurationFormatStyle.COMPACT,
     locale: Locale = Locale.getDefault()
 ): String {
-    val symbols = DecimalFormatSymbols.getInstance(locale)
     if (!isFinite()) {
+        val symbols = DecimalFormatSymbols.getInstance(locale)
         return if (isNegative()) {
-            "${symbols.minusSign}${symbols.infinity}"
+            formatNegativeDuration(locale, symbols.minusSign, symbols.infinity)
         } else {
             symbols.infinity
         }
@@ -93,10 +97,25 @@ fun Duration.formatDuration(
     val formatted = MeasureFormat.getInstance(locale, style.toFormatWidth())
         .formatMeasures(*measures)
     return if (components.isNegative) {
-        "${symbols.minusSign}$formatted"
+        val symbols = DecimalFormatSymbols.getInstance(locale)
+        formatNegativeDuration(locale, symbols.minusSign, formatted)
     } else {
         formatted
     }
+}
+
+private fun formatNegativeDuration(
+    locale: Locale,
+    minusSign: Char,
+    formattedValue: String
+): String {
+    val bidiFormatter = BidiFormatter.getInstance(locale)
+    val signed = if (bidiFormatter.isRtlContext) {
+        "$LRM$minusSign$formattedValue"
+    } else {
+        "$minusSign$formattedValue"
+    }
+    return bidiFormatter.unicodeWrap(signed, TextDirectionHeuristics.LTR)
 }
 
 /**

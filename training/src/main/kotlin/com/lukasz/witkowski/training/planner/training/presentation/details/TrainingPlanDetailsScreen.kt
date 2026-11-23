@@ -52,6 +52,8 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.buildStringOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
+import com.lukasz.witkowski.training.planner.shared.time.ProvideTimeDisplayEnvironment
+import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.button.AppPrimaryButton
@@ -441,15 +443,19 @@ private fun TrainingPlanDetailsScreenContentFailurePreview() {
 @Composable
 private fun TrainingPlanDetailsScreenContentPreview() {
     TrainingPlannerTheme {
-        TrainingPlanDetailsScreenContent(
-            trainingPlanState = ResultHandler.Success(value = PREVIEW_TRAINING_PLAN),
-            modifier = Modifier.fillMaxSize(),
-            previousSessionsTabContent = {
-                item {
-                    AppEmptyState("No Data", modifier = Modifier.fillMaxWidth())
+        ProvideTimeDisplayEnvironment(
+            TestTimeProvider(instant = Instant.parse("2026-10-06T12:00:00Z"))
+        ) {
+            TrainingPlanDetailsScreenContent(
+                trainingPlanState = ResultHandler.Success(value = PREVIEW_TRAINING_PLAN),
+                modifier = Modifier.fillMaxSize(),
+                previousSessionsTabContent = {
+                    item {
+                        AppEmptyState("No Data", modifier = Modifier.fillMaxWidth())
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 }
 

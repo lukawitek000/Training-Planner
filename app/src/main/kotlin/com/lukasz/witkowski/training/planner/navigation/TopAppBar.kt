@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
+import com.lukasz.witkowski.training.planner.shared.R as SharedR
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 
@@ -136,7 +137,7 @@ private fun TopBarPreview() {
                     ),
                     TopBarMenuItem.OverflowItem(
                         icon = Icons.Default.Delete,
-                        text = stringResource(R.string.delete),
+                        text = stringResource(SharedR.string.delete),
                         action = TopBarAction.DeleteExercise(ExerciseId.create())
                     ),
                 )
