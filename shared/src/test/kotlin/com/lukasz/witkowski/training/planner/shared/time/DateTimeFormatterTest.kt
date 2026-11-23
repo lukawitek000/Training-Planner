@@ -1,9 +1,6 @@
 package com.lukasz.witkowski.training.planner.shared.time
 
 import java.time.LocalDate
-import java.time.ZoneId
-import java.util.Locale
-import kotlin.time.Instant
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -139,44 +136,5 @@ class DateTimeFormatterTest {
         assertEquals("yMMMd", DateTimeStyle.FULL_DATE.toSkeleton(is24Hour = false))
         assertEquals("yMMMdHmm", DateTimeStyle.FULL_DATE_TIME.toSkeleton(is24Hour = true))
         assertEquals("yMMMdhmm", DateTimeStyle.FULL_DATE_TIME.toSkeleton(is24Hour = false))
-    }
-
-    @Test
-    fun `formatDateTime delegates skeleton, zone, and locale to injected engine`() {
-        val instant = Instant.parse("2026-11-20T19:23:00Z")
-        val engine = DateTimeFormatEngine { _, skeleton, zoneId, locale ->
-            "$skeleton@${zoneId.id}@${locale.toLanguageTag()}"
-        }
-        val utc = ZoneId.of("UTC")
-
-        assertEquals(
-            "MMMdHmm@UTC@en-US",
-            instant.formatDateTime(
-                style = DateTimeStyle.SHORT_DATE_TIME,
-                formatEngine = engine,
-                zoneId = utc,
-                locale = Locale.US,
-                is24Hour = true
-            )
-        )
-        assertEquals(
-            "MMMdhmm@UTC@en-US",
-            instant.formatDateTime(
-                style = DateTimeStyle.SHORT_DATE_TIME,
-                formatEngine = engine,
-                zoneId = utc,
-                locale = Locale.US,
-                is24Hour = false
-            )
-        )
-        assertEquals(
-            "yMMMd@UTC@pl-PL",
-            instant.formatDateTime(
-                style = DateTimeStyle.FULL_DATE,
-                formatEngine = engine,
-                zoneId = utc,
-                locale = Locale.forLanguageTag("pl-PL")
-            )
-        )
     }
 }

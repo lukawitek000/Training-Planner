@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,7 +29,7 @@ import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStati
 import com.lukasz.witkowski.training.planner.session.domain.session.models.SessionExerciseConfiguration
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.ProvideTimeDisplayEnvironment
+import com.lukasz.witkowski.training.planner.shared.time.LocalTimeProvider
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.ui.feedback.AppEmptyState
@@ -298,8 +299,8 @@ private val PREVIEW_DETAILS_SUCCESS_STATE = DetailsUiState.Success(PREVIEW_TRAIN
 @Composable
 private fun TrainingStatisticsTabPreview() {
     TrainingPlannerTheme {
-        ProvideTimeDisplayEnvironment(
-            TestTimeProvider(Instant.parse("2026-09-10T12:00:00Z"))
+        CompositionLocalProvider(
+            LocalTimeProvider provides TestTimeProvider(Instant.parse("2026-09-10T12:00:00Z"))
         ) {
             TrainingStatisticsTabContent(
                 overviews = PREVIEW_TRAINING_STATISTICS_OVERVIEWS.asPreviewPagerFlow()
@@ -317,8 +318,8 @@ private fun TrainingStatisticsTabPreview() {
 @Composable
 private fun TrainingStatisticsTabDetailsPreview() {
     TrainingPlannerTheme {
-        ProvideTimeDisplayEnvironment(
-            TestTimeProvider(Instant.parse("2026-09-10T12:00:00Z"))
+        CompositionLocalProvider(
+            LocalTimeProvider provides TestTimeProvider(Instant.parse("2026-09-10T12:00:00Z"))
         ) {
             TrainingStatisticsTabContent(
                 overviews = PREVIEW_TRAINING_STATISTICS_OVERVIEWS.asPreviewPagerFlow()

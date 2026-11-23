@@ -1,13 +1,11 @@
 package com.lukasz.witkowski.training.planner.shared.time
 
 import android.content.Context
-import android.content.Intent
-import android.os.Looper
 import androidx.compose.material3.Text
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.v2.createComposeRule
-import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.test.core.app.ApplicationProvider
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -22,7 +20,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.robolectric.Shadows
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
@@ -180,72 +177,17 @@ class DateTimeFormatterRobolectricTest {
     }
 
     @Test
-    fun `ProvideTimeDisplayEnvironment reacts to date and timezone broadcasts`() {
+    fun `composable relative formatters use LocalTimeProvider`() {
         val targetInstant = Instant.parse("2026-11-20T12:00:00Z")
-        val timeProvider = TestTimeProvider(instant = targetInstant)
+        val timeProvider = TestTimeProvider(instant = targetInstant + 1.days)
 
         composeTestRule.setContent {
-            ProvideTimeDisplayEnvironment(timeProvider) {
+            CompositionLocalProvider(LocalTimeProvider provides timeProvider) {
                 Text(text = targetInstant.formatRelativeDate())
-                Text(text = targetInstant.formatDateTime(DateTimeStyle.SHORT_DATE_TIME))
+                Text(text = targetInstant.toRelativeDateLabel().primary)
             }
         }
 
-        composeTestRule.onNodeWithText("Today").assertIsDisplayed()
-
-        timeProvider.advanceBy(1.days)
-        context.sendBroadcast(Intent(Intent.ACTION_DATE_CHANGED).setPackage(context.packageName))
-        Shadows.shadowOf(Looper.getMainLooper()).idle()
-        composeTestRule.waitForIdle()
-
-        composeTestRule.onNodeWithText("Yesterday").assertIsDisplayed()
-
-        context.sendBroadcast(
-            Intent(Intent.ACTION_TIMEZONE_CHANGED)
-                .putExtra("time-zone", "Asia/Tokyo")
-                .setPackage(context.packageName)
-        )
-        Shadows.shadowOf(Looper.getMainLooper()).idle()
-        composeTestRule.waitForIdle()
-
-        val expectedTokyoTime = if (android.text.format.DateFormat.is24HourFormat(context)) {
-            "21:00"
-        } else {
-            "9:00"
-        }
-        composeTestRule.onNodeWithText(expectedTokyoTime, substring = true).assertIsDisplayed()
-    }
-
-    @Test
-    fun `nested LocalTimeProvider overrides ancestor ProvideTimeDisplayEnvironment`() {
-        val targetInstant = Instant.parse("2026-11-20T12:00:00Z")
-        val outerProvider = TestTimeProvider(instant = targetInstant)
-        val nestedProvider = TestTimeProvider(instant = targetInstant + 1.days)
-
-        composeTestRule.setContent {
-            ProvideTimeDisplayEnvironment(outerProvider) {
-                CompositionLocalProvider(LocalTimeProvider provides nestedProvider) {
-                    Text(text = targetInstant.formatRelativeDate())
-                }
-            }
-        }
-
-        composeTestRule.onNodeWithText("Yesterday").assertIsDisplayed()
-    }
-
-    @Test
-    fun `static TestTimeProvider midnight timer terminates cleanly when clock advances`() {
-        val targetInstant = Instant.parse("2026-11-20T23:59:00Z")
-        val staticProvider = TestTimeProvider(instant = targetInstant)
-
-        composeTestRule.setContent {
-            ProvideTimeDisplayEnvironment(staticProvider) {
-                Text(text = targetInstant.formatRelativeDate())
-            }
-        }
-
-        composeTestRule.mainClock.advanceTimeBy(48L * 60 * 60 * 1000)
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Today").assertIsDisplayed()
+        composeTestRule.onAllNodesWithText("Yesterday").assertCountEquals(2)
     }
 }

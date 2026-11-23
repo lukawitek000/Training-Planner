@@ -32,10 +32,7 @@ import com.lukasz.witkowski.training.planner.navigation.TrainingPlansList
 import com.lukasz.witkowski.training.planner.navigation.rememberTrainingPlannerNavBackStack
 import com.lukasz.witkowski.training.planner.navigation.toUiConfig
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.ProvideTimeDisplayEnvironment
-import com.lukasz.witkowski.training.planner.shared.time.TimeProvider
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
-import org.koin.compose.koinInject
 import com.lukasz.witkowski.training.planner.shared.utils.LocalWeightUnit
 import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
 import com.lukasz.witkowski.training.planner.user.domain.UserRepository
@@ -48,15 +45,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            val timeProvider: TimeProvider = koinInject()
             val weightUnit by userRepository.weightUnit.collectAsStateWithLifecycle(
                 initialValue = WeightUnit.KG
             )
             CompositionLocalProvider(LocalWeightUnit provides weightUnit) {
                 TrainingPlannerTheme {
-                    ProvideTimeDisplayEnvironment(timeProvider = timeProvider) {
-                        TrainingPlannerApp()
-                    }
+                    TrainingPlannerApp()
                 }
             }
         }

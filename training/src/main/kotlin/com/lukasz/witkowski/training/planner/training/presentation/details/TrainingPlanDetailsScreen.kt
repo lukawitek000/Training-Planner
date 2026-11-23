@@ -35,6 +35,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -52,7 +53,7 @@ import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.buildStringOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.ProvideTimeDisplayEnvironment
+import com.lukasz.witkowski.training.planner.shared.time.LocalTimeProvider
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.time.formatDuration
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
@@ -81,7 +82,7 @@ private const val TAB_HEADER_INDEX = 1
 
 private fun LazyListState.isScrolledPast(itemIndex: Int): Boolean =
     firstVisibleItemIndex > itemIndex ||
-        (firstVisibleItemIndex == itemIndex && firstVisibleItemScrollOffset > 0)
+            (firstVisibleItemIndex == itemIndex && firstVisibleItemScrollOffset > 0)
 
 @Composable
 fun TrainingPlanDetailsScreen(
@@ -443,8 +444,8 @@ private fun TrainingPlanDetailsScreenContentFailurePreview() {
 @Composable
 private fun TrainingPlanDetailsScreenContentPreview() {
     TrainingPlannerTheme {
-        ProvideTimeDisplayEnvironment(
-            TestTimeProvider(instant = Instant.parse("2026-10-06T12:00:00Z"))
+        CompositionLocalProvider(
+            LocalTimeProvider provides TestTimeProvider(instant = Instant.parse("2026-10-06T12:00:00Z"))
         ) {
             TrainingPlanDetailsScreenContent(
                 trainingPlanState = ResultHandler.Success(value = PREVIEW_TRAINING_PLAN),

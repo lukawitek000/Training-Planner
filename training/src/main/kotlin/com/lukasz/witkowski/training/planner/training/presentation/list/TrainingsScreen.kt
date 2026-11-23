@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,7 +32,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.FilterCategor
 import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringState
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.ProvideTimeDisplayEnvironment
+import com.lukasz.witkowski.training.planner.shared.time.LocalTimeProvider
 import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.time.formatRelativeDate
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
@@ -316,8 +317,8 @@ private fun TrainingsScreenEmptyListPreview() {
 @Composable
 private fun TrainingsScreenSuccessPreview() {
     TrainingPlannerTheme {
-        ProvideTimeDisplayEnvironment(
-            TestTimeProvider(Instant.parse("2026-09-10T12:00:00Z"))
+        CompositionLocalProvider(
+            LocalTimeProvider provides TestTimeProvider(Instant.parse("2026-09-10T12:00:00Z"))
         ) {
             TrainingsScreenContent(
                 uiState = TrainingsListUiState.Success(

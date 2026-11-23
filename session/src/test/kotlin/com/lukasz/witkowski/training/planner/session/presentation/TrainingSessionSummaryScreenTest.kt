@@ -14,8 +14,6 @@ import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStati
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.presentation.models.TrainingSessionUiState
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
-import com.lukasz.witkowski.training.planner.shared.time.ProvideTimeDisplayEnvironment
-import com.lukasz.witkowski.training.planner.shared.time.TestTimeProvider
 import com.lukasz.witkowski.training.planner.shared.utils.ResultHandler
 import com.lukasz.witkowski.training.planner.shared.utils.kg
 import kotlin.test.assertEquals
@@ -77,13 +75,11 @@ class TrainingSessionSummaryScreenTest {
 
         composeTestRule.setContent {
             TrainingPlannerTheme {
-                ProvideTimeDisplayEnvironment(TestTimeProvider()) {
-                    TrainingSessionSummaryScreen(
-                        uiState = uiState,
-                        onSessionIntent = {},
-                        onFinishWorkout = {}
-                    )
-                }
+                TrainingSessionSummaryScreen(
+                    uiState = uiState,
+                    onSessionIntent = {},
+                    onFinishWorkout = {}
+                )
             }
         }
 
@@ -127,13 +123,11 @@ class TrainingSessionSummaryScreenTest {
 
         composeTestRule.setContent {
             TrainingPlannerTheme {
-                ProvideTimeDisplayEnvironment(TestTimeProvider()) {
-                    TrainingSessionSummaryScreen(
-                        uiState = uiState,
-                        onSessionIntent = { recordedIntents.add(it) },
-                        onFinishWorkout = { finishClicked = true }
-                    )
-                }
+                TrainingSessionSummaryScreen(
+                    uiState = uiState,
+                    onSessionIntent = { recordedIntents.add(it) },
+                    onFinishWorkout = { finishClicked = true }
+                )
             }
         }
 
