@@ -4,8 +4,8 @@ import android.app.Application
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import coil3.svg.SvgDecoder
 import com.lukasz.witkowski.training.planner.di.appModule
-import com.lukasz.witkowski.training.planner.image.infrastructure.ThemeAwareSvgDecoder
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
 import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
 import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlagProvider
@@ -22,7 +22,7 @@ class TrainingPlannerApplication : Application(), SingletonImageLoader.Factory {
     override fun newImageLoader(context: PlatformContext): ImageLoader =
         ImageLoader.Builder(context)
             .components {
-                add(ThemeAwareSvgDecoder.Factory())
+                add(SvgDecoder.Factory())
             }
             .build()
 
