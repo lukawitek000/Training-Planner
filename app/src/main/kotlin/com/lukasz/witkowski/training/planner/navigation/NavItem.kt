@@ -39,7 +39,6 @@ sealed interface ExerciseIdRoute {
 data class ExerciseDetails(
     @Serializable(with = ExerciseIdSerializer::class)
     override val exerciseId: ExerciseId,
-    val isEditable: Boolean = false,
 ) : TrainingPlannerNavKey, ExerciseIdRoute
 
 @Serializable
@@ -268,7 +267,7 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
             )
         )
 
-        is DeleteExercise -> UiConfig(
+        is DeleteExercise, is ExerciseDetails -> UiConfig(
             topBarConfig = TopBarConfig(
                 title = context.getString(R.string.exercise_details),
                 hasBackArrow = true,
@@ -285,30 +284,6 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
                         color = Color.Red
                     ),
                 )
-            )
-        )
-
-        is ExerciseDetails -> UiConfig(
-            topBarConfig = TopBarConfig(
-                title = context.getString(R.string.exercise_details),
-                hasBackArrow = true,
-                menuItems = if (key.isEditable) {
-                    listOf(
-                        TopBarMenuItem.OverflowItem(
-                            icon = Icons.Default.Edit,
-                            text = context.getString(R.string.edit),
-                            action = TopBarAction.EditExercise(key.exerciseId)
-                        ),
-                        TopBarMenuItem.OverflowItem(
-                            icon = Icons.Default.Delete,
-                            text = context.getString(R.string.delete),
-                            action = TopBarAction.DeleteExercise(key.exerciseId),
-                            color = Color.Red
-                        ),
-                    )
-                } else {
-                    emptyList()
-                }
             )
         )
 

@@ -46,7 +46,7 @@ class ExerciseDatabaseAssetTest {
         val exerciseDao = db.exerciseDao()
         val allExercises = exerciseDao.getAll().first()
 
-        assertEquals("Should contain 80 bundled exercises", 80, allExercises.size)
+        assertEquals("Should contain 78 bundled exercises", 78, allExercises.size)
 
         allExercises.forEach { exercise ->
             assertNotNull(

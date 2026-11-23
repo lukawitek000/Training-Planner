@@ -16,7 +16,6 @@ import androidx.navigation3.runtime.result.rememberResultEventBusNavEntryDecorat
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import com.lukasz.witkowski.training.planner.auth.presentation.auth.AuthenticationScreen
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.delete.DeleteExerciseScreen
 import com.lukasz.witkowski.training.planner.exercise.presentation.details.ExerciseDetailsScreen
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.CreateExerciseScreen
@@ -180,8 +179,8 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.exerciseEntryBuilder(
     entry<ExercisesList> {
         ExercisesScreen(
             viewModel = koinViewModel(),
-            onExerciseClicked = { id: ExerciseId, isEditable: Boolean ->
-                navigator.exerciseDetails(id, isEditable)
+            onExerciseClicked = { id ->
+                navigator.exerciseDetails(id)
             }
         )
     }

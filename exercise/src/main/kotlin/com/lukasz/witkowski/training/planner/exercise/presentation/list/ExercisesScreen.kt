@@ -82,7 +82,7 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun ExercisesScreen(
     viewModel: ExercisesListViewModel,
-    onExerciseClicked: (ExerciseId, Boolean) -> Unit,
+    onExerciseClicked: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val exercisesList = viewModel.exercises.collectAsLazyPagingItems()
@@ -105,7 +105,7 @@ fun ExercisesScreenContent(
     filteringState: FilteringState,
     toggleCategory: (ExerciseCategory) -> Unit,
     onSearchQueryChanged: (String) -> Unit,
-    onExerciseClicked: (ExerciseId, Boolean) -> Unit,
+    onExerciseClicked: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
     onClearCategories: () -> Unit = {},
     onResetFilters: () -> Unit = {
@@ -219,7 +219,7 @@ private fun ExercisesSearchAndFilterHeader(
 @Composable
 private fun ExercisesList(
     exercisesList: LazyPagingItems<Exercise>,
-    onExerciseClicked: (ExerciseId, Boolean) -> Unit,
+    onExerciseClicked: (ExerciseId) -> Unit,
     modifier: Modifier = Modifier,
     itemTrailingIcon: (@Composable (ExerciseId) -> Unit)? = null
 ) {
@@ -245,10 +245,7 @@ private fun ExercisesList(
             if (exercise != null) {
                 ExerciseListItemContent(
                     exercise = exercise,
-                    onClick = {
-                        val isEditable = exercise.metadata.source is ExerciseSource.UserCreated
-                        onExerciseClicked(exercise.id, isEditable)
-                    },
+                    onClick = { onExerciseClicked(exercise.id) },
                     itemTrailingIcon = itemTrailingIcon,
                     modifier = Modifier.testTag("ExerciseItem-${exercise.name}")
                 )
@@ -577,7 +574,7 @@ private fun ExercisesScreenContentPreview() {
             ),
             toggleCategory = {},
             onSearchQueryChanged = {},
-            onExerciseClicked = { _, _ -> }
+            onExerciseClicked = {}
         )
     }
 }
