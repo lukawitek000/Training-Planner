@@ -1,4 +1,4 @@
-<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="39 59 434 399" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
       <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#FF0000" />
@@ -7,10 +7,7 @@
       <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#888888" />
     </marker>
   </defs>
-  <!-- Background Badge / Stage -->
-  <circle cx="256" cy="256" r="230" fill="#111111" fill-opacity="0.035" stroke="#111111" stroke-width="1.5" stroke-opacity="0.08" />
-
-    <!-- Ground plane line with beveled ends and soft ground shadow -->
+<!-- Ground plane line with beveled ends and soft ground shadow -->
     <ellipse cx="256" cy="446" rx="180" ry="12" fill="#888888" fill-opacity="0.15" />
     <rect x="40" y="436" width="432" height="8" rx="4" fill="#888888" fill-opacity="0.6" stroke="#888888" stroke-width="2" />
     
