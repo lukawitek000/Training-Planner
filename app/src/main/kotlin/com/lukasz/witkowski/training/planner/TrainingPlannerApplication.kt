@@ -1,6 +1,10 @@
 package com.lukasz.witkowski.training.planner
 
 import android.app.Application
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
+import coil3.svg.SvgDecoder
 import com.lukasz.witkowski.training.planner.debug.StrictModeConfig
 import com.lukasz.witkowski.training.planner.di.appModule
 import com.lukasz.witkowski.training.planner.network.SyncScheduler
@@ -12,9 +16,16 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
 import timber.log.Timber
 
-class TrainingPlannerApplication : Application() {
+class TrainingPlannerApplication : Application(), SingletonImageLoader.Factory {
     private val syncScheduler: SyncScheduler by inject()
     private val featureFlagProvider: FeatureFlagProvider by inject()
+
+    override fun newImageLoader(context: PlatformContext): ImageLoader =
+        ImageLoader.Builder(context)
+            .components {
+                add(SvgDecoder.Factory())
+            }
+            .build()
 
     override fun onCreate() {
         super.onCreate()

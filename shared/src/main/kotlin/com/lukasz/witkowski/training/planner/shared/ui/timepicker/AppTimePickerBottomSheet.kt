@@ -428,8 +428,7 @@ fun AppTimePickerSheetContent(
         AppTertiaryButton(
             text = stringResource(R.string.cancel),
             onClick = onDismissRequest,
-            modifier =
-            Modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .testTag("TimePickerCancelButton")
         )

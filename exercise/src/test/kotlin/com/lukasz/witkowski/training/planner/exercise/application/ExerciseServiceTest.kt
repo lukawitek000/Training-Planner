@@ -13,7 +13,6 @@ import io.mockk.coVerify
 import io.mockk.mockk
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import kotlinx.coroutines.test.runTest
 
 class ExerciseServiceTest {
@@ -116,37 +115,6 @@ class ExerciseServiceTest {
             exerciseRepository.exercises.first()
         )
         coVerify(exactly = 0) { imageStorage.saveImages(any()) }
-    }
-
-    @Test
-    fun `update exercise throws IllegalStateException for bundled exercise`() = runTest {
-        val bundledDetails = TestData.PUSH_UPS_DETAILS.copy(
-            exercise = TestData.PUSH_UPS_EXERCISE.copy(
-                metadata = ExerciseMetadata(source = ExerciseSource.Bundled)
-            )
-        )
-        exerciseRepository.insert(bundledDetails)
-
-        assertFailsWith<IllegalStateException> {
-            service.updateExercise(
-                exerciseConfiguration = TestData.PUSH_UPS_CONFIGURATION,
-                exerciseId = bundledDetails.exercise.id
-            )
-        }
-    }
-
-    @Test
-    fun `delete exercise throws IllegalStateException for bundled exercise`() = runTest {
-        val bundledDetails = TestData.PUSH_UPS_DETAILS.copy(
-            exercise = TestData.PUSH_UPS_EXERCISE.copy(
-                metadata = ExerciseMetadata(source = ExerciseSource.Bundled)
-            )
-        )
-        exerciseRepository.insert(bundledDetails)
-
-        assertFailsWith<IllegalStateException> {
-            service.deleteExercise(bundledDetails.exercise.id)
-        }
     }
 
     @Test

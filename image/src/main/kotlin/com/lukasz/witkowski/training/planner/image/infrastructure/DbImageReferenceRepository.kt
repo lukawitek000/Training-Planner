@@ -103,8 +103,14 @@ internal class DbImageReferenceRepository(
         if (dbImageReference != null) {
             return@withContext dbImageReference.toImageReference()
         }
-        val fileName = "$imageId.webp"
-        if (bundledAssets.contains(fileName)) {
+        val svgFileName = "$imageId.svg"
+        val webpFileName = "$imageId.webp"
+        val fileName = when {
+            bundledAssets.contains(svgFileName) -> svgFileName
+            bundledAssets.contains(webpFileName) -> webpFileName
+            else -> null
+        }
+        if (fileName != null) {
             ImageReference(
                 imageId = imageId,
                 ownersIds = emptyList(),

@@ -34,6 +34,7 @@ dependencies {
 
     // Coil
     api(libs.coil.compose)
+    api(libs.coil.svg)
 
     // koin
     implementation(platform(libs.koin.bom))
