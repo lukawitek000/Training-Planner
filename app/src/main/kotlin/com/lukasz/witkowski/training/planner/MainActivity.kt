@@ -6,6 +6,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.FastOutLinearInEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -18,6 +24,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -30,6 +39,7 @@ import com.lukasz.witkowski.training.planner.navigation.TrainingPlannerNavigator
 import com.lukasz.witkowski.training.planner.navigation.TrainingPlansList
 import com.lukasz.witkowski.training.planner.navigation.rememberTrainingPlannerNavBackStack
 import com.lukasz.witkowski.training.planner.navigation.toUiConfig
+import com.lukasz.witkowski.training.planner.shared.theme.Motion
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
 import com.lukasz.witkowski.training.planner.shared.utils.LocalWeightUnit
@@ -62,14 +72,35 @@ fun TrainingPlannerApp(initialKey: TrainingPlannerNavKey = TrainingPlansList) {
     val context = LocalContext.current
     val navigator = TrainingPlannerNavigator(backStack)
     val uiConfig = navigator.toUiConfig(context = context)
+    var lastBottomBarConfig by remember { mutableStateOf(uiConfig.bottomBarConfig) }
+    if (uiConfig.bottomBarConfig != null) {
+        lastBottomBarConfig = uiConfig.bottomBarConfig
+    }
+    var lastTopBarConfig by remember { mutableStateOf(uiConfig.topBarConfig) }
+    if (uiConfig.topBarConfig != null) {
+        lastTopBarConfig = uiConfig.topBarConfig
+    }
     Scaffold(
         bottomBar = {
             AnimatedVisibility(
                 visible = uiConfig.bottomBarConfig != null,
-                enter = slideInVertically(initialOffsetY = { it }),
-                exit = slideOutVertically(targetOffsetY = { it }),
+                enter = slideInVertically(
+                    animationSpec = tween(Motion.ENTER_DURATION_MS, easing = FastOutSlowInEasing),
+                    initialOffsetY = { it }
+                ) + fadeIn(
+                    animationSpec = tween(
+                        durationMillis = Motion.FADE_THROUGH_IN_DURATION_MS,
+                        easing = LinearOutSlowInEasing
+                    )
+                ),
+                exit = slideOutVertically(
+                    animationSpec = tween(Motion.EXIT_DURATION_MS, easing = FastOutLinearInEasing),
+                    targetOffsetY = { it }
+                ) + fadeOut(
+                    animationSpec = tween(Motion.EXIT_DURATION_MS, easing = FastOutLinearInEasing)
+                ),
             ) {
-                uiConfig.bottomBarConfig?.let { config ->
+                lastBottomBarConfig?.let { config ->
                     BottomNavigationBar(
                         items = config.items
                     )
@@ -77,29 +108,48 @@ fun TrainingPlannerApp(initialKey: TrainingPlannerNavKey = TrainingPlansList) {
             }
         },
         topBar = {
-            TopBar(
-                config = uiConfig.topBarConfig,
-                navigateBack = { navigator.goBack() },
-                onAction = {
-                    when (it) {
-                        is TopBarAction.EditExercise -> {
-                            navigator.exerciseEdit(it.id)
-                        }
-                        is TopBarAction.DeleteExercise -> {
-                            navigator.showDeleteExerciseDialog(it.id)
-                        }
-                        is TopBarAction.EditTrainingPlan -> {
-                            navigator.trainingPlanEdit(it.id)
-                        }
-                        is TopBarAction.DeleteTrainingPlan -> {
-                            navigator.showDeleteTrainingPlanDialog(it.id)
-                        }
-                        TopBarAction.UserProfile -> {
-                            navigator.userProfile()
+            AnimatedVisibility(
+                visible = uiConfig.topBarConfig != null,
+                enter = slideInVertically(
+                    animationSpec = tween(Motion.ENTER_DURATION_MS, easing = FastOutSlowInEasing),
+                    initialOffsetY = { -it }
+                ) + fadeIn(
+                    animationSpec = tween(
+                        durationMillis = Motion.FADE_THROUGH_IN_DURATION_MS,
+                        easing = LinearOutSlowInEasing
+                    )
+                ),
+                exit = slideOutVertically(
+                    animationSpec = tween(Motion.EXIT_DURATION_MS, easing = FastOutLinearInEasing),
+                    targetOffsetY = { -it }
+                ) + fadeOut(
+                    animationSpec = tween(Motion.EXIT_DURATION_MS, easing = FastOutLinearInEasing)
+                ),
+            ) {
+                TopBar(
+                    config = lastTopBarConfig,
+                    navigateBack = { navigator.goBack() },
+                    onAction = {
+                        when (it) {
+                            is TopBarAction.EditExercise -> {
+                                navigator.exerciseEdit(it.id)
+                            }
+                            is TopBarAction.DeleteExercise -> {
+                                navigator.showDeleteExerciseDialog(it.id)
+                            }
+                            is TopBarAction.EditTrainingPlan -> {
+                                navigator.trainingPlanEdit(it.id)
+                            }
+                            is TopBarAction.DeleteTrainingPlan -> {
+                                navigator.showDeleteTrainingPlanDialog(it.id)
+                            }
+                            TopBarAction.UserProfile -> {
+                                navigator.userProfile()
+                            }
                         }
                     }
-                }
-            )
+                )
+            }
         },
         floatingActionButton = {
             uiConfig.fabConfig?.let { fab ->
