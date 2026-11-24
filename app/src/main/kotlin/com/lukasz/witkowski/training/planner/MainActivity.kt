@@ -2,13 +2,9 @@ package com.lukasz.witkowski.training.planner
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
@@ -63,22 +59,11 @@ fun TrainingPlannerApp(initialKey: TrainingPlannerNavKey = TrainingPlansList) {
     val context = LocalContext.current
     val navigator = TrainingPlannerNavigator(backStack)
     val uiConfig = navigator.toUiConfig(context = context)
-    BackHandler(enabled = !navigator.isOnMainScreen()) {
-        navigator.goBack()
-    }
     Scaffold(
         bottomBar = {
-            AnimatedVisibility(
-                visible = uiConfig.bottomBarConfig != null,
-                enter = slideInVertically(initialOffsetY = { it }),
-                exit = slideOutVertically(targetOffsetY = { it }),
-            ) {
-                uiConfig.bottomBarConfig?.let { config ->
-                    BottomNavigationBar(
-                        items = config.items
-                    )
-                }
-            }
+            BottomNavigationBar(
+                config = uiConfig.bottomBarConfig
+            )
         },
         topBar = {
             TopBar(
