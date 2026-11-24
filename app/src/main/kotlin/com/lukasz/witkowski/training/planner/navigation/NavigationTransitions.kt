@@ -2,9 +2,6 @@ package com.lukasz.witkowski.training.planner.navigation
 
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -19,188 +16,92 @@ import androidx.compose.animation.togetherWith
 import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
 import com.lukasz.witkowski.training.planner.shared.theme.Motion
+import com.lukasz.witkowski.training.planner.shared.ui.animation.AppMotionTransitions
 
 internal object NavigationTransitions {
 
-    fun sharedAxisXForward(offsetPx: Int): ContentTransform {
-        return (
-            slideInHorizontally(
-                animationSpec = tween(Motion.ENTER_DURATION_MS, easing = FastOutSlowInEasing),
-                initialOffsetX = { offsetPx }
-            ) + fadeIn(
-                animationSpec = tween(
-                    durationMillis = Motion.FADE_THROUGH_IN_DURATION_MS,
-                    delayMillis = Motion.FADE_THROUGH_DELAY_MS,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-            ) togetherWith (
-            slideOutHorizontally(
-                animationSpec = tween(Motion.ENTER_DURATION_MS, easing = FastOutSlowInEasing),
-                targetOffsetX = { -offsetPx }
-            ) + fadeOut(
-                animationSpec = tween(
-                    durationMillis = Motion.FADE_THROUGH_OUT_DURATION_MS,
-                    easing = FastOutLinearInEasing
-                )
-            )
-            )
-    }
+    fun sharedAxisXForward(offsetPx: Int): ContentTransform = sharedAxisX(offsetPx = offsetPx)
 
-    fun sharedAxisXBackward(offsetPx: Int): ContentTransform {
-        return (
-            slideInHorizontally(
-                animationSpec = tween(Motion.ENTER_DURATION_MS, easing = FastOutSlowInEasing),
-                initialOffsetX = { -offsetPx }
-            ) + fadeIn(
-                animationSpec = tween(
-                    durationMillis = Motion.FADE_THROUGH_IN_DURATION_MS,
-                    delayMillis = Motion.FADE_THROUGH_DELAY_MS,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-            ) togetherWith (
-            slideOutHorizontally(
-                animationSpec = tween(Motion.ENTER_DURATION_MS, easing = FastOutSlowInEasing),
-                targetOffsetX = { offsetPx }
-            ) + fadeOut(
-                animationSpec = tween(
-                    durationMillis = Motion.FADE_THROUGH_OUT_DURATION_MS,
-                    easing = FastOutLinearInEasing
-                )
-            )
-            )
-    }
-
-    fun fadeThrough(): ContentTransform {
-        return (
-            fadeIn(
-                animationSpec = tween(
-                    durationMillis = Motion.FADE_THROUGH_IN_DURATION_MS,
-                    delayMillis = Motion.FADE_THROUGH_DELAY_MS,
-                    easing = LinearOutSlowInEasing
-                )
-            ) + scaleIn(
-                initialScale = Motion.FADE_THROUGH_INITIAL_SCALE,
-                animationSpec = tween(
-                    durationMillis = Motion.FADE_THROUGH_IN_DURATION_MS,
-                    delayMillis = Motion.FADE_THROUGH_DELAY_MS,
-                    easing = FastOutSlowInEasing
-                )
-            )
-            ) togetherWith fadeOut(
-            animationSpec = tween(
-                durationMillis = Motion.FADE_THROUGH_OUT_DURATION_MS,
-                easing = FastOutLinearInEasing
-            )
-        )
-    }
+    fun sharedAxisXBackward(offsetPx: Int): ContentTransform = sharedAxisX(offsetPx = -offsetPx)
 
     fun topLevelTabMetadata(): Map<String, Any> {
         return metadata {
-            put(NavDisplay.TransitionKey) { fadeThrough() }
+            put(NavDisplay.TransitionKey) { AppMotionTransitions.fadeThroughTransform() }
         }
     }
 
     fun verticalModalMetadata(): Map<String, Any> {
-        val enter: ContentTransform = (
-            slideInVertically(
-                animationSpec = tween(Motion.ENTER_DURATION_MS, easing = FastOutSlowInEasing),
-                initialOffsetY = { it }
-            ) + fadeIn(
-                animationSpec = tween(Motion.FADE_THROUGH_IN_DURATION_MS, easing = LinearOutSlowInEasing)
-            )
-            ) togetherWith fadeOut(
-            animationSpec = tween(Motion.EXIT_DURATION_MS, easing = FastOutLinearInEasing)
-        )
+        val enter: ContentTransform =
+            AppMotionTransitions.slideFadeVerticalEnter(fromTop = false) togetherWith
+                fadeOut(Motion.exitTween())
 
-        val exit: ContentTransform = EnterTransition.None togetherWith (
-            slideOutVertically(
-                animationSpec = tween(Motion.EXIT_DURATION_MS, easing = FastOutLinearInEasing),
-                targetOffsetY = { it }
-            ) + fadeOut(
-                animationSpec = tween(Motion.EXIT_DURATION_MS, easing = FastOutLinearInEasing)
-            )
-            )
+        val exit: ContentTransform =
+            EnterTransition.None togetherWith
+                AppMotionTransitions.slideFadeVerticalExit(toTop = false)
 
-        return metadata {
-            put(NavDisplay.TransitionKey) { enter }
-            put(NavDisplay.PopTransitionKey) { exit }
-            put(NavDisplay.PredictivePopTransitionKey) { exit }
-        }
+        return modalMetadata(enter = enter, exit = exit)
     }
 
     fun sharedAxisYMetadata(offsetPx: Int): Map<String, Any> {
-        val enter: ContentTransform = (
-            slideInVertically(
-                animationSpec = tween(Motion.ENTER_DURATION_MS, easing = FastOutSlowInEasing),
-                initialOffsetY = { offsetPx }
-            ) + fadeIn(
-                animationSpec = tween(
-                    durationMillis = Motion.FADE_THROUGH_IN_DURATION_MS,
-                    delayMillis = Motion.FADE_THROUGH_DELAY_MS,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-            ) togetherWith (
-            slideOutVertically(
-                animationSpec = tween(Motion.ENTER_DURATION_MS, easing = FastOutSlowInEasing),
-                targetOffsetY = { -offsetPx }
-            ) + fadeOut(
-                animationSpec = tween(Motion.FADE_THROUGH_OUT_DURATION_MS, easing = FastOutLinearInEasing)
-            )
-            )
-
-        val exit: ContentTransform = (
-            slideInVertically(
-                animationSpec = tween(Motion.ENTER_DURATION_MS, easing = FastOutSlowInEasing),
-                initialOffsetY = { -offsetPx }
-            ) + fadeIn(
-                animationSpec = tween(
-                    durationMillis = Motion.FADE_THROUGH_IN_DURATION_MS,
-                    delayMillis = Motion.FADE_THROUGH_DELAY_MS,
-                    easing = LinearOutSlowInEasing
-                )
-            )
-            ) togetherWith (
-            slideOutVertically(
-                animationSpec = tween(Motion.ENTER_DURATION_MS, easing = FastOutSlowInEasing),
-                targetOffsetY = { offsetPx }
-            ) + fadeOut(
-                animationSpec = tween(Motion.FADE_THROUGH_OUT_DURATION_MS, easing = FastOutLinearInEasing)
-            )
-            )
-
-        return metadata {
-            put(NavDisplay.TransitionKey) { enter }
-            put(NavDisplay.PopTransitionKey) { exit }
-            put(NavDisplay.PredictivePopTransitionKey) { exit }
-        }
+        return modalMetadata(
+            enter = sharedAxisY(offsetPx = offsetPx),
+            exit = sharedAxisY(offsetPx = -offsetPx),
+        )
     }
 
     fun immersiveScaleMetadata(): Map<String, Any> {
+        val enterFade = fadeIn(
+            animationSpec = tween(Motion.ENTER_DURATION_MS, easing = LinearOutSlowInEasing)
+        )
         val enter: ContentTransform = (
             scaleIn(
                 initialScale = Motion.SESSION_SCALE_INITIAL,
-                animationSpec = tween(Motion.ENTER_DURATION_MS, easing = FastOutSlowInEasing)
-            ) + fadeIn(
-                animationSpec = tween(Motion.ENTER_DURATION_MS, easing = LinearOutSlowInEasing)
-            )
-            ) togetherWith fadeOut(
-            animationSpec = tween(Motion.EXIT_DURATION_MS, easing = FastOutLinearInEasing)
-        )
+                animationSpec = Motion.enterTween(),
+            ) + enterFade
+            ) togetherWith fadeOut(Motion.exitTween())
 
-        val exit: ContentTransform = fadeIn(
-            animationSpec = tween(Motion.ENTER_DURATION_MS, easing = LinearOutSlowInEasing)
-        ) togetherWith (
+        val exit: ContentTransform = enterFade togetherWith (
             scaleOut(
                 targetScale = Motion.SESSION_SCALE_INITIAL,
-                animationSpec = tween(Motion.EXIT_DURATION_MS, easing = FastOutLinearInEasing)
-            ) + fadeOut(
-                animationSpec = tween(Motion.EXIT_DURATION_MS, easing = FastOutLinearInEasing)
-            )
+                animationSpec = Motion.exitTween(),
+            ) + fadeOut(Motion.exitTween())
             )
 
+        return modalMetadata(enter = enter, exit = exit)
+    }
+
+    private fun sharedAxisX(offsetPx: Int): ContentTransform {
+        return (
+            slideInHorizontally(
+                animationSpec = Motion.enterTween(),
+                initialOffsetX = { offsetPx },
+            ) + fadeIn(animationSpec = Motion.fadeThroughInTween())
+            ) togetherWith (
+            slideOutHorizontally(
+                animationSpec = Motion.enterTween(),
+                targetOffsetX = { -offsetPx },
+            ) + fadeOut(animationSpec = Motion.fadeThroughOutTween())
+            )
+    }
+
+    private fun sharedAxisY(offsetPx: Int): ContentTransform {
+        return (
+            slideInVertically(
+                animationSpec = Motion.enterTween(),
+                initialOffsetY = { offsetPx },
+            ) + fadeIn(animationSpec = Motion.fadeThroughInTween())
+            ) togetherWith (
+            slideOutVertically(
+                animationSpec = Motion.enterTween(),
+                targetOffsetY = { -offsetPx },
+            ) + fadeOut(animationSpec = Motion.fadeThroughOutTween())
+            )
+    }
+
+    private fun modalMetadata(
+        enter: ContentTransform,
+        exit: ContentTransform,
+    ): Map<String, Any> {
         return metadata {
             put(NavDisplay.TransitionKey) { enter }
             put(NavDisplay.PopTransitionKey) { exit }

@@ -2,15 +2,6 @@ package com.lukasz.witkowski.training.planner.navigation
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -36,9 +27,10 @@ import androidx.compose.ui.res.stringResource
 import com.lukasz.witkowski.training.planner.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.shared.R as SharedR
-import com.lukasz.witkowski.training.planner.shared.theme.Motion
 import com.lukasz.witkowski.training.planner.shared.theme.TrainingPlannerTheme
 import com.lukasz.witkowski.training.planner.shared.ui.AppPreview
+import com.lukasz.witkowski.training.planner.shared.ui.animation.AppAnimatedNullableVisibility
+import com.lukasz.witkowski.training.planner.shared.ui.animation.AppMotionTransitions
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,64 +40,46 @@ fun TopBar(
     onAction: (TopBarAction) -> Unit,
     navigateBack: () -> Unit
 ) {
-    if (config == null) return
-    TopAppBar(
+    AppAnimatedNullableVisibility(
+        value = config,
         modifier = modifier,
-        navigationIcon = {
-            AnimatedVisibility(
-                visible = config.hasBackArrow,
-                enter = fadeIn(
-                    animationSpec = tween(
-                        durationMillis = Motion.FADE_THROUGH_IN_DURATION_MS,
-                        delayMillis = Motion.FADE_THROUGH_DELAY_MS,
-                        easing = LinearOutSlowInEasing
-                    )
-                ) + expandHorizontally(
-                    animationSpec = tween(Motion.ENTER_DURATION_MS, easing = FastOutSlowInEasing)
-                ),
-                exit = fadeOut(
-                    animationSpec = tween(Motion.FADE_THROUGH_OUT_DURATION_MS, easing = FastOutLinearInEasing)
-                ) + shrinkHorizontally(
-                    animationSpec = tween(Motion.EXIT_DURATION_MS, easing = FastOutLinearInEasing)
-                )
-            ) {
-                IconButton(onClick = { navigateBack() }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "Go back"
-                    )
+        enter = AppMotionTransitions.slideFadeVerticalEnter(fromTop = true),
+        exit = AppMotionTransitions.slideFadeVerticalExit(toTop = true),
+        label = "TopBarVisibility",
+    ) { topBarConfig ->
+        TopAppBar(
+            navigationIcon = {
+                AnimatedVisibility(
+                    visible = topBarConfig.hasBackArrow,
+                    enter = AppMotionTransitions.expandFadeHorizontallyEnter(),
+                    exit = AppMotionTransitions.shrinkFadeHorizontallyExit(),
+                    label = "TopBarBackArrowVisibility",
+                ) {
+                    IconButton(onClick = { navigateBack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Go back"
+                        )
+                    }
                 }
+            },
+            title = {
+                AnimatedContent(
+                    targetState = topBarConfig.title,
+                    transitionSpec = { AppMotionTransitions.fadeThroughTransform(withScale = false) },
+                    label = "TopBarTitleAnimation"
+                ) { title ->
+                    Text(text = title)
+                }
+            },
+            actions = {
+                TopBarActionsMenu(
+                    items = topBarConfig.menuItems,
+                    onAction = onAction
+                )
             }
-        },
-        title = {
-            AnimatedContent(
-                targetState = config.title,
-                transitionSpec = {
-                    fadeIn(
-                        animationSpec = tween(
-                            durationMillis = Motion.FADE_THROUGH_IN_DURATION_MS,
-                            delayMillis = Motion.FADE_THROUGH_DELAY_MS,
-                            easing = LinearOutSlowInEasing
-                        )
-                    ) togetherWith fadeOut(
-                        animationSpec = tween(
-                            durationMillis = Motion.FADE_THROUGH_OUT_DURATION_MS,
-                            easing = FastOutLinearInEasing
-                        )
-                    )
-                },
-                label = "TopBarTitleAnimation"
-            ) { title ->
-                Text(text = title)
-            }
-        },
-        actions = {
-            TopBarActionsMenu(
-                items = config.menuItems,
-                onAction = onAction
-            )
-        }
-    )
+        )
+    }
 }
 
 @Composable
