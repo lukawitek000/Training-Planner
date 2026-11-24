@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavBackStack
@@ -25,6 +26,7 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.editor.EditEx
 import com.lukasz.witkowski.training.planner.exercise.presentation.list.ExercisesScreen
 import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
 import com.lukasz.witkowski.training.planner.shared.featureflags.LocalFeatureFlagProvider
+import com.lukasz.witkowski.training.planner.shared.theme.Motion
 import com.lukasz.witkowski.training.planner.training.domain.TrainingExercise
 import com.lukasz.witkowski.training.planner.training.editor.AddTrainingExerciseScreen
 import com.lukasz.witkowski.training.planner.training.editor.TrainingExerciseConfigurationScreen
@@ -50,9 +52,14 @@ fun Navigation(
     val dialogStrategy = remember {
         DialogSceneStrategy<TrainingPlannerNavKey>()
     }
+    val density = LocalDensity.current
+    val sharedAxisOffsetPx = remember(density) {
+        with(density) { Motion.sharedAxisOffset.roundToPx() }
+    }
     NavDisplay(
         modifier = modifier,
         backStack = navigator.backStack,
+        onBack = { navigator.goBack() },
         entryDecorators = listOf(
             rememberSaveableStateHolderNavEntryDecorator(),
             rememberViewModelStoreNavEntryDecorator(),
@@ -60,11 +67,22 @@ fun Navigation(
             rememberResultEventBusNavEntryDecorator()
         ),
         sceneStrategies = listOf(dialogStrategy),
+        transitionSpec = {
+            NavigationTransitions.sharedAxisXForward(sharedAxisOffsetPx)
+        },
+        popTransitionSpec = {
+            NavigationTransitions.sharedAxisXBackward(sharedAxisOffsetPx)
+        },
+        predictivePopTransitionSpec = {
+            NavigationTransitions.sharedAxisXBackward(sharedAxisOffsetPx)
+        },
         entryProvider = entryProvider {
             exerciseEntryBuilder(navigator)
             trainingPlanEntryBuilder(navigator)
 
-            entry<UserProfile> {
+            entry<UserProfile>(
+                metadata = NavigationTransitions.sharedAxisYMetadata(sharedAxisOffsetPx)
+            ) {
                 UserProfileScreen(
                     viewModel = koinViewModel(),
                     versionName = BuildConfig.VERSION_NAME,
@@ -72,7 +90,9 @@ fun Navigation(
                 )
             }
 
-            entry<Authentication> {
+            entry<Authentication>(
+                metadata = NavigationTransitions.verticalModalMetadata()
+            ) {
                 val isOnlineSyncEnabled = LocalFeatureFlagProvider.current.isEnabled(
                     FeatureFlag.ONLINE_SYNC
                 )
@@ -89,7 +109,9 @@ fun Navigation(
                 }
             }
 
-            entry<TrainingSession> { key ->
+            entry<TrainingSession>(
+                metadata = NavigationTransitions.immersiveScaleMetadata()
+            ) { key ->
                 TrainingSessionScreen(
                     viewModel = koinViewModel { parametersOf(key.trainingPlanId) },
                     navigateBack = { navigator.goBack() }
@@ -102,7 +124,9 @@ fun Navigation(
 private fun EntryProviderScope<TrainingPlannerNavKey>.exerciseEntryBuilder(
     navigator: TrainingPlannerNavigator
 ) {
-    entry<ExercisesList> {
+    entry<ExercisesList>(
+        metadata = NavigationTransitions.topLevelTabMetadata()
+    ) {
         ExercisesScreen(
             viewModel = koinViewModel(),
             onExerciseClicked = { id ->
@@ -111,7 +135,9 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.exerciseEntryBuilder(
         )
     }
 
-    entry<CreateExercise> {
+    entry<CreateExercise>(
+        metadata = NavigationTransitions.verticalModalMetadata()
+    ) {
         CreateExerciseScreen(
             viewModel = koinViewModel(),
             navigateToDetails = { id ->
@@ -120,7 +146,9 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.exerciseEntryBuilder(
         )
     }
 
-    entry<EditExercise> { key ->
+    entry<EditExercise>(
+        metadata = NavigationTransitions.verticalModalMetadata()
+    ) { key ->
         EditExerciseScreen(
             viewModel = koinViewModel { parametersOf(key.exerciseId) },
             navigateToDetails = { _ ->
@@ -153,7 +181,9 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.exerciseEntryBuilder(
 private fun EntryProviderScope<TrainingPlannerNavKey>.trainingPlanEntryBuilder(
     navigator: TrainingPlannerNavigator
 ) {
-    entry<TrainingPlansList> {
+    entry<TrainingPlansList>(
+        metadata = NavigationTransitions.topLevelTabMetadata()
+    ) {
         TrainingsScreen(
             viewModel = koinViewModel(),
             onTrainingPlanClicked = { navigator.trainingPlanDetails(it) },
@@ -161,7 +191,9 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.trainingPlanEntryBuilder(
         )
     }
 
-    entry<CreateTrainingPlan> {
+    entry<CreateTrainingPlan>(
+        metadata = NavigationTransitions.verticalModalMetadata()
+    ) {
         val trainingPlanEditorViewModel: TrainingPlanEditorViewModel = koinViewModel()
         ResultEffect<TrainingExercise> { trainingExercise ->
             Timber.i("TrainingExercise received $trainingExercise")
@@ -176,7 +208,9 @@ private fun EntryProviderScope<TrainingPlannerNavKey>.trainingPlanEntryBuilder(
         )
     }
 
-    entry<EditTrainingPlan> { key ->
+    entry<EditTrainingPlan>(
+        metadata = NavigationTransitions.verticalModalMetadata()
+    ) { key ->
         val trainingPlanEditorViewModel: TrainingPlanEditorViewModel = koinViewModel { parametersOf(key.trainingPlanId) }
         ResultEffect<TrainingExercise> { trainingExercise ->
             Timber.i("TrainingExercise received $trainingExercise")

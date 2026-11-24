@@ -2,7 +2,6 @@ package com.lukasz.witkowski.training.planner
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
@@ -63,9 +62,6 @@ fun TrainingPlannerApp(initialKey: TrainingPlannerNavKey = TrainingPlansList) {
     val context = LocalContext.current
     val navigator = TrainingPlannerNavigator(backStack)
     val uiConfig = navigator.toUiConfig(context = context)
-    BackHandler(enabled = !navigator.isOnMainScreen()) {
-        navigator.goBack()
-    }
     Scaffold(
         bottomBar = {
             AnimatedVisibility(
