@@ -123,9 +123,9 @@ fun ExercisesScreenContent(
 ) {
     Column(
         modifier =
-        modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
     ) {
         ExercisesSearchAndFilterHeader(
             filteringState = filteringState,
@@ -139,11 +139,13 @@ fun ExercisesScreenContent(
                 title = stringResource(R.string.loading_exercises),
                 modifier = Modifier.fillMaxSize()
             )
+
             is LoadState.Error -> AppErrorState(
                 title = stringResource(R.string.failed_to_load_exercises),
                 subtitle = loadState.error.localizedMessage.orEmpty(),
                 modifier = Modifier.fillMaxSize()
             )
+
             is LoadState.NotLoading -> if (exercisesList.itemCount != 0) {
                 ExercisesList(
                     exercisesList = exercisesList,
@@ -156,11 +158,11 @@ fun ExercisesScreenContent(
                     filteringState.isAnyCategorySelected || filteringState.searchQuery.isNotBlank()
                 AppEmptyState(
                     title =
-                    if (filteringState.isAnyCategorySelected) {
-                        stringResource(id = R.string.no_exercises_for_categories)
-                    } else {
-                        stringResource(id = R.string.no_exercises)
-                    },
+                        if (filteringState.isAnyCategorySelected) {
+                            stringResource(id = R.string.no_exercises_for_categories)
+                        } else {
+                            stringResource(id = R.string.no_exercises)
+                        },
                     subtitle = stringResource(id = R.string.no_exercises_subtitle),
                     actionLabel = if (hasActiveFilters) {
                         stringResource(
@@ -171,9 +173,9 @@ fun ExercisesScreenContent(
                     },
                     onActionClick = if (hasActiveFilters) onResetFilters else null,
                     modifier =
-                    Modifier
-                        .weight(1f)
-                        .testTag("NoDataMessage")
+                        Modifier
+                            .weight(1f)
+                            .testTag("NoDataMessage")
                 )
             }
         }
@@ -190,9 +192,9 @@ private fun ExercisesSearchAndFilterHeader(
 ) {
     Column(
         modifier =
-        modifier
-            .fillMaxWidth()
-            .padding(top = Dimens.spaceSm, bottom = Dimens.spaceSm),
+            modifier
+                .fillMaxWidth()
+                .padding(top = Dimens.spaceSm, bottom = Dimens.spaceSm),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         AppSearchBar(
@@ -243,16 +245,16 @@ private fun ExercisesList(
 ) {
     LazyColumn(
         modifier =
-        modifier
-            .fillMaxSize()
-            .testTag("ExercisesList"),
+            modifier
+                .fillMaxSize()
+                .testTag("ExercisesList"),
         contentPadding =
-        PaddingValues(
-            start = Dimens.margin,
-            end = Dimens.margin,
-            top = Dimens.spaceXs,
-            bottom = Dimens.spaceXl
-        ),
+            PaddingValues(
+                start = Dimens.margin,
+                end = Dimens.margin,
+                top = Dimens.spaceXs,
+                bottom = Dimens.spaceXl
+            ),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         items(
@@ -287,11 +289,13 @@ fun ExerciseListItemContent(
             when (syncState) {
                 ExerciseSyncState.CONFLICT ->
                     BorderStroke(Dimens.thinBorder, Warning.copy(alpha = 0.45f))
+
                 ExerciseSyncState.ERROR ->
                     BorderStroke(
                         Dimens.thinBorder,
                         MaterialTheme.colorScheme.error.copy(alpha = 0.45f)
                     )
+
                 else ->
                     BorderStroke(
                         Dimens.thinBorder,
@@ -314,9 +318,9 @@ fun ExerciseListItemContent(
     ) {
         Row(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(Dimens.spaceSm),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(Dimens.spaceSm),
             verticalAlignment = Alignment.CenterVertically
         ) {
             ExerciseThumbnail(
@@ -365,9 +369,9 @@ private fun ExerciseInformation(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 modifier =
-                Modifier
-                    .weight(1f)
-                    .testTag("ExerciseItemName-${exercise.name}")
+                    Modifier
+                        .weight(1f)
+                        .testTag("ExerciseItemName-${exercise.name}")
             )
             if (isOnlineSyncEnabled) {
                 Spacer(modifier = Modifier.width(Dimens.spaceXs))
@@ -404,6 +408,7 @@ internal fun ExerciseSyncBadge(syncState: ExerciseSyncState, modifier: Modifier 
                 modifier = modifier
             )
         }
+
         ExerciseSyncState.ERROR -> {
             AppStatusBadge(
                 text = stringResource(R.string.sync_status_error),
@@ -412,6 +417,7 @@ internal fun ExerciseSyncBadge(syncState: ExerciseSyncState, modifier: Modifier 
                 modifier = modifier
             )
         }
+
         ExerciseSyncState.PENDING_UPLOAD, ExerciseSyncState.PENDING_DELETE -> {
             AppStatusBadge(
                 text = stringResource(R.string.sync_status_pending),
@@ -420,6 +426,7 @@ internal fun ExerciseSyncBadge(syncState: ExerciseSyncState, modifier: Modifier 
                 modifier = modifier
             )
         }
+
         ExerciseSyncState.LOCAL_ONLY -> {
             AppStatusBadge(
                 text = stringResource(R.string.sync_status_local),
@@ -428,6 +435,7 @@ internal fun ExerciseSyncBadge(syncState: ExerciseSyncState, modifier: Modifier 
                 modifier = modifier
             )
         }
+
         ExerciseSyncState.SYNCED -> {
             // Keep list clean for synced items unless explicitly requested
         }
@@ -444,6 +452,7 @@ private fun ExerciseSourcePill(metadata: ExerciseMetadata, modifier: Modifier = 
                 modifier = modifier
             )
         }
+
         is ExerciseSource.UserCreated -> {
             when (val owner = source.owner) {
                 is ExerciseOwner.Local -> {
@@ -454,6 +463,7 @@ private fun ExerciseSourcePill(metadata: ExerciseMetadata, modifier: Modifier = 
                         modifier = modifier
                     )
                 }
+
                 is ExerciseOwner.User -> {
                     val label =
                         if (metadata.sharing is ExerciseSharing.Community) {
@@ -464,17 +474,18 @@ private fun ExerciseSourcePill(metadata: ExerciseMetadata, modifier: Modifier = 
                     AppMetadataPill(
                         text = label,
                         leadingIcon =
-                        if (metadata.sharing is ExerciseSharing.Community) {
-                            Icons.Default.Public
-                        } else {
-                            Icons.Default.Cloud
-                        },
+                            if (metadata.sharing is ExerciseSharing.Community) {
+                                Icons.Default.Public
+                            } else {
+                                Icons.Default.Cloud
+                            },
                         contentColor = MaterialTheme.colorScheme.primary,
                         modifier = modifier
                     )
                 }
             }
         }
+
         ExerciseSource.Organization -> {
             AppMetadataPill(
                 text = stringResource(R.string.source_organization),
@@ -491,49 +502,35 @@ private fun ExerciseThumbnail(
     imageReference: ImageReference?,
     modifier: Modifier = Modifier
 ) {
-    Surface(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.small,
-        color = MaterialTheme.colorScheme.surfaceContainerHighest,
-        border =
-        BorderStroke(
-            width = Dimens.thinBorder,
-            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)
-        )
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .height(Dimens.listItemThumbnailSize)
     ) {
-        Box(
-            contentAlignment = Alignment.Center,
-        ) {
-            if (imageReference != null) {
-                val imgModel: Any = if (imageReference.path.startsWith("file:///android_asset/") ||
-                    imageReference.isRemote ||
-                    imageReference.path.startsWith("content://")
-                ) {
-                    imageReference.path
-                } else {
-                    java.io.File(imageReference.path)
-                }
-                AsyncImage(
-                    model = imgModel,
-                    placeholder = painterResource(id = R.drawable.exercise_default),
-                    error = painterResource(id = R.drawable.exercise_default),
-                    fallback = painterResource(id = R.drawable.exercise_default),
-                    contentDescription = imageDescription,
-                    contentScale = ContentScale.FillWidth,
-                    modifier =
-                    Modifier
-                        .clip(MaterialTheme.shapes.small)
-                )
+        if (imageReference != null) {
+            val imgModel: Any = if (imageReference.path.startsWith("file:///android_asset/") ||
+                imageReference.isRemote ||
+                imageReference.path.startsWith("content://")
+            ) {
+                imageReference.path
             } else {
-                Image(
-                    painter = painterResource(id = R.drawable.exercise_default),
-                    contentDescription = imageDescription,
-                    modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(Dimens.spaceSm)
-                )
+                java.io.File(imageReference.path)
             }
+            AsyncImage(
+                model = imgModel,
+                placeholder = painterResource(id = R.drawable.exercise_placeholder),
+                error = painterResource(id = R.drawable.exercise_error),
+                fallback = painterResource(id = R.drawable.exercise_fallback),
+                contentDescription = imageDescription,
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.clip(MaterialTheme.shapes.small)
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.exercise_fallback),
+                contentDescription = imageDescription,
+                modifier = Modifier.clip(MaterialTheme.shapes.small)
+            )
         }
     }
 }
@@ -549,10 +546,10 @@ val PREVIEW_EXERCISES =
             categories = listOf(ExerciseCategory("Chest"), ExerciseCategory("Shoulders")),
             thumbnail = PREVIEW_PUSH_UP_THUMBNAIL,
             metadata =
-            ExerciseMetadata(
-                source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
-                syncState = ExerciseSyncState.CONFLICT
-            )
+                ExerciseMetadata(
+                    source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
+                    syncState = ExerciseSyncState.CONFLICT
+                )
         ),
         ExerciseOverview(
             id = ExerciseId.create(),
@@ -561,10 +558,10 @@ val PREVIEW_EXERCISES =
             categories = listOf(ExerciseCategory("Back"), ExerciseCategory("Biceps")),
             thumbnail = PREVIEW_PULL_UP_THUMBNAIL,
             metadata =
-            ExerciseMetadata(
-                source = ExerciseSource.Bundled,
-                syncState = ExerciseSyncState.SYNCED
-            )
+                ExerciseMetadata(
+                    source = ExerciseSource.Bundled,
+                    syncState = ExerciseSyncState.SYNCED
+                )
         )
     )
 
@@ -588,10 +585,10 @@ private fun ExercisesScreenContentPreview() {
         ExercisesScreenContent(
             exercisesList = PREVIEW_EXERCISES.asPreviewPagerFlow().collectAsLazyPagingItems(),
             filteringState =
-            FilteringState(
-                searchQuery = "",
-                categories = PREVIEW_CATEGORIES
-            ),
+                FilteringState(
+                    searchQuery = "",
+                    categories = PREVIEW_CATEGORIES
+                ),
             toggleCategory = {},
             onSearchQueryChanged = {},
             onExerciseClicked = {}
