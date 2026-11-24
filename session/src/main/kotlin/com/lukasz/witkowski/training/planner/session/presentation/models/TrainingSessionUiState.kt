@@ -22,8 +22,10 @@ interface TrainingSessionUiState {
         }
     }
 
-    data class RestTime(val domainState: TrainingSessionState.RestTimeState) :
-        TrainingSessionUiState {
+    data class RestTime(
+        val domainState: TrainingSessionState.RestTimeState,
+        val nextExerciseThumbnail: ImageReference? = null
+    ) : TrainingSessionUiState {
         override val phaseKey = TrainingSessionPhaseKey.RestTime
     }
 

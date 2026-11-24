@@ -1,9 +1,7 @@
 package com.lukasz.witkowski.training.planner.exercise.presentation.list
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,8 +14,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -39,11 +35,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -52,7 +44,6 @@ import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
-import coil3.compose.AsyncImage
 import com.lukasz.witkowski.training.planner.exercise.R
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseCategory
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
@@ -65,8 +56,8 @@ import com.lukasz.witkowski.training.planner.exercise.presentation.FilteringStat
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_CATEGORIES
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PULL_UP_THUMBNAIL
 import com.lukasz.witkowski.training.planner.exercise.presentation.PREVIEW_PUSH_UP_THUMBNAIL
+import com.lukasz.witkowski.training.planner.exercise.presentation.components.AppExerciseImage
 import com.lukasz.witkowski.training.planner.exercise.presentation.models.ExerciseOverview
-import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.shared.featureflags.FeatureFlag
 import com.lukasz.witkowski.training.planner.shared.featureflags.LocalFeatureFlagProvider
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
@@ -323,10 +314,12 @@ fun ExerciseListItemContent(
                     .padding(Dimens.spaceSm),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ExerciseThumbnail(
-                imageDescription = imageDescription,
+            AppExerciseImage(
                 imageReference = exercise.thumbnail,
-                modifier = Modifier.weight(0.5f, fill = true)
+                contentDescription = imageDescription,
+                modifier = Modifier
+                    .weight(0.5f, fill = true)
+                    .height(Dimens.listItemThumbnailSize)
             )
             Spacer(modifier = Modifier.width(Dimens.spaceMd))
             ExerciseInformation(
@@ -491,45 +484,6 @@ private fun ExerciseSourcePill(metadata: ExerciseMetadata, modifier: Modifier = 
                 text = stringResource(R.string.source_organization),
                 leadingIcon = Icons.Default.Public,
                 modifier = modifier
-            )
-        }
-    }
-}
-
-@Composable
-private fun ExerciseThumbnail(
-    imageDescription: String,
-    imageReference: ImageReference?,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .height(Dimens.listItemThumbnailSize)
-    ) {
-        if (imageReference != null) {
-            val imgModel: Any = if (imageReference.path.startsWith("file:///android_asset/") ||
-                imageReference.isRemote ||
-                imageReference.path.startsWith("content://")
-            ) {
-                imageReference.path
-            } else {
-                java.io.File(imageReference.path)
-            }
-            AsyncImage(
-                model = imgModel,
-                placeholder = painterResource(id = R.drawable.exercise_placeholder),
-                error = painterResource(id = R.drawable.exercise_error),
-                fallback = painterResource(id = R.drawable.exercise_fallback),
-                contentDescription = imageDescription,
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.clip(MaterialTheme.shapes.small)
-            )
-        } else {
-            Image(
-                painter = painterResource(id = R.drawable.exercise_fallback),
-                contentDescription = imageDescription,
-                modifier = Modifier.clip(MaterialTheme.shapes.small)
             )
         }
     }

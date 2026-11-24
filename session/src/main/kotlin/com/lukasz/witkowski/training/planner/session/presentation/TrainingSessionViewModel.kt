@@ -3,6 +3,8 @@ package com.lukasz.witkowski.training.planner.session.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lukasz.witkowski.training.planner.exercise.application.ExerciseService
+import com.lukasz.witkowski.training.planner.image.ImageId
+import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.session.application.TrainingSessionService
 import com.lukasz.witkowski.training.planner.session.domain.models.SessionRpe
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
@@ -18,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -30,16 +33,31 @@ class TrainingSessionViewModel(
     private val trainingPlanId: TrainingPlanId
 ) : ViewModel() {
 
+    private val thumbnailCache = mutableMapOf<ImageId, ImageReference?>()
+
     @OptIn(ExperimentalCoroutinesApi::class)
     val trainingSessionState: StateFlow<TrainingSessionUiState> =
         trainingSessionService.trainingSessionState.flatMapLatest { domainState ->
             when (domainState) {
                 is TrainingSessionState.IdleState -> flowOf(TrainingSessionUiState.Loading)
-                is TrainingSessionState.RestTimeState -> flowOf(
-                    TrainingSessionUiState.RestTime(
-                        domainState
+                is TrainingSessionState.RestTimeState -> flow {
+                    val thumbnailId = domainState.nextExercise.snapshot.imageIds.firstOrNull()
+                    val thumbnail = thumbnailId?.let { id ->
+                        if (thumbnailCache.containsKey(id)) {
+                            thumbnailCache[id]
+                        } else {
+                            exerciseService.readExerciseThumbnail(id).also {
+                                thumbnailCache[id] = it
+                            }
+                        }
+                    }
+                    emit(
+                        TrainingSessionUiState.RestTime(
+                            domainState = domainState,
+                            nextExerciseThumbnail = thumbnail
+                        )
                     )
-                )
+                }
 
                 is TrainingSessionState.ExerciseState ->
                     exerciseService.loadImageReferences(

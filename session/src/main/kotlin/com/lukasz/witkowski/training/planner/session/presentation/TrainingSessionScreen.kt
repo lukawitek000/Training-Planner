@@ -118,6 +118,7 @@ fun TrainingSessionContent(
                     )?.let { uiState ->
                         RestTimeScreen(
                             state = uiState.domainState,
+                            nextExerciseThumbnail = uiState.nextExerciseThumbnail,
                             onSessionIntent = onSessionIntent,
                             onEndClicked = onEndClicked
                         )

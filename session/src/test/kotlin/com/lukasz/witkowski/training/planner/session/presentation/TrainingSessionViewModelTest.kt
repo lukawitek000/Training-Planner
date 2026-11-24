@@ -171,6 +171,46 @@ class TrainingSessionViewModelTest {
     }
 
     @Test
+    fun `maps RestTimeState with nextExercise thumbnail and caches across timer ticks`() =
+        runTest(testDispatcher) {
+            val imageId = ImageId.create()
+            val expectedThumbnail = ImageReference(imageId, "file:///android_asset/exercise_images/$imageId.svg")
+            coEvery { exerciseService.readExerciseThumbnail(imageId) } returns expectedThumbnail
+
+            val nextExercise = createSessionExercise(imageIds = listOf(imageId))
+            val firstTick =
+                TrainingSessionState.RestTimeState(
+                    nextExercise = nextExercise,
+                    timerState = TimerState.Running(25.seconds),
+                    totalRestTime = 30.seconds,
+                    nextSetQueueProgress = null,
+                    selectedFeedback = null
+                )
+            val secondTick = firstTick.copy(timerState = TimerState.Running(24.seconds))
+
+            val viewModel = createViewModel()
+            backgroundScope.launch(testDispatcher) {
+                viewModel.trainingSessionState.collect()
+            }
+
+            // when: first tick emits
+            domainStateFlow.value = firstTick
+
+            // then: thumbnail is loaded and attached
+            val firstUiState = viewModel.trainingSessionState.value as TrainingSessionUiState.RestTime
+            assertEquals(expectedThumbnail, firstUiState.nextExerciseThumbnail)
+            coVerify(exactly = 1) { exerciseService.readExerciseThumbnail(imageId) }
+
+            // when: subsequent timer tick emits for the same next exercise
+            domainStateFlow.value = secondTick
+
+            // then: cached thumbnail is reused without calling exerciseService again
+            val secondUiState = viewModel.trainingSessionState.value as TrainingSessionUiState.RestTime
+            assertEquals(expectedThumbnail, secondUiState.nextExerciseThumbnail)
+            coVerify(exactly = 1) { exerciseService.readExerciseThumbnail(imageId) }
+        }
+
+    @Test
     fun `maps SummaryState by fetching TrainingPlan for summary statistics`() =
         runTest(testDispatcher) {
             val summaryDomainState =

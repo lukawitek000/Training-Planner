@@ -21,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.lukasz.witkowski.training.planner.exercise.presentation.components.AppExerciseImage
+import com.lukasz.witkowski.training.planner.image.ImageReference
 import com.lukasz.witkowski.training.planner.session.R
 import com.lukasz.witkowski.training.planner.session.domain.models.SetEffort
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
@@ -54,7 +56,8 @@ fun RestTimeScreen(
     state: TrainingSessionState.RestTimeState,
     onSessionIntent: (SessionIntent) -> Unit,
     onEndClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    nextExerciseThumbnail: ImageReference? = null
 ) {
     val feedbackChipOptions = listOf(
         FeedbackChipOption(SetEffort.EASY, stringResource(R.string.session_feedback_easy)),
@@ -87,7 +90,10 @@ fun RestTimeScreen(
         )
         SetFeedbackForm(feedbackChipOptions, state, onSessionIntent)
 
-        NextExercisePreview(state)
+        NextExercisePreview(
+            state = state,
+            nextExerciseThumbnail = nextExerciseThumbnail
+        )
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -101,7 +107,10 @@ fun RestTimeScreen(
 }
 
 @Composable
-private fun NextExercisePreview(state: TrainingSessionState.RestTimeState) {
+private fun NextExercisePreview(
+    state: TrainingSessionState.RestTimeState,
+    nextExerciseThumbnail: ImageReference?
+) {
     AppCard(
         modifier = Modifier.fillMaxWidth(),
         containerColor = MaterialTheme.colorScheme.surfaceContainer
@@ -114,8 +123,10 @@ private fun NextExercisePreview(state: TrainingSessionState.RestTimeState) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             AppExerciseImage(
-                imageIds = state.nextExercise.snapshot.imageIds,
+                imageReference = nextExerciseThumbnail,
                 contentDescription = state.nextExercise.snapshot.name,
+                shape = MaterialTheme.shapes.medium,
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                 modifier = Modifier.size(Dimens.listItemThumbnailSize)
             )
 
