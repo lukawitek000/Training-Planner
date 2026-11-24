@@ -110,7 +110,9 @@ internal object NavigationTransitions {
             ) + fadeIn(
                 animationSpec = tween(Motion.FADE_THROUGH_IN_DURATION_MS, easing = LinearOutSlowInEasing)
             )
-            ) togetherWith ExitTransition.None
+            ) togetherWith fadeOut(
+            animationSpec = tween(Motion.EXIT_DURATION_MS, easing = FastOutLinearInEasing)
+        )
 
         val exit: ContentTransform = EnterTransition.None togetherWith (
             slideOutVertically(
