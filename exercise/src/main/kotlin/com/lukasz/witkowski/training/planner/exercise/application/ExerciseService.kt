@@ -3,12 +3,9 @@ package com.lukasz.witkowski.training.planner.exercise.application
 import androidx.paging.PagingData
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseDetails
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseMetadata
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOverview
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseOwner
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseQuery
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseRepository
-import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSource
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseSyncState
 import com.lukasz.witkowski.training.planner.image.Image
 import com.lukasz.witkowski.training.planner.image.ImageByteArray
@@ -49,23 +46,28 @@ class ExerciseService(
         exerciseId: ExerciseId
     ): ExerciseId {
         val existing = exerciseRepository.getExerciseDetailsById(exerciseId).firstOrNull()
-        if (existing?.exercise?.metadata?.source !is ExerciseSource.UserCreated) {
-            throw IllegalStateException("Only user-created exercises can be modified")
-        }
         val imageIds = if (exerciseConfiguration.images.isNotEmpty()) {
             saveImages(exerciseConfiguration.images, exerciseId).map { it.imageId }
         } else {
-            existing.images
+            existing?.images.orEmpty()
         }
-        val metadata = existing.exercise.metadata.copy(
+        val metadata = existing?.exercise?.metadata?.copy(
             syncState = ExerciseSyncState.PENDING_UPLOAD
         )
-        val exerciseDetails = ExerciseFactory.create(
-            exerciseConfiguration = exerciseConfiguration,
-            imageIds = imageIds,
-            exerciseId = exerciseId,
-            metadata = metadata
-        )
+        val exerciseDetails = if (metadata != null) {
+            ExerciseFactory.create(
+                exerciseConfiguration = exerciseConfiguration,
+                imageIds = imageIds,
+                exerciseId = exerciseId,
+                metadata = metadata
+            )
+        } else {
+            ExerciseFactory.create(
+                exerciseConfiguration = exerciseConfiguration,
+                imageIds = imageIds,
+                exerciseId = exerciseId
+            )
+        }
         exerciseRepository.updateExercise(exerciseDetails)
         return exerciseId
     }
@@ -82,10 +84,6 @@ class ExerciseService(
         exerciseRepository.queryExercises(exerciseQuery)
 
     suspend fun deleteExercise(exerciseId: ExerciseId) {
-        val existing = exerciseRepository.getExerciseDetailsById(exerciseId).firstOrNull()
-        if (existing?.exercise?.metadata?.source !is ExerciseSource.UserCreated) {
-            throw IllegalStateException("Only user-created exercises can be deleted")
-        }
         exerciseRepository.delete(exerciseId)
     }
 
