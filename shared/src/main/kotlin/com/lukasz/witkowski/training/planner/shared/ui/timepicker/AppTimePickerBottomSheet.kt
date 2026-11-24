@@ -39,7 +39,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -423,11 +422,11 @@ fun AppTimePickerSheetContent(
         Spacer(modifier = Modifier.height(Dimens.spaceXs))
 
         AppTertiaryButton(
-            text =  stringResource(R.string.cancel),
+            text = stringResource(R.string.cancel),
             onClick = onDismissRequest,
             modifier = Modifier
-                    .fillMaxWidth()
-                    .testTag("TimePickerCancelButton")
+                .fillMaxWidth()
+                .testTag("TimePickerCancelButton")
         )
     }
 }

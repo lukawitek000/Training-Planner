@@ -114,9 +114,9 @@ fun ExercisesScreenContent(
 ) {
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+        modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         ExercisesSearchAndFilterHeader(
             filteringState = filteringState,
@@ -149,11 +149,11 @@ fun ExercisesScreenContent(
                     filteringState.isAnyCategorySelected || filteringState.searchQuery.isNotBlank()
                 AppEmptyState(
                     title =
-                        if (filteringState.isAnyCategorySelected) {
-                            stringResource(id = R.string.no_exercises_for_categories)
-                        } else {
-                            stringResource(id = R.string.no_exercises)
-                        },
+                    if (filteringState.isAnyCategorySelected) {
+                        stringResource(id = R.string.no_exercises_for_categories)
+                    } else {
+                        stringResource(id = R.string.no_exercises)
+                    },
                     subtitle = stringResource(id = R.string.no_exercises_subtitle),
                     actionLabel = if (hasActiveFilters) {
                         stringResource(
@@ -164,9 +164,9 @@ fun ExercisesScreenContent(
                     },
                     onActionClick = if (hasActiveFilters) onResetFilters else null,
                     modifier =
-                        Modifier
-                            .weight(1f)
-                            .testTag("NoDataMessage")
+                    Modifier
+                        .weight(1f)
+                        .testTag("NoDataMessage")
                 )
             }
         }
@@ -183,9 +183,9 @@ private fun ExercisesSearchAndFilterHeader(
 ) {
     Column(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(top = Dimens.spaceSm, bottom = Dimens.spaceSm),
+        modifier
+            .fillMaxWidth()
+            .padding(top = Dimens.spaceSm, bottom = Dimens.spaceSm),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         AppSearchBar(
@@ -236,16 +236,16 @@ private fun ExercisesList(
 ) {
     LazyColumn(
         modifier =
-            modifier
-                .fillMaxSize()
-                .testTag("ExercisesList"),
+        modifier
+            .fillMaxSize()
+            .testTag("ExercisesList"),
         contentPadding =
-            PaddingValues(
-                start = Dimens.margin,
-                end = Dimens.margin,
-                top = Dimens.spaceXs,
-                bottom = Dimens.spaceXl
-            ),
+        PaddingValues(
+            start = Dimens.margin,
+            end = Dimens.margin,
+            top = Dimens.spaceXs,
+            bottom = Dimens.spaceXl
+        ),
         verticalArrangement = Arrangement.spacedBy(Dimens.spaceSm)
     ) {
         items(
@@ -309,9 +309,9 @@ fun ExerciseListItemContent(
     ) {
         Row(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(Dimens.spaceSm),
+            Modifier
+                .fillMaxWidth()
+                .padding(Dimens.spaceSm),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AppExerciseImage(
@@ -362,9 +362,9 @@ private fun ExerciseInformation(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 modifier =
-                    Modifier
-                        .weight(1f)
-                        .testTag("ExerciseItemName-${exercise.name}")
+                Modifier
+                    .weight(1f)
+                    .testTag("ExerciseItemName-${exercise.name}")
             )
             if (isOnlineSyncEnabled) {
                 Spacer(modifier = Modifier.width(Dimens.spaceXs))
@@ -467,11 +467,11 @@ private fun ExerciseSourcePill(metadata: ExerciseMetadata, modifier: Modifier = 
                     AppMetadataPill(
                         text = label,
                         leadingIcon =
-                            if (metadata.sharing is ExerciseSharing.Community) {
-                                Icons.Default.Public
-                            } else {
-                                Icons.Default.Cloud
-                            },
+                        if (metadata.sharing is ExerciseSharing.Community) {
+                            Icons.Default.Public
+                        } else {
+                            Icons.Default.Cloud
+                        },
                         contentColor = MaterialTheme.colorScheme.primary,
                         modifier = modifier
                     )
@@ -500,10 +500,10 @@ val PREVIEW_EXERCISES =
             categories = listOf(ExerciseCategory("Chest"), ExerciseCategory("Shoulders")),
             thumbnail = PREVIEW_PUSH_UP_THUMBNAIL,
             metadata =
-                ExerciseMetadata(
-                    source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
-                    syncState = ExerciseSyncState.CONFLICT
-                )
+            ExerciseMetadata(
+                source = ExerciseSource.UserCreated(ExerciseOwner.Local()),
+                syncState = ExerciseSyncState.CONFLICT
+            )
         ),
         ExerciseOverview(
             id = ExerciseId.create(),
@@ -512,10 +512,10 @@ val PREVIEW_EXERCISES =
             categories = listOf(ExerciseCategory("Back"), ExerciseCategory("Biceps")),
             thumbnail = PREVIEW_PULL_UP_THUMBNAIL,
             metadata =
-                ExerciseMetadata(
-                    source = ExerciseSource.Bundled,
-                    syncState = ExerciseSyncState.SYNCED
-                )
+            ExerciseMetadata(
+                source = ExerciseSource.Bundled,
+                syncState = ExerciseSyncState.SYNCED
+            )
         )
     )
 
@@ -539,10 +539,10 @@ private fun ExercisesScreenContentPreview() {
         ExercisesScreenContent(
             exercisesList = PREVIEW_EXERCISES.asPreviewPagerFlow().collectAsLazyPagingItems(),
             filteringState =
-                FilteringState(
-                    searchQuery = "",
-                    categories = PREVIEW_CATEGORIES
-                ),
+            FilteringState(
+                searchQuery = "",
+                categories = PREVIEW_CATEGORIES
+            ),
             toggleCategory = {},
             onSearchQueryChanged = {},
             onExerciseClicked = {}

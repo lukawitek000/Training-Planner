@@ -174,7 +174,8 @@ class TrainingSessionViewModelTest {
     fun `maps RestTimeState with nextExercise thumbnail and caches across timer ticks`() =
         runTest(testDispatcher) {
             val imageId = ImageId.create()
-            val expectedThumbnail = ImageReference(imageId, "file:///android_asset/exercise_images/$imageId.svg")
+            val expectedThumbnail =
+                ImageReference(imageId, "file:///android_asset/exercise_images/$imageId.svg")
             coEvery { exerciseService.readExerciseThumbnail(imageId) } returns expectedThumbnail
 
             val nextExercise = createSessionExercise(imageIds = listOf(imageId))
@@ -197,7 +198,8 @@ class TrainingSessionViewModelTest {
             domainStateFlow.value = firstTick
 
             // then: thumbnail is loaded and attached
-            val firstUiState = viewModel.trainingSessionState.value as TrainingSessionUiState.RestTime
+            val firstUiState =
+                viewModel.trainingSessionState.value as TrainingSessionUiState.RestTime
             assertEquals(expectedThumbnail, firstUiState.nextExerciseThumbnail)
             coVerify(exactly = 1) { exerciseService.readExerciseThumbnail(imageId) }
 
@@ -205,7 +207,8 @@ class TrainingSessionViewModelTest {
             domainStateFlow.value = secondTick
 
             // then: cached thumbnail is reused without calling exerciseService again
-            val secondUiState = viewModel.trainingSessionState.value as TrainingSessionUiState.RestTime
+            val secondUiState =
+                viewModel.trainingSessionState.value as TrainingSessionUiState.RestTime
             assertEquals(expectedThumbnail, secondUiState.nextExerciseThumbnail)
             coVerify(exactly = 1) { exerciseService.readExerciseThumbnail(imageId) }
         }
