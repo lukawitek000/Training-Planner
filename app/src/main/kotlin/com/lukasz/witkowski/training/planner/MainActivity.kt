@@ -76,6 +76,10 @@ fun TrainingPlannerApp(initialKey: TrainingPlannerNavKey = TrainingPlansList) {
     if (uiConfig.bottomBarConfig != null) {
         lastBottomBarConfig = uiConfig.bottomBarConfig
     }
+    var lastTopBarConfig by remember { mutableStateOf(uiConfig.topBarConfig) }
+    if (uiConfig.topBarConfig != null) {
+        lastTopBarConfig = uiConfig.topBarConfig
+    }
     Scaffold(
         bottomBar = {
             AnimatedVisibility(
@@ -105,7 +109,7 @@ fun TrainingPlannerApp(initialKey: TrainingPlannerNavKey = TrainingPlansList) {
         },
         topBar = {
             AnimatedVisibility(
-                visible = uiConfig.topBarConfig.isVisible,
+                visible = uiConfig.topBarConfig != null,
                 enter = slideInVertically(
                     animationSpec = tween(Motion.ENTER_DURATION_MS, easing = FastOutSlowInEasing),
                     initialOffsetY = { -it }
@@ -123,7 +127,7 @@ fun TrainingPlannerApp(initialKey: TrainingPlannerNavKey = TrainingPlansList) {
                 ),
             ) {
                 TopBar(
-                    config = uiConfig.topBarConfig,
+                    config = lastTopBarConfig,
                     navigateBack = { navigator.goBack() },
                     onAction = {
                         when (it) {

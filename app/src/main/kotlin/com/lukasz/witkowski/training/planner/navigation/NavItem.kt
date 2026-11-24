@@ -132,8 +132,7 @@ object ExerciseIdSerializer : KSerializer<ExerciseId> {
 data class TopBarConfig(
     val title: String,
     val hasBackArrow: Boolean,
-    val menuItems: List<TopBarMenuItem> = emptyList(),
-    val isVisible: Boolean = true,
+    val menuItems: List<TopBarMenuItem> = emptyList()
 )
 
 sealed interface TopBarAction {
@@ -171,7 +170,7 @@ data class BottomBarConfig(
 )
 
 data class UiConfig(
-    val topBarConfig: TopBarConfig,
+    val topBarConfig: TopBarConfig?,
     val bottomBarConfig: BottomBarConfig? = null,
     val fabConfig: FabConfig? = null,
 )
@@ -359,11 +358,5 @@ fun TrainingPlannerNavigator.toUiConfig(context: Context): UiConfig =
             )
         )
 
-        is TrainingSession -> UiConfig(
-            topBarConfig = TopBarConfig(
-                title = "",
-                hasBackArrow = false,
-                isVisible = false,
-            )
-        )
+        is TrainingSession -> UiConfig(topBarConfig = null)
     }
