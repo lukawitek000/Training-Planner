@@ -92,6 +92,7 @@ leakcanary-android = { module = "com.squareup.leakcanary:leakcanary-android", ve
 androidx-lifecycle-viewmodel = { module = "androidx.lifecycle:lifecycle-viewmodel", version = "2.6.2" }
 androidx-lifecycle-viewmodelKtx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version = "2.6.2" }
 androidx-lifecycle-livedataKtx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycle" }
 
 timber = { module = "com.jakewharton.timber:timber", version = "5.0.1" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }

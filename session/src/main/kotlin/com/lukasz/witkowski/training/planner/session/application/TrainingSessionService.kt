@@ -45,7 +45,8 @@ class TrainingSessionService(
     private val trainingSetsStrategy: TrainingSetsPolicy = StraightSetsPolicy(),
     private val backgroundDispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
-    private val sessionStatisticsRecorder: SessionStatisticsRecorder? = null
+    private val sessionStatisticsRecorder: SessionStatisticsRecorder? = null,
+    private val backgroundSessionExecutor: BackgroundSessionExecutor,
 ) {
     private val serviceScope = CoroutineScope(SupervisorJob() + backgroundDispatcher)
     private var currentSessionScope: CoroutineScope? = null
@@ -99,6 +100,7 @@ class TrainingSessionService(
             .launchIn(newSessionScope)
 
         trainingSession.start()
+        backgroundSessionExecutor.startExecution()
     }
 
     fun finishWorkout() {
@@ -127,6 +129,7 @@ class TrainingSessionService(
         currentSessionScope = null
         activeSession.value = null
         this.trainingPlan = null
+        backgroundSessionExecutor.stopExecution()
     }
 
     fun skip() {
@@ -179,6 +182,7 @@ class TrainingSessionService(
 
     fun endEarly() {
         requireActiveSession().endEarly()
+        backgroundSessionExecutor.stopExecution()
         currentSessionScope?.cancel()
         currentSessionScope = null
         activeSession.value = null

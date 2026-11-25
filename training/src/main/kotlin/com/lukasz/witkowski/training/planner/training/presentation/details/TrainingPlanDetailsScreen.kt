@@ -1,5 +1,10 @@
 package com.lukasz.witkowski.training.planner.training.presentation.details
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -47,8 +52,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.core.content.ContextCompat
 import com.lukasz.witkowski.training.planner.exercise.domain.ExerciseId
 import com.lukasz.witkowski.training.planner.exercise.presentation.editor.buildStringOverview
 import com.lukasz.witkowski.training.planner.shared.theme.Dimens
@@ -82,7 +89,7 @@ private const val TAB_HEADER_INDEX = 1
 
 private fun LazyListState.isScrolledPast(itemIndex: Int): Boolean =
     firstVisibleItemIndex > itemIndex ||
-        (firstVisibleItemIndex == itemIndex && firstVisibleItemScrollOffset > 0)
+            (firstVisibleItemIndex == itemIndex && firstVisibleItemScrollOffset > 0)
 
 @Composable
 fun TrainingPlanDetailsScreen(
@@ -154,6 +161,12 @@ private fun TrainingPlanDetails(
     val showScrollToTopButton by remember {
         derivedStateOf { lazyListState.firstVisibleItemIndex > 0 }
     }
+    val context = LocalContext.current
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) {
+        onStartTrainingSessionClicked(trainingPlan.id)
+    }
 
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
@@ -177,7 +190,23 @@ private fun TrainingPlanDetails(
                     TrainingPlanInfoSection(trainingPlan = trainingPlan)
                     AppPrimaryButton(
                         text = stringResource(id = R.string.start_training_session),
-                        onClick = { onStartTrainingSessionClicked(trainingPlan.id) },
+                        onClick = {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                val isGranted = ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.POST_NOTIFICATIONS
+                                ) == PackageManager.PERMISSION_GRANTED
+
+                                if (isGranted) {
+                                    onStartTrainingSessionClicked(trainingPlan.id)
+                                } else {
+                                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                }
+                            } else {
+                                // API 28–32 grants notification permission at install time
+                                onStartTrainingSessionClicked(trainingPlan.id)
+                            }
+                        },
                         leadingIcon = Icons.Default.PlayArrow,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -446,7 +475,7 @@ private fun TrainingPlanDetailsScreenContentPreview() {
     TrainingPlannerTheme {
         CompositionLocalProvider(
             LocalTimeProvider provides
-                TestTimeProvider(instant = Instant.parse("2026-10-06T12:00:00Z"))
+                    TestTimeProvider(instant = Instant.parse("2026-10-06T12:00:00Z"))
         ) {
             TrainingPlanDetailsScreenContent(
                 trainingPlanState = ResultHandler.Success(value = PREVIEW_TRAINING_PLAN),

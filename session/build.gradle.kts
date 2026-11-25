@@ -38,6 +38,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.compose)
     implementation(libs.koin.compose.viewmodel)
+    implementation(libs.androidx.lifecycle.service)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinTestJunit)
