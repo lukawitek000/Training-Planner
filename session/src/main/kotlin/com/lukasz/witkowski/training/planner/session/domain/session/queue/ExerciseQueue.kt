@@ -96,7 +96,8 @@ internal class ExerciseQueue(loadedExercises: List<SessionExercise>) {
             remainingSetsInWorkout = remainingExercises.size,
             nextSetQueueProgress = remainingExercises.firstOrNull()?.exerciseId?.let {
                 calculateNextSetProgress(it)
-            }
+            },
+            exerciseSetCounts = totalSetsByExercise.values.toList()
         ).also {
             Timber.d("Calculated queue progress $it")
         }
@@ -113,7 +114,8 @@ internal class ExerciseQueue(loadedExercises: List<SessionExercise>) {
             remainingExercises = groupedNextRemaining.size,
             totalExercises = totalDistinctExercises,
             remainingSetsInWorkout = nextRemaining.size,
-            nextSetQueueProgress = null
+            nextSetQueueProgress = null,
+            exerciseSetCounts = totalSetsByExercise.values.toList()
         ).also {
             Timber.d("Calculated next set queue progress $it")
         }

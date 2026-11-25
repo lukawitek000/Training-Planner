@@ -4,9 +4,8 @@ import android.content.Context
 import android.content.Intent
 import com.lukasz.witkowski.training.planner.session.application.BackgroundSessionExecutor
 
-class ForegroundServiceBackgroundSessionExecutor(
-    private val context: Context,
-) : BackgroundSessionExecutor {
+class ForegroundServiceBackgroundSessionExecutor(private val context: Context) :
+    BackgroundSessionExecutor {
     override fun startExecution() {
         context.startForegroundService(provideIntent())
     }
@@ -15,9 +14,8 @@ class ForegroundServiceBackgroundSessionExecutor(
         context.stopService(provideIntent())
     }
 
-    private fun provideIntent() =
-        Intent(
-            context,
-            TrainingSessionForegroundService::class.java
-        )
+    private fun provideIntent() = Intent(
+        context,
+        TrainingSessionForegroundService::class.java
+    )
 }

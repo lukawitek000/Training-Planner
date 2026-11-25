@@ -71,4 +71,23 @@
     <string name="session_reps_suffix">%1$d reps</string>
     <string name="session_summary_plan_date_format">%1$s • %2$s</string>
     <string name="session_bento_sets_value_format">%1$d / %2$d</string>
+
+    <!-- Foreground Service Notification -->
+    <string name="notification_channel_training_session">Training Session</string>
+    <string name="notification_subtext_active_session">Active session</string>
+    <string name="notification_subtext_rest">Rest interval</string>
+    <string name="notification_session_idle_title">Training Session</string>
+    <string name="notification_session_idle_text">Preparing workout...</string>
+    <string name="notification_exercise_title_with_timer">%1$s • %2$s</string>
+    <string name="notification_rest_title">Rest</string>
+    <string name="notification_rest_title_with_timer">%1$s • Rest</string>
+    <string name="notification_rest_up_next">Up next: %1$s</string>
+    <string name="notification_rest_up_next_with_set">Up next: %1$s (%2$s)</string>
+    <string name="notification_summary_title">Workout complete</string>
+    <string name="notification_summary_text">Open the app to review and finish your session</string>
+    <string name="notification_action_skip">Skip</string>
+    <string name="notification_action_complete">Complete</string>
+    <string name="notification_action_skip_rest">Skip rest</string>
+    <string name="notification_action_start_timer">Start timer</string>
+    <string name="notification_action_reset_timer">Reset</string>
 </resources>

@@ -87,7 +87,13 @@ internal class TrainingSessionServiceTest : TrainingSessionTest() {
                 trainingSetsStrategy = trainingSetsPolicy,
                 backgroundDispatcher = UnconfinedTestDispatcher(scheduler),
                 ioDispatcher = UnconfinedTestDispatcher(scheduler),
-                sessionStatisticsRecorder = SessionStatisticsRecorder { recordedEvents.add(it) }
+                sessionStatisticsRecorder = SessionStatisticsRecorder { recordedEvents.add(it) },
+                backgroundSessionExecutor =
+                object : BackgroundSessionExecutor {
+                    override fun startExecution() = Unit
+
+                    override fun stopExecution() = Unit
+                }
             )
     }
 

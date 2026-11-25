@@ -46,7 +46,7 @@ class TrainingSessionService(
     private val backgroundDispatcher: CoroutineDispatcher = Dispatchers.Default,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val sessionStatisticsRecorder: SessionStatisticsRecorder? = null,
-    private val backgroundSessionExecutor: BackgroundSessionExecutor,
+    private val backgroundSessionExecutor: BackgroundSessionExecutor
 ) {
     private val serviceScope = CoroutineScope(SupervisorJob() + backgroundDispatcher)
     private var currentSessionScope: CoroutineScope? = null
