@@ -8,7 +8,7 @@ class TrainingSessionNotificationController(
     private val channelManager: TrainingNotificationChannelManager,
     private val notificationBuilder: TrainingSessionNotificationBuilder
 ) {
-    val notificationId: Int = NOTIFICATION_ID
+    val notificationId: Int = ACTIVE_NOTIFICATION_ID
 
     fun initializeChannel() {
         channelManager.ensureChannelExists()
@@ -18,10 +18,28 @@ class TrainingSessionNotificationController(
         notificationBuilder.build(uiState)
 
     fun update(uiState: TrainingNotificationUiState) {
-        notificationManager.notify(notificationId, notificationBuilder.build(uiState))
+        notificationManager.notify(ACTIVE_NOTIFICATION_ID, notificationBuilder.build(uiState))
+    }
+
+    fun showCompleted(uiState: TrainingNotificationUiState.Summary) {
+        notificationManager.notify(COMPLETION_NOTIFICATION_ID, notificationBuilder.build(uiState))
+    }
+
+    fun cancelActive() {
+        notificationManager.cancel(ACTIVE_NOTIFICATION_ID)
+    }
+
+    fun cancelCompleted() {
+        notificationManager.cancel(COMPLETION_NOTIFICATION_ID)
+    }
+
+    fun cancelAll() {
+        cancelActive()
+        cancelCompleted()
     }
 
     private companion object {
-        const val NOTIFICATION_ID = 123
+        const val ACTIVE_NOTIFICATION_ID = 123
+        const val COMPLETION_NOTIFICATION_ID = 124
     }
 }

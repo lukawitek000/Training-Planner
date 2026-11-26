@@ -11,6 +11,7 @@ import com.lukasz.witkowski.training.planner.session.application.TrainingSession
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
 import com.lukasz.witkowski.training.planner.session.infrastructure.notification.TrainingNotificationAction
+import com.lukasz.witkowski.training.planner.session.infrastructure.notification.TrainingNotificationUiState
 import com.lukasz.witkowski.training.planner.session.infrastructure.notification.TrainingNotificationUiStateMapper
 import com.lukasz.witkowski.training.planner.session.infrastructure.notification.TrainingSessionNotificationController
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -35,8 +36,17 @@ class TrainingSessionForegroundService : LifecycleService() {
                 .distinctUntilChanged()
                 .collect { uiState ->
                     Timber.d("Notification UI state updated: %s", uiState)
-                    if (isForegroundStarted) {
-                        notificationController.update(uiState)
+                    if (!isForegroundStarted) return@collect
+                    when (uiState) {
+                        is TrainingNotificationUiState.Idle -> stopSessionService()
+                        is TrainingNotificationUiState.Summary -> {
+                            notificationController.showCompleted(uiState)
+                            stopSessionService()
+                        }
+                        is TrainingNotificationUiState.ActiveExercise,
+                        is TrainingNotificationUiState.Rest -> notificationController.update(
+                            uiState
+                        )
                     }
                 }
         }
@@ -85,12 +95,15 @@ class TrainingSessionForegroundService : LifecycleService() {
 
     override fun onDestroy() {
         isForegroundStarted = false
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
+        notificationController.cancelActive()
         super.onDestroy()
     }
 
     private fun startForegroundService() {
         val initialState =
             notificationStateMapper.map(trainingSessionService.trainingSessionState.value)
+        notificationController.cancelCompleted()
         val notification = notificationController.createNotification(initialState)
         try {
             ServiceCompat.startForeground(
@@ -100,6 +113,15 @@ class TrainingSessionForegroundService : LifecycleService() {
                 foregroundServiceType()
             )
             isForegroundStarted = true
+            when (initialState) {
+                is TrainingNotificationUiState.Idle -> stopSessionService()
+                is TrainingNotificationUiState.Summary -> {
+                    notificationController.showCompleted(initialState)
+                    stopSessionService()
+                }
+                is TrainingNotificationUiState.ActiveExercise,
+                is TrainingNotificationUiState.Rest -> Unit
+            }
         } catch (e: Exception) {
             if (
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.S &&
@@ -115,7 +137,8 @@ class TrainingSessionForegroundService : LifecycleService() {
 
     private fun stopSessionService() {
         isForegroundStarted = false
-        stopForeground(STOP_FOREGROUND_REMOVE)
+        ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
+        notificationController.cancelActive()
         stopSelf()
     }
 

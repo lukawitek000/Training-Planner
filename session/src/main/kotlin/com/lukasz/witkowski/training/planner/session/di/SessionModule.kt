@@ -29,7 +29,8 @@ val sessionModule =
 
         single<BackgroundSessionExecutor> {
             ForegroundServiceBackgroundSessionExecutor(
-                context = androidApplication()
+                context = androidApplication(),
+                notificationController = get()
             )
         }
         factory { TrainingNotificationUiStateMapper() }
@@ -45,7 +46,8 @@ val sessionModule =
         }
         single {
             TrainingSessionNotificationBuilder(
-                context = androidApplication()
+                context = androidApplication(),
+                contentIntentProvider = getOrNull()
             )
         }
         single {

@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.lukasz.witkowski.training.planner.navigation.BottomNavigationBar
+import com.lukasz.witkowski.training.planner.navigation.HandleNavigationIntents
 import com.lukasz.witkowski.training.planner.navigation.Navigation
 import com.lukasz.witkowski.training.planner.navigation.TopBar
 import com.lukasz.witkowski.training.planner.navigation.TopBarAction
@@ -58,6 +59,7 @@ fun TrainingPlannerApp(initialKey: TrainingPlannerNavKey = TrainingPlansList) {
     val backStack = rememberTrainingPlannerNavBackStack(initialKey)
     val context = LocalContext.current
     val navigator = TrainingPlannerNavigator(backStack)
+    HandleNavigationIntents(navigator = navigator)
     val uiConfig = navigator.toUiConfig(context = context)
     Scaffold(
         bottomBar = {

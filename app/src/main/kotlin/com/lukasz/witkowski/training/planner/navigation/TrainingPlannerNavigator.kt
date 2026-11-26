@@ -87,6 +87,19 @@ class TrainingPlannerNavigator(
         backStack.add(TrainingSession(id))
     }
 
+    fun openActiveTrainingSession(id: TrainingPlanId) {
+        val target = TrainingSession(id)
+        if (backStack.lastOrNull() == target) return
+        val existingIndex = backStack.indexOfLast { it == target }
+        if (existingIndex >= 0) {
+            while (backStack.size > existingIndex + 1) {
+                backStack.removeLastOrNull()
+            }
+            return
+        }
+        backStack.add(target)
+    }
+
     fun configureTrainingExercise(id: ExerciseId) {
         backStack.add(TrainingExerciseConfiguration(id))
     }

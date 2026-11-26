@@ -1,7 +1,9 @@
 package com.lukasz.witkowski.training.planner.session.infrastructure.notification
 
 import android.app.Notification
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import com.lukasz.witkowski.training.planner.session.R
 import kotlin.test.assertEquals
@@ -209,5 +211,27 @@ class TrainingSessionNotificationBuilderTest {
         )
         assertEquals(100, notification.extras.getInt(Notification.EXTRA_PROGRESS))
         assertEquals(0, notification.actions?.size ?: 0)
+        assertEquals(0, notification.flags and Notification.FLAG_ONGOING_EVENT)
+        assertTrue(notification.flags and Notification.FLAG_AUTO_CANCEL != 0)
+    }
+
+    @Test
+    fun `attaches contentIntent when SessionNotificationContentIntentProvider is provided`() {
+        val pendingIntent =
+            PendingIntent.getActivity(
+                context,
+                99,
+                Intent("test.action"),
+                PendingIntent.FLAG_IMMUTABLE
+            )
+        val builderWithContentIntent =
+            TrainingSessionNotificationBuilder(
+                context = context,
+                contentIntentProvider = SessionNotificationContentIntentProvider { pendingIntent }
+            )
+
+        val notification = builderWithContentIntent.build(TrainingNotificationUiState.Idle)
+
+        assertEquals(pendingIntent, notification.contentIntent)
     }
 }

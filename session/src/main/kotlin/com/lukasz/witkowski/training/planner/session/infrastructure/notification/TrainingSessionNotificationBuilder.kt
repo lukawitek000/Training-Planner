@@ -17,7 +17,10 @@ import com.lukasz.witkowski.training.planner.shared.R as SharedR
 import com.lukasz.witkowski.training.planner.shared.utils.formatUpToTwoDecimals
 import kotlin.time.Duration.Companion.seconds
 
-class TrainingSessionNotificationBuilder(private val context: Context) {
+class TrainingSessionNotificationBuilder(
+    private val context: Context,
+    private val contentIntentProvider: SessionNotificationContentIntentProvider? = null
+) {
     fun build(uiState: TrainingNotificationUiState): Notification {
         val content = mapToContent(uiState)
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
@@ -35,10 +38,12 @@ class TrainingSessionNotificationBuilder(private val context: Context) {
                 .setContentTitle(content.title)
                 .setContentText(content.text)
                 .setOngoing(content.ongoing)
+                .setAutoCancel(content.autoCancel)
                 .setOnlyAlertOnce(true)
 
         content.subText?.let(builder::setSubText)
         content.shortCriticalText?.let(builder::setShortCriticalText)
+        contentIntentProvider?.provideContentIntent()?.let(builder::setContentIntent)
         content.progress?.let { progress ->
             buildProgressStyle(progress)?.let(builder::setStyle)
         }
@@ -123,10 +128,12 @@ class TrainingSessionNotificationBuilder(private val context: Context) {
                 .setContentTitle(content.title)
                 .setContentText(content.text)
                 .setOngoing(content.ongoing)
+                .setAutoCancel(content.autoCancel)
                 .setOnlyAlertOnce(true)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
 
         content.subText?.let(builder::setSubText)
+        contentIntentProvider?.provideContentIntent()?.let(builder::setContentIntent)
         when (val progress = content.progress) {
             is NotificationProgress.WorkoutSegments -> {
                 if (progress.totalSets > 0) {
@@ -208,7 +215,8 @@ class TrainingSessionNotificationBuilder(private val context: Context) {
                     shortCriticalText = null,
                     progress = uiState.progress,
                     actions = emptyList(),
-                    ongoing = true
+                    ongoing = false,
+                    autoCancel = true
                 )
         }
 
@@ -384,7 +392,8 @@ class TrainingSessionNotificationBuilder(private val context: Context) {
         val shortCriticalText: String?,
         val progress: NotificationProgress?,
         val actions: List<ActionItem>,
-        val ongoing: Boolean
+        val ongoing: Boolean,
+        val autoCancel: Boolean = false
     )
 
     private data class ActionItem(
