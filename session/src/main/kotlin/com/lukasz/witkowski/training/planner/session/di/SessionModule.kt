@@ -33,7 +33,7 @@ val sessionModule =
                 notificationController = get()
             )
         }
-        factory { TrainingNotificationUiStateMapper() }
+        single { TrainingNotificationUiStateMapper() }
         single {
             val notificationManager =
                 requireNotNull(

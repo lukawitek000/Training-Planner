@@ -6,6 +6,9 @@ import android.content.Context
 import android.content.Intent
 import androidx.test.core.app.ApplicationProvider
 import com.lukasz.witkowski.training.planner.session.R
+import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
+import com.lukasz.witkowski.training.planner.shared.utils.kg
+import com.lukasz.witkowski.training.planner.shared.utils.lbs
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Test
@@ -20,9 +23,10 @@ class TrainingSessionNotificationBuilderTest {
     private val builder = TrainingSessionNotificationBuilder(context)
 
     @Test
-    fun `builds Idle notification with no actions`() {
+    fun `builds Idle notification with no actions on ongoing channel`() {
         val notification = builder.build(TrainingNotificationUiState.Idle)
 
+        assertEquals(TrainingNotificationChannelManager.CHANNEL_ID, notification.channelId)
         assertEquals(
             context.getString(R.string.notification_session_idle_title),
             notification.extras.getString(Notification.EXTRA_TITLE)
@@ -44,7 +48,8 @@ class TrainingSessionNotificationBuilderTest {
                     currentSet = 2,
                     totalSets = 4,
                     reps = 10,
-                    weightInKg = 60.0,
+                    weight = 60.kg,
+                    weightUnit = WeightUnit.KG,
                     holdSeconds = null,
                     timer = NotificationTimer.None,
                     progress =
@@ -72,6 +77,33 @@ class TrainingSessionNotificationBuilderTest {
     }
 
     @Test
+    fun `builds ActiveExercise notification in LBS when WeightUnit is LBS`() {
+        val notification =
+            builder.build(
+                TrainingNotificationUiState.ActiveExercise(
+                    exerciseName = "Deadlift",
+                    currentSet = 1,
+                    totalSets = 3,
+                    reps = 5,
+                    weight = 225.lbs,
+                    weightUnit = WeightUnit.LBS,
+                    holdSeconds = null,
+                    timer = NotificationTimer.None,
+                    progress =
+                    NotificationProgress.WorkoutSegments(
+                        completedSets = 0,
+                        exerciseSetCounts = listOf(3)
+                    )
+                )
+            )
+
+        assertEquals(
+            "Set 1 of 3 • 5 reps • 225 lbs",
+            notification.extras.getString(Notification.EXTRA_TEXT)
+        )
+    }
+
+    @Test
     fun `builds bodyweight rep-based ActiveExercise notification without weight`() {
         val notification =
             builder.build(
@@ -80,7 +112,7 @@ class TrainingSessionNotificationBuilderTest {
                     currentSet = 1,
                     totalSets = 3,
                     reps = 12,
-                    weightInKg = null,
+                    weight = null,
                     holdSeconds = null,
                     timer = NotificationTimer.None,
                     progress =
@@ -106,7 +138,7 @@ class TrainingSessionNotificationBuilderTest {
                     currentSet = 1,
                     totalSets = 3,
                     reps = 1,
-                    weightInKg = 10.0,
+                    weight = 10.kg,
                     holdSeconds = 45L,
                     timer = NotificationTimer.Ready(totalSeconds = 45L),
                     progress =
@@ -141,7 +173,7 @@ class TrainingSessionNotificationBuilderTest {
                     currentSet = 2,
                     totalSets = 3,
                     reps = 1,
-                    weightInKg = null,
+                    weight = null,
                     holdSeconds = 45L,
                     timer = NotificationTimer.Running(remainingSeconds = 30L),
                     progress =
@@ -198,9 +230,10 @@ class TrainingSessionNotificationBuilderTest {
     }
 
     @Test
-    fun `builds Summary notification with no actions and full progress`() {
+    fun `builds Summary notification on alerts channel as dismissible autoCancel`() {
         val notification = builder.build(TrainingNotificationUiState.Summary())
 
+        assertEquals(TrainingNotificationChannelManager.ALERTS_CHANNEL_ID, notification.channelId)
         assertEquals(
             context.getString(R.string.notification_summary_title),
             notification.extras.getString(Notification.EXTRA_TITLE)
@@ -212,6 +245,7 @@ class TrainingSessionNotificationBuilderTest {
         assertEquals(100, notification.extras.getInt(Notification.EXTRA_PROGRESS))
         assertEquals(0, notification.actions?.size ?: 0)
         assertEquals(0, notification.flags and Notification.FLAG_ONGOING_EVENT)
+        assertEquals(0, notification.flags and Notification.FLAG_ONLY_ALERT_ONCE)
         assertTrue(notification.flags and Notification.FLAG_AUTO_CANCEL != 0)
     }
 

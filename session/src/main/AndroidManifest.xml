@@ -1,19 +1,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />-->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
 
     <application>
         <service
             android:name="com.lukasz.witkowski.training.planner.session.infrastructure.TrainingSessionForegroundService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="specialUse"
-            />
-        <property
-        android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-        android:value="Active workout session and rest interval tracking" />
+            android:foregroundServiceType="specialUse">
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="User-initiated live workout session and rest countdown timer with ongoing notification controls; no body or activity sensors are used." />
+        </service>
+
+        <receiver
+            android:name="com.lukasz.witkowski.training.planner.session.infrastructure.notification.TrainingNotificationActionReceiver"
+            android:exported="false" />
     </application>
 </manifest>

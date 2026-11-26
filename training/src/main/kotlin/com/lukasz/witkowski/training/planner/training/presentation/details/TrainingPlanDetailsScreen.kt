@@ -47,6 +47,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -89,7 +90,7 @@ private const val TAB_HEADER_INDEX = 1
 
 private fun LazyListState.isScrolledPast(itemIndex: Int): Boolean =
     firstVisibleItemIndex > itemIndex ||
-            (firstVisibleItemIndex == itemIndex && firstVisibleItemScrollOffset > 0)
+        (firstVisibleItemIndex == itemIndex && firstVisibleItemScrollOffset > 0)
 
 @Composable
 fun TrainingPlanDetailsScreen(
@@ -162,10 +163,12 @@ private fun TrainingPlanDetails(
         derivedStateOf { lazyListState.firstVisibleItemIndex > 0 }
     }
     val context = LocalContext.current
+    val currentOnStartTrainingSessionClicked by rememberUpdatedState(onStartTrainingSessionClicked)
+    val currentTrainingPlanId by rememberUpdatedState(trainingPlan.id)
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) {
-        onStartTrainingSessionClicked(trainingPlan.id)
+        currentOnStartTrainingSessionClicked(currentTrainingPlanId)
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -200,7 +203,9 @@ private fun TrainingPlanDetails(
                                 if (isGranted) {
                                     onStartTrainingSessionClicked(trainingPlan.id)
                                 } else {
-                                    notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                    notificationPermissionLauncher.launch(
+                                        Manifest.permission.POST_NOTIFICATIONS
+                                    )
                                 }
                             } else {
                                 // API 28–32 grants notification permission at install time
@@ -475,7 +480,7 @@ private fun TrainingPlanDetailsScreenContentPreview() {
     TrainingPlannerTheme {
         CompositionLocalProvider(
             LocalTimeProvider provides
-                    TestTimeProvider(instant = Instant.parse("2026-10-06T12:00:00Z"))
+                TestTimeProvider(instant = Instant.parse("2026-10-06T12:00:00Z"))
         ) {
             TrainingPlanDetailsScreenContent(
                 trainingPlanState = ResultHandler.Success(value = PREVIEW_TRAINING_PLAN),

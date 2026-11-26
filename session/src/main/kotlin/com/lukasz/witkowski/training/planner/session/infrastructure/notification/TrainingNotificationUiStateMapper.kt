@@ -3,10 +3,14 @@ package com.lukasz.witkowski.training.planner.session.infrastructure.notificatio
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.session.queue.ExerciseQueueProgress
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
+import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
 import kotlin.time.Duration
 
 class TrainingNotificationUiStateMapper {
-    fun map(state: TrainingSessionState): TrainingNotificationUiState = when (state) {
+    fun map(
+        state: TrainingSessionState,
+        weightUnit: WeightUnit = WeightUnit.KG
+    ): TrainingNotificationUiState = when (state) {
         is TrainingSessionState.IdleState -> TrainingNotificationUiState.Idle
         is TrainingSessionState.ExerciseState -> {
             val config = state.sessionExercise.currentConfig
@@ -15,7 +19,8 @@ class TrainingNotificationUiStateMapper {
                 currentSet = state.progress.currentExerciseSet,
                 totalSets = state.progress.currentExerciseTotalSets,
                 reps = config.reps,
-                weightInKg = config.weight?.takeIf { it.isPositive }?.inKilograms,
+                weight = config.weight?.takeIf { it.isPositive },
+                weightUnit = weightUnit,
                 holdSeconds = config.holdTime?.takeIf { it > Duration.ZERO }?.inWholeSeconds,
                 timer = mapTimer(state.timerState),
                 progress = mapWorkoutProgress(state.progress)

@@ -10,16 +10,25 @@ class TrainingNotificationChannelManager(
     private val notificationManager: NotificationManager
 ) {
     fun ensureChannelExists() {
-        val channel =
+        val ongoingChannel =
             NotificationChannel(
                 CHANNEL_ID,
                 context.getString(R.string.notification_channel_training_session),
                 NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                setShowBadge(false)
+            }
+        val alertsChannel =
+            NotificationChannel(
+                ALERTS_CHANNEL_ID,
+                context.getString(R.string.notification_channel_training_alerts),
+                NotificationManager.IMPORTANCE_DEFAULT
             )
-        notificationManager.createNotificationChannel(channel)
+        notificationManager.createNotificationChannels(listOf(ongoingChannel, alertsChannel))
     }
 
     companion object {
         const val CHANNEL_ID = "TRAINING_SESSION_CHANNEL"
+        const val ALERTS_CHANNEL_ID = "TRAINING_SESSION_ALERTS_CHANNEL"
     }
 }

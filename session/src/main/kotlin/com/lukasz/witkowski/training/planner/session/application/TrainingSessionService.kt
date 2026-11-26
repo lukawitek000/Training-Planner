@@ -68,6 +68,9 @@ class TrainingSessionService(
     var trainingPlan: TrainingPlan? = null
         private set
 
+    val hasActiveSession: Boolean
+        get() = activeSession.value != null
+
     fun startTraining(trainingPlan: TrainingPlan) {
         currentSessionScope?.cancel()
         val newSessionScope = CoroutineScope(

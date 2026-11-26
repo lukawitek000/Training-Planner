@@ -10,6 +10,7 @@ import com.lukasz.witkowski.training.planner.network.networkModule
 import com.lukasz.witkowski.training.planner.notification.AppSessionNotificationContentIntentProvider
 import com.lukasz.witkowski.training.planner.session.di.sessionModule
 import com.lukasz.witkowski.training.planner.session.infrastructure.notification.SessionNotificationContentIntentProvider
+import com.lukasz.witkowski.training.planner.session.infrastructure.notification.SessionWeightUnitProvider
 import com.lukasz.witkowski.training.planner.shared.di.timeModule
 import com.lukasz.witkowski.training.planner.shared.featureflags.featureFlagsModule
 import com.lukasz.witkowski.training.planner.training.di.trainingModule
@@ -38,6 +39,10 @@ val appModule = module {
 
     single<SessionNotificationContentIntentProvider> {
         AppSessionNotificationContentIntentProvider(context = androidApplication())
+    }
+
+    single<SessionWeightUnitProvider> {
+        SessionWeightUnitProvider { get<com.lukasz.witkowski.training.planner.user.domain.UserRepository>().weightUnit }
     }
 
     single {

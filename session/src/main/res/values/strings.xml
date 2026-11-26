@@ -74,6 +74,7 @@
 
     <!-- Foreground Service Notification -->
     <string name="notification_channel_training_session">Training Session</string>
+    <string name="notification_channel_training_alerts">Workout Alerts</string>
     <string name="notification_subtext_active_session">Active session</string>
     <string name="notification_subtext_rest">Rest interval</string>
     <string name="notification_session_idle_title">Training Session</string>

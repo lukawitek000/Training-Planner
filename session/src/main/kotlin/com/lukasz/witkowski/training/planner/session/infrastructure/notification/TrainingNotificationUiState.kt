@@ -1,5 +1,8 @@
 package com.lukasz.witkowski.training.planner.session.infrastructure.notification
 
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
+import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
+
 sealed interface NotificationProgress {
     data class WorkoutSegments(val completedSets: Int, val exerciseSetCounts: List<Int>) :
         NotificationProgress {
@@ -32,7 +35,8 @@ sealed interface TrainingNotificationUiState {
         val currentSet: Int,
         val totalSets: Int,
         val reps: Int,
-        val weightInKg: Double?,
+        val weight: Weight?,
+        val weightUnit: WeightUnit = WeightUnit.KG,
         val holdSeconds: Long?,
         val timer: NotificationTimer,
         val progress: NotificationProgress.WorkoutSegments

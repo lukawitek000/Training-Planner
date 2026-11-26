@@ -15,6 +15,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,7 +59,7 @@ class MainActivity : ComponentActivity() {
 fun TrainingPlannerApp(initialKey: TrainingPlannerNavKey = TrainingPlansList) {
     val backStack = rememberTrainingPlannerNavBackStack(initialKey)
     val context = LocalContext.current
-    val navigator = TrainingPlannerNavigator(backStack)
+    val navigator = remember(backStack) { TrainingPlannerNavigator(backStack) }
     HandleNavigationIntents(navigator = navigator)
     val uiConfig = navigator.toUiConfig(context = context)
     Scaffold(

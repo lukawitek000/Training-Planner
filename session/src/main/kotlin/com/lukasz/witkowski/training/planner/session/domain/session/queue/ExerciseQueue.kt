@@ -36,7 +36,7 @@ internal class ExerciseQueue(loadedExercises: List<SessionExercise>) {
             "Exercise queue is empty, cannot load next exercise"
         }
         return remainingExercises.removeAt(0).also { polled ->
-            Timber.i("Polled exercise ${activeExercise.exerciseId}")
+            Timber.i("Polled exercise ${polled.exerciseId}")
             activeExercise = polled
             activeExerciseId = polled.exerciseId
             updateProgress(activeExerciseId)

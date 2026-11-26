@@ -35,6 +35,7 @@ internal class TrainingSession(
     private val statisticsRecorder: SessionStatisticsRecorder = CompositeStatisticsRecorder(),
     scope: CoroutineScope
 ) {
+    private val stateLock = Any()
     private val currentPhase = MutableStateFlow<SessionPhase>(IdlePhase)
 
     val state: StateFlow<TrainingSessionState> =
@@ -58,37 +59,41 @@ internal class TrainingSession(
     }
 
     fun start() {
-        if (currentPhase.value !is IdlePhase) return
-        statisticsRecorder.onEvent(SessionEvent.SessionStarted(trainingPlanId))
-        transitionToNextPhase()
+        synchronized(stateLock) {
+            if (currentPhase.value !is IdlePhase) return
+            statisticsRecorder.onEvent(SessionEvent.SessionStarted(trainingPlanId))
+            transitionToNextPhase()
+        }
     }
 
-    fun complete() {
+    fun complete() = synchronized(stateLock) {
         onPhaseFinished(currentPhase.value.complete())
     }
 
-    fun skip() {
+    fun skip() = synchronized(stateLock) {
         onPhaseFinished(currentPhase.value.skip())
     }
 
     fun endEarly() {
-        val event = currentPhase.value.endEarly() ?: return
-        recordPhaseEvent(event)
-        currentPhase.value.close()
-        statisticsRecorder.onEvent(SessionEvent.SessionFinished)
-        currentPhase.value = IdlePhase
+        synchronized(stateLock) {
+            val event = currentPhase.value.endEarly() ?: return
+            recordPhaseEvent(event)
+            currentPhase.value.close()
+            statisticsRecorder.onEvent(SessionEvent.SessionFinished)
+            currentPhase.value = IdlePhase
+        }
     }
 
-    fun addExtraSet() {
+    fun addExtraSet() = synchronized(stateLock) {
         val (exercise, newTotal) = exerciseQueue.addExtraSet()
         statisticsRecorder.onEvent(SessionEvent.ExtraSetAdded(exercise, newTotal))
     }
 
-    fun removeExtraSet() {
+    fun removeExtraSet() = synchronized(stateLock) {
         exerciseQueue.removeExtraSet()
     }
 
-    fun handle(command: SessionCommand) {
+    fun handle(command: SessionCommand) = synchronized(stateLock) {
         currentPhase.value.handle(command)
     }
 

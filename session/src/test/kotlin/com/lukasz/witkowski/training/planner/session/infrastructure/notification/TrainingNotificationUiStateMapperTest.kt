@@ -6,6 +6,7 @@ import com.lukasz.witkowski.training.planner.session.domain.models.TrainingStati
 import com.lukasz.witkowski.training.planner.session.domain.session.TrainingSessionState
 import com.lukasz.witkowski.training.planner.session.domain.session.queue.ExerciseQueueProgress
 import com.lukasz.witkowski.training.planner.session.domain.timer.TimerState
+import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
 import com.lukasz.witkowski.training.planner.shared.utils.kg
 import kotlin.test.assertEquals
 import kotlin.time.Duration
@@ -58,7 +59,8 @@ class TrainingNotificationUiStateMapperTest {
                 currentSet = 1,
                 totalSets = 3,
                 reps = 10,
-                weightInKg = 60.0,
+                weight = 60.kg,
+                weightUnit = WeightUnit.KG,
                 holdSeconds = null,
                 timer = NotificationTimer.None,
                 progress =
@@ -106,7 +108,8 @@ class TrainingNotificationUiStateMapperTest {
                 currentSet = 3,
                 totalSets = 4,
                 reps = 1,
-                weightInKg = null,
+                weight = null,
+                weightUnit = WeightUnit.KG,
                 holdSeconds = 45L,
                 timer = NotificationTimer.Running(remainingSeconds = 15L),
                 progress =

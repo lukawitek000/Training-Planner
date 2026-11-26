@@ -11,9 +11,10 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.lukasz.witkowski.training.planner.session.R
-import com.lukasz.witkowski.training.planner.session.infrastructure.TrainingSessionForegroundService
 import com.lukasz.witkowski.training.planner.session.presentation.formatRemainingTime
 import com.lukasz.witkowski.training.planner.shared.R as SharedR
+import com.lukasz.witkowski.training.planner.shared.utils.Weight
+import com.lukasz.witkowski.training.planner.shared.utils.WeightUnit
 import com.lukasz.witkowski.training.planner.shared.utils.formatUpToTwoDecimals
 import kotlin.time.Duration.Companion.seconds
 
@@ -33,13 +34,19 @@ class TrainingSessionNotificationBuilder(
     @RequiresApi(Build.VERSION_CODES.BAKLAVA)
     private fun buildPlatformNotification(content: NotificationContent): Notification {
         val builder =
-            Notification.Builder(context, TrainingNotificationChannelManager.CHANNEL_ID)
+            Notification.Builder(context, content.channelId)
                 .setSmallIcon(R.drawable.exercise_default)
                 .setContentTitle(content.title)
                 .setContentText(content.text)
+                .setCategory(Notification.CATEGORY_WORKOUT)
                 .setOngoing(content.ongoing)
                 .setAutoCancel(content.autoCancel)
-                .setOnlyAlertOnce(true)
+                .setOnlyAlertOnce(content.onlyAlertOnce)
+
+        if (content.ongoing) {
+            builder.setRequestPromotedOngoing(true)
+            builder.setForegroundServiceBehavior(Notification.FOREGROUND_SERVICE_IMMEDIATE)
+        }
 
         content.subText?.let(builder::setSubText)
         content.shortCriticalText?.let(builder::setShortCriticalText)
@@ -123,14 +130,19 @@ class TrainingSessionNotificationBuilder(
 
     private fun buildCompatNotification(content: NotificationContent): Notification {
         val builder =
-            NotificationCompat.Builder(context, TrainingNotificationChannelManager.CHANNEL_ID)
+            NotificationCompat.Builder(context, content.channelId)
                 .setSmallIcon(R.drawable.exercise_default)
                 .setContentTitle(content.title)
                 .setContentText(content.text)
+                .setCategory(NotificationCompat.CATEGORY_WORKOUT)
                 .setOngoing(content.ongoing)
                 .setAutoCancel(content.autoCancel)
-                .setOnlyAlertOnce(true)
+                .setOnlyAlertOnce(content.onlyAlertOnce)
                 .setPriority(NotificationCompat.PRIORITY_LOW)
+
+        if (content.ongoing) {
+            builder.setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
+        }
 
         content.subText?.let(builder::setSubText)
         contentIntentProvider?.provideContentIntent()?.let(builder::setContentIntent)
@@ -169,28 +181,33 @@ class TrainingSessionNotificationBuilder(
         when (uiState) {
             is TrainingNotificationUiState.Idle ->
                 NotificationContent(
+                    channelId = TrainingNotificationChannelManager.CHANNEL_ID,
                     title = context.getString(R.string.notification_session_idle_title),
                     text = context.getString(R.string.notification_session_idle_text),
                     subText = context.getString(R.string.notification_subtext_active_session),
                     shortCriticalText = null,
                     progress = null,
                     actions = emptyList(),
-                    ongoing = true
+                    ongoing = true,
+                    onlyAlertOnce = true
                 )
 
             is TrainingNotificationUiState.ActiveExercise ->
                 NotificationContent(
+                    channelId = TrainingNotificationChannelManager.CHANNEL_ID,
                     title = formatActiveExerciseTitle(uiState),
                     text = formatActiveExerciseText(uiState),
                     subText = context.getString(R.string.notification_subtext_active_session),
                     shortCriticalText = formatCriticalTimer(uiState.timer),
                     progress = uiState.progress,
                     actions = buildActiveExerciseActions(uiState.timer),
-                    ongoing = true
+                    ongoing = true,
+                    onlyAlertOnce = true
                 )
 
             is TrainingNotificationUiState.Rest ->
                 NotificationContent(
+                    channelId = TrainingNotificationChannelManager.CHANNEL_ID,
                     title = formatRestTitle(uiState.timer),
                     text = formatRestText(uiState),
                     subText = context.getString(R.string.notification_subtext_rest),
@@ -204,11 +221,13 @@ class TrainingSessionNotificationBuilder(
                             label = context.getString(R.string.notification_action_skip_rest)
                         )
                     ),
-                    ongoing = true
+                    ongoing = true,
+                    onlyAlertOnce = true
                 )
 
             is TrainingNotificationUiState.Summary ->
                 NotificationContent(
+                    channelId = TrainingNotificationChannelManager.ALERTS_CHANNEL_ID,
                     title = context.getString(R.string.notification_summary_title),
                     text = context.getString(R.string.notification_summary_text),
                     subText = null,
@@ -216,7 +235,8 @@ class TrainingSessionNotificationBuilder(
                     progress = uiState.progress,
                     actions = emptyList(),
                     ongoing = false,
-                    autoCancel = true
+                    autoCancel = true,
+                    onlyAlertOnce = false
                 )
         }
 
@@ -272,17 +292,21 @@ class TrainingSessionNotificationBuilder(
                         )
                     )
                 }
-                val weightInKg = uiState.weightInKg
-                if (weightInKg != null && weightInKg > 0.0) {
-                    add(
-                        context.getString(
-                            SharedR.string.weight_kg_format,
-                            weightInKg.formatUpToTwoDecimals()
-                        )
-                    )
+                uiState.weight?.takeIf { it.isPositive }?.let { weight ->
+                    add(formatWeight(weight, uiState.weightUnit))
                 }
             }
         return parts.joinToString(separator = SEGMENT_SEPARATOR)
+    }
+
+    private fun formatWeight(weight: Weight, unit: WeightUnit): String {
+        val formattedValue = weight.toDouble(unit).formatUpToTwoDecimals()
+        val formatRes =
+            when (unit) {
+                WeightUnit.KG -> SharedR.string.weight_kg_format
+                WeightUnit.LBS -> SharedR.string.weight_lbs_format
+            }
+        return context.getString(formatRes, formattedValue)
     }
 
     private fun buildActiveExerciseActions(timer: NotificationTimer): List<ActionItem> {
@@ -374,10 +398,10 @@ class TrainingSessionNotificationBuilder(
 
     private fun createActionPendingIntent(action: TrainingNotificationAction): PendingIntent {
         val intent =
-            Intent(context, TrainingSessionForegroundService::class.java).apply {
+            Intent(context, TrainingNotificationActionReceiver::class.java).apply {
                 this.action = action.intentAction
             }
-        return PendingIntent.getService(
+        return PendingIntent.getBroadcast(
             context,
             action.requestCode,
             intent,
@@ -386,6 +410,7 @@ class TrainingSessionNotificationBuilder(
     }
 
     private data class NotificationContent(
+        val channelId: String,
         val title: String,
         val text: String,
         val subText: String?,
@@ -393,7 +418,8 @@ class TrainingSessionNotificationBuilder(
         val progress: NotificationProgress?,
         val actions: List<ActionItem>,
         val ongoing: Boolean,
-        val autoCancel: Boolean = false
+        val autoCancel: Boolean = false,
+        val onlyAlertOnce: Boolean = true
     )
 
     private data class ActionItem(
